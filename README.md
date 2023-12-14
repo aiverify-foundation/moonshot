@@ -312,6 +312,7 @@ The Moonshot Team <<our.moonshot.team@gmail.com>>
 ### Datasets used in Moonshot recipes
 | Dataset       | Source           | License           |
 | :-------------:|:-------------:| :-------------:|
+|AdvGLUE|https://adversarialglue.github.io/|Creative Commons Attribution 4.0 International|
 |Analogical Similarity|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/analogical_similarity |Apache License Version 2.0, January 2004  |
 |Auto Categorization |https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/auto_categorization|Apache License Version 2.0, January 2004|
 |BBQ|https://github.com/nyu-mll/BBQ|Creative Commons Attribution 4.0 International| 
