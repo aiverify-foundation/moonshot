@@ -1,0 +1,9 @@
+{
+    "type": "openai-gpt35",
+    "name": "my-openai-gpt35",
+    "uri": "", 
+    "token": "",
+    "max_calls_per_second": 100,
+    "max_concurrency": 100,
+    "params": {}
+}
