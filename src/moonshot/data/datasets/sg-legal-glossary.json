@@ -1,0 +1,1712 @@
+{
+    "name": "sg-legal-glossary",
+    "description": "A list of singapore legal terms extracted from SICC and Judiciary websites.",
+    "keywords": [
+        "legal"
+    ],
+    "categories": [
+        "capability"
+    ],
+    "examples": [
+        {
+            "input": "Term",
+            "target": "Explanation"
+        },
+        {
+            "input": "Written law",
+            "target": "Same meaning as legislation."
+        },
+        {
+            "input": "Writ of seizure and sale of property",
+            "target": "A writ of execution directing the Sheriff to seize and sell movable property belonging to a judgment debtor in order to pay the judgment debt. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Writ of possession",
+            "target": "A writ of execution directing the Sheriff to enter upon immovable property to give vacant possession of the immovable property to a judgment creditor in satisfaction of a judgment or order. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Writ of execution",
+            "target": "A legal instrument issued by the court for the purpose of enforcing a judgment or order. This includes a writ of delivery, a writ of possession, and a writ of seizure and sale. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Writ of delivery",
+            "target": "A writ of execution directing the Sheriff to recover movable property in the possession of a judgment debtor, and deliver it or its assessed value to the judgment creditor in satisfaction of a judgment or order. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Witness statement",
+            "target": "A written statement recording the testimony and evidence that is given by a person in his capacity as a witness."
+        },
+        {
+            "input": "Without prejudice communications",
+            "target": "Communications carried out between parties to negotiate a settlement of their dispute without implying any admission of liability. Such communications cannot be adduced as evidence in any action without the consent of all the parties involved."
+        },
+        {
+            "input": "Without notice",
+            "target": "Without notice to any other party in a legal proceeding. Formerly known as ex parte."
+        },
+        {
+            "input": "Winding up",
+            "target": "A procedure by which a body corporate is dissolved or liquidated."
+        },
+        {
+            "input": "Warrant to act",
+            "target": "The written authority given by a client to his counsel to represent him and appear on his behalf in legal proceedings."
+        },
+        {
+            "input": "Want of prosecution",
+            "target": "The failure of a litigant to actively pursue or progress his case in legal proceedings that had been instituted."
+        },
+        {
+            "input": "Waiver",
+            "target": "The relinquishment or abandonment of a legal right or advantage."
+        },
+        {
+            "input": "Vexatious litigant",
+            "target": "A litigant who habitually, persistently and without any reasonable ground institutes frivolous and unmeritorious legal proceedings in court, whether against the same person or against different persons."
+        },
+        {
+            "input": "Unliquidated damages",
+            "target": "An unquantified or as yet quantified amount of monetary compensation sought to be"
+        },
+        {
+            "input": "\"Unless\" order",
+            "target": "An order compelling a party to perform an act or obligation, usually within a time frame, failing which adverse specified consequences will follow (for example, the striking out of a claimants action if he fails to comply with an unless order requiring him to file an overdue court document in the action by a specified deadline)."
+        },
+        {
+            "input": "Undue influence",
+            "target": "The improper use of power or control in a way that compromises a persons free will in performing an act."
+        },
+        {
+            "input": "Undertaking",
+            "target": "A promise given by a party or counsel to the court or another party in the course of legal proceedings, generally as a condition to obtaining some concession from the court or that other party."
+        },
+        {
+            "input": "Trust (in common law)",
+            "target": "A property interest held by a person for the benefit of another person. "
+        },
+        {
+            "input": "Trustee",
+            "target": "The person appointed, or required by law, to execute a trust for the benefit or to the use of a beneficiary or beneficiaries."
+        },
+        {
+            "input": "Trial",
+            "target": "The hearing of a case before a court where testimonies and evidence are given and adduced, and parties carry out direct examination and cross- examination of witnesses."
+        },
+        {
+            "input": "Transfer of Proceedings",
+            "target": "The process by which a case is transferred from one court to another court within the same judicial system."
+        },
+        {
+            "input": "Tort",
+            "target": "A private or civil wrong or injury."
+        },
+        {
+            "input": "Title (to property)",
+            "target": "The right which a person has to the ownership and/or possession of property."
+        },
+        {
+            "input": "Third-party notice",
+            "target": "A notice served on a third party by a defendant, where the defendant seeks to claim contribution, indemnity, any relief or remedy relating to or connected with the subject matter of the case, adding the third party to the existing proceedings."
+        },
+        {
+            "input": "Third-Party Funder",
+            "target": "A person who carries on the business of funding all or part of the costs of dispute resolution proceedings to which the person is not a party."
+        },
+        {
+            "input": "Third-party funding contract",
+            "target": "A contract whereby a third party funder provides funds to any party for the purpose of funding all or part of the costs of that party in dispute resolution proceedings, in return for a share or other interest in the proceeds or potential proceeds of the proceedings to which the party may become entitled."
+        },
+        {
+            "input": "Third party and third-party proceedings",
+            "target": "A third party is a person who is not initially a party to an action but is sued by a defendant seeking a contribution or indemnity against any damages that the court may order the defendant to pay to the claimant in the action. Third party proceedings are proceedings commenced for the purpose of determining whether the third party is required to indemnify the defendant or provide contribution against any damages awarded against the defendant."
+        },
+        {
+            "input": "Testimony",
+            "target": "Evidence given by a witness under oath or affirmation."
+        },
+        {
+            "input": "Tenancy in common",
+            "target": "A  form of proprietary interest in property where the title to the property is held in the names of two or more persons in accordance with the extent of their constituent shares in the property."
+        },
+        {
+            "input": "Summons without notice",
+            "target": "An application to the court in relation to an action or appeal which does not need to be served on any other party or non-party."
+        },
+        {
+            "input": "Summons",
+            "target": "The mode and form in which an interlocutory application should be taken out."
+        },
+        {
+            "input": "Summary Judgment",
+            "target": "A judgment granted by the court upon being satisfied, without the need for a trial, that the defendants defence against the claimants action is bound to fail."
+        },
+        {
+            "input": "Summary dismissal",
+            "target": "A decision by a court denying the relief or remedy sought in an appeal or application, without the need for a hearing or submissions, after giving the appellant or applicant a reasonable opportunity to show cause why the appeal or application should not be decided in this manner, and upon being satisfied that the appeal or application is bound to fail."
+        },
+        {
+            "input": "Substituted service",
+            "target": "A form of service of documents permitted to be carried out in lieu of personal service. Substituted service may be carried out in a number of ways, such as for example service by mail or service by publication in a newspaper."
+        },
+        {
+            "input": "Subsequent party",
+            "target": "A person who is added as a party to an action after the action has been commenced."
+        },
+        {
+            "input": "Subpoena",
+            "target": "A process to compel a witness to appear before a court to give testimony or to produce evidence at a specified time in a trial. A subpoena may likewise be referred to as an order to attend or produce documents.\nThe defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Submissions",
+            "target": "Arguments made to the court, either orally or in writing, setting out a partys legal and factual bases in support of his case in the action."
+        },
+        {
+            "input": "Striking out",
+            "target": "An order of the court: ordering the deletion of matters or points stated in pleadings, witness statements or any other document filed in court, so that those matters or points may no longer be relied on in the legal proceedings; or ordering the summary dismissal of a claim or part of a claim."
+        },
+        {
+            "input": "Stay of proceedings",
+            "target": "The temporary suspension of legal proceedings, by direction or order of the court."
+        },
+        {
+            "input": "Stay of execution",
+            "target": "The temporary suspension of the execution of a judgment or order, by direction or order of the court. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Stay of enforcement",
+            "target": "The temporary suspension of the enforcement of a judgment or order, by direction or order of the court."
+        },
+        {
+            "input": "Statement of truth",
+            "target": "A statement that the party putting forward a document, or the maker of a witness statement, believes that the facts stated in the document are true."
+        },
+        {
+            "input": "Statement of Claim",
+            "target": "A formal statement by the claimant in an action, setting out the material facts on which he relies to support his claim against the defendant, and the reliefs or remedies which he seeks."
+        },
+        {
+            "input": "State immunity",
+            "target": "An international law principle by which a sovereign state cannot, without its consent, be sued before the courts of another sovereign state."
+        },
+        {
+            "input": "Standard of proof",
+            "target": "The degree of proof required to establish, on the evidence, any fact in issue in legal proceedings."
+        },
+        {
+            "input": "Specific performance",
+            "target": "A relief or remedy compelling a partys performance of a contract in accordance with the precise terms agreed upon."
+        },
+        {
+            "input": "Sheriff",
+            "target": "The enforcement officer of the Supreme Court. The Sheriff has the authority to execute and carry into effect all writs of execution, court orders and enforcement orders."
+        },
+        {
+            "input": "Settlement",
+            "target": "An agreement reached by parties that resolves a dispute without the need for adjudication by a court or tribunal."
+        },
+        {
+            "input": "Setting aside",
+            "target": "To cancel, annul or revoke a judgment, order or award."
+        },
+        {
+            "input": "Set-off",
+            "target": "A counter demand by a defendant against the claimant that could result in the defendant paying the claimant an amount that is less than what is due, after taking into account any liability that the claimant may owe to the defendant."
+        },
+        {
+            "input": "Service",
+            "target": "The formal act of delivering to or leaving with a person a document that is to be used in legal proceedings."
+        },
+        {
+            "input": "Security for costs",
+            "target": "An interim measure which requires a party in legal proceedings (usually the claimant) to set aside a sum of money to satisfy any eventual costs order that may be made against him in the proceedings."
+        },
+        {
+            "input": "Search order",
+            "target": "Same meaning as an Anton Piller order."
+        },
+        {
+            "input": "Rules of court",
+            "target": "A body of procedural rules that govern court proceedings."
+        },
+        {
+            "input": "Right of audience",
+            "target": "The right to appear and be heard in court. "
+        },
+        {
+            "input": "Restructuring ",
+            "target": "The practice or an instance of changing the way in which a government, business entity or system is organised. Usually used to refer to corporate action taken that involves significantly modifying the debt, operations or structure of a company as a way of limiting financial harm and improving the business. "
+        },
+        {
+            "input": "Restricted registration foreign lawyer",
+            "target": "A foreign lawyer who can appear in any relevant proceedings solely for the purposes of making submissions on matters of foreign law as permitted by the Singapore International Commercial Court or the Court of Appeal, and give advice and prepare documents for that purpose."
+        },
+        {
+            "input": "Restitutionary claims",
+            "target": "A body of substantive law in which liability is not based on tort or contract law but on the defendants unjust enrichment. The measure of recovery is usually based not on the claimants loss but on the defendants gain."
+        },
+        {
+            "input": "Rescission (of contract)",
+            "target": "A partys unilateral unmaking of a contract for a legally sufficient reason, such as the other partys material breach, or a judgment rescinding the contract."
+        },
+        {
+            "input": "Res judicata",
+            "target": "A doctrine generally barring a party from re-litigating or re- arguing a same issue in dispute that had been decided by the court previously."
+        },
+        {
+            "input": "Request to produce",
+            "target": "A request served in writing by one party on another party in a legal proceeding, seeking disclosure of specified documents that are relevant and material to the requesting partys case."
+        },
+        {
+            "input": "Representative proceedings",
+            "target": "Proceedings where numerous persons have a common interest and sue or are sued as a group with one or more of them representing the group."
+        },
+        {
+            "input": "Reply to Defence to Counterclaim",
+            "target": "A defendants response to a Defence to Counterclaim."
+        },
+        {
+            "input": "Reply",
+            "target": "A claimants response to a Defence."
+        },
+        {
+            "input": "Relief or remedy",
+            "target": "The means by which a right is enforced or a wrong is redressed."
+        },
+        {
+            "input": "Registry of the Supreme Court",
+            "target": "The court department that is headed by the Registrar of the Supreme Court. The Registry of the Supreme Court comprises the Divisional Registry for the Court of Appeal and the Appellate Division of the High Court, the Divisional Registry for the\nGeneral Division of the High Court, and the Divisional Registry for the Singapore International Commercial Court."
+        },
+        {
+            "input": "Registrar of the Supreme Court",
+            "target": "The highest-ranking judicial officer of the Supreme Court. The Registrar is assisted by the Deputy Registrar, Senior Assistant Registrars and Assistant Registrars of the Supreme Court."
+        },
+        {
+            "input": "Registered law expert (in the Singapore International Commercial Court)",
+            "target": "A law expert who is authorised to make submissions on questions of foreign law on behalf of a party in legal proceedings before the Singapore International Commercial Court."
+        },
+        {
+            "input": "Registered foreign lawyer (in the Singapore International Commercial Court)",
+            "target": "A foreign lawyer who is authorised to plead, represent, and appear on behalf of a party in legal proceedings before the Singapore International Commercial Court"
+        },
+        {
+            "input": "Reciprocal enforcement of judgments",
+            "target": "A doctrine whereby a judgment made by a court from one country or territory can be enforced in the court of a foreign country or territory as a result of mutual understanding or cooperation between the authorities of those two countries or territories"
+        },
+        {
+            "input": "Re-examination",
+            "target": "An examination of a witness after a cross-examination, upon matters arising out of such cross- examination."
+        },
+        {
+            "input": "Receiver",
+            "target": "A person appointed by the court or pursuant to a legal instrument to act as custodian of a companys or corporations business, finances and assets. A receiver may be appointed when a company or corporation faces insolvency, and the receiver may enforce any security (such as a floating charge) for the benefit of certain creditors of the company or corporation."
+        },
+        {
+            "input": "Quantum meruit",
+            "target": "A doctrine under contract law recognising the reasonable value of services rendered by one person to another person in a quasi-contractual relationship, which ought to be compensated."
+        },
+        {
+            "input": "Proprietary estoppel ",
+            "target": "A form of estoppel relating to ownership interests in property. "
+        },
+        {
+            "input": "Production (of documents) ",
+            "target": "A process by which the parties involved in a legal proceeding inform each other of, and make available to each other, documents that they have in their possession, custody or power and which relate to the matters in dispute between the parties. "
+        },
+        {
+            "input": "Process server ",
+            "target": "A person authorised by law or by a court to formally deliver court documents to a party in legal proceedings. "
+        },
+        {
+            "input": "Proceeding(s) ",
+            "target": "An action, including the orderly progression of an action beginning from the time of commencement of the action. "
+        },
+        {
+            "input": "Probate and administration ",
+            "target": "The area of law relating to the management and distribution of a person's estate to his beneficiaries upon his death. See also grant of letters of administration and grant of probate. "
+        },
+        {
+            "input": "Privileged documents ",
+            "target": "Documents in relation to which a specified person has the legal right to refuse to disclose or prevent any other person from disclosing in legal proceedings. "
+        },
+        {
+            "input": "Priority of claim (in insolvency) ",
+            "target": "A creditors legal right to have his claim on a debt paid before other creditors of the same debtor are paid. "
+        },
+        {
+            "input": "Principal (in agency) ",
+            "target": "A person who authorises another person to act on his behalf as an agent. "
+        },
+        {
+            "input": "Pre-trial examination evidence ",
+            "target": "Testimony of a witness in or out of Singapore before a trial that is reduced into writing for later use in court. "
+        },
+        {
+            "input": "Pre-trial examination ",
+            "target": "A question and answer session under oath, which may be conducted out of court in advance of a trial as part of the discovery process. "
+        },
+        {
+            "input": "Prerogative order ",
+            "target": "An order granting remedies available in administrative law, and includes a mandatory order, a quashing order, a prohibiting order and an order for review of detention. "
+        },
+        {
+            "input": "Preliminary issues ",
+            "target": "Issues that are to be heard and determined before the trial or the substantive hearing in an action. "
+        },
+        {
+            "input": "Pre-action production of documents ",
+            "target": "The disclosure or making available of documents by a party or parties before the commencement of legal proceedings. "
+        },
+        {
+            "input": "Power of attorney ",
+            "target": "An instrument authorising a person to act on ones behalf in relation to legally binding transactions or matters. "
+        },
+        {
+            "input": "Pleadings ",
+            "target": "The formal documents setting out the material facts relied on by the parties in support of their claims and defences in an action."
+        },
+        {
+            "input": "Personal service ",
+            "target": "The service of a document on a person by leaving with the person the document or in such other manner as may be agreed between the party serving and the party to be served, as directed by the court, or as provided for in legislation. "
+        },
+        {
+            "input": "Personal representatives ",
+            "target": "Persons whose duty is to gather in the assets of the estate of a deceased person, to pay any liabilities and to distribute the residue to the beneficiaries of the estate. "
+        },
+        {
+            "input": "Personal property ",
+            "target": "Property that does not comprise land. "
+        },
+        {
+            "input": "Permission to defend ",
+            "target": "An order of court made on an application for summary judgment, directing that the action with respect to a claim, or part of a claim, proceed to be tried fully as opposed to being summarily dealt with. Permission to defend may be ordered either unconditionally or conditionally. A conditional permission to defend may require, for example, the defendant to pay some or all of the money or damages claimed in the action into court, or provide some form of security, pending the trial of the action. Formerly known as leave to defend."
+        },
+        {
+            "input": "Permission ",
+            "target": "Save for certain circumstances, this is formerly known as leave of court. "
+        },
+        {
+            "input": "Penal notice ",
+            "target": "A notice endorsed on a judgment or order of court, cautioning that the party against whom the judgment or order is made may be guilty of contempt of court if he fails to comply with the terms of the judgment or order. "
+        },
+        {
+            "input": "Payment into and out of court ",
+            "target": "The payment in and out of money held in an account maintained by the court in respect of an action, in satisfaction of an order or direction of the court. An example of money held in the account maintained by the court is security for costs furnished by a party pending the determination of an action."
+        },
+        {
+            "input": "Patent actions ",
+            "target": "Lawsuits brought against persons who have allegedly infringed a patent. "
+        },
+        {
+            "input": "Passing-off actions ",
+            "target": "Lawsuits against persons alleged to have engaged in the illegal act of selling a product that is similar to one which is legally protected by a trademark."
+        },
+        {
+            "input": "Partnership ",
+            "target": "A legal relationship which subsists between persons carrying on a business in common, without involving the setting up of a company or corporation. "
+        },
+        {
+            "input": "Particulars of pleading ",
+            "target": "The material facts in support of a claim or defence in an action. "
+        },
+        {
+            "input": "Originating process ",
+            "target": "The process by which a civil action is commenced in court, either by writ of summons or originating summons. The defined term is used only in relation to cases commenced before 1 April 2022."
+        },
+        {
+            "input": "Originating Application ",
+            "target": "The process by which a civil action is commenced in court. "
+        },
+        {
+            "input": "Ordinary service ",
+            "target": "The service of a document on a person by leaving the document at his proper address, by post, by facsimile, in a manner as may be agreed between the party serving and the party to be served, as directed by the court, or as provided for in legislation. "
+        },
+        {
+            "input": "Order to attend court or produce documents ",
+            "target": "An order to compel a witness to appear before a court to give testimony or to produce evidence at a specified time in a trial. Formerly known as subpoena. "
+        },
+        {
+            "input": "Order ",
+            "target": "A formal direction given by a court or a judge. "
+        },
+        {
+            "input": "Opening statement ",
+            "target": "A statement given at the beginning of a trial outlining the matters that a party seeks to prove in the course of the trial. "
+        },
+        {
+            "input": "Open court hearing ",
+            "target": "A hearing in court that is open to the public and media. "
+        },
+        {
+            "input": "Offshore case (in relation to proceedings in the Singapore International Commercial Court)",
+            "target": "An action which has no substantial connection with Singapore. "
+        },
+        {
+            "input": "Official record of hearing ",
+            "target": "An authorised audio recording of a hearing, or in its absence, the notes of the hearing taken down by a judge, judicial officer or court officer, whether by hand or through the use of a computer or electronic device. "
+        },
+        {
+            "input": "Offer to settle ",
+            "target": "An offer made by one party to another party in an attempt to resolve a dispute without the need for adjudication by the court. "
+        },
+        {
+            "input": "Offer of amicable resolution ",
+            "target": "An offer to settle the whole or a part of an action or appeal, or to resolve the whole or a part of a dispute other than by litigation. "
+        },
+        {
+            "input": "Oath ",
+            "target": "A form of attestation by which a person signifies that he is bound in conscience to perform an act faithfully and truthfully (e.g. testify before the court). "
+        },
+        {
+            "input": "Notice of appeal ",
+            "target": "A document submitted to an appellate court by a party indicating his intention to appeal against a lower court's judgment or order. This is the mode of commencing appeal proceedings in court."
+        },
+        {
+            "input": "Notice ",
+            "target": "A formal document to apprise a person of matters affecting his substantive legal rights (e.g. a notice of termination pursuant to a contractual clause) or of proceedings in which his interests are involved (e.g. a notice of arbitration, a notice of appeal, a notice of hearing). "
+        },
+        {
+            "input": "Norwich Pharmacal order ",
+            "target": "An order directing a person innocently mixed up in a wrongdoing to disclose information or documents to a potential claimant, typically to enable the potential claimant to identify the actual wrongdoer against whom legal proceedings may be commenced. "
+        },
+        {
+            "input": "Non-party ",
+            "target": "A person who is not named as a party in an action. "
+        },
+        {
+            "input": "Nonjoinder (of a party or parties) ",
+            "target": "A plea alleging that the claimant has failed to join all necessary parties to an action. "
+        },
+        {
+            "input": "Non-admission (of fact) ",
+            "target": "The opposite of an admission, and includes a denial of a fact. "
+        },
+        {
+            "input": "Non est factum ",
+            "target": "A plea that the terms of a contract or a document signed by a person are fundamentally different from what he believed them to mean. "
+        },
+        {
+            "input": "No case to answer ",
+            "target": "A submission by the defendant, after the close of the claimant's case at trial and before the defendant calls any evidence, that the claimant has not presented sufficient evidence to make out the claim. In civil proceedings, such a submission by the defendant usually means that the defendant will not be allowed to call any evidence of his own if the submission fails. "
+        },
+        {
+            "input": "Neutral evaluation ",
+            "target": "A dispute resolution procedure involving a neutral third party giving the parties a non-binding assessment of the dispute at an early stage on the basis of brief presentations made by the parties. The aim of neutral evaluation is to provide a without prejudice evaluation of the strengths and weaknesses of the parties cases in their dispute."
+        },
+        {
+            "input": "Negotiable instrument ",
+            "target": "A written instrument that (1) is signed by the maker or drawer, (2) includes an unconditional promise or order to pay a specified sum of money, (3) is payable on demand or at a definite time, and (4) is payable to order or to bearer. "
+        },
+        {
+            "input": "Negligence ",
+            "target": "The failure to exercise a duty of care to a standard that a reasonably prudent person would have exercised in a similar situation. "
+        },
+        {
+            "input": "Natural justice ",
+            "target": "The fair and proper administration of laws; the duty to act fairly in all circumstances. Includes the rule against bias and the right to a fair hearing. "
+        },
+        {
+            "input": "Movable property ",
+            "target": "Property that is not attached to land and can be moved or displaced. "
+        },
+        {
+            "input": "Mortgagor ",
+            "target": "The person who mortgages property to the mortgagee. "
+        },
+        {
+            "input": "Mortgagee ",
+            "target": "The person to whom property is mortgaged. "
+        },
+        {
+            "input": "Mortgage ",
+            "target": "The conveyance of a property owners title to another person as security for the payment of a debt or performance of a duty owed by the property owner to that other person. The title will revert to the original property owner upon payment of the debt or performance of the duty, according to the stipulated contractual terms. "
+        },
+        {
+            "input": "Mixed claims ",
+            "target": "Claims that seek both in personam reliefs and in rem reliefs or Claims seeking a combination of two or more of the following reliefs: liquidated damages, unliquidated damages, detinue, possession of immovable property."
+        },
+        {
+            "input": "Mistake (under law of contract) ",
+            "target": "The situation in which either (1) the parties to a contract did not intend the same thing, or (2) at least one party had a belief that did not correspond to the facts or law, resulting in the contract being voidable. "
+        },
+        {
+            "input": "Misrepresentation ",
+            "target": "The act or conduct of making a false or misleading statement of fact. "
+        },
+        {
+            "input": "Misjoinder (of a party or parties) ",
+            "target": "The improper inclusion of a party or parties into an action. "
+        },
+        {
+            "input": "Memorial ",
+            "target": "A document that may be tendered by a party in legal proceedings setting out the facts, legal grounds and arguments supporting his case, accompanied by copies of witness statements, expert reports (where applicable) and documentary evidence. "
+        },
+        {
+            "input": "Mediation ",
+            "target": "A consensual and non-binding dispute resolution mechanism where parties attempt to reach a settlement of their dispute under the facilitation of a neutral third party (the mediator). "
+        },
+        {
+            "input": "Mareva injunction ",
+            "target": "An injunction that prohibits a person from dissipating his assets in a way that could frustrate any judgment or order that may be made in legal proceedings. Also commonly known as a freezing order. "
+        },
+        {
+            "input": "Malice ",
+            "target": "The desire to commit a wrongful act and cause injury to a person. "
+        },
+        {
+            "input": "Litigation representative ",
+            "target": "A person authorised to act on behalf of a party in legal proceedings where the party is unable by virtue of a disability (whether legal or otherwise) to participate in the legal proceedings in his own capacity. "
+        },
+        {
+            "input": "Litigant in person ",
+            "target": "A party in legal proceedings who is not represented by a lawyer. "
+        },
+        {
+            "input": "Lis pendens alibi ",
+            "target": "A lawsuit pending elsewhere. "
+        },
+        {
+            "input": "Liquidator ",
+            "target": "The officer appointed and charged with the responsibility to carry out the liquidation of a body corporate. "
+        },
+        {
+            "input": "Liquidation (of bodies corporate) ",
+            "target": "The winding up or dissolution of a body corporate, usually to realise the proceeds of any available assets into cash to settle the debts of the body corporate. "
+        },
+        {
+            "input": "Liquidated damages ",
+            "target": "A quantified amount of monetary compensation sought to be recovered by a party in legal proceedings. "
+        },
+        {
+            "input": "Limited liability (in bodies corporate or partnerships) ",
+            "target": "A concept by which the liability of a shareholder or partner is nothing more than the capital that they have invested in a body corporate or a partnership. "
+        },
+        {
+            "input": "Limitation period ",
+            "target": "The period of time prescribed by legislation before the expiration of which legal proceedings can be commenced against a party to a dispute. "
+        },
+        {
+            "input": "Limitation of actions ",
+            "target": "A doctrine by which legal proceedings in respect of a dispute is barred from being commenced after a limitation period has expired. "
+        },
+        {
+            "input": "Lien ",
+            "target": "A legal right or interest that a person has in another persons property, lasting usually until a debt or duty owed by that other person to the first mentioned person is satisfied. "
+        },
+        {
+            "input": "Liability (in law) ",
+            "target": "The state of being responsible or answerable in law "
+        },
+        {
+            "input": "Legislation ",
+            "target": "Law that is enacted in written form according to a formal procedure by a branch of government constituted to perform this process. "
+        },
+        {
+            "input": "Legal professional privilege ",
+            "target": "The legal right of a person to refuse to disclose or prevent any other person from disclosing confidential communications between him and his lawyer. "
+        },
+        {
+            "input": "Leave to defend ",
+            "target": "An order of court made on an application for summary judgment, directing that the action with respect to a claim, or part of a claim, proceed to be tried fully as opposed to being summarily dealt with. Leave to defend may be ordered either unconditionally or conditionally. A conditional leave to defend may require, for example, the defendant to pay some or all of the money or damages claimed in the action into court, or provide some form of security, pending the trial of the action."
+        },
+        {
+            "input": "Leave to appeal ",
+            "target": "Permission to appeal against a court's judgment or order. "
+        },
+        {
+            "input": "Leave (of the Court)",
+            "target": "Permission from the court. "
+        },
+        {
+            "input": "Law expert ",
+            "target": "A person who has specialised knowledge, based on training, study or experience, on matters of law. "
+        },
+        {
+            "input": "Laches ",
+            "target": "A doctrine in equity describing neglect and unreasonable delay in the observance of a duty or opportunity. "
+        },
+        {
+            "input": "Jurisdiction agreement ",
+            "target": "An agreement whereby parties submit to the jurisdiction of a particular court or courts in the event of a dispute. Sometimes also known as a choice of court agreement. "
+        },
+        {
+            "input": "Jurisdiction ",
+            "target": "The authority and power of a court to hear and decide a case or make a certain order. The territorial limits within\nwhich the authority and power of a court may be exercised."
+        },
+        {
+            "input": "Judgment debtor ",
+            "target": "A party against whom a judgment or order has been made in court proceedings. "
+        },
+        {
+            "input": "Judgment creditor ",
+            "target": "A party in whose favour a judgment or order has been made in court proceedings. "
+        },
+        {
+            "input": "Judgment ",
+            "target": "A formal decision given by a court or a judge. "
+        },
+        {
+            "input": "Judge ",
+            "target": "An official with legal expertise who presides over court proceedings. "
+        },
+        {
+            "input": "Joint tenancy ",
+            "target": "A form of proprietary interest in property where the title to the property is held in the names of two or more persons equally, with the interest in the property of each person passing to the other surviving persons upon his death. "
+        },
+        {
+            "input": "Joint and severable liability ",
+            "target": "A form of liability where a person may sue, claim or enforce against those persons who hold such liability either individually or collectively at his option. "
+        },
+        {
+            "input": "Joinder (of parties)",
+            "target": "Adding one or more parties to an action, either as an additional claimant or an additional defendant. "
+        },
+        {
+            "input": "Intestate succession ",
+            "target": "A form of succession where a person has died without a will, or where his will has been revoked or annulled. "
+        },
+        {
+            "input": "Intervening party ",
+            "target": "A party who does not have a direct interest in an action but has a determinable interest in the outcome of the action, and who has been granted permission to participate in the action. "
+        },
+        {
+            "input": "Interrogatories ",
+            "target": "A series of formal written questions used in the examination of a party or a witness ahead of the trial proceedings. "
+        },
+        {
+            "input": "Interpleader ",
+            "target": "A procedure used to decide how two or more conflicting claims against a party under liability to pay or return any debt, money, goods or property should be dealt with. "
+        },
+        {
+            "input": "Interlocutory judgment ",
+            "target": "A judgment given in the course of proceedings that does not finally determine the action, for example where the issue of liability is determined with damages to be assessed at a later stage. "
+        },
+        {
+            "input": "Interlocutory application ",
+            "target": "A request made to the court for the determination of a matter arising in the course of proceedings. "
+        },
+        {
+            "input": "Interlocutory ",
+            "target": "During the course of proceedings"
+        },
+        {
+            "input": "Interim Relief",
+            "target": "A temporary remedy, such as an interim injunction or interim payment, granted to a party pending the trial or final determination of legal proceedings. "
+        },
+        {
+            "input": "Interested party (in relation to proceedings) ",
+            "target": "Any person, other than the parties to legal proceedings, who is directly affected by the decision made or to be made in the proceedings. "
+        },
+        {
+            "input": "Interest ",
+            "target": "A right, title, or share in a property. Money that is charged on an existing debt amount."
+        },
+        {
+            "input": "Inter partes ",
+            "target": "Between the parties; used in relation to court proceedings involving both sides. "
+        },
+        {
+            "input": "Intellectual property ",
+            "target": "Intangible property that includes patents, trade marks, copyright, and registered and unregistered design rights. "
+        },
+        {
+            "input": "Inspection (of documents) ",
+            "target": "An examination of the documents of a party's opponent in an action for the purpose of preparing one's own case for hearing. "
+        },
+        {
+            "input": "Insolvency / insolvent ",
+            "target": "The state of a person or a body corporate being unable to pay his/its debts as they fall due. The state where the liabilities of a person or a body corporate exceed his/its assets."
+        },
+        {
+            "input": "Injunction ",
+            "target": "A court order that restrains a person from performing an act, or mandates a person to perform an act. "
+        },
+        {
+            "input": "In-house counsel ",
+            "target": "A lawyer employed by an organisation to work in that organisation on its legal matters. "
+        },
+        {
+            "input": "Indemnity ",
+            "target": "An obligation whereby one person has to satisfy the liabilities of another person. "
+        },
+        {
+            "input": "In rem ",
+            "target": "Involving or determining the status of a thing, including the rights of persons with respect to that thing. "
+        },
+        {
+            "input": "In private hearing ",
+            "target": "A hearing which takes place with the media and public excluded. Formerly known as in camera hearing. "
+        },
+        {
+            "input": "In personam ",
+            "target": "Involving or determining the personal rights and obligations of the parties. "
+        },
+        {
+            "input": "In camera hearing ",
+            "target": "A hearing which takes place with the media and public excluded. "
+        },
+        {
+            "input": "Immovable property ",
+            "target": "Property that cannot be moved, such as landed property. "
+        },
+        {
+            "input": "Hire-purchase agreement ",
+            "target": "A rent-to-own purchase plan under which the hirer takes possession of the goods with the first payment and takes ownership with the final payment. "
+        },
+        {
+            "input": "Hearsay ",
+            "target": "Testimony given by a witness who relates not what he or she knows personally, but what others have said. "
+        },
+        {
+            "input": "Hearing fees ",
+            "target": "Charges levied and collected by the court for the utilisation of hearing days. "
+        },
+        {
+            "input": "Hearing ",
+            "target": "A judicial session held for the purpose of deciding issues of fact or of law, sometimes with witnesses testifying. "
+        },
+        {
+            "input": "Guarantor ",
+            "target": "Someone who provides a guarantee. "
+        },
+        {
+            "input": "Guarantee ",
+            "target": "The assurance that a contract or a legal act will be duly carried out. Something given or existing as security, such as to fulfil a future engagement or condition subsequent or To assume a suretyship obligation, to agree to answer for a debt or default. To promise that a legal act or contract will be carried out. "
+        },
+        {
+            "input": "Grant of probate ",
+            "target": "The judicial procedure by which a testamentary document is established to be a valid will, and the executor is appointed to manage and settle the testators estate."
+        },
+        {
+            "input": "Grant of letters of administration ",
+            "target": "The judicial procedure by which the estate of a person who has died without a will is managed and distributed to the beneficiaries of the estate."
+        },
+        {
+            "input": "Garnishee proceedings ",
+            "target": "A type of legal proceedings in which a judgment creditor seeks an order of court compelling a third party (known as the garnishee) who is indebted to or who holds property for the judgment debtor to satisfy the judgment debt, using the money owed by the garnishee to the judgment debtor or the property held by the garnishee for the judgment debtor."
+        },
+        {
+            "input": "Gaming and wagering ",
+            "target": "The act of risking something of value, especially money, for a chance to win a prize or another thing of value. "
+        },
+        {
+            "input": "Further arguments ",
+            "target": "Additional arguments sought to be raised for the courts consideration in respect of a judgment or order that has been made by the court. After hearing further arguments, the court may affirm, vary or set aside the judgment or order that had been made."
+        },
+        {
+            "input": "Further and better particulars ",
+            "target": "Additional material facts sought from a party to supplement his pleadings in legal proceedings."
+        },
+        {
+            "input": "Frivolous (and vexatious) claim ",
+            "target": "A claim that is legally or factually unsustainable "
+        },
+        {
+            "input": "Fraud ",
+            "target": "Conduct (which may include knowing misrepresentation or knowing concealment of a material fact) committed to induce a person to act to his own detriment."
+        },
+        {
+            "input": "Forum non conveniens ",
+            "target": "A doctrine whereby a court of competent jurisdiction declines to assume jurisdiction over an action on the basis that the action should more appropriately be heard and disposed of in the court of another state or territory. "
+        },
+        {
+            "input": "Foreign limitation period",
+            "target": "A limitation period the computation of which is determined by reference to foreign law. "
+        },
+        {
+            "input": "Foreign lawyer ",
+            "target": "An individual who is duly authorised or registered to practise law in a foreign state or territory. "
+        },
+        {
+            "input": "Foreign law ",
+            "target": "The law of another state or territory"
+        },
+        {
+            "input": "Foreign judgment / order",
+            "target": "A judgment or order that is made by a court in a state or territory different from the state or territory where enforcement of the judgment or order is sought."
+        },
+        {
+            "input": "Foreign arbitral award ",
+            "target": "An arbitral award that is made in a state or territory different from the state or territory where enforcement of the award is sought. "
+        },
+        {
+            "input": "Floating charge ",
+            "target": "A security interest in the changing assets of a company or a corporation, and which can be crystallised into a fixed charge over specific assets upon the occurrence of certain events. "
+        },
+        {
+            "input": "Fixed charge ",
+            "target": "A security interest over specific assets of a company or corporation. "
+        },
+        {
+            "input": "Fiduciary",
+            "target": "A person who is required to act for the benefit of another person on all matters within the scope of their relationship, and who owes that other person the duties of good faith, loyalty, due care and disclosure. "
+        },
+        {
+            "input": "Expert evidence",
+            "target": "An opinion given by a person relating to a point of scientific, technical or other specialised knowledge based on his training, study or experience."
+        },
+        {
+            "input": "Expedited appeal ",
+            "target": "An appeal where directions have been given for faster disposal."
+        },
+        {
+            "input": "Exhibit",
+            "target": "A document, record or other tangible material introduced as evidence. "
+        },
+        {
+            "input": "Execution of judgment / order",
+            "target": "The act of carrying out or putting into effect a court judgment or order."
+        },
+        {
+            "input": "Exclusive jurisdiction clause",
+            "target": "A provision in an agreement stipulating the only court or courts that will have the authority and power to determine any dispute that arises or may arise in connection with a particular legal relationship."
+        },
+        {
+            "input": "Exclusive choice of court agreement",
+            "target": "A choice of court agreement that designates a court or courts to the exclusion of the jurisdiction of any other court."
+        },
+        {
+            "input": "Ex parte",
+            "target": "Without notice to any other party in a legal proceeding. For example, the taking out of an ex parte application seeking urgent injunctive relief. "
+        },
+        {
+            "input": "Ex debito justitiae rule ",
+            "target": "A rule whereby a person is automatically entitled to a remedy and the court has no discretion to refuse the grant of that remedy."
+        },
+        {
+            "input": "Evidence ",
+            "target": "A document, material or testimony that is presented in legal proceedings to prove a fact or state of facts. "
+        },
+        {
+            "input": "Estoppel ",
+            "target": "A doctrine precluding a person from alleging or denying certain facts or state of facts, having regard to the previous conduct of the person, or in consequence of a determination of legal rights and obligations in a prior legal proceeding. "
+        },
+        {
+            "input": "Estate ",
+            "target": "The interest which a person has in movable and immovable property, or in any other subject of property. "
+        },
+        {
+            "input": "Equity ",
+            "target": "The part of English law that is distinct from the common law and which encompasses concepts traditionally not recognised in the common law, such as trusts, and equitable remedies distinct from the remedy of damages"
+        },
+        {
+            "input": "Equitable interest / equitable rights ",
+            "target": "Beneficial interest or rights in an asset recognised in equity. "
+        },
+        {
+            "input": "Equitable compensation ",
+            "target": "An amount given or received as recompense for a loss recognised in equity. "
+        },
+        {
+            "input": "Enforcement respondent ",
+            "target": "A party against whom an enforcement order is sought or made. "
+        },
+        {
+            "input": "Enforcement of judgment / order ",
+            "target": "The act of carrying out or putting into effect a court judgment or order. "
+        },
+        {
+            "input": "Enforcement order for attachment of a debt",
+            "target": "An order compelling a third party (known as the non-party) who is indebted to the enforcement respondent to satisfy the judgment debt, using the money owed by the non- party to the enforcement respondent. Formerly known as a garnishee order."
+        },
+        {
+            "input": "Enforcement order ",
+            "target": "A legal instrument issued by the court for the purpose of directing and empowering the Sheriff to take certain steps to enforce a judgment or order. Those steps may include seizing and selling property belonging to the enforcement respondent, or seizing and delivering or giving possession of property in the possession or control of the enforcement respondent. "
+        },
+        {
+            "input": "Enforcement (of judgment or order) ",
+            "target": "The process by which the terms of a judgment or order is executed or caused to take effect, which may include the seizure and sale of the judgment debtors property to satisfy a judgment debt. "
+        },
+        {
+            "input": "Electronically-stored documents ",
+            "target": "Documents stored by electronic, magnetic, optical or other means in an information system. "
+        },
+        {
+            "input": "Electronic Filing Service ",
+            "target": "A system which facilitates court processes and case management electronically, such as allowing parties to file and serve documents electronically, scheduling of hearings and collection or deduction of fees. "
+        },
+        {
+            "input": "Electronic filing (of documents) ",
+            "target": "The submission, transmission or uploading of electronic documents to an electronic system."
+        },
+        {
+            "input": "Electronic documents ",
+            "target": "Documents generated, communicated or received by electronic, magnetic, optical or other means in an information system or transmitted from one information system to another. "
+        },
+        {
+            "input": "Election (of remedies) ",
+            "target": "The liberty of choosing (or the act of choosing) one of several means afforded by law to redress an injury, or one of several available forms of action. "
+        },
+        {
+            "input": "Duress (under contract law) ",
+            "target": "Pressure put on a person to act in a particular way, such as to enter into a contract. "
+        },
+        {
+            "input": "Document disclosure ",
+            "target": "The process by which a party in a legal proceeding discloses to the other parties documents that he has in his possession, custody or power and which relate to the matters in dispute between the parties. "
+        },
+        {
+            "input": "Distress for rent ",
+            "target": "The taking of a personal property out of the possession of a party who owes rent into the custody of the party injured, to procure a satisfaction for non- payment of rent. "
+        },
+        {
+            "input": "Dismissal ",
+            "target": "A judgment or order denying the relief or remedy sought in an action or application. "
+        },
+        {
+            "input": "Disgorgement of benefits ",
+            "target": "The deprivation, under compulsion of gains that had been wrongfully obtained."
+        },
+        {
+            "input": "Discretion (of power) ",
+            "target": "The power of the court to take some step, grant a remedy, or make an order or direction as it thinks fit. "
+        },
+        {
+            "input": "Discovery (of documents) ",
+            "target": "A process by which the parties involved in a legal proceeding inform each other of, and make available to each other, documents that they have in their possession, custody or power and which relate to the matters in dispute between the parties. "
+        },
+        {
+            "input": "Discontinuance (of proceedings) ",
+            "target": "The termination of legal proceedings. "
+        },
+        {
+            "input": "Disciplinary proceedings ",
+            "target": "An action brought to reprimand, suspend, or expel a licensed professional because of unprofessional, unethical, improper or illegal conduct. "
+        },
+        {
+            "input": "Discharge ",
+            "target": "Release from an obligation, debt, or liability. "
+        },
+        {
+            "input": "Disbursements ",
+            "target": "Expenses incurred by a lawyer while acting on behalf of a client."
+        },
+        {
+            "input": "Disability (of mind) ",
+            "target": "Mental impairment that has a substantial and long-term adverse effect on a person's ability to carry out normal day-to-day activities. "
+        },
+        {
+            "input": "Directions ",
+            "target": "Instructions given by the court, a judge or a judicial officer in relation to the conduct of a proceeding. "
+        },
+        {
+            "input": "Direct examination ",
+            "target": "The questioning of a witness by the party who has called him to give evidence. Also known as examination in chief. "
+        },
+        {
+            "input": "Detinue ",
+            "target": "A common law action to recover personal property wrongfully taken or withheld by another person. "
+        },
+        {
+            "input": "Derivative action ",
+            "target": "A suit by a beneficiary of a fiduciary to enforce a right belonging to the fiduciary; especially a suit asserted by a shareholder on the corporation's behalf against a third party because of the corporation's failure to take some action against the third party or A lawsuit arising from an injury to another person."
+        },
+        {
+            "input": "Deposition / deposition evidence ",
+            "target": "A witness' out of court testimony that is reduced into writing for later use in court. "
+        },
+        {
+            "input": "Denial ",
+            "target": "A statement that something is not true, especially after someone else has suggested that it is or might be true; a disaffirmation or A refusal or rejection; especially a court's refusal to grant a request or  A defendant's response controverting the facts that a claimant has alleged in a complaint."
+        },
+        {
+            "input": "Delay ",
+            "target": "The act of postponing or slowing or An instance or the period during which something is postponed or slowed."
+        },
+        {
+            "input": "Defendants Statement ",
+            "target": "A document that states whether the defendant intends to contest the claim, and provides a summary of the facts relied on in the defence and the counterclaim (if any). "
+        },
+        {
+            "input": "Defendant ",
+            "target": "A person sued in civil proceedings."
+        },
+        {
+            "input": "Defence to Counterclaim ",
+            "target": "If there is a counterclaim by a defendant, the claimant may file a defence to that counterclaim. "
+        },
+        {
+            "input": "Defence ",
+            "target": "A defendant's stated reason why the claimant has no valid case or A defendant's method or strategy in opposing the claimant; a doctrine giving rise to such a method or strategy."
+        },
+        {
+            "input": "Default judgment",
+            "target": "A judgment entered against a defendant who has failed to plead or otherwise defend against the claimant's claim or A judgment entered as a penalty against a party who does not comply with an order."
+        },
+        {
+            "input": "Default ",
+            "target": "The omission or failure to perform a legal or contractual duty or To fail to take a step required under the applicable procedural rules or as directed by the court"
+        },
+        {
+            "input": "Declaratory judgment (or order) ",
+            "target": "A judgment (or order) declaring the legal rights and obligations of parties to a proceeding. "
+        },
+        {
+            "input": "Debtor ",
+            "target": "A person who owes _______ a debt. "
+        },
+        {
+            "input": "Debt ",
+            "target": "An obligation or a liability to pay a specific sum of money to a person. "
+        },
+        {
+            "input": "Damages ",
+            "target": "Money claimed by, or ordered to be paid to, a person as compensation for loss or injury. "
+        },
+        {
+            "input": "Cross-examination ",
+            "target": "The questioning of a witness at a trial or hearing by the party opposed to the party in whose favour the witness is testifying. "
+        },
+        {
+            "input": "Cross-appeal ",
+            "target": "A separate but related appeal arising from a judgment in respect of which an appeal has already been filed; a cross-appeal is usually filed by a respondent to an existing appeal. "
+        },
+        {
+            "input": "Creditor ",
+            "target": "A person to wh om a debt is owed."
+        },
+        {
+            "input": "Court of competent jurisdiction ",
+            "target": "The court which has the authority to hear a certain dispute or proceeding. "
+        },
+        {
+            "input": "Court fees ",
+            "target": "All charges, commissions and fees levied and collected by the court, such as for the filing and processing of documents in court. "
+        },
+        {
+            "input": "Court expert ",
+            "target": "An independent expert appointed by the court to inquire and report upon any question of fact or opinion."
+        },
+        {
+            "input": "Counterclaim ",
+            "target": "A claim asserted against an opposing party after an original claim has been made by that opposing party. "
+        },
+        {
+            "input": "Counsel ",
+            "target": "A lawyer or an advocate (including a solicitor). "
+        },
+        {
+            "input": "Costs to follow the event ",
+            "target": "A form of costs order whereby the party who is entitled to be compensated for his costs is the party who has succeeded in a proceeding which has concluded. "
+        },
+        {
+            "input": "Costs reserved ",
+            "target": "A form of costs order whereby any question relating to the entitlement to, and quantum of, compensation for any partys costs is deferred to be determined at a later stage. "
+        },
+        {
+            "input": "Costs in the cause ",
+            "target": "A form of costs order whereby the party who is entitled to be compensated for his costs is the party who ultimately succeeds in the underlying substantive cause or matter which has yet to be concluded."
+        },
+        {
+            "input": "Costs (in proceedings) ",
+            "target": "Expenses incurred by a party in legal proceedings, including fees, charges and disbursements. "
+        },
+        {
+            "input": "Corporation ",
+            "target": "A type of body corporate, and includes a company. "
+        },
+        {
+            "input": "Coram ",
+            "target": "The Judge or Judges, or the Judicial Officer, presiding over the proceedings. "
+        },
+        {
+            "input": "Copyright ",
+            "target": "An intellectual property law right in an original work of authorship fixed in any tangible medium of expression, giving the holder of the right the exclusive right to reproduce, adapt, distribute, perform and display the work. "
+        },
+        {
+            "input": "Conversion (of property) ",
+            "target": "The wrongful interference with another persons possession or use of his property. "
+        },
+        {
+            "input": "Contumelious behaviour / Contumelious default ",
+            "target": "Deliberate conduct in disregard of an order or direction of the court or conduct amounting to an abuse of process of the court."
+        },
+        {
+            "input": "Contributory negligence ",
+            "target": "A defence that may be raised by a defendant that the claimant's careless conduct contributed to the damage or loss suffered by the claimant. "
+        },
+        {
+            "input": "Contribution ",
+            "target": "Payment made by each of two or more persons in respect of damage or loss for which they are jointly liable. "
+        },
+        {
+            "input": "Contract ",
+            "target": "A legally binding agreement. "
+        },
+        {
+            "input": "Contempt of court ",
+            "target": "Any conduct that may unduly interfere with the administration of justice in the court, including an intentional disobedience or breach of any judgment, order, direction or other process of a court, and an intentional breach of an undertaking given to a court. "
+        },
+        {
+            "input": "Conspiracy (under law of torts) ",
+            "target": "An agreement or arrangement between two or more persons on a course of conduct to cause harm to another person, whether by lawful or unlawful means."
+        },
+        {
+            "input": "Consolidation (of proceedings) ",
+            "target": "A procedure by which two or more actions are ordered to be heard and tried at the same time or one immediately after another. "
+        },
+        {
+            "input": "Consideration (under law of contract) ",
+            "target": "An act, forbearance, or promise by one party to a contract that constitutes the price for which he obtains the promise of the other party to the contract. "
+        },
+        {
+            "input": "Consent order ",
+            "target": "An order the terms of which are settled and agreed to by the parties. "
+        },
+        {
+            "input": "Confidentiality order ",
+            "target": "An order preventing public disclosure of information, which may include directing that a case file be sealed, that a case be heard privately, or that no person must reveal or publish any information or document relating to the case. "
+        },
+        {
+            "input": "Concurrent evidence ",
+            "target": "Evidence given in a trial whereby two or more witnesses testify at the same time in the presence of each other, and each witness is able to comment on the other witness' evidence contemporaneously. Typically applies for the giving of expert evidence, where appropriate. "
+        },
+        {
+            "input": "Compromise (as in the law of compromise) ",
+            "target": "An arrangement arrived at, either in court or out of court, for settling a dispute upon what appears to the parties to be equitable terms, having regard to the uncertainty they are in regarding the facts, or the law and the facts together. "
+        },
+        {
+            "input": "Company ",
+            "target": "A type of body corporate that is formed, for example, on the principle of having the liability of its members limited by the amount of any unpaid shares respectively held by them (called a company limited by shares). "
+        },
+        {
+            "input": "Common expert ",
+            "target": "An expert witness agreed upon and appointed by the parties to an action. "
+        },
+        {
+            "input": "Committal proceedings ",
+            "target": "Proceedings that are concerned with whether a persons act or failure to act amounts to contempt of court. "
+        },
+        {
+            "input": "Commissioner for oaths ",
+            "target": "A person with the authority to administer oaths or affirmations in respect of affidavits or statutory declarations. "
+        },
+        {
+            "input": "Claimants Statement ",
+            "target": "A document that accompanies the Originating Application, and provides a summary of the facts giving rise to the claim, the harm suffered by the claimant, the cause or causes of action, and the relief or reliefs sought. "
+        },
+        {
+            "input": "Claimant ",
+            "target": "A person seeking relief against another person in a legal proceeding. "
+        },
+        {
+            "input": "Claim",
+            "target": "A demand for a legal remedy or an assertion of a legal right. "
+        },
+        {
+            "input": "Civil Procedure Convention ",
+            "target": "A convention, treaty or agreement between different States relating to civil procedure in the court. "
+        },
+        {
+            "input": "Chose in possession ",
+            "target": "A tangible property capable of being actually possessed and enjoyed. "
+        },
+        {
+            "input": "Chose in action ",
+            "target": "A property right that can be enforced by legal action. "
+        },
+        {
+            "input": "Choice of law (in private international law) ",
+            "target": "An issue as to which jurisdictions law is the parties chosen governing law in a case. "
+        },
+        {
+            "input": "Choice of court agreement ",
+            "target": "An agreement in writing or other means of communication that designates the court or courts that will decide any dispute that arises or may arise in connection with a particular legal relationship. "
+        },
+        {
+            "input": "Charterparty ",
+            "target": "A written contract by which a person (the charterer) hires from a shipowner, in return for the payment of freight, the use of his ship or part of it, such as for the carriage of goods by sea. "
+        },
+        {
+            "input": "Chamber proceedings / Chamber hearings ",
+            "target": "A hearing which takes place in either a Judge's or an Assistant Registrar's chambers, and which may not be open to members of the public depending on the circumstances. "
+        },
+        {
+            "input": "Cestui que trust ",
+            "target": "A beneficiary under ________ a trust. "
+        },
+        {
+            "input": "Caveat against release (of vessel) ",
+            "target": "A notice to prevent the release of a vessel from an arrest. "
+        },
+        {
+            "input": "Caveat against arrest (of vessel) ",
+            "target": "A notice to prevent the arrest of a vessel. "
+        },
+        {
+            "input": "Cause of action ",
+            "target": "The facts that entitle a person to sue, such as a wrongful act. "
+        },
+        {
+            "input": "Case management conference ",
+            "target": "A meeting between the parties and the court where various matters, including procedural directions and timelines, are discussed to facilitate the just, expeditious and economical disposal of the proceedings. "
+        },
+        {
+            "input": "Burden of proof ",
+            "target": "The duty to prove disputed facts. A claimant generally has the burden of proving his or her case."
+        },
+        {
+            "input": "Breach of trust ",
+            "target": "Any act done by a trustee contrary to the terms of his trust, or in excess of his authority and to the detriment of the trust; or the wrongful omission by a trustee of any act required of him by the terms of the trust. "
+        },
+        {
+            "input": "Body corporate ",
+            "target": "A person or group of persons established as or organised into an entity having a separate and distinct legal personality."
+        },
+        {
+            "input": "Bifurcate ",
+            "target": "To separate into two parts, especially for convenience. Multiple aspects of litigation, such as document production, claims, defences, issues and trial may be bifurcated to save time or achieve other benefits. "
+        },
+        {
+            "input": "Balance of convenience ",
+            "target": "A balancing test that courts apply to decide whether to issue a temporary injunction restraining a party (usually a defendant) from committing certain acts, weighing the benefit to the applicant (usually a claimant) against the burden on the defendant. "
+        },
+        {
+            "input": "Bailiff ",
+            "target": "A court officer who is empowered under the Sheriffs authority to execute and carry into effect enforcement orders. "
+        },
+        {
+            "input": "Assistant Registrar (in relation to the Supreme Court) ",
+            "target": "A judicial officer of the Supreme Court who, among other things, manages cases and proceedings in the Supreme Court, including hearing and determining certain civil proceedings. "
+        },
+        {
+            "input": "Assessor ",
+            "target": "A person who sits with and advises the court about scientific or technical matters during a trial."
+        },
+        {
+            "input": "Assessment (of damages) ",
+            "target": "Determination of the rate or quantum of something, such as loss or damages. "
+        },
+        {
+            "input": "Arbitrator ",
+            "target": "A neutral decision maker who is appointed directly or indirectly by the parties to an arbitration agreement to make a final and binding decision resolving the parties' dispute. "
+        },
+        {
+            "input": "Arbitration agreement ",
+            "target": "An agreement by which parties consent to resolve one or more disputes by arbitration. "
+        },
+        {
+            "input": "Arbitration ",
+            "target": "A private dispute resolution process adopted by agreement among the disputing parties in which one or more neutral arbitrators make a final and binding decision resolving the dispute. "
+        },
+        {
+            "input": "Arbitral tribunal ",
+            "target": "A neutral body of arbitrators resolving disputes between parties, by way of formal arbitration."
+        },
+        {
+            "input": "Arbitral award ",
+            "target": "A decision issued by an arbitrator or an arbitral tribunal. "
+        },
+        {
+            "input": "Appeal ",
+            "target": "A legal process seeking a higher courts review of a lower court's decision. "
+        },
+        {
+            "input": "Anton Piller order ",
+            "target": "An order preventing a party from disposing of or destroying material or evidence, by permitting one or more authorised person to enter into the partys premises to search for, seize and retain documents or other items. Also otherwise known as a search order. "
+        },
+        {
+            "input": "Anti-suit injunction ",
+            "target": "An injunction prohibiting a litigant from instituting other, related litigation, usually between the same parties on the same issues. "
+        },
+        {
+            "input": "Amicus curiae / Independent counsel ",
+            "target": "A person who is not a party to the action and, by invitation of the court, assists the court by furnishing an opinion regarding questions of law."
+        },
+        {
+            "input": "Amendment ",
+            "target": "A formal revision or addition proposed or made to a legal document or instrument, such as a pleading, an affidavit or a witness statement. "
+        },
+        {
+            "input": "Alternative dispute resolution ",
+            "target": "Any procedure for settling a dispute by means other than court litigation, such as by arbitration or mediation. "
+        },
+        {
+            "input": "Allegation ",
+            "target": "A declaration or assertion of a factual matter as being true or provable. "
+        },
+        {
+            "input": "Agent ",
+            "target": "A person who is authorised to act for or in place of another person. "
+        },
+        {
+            "input": "Affirmation ",
+            "target": "A solemn declaration equivalent to an oath but without reference to a supreme being or to swearing. "
+        },
+        {
+            "input": "Affidavit ",
+            "target": "A voluntary declaration of facts in written form and sworn to by the person making the declaration, usually before an officer authorised to administer oaths and affirmations. "
+        },
+        {
+            "input": "Advocate ",
+            "target": "A qualified member of the legal profession who assists, defends, pleads, or prosecutes on behalf of a party in legal proceedings. "
+        },
+        {
+            "input": "Adverse inference ",
+            "target": "A detrimental conclusion drawn by the fact-finder from a party's failure to produce evidence that is within the party's control. "
+        },
+        {
+            "input": "Admission (of fact) ",
+            "target": "An oral or a documentary statement by a person which suggests an inference as to the truth of any alleged fact. "
+        },
+        {
+            "input": "Admissibility (of evidence) ",
+            "target": "The quality, state, or condition of evidence being allowed to be entered in a hearing. "
+        },
+        {
+            "input": "Admiralty ",
+            "target": "The system of jurisprudence that has developed out of the practice of courts exercising jurisdiction over maritime or maritime-related claims. "
+        },
+        {
+            "input": "Adjudication track ",
+            "target": "The procedural mode by which proceedings are to be brought in the Singapore International Commercial Court. "
+        },
+        {
+            "input": "Adjudication ",
+            "target": "The process of resolving a legal dispute in court; the process of judicially deciding a case. "
+        },
+        {
+            "input": "Adjourn ",
+            "target": "To postpone a hearing"
+        },
+        {
+            "input": "Action ",
+            "target": "A proceeding brought to seek legal redress or to enforce or protect a legal right. "
+        },
+        {
+            "input": "Abuse of process ",
+            "target": "The improper use of a court process, for example to obtain an outcome that is unjust or beyond the purpose of the court process. "
+        },
+        {
+            "input": "Accused",
+            "target": "A person who is charged with breaking the law. Also known as a defendant."
+        },
+        {
+            "input": "Acquittal",
+            "target": "A decision of a judge that an accused person is not guilty or a case is not proven."
+        },
+        {
+            "input": "Adjourn",
+            "target": "When a case is postponed to a later date."
+        },
+        {
+            "input": "Admissibility",
+            "target": "Describes evidence that is accepted and allowed to be considered by the court."
+        },
+        {
+            "input": "Affidavit",
+            "target": "A signed statement made under oath that explains what you know or belief based on a particular set of facts."
+        },
+        {
+            "input": "Affirmation",
+            "target": "A declaration to tell the truth in court; one that does not involve taking a religious oath."
+        },
+        {
+            "input": "Allegation",
+            "target": "An accusation that has been made but not yet proven to be true."
+        },
+        {
+            "input": "Ancillary matters",
+            "target": "Issues regarding the children, property and maintenance in a divorce case."
+        },
+        {
+            "input": "Antecedents",
+            "target": "An accused persons previous criminal record."
+        },
+        {
+            "input": "Asynchronous",
+            "target": "Describes events that do not occur at the same time. \nIn this case, it describes the situation where parties to the legal action will not be required to appear before the judge at the same time, or where the judge will issue orders and directions without requiring the applicant to appear before them."
+        },
+        {
+            "input": "Bail",
+            "target": "Temporary release of an accused person awaiting trial or a hearing, usually on the condition that a sum of money is lodged to guarantee their appearance in court."
+        },
+        {
+            "input": "Bailor",
+            "target": "A person who is willing to provide security for the amount of money ordered by the court for the bail amount, so that an accused person may be released from remand. A bailor is also known as a \"surety\"."
+        },
+        {
+            "input": "Balance of probabilities",
+            "target": "In civil cases, this is the standard of proof and it is the way a judge makes decisions. It means that the court is satisfied that an event occurred if, based on the evidence, the occurrence of the event was more likely than not."
+        },
+        {
+            "input": "Bond",
+            "target": "An undertaking in writing to perform a certain act."
+        },
+        {
+            "input": "Chambers",
+            "target": "The private office of a judge or judicial officer where they deal with matters outside of a court session."
+        },
+        {
+            "input": "Charge",
+            "target": "The crime that an accused person is thought to have committed."
+        },
+        {
+            "input": "Citation",
+            "target": "The letter or form that tells a witness when and where to go to court."
+        },
+        {
+            "input": "Claim trial",
+            "target": "When an accused person claims trial, it means they do not admit that they are guilty and wish to defend\nthemself against the charges at trial."
+        },
+        {
+            "input": "Codicil",
+            "target": "An addition or supplement that explains, modifies, or revokes a will or part of one."
+        },
+        {
+            "input": "Commissioner",
+            "target": "A judge, lawyer, sheriff or other suitable person who hears evidence at a different place and time to the actual court case. This evidence can then be used during the court case."
+        },
+        {
+            "input": "Complaint",
+            "target": "A statement accusing a person of breaking the law."
+        },
+        {
+            "input": "Confiscation",
+            "target": "Property or money taken from an offender who benefited from crime."
+        },
+        {
+            "input": "Conviction",
+            "target": "A pronouncement of guilt by the judge against the accused. If an accused person is convicted of an offence, this means the accused is formally declared to have committed that crime."
+        },
+        {
+            "input": "Cross-examination",
+            "target": "Being questioned by the lawyers of the opposing party."
+        },
+        {
+            "input": "Default sentence",
+            "target": "An imprisonment term served by an accused person when they fail to pay the fine imposed by\nthe court."
+        },
+        {
+            "input": "Disbursement",
+            "target": "A payment made by the lawyer on behalf of their client, and then usually claimed back from the client."
+        },
+        {
+            "input": "Discovery",
+            "target": "Stating the documents, under one party's control, which are relevant to the case and making them available to\nthe other party) so that there are no surprises when the trial starts."
+        },
+        {
+            "input": "Domicile ",
+            "target": "The place that a person treats as his or her permanent home, or lives in and has a substantial connection with."
+        },
+        {
+            "input": "Enter an appearance",
+            "target": "When the plaintiff or defendant comes to court, either in person or through a lawyer, to state or defend a claim."
+        },
+        {
+            "input": "Estate",
+            "target": "The money and property owned by a particular person (such as cash, real estate, financial securities, possessions and other assets), as well as their liabilities (such as debts)."
+        },
+        {
+            "input": "Executor",
+            "target": "A person named in a testators will, appointed to carry out the terms of their will, including managing the testators property and distributing the estate to the beneficiaries after payment of the testators debts and other expenses."
+        },
+        {
+            "input": "Foreclosure",
+            "target": "The legal process in which a lender tries to recover the balance of a loan from a borrower by forcing the sale of the asset which was used as security for the loan."
+        },
+        {
+            "input": "Forensic evidence",
+            "target": "Scientific evidence collected from a crime scene such as DNA or fingerprints."
+        },
+        {
+            "input": "Grounds",
+            "target": "Reasons specified by the law that can serve as a basis for an application to the court."
+        },
+        {
+            "input": "Habitual residence",
+            "target": "Cases show that the courts have considered length of stay in a particular place, parents' shared intention, the child's acclimatisation, and the parents' acclimatisation to determine this term."
+        },
+        {
+            "input": "Immovable property",
+            "target": "Includes land, the benefits arising out of land and things attached to the earth or permanently fastened to anything attached to the earth."
+        },
+        {
+            "input": "Incapacitated",
+            "target": "An incapacitated person who is wholly or partially incapacitated or infirm, by reason of physical or mental disability or ill-health or old age"
+        },
+        {
+            "input": "Incapacitated husband",
+            "target": "An incapacitated husband means a husband who, during a marriage, becomes incapacitated from earning a livelihood by any physical or mental disability or illness, becomes unable to maintain himself and continues to be unable to maintain himself."
+        },
+        {
+            "input": "Indictment",
+            "target": "A court document that sets out the charges that an accused person faces."
+        },
+        {
+            "input": "Inference",
+            "target": "An opinion or a guess based on information that the person has."
+        },
+        {
+            "input": "Inquiry",
+            "target": "A request for information."
+        },
+        {
+            "input": "Interlocutory",
+            "target": "The intermediate stage between the start and the conclusion of a legal action. A judicial decision at this stage provides a temporary or interim decision on an issue, and not on the main subject matter of the legal action."
+        },
+        {
+            "input": "Inter parte",
+            "target": "One or more parties have to be served with an application which is usually a summons or Originationg Summons"
+        },
+        {
+            "input": "Intestate succession",
+            "target": "The term used when a person dies without making a will."
+        },
+        {
+            "input": "Judge",
+            "target": "A law expert in charge of all court proceedings while ensuring legal rules are followed."
+        },
+        {
+            "input": "Judicial management",
+            "target": "Where an independent judicial manager is appointed by the court to manage the operations, business and property of a company which is under financial distress."
+        },
+        {
+            "input": "Judicial sales",
+            "target": "The forced sale of any property by an official appointed by the court to satisfy a judgment or implement another order of the court. Such sales require public notice of time, place and a description of the goods to be sold."
+        },
+        {
+            "input": "Liable",
+            "target": "To be legally obligated or responsible."
+        },
+        {
+            "input": "Maintenance",
+            "target": "The provision of support (usually financial in nature) for family members."
+        },
+        {
+            "input": "Making representations",
+            "target": "Representations are letters or emails where an accused person (or their lawyer) sets out clearly the circumstances of the case, other facts which are relevant to how the case may be handled, and the accused's request regarding the charge."
+        },
+        {
+            "input": "Mitigation",
+            "target": "A chance for an accused person to convey relevant facts (such as reasons or explanations)\nto the judge for leniency to be shown to the accused during sentencing."
+        },
+        {
+            "input": "Movable property",
+            "target": "Anything that is capable of being owned by a person or an entity that is not an immovable property."
+        },
+        {
+            "input": "Newton Hearing",
+            "target": "An additional hearing also known as an ancillary hearing, convened during the sentencing process when there is a dispute as to facts which may materially affect the sentence to B15be imposed on an accused following his conviction."
+        },
+        {
+            "input": "Next of kin",
+            "target": "Closest relative."
+        },
+        {
+            "input": "Notes of Evidence",
+            "target": "A word-for-word transcript of what had been said by the different people in court."
+        },
+        {
+            "input": "Oath",
+            "target": "A swearing to tell the truth in court, usually according to religious beliefs, failing which the oath-taker could be prosecuted for lying."
+        },
+        {
+            "input": "Offender",
+            "target": "Someone who has committed an offence."
+        },
+        {
+            "input": "Plea",
+            "target": "The answer that an accused person gives to the court at the start of a trial when asked if guilty or not."
+        },
+        {
+            "input": "Plead guilty",
+            "target": "If an accused person pleads guilty, they admit to committing the offences as stated in the\ncharges."
+        },
+        {
+            "input": "Pleading",
+            "target": "A document in which a party states the facts on which they rely for their claim or defence.  A Statement of Claim, Memorandum of Appearance, defence (or defence and counterclaim) and reply are types of pleadings."
+        },
+        {
+            "input": "Prayer",
+            "target": "A specific request for the court to do something."
+        },
+        {
+            "input": "Prosecution",
+            "target": "Prosecutors conduct criminal proceedings against an accused on behalf of the State"
+        },
+        {
+            "input": "Question of law",
+            "target": "A question about the law rather than facts of a court case."
+        },
+        {
+            "input": "Recalcitrant offender",
+            "target": "An individual who has been sentenced to imprisonment or corrective training multiple times."
+        },
+        {
+            "input": "Receivership",
+            "target": "The process of the court appointing a receiver to take control of the assets of a party to a lawsuit pending a final decision by the court."
+        },
+        {
+            "input": "Reconyevance",
+            "target": "The transfer of title to the property, which was used as security for a loan, back to the borrower when the debt is fully paid."
+        },
+        {
+            "input": "Redemption",
+            "target": "The act of buying back the property after paying the full amount due to the lender."
+        },
+        {
+            "input": "Relief",
+            "target": "Any benefit the court gives a party to a lawsuit, including a monetary award, the return of property, alimony, etc."
+        },
+        {
+            "input": "Remand",
+            "target": "When an accused person is kept in prison or police cell pending investigations or when\nthe accused cannot raise bail."
+        },
+        {
+            "input": "Remedy",
+            "target": "The enforcement of a legal right which a party to a lawsuit claims has been infringed upon and has caused harm."
+        },
+        {
+            "input": "Sentence",
+            "target": "The judge's decision on what should happen when an accused person is found guilty of breaking the law."
+        },
+        {
+            "input": "Sole Executor",
+            "target": "The only executor named in a testators will. "
+        },
+        {
+            "input": "Statement of facts",
+            "target": "A statement of facts prepared by the prosecution which contains relevant facts of the\noffence."
+        },
+        {
+            "input": "Stood down charge",
+            "target": "A charge that is temporarily put on hold, but which the prosecution may at a later stage (1) apply to take-into-consideration (TIC) for the purpose of sentencing, (2) apply to proceed with it or (3) withdraw it."
+        },
+        {
+            "input": "Substituted Executor",
+            "target": "A person who takes over the duties of an original executor if they are unable to act as an executor of a will."
+        },
+        {
+            "input": "Summary of facts",
+            "target": "The document containing an accused person's version of facts that gave rise to their defence."
+        },
+        {
+            "input": "Summons to a Witness",
+            "target": "A document issued by the court to a person ordering him to come to court on a stipulated date and time to give evidence as a witness in a criminal case."
+        },
+        {
+            "input": "Testator",
+            "target": "A person who has made a will."
+        },
+        {
+            "input": "Take-into-consideration (TIC) charges",
+            "target": "Charges considered by the judge in determining the punishment. An accused person is not punished separately for the TIC charges, although the overall punishment imposed on the accused may be increased as a result of the TIC charges."
+        },
+        {
+            "input": "Vacate a hearing",
+            "target": "To remove from the court calendar the hearing that was scheduled on the date set aside for it."
+        },
+        {
+            "input": "Verdict",
+            "target": "The decision reached at the end of a trial on whether an accused person is guilty or not."
+        },
+        {
+            "input": "Warrant",
+            "target": "A court document that allows the police to take certain actions, such as searching premises or arresting someone."
+        },
+        {
+            "input": "Witness",
+            "target": "A person who gives evidence at a trial. A witness has to formally give an oath or affirmation to tell the truth before being allowed to give evidence."
+        }
+    ]
+}

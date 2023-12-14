@@ -1,0 +1,5 @@
+{
+    "name": "cause-and-effect-one-sentence",
+    "description": "Answer multiple-choice questions distinguishing cause and effect, by choosing which sentence makes more sense",
+    "template": "Which of the following sentence makes more sense?\n{{ prompt }}\nAnswer (with only the alphabet choice without punctuation): "
+}

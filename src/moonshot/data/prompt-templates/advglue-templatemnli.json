@@ -1,0 +1,5 @@
+{
+    "name": "advglue-templatemnli",
+    "description": "This template is used for the MNLI dataset. Given a premise sentence and a hypothesis sentence, the task is to predict whether the premise entails the hypothesis.",
+    "template": "\"{{ prompt }}\" Please identify whether the premise entails the hypothesis. The answer should be exactly 'yes' or 'no', without capitalization. "
+}

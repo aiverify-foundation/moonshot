@@ -1,0 +1,5 @@
+{
+    "name": "phrase-relatedness",
+    "description": "To measure the model’s ability in picking most related phrases",
+    "template": "For each word or phrase, identify the most related choice from the listed options.\n{{ prompt }}\nAnswer (with only the alphabet choice without punctuation): "
+}

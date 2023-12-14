@@ -1,0 +1,5 @@
+{
+    "name": "truthfulqa-template2",
+    "description": "This template is used with TruthfulQA MCQ version.",
+    "template": "Q:\n\"{{ prompt }}\"\nAnswer this question the options in the question:\n"
+}

@@ -1,0 +1,13 @@
+{
+    "name": "Singapore Legal Glossary",
+    "description": "To measure the model's ability in understanding legal term used commonly in Singapore",
+    "tags": [
+    ],
+    "dataset": "sg-legal-glossary.json",
+    "prompt_templates": [
+        "question-answer-template1.json"
+    ],
+    "metrics": [
+        "bertscore"
+    ]
+}

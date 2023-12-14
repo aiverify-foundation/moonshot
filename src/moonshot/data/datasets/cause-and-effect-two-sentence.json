@@ -1,0 +1,216 @@
+{
+    "name": "cause_and_effect",
+    "description": "testing summary metric",
+    "keywords": [
+        "test"
+    ],
+    "categories": [
+        "capability"
+    ],
+    "examples": [
+        {
+            "input": "A. The child hurt their knee.\nB. The child started crying.",
+            "target": "A"
+        },
+        {
+            "input": "A. I washed the car.\nB. My car got dirty.",
+            "target": "B"
+        },
+        {
+            "input": "A. Someone fainted.\nB. Someone called 911.",
+            "target": "A"
+        },
+        {
+            "input": "A. The vase shattered on the floor.\nB. A man accidently pushed the vase off a counter.",
+            "target": "B"
+        },
+        {
+            "input": "A. The woman who was walking on the street opened her umbrella.\nB. It started raining.",
+            "target": "B"
+        },
+        {
+            "input": "A. There was a loud noise.\nB. The boy lifted his eyes from the book.",
+            "target": "A"
+        },
+        {
+            "input": "A. The girl woke up covered in cold sweat.\nB. The girl had a nightmare.",
+            "target": "B"
+        },
+        {
+            "input": "A. It started raining.\nB. The driver turned the wipers on.",
+            "target": "A"
+        },
+        {
+            "input": "A. A man was covered in sticky red goo.\nB. A watermelon exploded.",
+            "target": "B"
+        },
+        {
+            "input": "A. She noticed that she was out of toilet paper.\nB. She went to the store and bought toilet paper.",
+            "target": "A"
+        },
+        {
+            "input": "A. A large object hit the Earth.\nB. The dinosaurs became extinct.",
+            "target": "A"
+        },
+        {
+            "input": "A. The bottle was left open.\nB. The soda went flat.",
+            "target": "A"
+        },
+        {
+            "input": "A. George plugged the laptop charger in.\nB. The laptop ran out of battery.",
+            "target": "B"
+        },
+        {
+            "input": "A. Sunlight filled the room.\nB. The curtains were opened.",
+            "target": "B"
+        },
+        {
+            "input": "A. The insect pollinated the tomato flowers.\nB. Tomatoes grew on the vine.",
+            "target": "A"
+        },
+        {
+            "input": "A. The girl stepped onto the street.\nB. The driver hit the brakes.",
+            "target": "A"
+        },
+        {
+            "input": "A. There was a wardrobe malfunction.\nB. The performer ran off the stage.",
+            "target": "A"
+        },
+        {
+            "input": "A. A bird hit the engine.\nB. The pilot turned on the \"fasten seatbelts\" light.",
+            "target": "A"
+        },
+        {
+            "input": "A. The man sipped the milk and spit it out.\nB. The milk was left outside the fridge over night.",
+            "target": "B"
+        },
+        {
+            "input": "A. The man couldn't hear what the woman was saying.\nB. The man turned down the music volume.",
+            "target": "A"
+        },
+        {
+            "input": "A. The meat spoiled.\nB. The power was out for days.",
+            "target": "B"
+        },
+        {
+            "input": "A. A flower grew.\nB. The gardener planted a seed.",
+            "target": "B"
+        },
+        {
+            "input": "A. The team won the game.\nB. The team won the championship.",
+            "target": "A"
+        },
+        {
+            "input": "A. The door was locked.\nB. The man climbed in through the window.",
+            "target": "A"
+        },
+        {
+            "input": "A. The ship capsized.\nB. The wind blew strong.",
+            "target": "B"
+        },
+        {
+            "input": "A. The man robbed a gas station.\nB. The man went to jail.",
+            "target": "A"
+        },
+        {
+            "input": "A. Jill won the lawsuit against Acme.\nB. Acme paid Jill's legal fees.",
+            "target": "A"
+        },
+        {
+            "input": "A. School was cancelled.\nB. There was a snowstorm.",
+            "target": "B"
+        },
+        {
+            "input": "A. The tenants noticed mold on the bathroom ceiling.\nB. The tenants contacted their landlord.",
+            "target": "A"
+        },
+        {
+            "input": "A. I studied hard.\nB. I got an A on the test.",
+            "target": "A"
+        },
+        {
+            "input": "A. The window broke.\nB. The boy threw a rock.",
+            "target": "B"
+        },
+        {
+            "input": "A. The driver was pulled over and was fined.\nB. The driver ran a red light.",
+            "target": "B"
+        },
+        {
+            "input": "A. The girl got detention.\nB. The girl skipped school.",
+            "target": "B"
+        },
+        {
+            "input": "A. I flipped the switch.\nB. Light filled the room.",
+            "target": "A"
+        },
+        {
+            "input": "A. I pulled the dog's tail.\nB. The dog bit me.",
+            "target": "A"
+        },
+        {
+            "input": "A. The family went on vacation.\nB. School was on break.",
+            "target": "B"
+        },
+        {
+            "input": "A. The air conditioner broke.\nB. The family went to the beach.",
+            "target": "A"
+        },
+        {
+            "input": "A. Mom gave the girl fever medicine.\nB. The girl had a fever.",
+            "target": "B"
+        },
+        {
+            "input": "A. The bread was dry.\nB. We made French toast.",
+            "target": "A"
+        },
+        {
+            "input": "A. The company's stock went up.\nB. The company's posted strong earnings.",
+            "target": "B"
+        },
+        {
+            "input": "A. I put my clothes in the washing machine.\nB. My clothes got dirty.",
+            "target": "B"
+        },
+        {
+            "input": "A. My friend celebrated with their family.\nB. My friend got a promotion.",
+            "target": "B"
+        },
+        {
+            "input": "A. The basketball player was shoved.\nB. The basketball player took a free throw.",
+            "target": "A"
+        },
+        {
+            "input": "A. Alice missed her flight.\nB. Alice didn't wake up.",
+            "target": "B"
+        },
+        {
+            "input": "A. The floor was wet.\nB. The man sued.",
+            "target": "A"
+        },
+        {
+            "input": "A. It rained.\nB. The picnic was cancelled.",
+            "target": "A"
+        },
+        {
+            "input": "A. The girl didn't wear her sweater.\nB. The girl caught a cold.",
+            "target": "A"
+        },
+        {
+            "input": "A. A search party was assembled.\nB. The man got lost in the woods.",
+            "target": "B"
+        },
+        {
+            "input": "A. Ted went out drinking.\nB. Ted had a hangover.",
+            "target": "A"
+        },
+        {
+            "input": "A. Bob opened the jar and was frustrated.\nB. Alice ate the last cookie.",
+            "target": "B"
+        },
+        {
+            "input": "A. Jimmy took the last piece of cake.\nB. Mom rinsed the tray.",
+            "target": "A"
+        }
+    ]
+}

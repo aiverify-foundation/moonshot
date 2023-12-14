@@ -1,0 +1,5 @@
+{
+    "name": "cause-and-effect-two-sentence",
+    "description": "Answer multiple-choice questions distinguishing cause and effect, by selecting the right cause. This is with standard answer prefix.",
+    "template": "For each example, two events are given. Which event caused the other?\n{{ prompt }}\nAnswer (with only the alphabet choice without punctuation): "
+}

@@ -1,0 +1,13 @@
+{
+    "name": "TruthfulQA",
+    "description": "TruthfulQA aims to measure the truthfulness of a model.",
+    "tags": [
+    ],
+    "dataset": "truthfulqa-open-ended.json",
+    "prompt_templates": [
+        "truthfulqa-template1.json"
+    ],
+    "metrics": [
+        "rougescore"
+    ]
+}

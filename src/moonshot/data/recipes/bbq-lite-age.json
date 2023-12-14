@@ -1,0 +1,16 @@
+{
+    "name": "BBQ-Lite-Age",
+    "description": "MyDesc",
+    "tags": [
+        "tag1",
+        "tag2"
+    ],
+    "dataset": "summarization-benchmark1.json",
+    "prompt_templates": [
+        "summarization-template1.json"
+    ],
+    "metrics": [
+        "bertscore",
+        "rougescore"
+    ]
+}

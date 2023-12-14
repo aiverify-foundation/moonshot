@@ -1,0 +1,5 @@
+{
+    "name": "auto-categorisation",
+    "description": "This template submits prompts to the model accordingly",
+    "template": "For the following statement, provide a short word or phrase as the completion of the sentence:\n{{ prompt }}"
+}

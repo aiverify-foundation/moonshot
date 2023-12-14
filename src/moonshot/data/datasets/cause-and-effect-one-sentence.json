@@ -1,0 +1,216 @@
+{
+    "name": "cause_and_effect_one_sentence",
+    "description": "Answer multiple-choice questions distinguishing cause and effect, by choosing which sentence makes more sense",
+    "keywords": [
+        "test"
+    ],
+    "categories": [
+        "capability"
+    ],
+    "examples": [
+        {
+            "input": "A. The child started crying because the child hurt their knee.\nB. The child hurt their knee because the child started crying.",
+            "target": "A"
+        },
+        {
+            "input": "A. I washed the car because my car got dirty.\nB. My car got dirty because i washed the car.",
+            "target": "A"
+        },
+        {
+            "input": "A. Someone fainted because someone called 911.\nB. Someone called 911 because someone fainted.",
+            "target": "B"
+        },
+        {
+            "input": "A. The vase shattered on the floor because a man accidently pushed the vase off a counter.\nB. A man accidently pushed the vase off a counter because the vase shattered on the floor.",
+            "target": "A"
+        },
+        {
+            "input": "A. The woman who was walking on the street opened her umbrella because it started raining.\nB. It started raining because the woman who was walking on the street opened her umbrella.",
+            "target": "A"
+        },
+        {
+            "input": "A. There was a loud noise because the boy lifted his eyes from the book.\nB. The boy lifted his eyes from the book because there was a loud noise.",
+            "target": "B"
+        },
+        {
+            "input": "A. The girl woke up covered in cold sweat because the girl had a nightmare.\nB. The girl had a nightmare because the girl woke up covered in cold sweat.",
+            "target": "A"
+        },
+        {
+            "input": "A. The driver turned the wipers on because it started raining.\nB. It started raining because the driver turned the wipers on.",
+            "target": "A"
+        },
+        {
+            "input": "A. A watermelon exploded because a man was covered in sticky red goo.\nB. A man was covered in sticky red goo because a watermelon exploded.",
+            "target": "B"
+        },
+        {
+            "input": "A. She went to the store and bought toilet paper because she noticed that she was out of toilet paper.\nB. She noticed that she was out of toilet paper because she went to the store and bought toilet paper.",
+            "target": "A"
+        },
+        {
+            "input": "A. The dinosaurs became extinct because a large object hit the Earth.\nB. A large object hit the Earth because the dinosaurs became extinct.",
+            "target": "A"
+        },
+        {
+            "input": "A. The soda went flat because the bottle was left open.\nB. The bottle was left open because the soda went flat.",
+            "target": "A"
+        },
+        {
+            "input": "A. George plugged the laptop charger in because the laptop ran out of battery.\nB. The laptop ran out of battery because George plugged the laptop charger in.",
+            "target": "A"
+        },
+        {
+            "input": "A. Sunlight filled the room because the curtains were opened.\nB. The curtains were opened because sunlight filled the room.",
+            "target": "A"
+        },
+        {
+            "input": "A. The insect pollinated the tomato flowers because tomatoes grew on the vine.\nB. Tomatoes grew on the vine because the insect pollinated the tomato flowers.",
+            "target": "B"
+        },
+        {
+            "input": "A. The driver hit the brakes because the girl stepped onto the street.\nB. The girl stepped onto the street because the driver hit the brakes.",
+            "target": "A"
+        },
+        {
+            "input": "A. There was a wardrobe malfunction because the performer ran off the stage.\nB. The performer ran off the stage because there was a wardrobe malfunction.",
+            "target": "B"
+        },
+        {
+            "input": "A. The pilot turned on the \"fasten seatbelts\" light because a bird hit the engine.\nB. A bird hit the engine because the pilot turned on the \"fasten seatbelts\" light.",
+            "target": "A"
+        },
+        {
+            "input": "A. The man sipped the milk and spit it out because the milk was left outside the fridge over night.\nB. The milk was left outside the fridge over night because the man sipped the milk and spit it out.",
+            "target": "A"
+        },
+        {
+            "input": "A. The man turned down the music volume because the man couldn't hear what the woman was saying.\nB. The man couldn't hear what the woman was saying because the man turned down the music volume.",
+            "target": "A"
+        },
+        {
+            "input": "A. The power was out for days because the meat spoiled.\nB. The meat spoiled because the power was out for days.",
+            "target": "B"
+        },
+        {
+            "input": "A. The gardener planted a seed because a flower grew.\nB. A flower grew because the gardener planted a seed.",
+            "target": "B"
+        },
+        {
+            "input": "A. The team won the championship because the team won the game.\nB. The team won the game because the team won the championship.",
+            "target": "A"
+        },
+        {
+            "input": "A. The door was locked because the man climbed in through the window.\nB. The man climbed in through the window because the door was locked.",
+            "target": "B"
+        },
+        {
+            "input": "A. The wind blew strong because the ship capsized.\nB. The ship capsized because the wind blew strong.",
+            "target": "B"
+        },
+        {
+            "input": "A. The man went to jail because the man robbed a gas station.\nB. The man robbed a gas station because the man went to jail.",
+            "target": "A"
+        },
+        {
+            "input": "A. Acme paid Jill's legal fees because Jill won the lawsuit against Acme.\nB. Jill won the lawsuit against Acme because acme paid Jill's legal fees.",
+            "target": "A"
+        },
+        {
+            "input": "A. School was cancelled because there was a snowstorm.\nB. There was a snowstorm because school was cancelled.",
+            "target": "A"
+        },
+        {
+            "input": "A. The tenants contacted their landlord because the tenants noticed mold on the bathroom ceiling.\nB. The tenants noticed mold on the bathroom ceiling because the tenants contacted their landlord.",
+            "target": "A"
+        },
+        {
+            "input": "A. I got an A on the test because i studied hard.\nB. I studied hard because i got an A on the test.",
+            "target": "A"
+        },
+        {
+            "input": "A. The window broke because the boy threw a rock.\nB. The boy threw a rock because the window broke.",
+            "target": "A"
+        },
+        {
+            "input": "A. The driver ran a red light because the driver was pulled over and was fined.\nB. The driver was pulled over and was fined because the driver ran a red light.",
+            "target": "B"
+        },
+        {
+            "input": "A. The girl got detention because the girl skipped school.\nB. The girl skipped school because the girl got detention.",
+            "target": "A"
+        },
+        {
+            "input": "A. Light filled the room because i flipped the switch.\nB. I flipped the switch because light filled the room.",
+            "target": "A"
+        },
+        {
+            "input": "A. The dog bit me because i pulled the dog's tail.\nB. I pulled the dog's tail because the dog bit me.",
+            "target": "A"
+        },
+        {
+            "input": "A. The family went on vacation because school was on break.\nB. School was on break because the family went on vacation.",
+            "target": "A"
+        },
+        {
+            "input": "A. The family went to the beach because the air conditioner broke.\nB. The air conditioner broke because the family went to the beach.",
+            "target": "A"
+        },
+        {
+            "input": "A. The girl had a fever because mom gave the girl fever medicine.\nB. Mom gave the girl fever medicine because the girl had a fever.",
+            "target": "B"
+        },
+        {
+            "input": "A. We made French toast because the bread was dry.\nB. The bread was dry because we made French toast.",
+            "target": "A"
+        },
+        {
+            "input": "A. The company's posted strong earnings because the company's stock went up.\nB. The company's stock went up because the company's posted strong earnings.",
+            "target": "B"
+        },
+        {
+            "input": "A. My clothes got dirty because i put my clothes in the washing machine.\nB. I put my clothes in the washing machine because my clothes got dirty.",
+            "target": "B"
+        },
+        {
+            "input": "A. My friend got a promotion because my friend celebrated with their family.\nB. My friend celebrated with their family because my friend got a promotion.",
+            "target": "B"
+        },
+        {
+            "input": "A. The basketball player took a free throw because the basketball player was shoved.\nB. The basketball player was shoved because the basketball player took a free throw.",
+            "target": "A"
+        },
+        {
+            "input": "A. Alice didn't wake up because Alice missed her flight.\nB. Alice missed her flight because Alice didn't wake up.",
+            "target": "B"
+        },
+        {
+            "input": "A. The man sued because the floor was wet.\nB. The floor was wet because the man sued.",
+            "target": "A"
+        },
+        {
+            "input": "A. The picnic was cancelled because it rained.\nB. It rained because the picnic was cancelled.",
+            "target": "A"
+        },
+        {
+            "input": "A. The girl didn't wear her sweater because the girl caught a cold.\nB. The girl caught a cold because the girl didn't wear her sweater.",
+            "target": "B"
+        },
+        {
+            "input": "A. The man got lost in the woods because a search party was assembled.\nB. A search party was assembled because the man got lost in the woods.",
+            "target": "B"
+        },
+        {
+            "input": "A. Ted had a hangover because Ted went out drinking.\nB. Ted went out drinking because Ted had a hangover.",
+            "target": "A"
+        },
+        {
+            "input": "A. Alice ate the last cookie because Bob opened the jar and was frustrated.\nB. Bob opened the jar and was frustrated because Alice ate the last cookie.",
+            "target": "B"
+        },
+        {
+            "input": "A. Jimmy took the last piece of cake because mom rinsed the tray.\nB. Mom rinsed the tray because Jimmy took the last piece of cake.",
+            "target": "B"
+        }
+    ]
+}

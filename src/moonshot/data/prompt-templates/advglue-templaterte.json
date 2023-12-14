@@ -1,0 +1,5 @@
+{
+	"name": "advglue-templaterte",
+	"description": "This template is used for recognizing textual entailment in the AdvGLUE dataset.",
+	"template": "\"{{ prompt }}\" Please identify whether the premise entails the hypothesis. The answer should be exactly 'yes' or 'no', without capitalization."
+}

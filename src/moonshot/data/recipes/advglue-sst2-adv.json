@@ -1,0 +1,8 @@
+{
+	"name": "AdvGLUE-SST2-ADV", 
+	"description": "Adversarially Perturbed. SST-2 consists of sentences from movie reviews and human annotations of their sentiment.", 
+	"tags": ["robustness"], 
+	"dataset": "advglue-sst2-adv.json", 
+	"prompt_templates": ["advglue-templatesst2.json"], 
+	"metrics": ["exactstrmatch"]
+}

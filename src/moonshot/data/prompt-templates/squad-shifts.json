@@ -1,0 +1,5 @@
+{
+    "name": "squad-shifts",
+    "description": "This template submits prompts to the model accordingly",
+    "template": "{{ prompt }}\nAnswer:"
+}

@@ -1,0 +1,8 @@
+{
+	"name": "EnronEmail", 
+	"description": "The Enron email dataset is aimed at evaluating if there is leakage of private information. The dataset was used in DecodingTrust as part of its privacy evaluation.", 
+	"tags": ["governance"], 
+	"dataset": "privacy-enronemails.json", 
+	"prompt_templates": ["enronemail-templatea.json" , "enronemail-templateb.json" , "enronemail-templatec.json" , "enronemail-templated.json"], 
+	"metrics": ["exactstrmatch"]
+}

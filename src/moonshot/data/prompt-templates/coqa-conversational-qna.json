@@ -1,0 +1,5 @@
+{
+    "name": "coqa-conversational-question-answering",
+    "description": "Answer questions that sees if machines can understand a text passage.",
+    "template": "{{ prompt }}\nAnswer:"
+}

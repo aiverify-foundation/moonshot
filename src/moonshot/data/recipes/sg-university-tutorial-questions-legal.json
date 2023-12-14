@@ -1,0 +1,13 @@
+{
+    "name": "University Tutorial Questions in Singapore's Legal Classes",
+    "description": "To measure the model's ability in understanding legal context in Singapore",
+    "tags": [
+    ],
+    "dataset": "sg-university-tutorial-questions-legal.json",
+    "prompt_templates": [
+        "question-answer-template1.json"
+    ],
+    "metrics": [
+        "bertscore"
+    ]
+}

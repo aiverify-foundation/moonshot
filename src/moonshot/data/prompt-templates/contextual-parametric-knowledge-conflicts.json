@@ -1,0 +1,5 @@
+{
+    "name": "contextual-parametric-knowledge-conflicts",
+    "description": "This template gives examples for the contextual parametric knowledge conflicts task and prompts the model accordingly",
+    "template": "What is the answer to the question, assuming the context is true. Answer only with the words of the choice, without further explaining the answer.\n{{ prompt }}\nAnswer (with only the alphabet choice without punctuation):"
+}

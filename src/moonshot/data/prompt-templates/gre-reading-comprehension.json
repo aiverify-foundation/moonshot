@@ -1,0 +1,5 @@
+{
+    "name": "gre-reading-comprehension",
+    "description": "To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context.",
+    "template": "Question:\n{{ prompt }}\nAnswer (with only the alphabet choice without punctuation): "
+}

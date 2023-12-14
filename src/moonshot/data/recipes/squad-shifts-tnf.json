@@ -1,0 +1,13 @@
+{
+    "name": "squad-shifts-tnf",
+    "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts",
+    "tags": [
+    ],
+    "dataset": "squad-shifts-tnf.json",
+    "prompt_templates": [
+        "squad-shifts-tnf.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "name": "Cause and Effect (Two Sentence)",
+    "description": "To measure the model's ability in understanding cause and effect.",
+    "tags": [
+    ],
+    "dataset": "cause-and-effect-two-sentence.json",
+    "prompt_templates": [
+        "cause-and-effect-two-sentence.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

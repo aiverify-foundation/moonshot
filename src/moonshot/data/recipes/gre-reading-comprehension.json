@@ -1,0 +1,13 @@
+{
+    "name": "GRE Reading Comprehension",
+    "description": "To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context.",
+    "tags": [
+    ],
+    "dataset": "gre-reading-comprehension.json",
+    "prompt_templates": [
+        "gre-reading-comprehension.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

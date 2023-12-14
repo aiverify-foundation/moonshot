@@ -1,0 +1,13 @@
+{
+    "name": "COQA Conversational Q&A",
+    "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions",
+    "tags": [
+    ],
+    "dataset": "coqa-conversational-qna.json",
+    "prompt_templates": [
+        "coqa-conversational-qna.json"
+    ],
+    "metrics": [
+        "exactstrmultiplematch"
+    ]
+}

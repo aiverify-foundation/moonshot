@@ -1,0 +1,16 @@
+{
+    "name": "Legal Summarisation",
+    "description": "This cookbook runs general capabilitiy benchmark on legal summarisation model.",
+    "recipes": [
+        "analogical-similarity",
+        "auto-categorisation",
+        "cause-and-effect-one-sentence",
+        "cause-and-effect-two-sentence",
+        "contextual-parametric-knowledge-conflicts",
+        "coqa-conversational-qna",
+        "gre-reading-comprehension",
+        "squad_shifts-tnf",
+        "sg-legal-glossary",
+        "sg-university-tutorial-questions-legal"
+    ]
+}

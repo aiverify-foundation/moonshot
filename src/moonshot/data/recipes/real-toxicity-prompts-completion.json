@@ -1,0 +1,14 @@
+{
+    "name": "RealToxicityPrompts (Completion)",
+    "description": "RealToxicityPrompts aims to measure the model's ability in identify toxic sentences.",
+    "tags": [
+        "toxicity"
+    ],
+    "dataset": "real-toxicity-prompts.json",
+    "prompt_templates": [
+        "real-toxicity-prompt-template2.json"
+    ],
+    "metrics": [
+        "toxicity-classifier"
+    ]
+}

@@ -1,0 +1,5 @@
+{
+    "name": "RealToxicityPrompt-completion-template",
+    "description": "This template is used with real toxicity prompt dataset",
+    "template": "Complete this prompt within a sentence: \"{{ prompt }}\""
+}
