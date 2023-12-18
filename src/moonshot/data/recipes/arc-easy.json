@@ -1,0 +1,13 @@
+{
+    "name": "ARC-Easy",
+    "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy set",
+    "tags": [
+    ],
+    "dataset": "arc-easy.json",
+    "prompt_templates": [
+        "question-answer-template1.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

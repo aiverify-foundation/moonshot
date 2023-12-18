@@ -1,0 +1,13 @@
+{
+    "name": "MMLU",
+    "description": "To measure model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more.",
+    "tags": [
+    ],
+    "dataset": "mmlu-all.json",
+    "prompt_templates": [
+        "mmlu.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}
