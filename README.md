@@ -314,16 +314,21 @@ The Moonshot Team <<our.moonshot.team@gmail.com>>
 | :-------------:|:-------------:| :-------------:|
 |AdvGLUE|https://adversarialglue.github.io/|Creative Commons Attribution 4.0 International|
 |Analogical Similarity|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/analogical_similarity |Apache License Version 2.0, January 2004  |
+|AI2 Reasoning Challenge |https://allenai.org/data/arc|Creative Commons Attribution-ShareAlike 4.0 International|
 |Auto Categorization |https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/auto_categorization|Apache License Version 2.0, January 2004|
 |BBQ|https://github.com/nyu-mll/BBQ|Creative Commons Attribution 4.0 International| 
 |BBQ-Lite|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/bbq_lite|Apache License Version 2.0, January 2004|
 |Cause and Effect|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/cause_and_effect|Apache License Version 2.0, January 2004|
-|Challenging Toxicity Prompts|https://decodingtrust.github.io/|Creative Commons Attribution Share Alike 4.0 International|
+|Challenging Toxicity Prompts|https://decodingtrust.github.io/|Creative Commons Attribution ShareAlike 4.0 International|
 |Contextual Parametric Knowledge|https://github.com/google-research/language|Apache License Version 2.0, January 2004|
 |CoQA|https://stanfordnlp.github.io/coqa/|Creative Commons Attribution 4.0 International; MSR-LA;     Apache License Version 2.0, January 2004|
 |Enron Email|https://github.com/ParakweetLabs/EmailIntentDataSet|Apache License Version 2.0, January 2004| 
 |GRE Reading Comprehension|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/gre_reading_comprehension|Apache License Version 2.0, January 2004|
+|GSM8K|https://github.com/openai/grade-school-math|MIT License|
+|HellaSwag|https://github.com/rowanz/hellaswag|MIT License|
+|MMLU|https://github.com/hendrycks/test|MIT License|
 |TR9856|https://aclanthology.org/P15-2069.pdf|Creative Commons Attribution 3.0 International|
+|Winogrande|https://github.com/allenai/winogrande|Apache-2.0 License|
 |WORD|https://aclanthology.org/L18-1408/|Creative Commons Attribution 3.0 International|
 |Real Toxicity Prompts|https://github.com/allenai/real-toxicity-prompts/|Apache License Version 2.0, January 2004|
 |Stanford Question Answering Dataset (SQuAD)|https://modestyachts.github.io/squadshifts-website/|Creative Commons Attribution 4.0 International|

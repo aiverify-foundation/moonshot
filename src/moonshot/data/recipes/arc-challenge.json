@@ -1,0 +1,13 @@
+{
+    "name": "ARC-Challenge",
+    "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the challenge set",
+    "tags": [
+    ],
+    "dataset": "arc-challenge.json",
+    "prompt_templates": [
+        "question-answer-template1.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}
