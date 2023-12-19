@@ -219,68 +219,60 @@ class RunMetadata:
 
 
 class Run:
-    def __init__(self, run_type: RunTypes, arguments: dict, run_id: str = ""):
+    def __init__(self, run_type: RunTypes, arguments: dict, run_id: str = "", create_based_on_run_id: bool = False):
         if run_id:
-            # There is an existing run id
             run_db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
             if Path(run_db_file).exists():
-                # Load the db instance
                 db_instance = Database(run_db_file)
                 db_instance.create_connection()
-
-                # Load the metadata by reading the info from the db
                 self.run_metadata = RunMetadata.load_metadata(
-                    db_instance.read_metadata_records(
-                        sql_read_run_metadata_records, run_id
-                    )
+                    db_instance.read_metadata_records(sql_read_run_metadata_records, run_id)
                 )
-
-                # Update metadata with the db instance
                 self.run_metadata.db_instance = db_instance
-            else:
+                return
+            elif not create_based_on_run_id:
                 raise RuntimeError("Invalid run id")
 
+        start_time = time.time()
+        datetime_now = datetime.fromtimestamp(start_time)
+        formatted_date = datetime_now.strftime("%Y%m%d-%H%M%S")
+
+        if run_type is RunTypes.RECIPE:
+            run_id = run_id or f"recipe-{formatted_date}"
+            self.run_metadata = RunMetadata(
+                run_id,
+                run_type,
+                arguments,
+                start_time,
+                start_time,
+                0.0,
+                f"{EnvironmentVars.DATABASES}/{run_id}.db",
+                f"{EnvironmentVars.RESULTS}/{run_id}.json",
+                arguments["recipes"],
+                "",
+                arguments["endpoints"],
+                arguments["num_of_prompts"],
+                "",
+            )
+        elif run_type is RunTypes.COOKBOOK:
+            run_id = run_id or f"cookbook-{formatted_date}"
+            self.run_metadata = RunMetadata(
+                run_id,
+                run_type,
+                arguments,
+                start_time,
+                start_time,
+                0.0,
+                f"{EnvironmentVars.DATABASES}/{run_id}.db",
+                f"{EnvironmentVars.RESULTS}/{run_id}.json",
+                "",
+                arguments["cookbooks"],
+                arguments["endpoints"],
+                arguments["num_of_prompts"],
+                "",
+            )
         else:
-            # Create a new run
-            start_time = time.time()
-            datetime_now = datetime.fromtimestamp(start_time)
-            formatted_date = datetime_now.strftime("%Y%m%d-%H%M%S")
-            if run_type is RunTypes.RECIPE:
-                run_id = f"recipe-{formatted_date}"
-                self.run_metadata = RunMetadata(
-                    run_id,
-                    run_type,
-                    arguments,
-                    start_time,
-                    start_time,
-                    0.0,
-                    f"{EnvironmentVars.DATABASES}/{run_id}.db",
-                    f"{EnvironmentVars.RESULTS}/{run_id}.json",
-                    arguments["recipes"],
-                    "",
-                    arguments["endpoints"],
-                    arguments["num_of_prompts"],
-                    "",
-                )
-            elif run_type is RunTypes.COOKBOOK:
-                run_id = f"cookbook-{formatted_date}"
-                self.run_metadata = RunMetadata(
-                    run_id,
-                    run_type,
-                    arguments,
-                    start_time,
-                    start_time,
-                    0.0,
-                    f"{EnvironmentVars.DATABASES}/{run_id}.db",
-                    f"{EnvironmentVars.RESULTS}/{run_id}.json",
-                    "",
-                    arguments["cookbooks"],
-                    arguments["endpoints"],
-                    arguments["num_of_prompts"],
-                    "",
-                )
-            else:
-                raise RuntimeError("Invalid run types")
+            raise RuntimeError("Invalid run types")
 
     @classmethod
     def load_run(cls, run_id: str) -> Any:
