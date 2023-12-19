@@ -303,6 +303,7 @@ class RecipeResult:
             f"[RecipeResult - Run] Generating recipe prompts took {(time.perf_counter() - start_time):.4f}s"
         )
 
+        print(recipe_instance.generated_prompts_info)
         with concurrent.futures.ThreadPoolExecutor(
             max_workers=multiprocessing.cpu_count()
         ) as executor:
