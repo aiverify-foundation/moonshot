@@ -170,27 +170,73 @@ class Recipe:
         else:
             prompts_to_generate = number_of_prompts
 
-        for template in self.prompt_templates_info:
-            jinja_template = Template(template["template"])
+        if self.prompt_templates_info:
+            for template in self.prompt_templates_info:
+                jinja_template = Template(template["template"])
 
+                # Generate prompts and targets
+                temp_list = list()
+                for prompt_index, prompt_set in enumerate(
+                    self.dataset_info["examples"], 1
+                ):
+                    if prompt_index <= prompts_to_generate:
+                        rendered_prompt = jinja_template.render(
+                            {"prompt": prompt_set["input"]}
+                        )
+                        target = prompt_set["target"]
+
+                        # Check if this prompt is in the cache for this template
+                        cache_output = None
+                        if cache_info and template["name"] in cache_info:
+                            cache_records = cache_info[template["name"]]
+
+                            # Loop through the records to find
+                            for cache_record in cache_records:
+                                if (
+                                    cache_record["prompt"] == rendered_prompt
+                                    and cache_record["target"] == target
+                                ):
+                                    # Prompt is in cache, use the cached target
+                                    cache_output = {
+                                        "prompt": cache_record["prompt"],
+                                        "target": cache_record["target"],
+                                        "predicted_result": cache_record[
+                                            "predicted_result"
+                                        ],
+                                        "duration": cache_record["duration"],
+                                    }
+                                    break
+
+                        # If not in cache, generate the prompt prediction
+                        if cache_output:
+                            temp_list.append(cache_output)
+                        else:
+                            temp_list.append(
+                                {
+                                    "prompt": rendered_prompt,
+                                    "target": target,
+                                }
+                            )
+
+                # Add the prompts and target
+                self.generated_prompts_info[template["name"]] = {"data": temp_list}
+        else:
             # Generate prompts and targets
             temp_list = list()
             for prompt_index, prompt_set in enumerate(self.dataset_info["examples"], 1):
                 if prompt_index <= prompts_to_generate:
-                    rendered_prompt = jinja_template.render(
-                        {"prompt": prompt_set["input"]}
-                    )
+                    prompt = prompt_set["input"]
                     target = prompt_set["target"]
 
                     # Check if this prompt is in the cache for this template
                     cache_output = None
-                    if cache_info and template["name"] in cache_info:
-                        cache_records = cache_info[template["name"]]
+                    if cache_info and "no-template" in cache_info:
+                        cache_records = cache_info["no-template"]
 
                         # Loop through the records to find
                         for cache_record in cache_records:
                             if (
-                                cache_record["prompt"] == rendered_prompt
+                                cache_record["prompt"] == prompt
                                 and cache_record["target"] == target
                             ):
                                 # Prompt is in cache, use the cached target
@@ -210,13 +256,13 @@ class Recipe:
                     else:
                         temp_list.append(
                             {
-                                "prompt": rendered_prompt,
+                                "prompt": prompt,
                                 "target": target,
                             }
                         )
 
             # Add the prompts and target
-            self.generated_prompts_info[template["name"]] = {"data": temp_list}
+            self.generated_prompts_info["no-template"] = {"data": temp_list}
 
 
 class RecipeResult:
