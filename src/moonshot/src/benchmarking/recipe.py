@@ -235,9 +235,22 @@ class Recipe:
 
                         # Loop through the records to find
                         for cache_record in cache_records:
+
+                            # Convert the prompt and target to json strings
+                            if not isinstance(prompt, str):
+                                check_prompt = json.dumps(prompt)
+                            else:
+                                check_prompt = prompt
+
+                            if not isinstance(target, str):
+                                check_target = json.dumps(target)
+                            else:
+                                check_target = target
+
+                            # Check if this prompt is in the cache
                             if (
-                                cache_record["prompt"] == prompt
-                                and cache_record["target"] == target
+                                cache_record["prompt"] == check_prompt
+                                and cache_record["target"] == check_target
                             ):
                                 # Prompt is in cache, use the cached target
                                 cache_output = {
