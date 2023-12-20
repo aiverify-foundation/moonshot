@@ -300,7 +300,8 @@ class RecipeResult:
         start_time = time.perf_counter()
         recipe_instance.run(number_of_prompts, cache_records)
         print(
-            f"[RecipeResult - Run] Generating recipe prompts took {(time.perf_counter() - start_time):.4f}s"
+            f"[RecipeResult - Run] Generating recipe prompts took {(time.perf_counter() - start_time):.4f}s "
+            f"for {len(recipe_instance.generated_prompts_info)} prompts."
         )
 
         with concurrent.futures.ThreadPoolExecutor(
