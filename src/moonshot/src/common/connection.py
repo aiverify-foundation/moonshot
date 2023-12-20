@@ -255,7 +255,6 @@ async def get_async_predictions(
     Returns:
         list: A list of prediction results.
     """
-    print(prompts_tasks)
     return await aiometer.run_all(
         prompts_tasks, max_at_once=max_at_once, max_per_second=max_calls_per_second
     )
