@@ -193,6 +193,7 @@ class Database:
         self.cache_records.append(
             (recipe_id, prompt_template_name, prompt_info, connection_id)
         )
+        print("CACHE RECORDS", self.cache_records)
 
     @timeit
     def create_cache_records(self) -> None:
