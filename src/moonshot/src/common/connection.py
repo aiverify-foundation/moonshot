@@ -186,9 +186,9 @@ def get_predictions(
         )
 
     # Run predictions async
-    print(f"Total number of prompts: {len(prompts_tasks)} "
-          f"with concurrency: {connection.api_max_concurrency} "
-          f"and calls per second: {connection.api_max_calls_per_second}")
+    print(f"Total number of prompts {len(prompts_tasks)} "
+          f"and concurrency {connection.api_max_concurrency} "
+          f"and calls per second {connection.api_max_calls_per_second}")
     prediction_results = asyncio.run(
         get_async_predictions(
             prompts_tasks,
@@ -255,6 +255,7 @@ async def get_async_predictions(
     Returns:
         list: A list of prediction results.
     """
+    print(prompts_tasks)
     return await aiometer.run_all(
         prompts_tasks, max_at_once=max_at_once, max_per_second=max_calls_per_second
     )
