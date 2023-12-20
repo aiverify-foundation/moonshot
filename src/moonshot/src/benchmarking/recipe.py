@@ -372,6 +372,11 @@ class RecipeResult:
             print(
                 f"[RecipeResult - Run] Calculate metrics took {(time.perf_counter() - start_time):.4f}s"
             )
+
+        # Write cache records and close connection
+        db_instance.write_cache_records()
+        db_instance.close_connection()
+
         return recipe, endpoint, recipe_instance.generated_prompts_info
 
     @staticmethod

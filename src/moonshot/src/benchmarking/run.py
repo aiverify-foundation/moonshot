@@ -361,8 +361,6 @@ class Run:
 
         # Update the run metadata
         self.run_metadata.update_metadata_in_database()
-        self.run_metadata.db_instance.write_cache_records()
-        self.run_metadata.db_instance.close_connection()
 
         return self.run_metadata.results
 
@@ -403,8 +401,6 @@ class Run:
 
         # Update the run metadata
         self.run_metadata.update_metadata_in_database()
-        self.run_metadata.db_instance.write_cache_records()
-        self.run_metadata.db_instance.close_connection()
 
         return self.run_metadata.results
 
