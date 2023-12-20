@@ -25,9 +25,7 @@ class Database:
         This method is automatically called when the object is destroyed.
         """
         # Write cache records
-        if len(self.cache_records) > 0:
-            print(f"Committing all {len(self.cache_records)} cache records...")
-            self.create_cache_records()
+        self.write_cache_records()
 
         # Close database connection
         self.close_connection()
@@ -246,6 +244,19 @@ class Database:
                     f"Error reading cache records for database ({self.db_file}) - {str(sqlite3_error)})"
                 )
 
+    @timeit
+    def write_cache_records(self) -> None:
+        """
+        Writes cache records to the database.
+        """
+        if len(self.cache_records) > 0:
+            print(f"Committing all {len(self.cache_records)} cache records...")
+            self.create_cache_records()
+
+            # Clear cache records
+            self.cache_records = list()
+
+    @timeit
     def close_connection(self) -> None:
         """
         Closes the connection to the database.
