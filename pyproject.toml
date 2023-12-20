@@ -52,7 +52,6 @@ aiohttp = "^3.9.0"
 python-dotenv = "^1.0.0"
 anthropic = "^0.7.4"
 cmd2 = "^2.4.3"
-gnureadline = "^8.1.2"
 rich = "^13.7.0"
 
 
