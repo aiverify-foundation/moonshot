@@ -67,9 +67,9 @@ class Recipe:
 
         # Additional variables for loaded info
         self.dataset_info = None
-        self.prompt_templates_info = list()
-        self.metrics_instances = list()
-        self.generated_prompts_info = dict()
+        self.prompt_templates_info = []
+        self.metrics_instances = []
+        self.generated_prompts_info = {}
 
     def run(self, number_of_prompts: int, cache_info: dict = None) -> None:
         """
@@ -82,15 +82,14 @@ class Recipe:
         Returns:
             None
         """
-        print(
-            f"🔃 Running recipe ({self.name})... do not close this terminal.\n"
-            f"You can start a new terminal to continue working."
-        )
+        print(f"🔃Running recipe ({self.name})... do not close this terminal.")
+        print("You can start a new terminal to continue working.")
 
         # Load dataset information
         start_time = time.perf_counter()
-        with open(f"{EnvironmentVars.DATASETS}/{self.dataset}", "r") as json_file:
-            self.dataset_info = json.load(json_file)
+        self.dataset_info = json.load(
+            open(f"{EnvironmentVars.DATASETS}/{self.dataset}", "r")
+        )
         print(
             f"[Recipe ({self.id}) - Run] Load dataset information took {(time.perf_counter() - start_time):.4f}s"
         )
@@ -98,25 +97,25 @@ class Recipe:
         # Load prompt templates information
         start_time = time.perf_counter()
         for template in self.prompt_templates:
-            with open(
-                f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}", "r"
-            ) as json_file:
-                self.prompt_templates_info.append(json.load(json_file))
+            self.prompt_templates_info.append(
+                json.load(open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}", "r"))
+            )
         print(
             f"[Recipe ({self.id}) - Run] Load prompt templates took {(time.perf_counter() - start_time):.4f}s"
         )
 
         # Create a new metric instance
         start_time = time.perf_counter()
+        self.metrics_instances = []
         for metric in self.metrics:
-            self.metric_instance = self._get_metric_instance(metric)
-            if self.metric_instance:
-                self.metric_instance = self.metric_instance()
+            metric_instance = self._get_metric_instance(metric)
+            if metric_instance:
+                metric_instance = metric_instance()
             else:
                 raise RuntimeError(
-                    f"Unable to get defined metric instance - {self.metric_instance}"
+                    f"Unable to get defined metric instance - {metric_instance}"
                 )
-            self.metrics_instances.append(self.metric_instance)
+            self.metrics_instances.append(metric_instance)
         print(
             f"[Recipe ({self.id}) - Run] Load metrics took {(time.perf_counter() - start_time):.4f}s"
         )
@@ -138,120 +137,74 @@ class Recipe:
         Returns:
             Any: An instance of the metric class if found, otherwise None.
         """
+        # Create the module specification
         module_spec = create_module_spec(
             metric_name,
             f"{EnvironmentVars.METRICS}/{metric_name}.py",
         )
+
+        # Check if the module specification exists
         if module_spec:
+            # Import the module
             module = import_module_from_spec(module_spec)
-            # Return the class object
+
+            # Iterate through the attributes of the module
             for attr in dir(module):
+                # Get the attribute object
                 obj = getattr(module, attr)
+
+                # Check if the attribute is a class and has the same module name as the metric name
                 if inspect.isclass(obj) and obj.__module__ == metric_name:
                     return obj
+
+        # Return None if no instance of the metric class is found
         return None
 
     def _generate_prompts_targets(
         self, number_of_prompts: int, cache_info: dict = None
     ) -> None:
         """
-        Generates prompts and targets based on the given number of prompts and cache information.
+        Generate prompts and targets based on the given number of prompts and cache information.
 
         Args:
-            number_of_prompts (int): The number of prompts to generate. If below 1, all available data will be used.
-            cache_info (dict, optional): Cache information for the prompts. Defaults to None.
-
-        Returns:
-            None
+            number_of_prompts (int): The number of prompts to generate.
+            cache_info (dict, optional): The cache information. Defaults to None.
         """
         # If the number of prompts is below 1, it means use all data available
-        if number_of_prompts < 1:
-            prompts_to_generate = len(self.dataset_info["examples"])
-        else:
-            prompts_to_generate = number_of_prompts
+        prompts_to_generate = (
+            len(self.dataset_info["examples"])
+            if number_of_prompts < 1
+            else number_of_prompts
+        )
+        self.generated_prompts_info = {}
 
         if self.prompt_templates_info:
             for template in self.prompt_templates_info:
                 jinja_template = Template(template["template"])
 
                 # Generate prompts and targets
-                temp_list = list()
+                temp_list = []
                 for prompt_index, prompt_set in enumerate(
                     self.dataset_info["examples"], 1
                 ):
-                    if prompt_index <= prompts_to_generate:
-                        rendered_prompt = jinja_template.render(
-                            {"prompt": prompt_set["input"]}
-                        )
-                        target = prompt_set["target"]
+                    if prompt_index > prompts_to_generate:
+                        break
 
-                        # Check if this prompt is in the cache for this template
-                        cache_output = None
-                        if cache_info and template["name"] in cache_info:
-                            cache_records = cache_info[template["name"]]
-
-                            # Loop through the records to find
-                            for cache_record in cache_records:
-                                if (
-                                    cache_record["prompt"] == rendered_prompt
-                                    and cache_record["target"] == target
-                                ):
-                                    # Prompt is in cache, use the cached target
-                                    cache_output = {
-                                        "prompt": cache_record["prompt"],
-                                        "target": cache_record["target"],
-                                        "predicted_result": cache_record[
-                                            "predicted_result"
-                                        ],
-                                        "duration": cache_record["duration"],
-                                    }
-                                    break
-
-                        # If not in cache, generate the prompt prediction
-                        if cache_output:
-                            temp_list.append(cache_output)
-                        else:
-                            temp_list.append(
-                                {
-                                    "prompt": rendered_prompt,
-                                    "target": target,
-                                }
-                            )
-
-                # Add the prompts and target
-                self.generated_prompts_info[template["name"]] = {"data": temp_list}
-        else:
-            # Generate prompts and targets
-            temp_list = list()
-            for prompt_index, prompt_set in enumerate(self.dataset_info["examples"], 1):
-                if prompt_index <= prompts_to_generate:
-                    prompt = prompt_set["input"]
+                    rendered_prompt = jinja_template.render(
+                        {"prompt": prompt_set["input"]}
+                    )
                     target = prompt_set["target"]
 
                     # Check if this prompt is in the cache for this template
                     cache_output = None
-                    if cache_info and "no-template" in cache_info:
-                        cache_records = cache_info["no-template"]
 
-                        # Loop through the records to find
+                    if cache_info and template["name"] in cache_info:
+                        cache_records = cache_info[template["name"]]
                         for cache_record in cache_records:
-                            # Convert the prompt and target to json strings
-                            if not isinstance(prompt, str):
-                                check_prompt = json.dumps(prompt)
-                            else:
-                                check_prompt = prompt
-
-                            if not isinstance(target, str):
-                                check_target = json.dumps(target)
-                            else:
-                                check_target = target
-
-                            # Check if this prompt is in the cache
                             if (
-                                cache_record["prompt"] == check_prompt
-                                and cache_record["target"] == check_target
+                                cache_record["prompt"] == rendered_prompt
+                                and cache_record["target"] == target
                             ):
-                                # Prompt is in cache, use the cached target
                                 cache_output = {
                                     "prompt": cache_record["prompt"],
                                     "target": cache_record["target"],
@@ -266,14 +219,45 @@ class Recipe:
                     if cache_output:
                         temp_list.append(cache_output)
                     else:
-                        temp_list.append(
-                            {
-                                "prompt": prompt,
-                                "target": target,
-                            }
-                        )
+                        temp_list.append({"prompt": rendered_prompt, "target": target})
+                self.generated_prompts_info[template["name"]] = {"data": temp_list}
+        else:
+            temp_list = []
 
-            # Add the prompts and target
+            for prompt_index, prompt_set in enumerate(self.dataset_info["examples"], 1):
+                if prompt_index > prompts_to_generate:
+                    break
+                prompt = prompt_set["input"]
+                target = prompt_set["target"]
+                cache_output = None
+                if cache_info and "no-template" in cache_info:
+                    cache_records = cache_info["no-template"]
+                    for cache_record in cache_records:
+                        check_prompt = (
+                            json.dumps(prompt)
+                            if not isinstance(prompt, str)
+                            else prompt
+                        )
+                        check_target = (
+                            json.dumps(target)
+                            if not isinstance(target, str)
+                            else target
+                        )
+                        if (
+                            cache_record["prompt"] == check_prompt
+                            and cache_record["target"] == check_target
+                        ):
+                            cache_output = {
+                                "prompt": cache_record["prompt"],
+                                "target": cache_record["target"],
+                                "predicted_result": cache_record["predicted_result"],
+                                "duration": cache_record["duration"],
+                            }
+                            break
+                    if cache_output:
+                        temp_list.append(cache_output)
+                    else:
+                        temp_list.append({"prompt": prompt, "target": target})
             self.generated_prompts_info["no-template"] = {"data": temp_list}
 
 
@@ -321,7 +305,7 @@ class RecipeResult:
         ) as executor:
             # Get predictions
             start_time = time.perf_counter()
-            updated_prompt_template_list = list()
+            updated_prompt_template_list = []
             futures = {
                 executor.submit(
                     get_predictions,
@@ -364,7 +348,7 @@ class RecipeResult:
                 ]
 
                 # Get metrics output for this prompt template
-                metrics_result = list()
+                metrics_result = []
                 futures = {
                     executor.submit(
                         metric.get_results,
@@ -396,21 +380,21 @@ class RecipeResult:
     def convert_cache_tuples_to_dict(cache_records: list) -> dict:
         """
         This static method converts a list of cache records tuples to a dictionary.
+
         Args:
             cache_records (list): A list of cache record tuples to be converted to a dictionary.
 
         Returns:
             dict: A dictionary of cache records.
         """
-        # Convert a list of cache records tuples to a dictionary
-        cache_dict = dict()
-        for cache_record in cache_records:
-            cache_prompt_template = cache_record[3]
-            if cache_prompt_template not in cache_dict.keys():
-                cache_dict[cache_prompt_template] = list()
+        # Initialize an empty dictionary to store the cache records
+        cache_dict = {}
 
-            # Convert the cache record to a dictionary
-            cache_dict[cache_prompt_template].append(
+        # Iterate over each cache record in the list
+        for cache_record in cache_records:
+            # Extract the cache prompt template from the cache record
+            cache_prompt_template = cache_record[3]
+            cache_dict.setdefault(cache_prompt_template, []).append(
                 {
                     "prompt": cache_record[4],
                     "target": cache_record[5],
@@ -423,14 +407,14 @@ class RecipeResult:
 
 def get_all_recipes() -> list:
     """
-    This static method retrieves a list of available recipes.
+    This function retrieves a list of available recipes.
 
     Returns:
         list: A list of available recipes. Each item in the list represents a recipe.
     """
     filepaths = [
         Path(fp).stem
-        for fp in glob.glob(f"{EnvironmentVars.RECIPES}/*.json")
+        for fp in glob.iglob(f"{EnvironmentVars.RECIPES}/*.json")
         if "__" not in fp
     ]
     return get_recipes(filepaths)
@@ -438,21 +422,23 @@ def get_all_recipes() -> list:
 
 def get_recipes(desired_recipes: list) -> list:
     """
-    This static method retrieves a list of desired recipes.
+    Retrieves a list of desired recipes.
+
+    Args:
+        desired_recipes (list): A list of recipe names to retrieve.
 
     Returns:
         list: A list of desired recipes, where each recipe is represented as a dictionary or an object.
     """
-    return_list = list()
+    recipes = []
     for recipe_name in desired_recipes:
         recipe_filename = slugify(recipe_name)
         filepath = f"{EnvironmentVars.RECIPES}/{recipe_filename}.json"
         with open(filepath, "r") as json_file:
-            file_info = json.load(json_file)
-            # Add filename (id)
-            file_info["filename"] = Path(filepath).stem
-            return_list.append(file_info)
-    return return_list
+            recipe_info = json.load(json_file)
+            recipe_info["filename"] = Path(filepath).stem
+            recipes.append(recipe_info)
+    return recipes
 
 
 def add_new_recipe(
@@ -508,36 +494,35 @@ def run_recipes_with_endpoints(
         db_file (str): The path to the database file.
 
     Returns:
-        dict: A dictionary containing the results of running the recipes. The dictionary may include
-        information about the success of each recipe execution and any output data or errors.
+        dict: A dictionary containing the results of running the recipes.
+        The dictionary may include information about the success of each recipe execution
+        and any output data or errors.
     """
     print(
         f"Running recipes {recipes} with endpoints {endpoints}. Caching results in {db_file}."
     )
 
-    # Create different combination of recipe and connection (4 recipe results for 2 recipes * 2 endpoints)
-    recipe_endpoint_combinations = list()
-    for recipe in recipes:
-        for endpoint in endpoints:
-            recipe_endpoint_combinations.append(
-                (recipe, endpoint, num_of_prompts, db_file)
-            )
-
+    recipe_endpoint_results = {}
     # Use multiprocessing to process each individual recipe
-    print(
-        f"Spawning {min(len(recipe_endpoint_combinations), multiprocessing.cpu_count())} processes to run recipes."
-    )
-    recipe_endpoint_results = dict()
     with concurrent.futures.ProcessPoolExecutor(
-        max_workers=min(len(recipe_endpoint_combinations), multiprocessing.cpu_count())
+        max_workers=multiprocessing.cpu_count()
     ) as executor:
+        # Create different combination of recipe and connection (4 recipe results for 2 recipes * 2 endpoints)
+        recipe_endpoint_combinations = [
+            (recipe, endpoint, num_of_prompts, db_file)
+            for recipe in recipes
+            for endpoint in endpoints
+        ]
+        print(
+            f"Spawning {multiprocessing.cpu_count()} processes to run {len(recipe_endpoint_combinations)} recipes."
+        )
+
         futures = {
-            executor.submit(RecipeResult.run, recipe_endpoint)
+            executor.submit(RecipeResult.run, recipe_endpoint): recipe_endpoint
             for recipe_endpoint in recipe_endpoint_combinations
         }
         for future in concurrent.futures.as_completed(futures):
             recipe, endpoint, generated_prompts_info = future.result()
             recipe_endpoint_results[f"{recipe}_{endpoint}"] = generated_prompts_info
 
-    # Return results
     return recipe_endpoint_results

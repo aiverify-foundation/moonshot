@@ -1,8 +1,14 @@
 {
-	"name": "UCIAdult", 
-	"description": "The UCI Adult dataset has been used widely used to assess fairness.", 
-	"tags": ["governance"], 
-	"dataset": "fairness-uciadult.json", 
-	"prompt_templates": ["uciadult-template.json"], 
-	"metrics": ["exactstrmatch"]
+    "name": "UCIAdult",
+    "description": "The UCI Adult dataset has been used widely used to assess fairness.",
+    "tags": [
+        "governance"
+    ],
+    "dataset": "fairness-uciadult.json",
+    "prompt_templates": [
+        "uciadult-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
 }

@@ -99,42 +99,33 @@ class RunMetadata:
         ) = metadata
 
         # Recover their types
-        run_type = RunTypes[run_type]
-        arguments = eval(arguments)
-        if recipes:
-            recipes = eval(recipes)
-        if cookbooks:
-            cookbooks = eval(cookbooks)
-        endpoints = eval(endpoints)
-
+        arguments, recipes, cookbooks, endpoints = map(
+            eval, [arguments, recipes, cookbooks, endpoints]
+        )
         return cls(
             run_id,
-            run_type,
+            RunTypes[run_type],
             arguments,
             start_time,
             end_time,
             duration,
             db_file,
             filepath,
-            recipes,
-            cookbooks,
+            recipes if recipes else None,
+            cookbooks if cookbooks else None,
             endpoints,
             num_of_prompts,
             results,
         )
 
     def create_metadata_in_database(self) -> None:
-        """
-        Creates metadata records in the database.
-        """
+        # Create metadata records in the database.
         self.db_instance.create_metadata_records(
             sql_create_run_metadata_records, self.get_tuple()
         )
 
     def update_metadata_in_database(self) -> None:
-        """
-        Updates the metadata in the database with the end time, duration, results and run_id.
-        """
+        # Update metadata records in the database.
         self.db_instance.update_metadata_records(
             sql_update_run_metadata_records,
             (
@@ -166,19 +157,22 @@ class RunMetadata:
                  - "results": The results of the run.
         """
         return {
-            "run_id": self.run_id,
-            "run_type": self.run_type,
-            "arguments": self.arguments,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
-            "duration": self.duration,
-            "db_file": self.db_file,
-            "filepath": self.filepath,
-            "recipes": self.recipes,
-            "cookbooks": self.cookbooks,
-            "endpoints": self.endpoints,
-            "num_of_prompts": self.num_of_prompts,
-            "results": self.results,
+            attr: getattr(self, attr)
+            for attr in [
+                "run_id",
+                "run_type",
+                "arguments",
+                "start_time",
+                "end_time",
+                "duration",
+                "db_file",
+                "filepath",
+                "recipes",
+                "cookbooks",
+                "endpoints",
+                "num_of_prompts",
+                "results",
+            ]
         }
 
     def get_tuple(self) -> tuple:
@@ -227,9 +221,9 @@ class Run:
         create_based_on_run_id: bool = False,
     ):
         if run_id:
-            run_db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
-            if Path(run_db_file).exists():
-                db_instance = Database(run_db_file)
+            db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
+            if Path(db_file).exists():
+                db_instance = Database(db_file)
                 db_instance.create_connection()
                 self.run_metadata = RunMetadata.load_metadata(
                     db_instance.read_metadata_records(
@@ -305,11 +299,15 @@ class Run:
             str: A string containing the time taken to run the function.
 
         Example:
-            ================================
+            ========================================
             Time taken to run: 0.123s
-            ================================
+            ========================================
         """
-        return f"{'=' * 100}\nTime taken to run: {self.run_metadata.duration}s\n{'=' * 100}"
+        return (
+            "=" * 39
+            + "\nTime taken to run: {}s\n".format(self.run_metadata.duration)
+            + "=" * 39
+        )
 
     def create_run(self) -> dict:
         """
@@ -422,7 +420,7 @@ def get_all_runs() -> list:
     """
     filepaths = [
         Path(fp).stem
-        for fp in glob.glob(f"{EnvironmentVars.DATABASES}/*.db")
+        for fp in glob.iglob(f"{EnvironmentVars.DATABASES}/*.db")
         if "__" not in fp
         and (Path(fp).stem.startswith("cookbook") or Path(fp).stem.startswith("recipe"))
     ]
@@ -439,7 +437,7 @@ def get_runs(desired_runs: list) -> list:
     Returns:
         list: A list of desired runs, where each run is represented as a dictionary or an object.
     """
-    return_list = list()
+    return_list = []
     for run_name in desired_runs:
         run_filename = slugify(run_name)
         run_db_file = f"{EnvironmentVars.DATABASES}/{run_filename}.db"

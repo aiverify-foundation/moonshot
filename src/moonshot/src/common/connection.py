@@ -33,9 +33,9 @@ class Connection:
         Returns:
             An instance of the class created from the JSON configuration.
         """
-        with open(
-            f"{EnvironmentVars.LLM_ENDPOINTS}/{endpoint_config}.json", "r"
-        ) as json_file:
+        # Construct the file path
+        file_path = Path(EnvironmentVars.LLM_ENDPOINTS) / f"{endpoint_config}.json"
+        with open(file_path, "r") as json_file:
             file_info = json.load(json_file)
             return cls(
                 Path(endpoint_config).stem,
@@ -86,17 +86,27 @@ class Connection:
         Returns:
             Any: An instance of the Connection class.
         """
+        # Create the module specification
         module_spec = create_module_spec(
             self.connection_type,
             f"{EnvironmentVars.LLM_CONNECTION_TYPES}/{self.connection_type}.py",
         )
+
+        # Check if the module specification exists
         if module_spec:
+            # Import the module
             module = import_module_from_spec(module_spec)
-            # Return the class object
+
+            # Iterate through the attributes of the module
             for attr in dir(module):
+                # Get the attribute object
                 obj = getattr(module, attr)
+
+                # Check if the attribute is a class and has the same module name as the connection type
                 if inspect.isclass(obj) and obj.__module__ == self.connection_type:
                     return obj
+
+        # Return None if no instance of the metric class is found
         return None
 
 
@@ -110,8 +120,11 @@ def get_connection_types() -> list:
     Returns:
         list: A list of LLM connection types, where each connection type is represented as a string or identifier.
     """
-    files = glob.glob(f"{EnvironmentVars.LLM_CONNECTION_TYPES}/*.py")
-    return [Path(file).stem for file in files if "__" not in file]
+    return [
+        Path(fp).stem
+        for fp in glob.iglob(f"{EnvironmentVars.LLM_CONNECTION_TYPES}/*.py")
+        if "__" not in fp
+    ]
 
 
 def get_endpoints() -> list:
@@ -122,7 +135,7 @@ def get_endpoints() -> list:
     Returns:
         list: A list of LLM endpoints, where each endpoint is represented as a dictionary or an object.
     """
-    return_list = list()
+    endpoints = []
     filepaths = glob.glob(f"{EnvironmentVars.LLM_ENDPOINTS}/*.json")
     for filepath in filepaths:
         if "__" in filepath:
@@ -131,15 +144,13 @@ def get_endpoints() -> list:
         with open(filepath, "r") as json_file:
             creation_timestamp = os.path.getctime(filepath)
             creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
-            file_info = json.load(json_file)
-
-            # Add created_date (id)
-            file_info["created_date"] = (
+            endpoints_info = json.load(json_file)
+            endpoints_info["created_date"] = (
                 creation_datetime.replace(microsecond=0).isoformat().replace("T", " ")
             )
+            endpoints.append(endpoints_info)
 
-            return_list.append(file_info)
-    return return_list
+    return endpoints
 
 
 def get_endpoint_names() -> list:
@@ -150,10 +161,7 @@ def get_endpoint_names() -> list:
     Returns:
         list: A list of LLM endpoint names.
     """
-    endpoint_name_list = []
-    for item in get_endpoints():
-        endpoint_name_list.append(item["name"])
-    return endpoint_name_list
+    return [item["name"] for item in get_endpoints()]
 
 
 def get_predictions(
@@ -173,17 +181,16 @@ def get_predictions(
     print("Performing predictions")
 
     # Store all the needed tasks
-    prompts_tasks = list()
-    for prompt_index, prompt_info in enumerate(prompts_template_info["data"], 0):
-        prompts_tasks.append(
-            partial(
-                get_async_predictions_helper,
-                prompt_index,
-                prompt_info,
-                connection,
-                prompt_callback,
-            )
+    prompts_tasks = [
+        partial(
+            get_async_predictions_helper,
+            prompt_index,
+            prompt_info,
+            connection,
+            prompt_callback,
         )
+        for prompt_index, prompt_info in enumerate(prompts_template_info["data"])
+    ]
 
     # Run predictions async
     print(
@@ -221,12 +228,10 @@ async def get_async_predictions_helper(
     Returns:
         dict: The updated prompt info with the predicted results and duration.
     """
-    if "predicted_result" not in prompt_info.keys():
+    if "predicted_result" not in prompt_info:
+        print(f"Predicting prompt {prompt_index} [{connection.id}]")
         start_time = time.perf_counter()
-        print(
-            f"Predicting prompt {prompt_index} [{connection.id}]",
-            flush=True,
-        )
+
         predicted_result = await connection.connection_instance.get_response(
             prompt_info["prompt"]
         )
@@ -234,8 +239,12 @@ async def get_async_predictions_helper(
         print(f"[Prompt {prompt_index}] took {duration:.4f}s")
 
         # Update prompt info
-        prompt_info["predicted_result"] = predicted_result
-        prompt_info["duration"] = duration
+        prompt_info.update(
+            {
+                "predicted_result": predicted_result,
+                "duration": duration,
+            }
+        )
 
         # Call prompt callback
         prompt_callback(prompt_info, connection.id)
@@ -250,9 +259,9 @@ async def get_async_predictions(
     Asynchronously performs predictions for a list of prompt tasks.
 
     Args:
-    prompts_tasks (list): A list of prompts tasks.
-    max_at_once (int): The maximum number of tasks to run at once.
-    max_calls_per_second (int): The maximum number of function calls per second.
+        prompts_tasks (list): A list of prompts tasks.
+        max_at_once (int): The maximum number of tasks to run at once.
+        max_calls_per_second (int): The maximum number of function calls per second.
 
     Returns:
         list: A list of prediction results.

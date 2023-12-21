@@ -13,19 +13,17 @@ class Cookbook:
     @classmethod
     def load_from_json_config(cls, cookbook_config: str) -> Any:
         """
-        Loads an instance of the class from a JSON configuration.
-        This class method allows loading an instance of the class from a JSON configuration stored in a file
-        or a string.
+        Load a cookbook from a JSON configuration file.
 
         Args:
-            cookbook_config (str): A JSON configuration representing the instance's parameters.
+            cookbook_config (str): The name of the cookbook configuration.
 
         Returns:
-            An instance of the class created from the JSON configuration.
+            Any: An instance of the Cookbook class populated with data from the JSON file.
         """
-        with open(
-            f"{EnvironmentVars.COOKBOOKS}/{cookbook_config}.json", "r"
-        ) as json_file:
+        # Construct the file path
+        file_path = Path(EnvironmentVars.COOKBOOKS) / f"{cookbook_config}.json"
+        with open(file_path, "r") as json_file:
             file_info = json.load(json_file)
             return cls(
                 Path(cookbook_config).stem,
@@ -50,10 +48,8 @@ class Cookbook:
             num_of_prompts (int): The number of prompts to use when running the recipes.
             db_file (str): The path to the database file to write the results to.
         """
-        print(
-            f"🔃 Running cookbook ({self.name})... do not close this terminal.\n"
-            f"You can start a new terminal to continue working."
-        )
+        print(f"🔃Running cookbook ({self.name})... do not close this terminal.")
+        print("You can start a new terminal to continue working.")
 
         # Run the recipes with the defined endpoints
         self.results = run_recipes_with_endpoints(
@@ -63,61 +59,59 @@ class Cookbook:
 
 def get_all_cookbooks() -> list:
     """
-    This static method retrieves a list of available cookbooks.
+    Retrieves a list of all cookbooks.
 
     Returns:
-        list: A list of available cookbooks. Each item in the list represents a cookbook with details such as
-        the name, description, and included recipes.
+        list: A list of cookbooks.
     """
-    return_list = list()
-    filepaths = glob.glob(f"{EnvironmentVars.COOKBOOKS}/*.json")
-    for filepath in filepaths:
-        if "__" in filepath:
-            continue
-
-        with open(filepath, "r") as json_file:
-            file_info = json.load(json_file)
-
-            # Add filename (id)
-            file_info["filename"] = Path(filepath).stem
-
-            return_list.append(file_info)
-    return return_list
+    cookbooks = []
+    for filepath in glob.iglob(f"{EnvironmentVars.COOKBOOKS}/*.json"):
+        if "__" not in filepath:
+            with open(filepath, "r") as json_file:
+                # Add filename (id)
+                cookbook = json.load(json_file)
+                cookbook["filename"] = Path(filepath).stem
+                cookbooks.append(cookbook)
+    return cookbooks
 
 
 def get_cookbook(cookbook_name: str) -> dict:
     """
-    This static method retrieves the desired cookbook.
+    Retrieve a cookbook based on its name.
 
     Args:
-        cookbook_name (str): The name of a cookbook.
+        cookbook_name (str): The name of the cookbook.
 
     Returns:
-        dict: Each item in the list represents a cookbook with details such as
-        the name, description, and included recipes.
+        dict: The cookbook information as a dictionary.
     """
+    # Construct the file path
     cookbook_filename = slugify(cookbook_name)
-    filepath = f"{EnvironmentVars.COOKBOOKS}/{cookbook_filename}.json"
-    with open(filepath, "r") as json_file:
-        file_info = json.load(json_file)
-        return file_info
+    with open(
+        f"{EnvironmentVars.COOKBOOKS}/{cookbook_filename}.json", "r"
+    ) as json_file:
+        return json.load(json_file)
 
 
 def add_new_cookbook(name: str, description: str, recipes: list) -> None:
     """
-    This static method allows adding a new cookbook with the specified name, description, and a list of recipes.
+    Add a new cookbook with the specified name, description, and recipes.
 
     Args:
-        name (str): The name or identifier of the new cookbook.
-        description (str): A brief description of the new cookbook, providing information
-        about its purpose or content.
-        recipes (list): A list of recipes to be included in the new cookbook.
+        name (str): The name of the cookbook.
+        description (str): A brief description of the cookbook.
+        recipes (list): A list of recipes in the cookbook.
 
     Returns:
-        None: This static method does not return any value.
+        None
     """
+    # Create the cookbook information dictionary
     cookbook_info = {"name": name, "description": description, "recipes": recipes}
+
+    # Generate the filename for the cookbook
     cookbook_filename = slugify(name)
+
+    # Open the JSON file and write the cookbook information
     with open(
         f"{EnvironmentVars.COOKBOOKS}/{cookbook_filename}.json", "w"
     ) as json_file:
@@ -147,9 +141,9 @@ def run_cookbooks_with_endpoints(
     )
 
     # Create cookbooks
-    cookbook_result = dict()
+    cookbook_result = {}
     for cookbook in cookbooks:
         cookbook_instance = Cookbook.load_from_json_config(cookbook)
         cookbook_instance.run(endpoints, num_of_prompts, db_file)
-        cookbook_result.update({cookbook: cookbook_instance.results})
+        cookbook_result[cookbook] = cookbook_instance.results
     return cookbook_result

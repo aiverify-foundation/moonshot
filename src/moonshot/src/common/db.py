@@ -17,7 +17,7 @@ class Database:
     def __init__(self, db_file: str):
         self.conn = None
         self.db_file = db_file
-        self.cache_records = list()
+        self.cache_records = []
 
     def __del__(self):
         """
@@ -134,23 +134,25 @@ class Database:
             connection_id (str): The ID of the connection.
         """
 
-        if self.conn:
+        if not self.conn:
+            return
+
+        cache_tuple = (
+            connection_id,
+            chat_settings["context_strategy"],
+            chat_settings["prompt_template"],
+            prompt,
+            prompt_info["prompt"],
+            prompt_info["predicted_result"],
+            prompt_info["duration"],
+        )
+
+        with self.conn:
             try:
-                # Prepare cache tuple
-                cache_tuple = (
-                    connection_id,
-                    chat_settings["context_strategy"],
-                    chat_settings["prompt_template"],
-                    prompt,
-                    prompt_info["prompt"],
-                    prompt_info["predicted_result"],
-                    prompt_info["duration"],
-                )
-                with self.conn:
-                    self.conn.execute(sql_create_chat_history_records, cache_tuple)
+                self.conn.execute(sql_create_chat_history_records, cache_tuple)
             except Error as sqlite3_error:
                 print(
-                    f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)})"
+                    f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)}"
                 )
 
     @timeit
@@ -202,24 +204,24 @@ class Database:
         """
         if self.conn:
             try:
-                # Prepare cache tuple
-                cache_tuple = [
-                    (
-                        connection_id,
-                        recipe_id,
-                        prompt_template_name,
-                        prompt_info["prompt"]
-                        if isinstance(prompt_info["prompt"], str)
-                        else json.dumps(prompt_info["prompt"]),
-                        prompt_info["target"]
-                        if isinstance(prompt_info["target"], str)
-                        else json.dumps(prompt_info["target"]),
-                        prompt_info["predicted_result"],
-                        prompt_info["duration"],
-                    )
-                    for recipe_id, prompt_template_name, prompt_info, connection_id in self.cache_records
-                ]
                 with self.conn:
+                    # Prepare cache tuple
+                    cache_tuple = [
+                        (
+                            connection_id,
+                            recipe_id,
+                            prompt_template_name,
+                            prompt_info["prompt"]
+                            if isinstance(prompt_info["prompt"], str)
+                            else json.dumps(prompt_info["prompt"]),
+                            prompt_info["target"]
+                            if isinstance(prompt_info["target"], str)
+                            else json.dumps(prompt_info["target"]),
+                            prompt_info["predicted_result"],
+                            prompt_info["duration"],
+                        )
+                        for recipe_id, prompt_template_name, prompt_info, connection_id in self.cache_records
+                    ]
                     self.conn.executemany(sql_create_cache_records, cache_tuple)
             except Error as sqlite3_error:
                 print(
@@ -254,12 +256,12 @@ class Database:
         """
         Writes cache records to the database.
         """
-        if len(self.cache_records) > 0:
+        if self.cache_records:
             print(f"Committing all {len(self.cache_records)} cache records...")
             self.create_cache_records()
 
             # Clear cache records
-            self.cache_records = list()
+            self.cache_records.clear()
 
     @timeit
     def close_connection(self) -> None:

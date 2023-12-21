@@ -143,7 +143,7 @@ class Session:
                 time.time(),
                 endpoints,
                 f"{EnvironmentVars.SESSIONS}/{session_id}.json",
-                list(),
+                [],
                 "",
                 0,
             )
@@ -160,7 +160,7 @@ class Session:
             Any: An instance of the class with the specified session ID.
         """
         # Trigger loading existing file using session_id
-        return cls("", "", list(), session_id)
+        return cls("", "", [], session_id)
 
     def create_new_session(self) -> None:
         """
@@ -180,8 +180,9 @@ class Session:
         Resumes an existing session. This function loads all the chats from the metadata and assigns them to the
         'chats_instances' variable. It then updates the prompt templates and context strategy based on the metadata.
         """
-        chats_instances = [Chat.load_chat(chat_id) for chat_id in self.metadata.chats]
-        self.metadata.chats = chats_instances
+        self.metadata.chats = [
+            Chat.load_chat(chat_id) for chat_id in self.metadata.chats
+        ]
 
         # Update the prompt templates and context strategy
         self.set_context_strategy(self.metadata.context_strategy)
@@ -255,12 +256,10 @@ class Session:
         Returns:
             list: A list of dictionaries representing the previous prompts.
         """
-        previous_prompts_list = list()
-        for chat in self.metadata.chats:
-            previous_prompts_list.append(
-                chat.get_previous_prompts(number_of_previous_prompts)
-            )
-        return previous_prompts_list
+        return [
+            chat.get_previous_prompts(number_of_previous_prompts)
+            for chat in self.metadata.chats
+        ]
 
     def get_session_context_strategy(self) -> int:
         """
@@ -290,7 +289,7 @@ def get_all_sessions() -> list:
     """
     filepaths = [
         Path(fp).stem
-        for fp in glob.glob(f"{EnvironmentVars.SESSIONS}/*.json")
+        for fp in glob.iglob(f"{EnvironmentVars.SESSIONS}/*.json")
         if "__" not in fp
     ]
     return get_sessions(filepaths)
@@ -303,10 +302,7 @@ def get_all_session_names() -> list:
     Returns:
         list: A list of available session names.
     """
-    session_name_list = []
-    for item in get_all_sessions():
-        session_name_list.append(item["session_id"])
-    return session_name_list
+    return [item["session_id"] for item in get_all_sessions()]
 
 
 def get_sessions(desired_sessions: list) -> list:
@@ -319,14 +315,14 @@ def get_sessions(desired_sessions: list) -> list:
     Returns:
         list: A list of desired sessions, where each session is represented as a dictionary or an object.
     """
-    return_list = list()
+    sessions = []
     for session_name in desired_sessions:
         session_filename = slugify(session_name)
-
         filepath = f"{EnvironmentVars.SESSIONS}/{session_filename}.json"
+
         with open(filepath, "r") as json_file:
-            file_info = json.load(json_file)
-            # Add filename (id)
-            file_info["filename"] = Path(filepath).stem
-            return_list.append(file_info)
-    return return_list
+            session_info = json.load(json_file)
+            session_info["filename"] = Path(filepath).stem
+            sessions.append(session_info)
+
+    return sessions

@@ -40,7 +40,7 @@ def load_env(env_dict: dict = None) -> None:
         env_dict (dict): A dictionary containing the key-value pairs from the environment file.
     """
     if env_dict is None:
-        env_dict = dict()
+        env_dict = {}
 
     # Load the new environment variables
     EnvironmentVars.LLM_ENDPOINTS = env_dict.get(

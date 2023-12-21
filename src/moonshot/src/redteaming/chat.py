@@ -37,7 +37,7 @@ class ChatMetadata:
         self.context_strategy = 0
         self.prompt_template = ""
         # loaded prompt template information
-        self.prompt_template_info = dict()
+        self.prompt_template_info = {}
 
         self.chat_id = f"chat-{slugify(endpoint)}-{self.created_datetime}"
         self.db_file = f"{EnvironmentVars.DATABASES}/{self.chat_id}.db"
@@ -244,8 +244,7 @@ class Chat:
                 num_of_previous_prompts
             )
             return [self._convert_tuple_to_dict(chat) for chat in prev_prompts]
-        else:
-            return list()
+        return []
 
     def _convert_tuple_to_dict(self, chat_records_tuple: tuple) -> dict:
         """
@@ -273,25 +272,15 @@ class Chat:
                 - "predicted_result" (str): The predicted result of the chat.
                 - "duration" (float): The duration of the chat.
         """
-        (
-            chat_id,
-            connection_id,
-            context_strategy,
-            prompt_template,
-            prompt,
-            prepared_prompt,
-            predicted_result,
-            duration,
-        ) = chat_records_tuple
         return {
-            "chat_id": chat_id,
-            "connection_id": connection_id,
-            "context_strategy": context_strategy,
-            "prompt_template": prompt_template,
-            "prompt": prompt,
-            "prepared_prompt": prepared_prompt,
-            "predicted_result": predicted_result,
-            "duration": duration,
+            "chat_id": chat_records_tuple[0],
+            "connection_id": chat_records_tuple[1],
+            "context_strategy": chat_records_tuple[2],
+            "prompt_template": chat_records_tuple[3],
+            "prompt": chat_records_tuple[4],
+            "prepared_prompt": chat_records_tuple[5],
+            "predicted_result": chat_records_tuple[6],
+            "duration": chat_records_tuple[7],
         }
 
     def set_context_strategy(self, context_strategy: int) -> None:
@@ -352,12 +341,9 @@ class Chat:
         # prepare the prompt for the prediction
         prepared_prompt = self.prepare_prompt(prompt)
 
-        # prepare the prompt info for the prediction
-        prompt_info = {"data": [{"prompt": prepared_prompt}]}
-
         # make the prediction and write to database through callback
         predictions_response = get_predictions(
-            prompt_info,
+            {"data": [{"prompt": prepared_prompt}]},
             self.chat_metadata.conn_instance,
             partial(
                 self.chat_metadata.db_instance.create_chat_records,
@@ -367,10 +353,7 @@ class Chat:
         )
 
         # return the first prediction response
-        if predictions_response:
-            return predictions_response[0]
-        else:
-            return predictions_response
+        return predictions_response[0] if predictions_response else None
 
     def process_context_prompts(
         self, current_prompt: str, context_strategy: int
@@ -387,12 +370,12 @@ class Chat:
         """
         previous_prompts = self.get_previous_prompts(context_strategy)
         if previous_prompts:
-            final_prompt = ""
+            final_prompt = "Previous prompt:"
             for previous_prompt in previous_prompts:
-                final_prompt += previous_prompt["prompt"]
-                final_prompt += " " + previous_prompt["predicted_result"]
+                final_prompt += (
+                    f"{previous_prompt['prompt']} {previous_prompt['predicted_result']}"
+                )
             final_prompt += f"Current prompt:{current_prompt}"
-            final_prompt = "Previous prompt:" + final_prompt
             return final_prompt
         return None
 
@@ -409,10 +392,7 @@ class Chat:
         """
         context_strategy = self.get_context_strategy()
         new_prompt = prompt
-        if (
-            self.chat_metadata.prompt_template
-            or self.chat_metadata.prompt_template != ""
-        ):
+        if self.chat_metadata.prompt_template:
             prompt_template_file = f"{EnvironmentVars.PROMPT_TEMPLATES}/{self.chat_metadata.prompt_template}.json"
             with open(prompt_template_file, "r") as json_file:
                 prompt_template_details = json.load(json_file)
@@ -426,7 +406,5 @@ class Chat:
             )
             if prompt_with_context:
                 return prompt_with_context
-            # no previous prompt
-            return new_prompt
-        else:
-            return new_prompt
+
+        return new_prompt

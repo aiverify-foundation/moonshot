@@ -7,7 +7,7 @@ from moonshot.src.common.env_variables import EnvironmentVars
 
 def read_results(results_filename: str) -> dict:
     """
-    This static method retrieves the contents of a results file.
+    This function retrieves the contents of a results file.
 
     Args:
         results_filename: The file name of the results.
@@ -21,14 +21,14 @@ def read_results(results_filename: str) -> dict:
 
 def get_all_results() -> list:
     """
-    This static method retrieves a list of available results.
+    This function retrieves a list of available results.
 
     Returns:
         list: A list of available results. Each item in the list represents a result.
     """
     filepaths = [
         Path(fp).stem
-        for fp in glob.glob(f"{EnvironmentVars.RESULTS}/*.json")
+        for fp in glob.iglob(f"{EnvironmentVars.RESULTS}/*.json")
         if "__" not in fp
     ]
     return filepaths

@@ -15,9 +15,9 @@ class ReadabilityScore:
     @staticmethod
     def get_results(output_response: Any, targets: Any) -> dict:
         results = 0
-        temp_scores = dict()
+        temp_scores = {}
         num_of_output_more_than_100 = 0
-        response_less_than_100 = list()
+        response_less_than_100 = []
 
         for response in output_response:
             if len(response.split()) < 100:
