@@ -48,9 +48,15 @@ class RougeScore:
                 test_metrics_dict = {}
                 for test_metric in test_metrics:
                     # Update average recall, precision, and f-measure values
-                    avg_recall[test_metrics.index(test_metric)] += scores[test_metric].recall
-                    avg_precision[test_metrics.index(test_metric)] += scores[test_metric].precision
-                    avg_fmeasure[test_metrics.index(test_metric)] += scores[test_metric].fmeasure
+                    avg_recall[test_metrics.index(test_metric)] += scores[
+                        test_metric
+                    ].recall
+                    avg_precision[test_metrics.index(test_metric)] += scores[
+                        test_metric
+                    ].precision
+                    avg_fmeasure[test_metrics.index(test_metric)] += scores[
+                        test_metric
+                    ].fmeasure
 
                     # Add test metric scores to the dictionary
                     test_metrics_dict[test_metric] = {
@@ -58,14 +64,14 @@ class RougeScore:
                         "p": scores[test_metric].precision,
                         "f": scores[test_metric].fmeasure,
                     }
-                individual_scores.append(test_metrics_dict)
+                    individual_scores.append(test_metrics_dict)
 
             # Add individual scores to the output dictionary
             output_dict["rouge-scores"] = individual_scores
 
             # Calculate average scores and add them to the output dictionary
             for avg_index, (recall, precision, fmeasure) in enumerate(
-                    zip(avg_recall, avg_precision, avg_fmeasure)
+                zip(avg_recall, avg_precision, avg_fmeasure)
             ):
                 output_dict[f"avg_{test_metrics[avg_index]}"] = {
                     "r": recall / len(targets),

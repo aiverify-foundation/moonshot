@@ -152,7 +152,7 @@ class Database:
                 self.conn.execute(sql_create_chat_history_records, cache_tuple)
             except Error as sqlite3_error:
                 print(
-                    f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)}"
+                    f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)})"
                 )
 
     @timeit

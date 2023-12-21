@@ -22,8 +22,9 @@ class Cookbook:
             Any: An instance of the Cookbook class populated with data from the JSON file.
         """
         # Construct the file path
-        file_path = Path(EnvironmentVars.COOKBOOKS) / f"{cookbook_config}.json"
-        with open(file_path, "r") as json_file:
+        with open(
+            f"{EnvironmentVars.COOKBOOKS}/{cookbook_config}.json", "r"
+        ) as json_file:
             file_info = json.load(json_file)
             return cls(
                 Path(cookbook_config).stem,

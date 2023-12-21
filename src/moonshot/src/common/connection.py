@@ -34,8 +34,9 @@ class Connection:
             An instance of the class created from the JSON configuration.
         """
         # Construct the file path
-        file_path = Path(EnvironmentVars.LLM_ENDPOINTS) / f"{endpoint_config}.json"
-        with open(file_path, "r") as json_file:
+        with open(
+            f"{EnvironmentVars.LLM_ENDPOINTS}/{endpoint_config}.json", "r"
+        ) as json_file:
             file_info = json.load(json_file)
             return cls(
                 Path(endpoint_config).stem,
