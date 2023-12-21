@@ -235,7 +235,6 @@ class Recipe:
 
                         # Loop through the records to find
                         for cache_record in cache_records:
-
                             # Convert the prompt and target to json strings
                             if not isinstance(prompt, str):
                                 check_prompt = json.dumps(prompt)

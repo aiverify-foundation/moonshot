@@ -219,14 +219,22 @@ class RunMetadata:
 
 
 class Run:
-    def __init__(self, run_type: RunTypes, arguments: dict, run_id: str = "", create_based_on_run_id: bool = False):
+    def __init__(
+        self,
+        run_type: RunTypes,
+        arguments: dict,
+        run_id: str = "",
+        create_based_on_run_id: bool = False,
+    ):
         if run_id:
             run_db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
             if Path(run_db_file).exists():
                 db_instance = Database(run_db_file)
                 db_instance.create_connection()
                 self.run_metadata = RunMetadata.load_metadata(
-                    db_instance.read_metadata_records(sql_read_run_metadata_records, run_id)
+                    db_instance.read_metadata_records(
+                        sql_read_run_metadata_records, run_id
+                    )
                 )
                 self.run_metadata.db_instance = db_instance
                 return

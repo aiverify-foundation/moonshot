@@ -208,8 +208,12 @@ class Database:
                         connection_id,
                         recipe_id,
                         prompt_template_name,
-                        prompt_info["prompt"] if isinstance(prompt_info["prompt"], str) else json.dumps(prompt_info["prompt"]),
-                        prompt_info["target"] if isinstance(prompt_info["target"], str) else json.dumps(prompt_info["target"]),
+                        prompt_info["prompt"]
+                        if isinstance(prompt_info["prompt"], str)
+                        else json.dumps(prompt_info["prompt"]),
+                        prompt_info["target"]
+                        if isinstance(prompt_info["target"], str)
+                        else json.dumps(prompt_info["target"]),
                         prompt_info["predicted_result"],
                         prompt_info["duration"],
                     )

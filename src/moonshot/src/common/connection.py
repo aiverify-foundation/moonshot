@@ -186,9 +186,11 @@ def get_predictions(
         )
 
     # Run predictions async
-    print(f"Total number of prompts {len(prompts_tasks)} "
-          f"and concurrency {connection.api_max_concurrency} "
-          f"and calls per second {connection.api_max_calls_per_second}")
+    print(
+        f"Total number of prompts {len(prompts_tasks)} "
+        f"and concurrency {connection.api_max_concurrency} "
+        f"and calls per second {connection.api_max_calls_per_second}"
+    )
     prediction_results = asyncio.run(
         get_async_predictions(
             prompts_tasks,
