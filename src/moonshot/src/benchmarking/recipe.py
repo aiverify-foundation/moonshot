@@ -254,10 +254,12 @@ class Recipe:
                                 "duration": cache_record["duration"],
                             }
                             break
-                    if cache_output:
-                        temp_list.append(cache_output)
-                    else:
-                        temp_list.append({"prompt": prompt, "target": target})
+
+                if cache_output:
+                    temp_list.append(cache_output)
+                else:
+                    temp_list.append({"prompt": prompt, "target": target})
+
             self.generated_prompts_info["no-template"] = {"data": temp_list}
 
 
