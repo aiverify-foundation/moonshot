@@ -133,7 +133,6 @@ class Database:
             prompt_info (dict): A dictionary containing information about the prompt.
             connection_id (str): The ID of the connection.
         """
-
         if not self.conn:
             return
 
@@ -147,13 +146,13 @@ class Database:
             prompt_info["duration"],
         )
 
-        with self.conn:
-            try:
+        try:
+            with self.conn:
                 self.conn.execute(sql_create_chat_history_records, cache_tuple)
-            except Error as sqlite3_error:
-                print(
-                    f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)})"
-                )
+        except Error as sqlite3_error:
+            print(
+                f"Error inserting chat records for database ({self.db_file}) - {str(sqlite3_error)})"
+            )
 
     @timeit
     def read_chat_records(self, number_of_records: int) -> list:
@@ -202,31 +201,34 @@ class Database:
         """
         Retrieves a cache tuple by iterating over the self.cache_records list. Then, insert them into the database.
         """
-        if self.conn:
-            try:
-                with self.conn:
-                    # Prepare cache tuple
-                    cache_tuple = [
-                        (
-                            connection_id,
-                            recipe_id,
-                            prompt_template_name,
-                            prompt_info["prompt"]
-                            if isinstance(prompt_info["prompt"], str)
-                            else json.dumps(prompt_info["prompt"]),
-                            prompt_info["target"]
-                            if isinstance(prompt_info["target"], str)
-                            else json.dumps(prompt_info["target"]),
-                            prompt_info["predicted_result"],
-                            prompt_info["duration"],
-                        )
-                        for recipe_id, prompt_template_name, prompt_info, connection_id in self.cache_records
-                    ]
-                    self.conn.executemany(sql_create_cache_records, cache_tuple)
-            except Error as sqlite3_error:
-                print(
-                    f"Error inserting cache records for database ({self.db_file}) - {str(sqlite3_error)})"
-                )
+        if not self.conn:
+            return
+
+        # Prepare cache tuple
+        cache_tuple = [
+            (
+                connection_id,
+                recipe_id,
+                prompt_template_name,
+                prompt_info["prompt"]
+                if isinstance(prompt_info["prompt"], str)
+                else json.dumps(prompt_info["prompt"]),
+                prompt_info["target"]
+                if isinstance(prompt_info["target"], str)
+                else json.dumps(prompt_info["target"]),
+                prompt_info["predicted_result"],
+                prompt_info["duration"],
+            )
+            for recipe_id, prompt_template_name, prompt_info, connection_id in self.cache_records
+        ]
+
+        try:
+            with self.conn:
+                self.conn.executemany(sql_create_cache_records, cache_tuple)
+        except Error as sqlite3_error:
+            print(
+                f"Error inserting cache records for database ({self.db_file}) - {str(sqlite3_error)})"
+            )
 
     @timeit
     def read_cache_records(self, recipe_id: str, connection_id: str) -> list:
