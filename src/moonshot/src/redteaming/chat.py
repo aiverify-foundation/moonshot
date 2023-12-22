@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 import time
 from datetime import datetime
@@ -43,7 +44,7 @@ class ChatMetadata:
         self.db_file = f"{EnvironmentVars.DATABASES}/{self.chat_id}.db"
 
     @classmethod
-    def load_metadata(cls, metadata: tuple) -> Any:
+    def load_metadata(cls, metadata: tuple) -> ChatMetadata:
         """
         Loads the chat metadata and creates an instance of the class using the provided metadata.
         Args:
@@ -55,7 +56,7 @@ class ChatMetadata:
                 - context_strategy (int): The strategy for handling context.
                 - prompt_template (str): The template for generating prompts.
         Returns:
-            class_instance: An instance of the class with the provided metadata.
+            ChatMetadata: An instance of the class with the provided metadata.
         """
         (
             chat_id,
@@ -166,7 +167,7 @@ class Chat:
             self.create_new_chat()
 
     @classmethod
-    def load_chat(cls, chat_id: str) -> Any:
+    def load_chat(cls, chat_id: str) -> Chat:
         """
         Loads an existing chat using the provided chat_id.
 

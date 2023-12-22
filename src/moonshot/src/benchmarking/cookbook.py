@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import glob
 import json
 from pathlib import Path
@@ -9,17 +11,19 @@ from moonshot.src.benchmarking.recipe import run_recipes_with_endpoints
 from moonshot.src.common.env_variables import EnvironmentVars
 
 
+
+
 class Cookbook:
     @classmethod
-    def load_from_json_config(cls, cookbook_config: str) -> Any:
+    def load_from_json_config(cls, cookbook_config: str) -> Cookbook:
         """
-        Load a cookbook from a JSON configuration file.
+        Loads a cookbook from a JSON configuration file.
 
         Args:
             cookbook_config (str): The name of the cookbook configuration.
 
         Returns:
-            Any: An instance of the Cookbook class populated with data from the JSON file.
+            Cookbook: An instance of the Cookbook class populated with data from the JSON file.
         """
         # Construct the file path
         with open(
@@ -78,7 +82,7 @@ def get_all_cookbooks() -> list:
 
 def get_cookbook(cookbook_name: str) -> dict:
     """
-    Retrieve a cookbook based on its name.
+    Retrieves a cookbook based on its name.
 
     Args:
         cookbook_name (str): The name of the cookbook.
@@ -96,15 +100,12 @@ def get_cookbook(cookbook_name: str) -> dict:
 
 def add_new_cookbook(name: str, description: str, recipes: list) -> None:
     """
-    Add a new cookbook with the specified name, description, and recipes.
+    Adds a new cookbook with the specified name, description, and recipes.
 
     Args:
         name (str): The name of the cookbook.
         description (str): A brief description of the cookbook.
         recipes (list): A list of recipes in the cookbook.
-
-    Returns:
-        None
     """
     # Create the cookbook information dictionary
     cookbook_info = {"name": name, "description": description, "recipes": recipes}
@@ -124,7 +125,7 @@ def run_cookbooks_with_endpoints(
 ) -> dict:
     """
     Runs a list of cookbooks using a list of endpoints.
-    This static method allows running a list of cookbooks using a list of endpoints and returns the results
+    This method allows running a list of cookbooks using a list of endpoints and returns the results
     as a dictionary.
 
     Args:

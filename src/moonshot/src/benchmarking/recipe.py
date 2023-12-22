@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import concurrent.futures
 import glob
 import inspect
@@ -23,17 +25,15 @@ from moonshot.src.utils.timeit import timeit
 
 class Recipe:
     @classmethod
-    def load_from_json_config(cls, recipe_config: str) -> Any:
+    def load_from_json_config(cls, recipe_config: str) -> Recipe:
         """
-        Loads an instance of the class from a JSON configuration.
-        This class method allows loading an instance of the class from a JSON configuration stored in a file
-        or a string.
+        Loads a recipe from a JSON configuration file.
 
         Args:
-            recipe_config (str): A JSON configuration representing the instance's parameters.
+            recipe_config (str): The name of the recipe configuration.
 
         Returns:
-            An instance of the class created from the JSON configuration.
+            Recipe: An instance of the Recipe class populated with data from the JSON file.
         """
         with open(f"{EnvironmentVars.RECIPES}/{recipe_config}.json", "r") as json_file:
             file_info = json.load(json_file)
@@ -73,14 +73,11 @@ class Recipe:
 
     def run(self, number_of_prompts: int, cache_info: dict = None) -> None:
         """
-        Run the recipe.
+        Runs the recipe.
 
         Args:
             number_of_prompts (int): The number of prompts from the dataset to generate.
             cache_info (dict): Information about the cache to use that contains previous results (default: None).
-
-        Returns:
-            None
         """
         print(f"🔃 Running recipe ({self.name})... do not close this terminal.")
         print("You can start a new terminal to continue working.")
@@ -164,7 +161,7 @@ class Recipe:
         self, number_of_prompts: int, cache_info: dict = None
     ) -> None:
         """
-        Generate prompts and targets based on the given number of prompts and cache information.
+        Generates prompts and targets based on the given number of prompts and cache information.
 
         Args:
             number_of_prompts (int): The number of prompts to generate.
@@ -269,7 +266,7 @@ class RecipeResult:
         """
         Runs the recipe with the given recipe endpoint.
 
-        Parameters:
+        Args:
             recipe_endpoint (tuple[str, str, int, str]): A tuple containing the recipe, endpoint, number of prompts,
             and the database file.
 
@@ -453,20 +450,17 @@ def add_new_recipe(
 ) -> None:
     """
     Adds a new recipe.
-    This static method allows adding a new recipe with the specified name, description, tags, dataset,
+    This method allows adding a new recipe with the specified name, description, tags, dataset,
     prompt templates, and a list of metrics.
 
     Args:
         name (str): The name or identifier of the new recipe.
         description (str): A brief description of the new recipe, providing information about its
         purpose or content.
-        tags (List[str]): A list of tags to be included in the new recipe.
+        tags (list[str]): A list of tags to be included in the new recipe.
         dataset (str): The dataset to be used.
-        prompt_templates (List[str]): A list of prompt templates to be included in the new recipe.
-        metrics (List[str]): A list of metrics to be included in the new recipe.
-
-    Returns:
-        None: This static method does not return any value.
+        prompt_templates (list[str]): A list of prompt templates to be included in the new recipe.
+        metrics (list[str]): A list of metrics to be included in the new recipe.
     """
     recipe_info = {
         "name": name,

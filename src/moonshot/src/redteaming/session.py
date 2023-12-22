@@ -1,3 +1,4 @@
+from __future__ import annotations
 import glob
 import json
 import time
@@ -39,7 +40,7 @@ class SessionMetadata:
         self.context_strategy = context_strategy
 
     @classmethod
-    def load_metadata(cls, session_id: str) -> Any:
+    def load_metadata(cls, session_id: str) -> SessionMetadata:
         """
         Load an instance of the class from a JSON configuration.
         This class method allows loading an instance of the class from a JSON configuration stored in a file
@@ -49,7 +50,7 @@ class SessionMetadata:
             session_id (str): The target session's ID.
 
         Returns:
-            An instance of the class created from the JSON configuration.
+            SessionMetadata: An instance of the class created from the JSON configuration.
         """
         try:
             with open(
@@ -151,13 +152,13 @@ class Session:
             self.create_new_session()
 
     @classmethod
-    def load_session(cls, session_id: str) -> Any:
+    def load_session(cls, session_id: str) -> Session:
         """
         A class method that loads a session based on a given session ID.
         Args:
             session_id (str): The ID of the session to be loaded.
         Returns:
-            Any: An instance of the class with the specified session ID.
+            Session: An instance of the class with the specified session ID.
         """
         # Trigger loading existing file using session_id
         return cls("", "", [], session_id)
@@ -282,7 +283,7 @@ class Session:
 
 def get_all_sessions() -> list:
     """
-    This static method retrieves a list of available sessions.
+    This method retrieves a list of available sessions.
 
     Returns:
         list: A list of available sessions. Each item in the list represents a session.
@@ -297,7 +298,7 @@ def get_all_sessions() -> list:
 
 def get_all_session_names() -> list:
     """
-    This static method retrieves a list of available session names.
+    This method retrieves a list of available session names.
 
     Returns:
         list: A list of available session names.
@@ -307,7 +308,7 @@ def get_all_session_names() -> list:
 
 def get_sessions(desired_sessions: list) -> list:
     """
-    This static method retrieves a list of desired sessions.
+    This method retrieves a list of desired sessions.
 
     Args:
         desired_sessions (list): A list of session names to retrieve more information on.

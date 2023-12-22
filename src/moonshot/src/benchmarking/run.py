@@ -1,3 +1,4 @@
+from __future__ import annotations
 import glob
 import time
 from datetime import datetime
@@ -59,7 +60,7 @@ class RunMetadata:
         self.results = results
 
     @classmethod
-    def load_metadata(cls, metadata: tuple) -> Any:
+    def load_metadata(cls, metadata: tuple) -> RunMetadata:
         """
         Loads metadata from a tuple and creates a new instance of the class.
 
@@ -80,7 +81,7 @@ class RunMetadata:
                 - results (list): A list of results.
 
         Returns:
-            cls: A new instance of the class with the loaded metadata.
+            RunMetadata: A new instance of the class with the loaded metadata.
         """
         (
             run_id,
@@ -413,7 +414,7 @@ class Run:
 
 def get_all_runs() -> list:
     """
-    This static method retrieves a list of available runs.
+    This method retrieves a list of available runs.
 
     Returns:
         list: A list of available runs. Each item in the list represents a run.
@@ -429,7 +430,7 @@ def get_all_runs() -> list:
 
 def get_runs(desired_runs: list) -> list:
     """
-    This static method retrieves a list of desired runs based on the input.
+    This method retrieves a list of desired runs based on the input.
 
     Args:
         desired_runs: A list desired run names.

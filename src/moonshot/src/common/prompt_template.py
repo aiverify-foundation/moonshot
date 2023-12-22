@@ -22,7 +22,7 @@ def get_prompt_templates() -> list:
 def get_prompt_template_names() -> list:
     """
     Gets a list of prompt template names.
-    This static method retrieves a list of prompt template names available.
+    This method retrieves a list of prompt template names available.
 
     Returns:
         list: A list of prompt template names.

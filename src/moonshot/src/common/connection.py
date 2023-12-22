@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import datetime
 import glob
@@ -21,7 +22,7 @@ from moonshot.src.utils.import_modules import (
 
 class Connection:
     @classmethod
-    def load_from_json_config(cls, endpoint_config: str) -> Any:
+    def load_from_json_config(cls, endpoint_config: str) -> Connection:
         """
         Loads an instance of the class from a JSON configuration.
         This class method allows loading an instance of the class from a JSON configuration stored in a file
@@ -31,7 +32,7 @@ class Connection:
             endpoint_config (str): A JSON configuration representing the instance's parameters.
 
         Returns:
-            An instance of the class created from the JSON configuration.
+            Connection: An instance of the class created from the JSON configuration.
         """
         # Construct the file path
         with open(
