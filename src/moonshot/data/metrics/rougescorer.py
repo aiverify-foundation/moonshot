@@ -64,7 +64,7 @@ class RougeScore:
                         "p": scores[test_metric].precision,
                         "f": scores[test_metric].fmeasure,
                     }
-                    individual_scores.append(test_metrics_dict)
+                individual_scores.append(test_metrics_dict)
 
             # Add individual scores to the output dictionary
             output_dict["rouge-scores"] = individual_scores

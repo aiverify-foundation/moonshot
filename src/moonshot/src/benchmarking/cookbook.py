@@ -49,7 +49,7 @@ class Cookbook:
             num_of_prompts (int): The number of prompts to use when running the recipes.
             db_file (str): The path to the database file to write the results to.
         """
-        print(f"🔃Running cookbook ({self.name})... do not close this terminal.")
+        print(f"🔃 Running cookbook ({self.name})... do not close this terminal.")
         print("You can start a new terminal to continue working.")
 
         # Run the recipes with the defined endpoints

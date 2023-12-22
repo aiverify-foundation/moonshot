@@ -82,7 +82,7 @@ class Recipe:
         Returns:
             None
         """
-        print(f"🔃Running recipe ({self.name})... do not close this terminal.")
+        print(f"🔃 Running recipe ({self.name})... do not close this terminal.")
         print("You can start a new terminal to continue working.")
 
         # Load dataset information
