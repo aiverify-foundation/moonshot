@@ -887,6 +887,19 @@ class RedTeamingCommandSet(cmd2.CommandSet):
                 f"Context Strategy: {Session.current_session.get_session_context_strategy()}."
             )
 
+    def do_clear_context_strategy(self, _: cmd2.Statement) -> None:
+        """
+        Resets the context in a session.
+        """
+
+        # Check if current session exists
+        if Session.current_session:
+            Session.current_session.set_context_strategy(0)
+            self._cmd.poutput(
+                f"Updated session: {Session.current_session.get_session_id()}. "
+                f"Context Strategy: {Session.current_session.get_session_context_strategy()}."
+            )
+
     @with_argparser(CommandLineInterface.use_prompt_template_parser)
     def do_use_prompt_template(self, args: argparse.Namespace) -> None:
         """
@@ -897,6 +910,19 @@ class RedTeamingCommandSet(cmd2.CommandSet):
         # Check if current session exists
         if Session.current_session:
             Session.current_session.set_prompt_template(new_prompt_template_name)
+            self._cmd.poutput(
+                f"Updated session: {Session.current_session.get_session_id()}. "
+                f"Prompt Template: {Session.current_session.get_session_prompt_template()}."
+            )
+
+    def do_clear_prompt_template(self, _: cmd2.Statement) -> None:
+        """
+        Resets the prompt template in a session.
+        """
+
+        # Check if current session exists
+        if Session.current_session:
+            Session.current_session.set_prompt_template()
             self._cmd.poutput(
                 f"Updated session: {Session.current_session.get_session_id()}. "
                 f"Prompt Template: {Session.current_session.get_session_prompt_template()}."

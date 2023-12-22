@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import glob
 import json
 import time
@@ -204,7 +205,7 @@ class Session:
         # Save session metadata
         self.metadata.create_metadata_file()
 
-    def set_prompt_template(self, new_prompt_template: str) -> None:
+    def set_prompt_template(self, new_prompt_template: str = "") -> None:
         """
         Sets the prompt template for this session and the chats in this session.
 

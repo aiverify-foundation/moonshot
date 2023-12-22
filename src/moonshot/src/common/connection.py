@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import asyncio
 import datetime
 import glob
@@ -115,7 +116,7 @@ class Connection:
 def get_connection_types() -> list:
     """
     Gets a list of available Language Model (LLM) connection types.
-    This static method retrieves a list of available LLM connection types,
+    This method retrieves a list of available LLM connection types,
     which can be used to identify and configure connections to different LLM
     models or services.
 
@@ -132,7 +133,7 @@ def get_connection_types() -> list:
 def get_endpoints() -> list:
     """
     Gets a list of Language Model (LLM) endpoints.
-    This static method retrieves a list of available Language Model (LLM) endpoints.
+    This method retrieves a list of available Language Model (LLM) endpoints.
 
     Returns:
         list: A list of LLM endpoints, where each endpoint is represented as a dictionary or an object.
@@ -158,7 +159,7 @@ def get_endpoints() -> list:
 def get_endpoint_names() -> list:
     """
     Gets a list of Language Model (LLM) endpoint names.
-    This static method retrieves a list of available Language Model (LLM) endpoint names.
+    This method retrieves a list of available Language Model (LLM) endpoint names.
 
     Returns:
         list: A list of LLM endpoint names.
@@ -284,7 +285,7 @@ def add_new_endpoint(
 ) -> None:
     """
     Adds an endpoint for a Language Model (LLM) connector.
-    This static method allows adding an endpoint for a Language Model (LLM) connector. The endpoint is identified by
+    This method allows adding an endpoint for a Language Model (LLM) connector. The endpoint is identified by
     its name and associated with the specified connector type. It requires the URI and access token for the
     LLM connector's API.
 
