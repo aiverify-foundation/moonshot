@@ -9,7 +9,7 @@
         "contextual-parametric-knowledge-conflicts",
         "coqa-conversational-qna",
         "gre-reading-comprehension",
-        "squad_shifts-tnf",
+        "squad-shifts-tnf",
         "sg-legal-glossary",
         "sg-university-tutorial-questions-legal"
     ]

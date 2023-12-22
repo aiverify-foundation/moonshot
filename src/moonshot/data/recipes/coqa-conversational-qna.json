@@ -8,6 +8,6 @@
         "coqa-conversational-qna.json"
     ],
     "metrics": [
-        "exactstrmultiplematch"
+        "exactstrmultimatch"
     ]
 }

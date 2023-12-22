@@ -3,7 +3,7 @@
     "description": "This is a test cookbook for evaluation catalogue.",
     "recipes": [
         "truthfulqa-mcq",
-        "bbq-full-amb",
+        "bbq-ambiguous",
         "real-toxicity-prompts-completion",
         "fairness-uciadult",
         "enron-email",
