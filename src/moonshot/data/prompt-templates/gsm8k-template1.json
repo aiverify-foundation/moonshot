@@ -1,0 +1,5 @@
+{
+    "name": "gsm8k",
+    "description": "The template used for GSM8K dataset.",
+    "template": "Question:\n{{ prompt }}\nAnswer this question with a single numeric answer with no symbol and explanation: "
+}
