@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import glob
 import time
 from datetime import datetime
@@ -158,22 +159,19 @@ class RunMetadata:
                  - "results": The results of the run.
         """
         return {
-            attr: getattr(self, attr)
-            for attr in [
-                "run_id",
-                "run_type",
-                "arguments",
-                "start_time",
-                "end_time",
-                "duration",
-                "db_file",
-                "filepath",
-                "recipes",
-                "cookbooks",
-                "endpoints",
-                "num_of_prompts",
-                "results",
-            ]
+            "run_id": self.run_id,
+            "run_type": self.run_type,
+            "arguments": self.arguments,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "duration": self.duration,
+            "db_file": self.db_file,
+            "filepath": self.filepath,
+            "recipes": self.recipes,
+            "cookbooks": self.cookbooks,
+            "endpoints": self.endpoints,
+            "num_of_prompts": self.num_of_prompts,
+            "results": self.results,
         }
 
     def get_tuple(self) -> tuple:
