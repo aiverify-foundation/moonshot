@@ -291,88 +291,99 @@ class RecipeResult:
             f"[RecipeResult - Run] Load database and cache records took {(time.perf_counter() - start_time):.4f}s"
         )
 
-        # Generate and query the model with recipe prompts (with/without pre- / post-prompts)
-        start_time = time.perf_counter()
-        recipe_instance.run(number_of_prompts, cache_records)
-        print(
-            f"[RecipeResult - Run] Generating recipe prompts took {(time.perf_counter() - start_time):.4f}s "
-            f"for {len(recipe_instance.generated_prompts_info)} prompts."
-        )
-
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=multiprocessing.cpu_count()
-        ) as executor:
-            # Get predictions
+        try:
+            # Generate and query the model with recipe prompts (with/without pre- / post-prompts)
             start_time = time.perf_counter()
-            updated_prompt_template_list = []
-            futures = {
-                executor.submit(
-                    get_predictions,
-                    prompt_template_info,
-                    conn_instance,
-                    partial(
-                        db_instance.append_cache_records, recipe, prompt_template_name
-                    ),
-                ): index
-                for index, (prompt_template_name, prompt_template_info) in enumerate(
-                    recipe_instance.generated_prompts_info.items(), 0
-                )
-            }
-            for future in concurrent.futures.as_completed(futures):
-                index = futures[future]
-                updated_prompt_template_list.append((index, future.result()))
-
-            # Sort prompt_template_list by index
-            updated_prompt_template_list.sort(key=lambda x: x[0])
+            recipe_instance.run(number_of_prompts, cache_records)
             print(
-                f"[RecipeResult - Run] Querying predictions took {(time.perf_counter() - start_time):.4f}s"
+                f"[RecipeResult - Run] Generating recipe prompts took {(time.perf_counter() - start_time):.4f}s "
+                f"for {len(recipe_instance.generated_prompts_info)} prompts."
             )
 
-            # Get metrics
-            start_time = time.perf_counter()
-            for index, updated_prompt_template_info in updated_prompt_template_list:
-                # Get dictionary name using index
-                prompt_template_name = list(
-                    recipe_instance.generated_prompts_info.keys()
-                )[index]
-
-                # Combine output_responses and targets
-                metrics_output_responses = [
-                    prompt_info["predicted_result"]
-                    for prompt_info in updated_prompt_template_info
-                ]
-                metrics_output_targets = [
-                    prompt_info["target"]
-                    for prompt_info in updated_prompt_template_info
-                ]
-
-                # Get metrics output for this prompt template
-                metrics_result = []
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=multiprocessing.cpu_count()
+            ) as executor:
+                # Get predictions
+                start_time = time.perf_counter()
+                updated_prompt_template_list = []
                 futures = {
                     executor.submit(
-                        metric.get_results,
-                        metrics_output_responses,
-                        metrics_output_targets,
-                    )
-                    for metric in recipe_instance.metrics_instances
+                        get_predictions,
+                        prompt_template_info,
+                        conn_instance,
+                        partial(
+                            db_instance.append_cache_records,
+                            recipe,
+                            prompt_template_name,
+                        ),
+                    ): index
+                    for index, (
+                        prompt_template_name,
+                        prompt_template_info,
+                    ) in enumerate(recipe_instance.generated_prompts_info.items(), 0)
                 }
                 for future in concurrent.futures.as_completed(futures):
-                    metrics_result.append(future.result())
+                    index = futures[future]
+                    updated_prompt_template_list.append((index, future.result()))
 
-                # Update the results for this prompt template
-                recipe_instance.generated_prompts_info[prompt_template_name] = {
-                    "data": updated_prompt_template_info,
-                    "results": metrics_result,
-                }
-            print(
-                f"[RecipeResult - Run] Calculate metrics took {(time.perf_counter() - start_time):.4f}s"
-            )
+                # Sort prompt_template_list by index
+                updated_prompt_template_list.sort(key=lambda x: x[0])
+                print(
+                    f"[RecipeResult - Run] Querying predictions took {(time.perf_counter() - start_time):.4f}s"
+                )
 
-        # Write cache records and close connection
-        db_instance.write_cache_records()
-        db_instance.close_connection()
+                # Get metrics
+                start_time = time.perf_counter()
+                for index, updated_prompt_template_info in updated_prompt_template_list:
+                    # Get dictionary name using index
+                    prompt_template_name = list(
+                        recipe_instance.generated_prompts_info.keys()
+                    )[index]
 
-        return recipe, endpoint, recipe_instance.generated_prompts_info
+                    # Combine output_responses and targets
+                    metrics_output_responses = [
+                        prompt_info["predicted_result"]
+                        for prompt_info in updated_prompt_template_info
+                    ]
+                    metrics_output_targets = [
+                        prompt_info["target"]
+                        for prompt_info in updated_prompt_template_info
+                    ]
+
+                    # Get metrics output for this prompt template
+                    metrics_result = []
+                    futures = {
+                        executor.submit(
+                            metric.get_results,
+                            metrics_output_responses,
+                            metrics_output_targets,
+                        )
+                        for metric in recipe_instance.metrics_instances
+                    }
+                    for future in concurrent.futures.as_completed(futures):
+                        metrics_result.append(future.result())
+
+                    # Update the results for this prompt template
+                    recipe_instance.generated_prompts_info[prompt_template_name] = {
+                        "data": updated_prompt_template_info,
+                        "results": metrics_result,
+                    }
+                print(
+                    f"[RecipeResult - Run] Calculate metrics took {(time.perf_counter() - start_time):.4f}s"
+                )
+
+            # Write cache records and close connection
+            db_instance.write_cache_records()
+            db_instance.close_connection()
+
+            return recipe, endpoint, recipe_instance.generated_prompts_info
+
+        except Exception as exception:
+            # Write cache records and close connection
+            db_instance.write_cache_records()
+            db_instance.close_connection()
+
+            raise exception
 
     @staticmethod
     @timeit
