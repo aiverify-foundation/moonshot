@@ -19,18 +19,6 @@ class Database:
         self.db_file = db_file
         self.cache_records = []
 
-    def __del__(self):
-        """
-        Cleans up the object by writing cache records and closing the database connection.
-
-        This method is automatically called when the object is destroyed.
-        """
-        # Write cache records
-        self.write_cache_records()
-
-        # Close database connection
-        self.close_connection()
-
     def create_connection(self) -> None:
         """
         Creates a connection to the database.
