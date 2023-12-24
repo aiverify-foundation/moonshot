@@ -101,20 +101,25 @@ class RunMetadata:
         ) = metadata
 
         # Recover their types
-        arguments, recipes, cookbooks, endpoints = map(
-            eval, [arguments, recipes, cookbooks, endpoints]
-        )
+        run_type = RunTypes[run_type]
+        arguments = eval(arguments)
+        if recipes:
+            recipes = eval(recipes)
+        if cookbooks:
+            cookbooks = eval(cookbooks)
+        endpoints = eval(endpoints)
+
         return cls(
             run_id,
-            RunTypes[run_type],
+            run_type,
             arguments,
             start_time,
             end_time,
             duration,
             db_file,
             filepath,
-            recipes if recipes else None,
-            cookbooks if cookbooks else None,
+            recipes,
+            cookbooks,
             endpoints,
             num_of_prompts,
             results,
