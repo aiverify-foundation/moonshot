@@ -343,7 +343,7 @@ class BenchmarkingCommandSet(cmd2.CommandSet):
     ) -> None:
         table = Table("", "Recipe", *endpoints)
         for recipe_index, recipe in enumerate(recipes, 1):
-            endpoint_results = list()
+            endpoint_results = []
             for endpoint in endpoints:
                 # Extract only the results of each prompt template
                 tmp_results = {
@@ -362,14 +362,14 @@ class BenchmarkingCommandSet(cmd2.CommandSet):
         table = Table("", "Cookbook", "Recipe", *endpoints)
         for cookbook_name, cookbook_results in results.items():
             # Get recipe name list
-            recipes = list()
+            recipes = []
             for recipe_endpoint, _ in cookbook_results.items():
                 recipe_name, _ = recipe_endpoint.split("_")
                 if recipe_name not in recipes:
                     recipes.append(recipe_name)
 
             for recipe_index, recipe in enumerate(recipes, 1):
-                endpoint_results = list()
+                endpoint_results = []
                 for endpoint in endpoints:
                     # Extract only the results of each prompt template
                     tmp_results = {
@@ -697,7 +697,7 @@ class BenchmarkingCommandSet(cmd2.CommandSet):
 
         if args.results_filename.startswith("cookbook"):
             # find out the endpoints first
-            endpoints = list()
+            endpoints = []
             for cookbook_name, cookbook_results in results.items():
                 for recipe_endpoint, _ in cookbook_results.items():
                     _, endpoint_name = recipe_endpoint.split("_")
@@ -709,8 +709,8 @@ class BenchmarkingCommandSet(cmd2.CommandSet):
 
         elif args.results_filename.startswith("recipe"):
             # find out the endpoints and recipes first
-            endpoints = list()
-            recipes = list()
+            endpoints = []
+            recipes = []
             for recipe_endpoint, recipe_endpoint_data in results.items():
                 recipe_name, endpoint_name = recipe_endpoint.split("_")
                 if recipe_name not in recipes:
@@ -756,7 +756,7 @@ class RedTeamingCommandSet(cmd2.CommandSet):
                 table.add_column(chat.get_id(), justify="center")
 
             # Check if you need to display any prior prompts
-            table_list = list()
+            table_list = []
             for session_previous_prompt in session_previous_prompts:
                 # table
                 new_table = Table(expand=True)
@@ -887,6 +887,19 @@ class RedTeamingCommandSet(cmd2.CommandSet):
                 f"Context Strategy: {Session.current_session.get_session_context_strategy()}."
             )
 
+    def do_clear_context_strategy(self, _: cmd2.Statement) -> None:
+        """
+        Resets the context in a session.
+        """
+
+        # Check if current session exists
+        if Session.current_session:
+            Session.current_session.set_context_strategy(0)
+            self._cmd.poutput(
+                f"Updated session: {Session.current_session.get_session_id()}. "
+                f"Context Strategy: {Session.current_session.get_session_context_strategy()}."
+            )
+
     @with_argparser(CommandLineInterface.use_prompt_template_parser)
     def do_use_prompt_template(self, args: argparse.Namespace) -> None:
         """
@@ -897,6 +910,19 @@ class RedTeamingCommandSet(cmd2.CommandSet):
         # Check if current session exists
         if Session.current_session:
             Session.current_session.set_prompt_template(new_prompt_template_name)
+            self._cmd.poutput(
+                f"Updated session: {Session.current_session.get_session_id()}. "
+                f"Prompt Template: {Session.current_session.get_session_prompt_template()}."
+            )
+
+    def do_clear_prompt_template(self, _: cmd2.Statement) -> None:
+        """
+        Resets the prompt template in a session.
+        """
+
+        # Check if current session exists
+        if Session.current_session:
+            Session.current_session.set_prompt_template()
             self._cmd.poutput(
                 f"Updated session: {Session.current_session.get_session_id()}. "
                 f"Prompt Template: {Session.current_session.get_session_prompt_template()}."

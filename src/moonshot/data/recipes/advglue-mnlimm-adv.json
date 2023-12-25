@@ -1,8 +1,14 @@
 {
-	"name": "AdvGLUE-MNLIMM-ADV", 
-	"description": "Adversarially perturned. MNLI consists is a crowd-sourced collection of sentence pairs with textual entailment annotations. Given a premise sentence and a hypothesis sentence, the task is to predict whether the premise entails the hypothesis.", 
-	"tags": ["robustness"], 
-	"dataset": "advglue-mnlimm-adv.json", 
-	"prompt_templates": ["advglue-templatemnli.json"], 
-	"metrics": ["exactstrmatch"]
+    "name": "AdvGLUE-MNLIMM-ADV",
+    "description": "Adversarially perturned. MNLI consists is a crowd-sourced collection of sentence pairs with textual entailment annotations. Given a premise sentence and a hypothesis sentence, the task is to predict whether the premise entails the hypothesis.",
+    "tags": [
+        "robustness"
+    ],
+    "dataset": "advglue-mnlimm-adv.json",
+    "prompt_templates": [
+        "advglue-templatemnli.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
 }

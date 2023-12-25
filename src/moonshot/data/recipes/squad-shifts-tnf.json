@@ -5,7 +5,7 @@
     ],
     "dataset": "squad-shifts-tnf.json",
     "prompt_templates": [
-        "squad-shifts-tnf.json"
+        "squad-shifts.json"
     ],
     "metrics": [
         "exactstrmatch"

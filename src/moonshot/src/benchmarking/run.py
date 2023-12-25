@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import glob
 import time
 from datetime import datetime
@@ -59,7 +61,7 @@ class RunMetadata:
         self.results = results
 
     @classmethod
-    def load_metadata(cls, metadata: tuple) -> Any:
+    def load_metadata(cls, metadata: tuple) -> RunMetadata:
         """
         Loads metadata from a tuple and creates a new instance of the class.
 
@@ -80,7 +82,7 @@ class RunMetadata:
                 - results (list): A list of results.
 
         Returns:
-            cls: A new instance of the class with the loaded metadata.
+            RunMetadata: A new instance of the class with the loaded metadata.
         """
         (
             run_id,
@@ -124,17 +126,13 @@ class RunMetadata:
         )
 
     def create_metadata_in_database(self) -> None:
-        """
-        Creates metadata records in the database.
-        """
+        # Create metadata records in the database.
         self.db_instance.create_metadata_records(
             sql_create_run_metadata_records, self.get_tuple()
         )
 
     def update_metadata_in_database(self) -> None:
-        """
-        Updates the metadata in the database with the end time, duration, results and run_id.
-        """
+        # Update metadata records in the database.
         self.db_instance.update_metadata_records(
             sql_update_run_metadata_records,
             (
@@ -219,68 +217,68 @@ class RunMetadata:
 
 
 class Run:
-    def __init__(self, run_type: RunTypes, arguments: dict, run_id: str = ""):
+    def __init__(
+        self,
+        run_type: RunTypes,
+        arguments: dict,
+        run_id: str = "",
+        create_based_on_run_id: bool = False,
+    ):
         if run_id:
-            # There is an existing run id
-            run_db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
-            if Path(run_db_file).exists():
-                # Load the db instance
-                db_instance = Database(run_db_file)
+            db_file = f"{EnvironmentVars.DATABASES}/{run_id}.db"
+            if Path(db_file).exists():
+                db_instance = Database(db_file)
                 db_instance.create_connection()
-
-                # Load the metadata by reading the info from the db
                 self.run_metadata = RunMetadata.load_metadata(
                     db_instance.read_metadata_records(
                         sql_read_run_metadata_records, run_id
                     )
                 )
-
-                # Update metadata with the db instance
                 self.run_metadata.db_instance = db_instance
-            else:
+                return
+            elif not create_based_on_run_id:
                 raise RuntimeError("Invalid run id")
 
+        start_time = time.time()
+        datetime_now = datetime.fromtimestamp(start_time)
+        formatted_date = datetime_now.strftime("%Y%m%d-%H%M%S")
+
+        if run_type is RunTypes.RECIPE:
+            run_id = run_id or f"recipe-{formatted_date}"
+            self.run_metadata = RunMetadata(
+                run_id,
+                run_type,
+                arguments,
+                start_time,
+                start_time,
+                0.0,
+                f"{EnvironmentVars.DATABASES}/{run_id}.db",
+                f"{EnvironmentVars.RESULTS}/{run_id}.json",
+                arguments["recipes"],
+                "",
+                arguments["endpoints"],
+                arguments["num_of_prompts"],
+                "",
+            )
+        elif run_type is RunTypes.COOKBOOK:
+            run_id = run_id or f"cookbook-{formatted_date}"
+            self.run_metadata = RunMetadata(
+                run_id,
+                run_type,
+                arguments,
+                start_time,
+                start_time,
+                0.0,
+                f"{EnvironmentVars.DATABASES}/{run_id}.db",
+                f"{EnvironmentVars.RESULTS}/{run_id}.json",
+                "",
+                arguments["cookbooks"],
+                arguments["endpoints"],
+                arguments["num_of_prompts"],
+                "",
+            )
         else:
-            # Create a new run
-            start_time = time.time()
-            datetime_now = datetime.fromtimestamp(start_time)
-            formatted_date = datetime_now.strftime("%Y%m%d-%H%M%S")
-            if run_type is RunTypes.RECIPE:
-                run_id = f"recipe-{formatted_date}"
-                self.run_metadata = RunMetadata(
-                    run_id,
-                    run_type,
-                    arguments,
-                    start_time,
-                    start_time,
-                    0.0,
-                    f"{EnvironmentVars.DATABASES}/{run_id}.db",
-                    f"{EnvironmentVars.RESULTS}/{run_id}.json",
-                    arguments["recipes"],
-                    "",
-                    arguments["endpoints"],
-                    arguments["num_of_prompts"],
-                    "",
-                )
-            elif run_type is RunTypes.COOKBOOK:
-                run_id = f"cookbook-{formatted_date}"
-                self.run_metadata = RunMetadata(
-                    run_id,
-                    run_type,
-                    arguments,
-                    start_time,
-                    start_time,
-                    0.0,
-                    f"{EnvironmentVars.DATABASES}/{run_id}.db",
-                    f"{EnvironmentVars.RESULTS}/{run_id}.json",
-                    "",
-                    arguments["cookbooks"],
-                    arguments["endpoints"],
-                    arguments["num_of_prompts"],
-                    "",
-                )
-            else:
-                raise RuntimeError("Invalid run types")
+            raise RuntimeError("Invalid run types")
 
     @classmethod
     def load_run(cls, run_id: str) -> Any:
@@ -305,11 +303,15 @@ class Run:
             str: A string containing the time taken to run the function.
 
         Example:
-            ================================
+            ========================================
             Time taken to run: 0.123s
-            ================================
+            ========================================
         """
-        return f"{'=' * 100}\nTime taken to run: {self.run_metadata.duration}s\n{'=' * 100}"
+        return (
+            "=" * 39
+            + "\nTime taken to run: {}s\n".format(self.run_metadata.duration)
+            + "=" * 39
+        )
 
     def create_run(self) -> dict:
         """
@@ -415,14 +417,14 @@ class Run:
 
 def get_all_runs() -> list:
     """
-    This static method retrieves a list of available runs.
+    This method retrieves a list of available runs.
 
     Returns:
         list: A list of available runs. Each item in the list represents a run.
     """
     filepaths = [
         Path(fp).stem
-        for fp in glob.glob(f"{EnvironmentVars.DATABASES}/*.db")
+        for fp in glob.iglob(f"{EnvironmentVars.DATABASES}/*.db")
         if "__" not in fp
         and (Path(fp).stem.startswith("cookbook") or Path(fp).stem.startswith("recipe"))
     ]
@@ -431,7 +433,7 @@ def get_all_runs() -> list:
 
 def get_runs(desired_runs: list) -> list:
     """
-    This static method retrieves a list of desired runs based on the input.
+    This method retrieves a list of desired runs based on the input.
 
     Args:
         desired_runs: A list desired run names.
@@ -439,7 +441,7 @@ def get_runs(desired_runs: list) -> list:
     Returns:
         list: A list of desired runs, where each run is represented as a dictionary or an object.
     """
-    return_list = list()
+    return_list = []
     for run_name in desired_runs:
         run_filename = slugify(run_name)
         run_db_file = f"{EnvironmentVars.DATABASES}/{run_filename}.db"

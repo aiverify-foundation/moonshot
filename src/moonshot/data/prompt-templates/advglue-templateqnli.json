@@ -1,5 +1,5 @@
 {
-	"name": "advglue-templateqnli",
-	"description": "The QNLI dataset is used for a sentence pair classification task. The task is to determine whether the context sentence contains the answer to the question.",
-	"template": "\"{{ prompt }}\" Please identify whether the sentence answers the question. The answer should be exactly 'yes' or 'no', without capitalization."
+    "name": "advglue-templateqnli",
+    "description": "The QNLI dataset is used for a sentence pair classification task. The task is to determine whether the context sentence contains the answer to the question.",
+    "template": "\"{{ prompt }}\" Please identify whether the sentence answers the question. The answer should be exactly 'yes' or 'no', without capitalization."
 }

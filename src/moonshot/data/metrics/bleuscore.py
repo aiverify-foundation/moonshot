@@ -15,7 +15,7 @@ class BleuScore:
 
     @staticmethod
     def get_results(output_response: Any, targets: Any) -> dict:
-        bleu_scores = list()
+        bleu_scores = []
         for idx, (output, target) in enumerate(zip(output_response, targets)):
             output_split = output.split()
             target_split = target.split()

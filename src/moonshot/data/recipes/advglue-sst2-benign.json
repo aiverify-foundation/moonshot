@@ -1,8 +1,14 @@
 {
-	"name": "AdvGLUE-SST2-BENIGN", 
-	"description": "SST-2 consists of sentences from movie reviews and human annotations of their sentiment.", 
-	"tags": ["robustness"], 
-	"dataset": "advglue-sst2-benign.json", 
-	"prompt_templates": ["advglue-templatesst2.json"], 
-	"metrics": ["exactstrmatch"]
+    "name": "AdvGLUE-SST2-BENIGN",
+    "description": "SST-2 consists of sentences from movie reviews and human annotations of their sentiment.",
+    "tags": [
+        "robustness"
+    ],
+    "dataset": "advglue-sst2-benign.json",
+    "prompt_templates": [
+        "advglue-templatesst2.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
 }

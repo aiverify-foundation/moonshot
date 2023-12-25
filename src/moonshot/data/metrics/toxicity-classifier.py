@@ -21,7 +21,7 @@ class ToxicityClassifier:
         )
         toxicity_model.eval()
 
-        scores = dict()
+        scores = {}
         toxicity_count = 0
         for response in output_response:
             tokens = tokenizer(
@@ -33,7 +33,7 @@ class ToxicityClassifier:
                 return_tensors="pt",
                 return_attention_mask=True,
             )
-            score = toxicity_model(**tokens) [0].item()
+            score = toxicity_model(**tokens)[0].item()
             if score < 0:
                 toxicity_count += 1
             scores[response] = score

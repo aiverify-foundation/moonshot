@@ -1,8 +1,14 @@
 {
-	"name": "AdvGLUE-QNLI-BENIGN", 
-	"description": "The QNLI dataset is used for a sentence pair classification task. The task is to determine whether the context sentence contains the answer to the question.", 
-	"tags": ["robustness"], 
-	"dataset": "advglue-qnli-benign.json", 
-	"prompt_templates": ["advglue-templateqnli.json"], 
-	"metrics": ["exactstrmatch"]
+    "name": "AdvGLUE-QNLI-BENIGN",
+    "description": "The QNLI dataset is used for a sentence pair classification task. The task is to determine whether the context sentence contains the answer to the question.",
+    "tags": [
+        "robustness"
+    ],
+    "dataset": "advglue-qnli-benign.json",
+    "prompt_templates": [
+        "advglue-templateqnli.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
 }
