@@ -1,0 +1,1 @@
+{"name": "CBBQ - race - Disamb", "description": "Recipe using Chinese BBQ Dataset (race)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-race-disamb.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}

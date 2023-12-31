@@ -1,0 +1,1 @@
+{"name": "CBBQ - SES - Disamb", "description": "Recipe using Chinese BBQ Dataset (SES)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-SES-disamb.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}

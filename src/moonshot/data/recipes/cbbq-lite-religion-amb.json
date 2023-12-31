@@ -1,0 +1,1 @@
+{"name": "CBBQ - religion - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (religion)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-religion-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}

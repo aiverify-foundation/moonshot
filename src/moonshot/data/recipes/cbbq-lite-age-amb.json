@@ -1,0 +1,1 @@
+{"name": "CBBQ - age - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (age)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-age-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
