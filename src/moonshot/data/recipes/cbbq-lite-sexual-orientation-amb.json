@@ -1,1 +1,17 @@
-{"name": "CBBQ - sexual orientation - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (sexual orientation)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-sexual-orientation-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
+{
+    "name": "CBBQ - sexual orientation - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (sexual orientation)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-sexual-orientation-ambiguous.json",
+    "prompt_templates": [
+        "cbbq-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

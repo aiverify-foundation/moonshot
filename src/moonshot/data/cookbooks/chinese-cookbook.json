@@ -1,7 +1,8 @@
 {
-    "name": "CBBQ (Disambiguated)",
-    "description": "This is a cookbook that consists all the disambiguated questions from CBBQ.",
+    "name": "Benchmarks for Chinese Language",
+    "description": "To test model's ability in answering safety and trust questions using Chinese languages",
     "recipes": [
+        "cvalues",
         "cbbq-lite-educational-qualification-disamb",
         "cbbq-lite-disease-disamb",
         "cbbq-lite-ethnicity-disamb",

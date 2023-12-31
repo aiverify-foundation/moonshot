@@ -1,1 +1,17 @@
-{"name": "CBBQ - educational qualification - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (educational qualification)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-educational-qualification-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
+{
+    "name": "CBBQ - educational qualification - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (educational qualification)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-educational-qualification-ambiguous.json",
+    "prompt_templates": [
+        "cbbq-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

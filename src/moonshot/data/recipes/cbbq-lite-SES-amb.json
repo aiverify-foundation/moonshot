@@ -1,1 +1,17 @@
-{"name": "CBBQ - SES - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (SES)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-SES-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
+{
+    "name": "CBBQ - SES - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (SES)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-SES-ambiguous.json",
+    "prompt_templates": [
+        "cbbq-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

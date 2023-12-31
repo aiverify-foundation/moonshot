@@ -1,1 +1,17 @@
-{"name": "CBBQ - physical appearance - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (physical appearance)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-physical-appearance-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
+{
+    "name": "CBBQ - physical appearance - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (physical appearance)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-physical-appearance-ambiguous.json",
+    "prompt_templates": [
+        "cbbq-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

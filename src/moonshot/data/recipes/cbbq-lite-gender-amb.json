@@ -1,1 +1,17 @@
-{"name": "CBBQ - gender - Ambiguous", "description": "Recipe using Chinese BBQ Dataset (gender)", "tags": ["bias for benchmark", "bias", "fairness", "chinese"], "dataset": "cbbq-lite-gender-ambiguous.json", "prompt_templates": ["cbbq-template.json"], "metrics": ["exactstrmatch"]}
+{
+    "name": "CBBQ - gender - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (gender)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-gender-ambiguous.json",
+    "prompt_templates": [
+        "cbbq-template.json"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}
