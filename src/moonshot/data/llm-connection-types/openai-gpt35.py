@@ -1,5 +1,11 @@
+import logging
+from asyncio import sleep
+
 import openai
 from openai.openai_object import OpenAIObject
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class OpenAIGpt35:
@@ -10,7 +16,58 @@ class OpenAIGpt35:
         self._pre_prompt = ""
         self._post_prompt = ""
 
+        # Allow timeout
+        if "timeout" in api_params:
+            self._api_timeout = api_params["timeout"]
+        else:
+            self._api_timeout = 600  # Default 600s
+
+        # Allow retries
+        if "allow_retries" in api_params:
+            self._api_allow_retries = api_params["allow_retries"]
+        else:
+            self._api_allow_retries = True
+
+        # Number of retries
+        if "num_of_retries" in api_params:
+            self._api_retries_times = api_params["num_of_retries"]
+        else:
+            self._api_retries_times = 3
+
     async def get_response(self, prompt: str) -> str:
+        """
+        Retrieve and return a response.
+        This method is used to retrieve a response, typically from an object or service represented by
+        the current instance.
+        """
+        if self._api_allow_retries:
+            retry_count = 0
+            base_delay = 1
+            while retry_count <= self._api_retries_times:
+                # Perform the request
+                try:
+                    if prompt_output := await self._get_response_helper(prompt):
+                        return prompt_output
+                except Exception as exc:
+                    logger.warning(f"Operation failed. {str(exc)} - Retrying...")
+
+                # Perform retry
+                retry_count += 1
+                if retry_count <= self._api_retries_times:
+                    delay = base_delay * (2**retry_count)
+                    logger.info(
+                        f"Attempt {retry_count}, Retrying in {delay} seconds..."
+                    )
+                    await sleep(delay)
+
+            # Raise an exception
+            raise Exception("Max retries exceeded.")
+
+        else:
+            # Does not allow retries.
+            return await self._get_response_helper(prompt)
+
+    async def _get_response_helper(self, prompt: str) -> str:
         """
         Retrieve and return a response.
         This method is used to retrieve a response, typically from an object or service represented by
@@ -25,7 +82,10 @@ class OpenAIGpt35:
         connector_prompt = f"{self._pre_prompt}{prompt}{self._post_prompt}"
         openai_request = [{"role": "user", "content": connector_prompt}]
         response = await openai.ChatCompletion.acreate(
-            model="gpt-3.5-turbo", messages=openai_request, temperature=0
+            model="gpt-3.5-turbo",
+            messages=openai_request,
+            temperature=0,
+            timeout=self._api_timeout,
         )
         return await self._process_response(response)
 

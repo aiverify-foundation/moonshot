@@ -5,5 +5,9 @@
     "token": "",
     "max_calls_per_second": 100,
     "max_concurrency": 100,
-    "params": {}
+    "params": {
+        "timeout": 600,
+        "allow_retries": true,
+        "num_of_retries": 3
+    }
 }
