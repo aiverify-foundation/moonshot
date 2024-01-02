@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - disease - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (disease)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-disease-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

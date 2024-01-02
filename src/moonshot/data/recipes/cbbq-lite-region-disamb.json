@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - region - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (region)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-region-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

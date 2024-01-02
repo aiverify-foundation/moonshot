@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - household registration - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (household registration)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-household-registration-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

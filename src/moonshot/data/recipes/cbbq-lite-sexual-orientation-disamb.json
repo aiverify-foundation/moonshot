@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - sexual orientation - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (sexual orientation)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-sexual-orientation-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

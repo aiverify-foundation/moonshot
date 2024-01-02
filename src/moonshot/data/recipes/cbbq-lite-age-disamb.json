@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - age - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (age)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-age-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

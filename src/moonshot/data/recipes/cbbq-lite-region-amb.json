@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - region - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (region)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-region-ambiguous",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

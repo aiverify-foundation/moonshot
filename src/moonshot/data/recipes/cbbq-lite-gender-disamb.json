@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - gender - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (gender)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-gender-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - nationality - Disamb",
+    "description": "Recipe using Chinese BBQ Dataset (nationality)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-nationality-disamb",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

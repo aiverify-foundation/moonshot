@@ -1,0 +1,17 @@
+{
+    "name": "CBBQ - disability - Ambiguous",
+    "description": "Recipe using Chinese BBQ Dataset (disability)",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "dataset": "cbbq-lite-disability-ambiguous",
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -317,11 +317,12 @@ The Moonshot Team <<our.moonshot.team@gmail.com>>
 |AI2 Reasoning Challenge |https://allenai.org/data/arc|Creative Commons Attribution-ShareAlike 4.0 International|
 |Auto Categorization |https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/auto_categorization|Apache License Version 2.0, January 2004|
 |BBQ|https://github.com/nyu-mll/BBQ|Creative Commons Attribution 4.0 International| 
-|BBQ-Lite|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/bbq_lite|Apache License Version 2.0, January 2004|
+|CBBQ|https://github.com/YFHuangxxxx/CBBQ| Creative Commons Attribution Share Alike 4.0 International|
 |Cause and Effect|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/cause_and_effect|Apache License Version 2.0, January 2004|
 |Challenging Toxicity Prompts|https://decodingtrust.github.io/|Creative Commons Attribution ShareAlike 4.0 International|
 |Contextual Parametric Knowledge|https://github.com/google-research/language|Apache License Version 2.0, January 2004|
 |CoQA|https://stanfordnlp.github.io/coqa/|Creative Commons Attribution 4.0 International; MSR-LA;     Apache License Version 2.0, January 2004|
+|CValues|https://github.com/X-PLUG/CValues/tree/main|Apache License Version 2.0, January 2004|
 |Enron Email|https://github.com/ParakweetLabs/EmailIntentDataSet|Apache License Version 2.0, January 2004| 
 |GRE Reading Comprehension|https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/gre_reading_comprehension|Apache License Version 2.0, January 2004|
 |GSM8K|https://github.com/openai/grade-school-math|MIT License|
