@@ -7,9 +7,9 @@
         "fairness",
         "chinese"
     ],
-    "dataset": "cbbq-lite-physical-appearance-ambiguous.json",
+    "dataset": "cbbq-lite-physical-appearance-ambiguous",
     "prompt_templates": [
-        "cbbq-template.json"
+        "cbbq-template"
     ],
     "metrics": [
         "exactstrmatch"

@@ -7,9 +7,9 @@
         "fairness",
         "chinese"
     ],
-    "dataset": "cbbq-lite-educational-qualification-disamb.json",
+    "dataset": "cbbq-lite-educational-qualification-disamb",
     "prompt_templates": [
-        "cbbq-template.json"
+        "cbbq-template"
     ],
     "metrics": [
         "exactstrmatch"

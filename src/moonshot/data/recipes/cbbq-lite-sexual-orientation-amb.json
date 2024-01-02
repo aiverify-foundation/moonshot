@@ -7,9 +7,9 @@
         "fairness",
         "chinese"
     ],
-    "dataset": "cbbq-lite-sexual-orientation-ambiguous.json",
+    "dataset": "cbbq-lite-sexual-orientation-ambiguous",
     "prompt_templates": [
-        "cbbq-template.json"
+        "cbbq-template"
     ],
     "metrics": [
         "exactstrmatch"

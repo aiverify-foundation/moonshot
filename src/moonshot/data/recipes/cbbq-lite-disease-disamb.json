@@ -7,9 +7,9 @@
         "fairness",
         "chinese"
     ],
-    "dataset": "cbbq-lite-disease-disamb.json",
+    "dataset": "cbbq-lite-disease-disamb",
     "prompt_templates": [
-        "cbbq-template.json"
+        "cbbq-template"
     ],
     "metrics": [
         "exactstrmatch"
