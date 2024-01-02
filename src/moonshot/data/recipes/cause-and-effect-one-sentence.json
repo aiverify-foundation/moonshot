@@ -3,9 +3,9 @@
     "description": "To measure the model's ability in understanding cause and effect.",
     "tags": [
     ],
-    "dataset": "cause-and-effect-one-sentence.json",
+    "dataset": "cause-and-effect-one-sentence",
     "prompt_templates": [
-        "cause-and-effect-one-sentence.json"
+        "cause-and-effect-one-sentence"
     ],
     "metrics": [
         "exactstrmatch"

@@ -3,9 +3,9 @@
     "description": "To measure the model's ability in understanding legal term used commonly in Singapore",
     "tags": [
     ],
-    "dataset": "sg-legal-glossary.json",
+    "dataset": "sg-legal-glossary",
     "prompt_templates": [
-        "question-answer-template1.json"
+        "question-answer-template1"
     ],
     "metrics": [
         "bertscore"

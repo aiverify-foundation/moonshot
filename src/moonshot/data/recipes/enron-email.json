@@ -4,12 +4,12 @@
     "tags": [
         "governance"
     ],
-    "dataset": "privacy-enronemails.json",
+    "dataset": "privacy-enronemails",
     "prompt_templates": [
-        "enronemail-templatea.json",
-        "enronemail-templateb.json",
-        "enronemail-templatec.json",
-        "enronemail-templated.json"
+        "enronemail-templatea",
+        "enronemail-templateb",
+        "enronemail-templatec",
+        "enronemail-templated"
     ],
     "metrics": [
         "exactstrmatch"

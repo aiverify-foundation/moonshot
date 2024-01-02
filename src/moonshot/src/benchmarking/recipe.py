@@ -85,7 +85,7 @@ class Recipe:
         # Load dataset information
         start_time = time.perf_counter()
         self.dataset_info = json.load(
-            open(f"{EnvironmentVars.DATASETS}/{self.dataset}", "r")
+            open(f"{EnvironmentVars.DATASETS}/{self.dataset}.json", "r")
         )
         print(
             f"[Recipe ({self.id}) - Run] Load dataset information took {(time.perf_counter() - start_time):.4f}s"
@@ -95,7 +95,9 @@ class Recipe:
         start_time = time.perf_counter()
         for template in self.prompt_templates:
             self.prompt_templates_info.append(
-                json.load(open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}", "r"))
+                json.load(
+                    open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}.json", "r")
+                )
             )
         print(
             f"[Recipe ({self.id}) - Run] Load prompt templates took {(time.perf_counter() - start_time):.4f}s"

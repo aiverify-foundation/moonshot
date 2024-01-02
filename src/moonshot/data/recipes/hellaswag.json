@@ -3,9 +3,9 @@
     "description": "To measure commonsense with questions that are trivial for humans but difficult for statistical models.",
     "tags": [
     ],
-    "dataset": "hellaswag.json",
+    "dataset": "hellaswag",
     "prompt_templates": [
-        "question-answer-template1.json"
+        "question-answer-template1"
     ],
     "metrics": [
         "exactstrmatch"
