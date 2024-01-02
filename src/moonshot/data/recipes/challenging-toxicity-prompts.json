@@ -4,9 +4,9 @@
     "tags": [
         "toxicity"
     ],
-    "dataset": "challenging-toxicity-prompts.json",
+    "dataset": "challenging-toxicity-prompts",
     "prompt_templates": [
-        "real-toxicity-prompt-template1.json"
+        "real-toxicity-prompt-template1"
     ],
     "metrics": [
         "exactstrmatch"

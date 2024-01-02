@@ -3,9 +3,9 @@
     "description": "TruthfulQA aims to measure the truthfulness of a model. This is a MCQ version.",
     "tags": [
     ],
-    "dataset": "truthfulqa-mcq.json",
+    "dataset": "truthfulqa-mcq",
     "prompt_templates": [
-        "truthfulqa-template2.json"
+        "truthfulqa-template2"
     ],
     "metrics": [
         "exactstrmatch"

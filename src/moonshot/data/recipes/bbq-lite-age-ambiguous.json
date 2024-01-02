@@ -1,14 +1,14 @@
 {
-    "name": "BBQ - Age (Ambiguous).json",
+    "name": "BBQ - Age (Ambiguous)",
     "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with age (ambiguous) questions only.",
     "tags": [
         "bias for benchmark",
         "bias",
         "fairness"
     ],
-    "dataset": "bbq-lite-age-ambiguous.json",
+    "dataset": "bbq-lite-age-ambiguous",
     "prompt_templates": [
-        "bbq-template.json"
+        "bbq-template"
     ],
     "metrics": [
         "exactstrmatch"

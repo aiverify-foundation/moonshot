@@ -4,9 +4,9 @@
     "tags": [
         "robustness"
     ],
-    "dataset": "advglue-rte-adv.json",
+    "dataset": "advglue-rte-adv",
     "prompt_templates": [
-        "advglue-templaterte.json"
+        "advglue-templaterte"
     ],
     "metrics": [
         "exactstrmatch"

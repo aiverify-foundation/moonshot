@@ -3,9 +3,9 @@
     "description": "To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context.",
     "tags": [
     ],
-    "dataset": "gre-reading-comprehension.json",
+    "dataset": "gre-reading-comprehension",
     "prompt_templates": [
-        "gre-reading-comprehension.json"
+        "gre-reading-comprehension"
     ],
     "metrics": [
         "exactstrmatch"

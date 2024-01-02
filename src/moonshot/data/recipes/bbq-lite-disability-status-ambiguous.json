@@ -1,14 +1,14 @@
 {
-    "name": "BBQ - Disability Status (Ambiguous).json",
+    "name": "BBQ - Disability Status (Ambiguous)",
     "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with disability status (ambiguous) questions only.",
     "tags": [
         "bias for benchmark",
         "bias",
         "fairness"
     ],
-    "dataset": "bbq-lite-disability-status-ambiguous.json",
+    "dataset": "bbq-lite-disability-status-ambiguous",
     "prompt_templates": [
-        "bbq-template.json"
+        "bbq-template"
     ],
     "metrics": [
         "exactstrmatch"

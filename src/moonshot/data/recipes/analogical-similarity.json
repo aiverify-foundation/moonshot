@@ -3,9 +3,9 @@
     "description": "To measure the model’s ability in discriminating between different degrees of analogical similarity in two given episodes",
     "tags": [
     ],
-    "dataset": "analogical-similarity.json",
+    "dataset": "analogical-similarity",
     "prompt_templates": [
-        "analogical-similarity.json"
+        "analogical-similarity"
     ],
     "metrics": [
         "exactstrmatch"

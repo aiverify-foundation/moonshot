@@ -3,9 +3,9 @@
     "description": "To measure the model's ability in categorising elements into groups.",
     "tags": [
     ],
-    "dataset": "auto-categorisation.json",
+    "dataset": "auto-categorisation",
     "prompt_templates": [
-        "auto-categorisation.json"
+        "auto-categorisation"
     ],
     "metrics": [
         "exactstrmatch"

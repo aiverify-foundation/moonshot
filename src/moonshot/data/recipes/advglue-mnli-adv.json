@@ -4,9 +4,9 @@
     "tags": [
         "robustness"
     ],
-    "dataset": "advglue-mnli-adv.json",
+    "dataset": "advglue-mnli-adv",
     "prompt_templates": [
-        "advglue-templatemnli.json"
+        "advglue-templatemnli"
     ],
     "metrics": [
         "exactstrmatch"
