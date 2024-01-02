@@ -4,9 +4,9 @@
     "tags": [
         "robustness"
     ],
-    "dataset": "advglue-qnli-adv.json",
+    "dataset": "advglue-qnli-adv",
     "prompt_templates": [
-        "advglue-templateqnli.json"
+        "advglue-templateqnli"
     ],
     "metrics": [
         "exactstrmatch"

@@ -4,9 +4,9 @@
     "tags": [
         "governance"
     ],
-    "dataset": "fairness-uciadult.json",
+    "dataset": "fairness-uciadult",
     "prompt_templates": [
-        "uciadult-template.json"
+        "uciadult-template"
     ],
     "metrics": [
         "exactstrmatch"

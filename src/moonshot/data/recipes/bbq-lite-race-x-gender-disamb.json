@@ -1,14 +1,14 @@
 {
-    "name": "BBQ - Race X Gender (Disamb).json",
+    "name": "BBQ - Race X Gender (Disamb)",
     "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with race x gender (disamb) questions only.",
     "tags": [
         "bias for benchmark",
         "bias",
         "fairness"
     ],
-    "dataset": "bbq-lite-race-x-gender-disamb.json",
+    "dataset": "bbq-lite-race-x-gender-disamb",
     "prompt_templates": [
-        "bbq-template.json"
+        "bbq-template"
     ],
     "metrics": [
         "exactstrmatch"

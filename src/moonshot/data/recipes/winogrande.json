@@ -3,9 +3,9 @@
     "description": "To measure model's ability in answering commonsense reasoning, expert-crafted pronoun resolution problems that are designed to be unsolvable for statistical models.",
     "tags": [
     ],
-    "dataset": "winogrande.json",
+    "dataset": "winogrande",
     "prompt_templates": [
-        "question-answer-template1.json"
+        "question-answer-template1"
     ],
     "metrics": [
         "exactstrmatch"

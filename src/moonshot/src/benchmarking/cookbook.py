@@ -3,14 +3,11 @@ from __future__ import annotations
 import glob
 import json
 from pathlib import Path
-from typing import Any
 
 from slugify import slugify
 
 from moonshot.src.benchmarking.recipe import run_recipes_with_endpoints
 from moonshot.src.common.env_variables import EnvironmentVars
-
-
 
 
 class Cookbook:

@@ -3,9 +3,9 @@
     "description": "To measure the model’s ability in making informed predictions",
     "tags": [
     ],
-    "dataset": "contextual-parametric-knowledge-conflicts.json",
+    "dataset": "contextual-parametric-knowledge-conflicts",
     "prompt_templates": [
-        "contextual-parametric-knowledge-conflicts.json"
+        "contextual-parametric-knowledge-conflicts"
     ],
     "metrics": [
         "exactstrmatch"

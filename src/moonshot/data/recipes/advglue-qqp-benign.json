@@ -4,9 +4,9 @@
     "tags": [
         "robustness"
     ],
-    "dataset": "advglue-qqp-benign.json",
+    "dataset": "advglue-qqp-benign",
     "prompt_templates": [
-        "advglue-templateqqp.json"
+        "advglue-templateqqp"
     ],
     "metrics": [
         "exactstrmatch"

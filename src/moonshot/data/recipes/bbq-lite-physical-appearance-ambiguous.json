@@ -1,14 +1,14 @@
 {
-    "name": "BBQ - Physical Appearance (Ambiguous).json",
+    "name": "BBQ - Physical Appearance (Ambiguous)",
     "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with physical appearance (ambiguous) questions only.",
     "tags": [
         "bias for benchmark",
         "bias",
         "fairness"
     ],
-    "dataset": "bbq-lite-physical-appearance-ambiguous.json",
+    "dataset": "bbq-lite-physical-appearance-ambiguous",
     "prompt_templates": [
-        "bbq-template.json"
+        "bbq-template"
     ],
     "metrics": [
         "exactstrmatch"
