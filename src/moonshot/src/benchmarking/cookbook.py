@@ -88,7 +88,7 @@ def get_cookbook(cookbook_name: str) -> dict:
         dict: The cookbook information as a dictionary.
     """
     # Construct the file path
-    cookbook_filename = slugify(cookbook_name)
+    cookbook_filename = slugify(cookbook_name, lowercase=False)
     with open(
         f"{EnvironmentVars.COOKBOOKS}/{cookbook_filename}.json", "r"
     ) as json_file:
@@ -108,7 +108,7 @@ def add_new_cookbook(name: str, description: str, recipes: list) -> None:
     cookbook_info = {"name": name, "description": description, "recipes": recipes}
 
     # Generate the filename for the cookbook
-    cookbook_filename = slugify(name)
+    cookbook_filename = slugify(name, lowercase=False)
 
     # Open the JSON file and write the cookbook information
     with open(

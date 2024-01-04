@@ -136,7 +136,7 @@ class Session:
                 print("Unable to resume existing session. Please create a new session.")
         else:
             # Create a new session
-            session_id = slugify(name)
+            session_id = slugify(name, lowercase=False)
             self.metadata = SessionMetadata(
                 session_id,
                 name,
@@ -318,7 +318,7 @@ def get_sessions(desired_sessions: list) -> list:
     """
     sessions = []
     for session_name in desired_sessions:
-        session_filename = slugify(session_name)
+        session_filename = slugify(session_name, lowercase=False)
         filepath = f"{EnvironmentVars.SESSIONS}/{session_filename}.json"
 
         with open(filepath, "r") as json_file:

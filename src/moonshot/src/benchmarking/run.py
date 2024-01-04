@@ -443,7 +443,7 @@ def get_runs(desired_runs: list) -> list:
     """
     return_list = []
     for run_name in desired_runs:
-        run_filename = slugify(run_name)
+        run_filename = slugify(run_name, lowercase=False)
         run_db_file = f"{EnvironmentVars.DATABASES}/{run_filename}.db"
 
         # read metadata from file
