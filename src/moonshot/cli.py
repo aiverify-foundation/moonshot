@@ -74,11 +74,6 @@ class CommandLineInterface(cmd2.Cmd):
         "context_strategy", type=str, help="The name of the context strategy to use"
     )
 
-    use_context_strategy_parser.add_argument(
-        type=str,
-        help="The number of previous prompts to use",
-    )
-
     # Use prompt template parser
     use_prompt_template_parser = cmd2.Cmd2ArgumentParser(
         description="Use a prompt template.",
