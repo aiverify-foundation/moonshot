@@ -21,6 +21,7 @@ class BertScore:
             output_response,
             targets,
             lang="en",
+            rescale_with_baseline=True
         )
 
         avg_scores = [s.mean(dim=0) for s in score]
