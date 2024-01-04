@@ -14,6 +14,7 @@ class EnvironmentVars:
     DATASETS = None
     PROMPT_TEMPLATES = None
     METRICS = None
+    CONTEXT_STRATEGY = None
     RESULTS = None
     DATABASES = None
     SESSIONS = None
@@ -66,6 +67,10 @@ def load_env(env_dict: dict = None) -> None:
     EnvironmentVars.METRICS = env_dict.get(
         "METRICS", os.environ.get("METRICS", "moonshot/data/metrics")
     )
+    EnvironmentVars.CONTEXT_STRATEGY = env_dict.get(
+        "CONTEXT_STRATEGY",
+        os.environ.get("CONTEXT_STRATEGY", "moonshot/data/context-strategy"),
+    )
     EnvironmentVars.RESULTS = env_dict.get(
         "RESULTS", os.environ.get("RESULTS", "moonshot/data/results")
     )
@@ -84,6 +89,7 @@ def load_env(env_dict: dict = None) -> None:
     os.environ["DATASETS"] = EnvironmentVars.DATASETS
     os.environ["PROMPT_TEMPLATES"] = EnvironmentVars.PROMPT_TEMPLATES
     os.environ["METRICS"] = EnvironmentVars.METRICS
+    os.environ["CONTEXT_STRATEGY"] = EnvironmentVars.CONTEXT_STRATEGY
     os.environ["RESULTS"] = EnvironmentVars.RESULTS
     os.environ["DATABASES"] = EnvironmentVars.DATABASES
     os.environ["SESSIONS"] = EnvironmentVars.SESSIONS

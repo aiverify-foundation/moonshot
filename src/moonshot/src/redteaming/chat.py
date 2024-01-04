@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import json
 import time
 from datetime import datetime
@@ -19,6 +20,10 @@ from moonshot.src.common.db_sql_queries import (
     sql_update_chat_metadata_records,
 )
 from moonshot.src.common.env_variables import EnvironmentVars
+from moonshot.src.utils.import_modules import (
+    create_module_spec,
+    import_module_from_spec,
+)
 
 
 class ChatMetadata:
@@ -35,7 +40,7 @@ class ChatMetadata:
         self.db_instance = None
         self.endpoint = endpoint
         # context strategy and prompt template
-        self.context_strategy = 0
+        self.context_strategy = ""
         self.prompt_template = ""
         # loaded prompt template information
         self.prompt_template_info = {}
@@ -284,17 +289,16 @@ class Chat:
             "duration": chat_records_tuple[7],
         }
 
-    def set_context_strategy(self, context_strategy: int) -> None:
+    def set_context_strategy(self, context_strategy: str) -> None:
         """
         Sets the context strategy for the chat.
 
         Args:
-            context_strategy (int): The context strategy to be set. (number of previous prompts to be used)
+            context_strategy (str): The context strategy to be set. (number of previous prompts to be used)
         """
         # Store context strategy and Update the chat metadata
-        if context_strategy >= 0:
-            self.chat_metadata.context_strategy = context_strategy
-            self.chat_metadata.update_metadata_in_database()
+        self.chat_metadata.context_strategy = context_strategy
+        self.chat_metadata.update_metadata_in_database()
 
     def get_context_strategy(self) -> int:
         """
@@ -357,30 +361,72 @@ class Chat:
         return predictions_response[0] if predictions_response else None
 
     def process_context_prompts(
-        self, current_prompt: str, context_strategy: int
+        self, current_prompt: str, context_strategy: str
     ) -> str:
         """
-        Append the user's prompts with context strategy (previous prompts to be used as context).
+        Prepares the context for a prompt. Context strategy may process multiple previous prompts together.
 
         Args:
-            current_prompt (str): The current prompt.
-            context_strategy (int): The context strategy (number of previous prompts to be used).
+            prompt (str): The prompt to be sent for prediction.
 
         Returns:
-            str or None: The processed context prompts or None if there are no previous prompts.
+            str: The first prediction response if available, otherwise None.
         """
-        previous_prompts = self.get_previous_prompts(context_strategy)
-        if previous_prompts:
-            final_prompt = "Previous prompt:"
-            for previous_prompt in previous_prompts:
-                final_prompt += (
-                    f"{previous_prompt['prompt']} {previous_prompt['predicted_result']}"
-                )
-            final_prompt += f"Current prompt:{current_prompt}"
-            return final_prompt
+        num_previous_prompts = 0
+        # add context to prompt if required
+        contextualised_prompt = current_prompt
+
+        context_strategy_instance = self._get_context_strategy_instance(
+            context_strategy
+        )
+
+        if context_strategy_instance:
+            context_strategy_instance = context_strategy_instance()
+            num_previous_prompts = (
+                context_strategy_instance.get_number_of_prev_prompts()
+            )
+            list_of_previous_prompts = self.get_previous_prompts(num_previous_prompts)
+            contextualised_prompt = context_strategy_instance.add_in_context(
+                current_prompt, list_of_previous_prompts
+            )
+            return contextualised_prompt
+
+        else:
+            return None
+
+    def _get_context_strategy_instance(self, context_strategy: str) -> object:
+        """
+        Returns an instance of the specified context strategy class based on its name.
+
+        Args:
+            context_strategy (str): The name of the context strategy.
+
+        Returns:
+            object: An instance of the context strategy class if found, else None.
+        """
+        module_spec = create_module_spec(
+            context_strategy,
+            f"{EnvironmentVars.CONTEXT_STRATEGY}/{context_strategy}.py",
+        )
+
+        # Check if the module specification exists
+        if module_spec:
+            # Import the module
+            module = import_module_from_spec(module_spec)
+
+            # Iterate through the attributes of the module
+            for attr in dir(module):
+                # Get the attribute object
+                obj = getattr(module, attr)
+
+                # Check if the attribute is a class and has the same module name as the context strategy name
+                if inspect.isclass(obj) and obj.__module__ == context_strategy:
+                    return obj
+
+        # Return None if no instance of the context strategy class is found
         return None
 
-    def prepare_prompt(self, prompt: str) -> str:
+    def prepare_prompt(self, current_prompt: str) -> str:
         """
         Prepare the final prompt to be sent by checking if the prompt needs to be modified
         to add prompt template contents and context.
@@ -389,23 +435,22 @@ class Chat:
             prompt (str): The original prompt.
 
         Returns:
-            str: The prepared final prompt.
+            str: The prepared final prompt to be sent to the LLM.
         """
         context_strategy = self.get_context_strategy()
-        new_prompt = prompt
+        new_prompt = current_prompt
+
+        # if there is a context strategy selected, add context to current prompt first
+        if context_strategy:
+            new_prompt = self.process_context_prompts(current_prompt, context_strategy)
+
+        # if there is a prompt template selected, add current prompt/contextualised prompt into prompt template
         if self.chat_metadata.prompt_template:
             prompt_template_file = f"{EnvironmentVars.PROMPT_TEMPLATES}/{self.chat_metadata.prompt_template}.json"
             with open(prompt_template_file, "r") as json_file:
                 prompt_template_details = json.load(json_file)
                 template = prompt_template_details["template"]
                 jinja_template = Template(template)
-                new_prompt = jinja_template.render({"prompt": prompt})
-
-        if context_strategy > 0:
-            prompt_with_context = self.process_context_prompts(
-                new_prompt, context_strategy
-            )
-            if prompt_with_context:
-                return prompt_with_context
+                new_prompt += jinja_template.render({"prompt": current_prompt})
 
         return new_prompt

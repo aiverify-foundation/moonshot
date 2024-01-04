@@ -189,20 +189,22 @@ class Session:
         self.set_context_strategy(self.metadata.context_strategy)
         self.set_prompt_template(self.metadata.prompt_template)
 
-    def set_context_strategy(self, new_context_strategy: int) -> None:
+    def set_context_strategy(self, new_context_strategy: str) -> None:
         """
         Set the context strategy for the session and chats.
 
         Args:
-            new_context_strategy (int): The new context strategy to be set.
+            new_context_strategy (str): The new context strategy to be set.
         """
         # Set session and chats context strategy
-        self.metadata.context_strategy = new_context_strategy
-        for chat in self.metadata.chats:
-            chat.set_context_strategy(new_context_strategy)
-
-        # Save session metadata
-        self.metadata.create_metadata_file()
+        if self.check_file_exists(new_context_strategy, "context_strategy"):
+            self.metadata.context_strategy = new_context_strategy
+            for chat in self.metadata.chats:
+                chat.set_context_strategy(new_context_strategy)
+            # Save session metadata
+            self.metadata.create_metadata_file()
+        else:
+            print("Please select a valid context strategy.")
 
     def set_prompt_template(self, new_prompt_template: str = "") -> None:
         """
@@ -279,6 +281,16 @@ class Session:
             str: The name of the prompt template for the current session.
         """
         return self.metadata.prompt_template
+
+    def check_file_exists(self, filename: str, filetype: str) -> bool:
+        if filetype == "context_strategy":
+            filepath = f"{EnvironmentVars.CONTEXT_STRATEGY}/{filename}.py"
+        elif filetype == "prompt_template":
+            filepath = f"{EnvironmentVars.PROMPT_TEMPLATES}/{filename}.json"
+        else:
+            filepath = ""
+
+        return Path(filepath).exists()
 
 
 def get_all_sessions() -> list:
