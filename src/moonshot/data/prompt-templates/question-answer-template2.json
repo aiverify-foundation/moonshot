@@ -1,0 +1,5 @@
+{
+    "name": "question-answer-template2",
+    "description": "This is a common template used for open-ended benchmarks.",
+    "template": "Q: \"{{ prompt }}\"\nA:"
+}
