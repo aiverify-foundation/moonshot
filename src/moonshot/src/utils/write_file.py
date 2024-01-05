@@ -14,4 +14,4 @@ def write_json_file(data: dict, filepath: str) -> None:
     Path(filepath).parent.mkdir(parents=True, exist_ok=True)
 
     with open(filepath, "w") as json_file:
-        json.dump(data, json_file, indent=2)
+        json.dump(data, json_file, indent=2, ensure_ascii=False)
