@@ -444,7 +444,7 @@ def get_recipes(desired_recipes: list) -> list:
     """
     recipes = []
     for recipe_name in desired_recipes:
-        recipe_filename = slugify(recipe_name)
+        recipe_filename = slugify(recipe_name, lowercase=False)
         filepath = f"{EnvironmentVars.RECIPES}/{recipe_filename}.json"
         with open(filepath, "r") as json_file:
             recipe_info = json.load(json_file)
@@ -483,7 +483,7 @@ def add_new_recipe(
         "prompt_templates": prompt_templates,
         "metrics": metrics,
     }
-    recipe_filename = slugify(name)
+    recipe_filename = slugify(name, lowercase=False)
     with open(f"{EnvironmentVars.RECIPES}/{recipe_filename}.json", "w") as json_file:
         json.dump(recipe_info, json_file, indent=2)
 

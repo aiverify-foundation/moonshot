@@ -307,7 +307,7 @@ def add_new_endpoint(
         "max_concurrency": max_concurrency,
         "params": params,
     }
-    endpoint_filename = slugify(name)
+    endpoint_filename = slugify(name, lowercase=False)
     with open(
         f"{EnvironmentVars.LLM_ENDPOINTS}/{endpoint_filename}.json", "w"
     ) as json_file:
