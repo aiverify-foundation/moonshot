@@ -131,8 +131,8 @@ class CommandLineInterface(cmd2.Cmd):
         epilog="Example:\n add_recipe 'My new recipe' "
         "'I am recipe description' "
         "\"['tag1','tag2']\" "
-        "bbq-lite-age-ambiguous.json "
-        "\"['analogical-similarity.json','auto-categorisation.json']\" "
+        "bbq-lite-age-ambiguous "
+        "\"['analogical-similarity','auto-categorisation']\" "
         "\"['bertscore','bleuscore']\"",
     )
     add_recipe_parser.add_argument("name", type=str, help="Name of the new recipe")
