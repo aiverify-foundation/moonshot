@@ -375,15 +375,16 @@ class FactScore:
                 logging.warning(f"#{index} Compute FactScore error")
 
         # Generate statistics
-        factscore_stats = {"total_facts": 0, "total_bad_facts": 0}
+        factscore_stats = {"total_facts": 0, "total_bad_facts": 0, "avg_factscore": 0.0}
         for result in individual_factscore:
             if result:
                 factscore_stats["total_facts"] += result["total_facts"]
                 factscore_stats["total_bad_facts"] += result["bad_facts"]
 
-        factscore_stats["avg_factscore"] = (
-            1 - factscore_stats["total_bad_facts"] / factscore_stats["total_facts"]
-        )
+        if factscore_stats["total_facts"] > 0:
+            factscore_stats["avg_factscore"] = (
+                1 - factscore_stats["total_bad_facts"] / factscore_stats["total_facts"]
+            )
 
         # Compute run time
         end_time = time.perf_counter()
