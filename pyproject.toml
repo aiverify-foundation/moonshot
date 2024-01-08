@@ -1,6 +1,6 @@
 [project]
 name = "moonshot"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -18,7 +18,10 @@ dependencies = [
     "python-dotenv==1.0.0",
     "anthropic==0.7.8",
     "cmd2==2.4.3",
-    "rich==13.7.0"
+    "rich==13.7.0",
+    "spacy==3.7.2",
+    "sentence-transformers==2.2.2",
+    "en-core-web-trf==https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl"
 ]
 readme = "README.md"
 requires-python = ">=3.11"
@@ -52,6 +55,9 @@ python-dotenv = "1.0.0"
 anthropic = "0.7.8"
 cmd2 = "2.4.3"
 rich = "13.7.0"
+spacy = "3.7.2"
+sentence-transformers = "2.2.2"
+en-core-web-trf = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl"}
 
 
 [tool.poetry.group.dev.dependencies]
