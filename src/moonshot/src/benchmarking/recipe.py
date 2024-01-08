@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import concurrent.futures
 import glob
 import inspect
@@ -13,7 +14,7 @@ from typing import Any
 from jinja2 import Template
 from slugify import slugify
 
-from moonshot.src.common.connection import Connection, get_predictions
+from moonshot.src.common.connection import Connection, get_multiple_predictions
 from moonshot.src.common.db import Database
 from moonshot.src.common.env_variables import EnvironmentVars
 from moonshot.src.utils.import_modules import (
@@ -302,77 +303,65 @@ class RecipeResult:
                 f"for {len(recipe_instance.generated_prompts_info)} prompts."
             )
 
-            with concurrent.futures.ThreadPoolExecutor(
-                max_workers=multiprocessing.cpu_count()
-            ) as executor:
-                # Get predictions
-                start_time = time.perf_counter()
-                updated_prompt_template_list = []
-                futures = {
-                    executor.submit(
-                        get_predictions,
-                        prompt_template_info,
-                        conn_instance,
-                        partial(
-                            db_instance.append_cache_records,
-                            recipe,
-                            prompt_template_name,
-                        ),
-                    ): index
-                    for index, (
-                        prompt_template_name,
-                        prompt_template_info,
-                    ) in enumerate(recipe_instance.generated_prompts_info.items(), 0)
-                }
-                for future in concurrent.futures.as_completed(futures):
-                    index = futures[future]
-                    updated_prompt_template_list.append((index, future.result()))
-
-                # Sort prompt_template_list by index
-                updated_prompt_template_list.sort(key=lambda x: x[0])
-                print(
-                    f"[RecipeResult - Run] Querying predictions took {(time.perf_counter() - start_time):.4f}s"
+            # Get predictions
+            start_time = time.perf_counter()
+            updated_prompt_template_list = asyncio.run(
+                get_multiple_predictions(
+                    recipe_instance.generated_prompts_info,
+                    conn_instance,
+                    partial(
+                        db_instance.append_cache_records,
+                        recipe,
+                    ),
                 )
+            )
+            print(
+                f"[RecipeResult - Run] Querying predictions took {(time.perf_counter() - start_time):.4f}s"
+            )
 
-                # Get metrics
-                start_time = time.perf_counter()
-                for index, updated_prompt_template_info in updated_prompt_template_list:
-                    # Get dictionary name using index
-                    prompt_template_name = list(
-                        recipe_instance.generated_prompts_info.keys()
-                    )[index]
+            # Get metrics
+            start_time = time.perf_counter()
+            for index, updated_prompt_template_info in enumerate(
+                updated_prompt_template_list
+            ):
+                # Get dictionary name using index
+                prompt_template_name = list(
+                    recipe_instance.generated_prompts_info.keys()
+                )[index]
 
-                    # Combine output_responses and targets
-                    metrics_output_responses = [
-                        prompt_info["predicted_result"]
-                        for prompt_info in updated_prompt_template_info
-                    ]
-                    metrics_output_targets = [
-                        prompt_info["target"]
-                        for prompt_info in updated_prompt_template_info
-                    ]
+                # Combine output_responses and targets
+                metrics_prompts = [
+                    prompt_info["prompt"]
+                    for prompt_info in updated_prompt_template_info
+                ]
+                metrics_predicted_results = [
+                    prompt_info["predicted_result"]
+                    for prompt_info in updated_prompt_template_info
+                ]
+                metrics_targets = [
+                    prompt_info["target"]
+                    for prompt_info in updated_prompt_template_info
+                ]
 
-                    # Get metrics output for this prompt template
-                    metrics_result = []
-                    futures = {
-                        executor.submit(
-                            metric.get_results,
-                            metrics_output_responses,
-                            metrics_output_targets,
+                # Get metrics output for this prompt template
+                metrics_result = []
+                for metric in recipe_instance.metrics_instances:
+                    metrics_result.append(
+                        metric.get_results(
+                            metrics_prompts,
+                            metrics_predicted_results,
+                            metrics_targets,
                         )
-                        for metric in recipe_instance.metrics_instances
-                    }
-                    for future in concurrent.futures.as_completed(futures):
-                        metrics_result.append(future.result())
+                    )
 
-                    # Update the results for this prompt template
-                    recipe_instance.generated_prompts_info[prompt_template_name] = {
-                        "data": updated_prompt_template_info,
-                        "results": metrics_result,
-                    }
-                print(
-                    f"[RecipeResult - Run] Calculate metrics took {(time.perf_counter() - start_time):.4f}s"
-                )
+                # Update the results for this prompt template
+                recipe_instance.generated_prompts_info[prompt_template_name] = {
+                    "data": updated_prompt_template_info,
+                    "results": metrics_result,
+                }
+            print(
+                f"[RecipeResult - Run] Calculate metrics took {(time.perf_counter() - start_time):.4f}s"
+            )
 
             # Write cache records and close connection
             db_instance.write_cache_records()
@@ -444,7 +433,7 @@ def get_recipes(desired_recipes: list) -> list:
     """
     recipes = []
     for recipe_name in desired_recipes:
-        recipe_filename = slugify(recipe_name)
+        recipe_filename = slugify(recipe_name, lowercase=False)
         filepath = f"{EnvironmentVars.RECIPES}/{recipe_filename}.json"
         with open(filepath, "r") as json_file:
             recipe_info = json.load(json_file)
@@ -483,7 +472,7 @@ def add_new_recipe(
         "prompt_templates": prompt_templates,
         "metrics": metrics,
     }
-    recipe_filename = slugify(name)
+    recipe_filename = slugify(name, lowercase=False)
     with open(f"{EnvironmentVars.RECIPES}/{recipe_filename}.json", "w") as json_file:
         json.dump(recipe_info, json_file, indent=2)
 
@@ -512,26 +501,42 @@ def run_recipes_with_endpoints(
     )
 
     recipe_endpoint_results = {}
-    # Use multiprocessing to process each individual recipe
-    with concurrent.futures.ProcessPoolExecutor(
-        max_workers=multiprocessing.cpu_count()
-    ) as executor:
+    if str(EnvironmentVars.ENABLE_MULTIPROCESSING).lower() == "true":
+        # Use multiprocessing to process each individual recipe
+        print("[MULTIPROCESSING] Running recipes in parallel.")
+        with concurrent.futures.ProcessPoolExecutor(
+            max_workers=multiprocessing.cpu_count()
+        ) as executor:
+            # Create different combination of recipe and connection (4 recipe results for 2 recipes * 2 endpoints)
+            recipe_endpoint_combinations = [
+                (recipe, endpoint, num_of_prompts, db_file)
+                for recipe in recipes
+                for endpoint in endpoints
+            ]
+            print(
+                f"Spawning {multiprocessing.cpu_count()} processes to run {len(recipe_endpoint_combinations)} recipes."
+            )
+
+            futures = {
+                executor.submit(RecipeResult.run, recipe_endpoint): recipe_endpoint
+                for recipe_endpoint in recipe_endpoint_combinations
+            }
+            for future in concurrent.futures.as_completed(futures):
+                recipe, endpoint, generated_prompts_info = future.result()
+                recipe_endpoint_results[f"{recipe}_{endpoint}"] = generated_prompts_info
+
+        return recipe_endpoint_results
+
+    else:
         # Create different combination of recipe and connection (4 recipe results for 2 recipes * 2 endpoints)
+        print("[SEQUENTIAL] Running recipes in sequence.")
         recipe_endpoint_combinations = [
             (recipe, endpoint, num_of_prompts, db_file)
             for recipe in recipes
             for endpoint in endpoints
         ]
-        print(
-            f"Spawning {multiprocessing.cpu_count()} processes to run {len(recipe_endpoint_combinations)} recipes."
-        )
-
-        futures = {
-            executor.submit(RecipeResult.run, recipe_endpoint): recipe_endpoint
-            for recipe_endpoint in recipe_endpoint_combinations
-        }
-        for future in concurrent.futures.as_completed(futures):
-            recipe, endpoint, generated_prompts_info = future.result()
+        for recipe_endpoint in recipe_endpoint_combinations:
+            recipe, endpoint, generated_prompts_info = RecipeResult.run(recipe_endpoint)
             recipe_endpoint_results[f"{recipe}_{endpoint}"] = generated_prompts_info
 
-    return recipe_endpoint_results
+        return recipe_endpoint_results

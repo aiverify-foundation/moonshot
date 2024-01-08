@@ -26,7 +26,10 @@ from moonshot.src.common.connection import (
     get_endpoints,
 )
 from moonshot.src.common.env_variables import __app_name__, __version__
-from moonshot.src.common.prompt_template import get_prompt_templates
+from moonshot.src.common.prompt_template import (
+    get_prompt_template_names,
+    get_prompt_templates,
+)
 from moonshot.src.redteaming.session import Session, get_all_sessions
 from moonshot.src.utils.timeit import timeit
 
@@ -65,10 +68,10 @@ class CommandLineInterface(cmd2.Cmd):
     # Use context strategy parser
     use_context_strategy_parser = cmd2.Cmd2ArgumentParser(
         description="Use a context strategy.",
-        epilog="Example:\n use_context_strategy 5",
+        epilog="Example:\n use_context_strategy my_strategy_one",
     )
     use_context_strategy_parser.add_argument(
-        "context_strategy", type=int, help="The context strategy to use"
+        "context_strategy", type=str, help="The name of the context strategy to use"
     )
 
     # Use prompt template parser
@@ -80,6 +83,7 @@ class CommandLineInterface(cmd2.Cmd):
         "prompt_template",
         type=str,
         help="Name of the prompt template",
+        choices=get_prompt_template_names(),
     )
 
     # Add endpoint parser
@@ -131,8 +135,8 @@ class CommandLineInterface(cmd2.Cmd):
         epilog="Example:\n add_recipe 'My new recipe' "
         "'I am recipe description' "
         "\"['tag1','tag2']\" "
-        "bbq-lite-age-ambiguous.json "
-        "\"['analogical-similarity.json','auto-categorisation.json']\" "
+        "bbq-lite-age-ambiguous "
+        "\"['analogical-similarity','auto-categorisation']\" "
         "\"['bertscore','bleuscore']\"",
     )
     add_recipe_parser.add_argument("name", type=str, help="Name of the new recipe")
@@ -894,7 +898,7 @@ class RedTeamingCommandSet(cmd2.CommandSet):
 
         # Check if current session exists
         if Session.current_session:
-            Session.current_session.set_context_strategy(0)
+            Session.current_session.set_context_strategy("")
             self._cmd.poutput(
                 f"Updated session: {Session.current_session.get_session_id()}. "
                 f"Context Strategy: {Session.current_session.get_session_context_strategy()}."

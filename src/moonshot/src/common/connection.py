@@ -9,7 +9,7 @@ import os
 import time
 from functools import partial
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 import aiometer
 from slugify import slugify
@@ -167,8 +167,68 @@ def get_endpoint_names() -> list:
     return [item["name"] for item in get_endpoints()]
 
 
+async def get_multiple_predictions(
+    multiple_prompts_template_info: dict,
+    connection: Connection,
+    prompt_callback: Union[Callable, None],
+):
+    """
+    Retrieves multiple predictions based on the given prompts.
+
+    Args:
+        multiple_prompts_template_info (dict): A dictionary containing information about the prompts.
+        connection (Connection): An instance of the Connection class.
+        prompt_callback (Union[Callable, None]): A callback function for each prompt.
+
+    Returns:
+        list: A list of results from the predictions.
+    """
+    print("Performing multiple predictions")
+
+    # Store all the needed tasks
+    coroutines = []
+    for (
+        prompt_template_name,
+        prompts_template_info,
+    ) in multiple_prompts_template_info.items():
+        prompts_tasks = [
+            partial(
+                get_async_predictions_helper,
+                prompt_index,
+                prompt_info,
+                connection,
+                partial(
+                    prompt_callback,
+                    prompt_template_name,
+                ),
+            )
+            for prompt_index, prompt_info in enumerate(prompts_template_info["data"])
+        ]
+
+        # Run predictions async
+        print(
+            f"Total number of prompts {len(prompts_tasks)} "
+            f"and concurrency {connection.api_max_concurrency} "
+            f"and calls per second {connection.api_max_calls_per_second}"
+        )
+
+        # Add to coroutines
+        coroutines.append(
+            get_async_predictions(
+                prompts_tasks,
+                connection.api_max_concurrency,
+                connection.api_max_calls_per_second,
+            )
+        )
+
+    # Return results
+    return await asyncio.gather(*coroutines)
+
+
 def get_predictions(
-    prompts_template_info: dict, connection: Connection, prompt_callback: Callable
+    prompts_template_info: dict,
+    connection: Connection,
+    prompt_callback: Union[Callable, None],
 ) -> list:
     """
     Performs predictions using the prompt. It appends contents of the prompt templates to the prompt first.
@@ -217,7 +277,7 @@ async def get_async_predictions_helper(
     prompt_index: int,
     prompt_info: dict,
     connection: Connection,
-    prompt_callback: Callable,
+    prompt_callback: Union[Callable, None],
 ) -> dict:
     """
     Helper function to asynchronously perform predictions for a given prompt.
@@ -250,7 +310,8 @@ async def get_async_predictions_helper(
         )
 
         # Call prompt callback
-        prompt_callback(prompt_info, connection.id)
+        if prompt_callback:
+            prompt_callback(prompt_info, connection.id)
 
     return prompt_info
 
@@ -307,7 +368,7 @@ def add_new_endpoint(
         "max_concurrency": max_concurrency,
         "params": params,
     }
-    endpoint_filename = slugify(name)
+    endpoint_filename = slugify(name, lowercase=False)
     with open(
         f"{EnvironmentVars.LLM_ENDPOINTS}/{endpoint_filename}.json", "w"
     ) as json_file:
