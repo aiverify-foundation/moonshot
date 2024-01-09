@@ -1,0 +1,5 @@
+{
+    "name": "Legal Term",
+    "description": "The template used for legal term dataset.",
+    "template": "Explain this term that is used in the legal context: {{ prompt }}\nA: "
+}
