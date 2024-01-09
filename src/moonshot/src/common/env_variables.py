@@ -14,10 +14,12 @@ class EnvironmentVars:
     DATASETS = None
     PROMPT_TEMPLATES = None
     METRICS = None
+    METRICS_CONFIG = None
     CONTEXT_STRATEGY = None
     RESULTS = None
     DATABASES = None
     SESSIONS = None
+    ENABLE_MULTIPROCESSING = None
 
 
 def read_env_file(env_file: str = ".env") -> dict:
@@ -67,6 +69,10 @@ def load_env(env_dict: dict = None) -> None:
     EnvironmentVars.METRICS = env_dict.get(
         "METRICS", os.environ.get("METRICS", "moonshot/data/metrics")
     )
+    EnvironmentVars.METRICS_CONFIG = env_dict.get(
+        "METRICS_CONFIG",
+        os.environ.get("METRICS_CONFIG", "moonshot/data/metrics/metrics_config.json"),
+    )
     EnvironmentVars.CONTEXT_STRATEGY = env_dict.get(
         "CONTEXT_STRATEGY",
         os.environ.get("CONTEXT_STRATEGY", "moonshot/data/context-strategy"),
@@ -80,6 +86,9 @@ def load_env(env_dict: dict = None) -> None:
     EnvironmentVars.SESSIONS = env_dict.get(
         "SESSIONS", os.environ.get("SESSIONS", "moonshot/data/sessions")
     )
+    EnvironmentVars.ENABLE_MULTIPROCESSING = env_dict.get(
+        "ENABLE_MULTIPROCESSING", os.environ.get("ENABLE_MULTIPROCESSING", "true")
+    )
 
     # Set environment variables
     os.environ["LLM_ENDPOINTS"] = EnvironmentVars.LLM_ENDPOINTS
@@ -89,10 +98,12 @@ def load_env(env_dict: dict = None) -> None:
     os.environ["DATASETS"] = EnvironmentVars.DATASETS
     os.environ["PROMPT_TEMPLATES"] = EnvironmentVars.PROMPT_TEMPLATES
     os.environ["METRICS"] = EnvironmentVars.METRICS
+    os.environ["METRICS_CONFIG"] = EnvironmentVars.METRICS_CONFIG
     os.environ["CONTEXT_STRATEGY"] = EnvironmentVars.CONTEXT_STRATEGY
     os.environ["RESULTS"] = EnvironmentVars.RESULTS
     os.environ["DATABASES"] = EnvironmentVars.DATABASES
     os.environ["SESSIONS"] = EnvironmentVars.SESSIONS
+    os.environ["ENABLE_MULTIPROCESSING"] = EnvironmentVars.ENABLE_MULTIPROCESSING
 
 
 # Load environment variables
