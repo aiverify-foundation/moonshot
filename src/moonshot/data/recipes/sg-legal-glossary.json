@@ -5,7 +5,7 @@
     ],
     "dataset": "sg-legal-glossary",
     "prompt_templates": [
-        "question-answer-template1"
+        "legal-term-template"
     ],
     "metrics": [
         "bertscore"
