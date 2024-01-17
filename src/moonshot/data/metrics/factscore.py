@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Load spacy model 'en_core_web_trf'
+logging.debug("[FactScore] Loading spacy model 'en_core_web_trf'.")
 start_time = time.perf_counter()
 nlp = spacy.load("en_core_web_trf")
 logging.debug(
@@ -25,6 +26,9 @@ logging.debug(
 )
 
 # Load SBert model 'https://huggingface.co/sentence-transformers/all-mpnet-base-v2'
+logging.debug(
+    "[FactScore] Loading sentence transformer 'sentence-transformers/all-mpnet-base-v2'."
+)
 start_time = time.perf_counter()
 sbert_model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
 logging.debug(
@@ -343,16 +347,19 @@ class FactScore:
                     reference = slr_extract_judgment(json.loads(reference))
 
             # Split the reference document into sentences
+            logging.info("[Factscore] Splitting document to sentences")
             start_time = time.perf_counter()
             reference_dict = split_document_to_sentences(reference)
             doc_to_str_duration = f"{(time.perf_counter() - start_time):.4f}s"
 
             # Extract facts from the candidate document
+            logging.info("[Factscore] Extracting facts")
             start_time = time.perf_counter()
             facts_completions = self.extract_facts(candidate)
             extraction_facts_duration = f"{(time.perf_counter() - start_time):.4f}s"
 
             # Check the extracted facts against the reference document
+            logging.info("[Factscore] Checking facts")
             start_time = time.perf_counter()
             (
                 fact_check_results,
