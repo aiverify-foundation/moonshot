@@ -180,14 +180,26 @@ class FactScore:
         """
         # Split document to paragraphs
         paragraphs = input_document.split("\n")
-        prompts_list = [
-            prompt.format(document=paragraph) for paragraph in paragraphs if paragraph
-        ]
+
         if self.extract_facts_use_local_model:
             logging.info("[FactScore] Extracting facts using local model.")
-            pass
+            facts_dicts = [
+                {
+                    "list_of_sentences": split_paragraph_to_sentences(
+                        paragraph, cleaning=False
+                    )
+                }
+                for paragraph in paragraphs
+                if paragraph
+            ]
+            return facts_dicts
         else:
             logging.info("[FactScore] Extracting facts using api model.")
+            prompts_list = [
+                prompt.format(document=paragraph)
+                for paragraph in paragraphs
+                if paragraph
+            ]
             return self.batch_call_api(prompts_list)
 
     def check_facts(self, facts_list: list, prompt: str = fact_check_prompt) -> list:
@@ -555,18 +567,21 @@ def retrieve_reference(sentences: list, ref_dict: dict, length_limit: int) -> li
     return candidates
 
 
-def split_paragraph_to_sentences(text: str) -> list:
+def split_paragraph_to_sentences(text: str, cleaning=True) -> list:
     """Split a text paragraph to a list of sentences
     Remove short sentences with less than 3 words
     Return:
         a list of sentences
     """
-    text = clean_text(re.sub(r";", ".", text))
-    return [
-        " ".join(sent.text.split())
-        for sent in nlp(text).sents
-        if len(sent.text.split()) > 2
-    ]
+    if cleaning:
+        text = clean_text(re.sub(r";", ".", text))
+        return [
+            " ".join(sent.text.split())
+            for sent in nlp(text).sents
+            if len(sent.text.split()) > 2
+        ]
+    else:
+        return [sent.text for sent in nlp(text).sents]
 
 
 def split_document_to_sentences(text: str) -> dict:
