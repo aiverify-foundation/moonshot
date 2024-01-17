@@ -367,6 +367,9 @@ class FactScore:
                 "total_run_duration": run_duration,
                 "results": fact_check_results,
             }
+        except ConnectionError as conn_error:
+            logging.error(f"Failed to compute factscore: {str(conn_error)}")
+            raise conn_error
         except Exception as error:
             logging.warning(f"Failed to compute factscore: {str(error)}")
             return False, {
