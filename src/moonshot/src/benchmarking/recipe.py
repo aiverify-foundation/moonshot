@@ -3,24 +3,19 @@ from __future__ import annotations
 import asyncio
 import concurrent.futures
 import glob
-import inspect
 import json
 import multiprocessing
 import time
 from functools import partial
 from pathlib import Path
-from typing import Any
 
 from jinja2 import Template
 from slugify import slugify
 
+from moonshot.src.benchmarking.metrics import load_metrics
 from moonshot.src.common.connection import Connection, get_multiple_predictions
 from moonshot.src.common.db import Database
 from moonshot.src.common.env_variables import EnvironmentVars
-from moonshot.src.utils.import_modules import (
-    create_module_spec,
-    import_module_from_spec,
-)
 from moonshot.src.utils.timeit import timeit
 
 
@@ -106,16 +101,7 @@ class Recipe:
 
         # Create a new metric instance
         start_time = time.perf_counter()
-        self.metrics_instances = []
-        for metric in self.metrics:
-            metric_instance = self._get_metric_instance(metric)
-            if metric_instance:
-                metric_instance = metric_instance()
-            else:
-                raise RuntimeError(
-                    f"Unable to get defined metric instance - {metric_instance}"
-                )
-            self.metrics_instances.append(metric_instance)
+        self.metrics_instances = load_metrics(self.metrics)
         print(
             f"[Recipe ({self.id}) - Run] Load metrics took {(time.perf_counter() - start_time):.4f}s"
         )
@@ -126,39 +112,6 @@ class Recipe:
         print(
             f"[Recipe ({self.id}) - Run] Generate prompts took {(time.perf_counter() - start_time):.4f}s"
         )
-
-    def _get_metric_instance(self, metric_name: str) -> Any:
-        """
-        Returns an instance of the metric class with the specified metric name.
-
-        Parameters:
-            metric_name (str): The name of the metric.
-
-        Returns:
-            Any: An instance of the metric class if found, otherwise None.
-        """
-        # Create the module specification
-        module_spec = create_module_spec(
-            metric_name,
-            f"{EnvironmentVars.METRICS}/{metric_name}.py",
-        )
-
-        # Check if the module specification exists
-        if module_spec:
-            # Import the module
-            module = import_module_from_spec(module_spec)
-
-            # Iterate through the attributes of the module
-            for attr in dir(module):
-                # Get the attribute object
-                obj = getattr(module, attr)
-
-                # Check if the attribute is a class and has the same module name as the metric name
-                if inspect.isclass(obj) and obj.__module__ == metric_name:
-                    return obj
-
-        # Return None if no instance of the metric class is found
-        return None
 
     def _generate_prompts_targets(
         self, number_of_prompts: int, cache_info: dict = None
