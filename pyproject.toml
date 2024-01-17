@@ -21,6 +21,7 @@ dependencies = [
     "rich==13.7.0",
     "spacy==3.7.2",
     "sentence-transformers==2.2.2",
+    "urllib3==2.1.0",
     "en-core-web-trf@https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl"
 ]
 readme = "README.md"
@@ -57,6 +58,7 @@ cmd2 = "2.4.3"
 rich = "13.7.0"
 spacy = "3.7.2"
 sentence-transformers = "2.2.2"
+urllib3 = "2.1.0"
 en-core-web-trf = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl"}
 
 
