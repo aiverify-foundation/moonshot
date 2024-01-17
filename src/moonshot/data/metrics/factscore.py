@@ -92,8 +92,12 @@ class FactScore:
 
         except Exception as exception:
             # Raise an error if there is an exception during calculation
-            logging.error(f"[FactScore] Unable to calculate - {str(exception)}")
-            raise RuntimeError(f"[FactScore] Unable to calculate - {str(exception)}")
+            logging.error(
+                f"[FactScore] Unable to generate metrics results - {str(exception)}"
+            )
+            raise RuntimeError(
+                f"[FactScore] Unable to generate metrics results - {str(exception)}"
+            )
 
     @classmethod
     def setup_factscore(cls, output_response: Any, targets: Any) -> FactScore:
@@ -126,8 +130,21 @@ class FactScore:
             else:
                 convert_judgment = False
 
+            if "extract_facts_model" in file_info:
+                if file_info["extract_facts_model"] == "external":
+                    extract_facts_use_local_model = False
+                else:
+                    extract_facts_use_local_model = True
+            else:
+                extract_facts_use_local_model = True
+
             return cls(
-                length_limit, model_endpoint, convert_judgment, output_response, targets
+                length_limit,
+                model_endpoint,
+                convert_judgment,
+                extract_facts_use_local_model,
+                output_response,
+                targets,
             )
 
     def __init__(
@@ -135,12 +152,14 @@ class FactScore:
         length_limit: int = 0,
         model_endpoint: str = "",
         convert_judgment: bool = False,
+        extract_facts_use_local_model: bool = True,
         output_response: Any = None,
         targets: Any = None,
     ) -> None:
         self.length_limit = length_limit
         self.model_endpoint = model_endpoint
         self.convert_judgment = convert_judgment
+        self.extract_facts_use_local_model = extract_facts_use_local_model
         self.output_response = output_response
         self.targets = targets
 
@@ -161,10 +180,27 @@ class FactScore:
         """
         # Split document to paragraphs
         paragraphs = input_document.split("\n")
-        prompts_list = [
-            prompt.format(document=paragraph) for paragraph in paragraphs if paragraph
-        ]
-        return self.batch_call_api(prompts_list)
+
+        if self.extract_facts_use_local_model:
+            logging.info("[FactScore] Extracting facts using local model.")
+            facts_dicts = [
+                {
+                    "list_of_sentences": split_paragraph_to_sentences(
+                        paragraph, cleaning=False
+                    )
+                }
+                for paragraph in paragraphs
+                if paragraph
+            ]
+            return facts_dicts
+        else:
+            logging.info("[FactScore] Extracting facts using api model.")
+            prompts_list = [
+                prompt.format(document=paragraph)
+                for paragraph in paragraphs
+                if paragraph
+            ]
+            return self.batch_call_api(prompts_list)
 
     def check_facts(self, facts_list: list, prompt: str = fact_check_prompt) -> list:
         """
@@ -343,6 +379,9 @@ class FactScore:
                 "total_run_duration": run_duration,
                 "results": fact_check_results,
             }
+        except ConnectionError as conn_error:
+            logging.error(f"Failed to compute factscore: {str(conn_error)}")
+            raise conn_error
         except Exception as error:
             logging.warning(f"Failed to compute factscore: {str(error)}")
             return False, {
@@ -377,7 +416,7 @@ class FactScore:
         # Generate statistics
         factscore_stats = {"total_facts": 0, "total_bad_facts": 0, "avg_factscore": 0.0}
         for result in individual_factscore:
-            if result:
+            if result and "total_facts" in result and "bad_facts" in result:
                 factscore_stats["total_facts"] += result["total_facts"]
                 factscore_stats["total_bad_facts"] += result["bad_facts"]
 
@@ -528,18 +567,21 @@ def retrieve_reference(sentences: list, ref_dict: dict, length_limit: int) -> li
     return candidates
 
 
-def split_paragraph_to_sentences(text: str) -> list:
+def split_paragraph_to_sentences(text: str, cleaning=True) -> list:
     """Split a text paragraph to a list of sentences
     Remove short sentences with less than 3 words
     Return:
         a list of sentences
     """
-    text = clean_text(re.sub(r";", ".", text))
-    return [
-        " ".join(sent.text.split())
-        for sent in nlp(text).sents
-        if len(sent.text.split()) > 2
-    ]
+    if cleaning:
+        text = clean_text(re.sub(r";", ".", text))
+        return [
+            " ".join(sent.text.split())
+            for sent in nlp(text).sents
+            if len(sent.text.split()) > 2
+        ]
+    else:
+        return [sent.text for sent in nlp(text).sents]
 
 
 def split_document_to_sentences(text: str) -> dict:

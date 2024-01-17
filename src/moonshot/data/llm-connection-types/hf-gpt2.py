@@ -61,7 +61,7 @@ class HFGpt2:
                     await sleep(delay)
 
             # Raise an exception
-            raise Exception("Max retries exceeded.")
+            raise ConnectionError("Max retries exceeded.")
 
         else:
             # Does not allow retries.
