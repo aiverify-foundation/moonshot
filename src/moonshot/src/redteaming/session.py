@@ -197,7 +197,10 @@ class Session:
             new_context_strategy (str): The new context strategy to be set.
         """
         # Set session and chats context strategy
-        if self.check_file_exists(new_context_strategy, "context_strategy"):
+        if (
+            self.check_file_exists(new_context_strategy, "context_strategy")
+            or new_context_strategy == ""
+        ):
             self.metadata.context_strategy = new_context_strategy
             for chat in self.metadata.chats:
                 chat.set_context_strategy(new_context_strategy)
