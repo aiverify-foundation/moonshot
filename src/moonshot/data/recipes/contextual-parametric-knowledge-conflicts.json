@@ -8,6 +8,6 @@
         "contextual-parametric-knowledge-conflicts"
     ],
     "metrics": [
-        "exactstrmatch"
+        "relaxstrmatch"
     ]
 }
