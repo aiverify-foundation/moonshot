@@ -1,0 +1,5 @@
+{
+	"name": "tamil-templatenewsclassification",
+	"description": "This template is used for Tamil News Classification for the Tamil News dataset.",
+	"template": "\"{{ prompt }}\" மேற்கொண்ட செய்தி எந்த பகுப்பை சேர்ந்தது? 'Only answer with either விளையாட்டு', 'உலகம்', 'இந்தியா', 'தமிழ்நாடு', 'அரசியல்' or 'சினிமா'."
+}

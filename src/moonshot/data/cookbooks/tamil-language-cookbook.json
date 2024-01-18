@@ -1,0 +1,9 @@
+{
+    "name": "Tamil Language",
+    "description": "This is a cookbook that consists of datasets related to the Tamil Language.",
+    "recipes": [
+        "tamil-kural-classification",
+        "tamil-tamilnews-classification",
+        "tamil-tanglish-tweets"
+    ]
+}
