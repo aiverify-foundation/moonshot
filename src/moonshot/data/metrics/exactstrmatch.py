@@ -1,5 +1,6 @@
 import logging
 from typing import Any
+import re
 
 from moonshot.src.utils.timeit import timeit
 
@@ -11,7 +12,6 @@ class ExactStrMatch:
     """
     ExactStrMatch will compare the output from language model with the expected target.
     """
-
     @staticmethod
     @timeit
     def get_results(
@@ -34,6 +34,24 @@ class ExactStrMatch:
         total = len(predicted_results)
 
         for idx, (result, target) in enumerate(zip(predicted_results, targets)):
-            if result == target:
-                correct += 1
+            # remove symbols and space
+            result = re.sub(r'[^\w]', '', result.rstrip()).replace(' ', '')
+            result = result.lower()
+
+            # To support benchmarks with multiple possible answers
+            if type(target) == list:
+                for each_item in target:
+                    each_item = re.sub(r'[^\w]', '', each_item.rstrip()).replace(' ', '')
+                    each_item = each_item.lower()
+
+                    if result == each_item:
+                        correct += 1
+                        break
+            else:
+                target = re.sub(r'[^\w\s]', '', target.rstrip()).replace(' ', '')
+                target = target.lower()
+            
+                if result == target:
+                    correct += 1
+                
         return {"exact_str_match": float(correct / total)}
