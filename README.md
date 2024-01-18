@@ -333,6 +333,9 @@ The Moonshot Team <<our.moonshot.team@gmail.com>>
 |WORD|https://aclanthology.org/L18-1408/|Creative Commons Attribution 3.0 International|
 |Real Toxicity Prompts|https://github.com/allenai/real-toxicity-prompts/|Apache License Version 2.0, January 2004|
 |Stanford Question Answering Dataset (SQuAD)|https://modestyachts.github.io/squadshifts-website/|Creative Commons Attribution 4.0 International|
+|Tanglish Tweets for Sentiment Ananlysis|https://www.kaggle.com/datasets/vyombhatia/tanglish-comments-for-sentiment-ananlysis/data|Creative Commons Attribution 1.0 International|
+|Tamil News Classification|https://github.com/vanangamudi/tamil-news-classification/tree/master/dataset/news|GNU General Public License v3.0|
+|Thirukkural Dataset|https://github.com/vijayanandrp/Thirukkural-Tamil-Dataset|Creative Commons Attribution 4.0 International|
 |TruthfulQA|https://github.com/sylinrl/TruthfulQA|Apache License Version 2.0, January 2004|
 |UCI Adult|https://archive.ics.uci.edu/dataset/2/adult|Creative Commons Attribution 4.0 International|
 
