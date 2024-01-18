@@ -1,0 +1,5 @@
+{
+	"name": "tamil-templatetanglishsa",
+	"description": "This template is used for Sentiment Analysis on the Tanglish Tweets dataset.",
+	"template": "\"{{ prompt }}\" The following tweet is code-miexed in Tamil and English. For the given tweet, label the sentiment of the sentence as positive, negative or mixed feelings. Return '0' for positive, '1' for negative and '2' for mixed feelings."
+}

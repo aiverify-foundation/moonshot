@@ -13,7 +13,7 @@ def get_prompt_templates() -> list:
         list: A list of prompt templates.
     """
     return [
-        json.load(open(filepath, "r"))
+        json.load(open(filepath, "r" , encoding = "utf-8"))
         for filepath in glob.iglob(f"{EnvironmentVars.PROMPT_TEMPLATES}/*.json")
         if "__" not in filepath
     ]
