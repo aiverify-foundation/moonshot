@@ -7,6 +7,8 @@ from moonshot.src.utils.import_modules import (
     import_module_from_spec,
 )
 
+loaded_metric_modules = {}
+
 
 def run_factscore(prompts: Any, predicted_results: Any, targets: Any) -> dict:
     """
@@ -38,13 +40,18 @@ def load_metrics(metrics: list) -> list:
     # Create a new metric instance
     metrics_instances = []
     for metric in metrics:
-        metric_instance = _get_metric_instance(metric)
-        if metric_instance:
-            metric_instance = metric_instance()
+        # Get the metric instance
+        if metric in loaded_metric_modules:
+            metric_instance = loaded_metric_modules[metric]
         else:
-            raise RuntimeError(
-                f"Unable to get defined metric instance - {metric_instance}"
-            )
+            metric_instance = _get_metric_instance(metric)
+            if metric_instance:
+                metric_instance = metric_instance()
+            else:
+                raise RuntimeError(
+                    f"Unable to get defined metric instance - {metric_instance}"
+                )
+            loaded_metric_modules[metric] = metric_instance
         metrics_instances.append(metric_instance)
     return metrics_instances
 
