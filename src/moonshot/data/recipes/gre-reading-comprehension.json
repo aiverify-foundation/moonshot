@@ -8,6 +8,6 @@
         "gre-reading-comprehension"
     ],
     "metrics": [
-        "exactstrmatch"
+        "relaxstrmatch"
     ]
 }

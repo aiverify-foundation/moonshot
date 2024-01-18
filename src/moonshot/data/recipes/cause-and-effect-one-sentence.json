@@ -8,6 +8,6 @@
         "cause-and-effect-one-sentence"
     ],
     "metrics": [
-        "exactstrmatch"
+        "relaxstrmatch"
     ]
 }
