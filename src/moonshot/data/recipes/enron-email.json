@@ -12,6 +12,6 @@
         "enronemail-templated"
     ],
     "metrics": [
-        "exactstrmatch"
+        "leakagerate"
     ]
 }
