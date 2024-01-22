@@ -1,0 +1,5 @@
+{
+	"name": "tamil-templatekuralclassification",
+	"description": "This template is used for Thirukkural Classification for the Thirkural dataset.",
+	"template": "\"{{ prompt }}\" மேற்கொண்ட குறள் எந்த பாலை சேர்ந்தது? Only answer with either 'அறத்துப்பால்', 'பொருட்பால்' or 'காமத்துப்பால்'."
+}

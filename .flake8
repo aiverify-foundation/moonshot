@@ -1,3 +1,5 @@
 [flake8]
 max-line-length = 120
 extend-ignore = E203
+
+per-file-ignores = cli.py:F401 benchmark.py:F403,F405 initialisation.py:F403,F405 redteam.py:F403,F405
