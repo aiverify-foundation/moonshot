@@ -81,7 +81,7 @@ class Recipe:
         # Load dataset information
         start_time = time.perf_counter()
         self.dataset_info = json.load(
-            open(f"{EnvironmentVars.DATASETS}/{self.dataset}.json", "r")
+            open(f"{EnvironmentVars.DATASETS}/{self.dataset}.json", "r" ,encoding = "utf-8")
         )
         print(
             f"[Recipe ({self.id}) - Run] Load dataset information took {(time.perf_counter() - start_time):.4f}s"
@@ -92,7 +92,7 @@ class Recipe:
         for template in self.prompt_templates:
             self.prompt_templates_info.append(
                 json.load(
-                    open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}.json", "r")
+                    open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{template}.json", "r" ,encoding = "utf-8")
                 )
             )
         print(
@@ -388,7 +388,7 @@ def get_recipes(desired_recipes: list) -> list:
     for recipe_name in desired_recipes:
         recipe_filename = slugify(recipe_name, lowercase=False)
         filepath = f"{EnvironmentVars.RECIPES}/{recipe_filename}.json"
-        with open(filepath, "r") as json_file:
+        with open(filepath, "r",encoding = "utf-8") as json_file:
             recipe_info = json.load(json_file)
             recipe_info["filename"] = Path(filepath).stem
             recipes.append(recipe_info)

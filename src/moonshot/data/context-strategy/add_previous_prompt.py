@@ -38,7 +38,7 @@ class ContextOne:
         combined_contextualised_previous_prompt = "Context:"
         for previous_prompt_dict in list_of_previous_prompts:
             previous_prompt_str = previous_prompt_dict.get("prompt")
-            combined_contextualised_previous_prompt += previous_prompt_str + "!!"
+            combined_contextualised_previous_prompt += previous_prompt_str
         return combined_contextualised_previous_prompt + "\n"
 
     @staticmethod

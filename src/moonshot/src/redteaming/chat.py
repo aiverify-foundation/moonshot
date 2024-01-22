@@ -451,6 +451,9 @@ class Chat:
                 prompt_template_details = json.load(json_file)
                 template = prompt_template_details["template"]
                 jinja_template = Template(template)
-                new_prompt += jinja_template.render({"prompt": current_prompt})
+                if context_strategy:
+                    new_prompt += jinja_template.render({"prompt": current_prompt})
+                else:
+                    new_prompt = jinja_template.render({"prompt": current_prompt})
 
         return new_prompt
