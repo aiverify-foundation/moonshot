@@ -115,7 +115,7 @@ class FactScore:
             else:
                 file_info = {}
 
-            # Read model endpoint, length limit, convert_judgment from config
+            # Read model endpoint, length limit, perform_postparsing from config
             if "model_endpoint" in file_info:
                 model_endpoint = file_info["model_endpoint"]
             else:
@@ -126,13 +126,13 @@ class FactScore:
             else:
                 length_limit = 10000
 
-            if "convert_judgment" in file_info:
-                if file_info["convert_judgment"] == "true":
-                    convert_judgment = True
+            if "perform_postparsing" in file_info:
+                if file_info["perform_postparsing"] == "true":
+                    perform_postparsing = True
                 else:
-                    convert_judgment = False
+                    perform_postparsing = False
             else:
-                convert_judgment = False
+                perform_postparsing = False
 
             if "extract_facts_model" in file_info:
                 if file_info["extract_facts_model"] == "external":
@@ -145,7 +145,7 @@ class FactScore:
             return cls(
                 length_limit,
                 model_endpoint,
-                convert_judgment,
+                perform_postparsing,
                 extract_facts_use_local_model,
                 output_response,
                 targets,
@@ -155,14 +155,14 @@ class FactScore:
         self,
         length_limit: int = 0,
         model_endpoint: str = "",
-        convert_judgment: bool = False,
+        perform_postparsing: bool = False,
         extract_facts_use_local_model: bool = True,
         output_response: Any = None,
         targets: Any = None,
     ) -> None:
         self.length_limit = length_limit
         self.model_endpoint = model_endpoint
-        self.convert_judgment = convert_judgment
+        self.perform_postparsing = perform_postparsing
         self.extract_facts_use_local_model = extract_facts_use_local_model
         self.output_response = output_response
         self.targets = targets
@@ -339,12 +339,16 @@ class FactScore:
         try:
             total_start_time = time.perf_counter()
 
-            # Check if reference requires conversion
-            if self.convert_judgment:
+            # Check if you need to message the candidate
+            if self.perform_postparsing:
+                # Perform prompt processing
                 if isinstance(reference, list):
                     reference = slr_extract_judgment(reference)
                 else:
                     reference = slr_extract_judgment(json.loads(reference))
+
+                # Perform candidate processing
+                candidate = "Facts\n\n" + candidate.split("Facts\n\n")[1]
 
             # Split the reference document into sentences
             logging.info("[Factscore] Splitting document to sentences")
