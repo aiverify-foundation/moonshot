@@ -8,6 +8,6 @@
         "analogical-similarity"
     ],
     "metrics": [
-        "exactstrmatch"
+        "relaxstrmatch"
     ]
 }

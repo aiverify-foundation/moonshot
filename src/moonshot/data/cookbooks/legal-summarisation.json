@@ -7,10 +7,7 @@
         "cause-and-effect-one-sentence",
         "cause-and-effect-two-sentence",
         "contextual-parametric-knowledge-conflicts",
-        "coqa-conversational-qna",
         "gre-reading-comprehension",
-        "squad-shifts-tnf",
-        "sg-legal-glossary",
-        "sg-university-tutorial-questions-legal"
+        "squad-shifts-tnf"
     ]
 }
