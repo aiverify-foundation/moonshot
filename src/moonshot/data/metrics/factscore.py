@@ -17,32 +17,6 @@ from moonshot.src.utils.timeit import timeit
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Load spacy model 'en_core_web_trf'
-logging.info("[FactScore] Loading spacy model 'en_core_web_trf'.")
-start_time = time.perf_counter()
-nlp = spacy.load("en_core_web_trf")
-logging.info(
-    f"[FactScore] Loading spacy model 'en_core_web_trf' took {(time.perf_counter() - start_time):.4f}s"
-)
-
-# Load SBert model 'https://huggingface.co/sentence-transformers/all-mpnet-base-v2'
-logging.info(
-    "[FactScore] Loading sentence transformer 'sentence-transformers/all-mpnet-base-v2'."
-)
-start_time = time.perf_counter()
-sbert_model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
-logging.info(
-    f"[FactScore] Loading sentence transformer 'sentence-transformers/all-mpnet-base-v2' took "
-    f"{(time.perf_counter() - start_time):.4f}s"
-)
-
-# Precompile the regular expression
-start_time = time.perf_counter()
-pattern = re.compile(r": \(?(at )?\[\d*(\(\w\)(\(i{1,3}\))?)?].*?\.", re.DOTALL)
-logging.info(
-    f"[FactScore] Compiling regression pattern took {(time.perf_counter() - start_time):.4f}s"
-)
-
 
 class FactScore:
     """
@@ -63,6 +37,32 @@ class FactScore:
     Provide output in JSON format with the following four keys:
     'hypothesis', 'decision': (true, false, or undetermined), 'reason', 'revision'.
     """
+
+    # Load spacy model 'en_core_web_trf'
+    logging.info("[FactScore] Loading spacy model 'en_core_web_trf'.")
+    start_time = time.perf_counter()
+    nlp = spacy.load("en_core_web_trf")
+    logging.info(
+        f"[FactScore] Loading spacy model 'en_core_web_trf' took {(time.perf_counter() - start_time):.4f}s"
+    )
+
+    # Load SBert model 'https://huggingface.co/sentence-transformers/all-mpnet-base-v2'
+    logging.info(
+        "[FactScore] Loading sentence transformer 'sentence-transformers/all-mpnet-base-v2'."
+    )
+    start_time = time.perf_counter()
+    sbert_model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
+    logging.info(
+        f"[FactScore] Loading sentence transformer 'sentence-transformers/all-mpnet-base-v2' took "
+        f"{(time.perf_counter() - start_time):.4f}s"
+    )
+
+    # Precompile the regular expression
+    start_time = time.perf_counter()
+    pattern = re.compile(r": \(?(at )?\[\d*(\(\w\)(\(i{1,3}\))?)?].*?\.", re.DOTALL)
+    logging.info(
+        f"[FactScore] Compiling regression pattern took {(time.perf_counter() - start_time):.4f}s"
+    )
 
     @staticmethod
     @timeit
@@ -189,7 +189,7 @@ class FactScore:
             logging.info("[FactScore] Extracting facts using local model.")
             facts_dicts = [
                 {
-                    "list_of_sentences": split_paragraph_to_sentences(
+                    "list_of_sentences": self.split_paragraph_to_sentences(
                         paragraph, cleaning=False
                     )
                 }
@@ -267,7 +267,7 @@ class FactScore:
         total_facts = total_bad_facts = 0
         for completion in facts_completions:
             # Retrieve the reference for each completion
-            retrieval_output = retrieve_reference(
+            retrieval_output = self.retrieve_reference(
                 completion["list_of_sentences"], ref_dict, self.length_limit
             )
 
@@ -343,9 +343,9 @@ class FactScore:
             if self.perform_postparsing:
                 # Perform prompt processing
                 if isinstance(reference, list):
-                    reference = slr_extract_judgment(reference)
+                    reference = self.slr_extract_judgment(reference)
                 else:
-                    reference = slr_extract_judgment(json.loads(reference))
+                    reference = self.slr_extract_judgment(json.loads(reference))
 
                 # Perform candidate processing
                 candidate = "Facts\n\n" + candidate.split("Facts\n\n")[1]
@@ -353,7 +353,7 @@ class FactScore:
             # Split the reference document into sentences
             logging.info("[Factscore] Splitting document to sentences")
             start_time = time.perf_counter()
-            reference_dict = split_document_to_sentences(reference)
+            reference_dict = self.split_document_to_sentences(reference)
             doc_to_str_duration = f"{(time.perf_counter() - start_time):.4f}s"
 
             # Extract facts from the candidate document
@@ -448,216 +448,216 @@ class FactScore:
             "average_scores": factscore_stats,
         }
 
+    # Support utility functions
+    def remove_ref(self, s: str) -> str:
+        """
+        To replace the reference of the following format to period ".":
+            ": at [12], [34] and [56]."
+            ": [12], [34] and [56]."
+            ": at [40(a)], [74] to [79] and [83(e)]."
+            ": (at [64] and [68])."
+            ": at [25(c)(ii)]."
+            Parameters:
+                s (str): input text
+            Returns:
+                text (str): output of all references matching the formats removed.
+        """
+        return self.pattern.sub(".", s)
 
-# Support utility functions
-def remove_ref(s: str) -> str:
-    """
-    To replace the reference of the following format to period ".":
-        ": at [12], [34] and [56]."
-        ": [12], [34] and [56]."
-        ": at [40(a)], [74] to [79] and [83(e)]."
-        ": (at [64] and [68])."
-        ": at [25(c)(ii)]."
-        Parameters:
-            s (str): input text
-        Returns:
-            text (str): output of all references matching the formats removed.
-    """
-    return pattern.sub(".", s)
+    def remove_list_number(self, text: str) -> str:
+        """Remove list number at the beginning of a text paragraph"""
+        words = text.split(maxsplit=1)
+        if words[0].strip("().").isdigit():
+            return words[1] if len(words) > 1 else ""
+        return text
 
+    def clean_text(self, text: str) -> str:
+        """Remove paragraph numbers at the beginning
+        Remove references at the end
+        """
+        return " ".join(self.remove_ref(self.remove_list_number(text)).split())
 
-def remove_list_number(text: str) -> str:
-    """Remove list number at the beginning of a text paragraph"""
-    words = text.split(maxsplit=1)
-    if words[0].strip("().").isdigit():
-        return words[1] if len(words) > 1 else ""
-    return text
+    def fit_paragraphs_to_limit(self, word_counts: list, length_limit: int) -> int:
+        """Check how many paragraphs can fit into length limit
+        Args:
+            word_counts: Number of words in each paragraph
+            length_limit: The total number words in selected paragraphs should not exceed this limit.
+        Return:
+            Number of paragraphs that can fit into length limit
+        """
+        total_words = 0
+        for i, count in enumerate(word_counts):
+            total_words += count
+            if total_words > length_limit:
+                return i
+        return len(word_counts)
 
+    def find_top_reference(self, scores, ref_dict: dict, length_limit: int) -> dict:
+        """Find indexes of the most relevant paragraphs in reference
+        Args:
+            scores: a numpy array of similarity scores
+            length_limit: The total number words in selected paragraphs should not exceed this limit.
+            ref_dict: a dict of reference: {'parags', 'word_counts', 'sents', 'idx'}
+        Return:
+            a dict: ['max_score', 'idx']
+            idx: indexes of the most relevant reference paragraphs
+        """
+        # Sort reference sentences on scores in descending order
+        scores_dict = sorted(
+            [
+                {
+                    "i": parag_index,
+                    "score": score,
+                    "word_count": ref_dict["word_counts"][parag_index],
+                }
+                for parag_index, score in zip(ref_dict["idx"], scores)
+            ],
+            key=lambda x: x["score"],
+            reverse=True,
+        )
 
-def clean_text(text: str) -> str:
-    """Remove paragraph numbers at the beginning
-    Remove references at the end
-    """
-    return " ".join(remove_ref(remove_list_number(text)).split())
+        # Remove duplicates and keep only the first occurrence
+        seen = set()
+        scores_dict = [
+            d for d in scores_dict if not (d["i"] in seen or seen.add(d["i"]))
+        ]
 
+        # Find how many reference paragraphs can fit into length limit
+        number_of_parags = self.fit_paragraphs_to_limit(
+            word_counts=[d["word_count"] for d in scores_dict],
+            length_limit=length_limit,
+        )
 
-def fit_paragraphs_to_limit(word_counts: list, length_limit: int) -> int:
-    """Check how many paragraphs can fit into length limit
-    Args:
-        word_counts: Number of words in each paragraph
-        length_limit: The total number words in selected paragraphs should not exceed this limit.
-    Return:
-        Number of paragraphs that can fit into length limit
-    """
-    total_words = 0
-    for i, count in enumerate(word_counts):
-        total_words += count
-        if total_words > length_limit:
-            return i
-    return len(word_counts)
+        return {
+            "max_score": round(float(scores_dict[0]["score"]), 4),
+            "idx": sorted([d["i"] for d in scores_dict[:number_of_parags]]),
+        }
 
+    def retrieve_reference(
+        self, sentences: list, ref_dict: dict, length_limit: int
+    ) -> list:
+        """Retrieve relevant reference paragraphs for a list of candidate sentences.
+        Args:
+            sentences: a list of candidate sentences
+            ref_dict:  a dict of reference: {'parags', 'word_counts', 'sents', 'idx'}
+            length_limit: The total number words in selected paragraphs should not exceed this limit.
+        Return:
+            a list of dict: [{'sentence', 'cleaned', 'reference', 'max_score'}]
+        """
+        # Select candidate sentences (>= 3 words) for similarity computation
+        candidates = [
+            {"index": i, "sentence": sent, "cleaned": self.clean_text(sent)}
+            for i, sent in enumerate(sentences)
+        ]
 
-def find_top_reference(scores, ref_dict: dict, length_limit: int) -> dict:
-    """Find indexes of the most relevant paragraphs in reference
-    Args:
-        scores: a numpy array of similarity scores
-        length_limit: The total number words in selected paragraphs should not exceed this limit.
-        ref_dict: a dict of reference: {'parags', 'word_counts', 'sents', 'idx'}
-    Return:
-        a dict: ['max_score', 'idx']
-        idx: indexes of the most relevant reference paragraphs
-    """
-    # Sort reference sentences on scores in descending order
-    scores_dict = sorted(
-        [
-            {
-                "i": parag_index,
-                "score": score,
-                "word_count": ref_dict["word_counts"][parag_index],
-            }
-            for parag_index, score in zip(ref_dict["idx"], scores)
-        ],
-        key=lambda x: x["score"],
-        reverse=True,
-    )
+        selected_candidates = [
+            cand for cand in candidates if len(cand["cleaned"].split()) > 2
+        ]
 
-    # Remove duplicates and keep only the first occurrence
-    seen = set()
-    scores_dict = [d for d in scores_dict if not (d["i"] in seen or seen.add(d["i"]))]
+        if not selected_candidates:
+            return candidates
 
-    # Find how many reference paragraphs can fit into length limit
-    number_of_parags = fit_paragraphs_to_limit(
-        word_counts=[d["word_count"] for d in scores_dict], length_limit=length_limit
-    )
+        # Compute similarity scores
+        sim_scores = self.compute_sbert_scores(
+            ref_dict["sents"], [cand["cleaned"] for cand in selected_candidates]
+        )
+        logging.info(f"Similarity scores (shape): {sim_scores.shape}")
 
-    return {
-        "max_score": round(float(scores_dict[0]["score"]), 4),
-        "idx": sorted([d["i"] for d in scores_dict[:number_of_parags]]),
-    }
+        # Retrieve top reference paragraphs for each selected sentence
+        for i, cand in enumerate(selected_candidates):
+            d = self.find_top_reference(
+                scores=sim_scores[:, i], ref_dict=ref_dict, length_limit=length_limit
+            )
 
+            candidates[cand["index"]]["max_score"] = d["max_score"]
+            candidates[cand["index"]]["reference"] = "\n".join(
+                ref_dict["parags"][index] for index in d["idx"]
+            )
 
-def retrieve_reference(sentences: list, ref_dict: dict, length_limit: int) -> list:
-    """Retrieve relevant reference paragraphs for a list of candidate sentences.
-    Args:
-        sentences: a list of candidate sentences
-        ref_dict:  a dict of reference: {'parags', 'word_counts', 'sents', 'idx'}
-        length_limit: The total number words in selected paragraphs should not exceed this limit.
-    Return:
-        a list of dict: [{'sentence', 'cleaned', 'reference', 'max_score'}]
-    """
-    # Select candidate sentences (>= 3 words) for similarity computation
-    candidates = [
-        {"index": i, "sentence": sent, "cleaned": clean_text(sent)}
-        for i, sent in enumerate(sentences)
-    ]
-
-    selected_candidates = [
-        cand for cand in candidates if len(cand["cleaned"].split()) > 2
-    ]
-
-    if not selected_candidates:
         return candidates
 
-    # Compute similarity scores
-    sim_scores = compute_sbert_scores(
-        ref_dict["sents"], [cand["cleaned"] for cand in selected_candidates]
-    )
-    logging.info(f"Similarity scores (shape): {sim_scores.shape}")
+    def split_paragraph_to_sentences(self, text: str, cleaning=True) -> list:
+        """Split a text paragraph to a list of sentences
+        Remove short sentences with less than 3 words
+        Return:
+            a list of sentences
+        """
+        if cleaning:
+            text = self.clean_text(re.sub(r";", ".", text))
+            return [
+                " ".join(sent.text.split())
+                for sent in self.nlp(text).sents
+                if len(sent.text.split()) > 2
+            ]
+        else:
+            return [sent.text for sent in self.nlp(text).sents]
 
-    # Retrieve top reference paragraphs for each selected sentence
-    for i, cand in enumerate(selected_candidates):
-        d = find_top_reference(
-            scores=sim_scores[:, i], ref_dict=ref_dict, length_limit=length_limit
+    def split_document_to_sentences(self, text: str) -> dict:
+        """Split document first to paragraphs and then to sentences
+        return:
+            a dict: {'parags', 'word_counts', 'sents', 'idx'}
+            words_counts: number of words in each paragraph
+            idx: paragraph indexes of sentences
+        """
+        # Split document to paragraphs
+        parags = list(filter(None, text.split("\n")))
+        word_counts = [len(parag.split()) for parag in parags]
+
+        # Split paragraph to sentences
+        sents = []
+        idx = []
+        for i, parag in enumerate(parags):
+            strs = self.split_paragraph_to_sentences(parag)
+            sents.extend(strs)
+            idx.extend([i] * len(strs))
+
+        return {
+            "parags": parags,
+            "word_counts": word_counts,
+            "sents": sents,
+            "idx": idx,
+        }
+
+    def compute_sbert_scores(self, ref_strs: list, test_strs: list):
+        """Use Sentence Transformer to compute cosine similarity scores
+        between ref strings and test strings
+        Returns:
+             Cosine similarity scores in M x N numpy array
+             M: length of ref_strs, N: length of test_strs
+        """
+        start = time.time()
+        embeddings1 = self.sbert_model.encode(ref_strs)
+        embeddings2 = self.sbert_model.encode(test_strs)
+        scores = np.inner(embeddings1, embeddings2)
+        end = time.time()
+        logging.info(
+            f"Time for similarity computation (SBert): {(end - start):.1f} seconds"
         )
+        return scores
 
-        candidates[cand["index"]]["max_score"] = d["max_score"]
-        candidates[cand["index"]]["reference"] = "\n".join(
-            ref_dict["parags"][index] for index in d["idx"]
-        )
+    def slr_extract_judgment(self, jsondict: list) -> str:
+        """Extract Judgment text from SAL JSON dict data.
+        Output:
+            text string for judgment
+        """
+        output_buf = []
+        for data in jsondict:
+            # Extract header text
+            output_buf.append(data["header"]["text"])
 
-    return candidates
+            # Extract paragraph text
+            for parag_data in data["paragraphs"]:
+                if parag_data["paragraph_number"]:
+                    output_buf.append(
+                        parag_data["paragraph_number"] + " " + parag_data["text"]
+                    )
+                else:
+                    output_buf.append(parag_data["text"])
 
+                # Extract table text
+                for table_data in parag_data["tables"]:
+                    rows = [row.replace("\t", " | ") for row in table_data]
+                    output_buf.append("\n".join(rows))
 
-def split_paragraph_to_sentences(text: str, cleaning=True) -> list:
-    """Split a text paragraph to a list of sentences
-    Remove short sentences with less than 3 words
-    Return:
-        a list of sentences
-    """
-    if cleaning:
-        text = clean_text(re.sub(r";", ".", text))
-        return [
-            " ".join(sent.text.split())
-            for sent in nlp(text).sents
-            if len(sent.text.split()) > 2
-        ]
-    else:
-        return [sent.text for sent in nlp(text).sents]
-
-
-def split_document_to_sentences(text: str) -> dict:
-    """Split document first to paragraphs and then to sentences
-    return:
-        a dict: {'parags', 'word_counts', 'sents', 'idx'}
-        words_counts: number of words in each paragraph
-        idx: paragraph indexes of sentences
-    """
-    # Split document to paragraphs
-    parags = list(filter(None, text.split("\n")))
-    word_counts = [len(parag.split()) for parag in parags]
-
-    # Split paragraph to sentences
-    sents = []
-    idx = []
-    for i, parag in enumerate(parags):
-        strs = split_paragraph_to_sentences(parag)
-        sents.extend(strs)
-        idx.extend([i] * len(strs))
-
-    return {"parags": parags, "word_counts": word_counts, "sents": sents, "idx": idx}
-
-
-def compute_sbert_scores(ref_strs: list, test_strs: list):
-    """Use Sentence Transformer to compute cosine similarity scores
-    between ref strings and test strings
-    Returns:
-         Cosine similarity scores in M x N numpy array
-         M: length of ref_strs, N: length of test_strs
-    """
-    start = time.time()
-    embeddings1 = sbert_model.encode(ref_strs)
-    embeddings2 = sbert_model.encode(test_strs)
-    scores = np.inner(embeddings1, embeddings2)
-    end = time.time()
-    logging.info(
-        f"Time for similarity computation (SBert): {(end - start):.1f} seconds"
-    )
-    return scores
-
-
-def slr_extract_judgment(jsondict: list) -> str:
-    """Extract Judgment text from SAL JSON dict data.
-    Output:
-        text string for judgment
-    """
-    output_buf = []
-    for data in jsondict:
-        # Extract header text
-        output_buf.append(data["header"]["text"])
-
-        # Extract paragraph text
-        for parag_data in data["paragraphs"]:
-            if parag_data["paragraph_number"]:
-                output_buf.append(
-                    parag_data["paragraph_number"] + " " + parag_data["text"]
-                )
-            else:
-                output_buf.append(parag_data["text"])
-
-            # Extract table text
-            for table_data in parag_data["tables"]:
-                rows = [row.replace("\t", " | ") for row in table_data]
-                output_buf.append("\n".join(rows))
-
-    text = "\n\n".join(output_buf)
-    return text
+        text = "\n\n".join(output_buf)
+        return text
