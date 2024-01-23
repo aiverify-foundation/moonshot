@@ -142,14 +142,6 @@ class FactScore:
             else:
                 extract_facts_use_local_model = True
 
-            if "extract_facts_model" in file_info:
-                if file_info["extract_facts_model"] == "external":
-                    extract_facts_use_local_model = False
-                else:
-                    extract_facts_use_local_model = True
-            else:
-                extract_facts_use_local_model = True
-
             return cls(
                 length_limit,
                 model_endpoint,
@@ -662,10 +654,10 @@ def slr_extract_judgment(jsondict: list) -> str:
             else:
                 output_buf.append(parag_data["text"])
 
-        # Extract table text
-        for table_data in data["tables"]:
-            rows = [row.replace("\t", " | ") for row in table_data]
-            output_buf.append("\n".join(rows))
+            # Extract table text
+            for table_data in parag_data["tables"]:
+                rows = [row.replace("\t", " | ") for row in table_data]
+                output_buf.append("\n".join(rows))
 
     text = "\n\n".join(output_buf)
     return text
