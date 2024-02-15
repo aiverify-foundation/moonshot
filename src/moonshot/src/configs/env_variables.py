@@ -7,8 +7,8 @@ from dotenv import dotenv_values
 
 
 class EnvironmentVars:
-    LLM_ENDPOINTS = None
-    LLM_CONNECTION_TYPES = None
+    CONNECTORS_ENDPOINTS = None
+    CONNECTORS = None
     RECIPES = None
     COOKBOOKS = None
     DATASETS = None
@@ -35,7 +35,7 @@ def read_env_file(env_file: str = ".env") -> dict:
     return dotenv_values(env_file)
 
 
-def load_env(env_dict: dict = None) -> None:
+def load_env(env_dict: dict = {}) -> None:
     """
     Loads env var from the input dictionary or from the system environment variables if no dictionary is provided.
 
@@ -46,12 +46,13 @@ def load_env(env_dict: dict = None) -> None:
         env_dict = {}
 
     # Load the new environment variables
-    EnvironmentVars.LLM_ENDPOINTS = env_dict.get(
-        "LLM_ENDPOINTS", os.environ.get("LLM_ENDPOINTS", "moonshot/data/llm-endpoints")
+    EnvironmentVars.CONNECTORS_ENDPOINTS = env_dict.get(
+        "CONNECTORS_ENDPOINTS",
+        os.environ.get("CONNECTORS_ENDPOINTS", "moonshot/data/connectors-endpoints"),
     )
-    EnvironmentVars.LLM_CONNECTION_TYPES = env_dict.get(
-        "LLM_CONNECTION_TYPES",
-        os.environ.get("LLM_CONNECTION_TYPES", "moonshot/data/llm-connection-types"),
+    EnvironmentVars.CONNECTORS = env_dict.get(
+        "CONNECTORS",
+        os.environ.get("CONNECTORS", "moonshot/data/connectors"),
     )
     EnvironmentVars.RECIPES = env_dict.get(
         "RECIPES", os.environ.get("RECIPES", "moonshot/data/recipes")
@@ -91,8 +92,8 @@ def load_env(env_dict: dict = None) -> None:
     )
 
     # Set environment variables
-    os.environ["LLM_ENDPOINTS"] = EnvironmentVars.LLM_ENDPOINTS
-    os.environ["LLM_CONNECTION_TYPES"] = EnvironmentVars.LLM_CONNECTION_TYPES
+    os.environ["CONNECTORS_ENDPOINTS"] = EnvironmentVars.CONNECTORS_ENDPOINTS
+    os.environ["CONNECTORS"] = EnvironmentVars.CONNECTORS
     os.environ["RECIPES"] = EnvironmentVars.RECIPES
     os.environ["COOKBOOKS"] = EnvironmentVars.COOKBOOKS
     os.environ["DATASETS"] = EnvironmentVars.DATASETS

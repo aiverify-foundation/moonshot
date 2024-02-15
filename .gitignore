@@ -163,7 +163,7 @@ cython_debug/
 .idea/
 
 # User defined files
-src/moonshot/data/llm-endpoints/*.json
+src/moonshot/data/connectors-endpoints/*.json
 src/moonshot/data/results/*.json
 src/moonshot/data/databases/*.db
 src/moonshot/data/sessions/*.json

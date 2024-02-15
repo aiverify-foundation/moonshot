@@ -1,6 +1,2 @@
 {
-    "factscore": {
-        "model_endpoint": "",
-        "length_limit": 10000
-    }
 }

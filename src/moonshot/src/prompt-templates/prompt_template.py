@@ -1,7 +1,7 @@
 import glob
 import json
 
-from moonshot.src.common.env_variables import EnvironmentVars
+from moonshot.src.configs.env_variables import EnvironmentVars
 
 
 def get_prompt_templates() -> list:
@@ -13,7 +13,7 @@ def get_prompt_templates() -> list:
         list: A list of prompt templates.
     """
     return [
-        json.load(open(filepath, "r" , encoding = "utf-8"))
+        json.load(open(filepath, "r", encoding="utf-8"))
         for filepath in glob.iglob(f"{EnvironmentVars.PROMPT_TEMPLATES}/*.json")
         if "__" not in filepath
     ]
