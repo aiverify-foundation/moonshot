@@ -102,15 +102,15 @@ class ConnectorManager:
             raise e
 
     @staticmethod
-    def update_endpoint(ep_args: ConnectorEndpointArguments) -> None:
+    def update_endpoint(ep_args: ConnectorEndpointArguments) -> bool:
         # TODO: Update endpoint
-        pass
+        return False
 
     @staticmethod
     @validate_arguments
-    def delete_endpoint(ep_id: str) -> None:
+    def delete_endpoint(ep_id: str) -> bool:
         # TODO: Delete endpoint
-        pass
+        return False
 
     @staticmethod
     def get_available_endpoints() -> tuple[list[str], list[ConnectorEndpointArguments]]:
@@ -155,36 +155,6 @@ class ConnectorManager:
             raise e
 
     # Connector functions
-    @staticmethod
-    @validate_arguments
-    def create_connector_from_connector_endpoints_ids(
-        ep_ids: list[str],
-    ) -> list[Connector]:
-        """
-        Creates connectors based on the provided endpoint IDs.
-
-        This method takes a list of endpoint IDs, retrieves the corresponding endpoint information for each ID, and
-        then creates a connector object for each endpoint. The method returns a list of these connector objects.
-
-        Args:
-            ep_ids (list[str]): A list of endpoint IDs for which connectors are to be created.
-
-        Returns:
-            list[Connector]: A list of Connector objects created based on the provided endpoint IDs.
-        """
-        try:
-            results = []
-            for ep_id in ep_ids:
-                connector_endpoint_info = ConnectorManager.read_endpoint(ep_id)
-                results.append(
-                    ConnectorManager.create_connector(connector_endpoint_info)
-                )
-            return results
-
-        except Exception as e:
-            print(f"Failed to create connectors from connector endpoints ids: {str(e)}")
-            raise e
-
     @staticmethod
     def create_connector(ep_args: ConnectorEndpointArguments) -> Connector:
         """
