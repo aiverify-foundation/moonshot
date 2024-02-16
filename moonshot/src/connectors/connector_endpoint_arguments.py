@@ -43,6 +43,7 @@ class ConnectorEndpointArguments(BaseModel):
         Returns:
             dict: A dictionary representation of the ConnectorEndpointArguments instance.
         """
+
         return {
             "id": self.id,
             "name": self.name,

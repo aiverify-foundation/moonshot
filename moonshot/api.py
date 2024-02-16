@@ -6,6 +6,22 @@ from moonshot.src.connectors.connector_manager import ConnectorManager
 
 
 # ------------------------------------------------------------------------------
+# Environment Variables APIs
+# ------------------------------------------------------------------------------
+def api_set_environment_variables(env_vars: dict) -> None:
+    """
+    Sets the environment variables for the current session.
+
+    Args:
+        env_vars (dict): A dictionary containing the environment variables to set.
+
+    Returns:
+        None
+    """
+    pass
+
+
+# ------------------------------------------------------------------------------
 # Connector APIs
 # ------------------------------------------------------------------------------
 def api_create_endpoint(

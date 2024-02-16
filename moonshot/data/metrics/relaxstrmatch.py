@@ -1,6 +1,6 @@
 import logging
-from typing import Any
 import re
+from typing import Any
 
 from moonshot.src.utils.timeit import timeit
 
@@ -10,8 +10,10 @@ logger = logging.getLogger(__name__)
 
 class RelaxStrMatch:
     """
-    RelaxStrMatch will remove symbols and spaces before comparing the output from language model with the expected target.
+    RelaxStrMatch will remove symbols and spaces before comparing the output from language model with the expected
+    target.
     """
+
     @staticmethod
     @timeit
     def get_results(
@@ -35,23 +37,25 @@ class RelaxStrMatch:
 
         for idx, (result, target) in enumerate(zip(predicted_results, targets)):
             # remove symbols and space
-            result = re.sub(r'[^\w]', '', result.rstrip()).replace(' ', '')
+            result = re.sub(r"[^\w]", "", result.rstrip()).replace(" ", "")
             result = result.lower()
 
             # To support benchmarks with multiple possible answers
             if type(target) == list:
                 for each_item in target:
-                    each_item = re.sub(r'[^\w]', '', each_item.rstrip()).replace(' ', '')
+                    each_item = re.sub(r"[^\w]", "", each_item.rstrip()).replace(
+                        " ", ""
+                    )
                     each_item = each_item.lower()
 
                     if result == each_item:
                         correct += 1
                         break
             else:
-                target = re.sub(r'[^\w\s]', '', target.rstrip()).replace(' ', '')
+                target = re.sub(r"[^\w\s]", "", target.rstrip()).replace(" ", "")
                 target = target.lower()
-            
+
                 if result == target:
                     correct += 1
-                
+
         return {"relax_str_match": float(correct / total)}

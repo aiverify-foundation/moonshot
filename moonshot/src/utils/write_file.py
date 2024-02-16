@@ -13,5 +13,5 @@ def write_json_file(data: dict, filepath: str) -> None:
     # Create directories if they don't exist
     Path(filepath).parent.mkdir(parents=True, exist_ok=True)
 
-    with open(filepath, "w", encoding = "utf-8") as json_file:
+    with open(filepath, "w", encoding="utf-8") as json_file:
         json.dump(data, json_file, indent=2, ensure_ascii=False)

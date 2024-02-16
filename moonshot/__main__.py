@@ -1,7 +1,7 @@
 import sys
 import warnings
 
-from moonshot.cli import CommandLineInterface
+from moonshot.interfaces.cli.cli import CommandLineInterface
 
 """
 Run the Moonshot application
