@@ -1,6 +1,6 @@
-from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 class SessionPromptDTO(BaseModel):
-    history_length: Optional[int] = 10
-    prompt: str
+    model_config = ConfigDict(from_attributes=True)
+    history_length: int | None = 10
+    prompt: str = Field(min_length=1)

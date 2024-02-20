@@ -3,13 +3,14 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 from ..app import init_api
 from ..schemas.endpoint_response_model import EndpointDataModel
+import inspect
 
 app = init_api()
 
 @patch('web_api.services.benchmarking_service.get_all_endpoints')
 def test_get_all_endpoints(mock_get_all_endpoints):
     # Define the mock return value
-    mock_get_all_endpoints.return_value =[
+    mock_get_all_endpoints.return_value = [
         EndpointDataModel(
             type="Type1",
             name="Mock Endpoint 1",
@@ -28,7 +29,6 @@ def test_get_all_endpoints(mock_get_all_endpoints):
         )
     ]
 
-    
     with TestClient(app) as client:
         response = client.get("/v1/llm_endpoints")
     

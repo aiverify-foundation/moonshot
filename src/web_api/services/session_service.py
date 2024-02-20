@@ -1,31 +1,12 @@
 from typing_extensions import TypedDict
-
 from moonshot.src.redteaming.session import Session, get_all_sessions
-from web_api.services.custom_exceptions import SessionException
+from web_api.services.utils.exceptions_handler import SessionException, exception_handler
 from web_api.schemas.session_create_dto import SessionCreateDTO
 from web_api.schemas.session_response_model import SessionMetadataModel
-from pydantic import ValidationError
-from typing import Any, Callable, Dict, List, Optional
 
-def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        try:
-            return func(*args, **kwargs)
-        except FileNotFoundError as e:
-            raise SessionException(f"{e}", __name__)
-        except ValidationError as e:
-            raise SessionException(f"A validation error occurred: {e}", __name__)
-        except Exception as e:
-            raise SessionException(f"An unexpected error occurred: {e}", __name__)
-    return wrapper
 
 @exception_handler
 def create_session(session_create_dto: SessionCreateDTO, set_as_current_session: bool = False) -> SessionMetadataModel:
-    print("Creating a new session with the following details ============================== :")
-    print(f"Name: {session_create_dto.name}")
-    print(f"Description: {session_create_dto.description}")
-    print(f"Endpoints: {session_create_dto.endpoints}")
-    print(f"Set as current session: {set_as_current_session}")
     new_session_instance = Session(session_create_dto.name, session_create_dto.description, session_create_dto.endpoints)
     if not new_session_instance.metadata.session_id.strip():
         raise SessionException("Session creation failed", __name__)
@@ -47,16 +28,16 @@ def create_session(session_create_dto: SessionCreateDTO, set_as_current_session:
     )
 
 @exception_handler
-def get_session(session_id: str) -> Optional[SessionMetadataModel]:
+def get_session(session_id: str) -> SessionMetadataModel | None:
     session_data = next((session for session in get_sessions() if session.session_id == session_id), None)
     return session_data
 
 @exception_handler
-def get_sessions() -> list[Optional[SessionMetadataModel]]:
+def get_sessions() -> list[SessionMetadataModel | None]:
     return [SessionMetadataModel.model_validate(session) for session in get_all_sessions()]
 
 @exception_handler
-def set_current_session(session_id: str) -> Optional[SessionMetadataModel]:
+def set_current_session(session_id: str) -> SessionMetadataModel | None:
     session_data = get_session(session_id)
     session_instance: Session = Session.load_session(session_id)
     Session.current_session = session_instance
@@ -75,9 +56,9 @@ class PromptDetails(TypedDict):
 def get_session_chat_history(session_id: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
     try:
         session_instance = Session.load_session(session_id)
-        session_previous_prompts: List[PromptDetails] = session_instance.get_session_previous_prompts(history_length)
+        session_previous_prompts: list[PromptDetails] = session_instance.get_session_previous_prompts(history_length)
         session_chats = session_instance.get_session_chats()
-        all_chats_dict: Dict[str, List[PromptDetails]] = {}
+        all_chats_dict: dict[str, list[PromptDetails]] = {}
         for i, chat in enumerate(session_chats):
             all_chats_dict[chat.get_id()] = session_previous_prompts[i][::-1]
     except Exception as e:

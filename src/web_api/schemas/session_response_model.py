@@ -1,20 +1,20 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Any, Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Any
 
 class SessionMetadataModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    session_id: str
-    name: str
-    description: str
+    session_id: str = Field(min_length=1)
+    name: str = Field(min_length=1)
+    description: str = Field(min_length=1)
     created_epoch: float
-    created_datetime: str
-    chats: list[str]
-    endpoints: list[str]
-    metadata_file: str
-    prompt_template: str
+    created_datetime: str = Field(min_length=1)
+    chats: list[str] = Field(min_length=1)
+    endpoints: list[str] = Field(min_length=1)
+    metadata_file: str = Field(min_length=1)
+    prompt_template: str = Field(min_length=1)
     context_strategy: int
-    filename: str
-    chat_history: Optional[dict[str, list[Any]]] = None
+    filename: str = Field(min_length=1)
+    chat_history: dict[str, list[Any]] | None = None
 
 class SessionResponseModel(BaseModel):
     session: SessionMetadataModel
