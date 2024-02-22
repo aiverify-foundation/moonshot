@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from .routes.redteam import router as red_team_router
 from .routes.benchmark import router as benchmarking_router
+from .routes.dev_testing import router as dev_router
 
 async def monitor_tasks(loop: asyncio.AbstractEventLoop):
     while True:
@@ -31,4 +32,5 @@ app = FastAPI(lifespan=lifespan)
 def init_api():
     app.include_router(red_team_router)
     app.include_router(benchmarking_router)
+    app.include_router(dev_router)
     return app
