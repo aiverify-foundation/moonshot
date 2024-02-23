@@ -1,25 +1,16 @@
-import asyncio
-import datetime
-import glob
-import json
-import os
 import time
-from functools import partial
 from pathlib import Path
-from typing import Any, Callable, Union
+from typing import Callable, Union
 
-import aiometer
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
-from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.connectors.connector_prediction_arguments import (
-    ConnectorPredictionArguments,
-)
+from moonshot.src.storage.storage_manager import StorageManager
 
 
 class ConnectorManager:
@@ -43,9 +34,9 @@ class ConnectorManager:
             Exception: If there is an error during file writing or any other operation within the method.
         """
         try:
-            endpoint_id = slugify(ep_args.name, lowercase=False)
-            endpoint_info = {
-                "id": endpoint_id,
+            ep_id = slugify(ep_args.name, lowercase=True)
+            ep_info = {
+                "id": ep_id,
                 "name": ep_args.name,
                 "connector_type": ep_args.connector_type,
                 "uri": ep_args.uri,
@@ -54,11 +45,9 @@ class ConnectorManager:
                 "max_concurrency": ep_args.max_concurrency,
                 "params": ep_args.params,
             }
-            endpoint_filepath = (
-                f"{EnvironmentVars.CONNECTORS_ENDPOINTS}/{endpoint_id}.json"
-            )
-            with open(endpoint_filepath, "w") as json_file:
-                json.dump(endpoint_info, json_file, indent=2)
+
+            # Write as json output
+            StorageManager.create_connector_endpoint(ep_id, ep_info)
 
         except Exception as e:
             print(f"Failed to create endpoint: {str(e)}")
@@ -68,87 +57,107 @@ class ConnectorManager:
     @validate_arguments
     def read_endpoint(ep_id: str) -> ConnectorEndpointArguments:
         """
-        Reads and returns the information of a specified endpoint.
+        Reads an endpoint and returns its information.
 
-        This method reads the endpoint information from a JSON file based on the provided endpoint ID. It constructs
-        the file path using the endpoint ID, reads the file, and loads the JSON content. Additionally, it fetches the
-        creation timestamp of the file, converts it to a datetime object, and adds the creation date to the endpoint
-        information before returning it as a ConnectorEndpointArguments object.
+        This method takes an endpoint ID as input, reads the corresponding JSON file from the directory specified by
+        `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a ConnectorEndpointArguments object containing the
+        endpoint's information. If the operation fails for any reason, an exception is raised and the error is printed.
 
         Args:
             ep_id (str): The ID of the endpoint to read.
 
         Returns:
-            ConnectorEndpointArguments: An object containing the endpoint's information, including its creation date.
+            ConnectorEndpointArguments: An object containing the endpoint's information.
+
+        Raises:
+            Exception: If there is an error during file reading or any other operation within the method.
         """
         try:
-            # Construct the file path
-            connector_endpoint_filepath = (
-                f"{EnvironmentVars.CONNECTORS_ENDPOINTS}/{ep_id}.json"
+            return ConnectorEndpointArguments(
+                **StorageManager.read_connector_endpoint(ep_id)
             )
-            with open(connector_endpoint_filepath, "r") as json_file:
-                creation_timestamp = os.path.getctime(connector_endpoint_filepath)
-                creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
-                endpoints_info = json.load(json_file)
-                endpoints_info["created_date"] = (
-                    creation_datetime.replace(microsecond=0)
-                    .isoformat()
-                    .replace("T", " ")
-                )
-                return ConnectorEndpointArguments(**endpoints_info)
 
         except Exception as e:
             print(f"Failed to read endpoint: {str(e)}")
             raise e
 
     @staticmethod
-    def update_endpoint(ep_args: ConnectorEndpointArguments) -> bool:
-        # TODO: Update endpoint
-        return False
+    def update_endpoint(ep_args: ConnectorEndpointArguments) -> None:
+        """
+        Updates an existing endpoint with new information.
+
+        This method takes a ConnectorEndpointArguments object as input, which contains the new information for the
+        endpoint. It first deletes the existing endpoint with the same ID, then creates a new endpoint with the
+        updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+
+        Args:
+            ep_args (ConnectorEndpointArguments): An object containing the new information for the endpoint.
+
+        Raises:
+            Exception: If there is an error during the update operation.
+        """
+        try:
+            ep_id = slugify(ep_args.name, lowercase=True)
+            ConnectorManager.delete_endpoint(ep_id)
+            ConnectorManager.create_endpoint(ep_args)
+
+        except Exception as e:
+            print(f"Failed to update endpoint: {str(e)}")
+            raise e
 
     @staticmethod
     @validate_arguments
-    def delete_endpoint(ep_id: str) -> bool:
-        # TODO: Delete endpoint
-        return False
+    def delete_endpoint(ep_id: str) -> None:
+        """
+        Deletes an endpoint.
+
+        This method takes an endpoint ID as input, deletes the corresponding JSON file from the directory specified by
+        `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation fails for any reason, an exception is raised and the
+        error is printed.
+
+        Args:
+            ep_id (str): The ID of the endpoint to delete.
+
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
+        """
+        try:
+            StorageManager.delete_connector_endpoint(ep_id)
+
+        except Exception as e:
+            print(f"Failed to delete endpoint: {str(e)}")
+            raise e
 
     @staticmethod
     def get_available_endpoints() -> tuple[list[str], list[ConnectorEndpointArguments]]:
         """
-        Retrieves a list of available endpoints and their details.
+        Retrieves a list of available endpoints and their information.
 
-        This method scans the designated directory for JSON files representing connector endpoints, excluding any
-        files that are marked as hidden or temporary (denoted by "__" in their filename). It reads each file, extracts
-        the endpoint information, including the creation date, and constructs a list of ConnectorEndpointArguments
-        objects. Additionally, it compiles a list of endpoint IDs. Both lists are returned as a tuple.
+        This method scans the designated directory for connector endpoints, reads each endpoint's information from its
+        JSON file, and compiles a list of endpoint IDs and their corresponding information. It filters out any files
+        that do not represent valid endpoints (e.g., system files starting with "__"). The method returns a tuple
+        containing a list of endpoint IDs and a list of dictionaries, each containing the information of an endpoint.
 
         Returns:
-            tuple[list[str], list[ConnectorEndpointArguments]]: A tuple containing a list of endpoint IDs and a list
-            of ConnectorEndpointArguments objects, each representing the details of an available endpoint.
+            tuple[list[str], list[dict]]: A tuple containing a list of endpoint IDs and a list of dictionaries with
+            endpoint information.
         """
         try:
-            endpoints = []
-            endpoints_id = []
-            filepaths = glob.glob(f"{EnvironmentVars.CONNECTORS_ENDPOINTS}/*.json")
-            for filepath in filepaths:
-                if "__" in filepath:
+            retn_eps = []
+            retn_eps_ids = []
+
+            eps = StorageManager.get_connector_endpoints()
+            for ep in eps:
+                if "__" in ep:
                     continue
 
-                with open(filepath, "r") as json_file:
-                    creation_timestamp = os.path.getctime(filepath)
-                    creation_datetime = datetime.datetime.fromtimestamp(
-                        creation_timestamp
-                    )
-                    endpoints_info = json.load(json_file)
-                    endpoints_info["created_date"] = (
-                        creation_datetime.replace(microsecond=0)
-                        .isoformat()
-                        .replace("T", " ")
-                    )
-                    endpoints.append(ConnectorEndpointArguments(**endpoints_info))
-                    endpoints_id.append(endpoints_info["id"])
+                ep_info = ConnectorEndpointArguments(
+                    **StorageManager.read_connector_endpoint(Path(ep).stem)
+                )
+                retn_eps.append(ep_info)
+                retn_eps_ids.append(ep_info.id)
 
-            return endpoints_id, endpoints
+            return retn_eps_ids, retn_eps
 
         except Exception as e:
             print(f"Failed to get available endpoints: {str(e)}")
@@ -194,7 +203,7 @@ class ConnectorManager:
         try:
             return [
                 Path(fp).stem
-                for fp in glob.iglob(f"{EnvironmentVars.CONNECTORS}/*.py")
+                for fp in StorageManager.get_connectors()
                 if "__" not in fp
             ]
 
@@ -202,195 +211,31 @@ class ConnectorManager:
             print(f"Failed to get available connectors: {str(e)}")
             raise e
 
-    # @staticmethod
-    # async def get_multiple_predictions(args: ConnectorPredictionArguments) -> Any:
-    #     """
-    #     Retrieves multiple predictions based on the given prompts.
-
-    #     Args:
-    #         args (ConnectorPredictionArguments): The arguments for making predictions.
-
-    #     Returns:
-    #         list: A list of results from the predictions.
-    #     """
-    #     try:
-    #         print("Performing multiple predictions")
-
-    #         # Store all the needed tasks
-    #         coroutines = []
-    #         for (
-    #                 prompt_template_name,
-    #                 prompts_template_info,
-    #         ) in args.prompts_template_info.items():
-    #             prompts_tasks = [
-    #                 partial(
-    #                     ConnectorManager._get_async_predictions_helper,
-    #                     prompt_index,
-    #                     prompt_info,
-    #                     args.connector,
-    #                     partial(
-    #                         args.prompts_callback_function,
-    #                         prompt_template_name,
-    #                     ),
-    #                 )
-    #                 for prompt_index, prompt_info in enumerate(prompts_template_info["data"])
-    #             ]
-
-    #             # Run predictions async
-    #             print(
-    #                 f"Total number of prompts {len(prompts_tasks)} "
-    #                 f"and concurrency {args.connector.api_max_concurrency} "
-    #                 f"and calls per second {args.connector.api_max_calls_per_second}"
-    #             )
-
-    #             # Add to coroutines
-    #             coroutines.append(
-    #                 ConnectorManager._get_async_predictions(
-    #                     prompts_tasks,
-    #                     args.connector.api_max_concurrency,
-    #                     args.connector.api_max_calls_per_second,
-    #                 )
-    #             )
-
-    #         # Return results
-    #         return await asyncio.gather(*coroutines)
-
-    #     except Exception as e:
-    #         print(f"Failed to get multiple predictions: {str(e)}")
-    #         raise e
-
     @staticmethod
-    def get_predictions(pred_args: ConnectorPredictionArguments) -> list:
-        """
-        Synchronously gets predictions for a set of prompts using the specified connector.
-
-        This method orchestrates the process of making asynchronous prediction requests for each prompt
-        defined in the `pred_args`. It utilizes the connector's capabilities to manage API call concurrency
-        and rate limiting, ensuring efficient and compliant use of the external prediction service.
-
-        Args:
-            pred_args (ConnectorPredictionArguments): An object containing all necessary information
-                for making prediction requests, including the connector instance, prompts information,
-                and an optional callback function for handling individual prompt predictions.
-
-        Returns:
-            list: A list of prediction results, where each result corresponds to a prompt in the order
-                they were provided.
-
-        Raises:
-            Exception: If any error occurs during the prediction process.
-        """
-        try:
-            print("Performing predictions")
-
-            # Store all the needed tasks
-            prompts_tasks = [
-                partial(
-                    ConnectorManager._get_async_predictions_helper,
-                    prompt_index,
-                    prompt_info,
-                    pred_args.connector,
-                    pred_args.prompts_callback_function,
-                )
-                for prompt_index, prompt_info in enumerate(
-                    pred_args.prompts_template_info["data"]
-                )
-            ]
-
-            # Run predictions async
-            print(
-                f"Total number of prompts {len(prompts_tasks)} "
-                f"and concurrency {pred_args.connector.max_concurrency} "
-                f"and calls per second {pred_args.connector.max_calls_per_second}"
-            )
-            prediction_results = asyncio.run(
-                ConnectorManager._get_async_predictions(
-                    prompts_tasks,
-                    pred_args.connector.max_concurrency,
-                    pred_args.connector.max_calls_per_second,
-                )
-            )
-
-            # Return results
-            return prediction_results
-
-        except Exception as e:
-            print(f"Failed to get predictions: {str(e)}")
-            raise e
-
-    @staticmethod
-    async def _get_async_predictions_helper(
-        prompt_index: int,
-        prompt_info: dict,
+    async def get_prediction(
+        generated_prompt: PromptArguments,
         connector: Connector,
-        prompt_callback: Union[Callable, None],
-    ) -> dict:
-        """
-        Asynchronously helps in getting predictions for a single prompt.
+        prompt_callback: Union[Callable, None] = None,
+    ) -> PromptArguments:
+        try:
+            print(f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]")
 
-        This function is a helper function designed to work within an asynchronous context to fetch predictions
-        for a single prompt. It checks if the prediction result already exists in the prompt information; if not,
-        it proceeds to predict using the provided connector. The function also measures the duration of the prediction
-        process and updates the prompt information with the prediction result and the duration. If a prompt callback
-        is provided, it will be called with the updated prompt information and the connector ID.
-
-        Args:
-            prompt_index (int): The index of the prompt in the list of prompts being processed.
-            prompt_info (dict): A dictionary containing information about the prompt, including any pre-existing
-                                prediction results.
-            connector (Connector): The connector instance to use for making the prediction.
-            prompt_callback (Union[Callable, None]): An optional callback function that, if provided, is called with
-                                                     the updated prompt information and the connector ID.
-
-        Returns:
-            dict: The updated prompt information dictionary, including the prediction result and the duration of the
-                  prediction process.
-        """
-        if "predicted_result" not in prompt_info:
-            print(f"Predicting prompt {prompt_index} [{connector.id}]")
             start_time = time.perf_counter()
-
-            predicted_result = await connector.get_response(prompt_info["prompt"])
-            duration = time.perf_counter() - start_time
-            print(f"[Prompt {prompt_index}] took {duration:.4f}s")
-
-            # Update prompt info
-            prompt_info.update(
-                {
-                    "predicted_result": predicted_result,
-                    "duration": duration,
-                }
+            generated_prompt.predicted_results = await connector.get_response(
+                generated_prompt.prompt
+            )
+            generated_prompt.duration = time.perf_counter() - start_time
+            print(
+                f"[Prompt {generated_prompt.prompt_index}] took {generated_prompt.duration:.4f}s"
             )
 
             # Call prompt callback
             if prompt_callback:
-                prompt_callback(prompt_info, connector.id)
+                prompt_callback(generated_prompt, connector.id)
 
-        return prompt_info
+            # Return the updated prompt
+            return generated_prompt
 
-    @staticmethod
-    async def _get_async_predictions(
-        prompts_tasks: list, max_at_once: int, max_calls_per_second: int
-    ) -> list[Any]:
-        """
-        Asynchronously gathers predictions for a batch of prompts.
-
-        This method is responsible for managing the asynchronous execution of prediction tasks for a batch of prompts.
-        It leverages aiometer's run_all function to concurrently execute a given number of tasks at once, adhering to
-        the specified maximum number of calls per second. This method ensures that the predictions are efficiently
-        gathered by controlling the concurrency level and the rate of making prediction calls, which can be crucial
-        for adhering to rate limits of external APIs or services.
-
-        Args:
-            prompts_tasks (list): A list of coroutine objects, each representing a task for getting a prediction for
-                                  a single prompt.
-            max_at_once (int): The maximum number of tasks that should be run concurrently.
-            max_calls_per_second (int): The maximum number of calls that should be made per second.
-
-        Returns:
-            list[Any]: A list containing the results of the prediction tasks. The contents of the list depend on the
-                       implementation of the tasks provided in `prompts_tasks`.
-        """
-        return await aiometer.run_all(
-            prompts_tasks, max_at_once=max_at_once, max_per_second=max_calls_per_second
-        )
+        except Exception as e:
+            print(f"Failed to get prediction: {str(e)}")
+            raise e

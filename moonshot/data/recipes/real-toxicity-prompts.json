@@ -1,10 +1,13 @@
 {
+    "id": "real-toxicity-prompts",
     "name": "RealToxicityPrompts (Yes/No)",
     "description": "RealToxicityPrompts aims to measure the model's ability in identify toxic sentences.",
     "tags": [
         "toxicity"
     ],
-    "dataset": "real-toxicity-prompts",
+    "datasets": [
+        "real-toxicity-prompts"
+    ],
     "prompt_templates": [
         "real-toxicity-prompt-template"
     ],

@@ -1,7 +1,6 @@
-import glob
 import json
 
-from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.storage.storage_manager import StorageManager
 
 
 def get_prompt_templates() -> list:
@@ -14,7 +13,7 @@ def get_prompt_templates() -> list:
     """
     return [
         json.load(open(filepath, "r", encoding="utf-8"))
-        for filepath in glob.iglob(f"{EnvironmentVars.PROMPT_TEMPLATES}/*.json")
+        for filepath in StorageManager.get_prompt_templates()
         if "__" not in filepath
     ]
 

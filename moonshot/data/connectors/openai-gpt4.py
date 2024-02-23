@@ -20,6 +20,7 @@ class OpenAIGpt4(Connector):
         # Set OpenAI Key
         openai.api_key = self.token
 
+    @Connector.rate_limited
     @perform_retry
     async def get_response(self, prompt: str) -> str:
         """

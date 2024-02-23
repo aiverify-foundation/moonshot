@@ -17,6 +17,7 @@ class HFGpt2(Connector):
         # Initialize super class
         super().__init__(ep_arguments)
 
+    @Connector.rate_limited
     @perform_retry
     async def get_response(self, prompt: str) -> str:
         """

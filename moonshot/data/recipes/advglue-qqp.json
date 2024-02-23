@@ -1,0 +1,18 @@
+{
+    "id": "advglue-qpp",
+    "name": "AdvGLUE-QQP",
+    "description": "QQP consists of dataset is a collection of question pairs from the community question-answering website Quora. The task is to determine whether a pair of questions are semantically equivalent.",
+    "tags": [
+        "robustness"
+    ],
+    "datasets": [
+        "advglue-qqp-adv",
+        "advglue-qpp-benign"
+    ],
+    "prompt_templates": [
+        "advglue-templateqqp"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

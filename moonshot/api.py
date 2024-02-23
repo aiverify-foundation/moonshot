@@ -1,3 +1,5 @@
+from moonshot.src.benchmarking.recipes.recipe import Recipe
+from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
@@ -68,7 +70,7 @@ def api_create_endpoint(
         params=params,
         created_date="",
     )
-    return ConnectorManager.create_endpoint(connector_endpoint_args)
+    ConnectorManager.create_endpoint(connector_endpoint_args)
 
 
 def api_read_endpoint(ep_id: str) -> dict:
@@ -94,25 +96,25 @@ def api_update_endpoint(
     max_calls_per_second: int,
     max_concurrency: int,
     params: dict,
-) -> bool:
+) -> None:
     """
-    Updates an existing endpoint with the provided information.
+    Updates an existing endpoint in the connector manager.
 
-    This function updates an existing endpoint in the connector manager using the provided information.
-    It constructs a ConnectorEndpointArguments object with the given parameters and then calls the
-    ConnectorManager's update_endpoint method to perform the update.
+    This function updates an existing endpoint in the connector manager using the provided endpoint details.
+    It first creates a ConnectorEndpointArguments instance with the provided details, then calls the
+    ConnectorManager's update_endpoint method to update the endpoint.
 
     Args:
         name (str): The name of the endpoint.
-        connector_type (str): The type of the LLM connector (e.g., 'GPT-3', 'Bert', etc.).
-        uri (str): The URI for the LLM connector's API.
-        token (str): The access token required to authenticate and access the LLM connector's API.
-        max_calls_per_second (int): The number of API calls allowed per second.
-        max_concurrency (int): The number of concurrent API calls allowed.
-        params (dict): A dictionary containing connection specified parameters.
+        connector_type (str): The type of the connector.
+        uri (str): The URI for the connector.
+        token (str): The token for the connector.
+        max_calls_per_second (int): The maximum number of API calls allowed per second.
+        max_concurrency (int): The maximum number of concurrent API calls.
+        params (dict): Additional parameters for the connector.
 
     Returns:
-        bool: True if the update was successful, False otherwise.
+        None
     """
     connector_endpoint_args = ConnectorEndpointArguments(
         id="",
@@ -125,22 +127,23 @@ def api_update_endpoint(
         params=params,
         created_date="",
     )
-    return ConnectorManager.update_endpoint(connector_endpoint_args)
+    ConnectorManager.update_endpoint(connector_endpoint_args)
 
 
-def api_delete_endpoint(ep_id: str) -> bool:
+def api_delete_endpoint(ep_id: str) -> None:
     """
-    Deletes an endpoint from the connector manager.
+    Deletes an existing endpoint in the connector manager.
 
-    This function deletes an endpoint from the connector manager using the provided endpoint ID.
+    This function deletes an existing endpoint in the connector manager using the provided endpoint ID.
+    It calls the ConnectorManager's delete_endpoint method to delete the endpoint.
 
     Args:
-        ep_id (str): The ID of the endpoint to delete.
+        ep_id (str): The ID of the endpoint to be deleted.
 
     Returns:
-        bool: True if the deletion was successful, False otherwise.
+        None
     """
-    return ConnectorManager.delete_endpoint(ep_id)
+    ConnectorManager.delete_endpoint(ep_id)
 
 
 def api_get_all_endpoints() -> list[dict]:
@@ -232,6 +235,161 @@ def api_get_all_connectors() -> list[str]:
 # ------------------------------------------------------------------------------
 # Recipe APIs
 # ------------------------------------------------------------------------------
+def api_create_recipe(
+    name: str,
+    description: str,
+    tags: list[str],
+    datasets: list[str],
+    prompt_templates: list[str],
+    metrics: list[str],
+) -> None:
+    """
+    Creates a new recipe.
+
+    This function takes a name, description, tags, datasets, prompt templates, and metrics as input, and creates a
+    new recipe. It constructs a RecipeArguments object with the provided details and then calls the Recipe's
+    create_recipe method to add the new recipe.
+
+    Args:
+        name (str): The name of the new recipe.
+        description (str): The description of the recipe.
+        tags (list[str]): The tags associated with the recipe.
+        datasets (list[str]): The datasets used in the recipe.
+        prompt_templates (list[str]): The prompt templates used in the recipe.
+        metrics (list[str]): The metrics used in the recipe.
+
+    Returns:
+        None
+    """
+    # Create a new recipe
+    # We do not need to provide the id.
+    # This is because during creation:
+    # 1. the id is slugify from the name and stored as id.
+    recipe_args = RecipeArguments(
+        id="",
+        name=name,
+        description=description,
+        tags=tags,
+        datasets=datasets,
+        prompt_templates=prompt_templates,
+        metrics=metrics,
+    )
+    Recipe.create_recipe(recipe_args)
+
+
+def api_read_recipe(rec_id: str) -> dict:
+    """
+    Reads a recipe and returns its information.
+
+    This function takes a recipe ID as input, reads the corresponding recipe,
+    and returns a dictionary containing the recipe's information.
+
+    Args:
+        rec_id (str): The ID of the recipe.
+
+    Returns:
+        dict: A dictionary containing the recipe's information.
+    """
+    return Recipe.read_recipe(rec_id).to_dict()
+
+
+def api_read_recipes(rec_ids: list[str]) -> list[dict]:
+    """
+    Reads multiple recipes and returns their information.
+
+    This function takes a list of recipe IDs as input, reads the corresponding recipes,
+    and returns a list of dictionaries containing each recipe's information.
+
+    Args:
+        rec_ids (list[str]): The IDs of the recipes.
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing a recipe's information.
+    """
+    # This function uses list comprehension to iterate over the list of recipe IDs,
+    # calling the read_recipe method for each ID and converting the result to a dictionary.
+    # The resulting list of dictionaries is then returned.
+    return [Recipe.read_recipe(rec_id).to_dict() for rec_id in rec_ids]
+
+
+def api_update_recipe(
+    name: str,
+    description: str,
+    tags: list[str],
+    datasets: list[str],
+    prompt_templates: list[str],
+    metrics: list[str],
+) -> None:
+    """
+    Updates an existing recipe with new information.
+
+    This function takes a set of arguments for a recipe, including its name, description, tags, datasets,
+    prompt templates, and metrics. It first deletes the existing recipe with the same ID, then creates a new
+    recipe with the updated information.
+
+    Args:
+        name (str): The name of the recipe.
+        description (str): The description of the recipe.
+        tags (list[str]): The tags associated with the recipe.
+        datasets (list[str]): The datasets used in the recipe.
+        prompt_templates (list[str]): The prompt templates used in the recipe.
+        metrics (list[str]): The metrics used in the recipe.
+    """
+    recipe_args = RecipeArguments(
+        id="",
+        name=name,
+        description=description,
+        tags=tags,
+        datasets=datasets,
+        prompt_templates=prompt_templates,
+        metrics=metrics,
+    )
+    Recipe.update_recipe(recipe_args)
+
+
+def api_delete_recipe(rec_id: str) -> None:
+    """
+    Deletes a recipe.
+
+    This method takes a recipe ID as input, deletes the corresponding JSON file from the directory specified by
+    `EnvironmentVars.RECIPES`. If the operation fails for any reason, an exception is raised and the
+    error is printed.
+
+    Args:
+        rec_id (str): The ID of the recipe to delete.
+
+    Raises:
+        Exception: If there is an error during file deletion or any other operation within the method.
+    """
+    Recipe.delete_recipe(rec_id)
+
+
+def api_get_all_recipes() -> list[dict]:
+    """
+    Retrieves all available recipes.
+
+    This function calls the get_available_recipes method to retrieve all available recipes. It then converts each
+    recipe into a dictionary using the to_dict method and returns a list of these dictionaries.
+
+    Returns:
+        list[dict]: A list of dictionaries, each representing a recipe.
+    """
+    _, recipes = Recipe.get_available_recipes()
+    return [recipe.to_dict() for recipe in recipes]
+
+
+def api_get_all_recipes_names() -> list[str]:
+    """
+    Retrieves all available recipe names.
+
+    This function calls the get_available_recipes method to retrieve all available recipes. It then extracts the names
+    of each recipe and returns a list of these names.
+
+    Returns:
+        list[str]: A list of strings, each representing a recipe name.
+    """
+    recipes_names, _ = Recipe.get_available_recipes()
+    return recipes_names
 
 
 # ------------------------------------------------------------------------------
@@ -304,73 +462,6 @@ def api_get_all_connectors() -> list[str]:
 #     )
 
 #     return cookbook_run
-
-
-# def api_get_recipes(desired_recipes: list) -> list:
-#     """
-#     Retrieves a list of desired recipes.
-
-#     Args:
-#         desired_recipes (list): A list of recipe names to retrieve.
-
-#     Returns:
-#         list: A list of desired recipes, where each recipe is represented as a dictionary or an object.
-#     """
-#     return get_recipes(desired_recipes)
-
-
-# def api_add_new_recipe(
-#     name: str,
-#     description: str,
-#     tags: list[str],
-#     dataset: str,
-#     prompt_templates: list[str],
-#     metrics: list[str],
-# ) -> None:
-#     """
-#     Adds a new recipe.
-#     This method allows adding a new recipe with the specified name, description, tags, dataset,
-#     prompt templates, and a list of metrics.
-
-#     Args:
-#         name (str): The name or identifier of the new recipe.
-#         description (str): A brief description of the new recipe, providing information about its
-#         purpose or content.
-#         tags (list[str]): A list of tags to be included in the new recipe.
-#         dataset (str): The dataset to be used.
-#         prompt_templates (list[str]): A list of prompt templates to be included in the new recipe.
-#         metrics (list[str]): A list of metrics to be included in the new recipe.
-#     """
-#     add_new_recipe(name, description, tags, dataset, prompt_templates, metrics)
-
-
-# def api_get_all_recipes() -> list:
-#     """
-#     This function retrieves a list of available recipes.
-
-#     Returns:
-#         list: A list of available recipes. Each item in the list represents a recipe.
-#     """
-#     return get_all_recipes()
-
-
-# def api_run_recipe(recipes, endpoints, num_of_prompts) -> dict:
-#     """
-#     Creates a recipe run instance.
-
-#     Returns:
-#         dict: A dictionary representing the newly created recipe run instance.
-#     """
-#     recipe_run = Run(
-#         RunTypes.RECIPE,
-#         {
-#             "recipes": recipes,
-#             "endpoints": endpoints,
-#             "num_of_prompts": num_of_prompts,
-#         },
-#     )
-
-#     return recipe_run
 
 
 # def api_get_all_results() -> list:

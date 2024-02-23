@@ -21,6 +21,7 @@ class Claude2(Connector):
         # Create anthropic client
         self.client = anthropic.AsyncAnthropic(api_key=self.token)
 
+    @Connector.rate_limited
     @perform_retry
     async def get_response(self, prompt: str) -> str:
         """

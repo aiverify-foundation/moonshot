@@ -20,6 +20,7 @@ class HfLlama213BGPTQ(Connector):
         self.pre_prompt = "[INST]<<SYS>> You are a helpful assistant.<</SYS>>"
         self.post_prompt = "[/INST]"
 
+    @Connector.rate_limited
     @perform_retry
     async def get_response(self, prompt: str) -> str:
         """

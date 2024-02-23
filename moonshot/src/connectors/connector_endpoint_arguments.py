@@ -6,26 +6,19 @@ class ConnectorEndpointArguments(BaseModel):
     # During creation, id is not required. The id is automatically generated and returned
     id: str
 
-    # name (str): The name for the endpoint.
-    name: str
+    name: str  # name (str): The name for the endpoint.
 
-    # connector_type (str): The type of the LLM connector (e.g., 'GPT-3', 'Bert', etc.).
-    connector_type: str
+    connector_type: str  # connector_type (str): The type of the LLM connector (e.g., 'GPT-3', 'Bert', etc.).
 
-    # uri (str): The URI (Uniform Resource Identifier) for the LLM connector's API.
-    uri: str
+    uri: str  # uri (str): The URI (Uniform Resource Identifier) for the LLM connector's API.
 
-    # token (str): The access token required to authenticate and access the LLM connector's API.
-    token: str
+    token: str  # token (str): The access token required to authenticate and access the LLM connector's API.
 
-    # max_calls_per_second (int): The number of api calls per second
-    max_calls_per_second: int
+    max_calls_per_second: int  # max_calls_per_second (int): The number of api calls per second
 
-    # max_concurrency (int): The number of concurrent api calls
-    max_concurrency: int
+    max_concurrency: int  # max_concurrency (int): The number of concurrent api calls
 
-    # params (dict): A dictionary that contains connection specified parameters
-    params: dict
+    params: dict  # params (dict): A dictionary that contains connection specified parameters
 
     # created_date (str): The date and time the endpoint was created in isoformat without 'T'.
     # During creation, created_date is not required. The created_date is automatically generated and returned

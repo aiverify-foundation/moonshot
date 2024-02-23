@@ -1,0 +1,20 @@
+{
+    "id": "advglue-mnli",
+    "name": "AdvGLUE-MNLI",
+    "description": "Consists of adversarially perturned and benign MNLI and MNLIMM datasets. MNLI consists is a crowd-sourced collection of sentence pairs with textual entailment annotations. Given a premise sentence and a hypothesis sentence, the task is to predict whether the premise entails the hypothesis.",
+    "tags": [
+        "robustness"
+    ],
+    "datasets": [
+        "advglue-mnli-adv",
+        "advglue-mnli-benign",
+        "advglue-mnlimm-adv",
+        "advglue-mnlimm-benign"
+    ],
+    "prompt_templates": [
+        "advglue-templatemnli"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import asyncio
 import inspect
+import time
 from abc import abstractmethod
 from asyncio import sleep
+from functools import wraps
 from typing import Any
 
-from moonshot.src.configs.env_variables import EnvironmentVars
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
+from moonshot.src.storage.storage_manager import StorageManager
 from moonshot.src.utils.import_modules import (
     create_module_spec,
     import_module_from_spec,
@@ -21,7 +24,7 @@ def perform_retry(func):
 
     This decorator wraps a function to enable retrying the function call
     if it fails. The number of retries and the delay between retries
-    are determined by the `api_retries_times` and `api_allow_retries`
+    are determined by the `retries_times` and `allow_retries`
     attributes of the class instance.
 
     Parameters:
@@ -32,10 +35,10 @@ def perform_retry(func):
     """
 
     async def wrapper(self, *args, **kwargs):
-        if self.api_allow_retries:
+        if self.allow_retries:
             retry_count = 0
             base_delay = 1
-            while retry_count <= self.api_retries_times:
+            while retry_count <= self.retries_times:
                 # Perform the request
                 try:
                     return await func(self, *args, **kwargs)
@@ -44,7 +47,7 @@ def perform_retry(func):
 
                 # Perform retry
                 retry_count += 1
-                if retry_count <= self.api_retries_times:
+                if retry_count <= self.retries_times:
                     delay = base_delay * (2**retry_count)
                     print(f"Attempt {retry_count}, Retrying in {delay} seconds...")
                     await sleep(delay)
@@ -56,7 +59,7 @@ def perform_retry(func):
 
 class Connector:
     def __init__(self, ep_args: ConnectorEndpointArguments) -> None:
-        self.id = None
+        self.id = ep_args.id
 
         self.endpoint = ep_args.uri
         self.token = ep_args.token
@@ -67,10 +70,47 @@ class Connector:
         self.pre_prompt = ""
         self.post_prompt = ""
 
+        # Rate limiting
+        self.rate_limiter = ep_args.max_calls_per_second
+        self.semaphore = asyncio.Semaphore(ep_args.max_concurrency)
+        self.last_call_time = None
+
         # Connection timeout
         self.timeout = ep_args.params.get("timeout", 600)
         self.allow_retries = ep_args.params.get("allow_retries", True)
         self.retries_times = ep_args.params.get("num_of_retries", 3)
+
+    @staticmethod
+    def rate_limited(func):
+        """
+        Decorator function to limit the rate of function calls.
+
+        This decorator ensures that the decorated function is not called more frequently than the rate limit
+        specified by the `rate_limiter` attribute of the `Connector` instance. If the function is called more
+        frequently, it sleeps for the necessary amount of time to maintain the rate limit.
+
+        Args:
+            func (Callable): The function to be rate-limited.
+
+        Returns:
+            Callable: The wrapped function, which enforces the rate limit.
+        """
+
+        @wraps(func)
+        async def wrapper(self, *args, **kwargs):
+            async with self.semaphore:
+                if self.last_call_time is not None:
+                    time_since_last_call = time.time() - self.last_call_time
+                    if time_since_last_call < 1.0 / self.rate_limiter:
+                        sleep_time = 1.0 / self.rate_limiter - time_since_last_call
+                        print(
+                            f"[{self.id}]: Hit rate-limit: Sleeping {round(sleep_time, 2)}s..."
+                        )
+                        await asyncio.sleep(sleep_time)
+                self.last_call_time = time.time()
+                return await func(self, *args, **kwargs)
+
+        return wrapper
 
     @abstractmethod
     async def get_response(self, prompt: str) -> str:
@@ -131,10 +171,9 @@ class Connector:
             Any: An instance of the found connector class, or None if no matching class is found.
         """
         # Create the module specification
-        connector_filepath = f"{EnvironmentVars.CONNECTORS}/{connector_type}.py"
         module_spec = create_module_spec(
             connector_type,
-            connector_filepath,
+            StorageManager.get_connector_filepath(connector_type),
         )
 
         # Check if the module specification exists

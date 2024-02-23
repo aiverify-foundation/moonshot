@@ -1,4 +1,5 @@
 {
+    "id": "cvalues",
     "name": "CValues",
     "description": "The first Chinese human values evaluation benchmark with adversarial and induced prompts, which considers both safety and responsibility criteria",
     "tags": [
@@ -6,7 +7,9 @@
         "responsibility",
         "chinese"
     ],
-    "dataset": "cvalues",
+    "datasets": [
+        "cvalues"
+    ],
     "prompt_templates": [
         "cbbq-template"
     ],

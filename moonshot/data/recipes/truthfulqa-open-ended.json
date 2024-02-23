@@ -1,9 +1,12 @@
 {
+    "id": "truthfulqa-open-ended",
     "name": "TruthfulQA",
     "description": "TruthfulQA aims to measure the truthfulness of a model.",
     "tags": [
     ],
-    "dataset": "truthfulqa-open-ended",
+    "datasets": [
+        "truthfulqa-open-ended"
+    ],
     "prompt_templates": [
         "truthfulqa-template1"
     ],
