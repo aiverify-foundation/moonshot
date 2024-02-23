@@ -1,4 +1,5 @@
 {
+    "id": "chinese-cookbook",
     "name": "Benchmarks for Chinese Language",
     "description": "To test model's ability in answering safety and trust questions using Chinese languages",
     "recipes": [

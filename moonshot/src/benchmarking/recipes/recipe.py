@@ -148,6 +148,21 @@ class Recipe:
 
     @staticmethod
     def get_available_recipes() -> tuple[list[str], list[RecipeArguments]]:
+        """
+        Returns a list of available recipes.
+
+        This method retrieves all the recipes stored in the directory specified by `EnvironmentVars.RECIPES`.
+        It ignores any files with "__" in their names. For each valid recipe file, it reads the file and constructs
+        a RecipeArguments object with the recipe's information. It then appends the RecipeArguments object and the
+        recipe ID to their respective lists.
+
+        Returns:
+            tuple[list[str], list[RecipeArguments]]: A tuple containing a list of recipe IDs and a list of
+            RecipeArguments objects.
+
+        Raises:
+            Exception: If there is an error during file reading or any other operation within the method.
+        """
         try:
             retn_recs = []
             retn_recs_ids = []

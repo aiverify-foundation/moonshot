@@ -153,6 +153,80 @@ class StorageManager:
         return glob.iglob(f"{EnvironmentVars.PROMPT_TEMPLATES}/*.json")
 
     # ------------------------------------------------------------------------------
+    # Cookbook Storage APIs
+    # ------------------------------------------------------------------------------
+    @staticmethod
+    def create_cookbook(cb_id: str, cb_info: dict) -> None:
+        """
+        Creates a new cookbook.
+
+        This method takes a cookbook ID and a dictionary containing the cookbook information as input. It constructs
+        the file path using the cookbook ID and the designated directory for cookbooks. The method
+        then writes the cookbook information to a JSON file.
+
+        Args:
+            cb_id (str): The ID of the cookbook.
+            cb_info (dict): A dictionary containing the cookbook information.
+        """
+        cb_filepath = f"{EnvironmentVars.COOKBOOKS}/{cb_id}.json"
+        with open(cb_filepath, "w") as json_file:
+            json.dump(cb_info, json_file, indent=2)
+
+    @staticmethod
+    def read_cookbook(cb_id: str) -> dict:
+        """
+        Reads a cookbook from a JSON file.
+
+        This method takes a cookbook ID as input, reads the corresponding JSON file from the directory specified by
+        `EnvironmentVars.COOKBOOKS`, and returns a dictionary containing the cookbook's information.
+
+        Args:
+            cb_id (str): The ID of the cookbook.
+
+        Returns:
+            dict: A dictionary containing the cookbook's information.
+        """
+        cb_filepath = f"{EnvironmentVars.COOKBOOKS}/{cb_id}.json"
+        with open(cb_filepath, "r", encoding="utf-8") as json_file:
+            cb_info = json.load(json_file)
+        return cb_info
+
+    @staticmethod
+    def delete_cookbook(cb_id: str) -> None:
+        """
+        Deletes a cookbook.
+
+        This method takes a cookbook ID as input, constructs the file path using the cookbook ID and the designated
+        directory for cookbooks, and deletes the corresponding JSON file. If the file does not exist, it does nothing.
+
+        Args:
+            cb_id (str): The ID of the cookbook.
+        """
+        # Delete cookbook
+        cb_path = Path(f"{EnvironmentVars.COOKBOOKS}/{cb_id}.json")
+
+        try:
+            cb_path.unlink(missing_ok=True)
+
+        except FileNotFoundError:
+            pass
+
+    @staticmethod
+    def get_cookbooks() -> Iterator[str]:
+        """
+        Returns an iterator over the cookbook files in the directory specified by `EnvironmentVars.COOKBOOKS`.
+
+        This method uses the `glob.iglob` function to create an iterator over the cookbook files in the directory
+        specified by `EnvironmentVars.COOKBOOKS`. The `iglob` function returns an iterator which yields the
+        paths matching a pathname pattern. The pattern used in this case is `*.json`, which matches all JSON files
+        in the directory.
+
+        Returns:
+            Iterator[str]: An iterator over the cookbook files in the directory.
+        """
+        return glob.iglob(f"{EnvironmentVars.COOKBOOKS}/*.json")
+
+    # ------------------------------------------------------------------------------
     # Recipe Storage APIs
     # ------------------------------------------------------------------------------
     @staticmethod

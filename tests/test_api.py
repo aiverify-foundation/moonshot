@@ -1,6 +1,10 @@
-from moonshot.api import (api_create_connector, api_create_connectors, api_create_endpoint, api_create_recipe, api_delete_endpoint, api_delete_recipe, 
-                          api_get_all_connectors, api_get_all_endpoints, api_get_all_endpoints_names, api_get_all_recipes, api_get_all_recipes_names, 
-                          api_read_endpoint, api_read_recipe, api_read_recipes, api_update_endpoint, api_update_recipe)
+from moonshot.api import (
+    api_create_connector, api_create_connectors, api_create_cookbook, api_create_endpoint, api_create_recipe, 
+    api_delete_cookbook, api_delete_endpoint, api_delete_recipe, api_get_all_connectors, api_get_all_cookbooks, 
+    api_get_all_cookbooks_names, api_get_all_endpoints, api_get_all_endpoints_names, api_get_all_recipes, 
+    api_get_all_recipes_names, api_read_cookbook, api_read_cookbooks, api_read_endpoint, api_read_recipe, 
+    api_read_recipes, api_update_cookbook, api_update_endpoint, api_update_recipe
+)
 
 # ------------------------------------------------------------------------------
 # Environment variables APIs Test
@@ -149,7 +153,67 @@ def test_run_connector_api():
 # ------------------------------------------------------------------------------
 # Cookbook APIs Test
 # ------------------------------------------------------------------------------
+def test_create_cookbook():
+    api_create_cookbook(
+        name="my new cookbook",
+        description="This is a cookbook that consists of a subset of Bias Benchmark for QA (BBQ) recipes for age.",
+        recipes=["my-recipe1","my-recipe2"]
+    )
 
+def test_read_cookbook():
+    print(api_read_cookbook("my-new-cookbook"))
+
+def test_read_cookbooks():
+    cookbooks = api_read_cookbooks(["my-new-cookbook", "my-new-cookbook", "my-new-cookbook"])
+    for cookbook_no, cookbook in enumerate(cookbooks, 1):
+        print("-"*100)
+        print("Cookbook No. ", cookbook_no)
+        print(cookbook)
+
+def test_update_cookbook():
+    api_update_cookbook(
+        name="my new cookbook",
+        description="My new cookbook description",
+        recipes=["my-recipe2","my-recipe5"]
+    )
+
+def test_delete_cookbook():
+    api_delete_cookbook("my-new-cookbook")
+
+def test_get_all_cookbooks():
+    print(api_get_all_cookbooks())
+
+def test_get_all_cookbooks_names():
+    print(api_get_all_cookbooks_names())
+
+def test_run_cookbook_api():
+    # Create cookbook
+    print("="*100,"\nTest creating cookbook")
+    test_create_cookbook()
+
+    # Read cookbook
+    print("="*100,"\nTest reading cookbook")
+    test_read_cookbook()
+
+    # Update cookbook
+    print("="*100,"\nTest updating cookbook")
+    test_update_cookbook()
+
+    # Read cookbooks
+    print("="*100,"\nTest reading cookbooks")
+    test_read_cookbooks()
+
+    # Delete cookbook
+    print("="*100,"\nTest deleting cookbooks")
+    test_delete_cookbook()
+    
+    # List all cookbooks
+    print("="*100,"\nTest listing all cookbooks")
+    test_get_all_cookbooks()
+
+    # List all cookbooks names
+    print("="*100,"\nTest listing all cookbooks names")
+    test_get_all_cookbooks_names()
 
 # ------------------------------------------------------------------------------
 # Recipes APIs Test
@@ -228,3 +292,6 @@ if __name__ == "__main__":
 
     # Test recipes api
     test_run_recipe_api()
+
+    # Test cookbooks api
+    test_run_cookbook_api()

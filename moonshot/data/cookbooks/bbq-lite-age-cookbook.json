@@ -1,4 +1,5 @@
 {
+    "id": "bbq-lite-age-cookbook",
     "name": "BBQ Age Cookbook (Lite)",
     "description": "This is a cookbook that consists of a subset of Bias Benchmark for QA (BBQ) recipes for age.",
     "recipes": [

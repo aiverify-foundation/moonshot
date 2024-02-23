@@ -1,4 +1,5 @@
 {
+    "id": "evaluation-catalogue-cookbook",
     "name": "IMDA's LLM Evaluation Catalogue",
     "description": "This is a test cookbook for evaluation catalogue.",
     "recipes": [
