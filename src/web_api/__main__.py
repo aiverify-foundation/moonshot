@@ -6,7 +6,7 @@ import os
 from multiprocessing import Pool
 from threading import Thread
 
-from web_api.tasks.task_processor import TaskProcessor
+from web_api.tasks.queue_task_processor import QueueTaskProcessor
 from .tasks.implementation.in_memory_shared_queue import InMemorySharedQueue
 from .tasks.queue_manager import QueueManager
 from .app import init_api
@@ -21,7 +21,7 @@ def run_uvicorn():
     # uvicorn (ASGI server) uses an event loop for handling async tasks associated with FastAPI app.
     uvicorn.run(app, host="0.0.0.0", port=5000)
 
-def benchmark_test_worker_process(channel_name: str, channels):
+def consumer_benchmark_test_queue(channel_name: str, channels):
     channel = channels[channel_name]
     while True:
         task = channel.get()
@@ -30,7 +30,7 @@ def benchmark_test_worker_process(channel_name: str, channels):
         # Simulate processing task
         print(f"Worker process ID: {os.getpid()}")
         print(f"Processing task in channel {channel_name}: {task}")
-        TaskProcessor.run_benchmark_test(task)
+        QueueTaskProcessor.run_benchmark_test(task)
         time.sleep(1)
 
 def main():
@@ -54,7 +54,7 @@ def main():
     pool = None
     try:
         pool = Pool(4)
-        result = pool.starmap_async(benchmark_test_worker_process, [(BENCHMARK_TEST_CHANNEL,globals.SHARED_CHANNELS)] * 4)
+        result = pool.starmap_async(consumer_benchmark_test_queue, [(BENCHMARK_TEST_CHANNEL,globals.SHARED_CHANNELS)] * 4)
         # result.wait()
     except KeyboardInterrupt:
         print("KeyboardInterrupt. Terminating workers.")
