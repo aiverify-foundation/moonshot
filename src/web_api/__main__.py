@@ -1,18 +1,16 @@
 from multiprocessing.managers import DictProxy
 from queue import Queue
 from typing import Any
-from .tasks.implementation.in_memory_standard_queue import InMemoryQueue
+from .queue.implementation.in_memory_standard_queue import InMemoryQueue
 import uvicorn
 import time
 import os
 from multiprocessing import Pool
 from threading import Thread
 
-from web_api.tasks.queue_task_processor import QueueTaskProcessor
-from .tasks.implementation.in_memory_shared_queue import InMemorySharedQueue
-from concurrent.futures import ProcessPoolExecutor
-from multiprocessing import Queue
-from .tasks.queue_manager import QueueManager
+from web_api.queue.queue_job_worker import QueueJobWorker
+from .queue.implementation.in_memory_shared_queue import InMemorySharedQueue
+from .queue.queue_manager import QueueManager
 from .app import init_api
 from . import globals
 
@@ -35,7 +33,7 @@ def consumer_benchmark_test_queue(channel_name: str, channels):
         # Simulate processing task
         print(f"Worker process ID: {os.getpid()}")
         print(f"Processing task in channel {channel_name}: {task}")
-        QueueTaskProcessor.run_benchmark_test(task)
+        QueueJobWorker.run_benchmark_test(task)
         time.sleep(1)
 
 def process_task(task_data: dict[str, Any]) -> None:
@@ -45,7 +43,7 @@ def process_task(task_data: dict[str, Any]) -> None:
 def main():
     # global SHARED_CHANNELS
     globals.BENCHMARK_TEST_QUEUE_MANAGER = QueueManager(QUEUE_TYPE)
-    globals.BENCHMARK_TEST_QUEUE_MANAGER.subscribe(QueueTaskProcessor.run_benchmark_test)
+    globals.BENCHMARK_TEST_QUEUE_MANAGER.subscribe(QueueJobWorker.run_benchmark_test)
     # connection = queue_manager.connect(); #TODO - this needs to be a Singleton - Explore using IOC container for better management
     # globals.SHARED_CHANNELS = connection.get_channels()
 

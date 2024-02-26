@@ -12,8 +12,8 @@ class QueueManager:
     def subscribe(self, callback: Callable[[dict[str, Any]], None]) -> None:
         return self.connection.subscribe(callback)
 
-    def publish(self, task: dict[str, Any]):
-        self.connection.publish(task)
+    def publish(self, job: dict[str, Any]):
+        self.connection.publish(job)
 
     def close(self):
         self.connection.close()

@@ -2,11 +2,11 @@ import multiprocessing
 from multiprocessing.managers import DictProxy, SyncManager
 from queue import Queue
 from typing import Any
-from ..interface.queue_connection import I_QueueConnection
+from ..interface.queue_connection import InterfaceQueueConnection
 
 # TODO - this probably has to be a Singleton because it's a shared resource
 
-class InMemorySharedQueue(I_QueueConnection):
+class InMemorySharedQueue(InterfaceQueueConnection):
     def __init__(self):
         self.manager: SyncManager = multiprocessing.Manager()
         self.channels: DictProxy[str, Queue] = self.manager.dict()

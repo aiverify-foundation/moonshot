@@ -2,12 +2,12 @@ import time
 from typing import Any
 
 
-class QueueTaskProcessor:
+class QueueJobWorker:
     @staticmethod
-    def process_task(task):
+    def process_job(job):
         # Example: perform calculation / tests etc
         # Replace this with actual processing logic
-        return QueueTaskProcessor.run_benchmark_test(task)
+        return QueueJobWorker.run_benchmark_test(job)
 
     @staticmethod
     def run_benchmark_test(task: dict[str, Any]) -> None:
