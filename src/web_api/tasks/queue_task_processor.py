@@ -1,4 +1,5 @@
 import time
+from typing import Any
 
 
 class QueueTaskProcessor:
@@ -9,7 +10,7 @@ class QueueTaskProcessor:
         return QueueTaskProcessor.run_benchmark_test(task)
 
     @staticmethod
-    def run_benchmark_test(task):
+    def run_benchmark_test(task: dict[str, Any]) -> None:
         print(f"Running test for: {task}")
         time.sleep(10)  # Simulate test time
-        return {"task": task, "data": "Mock"}
+        return None #{"task": task, "data": "Mock"}

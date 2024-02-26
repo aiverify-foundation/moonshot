@@ -1,21 +1,19 @@
-from .interface.queue_connection import I_QueueConnection
+from typing import Any, Callable
+from .interface.queue_connection import InterfaceQueueConnection
 
 class QueueManager:
-    def __init__(self, connection: I_QueueConnection):
+    def __init__(self, connection: InterfaceQueueConnection) -> None:
         self.connection = connection
 
     def connect(self):
         self.connection.connect()
         return self.connection
 
-    def create_channel(self, channel_name):
-        self.connection.create_channel(channel_name)
+    def subscribe(self, callback: Callable[[dict[str, Any]], None]) -> None:
+        return self.connection.subscribe(callback)
 
-    def consume(self, channel_name):
-        return self.connection.consume(channel_name)
-
-    def publish(self, channel_name, task):
-        self.connection.publish(channel_name, task)
+    def publish(self, task: dict[str, Any]):
+        self.connection.publish(task)
 
     def close(self):
         self.connection.close()

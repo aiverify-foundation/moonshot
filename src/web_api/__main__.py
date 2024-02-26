@@ -1,5 +1,7 @@
 from multiprocessing.managers import DictProxy
 from queue import Queue
+from typing import Any
+from .tasks.implementation.in_memory_standard_queue import InMemoryQueue
 import uvicorn
 import time
 import os
@@ -8,13 +10,16 @@ from threading import Thread
 
 from web_api.tasks.queue_task_processor import QueueTaskProcessor
 from .tasks.implementation.in_memory_shared_queue import InMemorySharedQueue
+from concurrent.futures import ProcessPoolExecutor
+from multiprocessing import Queue
 from .tasks.queue_manager import QueueManager
 from .app import init_api
 from . import globals
 
 # Choose the queue implementation
-QUEUE_TYPE = InMemorySharedQueue()
-BENCHMARK_TEST_CHANNEL = "benchmark_test"
+# QUEUE_TYPE = InMemorySharedQueue()
+QUEUE_TYPE = InMemoryQueue("benchmark_test_queue")
+# BENCHMARK_TEST_CHANNEL = "benchmark_test"
 
 def run_uvicorn():
     app = init_api()
@@ -33,12 +38,16 @@ def consumer_benchmark_test_queue(channel_name: str, channels):
         QueueTaskProcessor.run_benchmark_test(task)
         time.sleep(1)
 
+def process_task(task_data: dict[str, Any]) -> None:
+    # Example processing of task_data
+    print("Processing task with data:", task_data)
+
 def main():
     # global SHARED_CHANNELS
-    queue_manager = QueueManager(QUEUE_TYPE)
-    connection = queue_manager.connect(); #TODO - this needs to be a Singleton - Explore using IOC container for better management
-    connection.create_channel(BENCHMARK_TEST_CHANNEL)
-    globals.SHARED_CHANNELS = connection.get_channels()
+    globals.BENCHMARK_TEST_QUEUE_MANAGER = QueueManager(QUEUE_TYPE)
+    globals.BENCHMARK_TEST_QUEUE_MANAGER.subscribe(QueueTaskProcessor.run_benchmark_test)
+    # connection = queue_manager.connect(); #TODO - this needs to be a Singleton - Explore using IOC container for better management
+    # globals.SHARED_CHANNELS = connection.get_channels()
 
 
     # TODO
@@ -51,19 +60,19 @@ def main():
     uvicorn_thread.start()
 
     # Create a pool of 4 worker processes
-    pool = None
-    try:
-        pool = Pool(4)
-        result = pool.starmap_async(consumer_benchmark_test_queue, [(BENCHMARK_TEST_CHANNEL,globals.SHARED_CHANNELS)] * 4)
-        # result.wait()
-    except KeyboardInterrupt:
-        print("KeyboardInterrupt. Terminating workers.")
-        if pool is not None:
-            pool.terminate()  # Immediately stop the worker processes
-            pool.close()  # Necesary before join(). Clean up the pool resources
-            pool.join()  # Necessary to wait for the worker processes to exit
-            connection.close();
-            print("Cleaned up resources.")
+    # pool = None
+    # try:
+    #     pool = Pool(4)
+    #     result = pool.starmap_async(consumer_benchmark_test_queue, [(BENCHMARK_TEST_CHANNEL,globals.SHARED_CHANNELS)] * 4)
+    #     # result.wait()
+    # except KeyboardInterrupt:
+    #     print("KeyboardInterrupt. Terminating workers.")
+    #     if pool is not None:
+    #         pool.terminate()  # Immediately stop the worker processes
+    #         pool.close()  # Necesary before join(). Clean up the pool resources
+    #         pool.join()  # Necessary to wait for the worker processes to exit
+    #         connection.close();
+    #         print("Cleaned up resources.")
             
 
 if __name__ == "__main__":

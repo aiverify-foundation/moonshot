@@ -1,26 +1,27 @@
-from queue import Queue
-from typing import Any
+from typing import Any, Callable, Self
 from abc import ABC, abstractmethod
 
-class I_QueueConnection(ABC):
+class InterfaceQueueConnection(ABC):
 
     @abstractmethod
-    def connect(self):
+    def connect(self, queue_name: str | None = None) -> Self:
         pass
     
     @abstractmethod
-    def get_channels(self) -> dict[str, Queue]:
+    def subscribe(self, callback: Callable[[dict[str, Any]], None]) -> None:
         pass
 
     @abstractmethod
-    def create_channel(self, channel_name) -> bool:
+    def unsubscribe(self) -> None:
         pass
-
-    def consume(self, channel_name) -> dict[str, Any] | None:
+    
+    @abstractmethod
+    def publish(self, task: dict[str, Any]) -> bool | None:
         pass
-
-    def publish(self, channel_name, task) -> bool | None:
-        pass
-
+    
+    @abstractmethod
     def close(self):
         pass
+
+
+
