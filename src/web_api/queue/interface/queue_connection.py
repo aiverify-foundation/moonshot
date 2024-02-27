@@ -8,7 +8,7 @@ class InterfaceQueueConnection(ABC):
         pass
     
     @abstractmethod
-    def subscribe(self, callback: Callable[[dict[str, Any]], None]) -> None:
+    def subscribe(self, job_worker: Callable[[dict[str, Any]], None]) -> None:
         pass
 
     @abstractmethod

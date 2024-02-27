@@ -2,10 +2,16 @@
 import asyncio
 import os
 from contextlib import asynccontextmanager
+from typing import Union
 from fastapi import FastAPI
+
+from web_api.container import Container
 from .routes.redteam import router as red_team_router
 from .routes.benchmark import router as benchmarking_router
 from .routes.dev_testing import router as dev_router
+
+class CustomFastAPI(FastAPI):
+    container: Container
 
 async def monitor_tasks(loop: asyncio.AbstractEventLoop):
     while True:
@@ -27,9 +33,10 @@ async def startup_event():
         loop = asyncio.get_running_loop()
         loop.create_task(monitor_tasks(loop))
 
-app = FastAPI(lifespan=lifespan)
-
-def init_api():
+def create_app() -> CustomFastAPI:
+    container: Container = Container()
+    app: FastAPI = FastAPI(lifespan=lifespan)
+    app.container = container
     app.include_router(red_team_router)
     app.include_router(benchmarking_router)
     app.include_router(dev_router)

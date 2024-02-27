@@ -1,4 +1,6 @@
 import time
+import logging
+import os
 from typing import Any
 
 
@@ -11,6 +13,9 @@ class QueueJobWorker:
 
     @staticmethod
     def run_benchmark_test(task: dict[str, Any]) -> None:
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(" worker")
+        logger.debug(f" Process ID: {os.getpid()}")
         print(f"Running test for: {task}")
         time.sleep(10)  # Simulate test time
         return None #{"task": task, "data": "Mock"}

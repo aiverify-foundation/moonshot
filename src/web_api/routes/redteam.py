@@ -1,11 +1,14 @@
 # api/routes.py
 from typing import Optional, Any
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from moonshot.src.common.prompt_template import get_prompt_templates
+from dependency_injector.wiring import inject, Provide
+
+from ..container import Container
 from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
-from web_api.services import session_service
+from ..services.session_service import SessionService, PromptDetails
 
 
 router = APIRouter()
@@ -17,12 +20,21 @@ async def status():
 
 
 @router.get("/v1/sessions")
-async def get_all() -> list[Optional[SessionMetadataModel]]:
+@inject
+async def get_all(
+    session_service: SessionService = Depends(Provide[Container.session_service])
+) -> list[Optional[SessionMetadataModel]]:
     return session_service.get_sessions()
 
 
 @router.get("/v1/sessions/{session_id}")
-async def get_one(session_id: str, include_history: bool = False, length: int = 5) -> SessionResponseModel:
+@inject
+async def get_one(
+    session_id: str,
+    include_history: bool = False,
+    length: int = 5,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> SessionResponseModel:
     session_data = session_service.get_session(session_id)
     if include_history:
         history = session_service.get_session_chat_history(session_id, length)
@@ -35,12 +47,20 @@ async def get_one(session_id: str, include_history: bool = False, length: int = 
 
 
 @router.post("/v1/sessions")
-async def create(session_dto: SessionCreateDTO) -> SessionResponseModel:
+@inject
+async def create(
+    session_dto: SessionCreateDTO,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> SessionResponseModel:
     return SessionResponseModel(session=session_service.create_session(session_dto))
 
 
 @router.put("/v1/sessions/{session_id}")
-async def set_active_session(session_id: str) -> SessionResponseModel:
+@inject
+async def set_active_session(
+    session_id: str,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> SessionResponseModel:
     session_data = session_service.set_current_session(session_id)
     if session_data is not None:
         return SessionResponseModel(session=session_data)
@@ -49,21 +69,33 @@ async def set_active_session(session_id: str) -> SessionResponseModel:
 
 
 @router.post("/v1/sessions/{session_id}/prompt")
-async def prompt(session_id: str, user_prompt: SessionPromptDTO) -> dict[str, list[session_service.PromptDetails]]:
+@inject
+async def prompt(
+    session_id: str,
+    user_prompt: SessionPromptDTO,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, list[PromptDetails]]:
     result = await session_service.send_prompt(session_id, user_prompt.prompt, user_prompt.history_length)
     return result
 
 
 @router.get("/v1/prompt_templates")
-def get_all_prompt_templates() -> list[Optional[Any]]:
+@inject
+def get_all_prompt_templates(
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> list[Optional[Any]]:
     """
     Get all the prompt templates from the database
     """
-    return get_prompt_templates()
+    return session_service.get_prompt_templates()
 
 
 @router.put("/v1/prompt_templates/{prompt_template_name}")
-async def set_prompt_template(prompt_template_name: str) -> dict[str, bool]:
+@inject
+async def set_prompt_template(
+    prompt_template_name: str,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, bool]:
     """
     Select a prompt template for the current session
     """
@@ -72,9 +104,13 @@ async def set_prompt_template(prompt_template_name: str) -> dict[str, bool]:
 
 
 @router.delete("/v1/prompt_templates/{prompt_template_name}")
-async def unset_prompt_template(prompt_template_name: str = '') -> dict[str, bool]:
+@inject
+async def unset_prompt_template(
+    prompt_template_name: str = '',
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, bool]:
     """
-    Delete a prompt template for the current session
+    Remove prompt template from the current session
     """
     result = session_service.select_prompt_template()
     return {"success": result}
