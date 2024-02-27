@@ -3,8 +3,8 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from typing import Union
-from fastapi import FastAPI
-
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from web_api.container import Container
 from .routes.redteam import router as red_team_router
 from .routes.benchmark import router as benchmarking_router
@@ -35,9 +35,24 @@ async def startup_event():
 
 def create_app() -> CustomFastAPI:
     container: Container = Container()
+    allowed_origins = os.getenv("ALLOWED_ORIGINS").split(",")
     app: FastAPI = FastAPI(lifespan=lifespan)
+    @app.middleware("http")
+    async def log_request_origin(request: Request, call_next):
+        origin = request.headers.get('origin')
+        print(f"Request origin: {origin}")
+        response = await call_next(request)
+        return response
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allowed_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.container = container
     app.include_router(red_team_router)
     app.include_router(benchmarking_router)
     app.include_router(dev_router)
     return app
+

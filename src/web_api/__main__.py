@@ -2,7 +2,6 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from threading import Thread
-from dependency_injector.wiring import Provide, inject
 from .queue.interface.queue_connection import InterfaceQueueConnection
 from .queue.queue_job_worker import QueueJobWorker
 from .app import create_app
