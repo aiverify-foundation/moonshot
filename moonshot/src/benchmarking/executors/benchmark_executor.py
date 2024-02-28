@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import time
-from pathlib import Path
-from typing import AsyncGenerator, Union
+from typing import Any, AsyncGenerator
 
 from jinja2 import Template
 from pydantic.v1 import validate_arguments
@@ -55,49 +54,31 @@ class BenchmarkExecutor:
         )
 
     @classmethod
-    def load_executor(cls, be_id: str) -> BenchmarkExecutor:
-        """
-        Loads a benchmark executor from a database.
-
-        This method reads the benchmark executor information from a database specified by the executor ID. It constructs
-        the database path using the executor ID and the designated directory for databases. The method
-        then reads the database and returns the benchmark executor information as a dictionary.
-
-        Args:
-            be_id (str): The ID of the benchmark executor.
-
-        Returns:
-            BenchmarkExecutor: An instance of the BenchmarkExecutor class with the loaded executor information.
-        """
-        be_args = StorageManager.read_executor(be_id)
-        if be_args:
-            return cls(be_args)
-        else:
-            raise RuntimeError(f"Failed to load {be_id}.")
-
-    @classmethod
     def create_executor(cls, be_args: BenchmarkExecutorArguments) -> BenchmarkExecutor:
         """
-        Creates a new benchmark executor and stores its information in a database.
+        Creates a new BenchmarkExecutor instance.
 
-        This method takes the arguments provided in the `be_args` parameter, generates a unique executor ID by
-        slugifying the executor name, and then constructs a dictionary with the executor's information. It then
-        writes this information to a database file named after the executor ID within the directory specified by
-        `EnvironmentVars.DATABASES`. If the operation fails for any reason, an exception is raised
-        and the error is printed.
+        This method takes a BenchmarkExecutorArguments object as an argument, which contains all the necessary
+        information to create a new BenchmarkExecutor. It generates a unique id for the executor based on its type
+        and name, and sets up the necessary storage for the executor. If the executor is successfully created, it
+        is returned. If there is an error during creation, the error is printed and re-raised.
 
         Args:
-            be_args (BenchmarkExecutorArguments): An object containing the necessary information to create a
-            new benchmark executor.
+            be_args (BenchmarkExecutorArguments): The arguments to create the executor.
 
         Returns:
-            BenchmarkExecutor: An instance of the BenchmarkExecutor class with the loaded executor information.
+            BenchmarkExecutor: The newly created executor.
 
         Raises:
-            Exception: If there is an error during file writing or any other operation within the method.
+            Exception: If there is an error during executor creation.
         """
         try:
-            be_id = slugify(be_args.name, lowercase=True)
+            prefix = (
+                "recipe-"
+                if be_args.type == BenchmarkExecutorTypes.RECIPE
+                else "cookbook-"
+            )
+            be_id = slugify(prefix + be_args.name, lowercase=True)
             be_info = {
                 "id": be_id,
                 "name": be_args.name,
@@ -115,9 +96,12 @@ class BenchmarkExecutor:
                 "status": be_args.status,
                 "progress_callback_func": be_args.progress_callback_func,
             }
-            # Write as database output
-            be_args = StorageManager.create_executor(
-                BenchmarkExecutorArguments(**be_info)
+            be_args = BenchmarkExecutorArguments(**be_info)
+            be_args.database_instance = (
+                StorageManager.create_executor_database_connection(be_id)
+            )
+            StorageManager.create_executor_storage(
+                be_args.to_tuple(), be_args.database_instance
             )
 
             # Return an instance of executor
@@ -127,115 +111,183 @@ class BenchmarkExecutor:
             print(f"Failed to create executor: {str(e)}")
             raise e
 
-    @staticmethod
-    @validate_arguments
-    def read_executor(be_id: str) -> Union[BenchmarkExecutorArguments, None]:
+    @classmethod
+    def load_executor(cls, be_id: str) -> BenchmarkExecutor:
         """
-        Reads an executor.
+        Loads a BenchmarkExecutor instance from the storage.
 
-        This method reads an executor by loading the executor's database file and reading the metadata record.
-        It constructs the file path for the database file using the executor ID and the designated directory for
-        databases.
-        If the file does not exist, it raises a RuntimeError.
-        It then returns the BenchmarkExecutorArguments instance constructed from the metadata record, or None
-        if the record could not be found.
+        This method takes a BenchmarkExecutor ID as an argument, retrieves the corresponding data from the storage,
+        and creates a BenchmarkExecutor instance from it. If the executor is successfully loaded, it is returned.
+        If there is an error during loading, the error is printed and re-raised.
 
         Args:
-            be_id (str): The ID of the executor.
+            be_id (str): The ID of the BenchmarkExecutor to be loaded.
 
         Returns:
-            Union[BenchmarkExecutorArguments, None]: The BenchmarkExecutorArguments instance, or None if the
-            record could not be found.
+            BenchmarkExecutor: The loaded BenchmarkExecutor instance.
+
+        Raises:
+            Exception: If there is an error during executor loading.
         """
+        db_instance = None
         try:
-            return StorageManager.read_executor(be_id)
+            db_instance = StorageManager.create_executor_database_connection(be_id)
+            be_args = BenchmarkExecutorArguments.from_tuple(
+                StorageManager.read_executor_storage(be_id, db_instance)
+            )
+            be_args.database_instance = db_instance
+
+            return cls(be_args)
 
         except Exception as e:
-            print(f"Failed to read executor: {str(e)}")
+            print(f"Failed to load executor: {str(e)}")
             raise e
 
     @staticmethod
-    def update_executor(be_args: BenchmarkExecutorArguments) -> None:
+    def update_executor(be_args: BenchmarkExecutorArguments) -> BenchmarkExecutor:
         """
-        Updates an executor.
+        Updates an existing executor.
 
-        This method updates an executor by updating the executor's database file with the new metadata record.
-        It constructs the file path for the database file using the executor ID and the designated directory for
-        databases.
-        If the file does not exist, it raises a RuntimeError.
+        This function takes a BenchmarkExecutorArguments object as input. It first generates a new executor ID
+        based on the type and name of the executor. It then deletes the existing executor with the same ID and
+        creates a new executor with the updated arguments. If the update is successful, it returns the new executor.
+        If there is an error during the update, the error is printed and re-raised.
 
         Args:
-            be_args (BenchmarkExecutorArguments): The updated executor arguments.
+            be_args (BenchmarkExecutorArguments): The updated arguments for the executor.
+
+        Returns:
+            BenchmarkExecutor: The updated executor.
 
         Raises:
-            Exception: If there is an error during file updating or any other operation within the method.
+            Exception: If there is an error during executor update.
         """
         try:
-            StorageManager.update_executor(be_args)
+            prefix = (
+                "recipe-"
+                if be_args.type == BenchmarkExecutorTypes.RECIPE
+                else "cookbook-"
+            )
+            be_id = slugify(prefix + be_args.name, lowercase=True)
+            BenchmarkExecutor.delete_executor(be_id)
+            return BenchmarkExecutor.create_executor(be_args)
 
         except Exception as e:
             print(f"Failed to update executor: {str(e)}")
             raise e
 
     @staticmethod
-    @validate_arguments
     def delete_executor(be_id: str) -> None:
         """
-        Deletes a benchmark executor from the database and its corresponding results file.
+        Deletes an existing executor.
 
-        This method deletes the executor information from the database file and the results file specified by
-        the executor ID. It constructs the file paths using the executor ID and the designated directories for
-        databases and results. The method then deletes both the database file and the results file.
+        This function takes a BenchmarkExecutor ID as input. It first deletes the executor's database and results
+        using the StorageManager. If there is an error during the deletion, the error is printed and re-raised.
 
         Args:
-            be_id (str): The ID of the executor.
+            be_id (str): The ID of the executor to be deleted.
 
         Raises:
-            Exception: If there is an error during file deletion or any other operation within the method.
+            Exception: If there is an error during executor deletion.
         """
         try:
-            StorageManager.delete_executor(be_id)
+            StorageManager.remove_executor_database(be_id)
+            StorageManager.remove_executor_results(be_id)
 
         except Exception as e:
             print(f"Failed to delete executor: {str(e)}")
             raise e
 
     @staticmethod
-    def get_available_executors() -> tuple[list[str], list[BenchmarkExecutorArguments]]:
+    @validate_arguments
+    def read_executor_arguments(be_id: str) -> BenchmarkExecutorArguments:
         """
-        Returns a list of available executors and their corresponding BenchmarkExecutorArguments.
+        Reads the executor's arguments from the storage.
 
-        This method retrieves all the executors from the storage manager. It then reads the executor information
-        for each executor and appends it to a list. Executors with "__" in their names are ignored.
+        This function takes a BenchmarkExecutor ID as input. It first creates a connection to the executor's database
+        using the StorageManager. Then, it reads the executor's storage and converts the result into a
+        BenchmarkExecutorArguments object. If there is an error during the reading, the error is printed and re-raised.
+
+        Args:
+            be_id (str): The ID of the executor whose arguments are to be read.
 
         Returns:
-            tuple[list[str], list[BenchmarkExecutorArguments]]: A tuple containing a list of executor IDs and a list
-            of BenchmarkExecutorArguments for each executor.
+            BenchmarkExecutorArguments: The arguments of the executor.
 
         Raises:
-            Exception: If there is an error during file reading or any other operation within the method.
+            Exception: If there is an error during executor arguments reading.
+        """
+        db_instance = None
+        try:
+            db_instance = StorageManager.create_executor_database_connection(be_id)
+            return BenchmarkExecutorArguments.from_tuple(
+                StorageManager.read_executor_storage(be_id, db_instance)
+            )
+
+        except Exception as e:
+            print(f"Failed to read executor: {str(e)}")
+            raise e
+
+        finally:
+            if db_instance:
+                StorageManager.close_executor_database_connection(db_instance)
+
+    @staticmethod
+    def get_available_executors() -> tuple[list[str], list[BenchmarkExecutorArguments]]:
+        """
+        Retrieves all available benchmark executors.
+
+        This function calls the get_executors method to retrieve all available benchmark executors. It then converts
+        each executor into a BenchmarkExecutorArguments object using the from_tuple method and returns a tuple of
+        two lists:
+            a list of executor IDs and a list of BenchmarkExecutorArguments objects.
+
+        Returns:
+            tuple[list[str], list[BenchmarkExecutorArguments]]: A tuple of two lists, the first list contains the IDs
+            of the executors, and the second list contains the BenchmarkExecutorArguments objects of the executors.
+
+        Raises:
+            Exception: If there is an error during executor retrieval.
         """
         try:
-            retn_be_args = []
-            retn_be_ids = []
+            retn_bes = []
+            retn_bes_ids = []
 
-            bm_executors = StorageManager.get_executors()
-            for bm_executor in bm_executors:
-                if "__" in bm_executor:
+            execs = StorageManager.get_executors()
+            for exec in execs:
+                if "__" in exec:
                     continue
 
-                bm_args = StorageManager.read_executor(Path(bm_executor).stem)
-                if bm_args:
-                    retn_be_args.append(bm_args.to_dict())
-                    retn_be_ids.append(bm_args.id)
+                db_instance = StorageManager.create_executor_database_connection(exec)
+                be_info = BenchmarkExecutorArguments.from_tuple(
+                    StorageManager.read_executor_storage(exec, db_instance)
+                )
+                StorageManager.close_executor_database_connection(db_instance)
 
-            return retn_be_ids, retn_be_args
+                retn_bes.append(be_info)
+                retn_bes_ids.append(be_info.id)
+
+            return retn_bes_ids, retn_bes
 
         except Exception as e:
             print(f"Failed to get available executors: {str(e)}")
             raise e
 
-    async def execute_benchmark_pipeline(
+    def close_executor(self) -> None:
+        """
+        Closes the executor's database connection.
+
+        This method attempts to close the executor's database connection using the database_instance attribute.
+        If the database_instance attribute is not None, it calls the close_executor_database_connection method of
+        the StorageManager.
+
+        Returns:
+            None
+        """
+        if self.database_instance:
+            StorageManager.close_executor_database_connection(self.database_instance)
+
+    async def _execute_benchmark_pipeline(
         self, recipe_inst: Recipe, recipe_connectors: list[Connector]
     ):
         """
@@ -257,16 +309,18 @@ class BenchmarkExecutor:
             Exception: If there is an error during the generation of prompts or predictions.
         """
         # Generate prompts based on datasets and replacement in prompt templates
-        gen_prompt = self.generate_prompts(
+        gen_prompt = self._generate_prompts(
             recipe_inst.id, recipe_inst.datasets, recipe_inst.prompt_templates
         )
 
         # Generate predictions based on the gen_prompts on different connectors
-        gen_result = self.generate_predictions(gen_prompt, recipe_connectors)
+        gen_result = self._generate_predictions(
+            gen_prompt, recipe_connectors, self.database_instance
+        )
 
         return [result async for result in gen_result]
 
-    async def generate_prompts(
+    async def _generate_prompts(
         self, rec_id: str, ds_ids: list[str], pt_ids: list[str] = []
     ) -> AsyncGenerator[PromptArguments, None]:
         """
@@ -329,26 +383,36 @@ class BenchmarkExecutor:
                     }
                     yield PromptArguments(**retn_prompt)
 
-    async def generate_predictions(
+    async def _generate_predictions(
         self,
         gen_prompt: AsyncGenerator[PromptArguments, None],
         recipe_connectors: list[Connector],
+        database_instance: Any,
     ):
         """
-        Asynchronously generates predictions for the given prompts using the provided recipe connectors.
+        This method generates predictions for the given prompts using the provided recipe connectors and
+        database instance.
 
-        This method takes an asynchronous generator of prompts and a list of recipe connectors. It iterates over
-        the prompts and for each prompt, it iterates over the recipe connectors. For each combination of prompt
-        and connector, it first checks if there is a saved record in the cache. If there is, it uses that record.
-        If there is not, it gets a prediction from the connector and creates a new cache record. It then yields
-        the updated prompt information.
+        This method is a coroutine that takes an asynchronous generator of prompts, a list of recipe connectors,
+        and a database instance.
+
+        It iterates over the prompts from the generator and for each prompt, it iterates over the recipe connectors.
+        For each connector, it updates the prompt with the connector id and checks if the prompt has saved records
+        in the cache.
+        If there are no saved records, it gets predictions from the connector and creates cache records.
+        If there are saved records, it updates the prompt info from the cache records.
+        Finally, it yields the updated prompt info.
 
         Args:
-            gen_prompt (AsyncGenerator[PromptArguments, None]): An asynchronous generator that yields prompts.
-            recipe_connectors (list[Connector]): A list of recipe connectors to be used for generating predictions.
+            gen_prompt (AsyncGenerator[PromptArguments, None]): An asynchronous generator of prompts.
+            recipe_connectors (list[Connector]): A list of recipe connectors.
+            database_instance (Any): A database instance.
 
         Yields:
-            PromptArguments: The updated prompt information.
+            PromptArguments: The updated prompt info.
+
+        Raises:
+            Exception: If there is an error during cache reading or any other operation within the method.
         """
         async for prompt_info in gen_prompt:
             for rec_conn in recipe_connectors:
@@ -356,17 +420,25 @@ class BenchmarkExecutor:
                 prompt_info.conn_id = rec_conn.id
 
                 # Check if gen_prompt has saved records in cache
-                updated_prompt_info = StorageManager.read_benchmark_cache_record(
-                    self.database_instance, prompt_info
+                cache_record = StorageManager.read_benchmark_cache_record(
+                    (
+                        prompt_info.rec_id,
+                        prompt_info.conn_id,
+                        prompt_info.pt_id,
+                        prompt_info.prompt,
+                    ),
+                    database_instance,
                 )
-                if updated_prompt_info is None:
+                if cache_record is None:
                     # Get predictions from connector and create cache records
                     updated_prompt_info = await ConnectorManager.get_prediction(
                         prompt_info, rec_conn
                     )
                     StorageManager.create_benchmark_cache_record(
-                        self.database_instance, updated_prompt_info
+                        updated_prompt_info.to_tuple(), database_instance
                     )
+                else:
+                    updated_prompt_info = PromptArguments.from_tuple(cache_record)
 
                 # Return updated prompt info
                 yield updated_prompt_info
@@ -390,7 +462,7 @@ class BenchmarkExecutor:
 
             for recipe_index, recipe in enumerate(self.recipes, 0):
                 # Update progress
-                self.update_execution_progress(
+                self._update_execution_progress(
                     BenchmarkExecutorStatus.RUNNING, recipe_index, recipe
                 )
                 print(
@@ -398,21 +470,21 @@ class BenchmarkExecutor:
                 )
 
                 # Execute the recipe
-                self.execute_recipe(recipe)
+                self._execute_recipe(recipe)
 
             # Update progress
-            self.update_execution_progress(
+            self._update_execution_progress(
                 BenchmarkExecutorStatus.COMPLETED, len(self.recipes), ""
             )
 
         elif self.type == BenchmarkExecutorTypes.COOKBOOK:
-            self.execute_cookbook()
+            self._execute_cookbook()
 
         else:
             print("Invalid executor type.")
             raise RuntimeError("Invalid executor type.")
 
-    def execute_recipe(self, recipe: str):
+    def _execute_recipe(self, recipe: str):
         """
         Executes a single recipe.
 
@@ -453,7 +525,7 @@ class BenchmarkExecutor:
         print("Part 2: Building generator pipeline for predicting prompts...")
         start_time = time.perf_counter()
         recipe_preds = asyncio.run(
-            self.execute_benchmark_pipeline(recipe_inst, recipe_eps)
+            self._execute_benchmark_pipeline(recipe_inst, recipe_eps)
         )
         print(
             f"Predicting prompts for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
@@ -465,10 +537,10 @@ class BenchmarkExecutor:
         # Load metrics for recipe
         print(recipe_preds)
 
-    def execute_cookbook(self):
+    def _execute_cookbook(self):
         pass
 
-    def get_benchmark_arguments(self) -> BenchmarkExecutorArguments:
+    def _get_current_benchmark_arguments(self) -> BenchmarkExecutorArguments:
         """
         Constructs the BenchmarkExecutorArguments object.
 
@@ -497,7 +569,7 @@ class BenchmarkExecutor:
             progress_callback_func=self.progress_callback_func,
         )
 
-    def update_execution_progress(
+    def _update_execution_progress(
         self, status: BenchmarkExecutorStatus, current_index: int, recipe_name: str
     ) -> None:
         """
@@ -517,4 +589,10 @@ class BenchmarkExecutor:
         self.progress.update_progress(
             current_index, recipe_name, self.duration, self.status.name, self.results
         )
-        self.update_executor(self.get_benchmark_arguments())
+        if self.database_instance:
+            StorageManager.update_executor_progress(
+                self._get_current_benchmark_arguments().to_tuple(),
+                self.database_instance,
+            )
+        else:
+            print("Unable to update executor progress: db_instance is not initialised.")

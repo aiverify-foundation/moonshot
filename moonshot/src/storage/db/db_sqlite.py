@@ -5,132 +5,130 @@ from typing import Union
 from moonshot.src.storage.db.db_accessor import DBAccessor
 
 
-class DbSqlite(DBAccessor):
-    @staticmethod
-    def create_connection(db_path: str) -> Union[sqlite3.Connection, None]:
-        """
-        Creates a connection to the database.
+class DBSqlite(DBAccessor):
+    def __init__(self, db_path: str):
+        self.db_path = db_path
+        self.sqlite_conn = None
 
-        Args:
-            db_path (str): The database path.
+    def create_connection(self) -> bool:
+        """
+        Establishes a connection to the SQLite database.
+
+        This method attempts to create a connection to the SQLite database at the path specified during the
+        object's initialization.
+
+        If the connection is successfully established, it returns True.
+        If an error occurs during the connection process, it prints an error message with the details of the
+        SQLite error and returns False.
 
         Returns:
-            None
+            bool: True if the connection is successfully established, False otherwise.
         """
         try:
             # Create directories if they don't exist
-            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-            sqlite_conn = sqlite3.connect(db_path)
-            print(f"Established connection to database ({db_path})")
-            return sqlite_conn
+            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+            self.sqlite_conn = sqlite3.connect(self.db_path)
+            print(f"Established connection to database ({self.db_path})")
+            return True
 
         except sqlite3.Error as sqlite3_error:
             print(
-                f"Error establishing connection to database ({db_path}) - {str(sqlite3_error)})"
+                f"Error establishing connection to database ({self.db_path}) - {str(sqlite3_error)})"
             )
-            return None
+            return False
 
-    @staticmethod
-    def close_connection(db_conn: sqlite3.Connection) -> None:
+    def close_connection(self) -> None:
         """
-        Closes the connection to the database.
+        Closes the connection to the SQLite database.
 
-        Args:
-            db_conn (Any): The connection to the database.
+        If the connection is already established, it attempts to close it and sets the connection attribute to None.
+        If an error occurs during the closing process, it prints an error message with the details of the SQLite error.
 
         Returns:
             None
         """
-        if db_conn:
-            db_conn.close()
-
-    @staticmethod
-    def create_table(db_conn: sqlite3.Connection, create_table_sql: str) -> None:
-        """
-        Creates a table in the database using the provided SQL statement.
-
-        Args:
-            create_table_sql (str): The SQL statement to create a table.
-
-        Returns:
-            None
-        """
-        if db_conn:
+        if self.sqlite_conn:
             try:
-                with db_conn:
-                    db_conn.execute(create_table_sql)
+                self.sqlite_conn.close()
+                print(f"Closed connection to database ({self.db_path})")
+            except sqlite3.Error as sqlite3_error:
+                print(
+                    f"Error closing connection to database ({self.db_path}) - {str(sqlite3_error)})"
+                )
+            finally:
+                self.sqlite_conn = None
+
+    def create_table(self, create_table_sql: str) -> None:
+        """
+        Creates a table in the SQLite database using the provided SQL query.
+
+        This method attempts to create a table in the SQLite database using the provided SQL query.
+        If the connection to the SQLite database is established, it executes the SQL query.
+        If an error occurs during the table creation process, it prints an error message with the details of the
+        SQLite error.
+
+        Args:
+            create_table_sql (str): The SQL query to create a table.
+
+        Returns:
+            None
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    self.sqlite_conn.execute(create_table_sql)
 
             except sqlite3.Error as sqlite3_error:
-                print(f"Error creating table for database - {str(sqlite3_error)})")
+                print(f"Error creating table for database - {str(sqlite3_error)}")
 
-    @staticmethod
     def create_record(
-        db_conn: sqlite3.Connection, record: tuple, create_record_sql: str
-    ) -> None:
+        self, record: tuple, create_record_sql: str
+    ) -> Union[tuple, None]:
         """
-        Creates a record in the database using the provided SQL statement.
+        Inserts a new record into the SQLite database using the provided SQL query and record.
+
+        This method attempts to insert a new record into the SQLite database using the provided SQL query and record.
+        If the connection to the SQLite database is established, it executes the SQL query with the record.
+        If an error occurs during the record insertion process, it prints an error message with the details of the
+        SQLite error and returns None.
 
         Args:
-            db_conn (Any): The connection to the database.
             record (tuple): The record to be inserted into the database.
-            create_record_sql (str): The SQL statement to create a record.
+            create_record_sql (str): The SQL query to insert a record.
 
         Returns:
-            None
+            tuple: The inserted record if the operation is successful, None otherwise.
         """
-        if db_conn:
+        if self.sqlite_conn:
             try:
-                with db_conn:
-                    db_conn.execute(create_record_sql, record)
+                with self.sqlite_conn:
+                    self.sqlite_conn.execute(create_record_sql, record)
 
             except sqlite3.Error as sqlite3_error:
-                print(f"Error inserting record into database - {str(sqlite3_error)})")
+                print(f"Error inserting record into database - {str(sqlite3_error)}")
 
-    @staticmethod
-    def read_metadata_record(
-        db_conn: sqlite3.Connection, record_id: str, read_record_sql: str
-    ) -> Union[tuple, None]:
+    def read_record(self, record: tuple, read_record_sql: str) -> Union[tuple, None]:
         """
-        Reads a record from the database using the provided SQL statement.
+        Reads a record from the SQLite database using the provided SQL query and record.
+
+        This method attempts to read a record from the SQLite database using the provided SQL query and record.
+
+        If the connection to the SQLite database is established, it executes the SQL query with the record and returns
+        the fetched record.
+        If an error occurs during the record reading process, it prints an error message with the details of the SQLite
+        error and returns None.
 
         Args:
-            db_conn (Any): The connection to the database.
-            record_id (str): The record to be read from the database.
-            read_record_sql (str): The SQL statement to read a record.
-
-        Returns:
-            Union[tuple, None]: The record read from the database, or None if the record could not be found.
-        """
-        if db_conn:
-            try:
-                with db_conn:
-                    cursor = db_conn.cursor()
-                    cursor.execute(read_record_sql, (record_id,))
-                    return cursor.fetchone()
-
-            except sqlite3.Error as sqlite3_error:
-                print(f"Error reading record from database - {str(sqlite3_error)}")
-        return None
-
-    @staticmethod
-    def read_cache_record(
-        db_conn: sqlite3.Connection, record: tuple, read_record_sql: str
-    ) -> Union[tuple, None]:
-        """
-        Reads a record from the database using the provided SQL statement.
-
-        Args:
-            db_conn (Any): The connection to the database.
             record (tuple): The record to be read from the database.
-            read_record_sql (str): The SQL statement to read a record.
+            read_record_sql (str): The SQL query to read a record.
 
         Returns:
-            Union[tuple, None]: The record read from the database, or None if the record could not be found.
+            tuple: The read record if the operation is successful, None otherwise.
         """
-        if db_conn:
+        if self.sqlite_conn:
             try:
-                with db_conn:
-                    cursor = db_conn.cursor()
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
                     cursor.execute(read_record_sql, record)
                     return cursor.fetchone()
 
@@ -138,24 +136,26 @@ class DbSqlite(DBAccessor):
                 print(f"Error reading record from database - {str(sqlite3_error)}")
         return None
 
-    @staticmethod
-    def update_record(
-        db_conn: sqlite3.Connection, record: tuple, update_record_sql: str
-    ) -> None:
+    def update_record(self, record: tuple, update_record_sql: str) -> None:
         """
-        Updates a record in the database using the provided SQL statement.
+        Updates a record in the SQLite database using the provided SQL query and record.
+
+        This method attempts to update a record in the SQLite database using the provided SQL query and record.
+        If the connection to the SQLite database is established, it executes the SQL query with the record.
+        If an error occurs during the record updating process, it prints an error message with the details of the
+        SQLite error.
 
         Args:
-            db_conn (Any): The connection to the database.
             record (tuple): The record to be updated in the database.
-            update_record_sql (str): The SQL statement to update a record.
+            update_record_sql (str): The SQL query to update a record.
 
         Returns:
             None
         """
-        if db_conn:
+        if self.sqlite_conn:
             try:
-                with db_conn:
-                    db_conn.execute(update_record_sql, record)
+                with self.sqlite_conn:
+                    self.sqlite_conn.execute(update_record_sql, record)
+
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")

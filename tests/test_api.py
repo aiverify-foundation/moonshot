@@ -1,9 +1,9 @@
 from moonshot.api import (
-    api_create_connector, api_create_connectors, api_create_cookbook, api_create_endpoint, api_create_recipe, 
-    api_delete_cookbook, api_delete_endpoint, api_delete_recipe, api_get_all_connectors, api_get_all_cookbooks, 
-    api_get_all_cookbooks_names, api_get_all_endpoints, api_get_all_endpoints_names, api_get_all_recipes, 
-    api_get_all_recipes_names, api_read_cookbook, api_read_cookbooks, api_read_endpoint, api_read_recipe, 
-    api_read_recipes, api_update_cookbook, api_update_endpoint, api_update_recipe
+    api_create_connector, api_create_connectors, api_create_cookbook, api_create_endpoint, api_create_recipe, api_create_recipe_executor, 
+    api_delete_cookbook, api_delete_endpoint, api_delete_executor, api_delete_recipe, api_get_all_connectors, api_get_all_cookbooks, 
+    api_get_all_cookbooks_names, api_get_all_endpoints, api_get_all_endpoints_names, api_get_all_executors, api_get_all_executors_names, api_get_all_recipes, 
+    api_get_all_recipes_names, api_load_executor, api_read_cookbook, api_read_cookbooks, api_read_endpoint, api_read_executor, api_read_recipe, 
+    api_read_recipes, api_update_cookbook, api_update_endpoint, api_update_recipe, api_update_recipe_executor
 )
 
 # ------------------------------------------------------------------------------
@@ -286,6 +286,118 @@ def test_run_recipe_api():
     print("="*100,"\nTest listing all recipes names")
     test_get_all_recipes_names()
 
+# ------------------------------------------------------------------------------
+# Benchmark executor APIs Test
+# ------------------------------------------------------------------------------
+def test_create_executor():
+    bm_executor = api_create_recipe_executor(
+        name="my new recipe executor",
+        recipes=["bbq"],
+        endpoints=["openai-gpt35-lionel"],
+        num_of_prompts=1
+    )
+    print("Benchmark Executor Attributes:")
+    print("ID:", bm_executor.id)
+    print("Name:", bm_executor.name)
+    print("Type:", bm_executor.type)
+    print("Start Time:", bm_executor.start_time)
+    print("End Time:", bm_executor.end_time)
+    print("Duration:", bm_executor.duration)
+    print("Database Instance:", bm_executor.database_instance)
+    print("Database File:", bm_executor.database_file)
+    print("Results File:", bm_executor.results_file)
+    print("Recipes:", bm_executor.recipes)
+    print("Cookbooks:", bm_executor.cookbooks)
+    print("Endpoints:", bm_executor.endpoints)
+    print("Number of Prompts:", bm_executor.num_of_prompts)
+    print("Results:", bm_executor.results)
+    print("Status:", bm_executor.status)
+    print("Progress Callback Function:", bm_executor.progress_callback_func)
+    bm_executor.close_executor()
+
+def test_load_executor():
+    bm_executor = api_load_executor("recipe-my-new-recipe-executor")
+    print("Benchmark Executor Attributes:")
+    print("ID:", bm_executor.id)
+    print("Name:", bm_executor.name)
+    print("Type:", bm_executor.type)
+    print("Start Time:", bm_executor.start_time)
+    print("End Time:", bm_executor.end_time)
+    print("Duration:", bm_executor.duration)
+    print("Database Instance:", bm_executor.database_instance)
+    print("Database File:", bm_executor.database_file)
+    print("Results File:", bm_executor.results_file)
+    print("Recipes:", bm_executor.recipes)
+    print("Cookbooks:", bm_executor.cookbooks)
+    print("Endpoints:", bm_executor.endpoints)
+    print("Number of Prompts:", bm_executor.num_of_prompts)
+    print("Results:", bm_executor.results)
+    print("Status:", bm_executor.status)
+    print("Progress Callback Function:", bm_executor.progress_callback_func)
+    bm_executor.close_executor()
+
+def test_execute_executor():
+    bm_executor = api_load_executor("recipe-my-new-recipe-executor")
+    bm_executor.execute()
+    bm_executor.close_executor()
+
+def test_read_executor():
+    print(api_read_executor("recipe-my-new-recipe-executor"))
+
+def test_update_executor():
+    api_update_recipe_executor(
+        name="my new recipe executor",
+        recipes=["bbq234"],
+        endpoints=["openai-gpt55-lionel"],
+        num_of_prompts=1
+    )
+
+def test_delete_executor():
+    api_delete_executor("recipe-my-new-recipe-executor")
+
+def test_get_all_executors():
+    print(api_get_all_executors())
+
+def test_get_all_executors_names():
+    print(api_get_all_executors_names())
+
+def test_run_benchmark_executor_api():
+    # Create executor
+    print("="*100,"\nTest creating executor")
+    test_create_executor()
+
+    # Load executor
+    print("="*100,"\nTest loading executor")
+    test_load_executor()
+
+    # Execute the recipe job
+    print("="*100,"\nTest executing executor")
+    test_execute_executor()
+
+    # Read executor
+    print("="*100,"\nTest reading executor")
+    test_read_executor()
+
+    # Update executor
+    print("="*100,"\nTest updating executor")
+    test_update_executor()
+
+    # Read executor
+    print("="*100,"\nTest reading executor")
+    test_read_executor()
+
+    # List all executor
+    print("="*100,"\nTest listing all executors")
+    test_get_all_executors()
+
+    # List all executor names
+    print("="*100,"\nTest listing all executors names")
+    test_get_all_executors_names()
+
+    # Delete executor
+    print("="*100,"\nTest deleting executors")
+    test_delete_executor()
+
 if __name__ == "__main__":
     # Test connector apis
     test_run_connector_api()
@@ -295,3 +407,6 @@ if __name__ == "__main__":
 
     # Test cookbooks api
     test_run_cookbook_api()
+
+    # Test executor api
+    test_run_benchmark_executor_api()

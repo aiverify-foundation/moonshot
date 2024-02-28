@@ -44,7 +44,7 @@ class PromptArguments(BaseModel):
             self.prompt,
             self.target,
             self.predicted_results,
-            self.duration,
+            str(self.duration),
         )
 
     @classmethod

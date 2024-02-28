@@ -3,16 +3,13 @@ import glob
 import json
 import os
 from pathlib import Path
-from typing import Any, Iterator, Union
+from typing import Iterator, Union
 
-from moonshot.src.benchmarking.executors.benchmark_executor_arguments import (
-    BenchmarkExecutorArguments,
-)
 from moonshot.src.benchmarking.executors.benchmark_executor_types import (
     BenchmarkExecutorTypes,
 )
-from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.db.db_manager import DatabaseManager
 from moonshot.src.storage.generators.ds_info_generator import DatasetInfoGenerator
 from moonshot.src.storage.generators.pt_info_generator import (
@@ -337,108 +334,162 @@ class StorageManager:
         return f"{EnvironmentVars.RESULTS}/{be_id}.json"
 
     @staticmethod
-    def create_executor(
-        be_args: BenchmarkExecutorArguments,
-    ) -> BenchmarkExecutorArguments:
+    def create_executor_database_connection(be_id: str) -> DBAccessor:
         """
-        Creates a new executor.
+        Creates a connection to the executor's database.
 
-        This method creates a new executor by constructing the file paths for the executor's database and results
-        using the executor ID from the provided BenchmarkExecutorArguments. It then updates the
-        BenchmarkExecutorArguments instance with these a new database connection.
-        The method also creates the metadata and cache tables in the database and inserts a metadata record.
-        Finally, it returns the updated BenchmarkExecutorArguments instance.
-
-        Args:
-            be_args (BenchmarkExecutorArguments): The arguments for the BenchmarkExecutor.
-
-        Returns:
-            BenchmarkExecutorArguments: The updated arguments for the BenchmarkExecutor.
-        """
-        # Validate if database exists
-        if Path.exists(Path(be_args.database_file)):
-            raise RuntimeError("benchmark executor file exists.")
-
-        # Create a database file and update BenchmarkArguments
-        db_conn = DatabaseManager.create_benchmark_connection(be_args.database_file)
-        be_args.database_instance = db_conn
-
-        # Create the metadata and the cache table and update the metadata information
-        DatabaseManager.create_benchmark_metadata_table(db_conn)
-        DatabaseManager.create_benchmark_cache_table(db_conn)
-        DatabaseManager.create_benchmark_metadata_record(db_conn, be_args.to_tuple())
-
-        return be_args
-
-    @staticmethod
-    def read_executor(be_id: str) -> Union[BenchmarkExecutorArguments, None]:
-        """
-        Reads an executor.
-
-        This method reads an executor by loading the executor's database file and reading the metadata record.
-        It constructs the file path for the database file using the executor ID and the designated directory for
-        databases.
-        If the file does not exist, it raises a RuntimeError.
-        It then returns the BenchmarkExecutorArguments instance constructed from the metadata record, or None
-        if the record could not be found.
+        This method constructs the file path for the executor's database using the executor ID and the designated
+        directory for databases. It then creates a connection to the database using the DatabaseManager's
+        create_benchmark_connection method and returns the DBAccessor instance.
 
         Args:
             be_id (str): The ID of the executor.
 
         Returns:
-            Union[BenchmarkExecutorArguments, None]: The BenchmarkExecutorArguments instance, or None if the
-            record could not be found.
+            DBAccessor: The DBAccessor instance if the connection is successfully established.
+
+        Raises:
+            RuntimeError: If the DBAccessor instance is not initialised.
         """
         db_file = Path(StorageManager.get_executor_database_filepath(be_id))
-        if not Path.exists(db_file):
-            raise RuntimeError("benchmark executor file does not exist.")
+        db_instance = DatabaseManager.create_benchmark_connection(str(db_file))
+        if not db_instance:
+            raise RuntimeError("db instance is not initialised.")
+        return db_instance
 
-        # Load the database file
-        db_conn = DatabaseManager.create_benchmark_connection(str(db_file))
-        metadata_record = DatabaseManager.read_benchmark_metadata_record(db_conn, be_id)
-        if metadata_record:
-            be_args = BenchmarkExecutorArguments.from_tuple(metadata_record)
-            be_args.database_instance = db_conn
-            return be_args
+    @staticmethod
+    def close_executor_database_connection(db_instance: DBAccessor) -> None:
+        """
+        Closes the connection to the executor's database.
+
+        This method attempts to close the connection to the executor's database using the db_instance parameter.
+        If the db_instance is not None, it calls the close_benchmark_connection method of the DatabaseManager.
+
+        Args:
+            db_instance (DBAccessor): The DBAccessor instance to close the connection.
+
+        Returns:
+            None
+        """
+        DatabaseManager.close_benchmark_connection(db_instance)
+
+    @staticmethod
+    def create_executor_storage(
+        metadata_record: tuple, db_instance: DBAccessor
+    ) -> None:
+        """
+        Creates the executor's storage.
+
+        This method creates the executor's storage by creating the metadata and cache tables in the executor's database
+        using the db_instance parameter and metadata_record.
+        If the db_instance is not None, it calls the create_benchmark_metadata_table, create_benchmark_cache_table,
+        and create_benchmark_metadata_record methods of the DatabaseManager.
+        If the db_instance is None, it raises a RuntimeError.
+
+        Args:
+            metadata_record (tuple): The metadata record to be created.
+            db_instance (DBAccessor): The DBAccessor instance to create the tables and record.
+
+        Returns:
+            None
+
+        Raises:
+            RuntimeError: If the db_instance is None.
+        """
+        # Create metadata and cache table and update metadata information
+        if db_instance:
+            DatabaseManager.create_benchmark_metadata_table(db_instance)
+            DatabaseManager.create_benchmark_cache_table(db_instance)
+            DatabaseManager.create_benchmark_metadata_record(
+                db_instance, metadata_record
+            )
         else:
-            return None
+            raise RuntimeError("db instance is not initialised.")
 
     @staticmethod
-    def update_executor(be_args: BenchmarkExecutorArguments) -> None:
-        be_id = be_args.id
+    def read_executor_storage(be_id: str, db_instance: DBAccessor) -> tuple:
+        """
+        Reads the executor's storage.
+
+        This method reads the executor's storage by reading the metadata and cache tables in the executor's database
+        using the db_instance parameter and be_id.
+        If the db_instance is not None, it calls the read_benchmark_metadata_record method of the DatabaseManager.
+        If the db_instance is None, it raises a RuntimeError.
+
+        Args:
+            be_id (str): The benchmark executor ID to be read.
+            db_instance (DBAccessor): The DBAccessor instance to read the tables and record.
+
+        Returns:
+            tuple: The metadata record if found, None otherwise.
+
+        Raises:
+            RuntimeError: If the db_instance is None.
+        """
+        # Get database filepath
         db_file = Path(StorageManager.get_executor_database_filepath(be_id))
         if not Path.exists(db_file):
             raise RuntimeError("benchmark executor file does not exist.")
 
-        # Load the database file
-        db_conn = DatabaseManager.create_benchmark_connection(str(db_file))
-        DatabaseManager.update_benchmark_metadata_record(db_conn, be_args.to_tuple())
+        # Load database file
+        if db_instance:
+            metadata_record = DatabaseManager.read_benchmark_metadata_record(
+                db_instance, (be_id,)
+            )
+            if not metadata_record:
+                raise RuntimeError(
+                    "benchmark executor file metadata record does not exist."
+                )
+            return metadata_record
+        else:
+            raise RuntimeError("db instance is not initialised.")
 
     @staticmethod
-    def delete_executor(be_id: str) -> None:
+    def remove_executor_database(be_id: str) -> None:
         """
-        Deletes an executor.
+        Removes the executor's database.
 
-        This method deletes an executor by removing both the executor's database file and results file.
-        It constructs the file paths for these files using the executor ID and the designated directories for databases
-        and results. If the files do not exist, it does nothing.
+        This method removes the executor's database by deleting the database file in the executor's directory
+        using the be_id.
+        If the database file does not exist, it does nothing.
 
         Args:
-            be_id (str): The ID of the executor.
-        """
-        # Delete both executor database file and result file
-        db_path = Path(StorageManager.get_executor_database_filepath(be_id))
-        res_path = Path(StorageManager.get_executor_results_filepath(be_id))
+            be_id (str): The benchmark executor ID of the database to be removed.
 
+        Returns:
+            None
+        """
+        db_path = Path(StorageManager.get_executor_database_filepath(be_id))
         try:
             db_path.unlink(missing_ok=True)
+
+        except FileNotFoundError:
+            pass
+
+    @staticmethod
+    def remove_executor_results(be_id: str) -> None:
+        """
+        Removes the executor's results.
+
+        This method removes the executor's results by deleting the results file in the executor's directory
+        using the be_id.
+        If the results file does not exist, it does nothing.
+
+        Args:
+            be_id (str): The benchmark executor ID of the results to be removed.
+
+        Returns:
+            None
+        """
+        res_path = Path(StorageManager.get_executor_results_filepath(be_id))
+        try:
             res_path.unlink(missing_ok=True)
 
         except FileNotFoundError:
             pass
 
     @staticmethod
-    def get_executors() -> list[str]:
+    def get_executors() -> Iterator[str]:
         """
         Returns a list of executor IDs.
 
@@ -447,9 +498,9 @@ class StorageManager:
         names are excluded. Only executors whose type matches one of the `BenchmarkExecutorTypes` are included.
 
         Returns:
-            list[str]: A list of executor IDs.
+            Iterator[str]: An iterator over the executor IDs.
         """
-        return [
+        return (
             Path(fp).stem
             for fp in glob.iglob(f"{EnvironmentVars.DATABASES}/*.db")
             if "__" not in fp
@@ -457,56 +508,85 @@ class StorageManager:
                 Path(fp).stem.startswith(executor_type.name.lower())
                 for executor_type in BenchmarkExecutorTypes
             )
-        ]
+        )
+
+    @staticmethod
+    def update_executor_progress(progress_info: tuple, db_instance: DBAccessor) -> None:
+        """
+        Updates the executor's progress in the benchmark database.
+
+        This method attempts to update the executor's progress in the benchmark database using the db_instance parameter
+        and progress_info.
+        If the db_instance is not None, it calls the update_benchmark_metadata_record method of the DatabaseManager.
+        If the db_instance is None, it prints an error message.
+
+        Args:
+            progress_info (tuple): The data to be updated in the executor's progress record.
+            db_instance (DBAccessor): The DBAccessor instance to update the record.
+
+        Returns:
+            None
+        """
+        if db_instance:
+            DatabaseManager.update_benchmark_metadata_record(db_instance, progress_info)
+        else:
+            print("Unable to update executor progress: db_instance is not initialised.")
 
     @staticmethod
     def create_benchmark_cache_record(
-        db_instance: Any, prompt_info: PromptArguments
+        prompt_info: tuple, db_instance: DBAccessor
     ) -> None:
         """
-        Creates a new cache record in the benchmark database.
+        Creates a benchmark cache record.
 
-        This method takes a database instance and a PromptArguments instance. It converts the PromptArguments
-        instance into a tuple and inserts it as a new record in the cache table of the benchmark database.
+        This method attempts to create a benchmark cache record in the database using the db_instance parameter
+        and prompt_info.
+        If the db_instance is not None, it calls the create_benchmark_cache_record method of the DatabaseManager.
+        If the db_instance is None, it prints an error message.
 
         Args:
-            db_instance (Any): The database instance where the cache record will be created.
-            prompt_info (PromptArguments): The prompt information to be inserted as a cache record.
+            prompt_info (tuple): The data to be stored in the cache record.
+            db_instance (DBAccessor): The DBAccessor instance to create the record.
+
+        Returns:
+            None
         """
-        DatabaseManager.create_benchmark_cache_record(
-            db_instance, prompt_info.to_tuple()
-        )
+        if db_instance:
+            DatabaseManager.create_benchmark_cache_record(db_instance, prompt_info)
+        else:
+            print(
+                "Unable to create benchmark cache record: db_instance is not initialised."
+            )
 
     @staticmethod
     def read_benchmark_cache_record(
-        db_instance: Any, prompt_info: PromptArguments
-    ) -> Union[PromptArguments, None]:
+        prompt_info: tuple, db_instance: DBAccessor
+    ) -> Union[tuple, None]:
         """
-        Reads a cache record from the benchmark database.
+        Reads a benchmark cache record.
 
-        This method takes a database instance and a PromptArguments instance. It converts the PromptArguments
-        instance into a tuple and uses it to read a record from the cache table of the benchmark database. If a
-        cache record is found, it is converted back into a PromptArguments instance and returned. If no cache
-        record is found, None is returned.
+        This method attempts to read a benchmark cache record from the database using the db_instance parameter
+        and prompt_info.
+        If the db_instance is not None, it calls the read_benchmark_cache_record method of the DatabaseManager.
+        If the db_instance is None, it prints an error message.
 
         Args:
-            db_instance (Any): The database instance where the cache record will be read.
-            prompt_info (PromptArguments): The prompt information to be used to read a cache record.
+            prompt_info (tuple): The data to be read from the cache record.
+            db_instance (DBAccessor): The DBAccessor instance to read the record.
 
         Returns:
-            Union[PromptArguments, None]: The cache record read from the database as a PromptArguments instance,
-                                          or None if the record could not be found.
+            Union[tuple, None]: The cache record if found, None otherwise.
         """
-        read_tuple = (
-            prompt_info.rec_id,
-            prompt_info.conn_id,
-            prompt_info.pt_id,
-            prompt_info.prompt,
-        )
-        cache_record = DatabaseManager.read_benchmark_cache_record(
-            db_instance, read_tuple
-        )
-        return PromptArguments.from_tuple(cache_record) if cache_record else None
+        if db_instance:
+            cache_record = DatabaseManager.read_benchmark_cache_record(
+                db_instance, prompt_info
+            )
+            return cache_record if cache_record else None
+        else:
+            print(
+                "Unable to create benchmark cache record: db_instance is not initialised."
+            )
+            return None
 
     @staticmethod
     def get_dataset_info(ds_id: str) -> Iterator:
