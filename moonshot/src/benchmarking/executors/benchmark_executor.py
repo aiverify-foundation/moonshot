@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Any, AsyncGenerator
+from itertools import groupby
+from operator import attrgetter
+from pathlib import Path
+from typing import Any, AsyncGenerator, Callable, Union
 
 from jinja2 import Template
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
-from moonshot.src.benchmarking.benchmark_progress import BenchmarkProgress
+from moonshot.src.benchmarking.cookbooks.cookbook import Cookbook
 from moonshot.src.benchmarking.executors.benchmark_executor_arguments import (
     BenchmarkExecutorArguments,
+)
+from moonshot.src.benchmarking.executors.benchmark_executor_progress import (
+    BenchmarkExecutorProgress,
 )
 from moonshot.src.benchmarking.executors.benchmark_executor_status import (
     BenchmarkExecutorStatus,
@@ -18,6 +24,7 @@ from moonshot.src.benchmarking.executors.benchmark_executor_status import (
 from moonshot.src.benchmarking.executors.benchmark_executor_types import (
     BenchmarkExecutorTypes,
 )
+from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.connectors.connector import Connector
@@ -43,12 +50,15 @@ class BenchmarkExecutor:
         self.results = be_args.results
         self.status = be_args.status
         self.progress_callback_func = be_args.progress_callback_func
-        self.progress = BenchmarkProgress(
+        self.benchmark_executor_progress = BenchmarkExecutorProgress(
             exec_id=str(self.id),
             exec_name=self.name,
             exec_type=self.type.name,
             bm_max_progress_per_recipe=int(100.0 / len(self.recipes))
-            if self.recipes
+            if len(self.recipes) > 0
+            else 0,
+            bm_max_progress_per_cookbook=int(100.0 / len(self.cookbooks))
+            if len(self.cookbooks) > 0
             else 0,
             bm_progress_callback_func=self.progress_callback_func,
         )
@@ -79,6 +89,13 @@ class BenchmarkExecutor:
                 else "cookbook-"
             )
             be_id = slugify(prefix + be_args.name, lowercase=True)
+
+            # Check if the executor database file already exists. If it does, raise an error to prevent overwriting.
+            if Path(StorageManager.get_executor_database_filepath(be_id)).exists():
+                raise RuntimeError(
+                    "Unable to create executor because the database file exists."
+                )
+
             be_info = {
                 "id": be_id,
                 "name": be_args.name,
@@ -112,68 +129,47 @@ class BenchmarkExecutor:
             raise e
 
     @classmethod
-    def load_executor(cls, be_id: str) -> BenchmarkExecutor:
+    def load_executor(
+        cls, be_id: str, progress_callback_func: Union[Callable, None] = None
+    ) -> BenchmarkExecutor:
         """
-        Loads a BenchmarkExecutor instance from the storage.
+        Loads an executor by its ID.
 
-        This method takes a BenchmarkExecutor ID as an argument, retrieves the corresponding data from the storage,
-        and creates a BenchmarkExecutor instance from it. If the executor is successfully loaded, it is returned.
-        If there is an error during loading, the error is printed and re-raised.
+        This method loads an executor by its ID. It first checks if the executor database file exists.
+        If it does, it creates a database connection and reads the executor storage.
+        It then sets the database instance and progress callback function in the BenchmarkExecutorArguments object.
+        If the database file does not exist, it raises a RuntimeError.
 
         Args:
-            be_id (str): The ID of the BenchmarkExecutor to be loaded.
+            be_id (str): The ID of the executor to load.
+            progress_callback_func (Union[Callable, None]): The progress callback function for the executor.
 
         Returns:
-            BenchmarkExecutor: The loaded BenchmarkExecutor instance.
+            BenchmarkExecutor: The loaded executor instance.
 
         Raises:
+            RuntimeError: If the executor database file does not exist.
             Exception: If there is an error during executor loading.
         """
         db_instance = None
         try:
+            # Check if the executor database file exists. If it does not exist, raise an error.
+            if not Path(StorageManager.get_executor_database_filepath(be_id)).exists():
+                raise RuntimeError(
+                    "Unable to create executor because the database file does not exists."
+                )
+
             db_instance = StorageManager.create_executor_database_connection(be_id)
             be_args = BenchmarkExecutorArguments.from_tuple(
                 StorageManager.read_executor_storage(be_id, db_instance)
             )
             be_args.database_instance = db_instance
+            be_args.progress_callback_func = progress_callback_func
 
             return cls(be_args)
 
         except Exception as e:
             print(f"Failed to load executor: {str(e)}")
-            raise e
-
-    @staticmethod
-    def update_executor(be_args: BenchmarkExecutorArguments) -> BenchmarkExecutor:
-        """
-        Updates an existing executor.
-
-        This function takes a BenchmarkExecutorArguments object as input. It first generates a new executor ID
-        based on the type and name of the executor. It then deletes the existing executor with the same ID and
-        creates a new executor with the updated arguments. If the update is successful, it returns the new executor.
-        If there is an error during the update, the error is printed and re-raised.
-
-        Args:
-            be_args (BenchmarkExecutorArguments): The updated arguments for the executor.
-
-        Returns:
-            BenchmarkExecutor: The updated executor.
-
-        Raises:
-            Exception: If there is an error during executor update.
-        """
-        try:
-            prefix = (
-                "recipe-"
-                if be_args.type == BenchmarkExecutorTypes.RECIPE
-                else "cookbook-"
-            )
-            be_id = slugify(prefix + be_args.name, lowercase=True)
-            BenchmarkExecutor.delete_executor(be_id)
-            return BenchmarkExecutor.create_executor(be_args)
-
-        except Exception as e:
-            print(f"Failed to update executor: {str(e)}")
             raise e
 
     @staticmethod
@@ -443,102 +439,325 @@ class BenchmarkExecutor:
                 # Return updated prompt info
                 yield updated_prompt_info
 
-    def execute(self):
+    def benchmark_update_progress(
+        self, status: Union[BenchmarkExecutorStatus, None] = None
+    ) -> None:
+        """
+        Updates the progress of the benchmark execution.
+
+        This method updates the progress of the benchmark execution by setting the end time and duration.
+        If a status is provided, it updates the status as well.
+        If a database instance is available, it updates the executor progress in the database.
+        If a database instance is not available, it prints an error message.
+
+        Args:
+            status (Union[BenchmarkExecutorStatus, None], optional): The status of the benchmark execution.
+            Defaults to None.
+        """
+        self.end_time = time.time()
+        self.duration = int(self.end_time - self.start_time)
+        if status:
+            self.status = status
+
+        if self.database_instance:
+            StorageManager.update_executor_progress(
+                self._get_current_benchmark_arguments().to_tuple(),
+                self.database_instance,
+            )
+        else:
+            print("Unable to update executor progress: db_instance is not initialised.")
+
+    def execute(self) -> None:
         """
         Executes the benchmark based on its type.
 
-        This method checks the type of the benchmark executor and runs the corresponding execution method.
-        If the type is RECIPE, it runs the execute_recipe method for each recipe in the recipes list.
-        If the type is COOKBOOK, it runs the execute_cookbook method.
-        If the type is not recognized, it raises a RuntimeError.
+        This method checks the type of the benchmark and executes it accordingly. If the type is 'RECIPE',
+        it runs the recipes and updates the progress. If the type is 'COOKBOOK', it loads the cookbook instance,
+        iterates over the recipes in the cookbook, updates the progress, executes the recipe, and then updates
+        the progress again.
 
         Raises:
-            RuntimeError: If the executor type is not recognized.
+            Exception: If there is an error during the execution of the benchmark.
         """
         # Execute the benchmark executor based on its type
         if self.type == BenchmarkExecutorTypes.RECIPE:
             print(f"🔃 Running recipes ({self.name})... do not close this terminal.")
             print("You can start a new terminal to continue working.")
 
+            # Update progress
+            self.benchmark_update_progress(BenchmarkExecutorStatus.RUNNING)
+            self.benchmark_executor_progress.update_progress(
+                status=self.status.name,
+                duration=self.duration,
+                results=self.results,
+                recipe_total=len(self.recipes),
+            )
+
             for recipe_index, recipe in enumerate(self.recipes, 0):
-                # Update progress
-                self._update_execution_progress(
-                    BenchmarkExecutorStatus.RUNNING, recipe_index, recipe
-                )
                 print(
                     f"Running recipe {recipe}... ({recipe_index+1}/{len(self.recipes)})"
+                )
+
+                # Update progress
+                self.benchmark_executor_progress.update_progress(
+                    recipe_index=recipe_index,
+                    recipe_name=recipe,
                 )
 
                 # Execute the recipe
                 self._execute_recipe(recipe)
 
+                # Update progress end time and duration
+                self.benchmark_update_progress()
+                self.benchmark_executor_progress.update_progress(
+                    duration=self.duration,
+                    results=self.results,
+                )
+
+            # TODO: Create a result instance and write
+
             # Update progress
-            self._update_execution_progress(
-                BenchmarkExecutorStatus.COMPLETED, len(self.recipes), ""
+            self.benchmark_update_progress(BenchmarkExecutorStatus.COMPLETED)
+            self.benchmark_executor_progress.update_progress(
+                cookbook_index=-1,
+                cookbook_name="",
+                recipe_index=len(self.recipes),
+                recipe_name="",
+                recipe_total=len(self.recipes),
+                status=self.status.name,
+                duration=self.duration,
+                results=self.results,
             )
 
         elif self.type == BenchmarkExecutorTypes.COOKBOOK:
-            self._execute_cookbook()
+            print(f"🔃 Running cookbooks ({self.name})... do not close this terminal.")
+            print("You can start a new terminal to continue working.")
+
+            # Update progress
+            self.benchmark_update_progress(BenchmarkExecutorStatus.RUNNING)
+            self.benchmark_executor_progress.update_progress(
+                status=self.status.name,
+                duration=self.duration,
+                results=self.results,
+                cookbook_total=len(self.cookbooks),
+            )
+
+            for cookbook_index, cookbook in enumerate(self.cookbooks, 0):
+                print(
+                    f"Running cookbook {cookbook}... ({cookbook_index+1}/{len(self.cookbooks)})"
+                )
+
+                # Update progress
+                self.benchmark_executor_progress.update_progress(
+                    cookbook_index=cookbook_index,
+                    cookbook_name=cookbook,
+                )
+
+                # Execute the cookbook
+                self._execute_cookbook(cookbook)
+
+                # Update progress end time and duration
+                self.benchmark_update_progress()
+                self.benchmark_executor_progress.update_progress(
+                    duration=self.duration,
+                    results=self.results,
+                )
+
+            # TODO: Create a result instance and write
+
+            # Update progress
+            self.benchmark_update_progress(BenchmarkExecutorStatus.COMPLETED)
+            self.benchmark_executor_progress.update_progress(
+                cookbook_index=len(self.cookbooks),
+                cookbook_name="",
+                cookbook_total=len(self.cookbooks),
+                recipe_index=-1,
+                recipe_name="",
+                recipe_total=-1,
+                status=self.status.name,
+                duration=self.duration,
+                results=self.results,
+            )
 
         else:
             print("Invalid executor type.")
             raise RuntimeError("Invalid executor type.")
 
-    def _execute_recipe(self, recipe: str):
+    def _execute_recipe(self, recipe: str) -> None:
         """
-        Executes a single recipe.
+        Executes a given recipe.
 
-        This method takes a recipe as an argument and performs the following steps:
-        1. Loads the recipe instance.
-        2. Loads the recipe endpoints instances.
-        3. Builds a generator pipeline to get prompts and perform predictions.
-        4. Generates the metrics results.
+        This method takes a recipe as input and performs the following steps:
+        1. Loads various instances related to the recipe.
+        2. Builds a generator pipeline to get prompts and perform predictions.
+        3. Sorts the recipe predictions into groups.
 
         Args:
             recipe (str): The recipe to be executed.
+        """
+        try:
+            # ------------------------------------------------------------------------------
+            # Part 1: Load instances
+            # ------------------------------------------------------------------------------
+            print("Part 1: Loading various instances...")
+            start_time = time.perf_counter()
+            recipe_inst = Recipe.load_recipe(recipe)
+            print(
+                f"Load recipe instance took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            start_time = time.perf_counter()
+            recipe_eps = [
+                ConnectorManager.create_connector(
+                    ConnectorManager.read_endpoint(endpoint)
+                )
+                for endpoint in self.endpoints
+            ]
+            print(
+                f"Load recipe endpoints instances took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            start_time = time.perf_counter()
+            metrics_instances = [
+                Metric.load_metric(metric) for metric in recipe_inst.metrics
+            ]
+            print(f"Load metrics took {(time.perf_counter() - start_time):.4f}s")
+
+            # ------------------------------------------------------------------------------
+            # Part 2: Build generator pipeline to get prompts and perform predictions
+            # ------------------------------------------------------------------------------
+            print("Part 2: Building generator pipeline for predicting prompts...")
+            start_time = time.perf_counter()
+            recipe_preds = asyncio.run(
+                self._execute_benchmark_pipeline(recipe_inst, recipe_eps)
+            )
+            print(
+                f"Predicting prompts for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            # ------------------------------------------------------------------------------
+            # Part 3: Sort the recipe predictions into groups for recipe
+            # ------------------------------------------------------------------------------
+            # Sort PromptArguments instances into groups based on the same conn_id, rec_id, ds_id, and pt_id
+            print("Part 3: Sort the recipe predictions into groups")
+            start_time = time.perf_counter()
+
+            # Assuming `recipe_preds` is your list of PromptArguments instances
+            recipe_preds.sort(key=attrgetter("conn_id", "rec_id", "ds_id", "pt_id"))
+
+            # Now group them and generate separate lists for each group
+            grouped_recipe_preds = {
+                key: {
+                    "prompts": [pred.prompt for pred in group_list],
+                    "predicted_results": [
+                        pred.predicted_results for pred in group_list
+                    ],
+                    "targets": [pred.target for pred in group_list],
+                }
+                for key, group in groupby(
+                    recipe_preds, key=attrgetter("conn_id", "rec_id", "ds_id", "pt_id")
+                )
+                for group_list in [list(group)]
+            }
+
+            print(
+                f"Sort the recipe predictions into groups for recipe [{recipe}] took \
+                {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            # ------------------------------------------------------------------------------
+            # Part 4: Generate the metrics results
+            # ------------------------------------------------------------------------------
+            # Load metrics for recipe
+            print("Part 4: Performing metrics calculation")
+            start_time = time.perf_counter()
+
+            for group_recipe_key, group_recipe_value in grouped_recipe_preds.items():
+                print(
+                    f"Running metrics for conn_id ({group_recipe_key[0]}), \
+                    recipe_id ({group_recipe_key[1]}), dataset_id ({group_recipe_key[2]}), \
+                    prompt_template_id ({group_recipe_key[3]})"
+                )
+
+                metrics_result = []
+                prompts = group_recipe_value["prompts"]
+                predicted_results = group_recipe_value["predicted_results"]
+                targets = group_recipe_value["targets"]
+                for metric in metrics_instances:
+                    metrics_result.append(
+                        metric.get_results(prompts, predicted_results, targets)  # type: ignore ; ducktyping
+                    )
+                self.results[group_recipe_key] = metrics_result
+
+            print(
+                f"Performing metrics calculation for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+        except Exception as e:
+            print(f"Failed to execute recipe due to error: {str(e)}")
+            raise e
+
+    def _execute_cookbook(self, cookbook: str) -> None:
+        """
+        Executes a cookbook.
+
+        This method takes a cookbook and executes it. It first loads the cookbook instance and then iterates
+        over the recipes in the cookbook. For each recipe, it updates the progress, executes the recipe, and
+        then updates the progress again.
+
+        Args:
+            cookbook (str): The cookbook to be executed.
 
         Raises:
-            Exception: If there is an error during any of the steps.
+            Exception: If there is an error during the execution of the cookbook.
         """
-        # ------------------------------------------------------------------------------
-        # Part 1: Load instances
-        # ------------------------------------------------------------------------------
-        print("Part 1: Loading various instances...")
-        start_time = time.perf_counter()
-        recipe_inst = Recipe.load_recipe(recipe)
-        print(f"Load recipe instance took {(time.perf_counter() - start_time):.4f}s")
+        try:
+            # ------------------------------------------------------------------------------
+            # Part 1: Load instances
+            # ------------------------------------------------------------------------------
+            print("Part 1: Loading various instances...")
+            start_time = time.perf_counter()
+            cookbook_inst = Cookbook.load_cookbook(cookbook)
+            print(
+                f"Load cookbook instance took {(time.perf_counter() - start_time):.4f}s"
+            )
 
-        start_time = time.perf_counter()
-        recipe_eps = [
-            ConnectorManager.create_connector(ConnectorManager.read_endpoint(endpoint))
-            for endpoint in self.endpoints
-        ]
-        print(
-            f"Load recipe endpoints instances took {(time.perf_counter() - start_time):.4f}s"
-        )
+            # ------------------------------------------------------------------------------
+            # Part 2: Execute recipes
+            # ------------------------------------------------------------------------------
+            # Update progress
+            self.benchmark_update_progress()
+            self.benchmark_executor_progress.update_progress(
+                status=self.status.name,
+                duration=self.duration,
+                results=self.results,
+                recipe_total=len(cookbook_inst.recipes),
+            )
 
-        start_time = time.perf_counter()
-        print(f"Load metrics took {(time.perf_counter() - start_time):.4f}s")
-        # ------------------------------------------------------------------------------
-        # Part 2: Build generator pipeline to get prompts and perform predictions
-        # ------------------------------------------------------------------------------
-        print("Part 2: Building generator pipeline for predicting prompts...")
-        start_time = time.perf_counter()
-        recipe_preds = asyncio.run(
-            self._execute_benchmark_pipeline(recipe_inst, recipe_eps)
-        )
-        print(
-            f"Predicting prompts for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
-        )
+            for recipe_index, recipe in enumerate(cookbook_inst.recipes, 0):
+                print(
+                    f"Running recipe {recipe}... ({recipe_index+1}/{len(cookbook_inst.recipes)})"
+                )
 
-        # ------------------------------------------------------------------------------
-        # Part 3: Generate the metrics results
-        # ------------------------------------------------------------------------------
-        # Load metrics for recipe
-        print(recipe_preds)
+                # Update progress
+                self.benchmark_executor_progress.update_progress(
+                    recipe_index=recipe_index,
+                    recipe_name=recipe,
+                )
 
-    def _execute_cookbook(self):
-        pass
+                # Execute the recipe
+                self._execute_recipe(recipe)
+
+                # Update progress end time and duration
+                self.benchmark_update_progress()
+                self.benchmark_executor_progress.update_progress(
+                    duration=self.duration,
+                    results=self.results,
+                )
+
+        except Exception as e:
+            print(f"Failed to execute recipe due to error: {str(e)}")
+            raise e
 
     def _get_current_benchmark_arguments(self) -> BenchmarkExecutorArguments:
         """
@@ -568,31 +787,3 @@ class BenchmarkExecutor:
             status=self.status,
             progress_callback_func=self.progress_callback_func,
         )
-
-    def _update_execution_progress(
-        self, status: BenchmarkExecutorStatus, current_index: int, recipe_name: str
-    ) -> None:
-        """
-        Updates the execution progress of the benchmark.
-
-        This method updates the status, end time, duration, and progress of the benchmark execution.
-        It also updates the executor with the benchmark arguments.
-
-        Args:
-            status (BenchmarkExecutorStatus): The status of the benchmark execution.
-            current_index (int): The current index of the recipe being executed.
-            recipe_name (str): The name of the recipe being executed.
-        """
-        self.status = status
-        self.end_time = time.time()
-        self.duration = int(self.end_time - self.start_time)
-        self.progress.update_progress(
-            current_index, recipe_name, self.duration, self.status.name, self.results
-        )
-        if self.database_instance:
-            StorageManager.update_executor_progress(
-                self._get_current_benchmark_arguments().to_tuple(),
-                self.database_instance,
-            )
-        else:
-            print("Unable to update executor progress: db_instance is not initialised.")

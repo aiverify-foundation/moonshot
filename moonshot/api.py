@@ -1,3 +1,5 @@
+from typing import Callable, Union
+
 from moonshot.src.benchmarking.cookbooks.cookbook import Cookbook
 from moonshot.src.benchmarking.cookbooks.cookbook_arguments import CookbookArguments
 from moonshot.src.benchmarking.executors.benchmark_executor import BenchmarkExecutor
@@ -7,6 +9,7 @@ from moonshot.src.benchmarking.executors.benchmark_executor_arguments import (
 from moonshot.src.benchmarking.executors.benchmark_executor_types import (
     BenchmarkExecutorTypes,
 )
+from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.connectors.connector import Connector
@@ -535,27 +538,59 @@ def api_get_all_recipes_names() -> list[str]:
 # ------------------------------------------------------------------------------
 # Metrics APIs
 # ------------------------------------------------------------------------------
+def api_delete_metric(met_id: str) -> None:
+    """
+    Deletes a metric.
+
+    This method takes a metric ID as input, deletes the corresponding JSON file from the directory specified by
+    `EnvironmentVars.METRICS`. If the operation fails for any reason, an exception is raised and the
+    error is printed.
+
+    Args:
+        met_id (str): The ID of the metric to delete.
+
+    Raises:
+        Exception: If there is an error during file deletion or any other operation within the method.
+    """
+    Metric.delete_metric(met_id)
+
+
+def api_get_all_metrics() -> list[str]:
+    """
+    Retrieves all available metrics.
+
+    This function calls the get_available_metrics method to retrieve all available metrics.
+    It then returns a list of these metrics.
+
+    Returns:
+        list[str]: A list of strings, each representing a metric.
+    """
+    return Metric.get_available_metrics()
 
 
 # ------------------------------------------------------------------------------
 # Benchmark executor APIs
 # ------------------------------------------------------------------------------
 def api_create_recipe_executor(
-    name: str, recipes: list[str], endpoints: list[str], num_of_prompts: int
+    name: str,
+    recipes: list[str],
+    endpoints: list[str],
+    num_of_prompts: int,
+    progress_callback_func: Union[Callable, None] = None,
 ) -> BenchmarkExecutor:
     """
     Creates a new recipe executor.
 
-    This function takes a name, a list of recipes, a list of endpoints, and a number of prompts as input. It then
-    creates a new BenchmarkExecutorArguments object with these inputs and an empty id. The id is left empty because
-    it will be generated from the name during the creation process. The function then calls the create_executor method
-    to create a new recipe executor and returns the result.
+    This function takes a name, a list of recipes, a list of endpoints, a number of prompts, and an optional progress
+    callback function as input.
+    It creates a new BenchmarkExecutor instance with these parameters and returns it.
 
     Args:
         name (str): The name of the new recipe executor.
-        recipes (list[str]): A list of recipes for the new recipe executor.
-        endpoints (list[str]): A list of endpoints for the new recipe executor.
-        num_of_prompts (int): The number of prompts for the new recipe executor.
+        recipes (list[str]): A list of recipes for the new executor.
+        endpoints (list[str]): A list of endpoints for the new executor.
+        num_of_prompts (int): The number of prompts for the new executor.
+        progress_callback_func (Union[Callable, None]): An optional progress callback function for the new executor.
 
     Returns:
         BenchmarkExecutor: The newly created recipe executor.
@@ -571,26 +606,31 @@ def api_create_recipe_executor(
         recipes=recipes,
         endpoints=endpoints,
         num_of_prompts=num_of_prompts,
+        progress_callback_func=progress_callback_func,
     )
     return BenchmarkExecutor.create_executor(be_args)
 
 
 def api_create_cookbook_executor(
-    name: str, cookbooks: list[str], endpoints: list[str], num_of_prompts: int
+    name: str,
+    cookbooks: list[str],
+    endpoints: list[str],
+    num_of_prompts: int,
+    progress_callback_func: Union[Callable, None] = None,
 ) -> BenchmarkExecutor:
     """
     Creates a new cookbook executor.
 
-    This function takes a name, a list of cookbooks, a list of endpoints, and a number of prompts as input. It then
-    creates a new BenchmarkExecutorArguments object with these inputs and an empty id. The id is left empty because it
-    will be generated from the name during the creation process. The function then calls the create_executor method to
-    create a new cookbook executor and returns the result.
+    This function takes a name, a list of cookbooks, a list of endpoints, a number of prompts, and an optional progress
+    callback function as input.
+    It creates a new BenchmarkExecutor instance with these parameters and returns it.
 
     Args:
         name (str): The name of the new cookbook executor.
-        cookbooks (list[str]): A list of cookbooks for the new cookbook executor.
-        endpoints (list[str]): A list of endpoints for the new cookbook executor.
-        num_of_prompts (int): The number of prompts for the new cookbook executor.
+        cookbooks (list[str]): A list of cookbooks for the new executor.
+        endpoints (list[str]): A list of endpoints for the new executor.
+        num_of_prompts (int): The number of prompts for the new executor.
+        progress_callback_func (Union[Callable, None]): An optional progress callback function for the new executor.
 
     Returns:
         BenchmarkExecutor: The newly created cookbook executor.
@@ -606,25 +646,35 @@ def api_create_cookbook_executor(
         cookbooks=cookbooks,
         endpoints=endpoints,
         num_of_prompts=num_of_prompts,
+        progress_callback_func=progress_callback_func,
     )
     return BenchmarkExecutor.create_executor(be_args)
 
 
-def api_load_executor(be_id: str) -> BenchmarkExecutor:
+def api_load_executor(
+    be_id: str, progress_callback_func: Union[Callable, None] = None
+) -> BenchmarkExecutor:
     """
-    Loads a benchmark executor from a database file.
+    Loads an existing executor.
 
-    This method reads the benchmark executor information from a database file specified by the executor ID. It
-    constructs the file path using the executor ID and the designated directory for executors. The method
-    then reads the database file and returns the executor information as a BenchmarkExecutorArguments object.
+    This function takes an executor ID and an optional progress callback function as input.
+    It checks if the executor's database file exists. If it does not, it raises an error.
+    If the file does exist, it creates a connection to the database and reads the executor's
+    information from the database. It then creates a new BenchmarkExecutor instance with the
+    read information and the provided progress callback function, and returns this instance.
 
     Args:
-        be_id (str): The ID of the benchmark executor.
+        be_id (str): The ID of the executor to load.
+        progress_callback_func (Union[Callable, None]): An optional progress callback function for the executor.
 
     Returns:
-        BenchmarkExecutor: An instance of the BenchmarkExecutor class with the loaded executor information.
+        BenchmarkExecutor: The loaded executor.
+
+    Raises:
+        RuntimeError: If the executor's database file does not exist.
+        Exception: If there is an error during the loading process.
     """
-    return BenchmarkExecutor.load_executor(be_id)
+    return BenchmarkExecutor.load_executor(be_id, progress_callback_func)
 
 
 def api_read_executor(be_id: str) -> dict:
@@ -641,58 +691,6 @@ def api_read_executor(be_id: str) -> dict:
         dict: A dictionary containing the executor's information.
     """
     return BenchmarkExecutor.read_executor_arguments(be_id).to_dict()
-
-
-def api_update_recipe_executor(
-    name: str, recipes: list[str], endpoints: list[str], num_of_prompts: int
-) -> None:
-    """
-    This function takes a name, a list of recipes, a list of endpoints, and a number of prompts as input. It then
-    creates a new BenchmarkExecutorArguments object with these inputs and an empty id. The id is left empty because it
-    will be generated from the name during the creation process. The function then calls the update_executor method to
-    update an existing recipe executor with the new information.
-
-    Args:
-        name (str): The name of the recipe executor to be updated.
-        recipes (list[str]): A list of recipes for the updated recipe executor.
-        endpoints (list[str]): A list of endpoints for the updated recipe executor.
-        num_of_prompts (int): The number of prompts for the updated recipe executor.
-    """
-    be_args = BenchmarkExecutorArguments(
-        id="",
-        name=name,
-        type=BenchmarkExecutorTypes.RECIPE,
-        recipes=recipes,
-        endpoints=endpoints,
-        num_of_prompts=num_of_prompts,
-    )
-    BenchmarkExecutor.update_executor(be_args)
-
-
-def api_update_cookbook_executor(
-    name: str, cookbooks: list[str], endpoints: list[str], num_of_prompts: int
-) -> None:
-    """
-    This function takes a name, a list of cookbooks, a list of endpoints, and a number of prompts as input. It then
-    creates a new BenchmarkExecutorArguments object with these inputs and an empty id. The id is left empty because it
-    will be generated from the name during the creation process. The function then calls the update_executor method to
-    update an existing cookbook executor with the new information.
-
-    Args:
-        name (str): The name of the cookbook executor to be updated.
-        cookbooks (list[str]): A list of cookbooks for the updated cookbook executor.
-        endpoints (list[str]): A list of endpoints for the updated cookbook executor.
-        num_of_prompts (int): The number of prompts for the updated cookbook executor.
-    """
-    be_args = BenchmarkExecutorArguments(
-        id="",
-        name=name,
-        type=BenchmarkExecutorTypes.COOKBOOK,
-        cookbooks=cookbooks,
-        endpoints=endpoints,
-        num_of_prompts=num_of_prompts,
-    )
-    BenchmarkExecutor.update_executor(be_args)
 
 
 def api_delete_executor(be_id: str) -> None:
@@ -728,25 +726,6 @@ def api_get_all_executors_names() -> list[str]:
     return executors_names
 
 
-# def api_run_cookbooks(cookbooks, endpoints, num_of_prompts) -> dict:
-#     """
-#     Creates a cookbook run instance.
-
-#     Returns:
-#         dict: A dictionary representing the newly created cookbook run instance.
-#     """
-#     cookbook_run = Run(
-#         RunTypes.COOKBOOK,
-#         {
-#             "cookbooks": cookbooks,
-#             "endpoints": endpoints,
-#             "num_of_prompts": num_of_prompts,
-#         },
-#     )
-
-#     return cookbook_run
-
-
 # def api_get_all_results() -> list:
 #     """
 #     This function retrieves a list of available results.
@@ -768,16 +747,6 @@ def api_get_all_executors_names() -> list[str]:
 #         dict: A dictionary of results.
 #     """
 #     return read_results(results_filename)
-
-
-# def api_load_run(run_id: str) -> None:
-#     """
-#     Loads a run using the provided run ID.
-
-#     Args:
-#         run_id (str): The ID of the run to resume.
-#     """
-#     return Run.load_run(run_id)
 
 
 # def api_get_prompt_templates() -> list:

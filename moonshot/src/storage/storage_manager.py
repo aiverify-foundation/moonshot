@@ -299,6 +299,67 @@ class StorageManager:
         return glob.iglob(f"{EnvironmentVars.RECIPES}/*.json")
 
     # ------------------------------------------------------------------------------
+    # Metrics Storage APIs
+    # ------------------------------------------------------------------------------
+    @staticmethod
+    def get_metric_filepath(met_id: str) -> str:
+        """
+        Constructs the file path for the metric.
+
+        This method constructs the file path for the metric using the metric ID and the designated
+        directory for metrics. The method then returns the constructed file path.
+
+        Args:
+            met_id (str): The ID of the metric.
+
+        Returns:
+            str: The file path of the metric.
+        """
+        return f"{EnvironmentVars.METRICS}/{met_id}.py"
+
+    @staticmethod
+    def delete_metric(met_id: str) -> None:
+        """
+        Deletes a metric by its ID.
+
+        This method deletes a metric by its ID. It first constructs the file path for the metric using the metric ID
+        and the designated directory for metrics. It then attempts to delete the file at this path.
+        If the file does not exist, it does nothing.
+
+        Args:
+            met_id (str): The ID of the metric to delete.
+
+        Returns:
+            None
+
+        Raises:
+            FileNotFoundError: If the file does not exist.
+        """
+        # Delete metric
+        met_path = Path(f"{EnvironmentVars.METRICS}/{met_id}.py")
+
+        try:
+            met_path.unlink(missing_ok=True)
+
+        except FileNotFoundError:
+            pass
+
+    @staticmethod
+    def get_metrics() -> Iterator[str]:
+        """
+        Retrieves a list of available metrics.
+
+        This method scans the directory specified by the `EnvironmentVars.METRICS` environment variable for
+        Python files, excluding any that are special or private files (denoted by "__" in their names). It
+        extracts and returns the stem (the filename without the extension) of each Python file found, which
+        represents the available metric names.
+
+        Returns:
+            list[str]: A list of the names of available metrics.
+        """
+        return glob.iglob(f"{EnvironmentVars.METRICS}/*.py")
+
+    # ------------------------------------------------------------------------------
     # Executor Storage APIs
     # ------------------------------------------------------------------------------
     @staticmethod

@@ -217,6 +217,33 @@ class ConnectorManager:
         connector: Connector,
         prompt_callback: Union[Callable, None] = None,
     ) -> PromptArguments:
+        """
+        Generates a prediction for a given prompt using a specified connector.
+
+        This method takes a `generated_prompt` object, which contains the prompt to be predicted, and a `connector`
+        object, which is used to generate the prediction. The method also optionally takes a `prompt_callback` function,
+        which is called after the prediction is generated.
+
+        The method first prints a message indicating that it is predicting the prompt. It then records the start time
+        and uses the `connector` to generate a prediction for the `generated_prompt`. The duration of the prediction
+        is calculated and stored in the `generated_prompt`.
+
+        If a `prompt_callback` function is provided, it is called with the `generated_prompt` and `connector.id` as
+        arguments.
+
+        The method then returns the `generated_prompt` with the generated prediction and duration.
+
+        Args:
+            generated_prompt (PromptArguments): The prompt to be predicted.
+            connector (Connector): The connector to be used for prediction.
+            prompt_callback (Union[Callable, None]): An optional callback function to be called after prediction.
+
+        Returns:
+            PromptArguments: The `generated_prompt` with the generated prediction and duration.
+
+        Raises:
+            Exception: If there is an error during prediction.
+        """
         try:
             print(f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]")
 

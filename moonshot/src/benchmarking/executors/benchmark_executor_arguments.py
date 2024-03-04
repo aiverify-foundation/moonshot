@@ -33,6 +33,10 @@ class BenchmarkExecutorArguments(BaseModel):
 
     database_file: str = ""  # The database file associated with the BenchmarkExecutor.
 
+    error_messages: list[
+        str
+    ] = []  # The error messages associated with the BenchmarkExecutor.
+
     results_file: str = ""  # The results file associated with the BenchmarkExecutor.
 
     recipes: list[str] = []  # List of recipes for the BenchmarkExecutor.
@@ -43,7 +47,7 @@ class BenchmarkExecutorArguments(BaseModel):
 
     num_of_prompts: int = 0  # Number of prompts for the BenchmarkExecutor.
 
-    results: str = ""  # Results of the BenchmarkExecutor.
+    results: dict = {}  # Results of the BenchmarkExecutor.
 
     status: BenchmarkExecutorStatus = (
         BenchmarkExecutorStatus.PENDING
@@ -58,11 +62,12 @@ class BenchmarkExecutorArguments(BaseModel):
         Converts the BenchmarkExecutorArguments instance into a dictionary.
 
         This method takes all the attributes of the BenchmarkExecutorArguments instance and constructs a dictionary
-        with attribute names as keys and their corresponding values. This includes the id, type, start_time,
-        end_time, duration, database_file, results_file, recipes, cookbooks, endpoints, num_of_prompts, results
-        and progress callback function.
-        This dictionary can be used for serialization purposes, such as storing the benchmark executor information
-        in a JSON file or sending it over a network.
+        with attribute names as keys and their corresponding values. This includes the id, name, type, start_time,
+        end_time, duration, database_instance, database_file, error_messages, results_file, recipes, cookbooks,
+        endpoints, num_of_prompts, results, status, and progress_callback_func.
+
+        This dictionary can be used for serialization purposes, such as storing the benchmark executor arguments
+        information in a JSON file or sending it over a network.
 
         Returns:
             dict: A dictionary representation of the BenchmarkExecutorArguments instance.
@@ -74,6 +79,7 @@ class BenchmarkExecutorArguments(BaseModel):
             "end_time": self.end_time,
             "duration": self.duration,
             "database_file": self.database_file,
+            "error_messages": self.error_messages,
             "results_file": self.results_file,
             "recipes": self.recipes,
             "cookbooks": self.cookbooks,
@@ -89,10 +95,11 @@ class BenchmarkExecutorArguments(BaseModel):
         Converts the BenchmarkExecutorArguments instance into a tuple.
 
         This method takes all the attributes of the BenchmarkExecutorArguments instance and constructs a tuple
-        with the attribute values in the following order: id, name, type, start_time, end_time, duration,
-        database_file, results_file, recipes, cookbooks, endpoints, num_of_prompts, and results.
-        This tuple can be used for serialization purposes, such as storing the benchmark executor information
-        in a database or sending it over a network.
+        with attribute values in the following order: name, type, start_time, end_time, duration, database_file,
+        error_messages, results_file, recipes, cookbooks, endpoints, num_of_prompts, results, status, id.
+
+        This tuple can be used for serialization purposes, such as storing the benchmark executor arguments
+        information in a database or sending it over a network.
 
         Returns:
             tuple: A tuple representation of the BenchmarkExecutorArguments instance.
@@ -104,12 +111,13 @@ class BenchmarkExecutorArguments(BaseModel):
             self.end_time,
             self.duration,
             self.database_file,
+            str(self.error_messages),
             self.results_file,
             str(self.recipes),
             str(self.cookbooks),
             str(self.endpoints),
             self.num_of_prompts,
-            self.results,
+            str(self.results),
             self.status.name.lower(),
             self.id,
         )
@@ -119,16 +127,19 @@ class BenchmarkExecutorArguments(BaseModel):
         """
         Converts a tuple into a BenchmarkExecutorArguments instance.
 
-        This method takes a tuple with the attribute values of a BenchmarkExecutorArguments instance in the
-        following order: id, name, type, start_time, end_time, duration, database_file, results_file, recipes,
-        cookbooks, endpoints, num_of_prompts, results, and status. It then constructs a BenchmarkExecutorArguments
-        instance with these values.
+        This method takes a tuple with attribute values in the following order: id, name, type, start_time,
+        end_time, duration, database_file, error_messages, results_file, recipes, cookbooks, endpoints,
+        num_of_prompts, results, status. It then constructs a BenchmarkExecutorArguments instance using these values.
+
+        This method is useful for deserialization purposes, such as retrieving the benchmark executor arguments
+        information from a database or receiving it over a network.
 
         Args:
-            bm_record (tuple): A tuple containing the attribute values of a BenchmarkExecutorArguments instance.
+            bm_record (tuple): A tuple representation of the BenchmarkExecutorArguments instance.
 
         Returns:
-            BenchmarkExecutorArguments: A BenchmarkExecutorArguments instance constructed from the tuple.
+            BenchmarkExecutorArguments: An instance of the BenchmarkExecutorArguments class with the loaded
+            benchmark executor arguments information.
         """
         return cls(
             id=bm_record[0],
@@ -138,11 +149,12 @@ class BenchmarkExecutorArguments(BaseModel):
             end_time=float(bm_record[4]),
             duration=bm_record[5],
             database_file=bm_record[6],
-            results_file=bm_record[7],
-            recipes=ast.literal_eval(bm_record[8]),
-            cookbooks=ast.literal_eval(bm_record[9]),
-            endpoints=ast.literal_eval(bm_record[10]),
-            num_of_prompts=bm_record[11],
-            results=bm_record[12],
-            status=BenchmarkExecutorStatus(bm_record[13].lower()),
+            error_messages=ast.literal_eval(bm_record[7]),
+            results_file=bm_record[8],
+            recipes=ast.literal_eval(bm_record[9]),
+            cookbooks=ast.literal_eval(bm_record[10]),
+            endpoints=ast.literal_eval(bm_record[11]),
+            num_of_prompts=bm_record[12],
+            results=ast.literal_eval(bm_record[13]),
+            status=BenchmarkExecutorStatus(bm_record[14].lower()),
         )

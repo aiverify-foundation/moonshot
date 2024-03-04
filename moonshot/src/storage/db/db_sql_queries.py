@@ -10,6 +10,7 @@ sql_create_metadata_table = """
         end_time INTEGER NOT NULL,
         duration INTEGER NOT NULL,
         database_file text NOT NULL,
+        error_messages text NOT NULL,
         results_file text NOT NULL,
         recipes text,
         cookbooks text,
@@ -22,9 +23,9 @@ sql_create_metadata_table = """
 
 sql_create_metadata_records = """
         INSERT INTO metadata_table (
-        name,type,start_time,end_time,duration,database_file,results_file,recipes,cookbooks,endpoints,
+        name,type,start_time,end_time,duration,database_file,error_messages,results_file,recipes,cookbooks,endpoints,
         num_of_prompts,results,status,id)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 """
 
 sql_read_metadata_records = """
@@ -32,8 +33,8 @@ sql_read_metadata_records = """
 """
 
 sql_update_metadata_records = """
-        UPDATE metadata_table SET name=?,type=?,start_time=?,end_time=?,duration=?,database_file=?,results_file=?,
-        recipes=?,cookbooks=?,endpoints=?,num_of_prompts=?,results=?,status=? WHERE id=?
+        UPDATE metadata_table SET name=?,type=?,start_time=?,end_time=?,duration=?,database_file=?,error_messages=?,
+        results_file=?,recipes=?,cookbooks=?,endpoints=?,num_of_prompts=?,results=?,status=? WHERE id=?
 """
 
 # ------------------------------------------------------------------------------
