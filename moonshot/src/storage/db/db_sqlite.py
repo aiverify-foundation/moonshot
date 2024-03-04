@@ -131,7 +131,6 @@ class DBSqlite(DBAccessor):
                     cursor = self.sqlite_conn.cursor()
                     cursor.execute(read_record_sql, record)
                     return cursor.fetchone()
-
             except sqlite3.Error as sqlite3_error:
                 print(f"Error reading record from database - {str(sqlite3_error)}")
         return None
@@ -159,3 +158,28 @@ class DBSqlite(DBAccessor):
 
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")
+
+    def read_table(self, read_table_sql: str) -> Union[list, None]:
+        """
+        Executes a SQL query to read data from a table and returns the results.
+
+        This method attempts to execute a provided SQL query to read data from a table within the SQLite database.
+        If the connection to the database is established, it executes the query and returns all fetched rows as a list.
+        In case of an error during the execution of the query, it prints an error message detailing the issue.
+
+        Args:
+            read_table_sql (str): The SQL query string used to read data from a table.
+
+        Returns:
+            Union[list, None]: A list of tuples representing the rows fetched by the query if successful.
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(read_table_sql)
+                    return cursor.fetchall()
+
+            except sqlite3.Error as sqlite3_error:
+                print(f"Error reading table from database - {str(sqlite3_error)}")
+        return None

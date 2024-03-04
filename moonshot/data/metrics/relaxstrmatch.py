@@ -41,7 +41,7 @@ class RelaxStrMatch:
             result = result.lower()
 
             # To support benchmarks with multiple possible answers
-            if type(target) == list:
+            if type(target) is list:
                 for each_item in target:
                     each_item = re.sub(r"[^\w]", "", each_item.rstrip()).replace(
                         " ", ""

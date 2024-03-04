@@ -684,3 +684,315 @@ class StorageManager:
         """
         pt_filepath = f"{EnvironmentVars.PROMPT_TEMPLATES}/{pt_id}.json"
         return PromptTemplateInfoGenerator(pt_filepath)
+
+    # ------------------------------------------------------------------------------
+    # Redteaming APIs
+    # ------------------------------------------------------------------------------
+
+    @staticmethod
+    def get_session_database_filepath(se_id: str) -> str:
+        """
+        Constructs and returns the file path for a session's database based on the session ID.
+
+        This method generates the file path for the database of a specific session by appending the session ID
+        to the base directory for session databases, as defined in `EnvironmentVars.SESSIONS`. The resulting
+        file path is used to locate or create the database file associated with the given session ID.
+
+        Args:
+            se_id (str): The unique identifier for the session.
+
+        Returns:
+            str: The file path for the session's database.
+        """
+        return f"{EnvironmentVars.SESSIONS}/{se_id}.db"
+
+    @staticmethod
+    def create_session_database_connection(se_id: str) -> DBAccessor:
+        """
+        Creates and returns a database connection for a specific session based on its session ID.
+
+        This method first constructs the file path for the session's database using the session ID. It then
+        attempts to create a database connection using this file path. If the connection is successfully established,
+        the database instance is returned. If the connection cannot be established, a RuntimeError is raised indicating
+        that the database instance is not initialized.
+
+        Args:
+            se_id (str): The unique identifier for the session.
+
+        Returns:
+            DBAccessor: An instance of the database accessor if the connection is successfully established.
+
+        Raises:
+            RuntimeError: If the database instance cannot be initialized.
+        """
+        db_file = Path(StorageManager.get_session_database_filepath(se_id))
+        db_instance = DatabaseManager.create_session_connection(str(db_file))
+        if not db_instance:
+            raise RuntimeError("db instance is not initialised.")
+        return db_instance
+
+    # create session and chat metadata tables
+    @staticmethod
+    def create_session_storage(
+        session_metadata: tuple, db_instance: DBAccessor
+    ) -> None:
+        """
+        Initializes the storage for a new session by creating necessary tables and inserting session metadata.
+
+        This method is responsible for setting up the database structure for a new session. It creates the session
+        metadata table and the chat metadata table if they do not already exist. Additionally, it inserts the provided
+        session metadata into the session metadata table. This setup is crucial for tracking session and chat
+        information within the application.
+
+        Args:
+            session_metadata (tuple): The metadata for the session to be inserted into the session metadata table.
+                                    This should include all necessary information such as session ID, start time, etc.
+            db_instance (DBAccessor): The database accessor instance used for executing database operations.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the database connection could not
+            be established.
+        """
+        if db_instance:
+            DatabaseManager.create_session_metadata_table(db_instance)
+            DatabaseManager.create_chat_metadata_table(db_instance)
+            DatabaseManager.create_session_metadata_record(
+                db_instance, session_metadata
+            )
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # create chat history table
+    @staticmethod
+    def create_chat_history_storage(chat_id: str, db_instance: DBAccessor) -> None:
+        """
+        Initializes the storage for chat history by creating a dedicated table for a specific chat session.
+
+        This method is tasked with setting up a unique table for storing the chat history of a specific chat session,
+        identified by the chat_id. It delegates the creation of this table to the DatabaseManager, which executes the
+        necessary SQL command to create the table if it does not already exist. This setup is essential for organizing
+        and storing chat interactions in a structured and retrievable manner.
+
+        Args:
+            chat_id (str): The unique identifier for the chat session, which will be used as the table name.
+            db_instance (DBAccessor): The database accessor instance used for executing the table creation operation.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the database connection
+            could not be established.
+        """
+        if db_instance:
+            DatabaseManager.create_chat_history_table(db_instance, chat_id)
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    @staticmethod
+    def create_chat_metadata_record(
+        chat_metadata: tuple, db_instance: DBAccessor
+    ) -> None:
+        """
+        Inserts a new chat metadata record into the database.
+
+        This method is responsible for adding a new record to the chat metadata table within the database. It utilizes
+        the provided database instance to execute the insertion. The chat metadata, structured as a tuple, contains all
+        necessary information that needs to be stored, such as chat IDs, timestamps, and other relevant data.
+
+        Args:
+            chat_metadata (tuple): The chat metadata to be inserted into the database. The structure of this tuple
+                                must align with the schema of the chat metadata table.
+            db_instance (DBAccessor): The database accessor instance used for executing the insertion operation.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating a failure to
+            establish a database connection.
+        """
+        if db_instance:
+            DatabaseManager.create_chat_metadata_record(db_instance, chat_metadata)
+
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # update session metadata with chat ids
+    @staticmethod
+    def update_session_metata_with_chat_info(
+        chat_info: tuple, db_instance: DBAccessor
+    ) -> None:
+        """
+        Updates session metadata with chat information in the database.
+
+        This method is designed to update an existing session's metadata with new chat information. It leverages the
+        provided database instance to execute the update operation. The chat_info tuple contains the necessary data
+        for the update, structured according to the expectations of the underlying SQL operation managed by the
+        DatabaseManager.
+
+        Args:
+            chat_info (tuple): The chat information to be updated in the session metadata. This includes any relevant
+                            identifiers, timestamps, or other metadata associated with the chat session.
+            db_instance (DBAccessor): The database accessor instance used for executing the update operation.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due to
+                        a lack of a valid database connection.
+        """
+        if db_instance:
+            DatabaseManager.update_session_metadata_with_chat_info(
+                db_instance, chat_info
+            )
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # get session metadata
+    @staticmethod
+    def get_session_metata(db_instance: DBAccessor) -> None:
+        """
+        Retrieves and returns the session metadata from the database.
+
+        This method is responsible for fetching the metadata of a session from the database using the provided
+        database instance. It calls a specific method in the DatabaseManager to execute the operation. If the
+        database instance is valid, it returns the session metadata. This operation is crucial for accessing
+        session-specific information that may be needed for various application functionalities.
+
+        Args:
+            db_instance (DBAccessor): The database accessor instance used for reading the session metadata.
+
+        Returns:
+            The session metadata if available, None otherwise.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
+                        to a lack of a valid database connection.
+        """
+        if db_instance:
+            return DatabaseManager.read_session_metadata(db_instance)
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # get all chat metadata in a session
+    @staticmethod
+    def get_session_chat_metadata(db_instance: DBAccessor) -> None:
+        """
+        Retrieves all chat metadata associated with a session from the database.
+
+        This method fetches the chat metadata for a specific session using the provided database instance. It
+        leverages the DatabaseManager to execute a query that reads the chat metadata from the database. This
+        functionality is essential for accessing detailed information about each chat session, including identifiers,
+        timestamps, and other relevant metadata.
+
+        Args:
+            db_instance (DBAccessor): The database accessor instance used for reading the chat metadata.
+
+        Returns:
+            A list of chat metadata records if available, None otherwise.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
+                        to a lack of a valid database connection.
+        """
+        if db_instance:
+            return DatabaseManager.read_session_chat_metadata(db_instance)
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # get all chat history for one endpoint
+    @staticmethod
+    def get_chat_history_for_one_endpoint(
+        chat_id: str, db_instance: DBAccessor
+    ) -> None:
+        """
+        Retrieves the chat history for a specific chat session from the database.
+
+        This method is designed to fetch the entire chat history associated with a given chat ID using the provided
+        database instance. It calls upon the DatabaseManager to execute the operation. If successful, it returns the
+        chat history records. This functionality is crucial for reviewing past interactions within a specific chat
+        session.
+
+        Args:
+            chat_id (str): The unique identifier for the chat session.
+            db_instance (DBAccessor): The database accessor instance used for executing the read operation.
+
+        Returns:
+            A list of chat history records if available, None otherwise.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due to
+                        a lack of a valid database connection.
+        """
+        if db_instance:
+            return DatabaseManager.read_chat_history_for_one_endpoint(
+                db_instance, chat_id
+            )
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    # get a chat record for the prompt
+    @staticmethod
+    def create_chat_record(
+        chat_record_tuple: tuple, db_instance: DBAccessor, chat_id: str
+    ) -> None:
+        """
+        Inserts a new chat record into the database for a specific chat session.
+
+        This method is responsible for adding a new chat record to the database, associated with a specific chat
+        session identified by the chat_id. It utilizes the provided database instance to execute the
+        insertion operation. The chat record data, structured as a tuple, should contain all necessary information
+        that corresponds to the database schema for the chat session table.
+
+        Args:
+            chat_record_tuple (tuple): The chat record data to be inserted, structured as a tuple. This should
+            include all necessary fields such as message content, timestamps, sender identifiers, etc.
+            db_instance (DBAccessor): The database accessor instance used for executing the insertion operation.
+            chat_id (str): The unique identifier for the chat session, which determines the specific table where
+            the record will be inserted.
+
+        Raises:
+            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
+            to a lack of a valid database connection.
+        """
+        if db_instance:
+            return DatabaseManager.create_chat_record(
+                db_instance, chat_record_tuple, chat_id
+            )
+        else:
+            raise RuntimeError("db instance is not initialised.")
+
+    @staticmethod
+    def update_prompt_template(
+        db_instance: DBAccessor, prompt_template_tuple: tuple
+    ) -> None:
+        """
+        Updates the prompt template in the database.
+
+        This method updates the prompt template in the database using the provided database instance and the prompt
+        template tuple. If the database instance is valid, it calls the update_prompt_template method of the
+        DatabaseManager to perform the update.
+
+        Args:
+            db_instance (DBAccessor): The database accessor instance.
+            prompt_template_tuple (tuple): The tuple containing the updated prompt template information.
+
+        Returns:
+            None
+        """
+        if db_instance:
+            DatabaseManager.update_prompt_template(db_instance, prompt_template_tuple)
+
+    @staticmethod
+    def update_context_strategy(
+        db_instance: DBAccessor, context_strategy_tuple: tuple
+    ) -> None:
+        """
+        Updates the context strategy in the database.
+
+        This method updates the context strategy in the database using the provided database instance and the context
+        strategy tuple. If the database instance is valid, it calls the update_context_strategy method of the
+        DatabaseManager to perform the update.
+
+        Args:
+            db_instance (DBAccessor): The database accessor instance.
+            context_strategy_tuple (tuple): The tuple containing the updated context strategy information.
+
+        Returns:
+            None
+        """
+        if db_instance:
+            DatabaseManager.update_context_strategy(db_instance, context_strategy_tuple)

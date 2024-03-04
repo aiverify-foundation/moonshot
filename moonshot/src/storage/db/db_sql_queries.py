@@ -63,3 +63,61 @@ sql_create_cache_records = """
 sql_read_cache_records = """
         SELECT * from cache_table WHERE rec_id=? AND conn_id=? AND pt_id=? AND prompt=?
 """
+
+# ------------------------------------------------------------------------------
+# SQL Queries for Red Teaming
+# ------------------------------------------------------------------------------
+sql_create_session_metadata_table = """
+        CREATE TABLE IF NOT EXISTS session_metadata_table (
+        session_id text PRIMARY KEY NOT NULL,
+        name text NOT NULL,
+        description text NOT NULL,
+        endpoints text NOT NULL,
+        created_epoch INTEGER NOT NULL,
+        created_datetime text NOT NULL,
+        context_strategy text,
+        prompt_template text,
+        chat_ids text
+        );
+"""
+
+sql_create_session_metadata_record = """
+    INSERT INTO session_metadata_table (
+    session_id,name,description,endpoints,created_epoch,created_datetime,context_strategy,prompt_template)
+    VALUES(?,?,?,?,?,?,?,?)
+"""
+
+sql_create_chat_metadata_table = """
+        CREATE TABLE IF NOT EXISTS chat_metadata_table (
+        chat_id text PRIMARY KEY,
+        endpoint text NOT NULL,
+        created_epoch INTEGER NOT NULL,
+        created_datetime text NOT NULL
+        );
+"""
+
+sql_create_chat_metadata_record = """
+        INSERT INTO chat_metadata_table (
+        chat_id,endpoint,created_epoch,created_datetime)
+        VALUES(?,?,?,?)
+"""
+
+sql_update_session_metadata_chat = """
+        UPDATE session_metadata_table SET chat_ids=? WHERE session_id=?
+"""
+
+sql_read_session_metadata = """
+        SELECT * from session_metadata_table
+"""
+
+sql_read_session_chat_metadata = """
+        SELECT * from chat_metadata_table
+"""
+
+sql_update_context_strategy = """
+        UPDATE session_metadata_table SET context_strategy=? WHERE session_id =?
+"""
+
+sql_update_prompt_template = """
+        UPDATE session_metadata_table SET prompt_template=? WHERE session_id =?
+"""
