@@ -1,7 +1,6 @@
 # api/routes.py
 from typing import Optional, Any
 from fastapi import APIRouter, Depends, HTTPException
-from moonshot.src.common.prompt_template import get_prompt_templates
 from dependency_injector.wiring import inject, Provide
 
 from ..container import Container

@@ -1,6 +1,6 @@
 import logging
 from typing import Any
-from moonshot.src.common.prompt_template import get_prompt_templates #TODO - call new interface
+import moonshot.api as moonshot_api
 
 class BaseService:
 
@@ -10,5 +10,5 @@ class BaseService:
         )
 
     def get_prompt_templates(self) -> list[Any | None]:
-        return get_prompt_templates()
+        return moonshot_api.get_prompt_templates()
 

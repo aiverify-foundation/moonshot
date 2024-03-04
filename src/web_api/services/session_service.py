@@ -1,9 +1,11 @@
 from typing_extensions import TypedDict
-from moonshot.src.redteaming.session import Session, get_all_sessions
+#TODO - moonshot api.py to expose session instance
+from moonshot.src.redteaming.session import Session 
 from .base_service import BaseService
 from web_api.services.utils.exceptions_handler import SessionException, exception_handler
 from web_api.schemas.session_create_dto import SessionCreateDTO
 from web_api.schemas.session_response_model import SessionMetadataModel
+import moonshot.api as moonshot_api
 
 
 class PromptDetails(TypedDict):
@@ -19,7 +21,7 @@ class PromptDetails(TypedDict):
 class SessionService(BaseService):
 
     @exception_handler
-    def create_session(session_create_dto: SessionCreateDTO, set_as_current_session: bool = False) -> SessionMetadataModel:
+    def create_session(self, session_create_dto: SessionCreateDTO, set_as_current_session: bool = False) -> SessionMetadataModel:
         new_session_instance = Session(session_create_dto.name, session_create_dto.description, session_create_dto.endpoints)
         if not new_session_instance.metadata.session_id.strip():
             raise SessionException("Session creation failed", __name__)
@@ -41,24 +43,23 @@ class SessionService(BaseService):
         )
 
     @exception_handler
-    def get_session(session_id: str) -> SessionMetadataModel | None:
-        session_data = next((session for session in get_sessions() if session.session_id == session_id), None)
+    def get_session(self, session_id: str) -> SessionMetadataModel | None:
+        session_data = next((session for session in self.get_sessions() if session.session_id == session_id), None)
         return session_data
 
     @exception_handler
-    def get_sessions() -> list[SessionMetadataModel | None]:
-        return [SessionMetadataModel.model_validate(session) for session in get_all_sessions()]
+    def get_sessions(self) -> list[SessionMetadataModel | None]:
+        return [SessionMetadataModel.model_validate(session) for session in moonshot_api.get_all_sessions()]
 
     @exception_handler
-    def set_current_session(session_id: str) -> SessionMetadataModel | None:
-        session_data = get_session(session_id)
+    def set_current_session(self, session_id: str) -> SessionMetadataModel | None:
+        session_data = self.get_session(session_id)
         session_instance: Session = Session.load_session(session_id)
         Session.current_session = session_instance
         return session_data
 
-
-
-    def get_session_chat_history(session_id: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
+    @exception_handler
+    def get_session_chat_history(self, session_id: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
         try:
             session_instance = Session.load_session(session_id)
             session_previous_prompts: list[PromptDetails] = session_instance.get_session_previous_prompts(history_length)
@@ -71,18 +72,20 @@ class SessionService(BaseService):
         
         return all_chats_dict
 
-    async def send_prompt(session_id: str, user_prompt: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
+    @exception_handler
+    async def send_prompt(self, session_id: str, user_prompt: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
         user_prompt = user_prompt.strip()
         try:
             session_instance = Session.load_session(session_id)
             await session_instance.send_prompt_async(user_prompt)
-            all_chats_dict = get_session_chat_history(session_id, history_length)
+            all_chats_dict = self.get_session_chat_history(session_id, history_length)
         except Exception as e:
             raise SessionException(f"An unexpected error occurred: {e}", __name__)
         
         return all_chats_dict
 
-    def select_prompt_template(prompt_template_name: str = '') -> bool:
+    @exception_handler
+    def select_prompt_template(self, prompt_template_name: str = '') -> bool:
         # Check if current session exists
         if Session.current_session:
             if prompt_template_name == '':
