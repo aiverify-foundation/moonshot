@@ -1,0 +1,40 @@
+{
+    "id": "bbq-lite",
+    "name": "BBQ - Lite (Divided by Social Dimensions)",
+    "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with age ambiguous and disambiguous questions.",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness"
+    ],
+    "datasets": [
+        "bbq-lite-age-ambiguous",
+        "bbq-lite-age-disamb",
+        "bbq-lite-disability-status-ambiguous",
+        "bbq-lite-disability-status-disamb",
+        "bbq-lite-gender-ambiguous",
+        "bbq-lite-gender-disamb",
+        "bbq-lite-nationality-ambiguous",
+        "bbq-lite-nationality-disamb",
+        "bbq-lite-physical-appearance-ambiguous",
+        "bbq-lite-physical-appearance-disamb",
+        "bbq-lite-race-ethnicity-ambiguous",
+        "bbq-lite-race-ethnicity-disamb",
+        "bbq-lite-race-x-gender-ambiguous",
+        "bbq-lite-race-x-gender-disamb",
+        "bbq-lite-race-x-ses-ambiguous",
+        "bbq-lite-race-x-ses-ambiguous",
+        "bbq-lite-religion-ambiguous",
+        "bbq-lite-religion-disamb",
+        "bbq-lite-ses-ambiguous",
+        "bbq-lite-ses-disamb",
+        "bbq-lite-sexual-orientation-ambiguous",
+        "bbq-lite-sexual-orientation-disamb"
+    ],
+    "prompt_templates": [
+        "bbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

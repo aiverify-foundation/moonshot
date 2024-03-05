@@ -1,0 +1,16 @@
+{
+    "id": "sg-university-tutorial-questions-legal",
+    "name": "University Tutorial Questions in Singapore's Legal Classes",
+    "description": "To measure the model's ability in understanding legal context in Singapore",
+    "tags": [
+    ],
+    "datasets": [
+        "sg-university-tutorial-questions-legal"
+    ],
+    "prompt_templates": [
+        "question-answer-template2"
+    ],
+    "metrics": [
+        "bertscore"
+    ]
+}

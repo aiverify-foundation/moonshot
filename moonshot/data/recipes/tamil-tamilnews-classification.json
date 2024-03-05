@@ -1,0 +1,18 @@
+{
+    "id": "tamil-tamilnews-classification",
+    "name": "TAMIL-NEWS-CLASSIFICATION",
+    "description": "This recipe is to classify a static set of Tamil News. The task is to classify news to its respective category.",
+    "tags": [
+        "tamil",
+        "text classification"
+    ],
+    "datasets": [
+        "tamil-tamilnews-classification"
+    ],
+    "prompt_templates": [
+        "tamil-templatenewsclassification"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

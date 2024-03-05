@@ -1,0 +1,16 @@
+{
+    "id": "cause-and-effect-two-sentence",
+    "name": "Cause and Effect (Two Sentence)",
+    "description": "To measure the model's ability in understanding cause and effect.",
+    "tags": [
+    ],
+    "datasets": [
+        "cause-and-effect-two-sentence"
+    ],
+    "prompt_templates": [
+        "cause-and-effect-two-sentence"
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ]
+}

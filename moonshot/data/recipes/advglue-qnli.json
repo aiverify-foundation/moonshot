@@ -1,0 +1,18 @@
+{
+    "id": "advglue-qnli",
+    "name": "AdvGLUE-QNLI",
+    "description": "Adversarially Perturbed. The QNLI dataset is used for a sentence pair classification task. The task is to determine whether the context sentence contains the answer to the question.",
+    "tags": [
+        "robustness"
+    ],
+    "datasets": [
+        "advglue-qnli-adv",
+        "advglue-qnli-benign"
+    ],
+    "prompt_templates": [
+        "advglue-templateqnli"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "id": "cbbq-disamb-cookbook",
+    "name": "CBBQ (Disambiguated)",
+    "description": "This is a cookbook that consists all the disambiguated questions from CBBQ.",
+    "recipes": [
+        "cbbq-lite-educational-qualification-disamb",
+        "cbbq-lite-disease-disamb",
+        "cbbq-lite-ethnicity-disamb",
+        "cbbq-lite-nationality-disamb",
+        "cbbq-lite-gender-disamb",
+        "cbbq-lite-physical-appearance-disamb",
+        "cbbq-lite-region-disamb",
+        "cbbq-lite-race-disamb",
+        "cbbq-lite-age-disamb",
+        "cbbq-lite-race-disamb",
+        "cbbq-lite-disability-disamb",
+        "cbbq-lite-SES-disamb",
+        "cbbq-lite-sexual-orientation-disamb",
+        "cbbq-lite-household-registration-disamb"
+    ]
+}

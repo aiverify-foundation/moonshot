@@ -1,0 +1,17 @@
+{
+    "id": "arc",
+    "name": "ARC",
+    "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy and challenge sets.",
+    "tags": [
+    ],
+    "datasets": [
+        "arc-challenge",
+        "arc-easy"
+    ],
+    "prompt_templates": [
+        "question-answer-template1"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

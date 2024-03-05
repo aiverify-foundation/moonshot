@@ -1,0 +1,20 @@
+{
+    "id": "bbq",
+    "name": "BBQ",
+    "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with ambiguous and disambiguous questions",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness"
+    ],
+    "datasets": [
+        "bbq-ambiguous",
+        "bbq-disamb"
+    ],
+    "prompt_templates": [
+        "bbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "id": "advglue-rte",
+    "name": "AdvGLUE-RTE",
+    "description": "Adversarially Perturbed. The RTE dataset dataset is a combination of a series of data from annual textual entailment challenges. Examples are constructed based on news and Wikipedia text. The task is to predict the relationship between a pair of sentences.",
+    "tags": [
+        "robustness"
+    ],
+    "datasets": [
+        "advglue-rte-adv",
+        "advglue-rte-benign"
+    ],
+    "prompt_templates": [
+        "advglue-templaterte"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

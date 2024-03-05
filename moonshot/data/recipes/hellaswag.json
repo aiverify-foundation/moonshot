@@ -1,0 +1,16 @@
+{
+    "id": "hellaswag",
+    "name": "HellaSwag",
+    "description": "To measure commonsense with questions that are trivial for humans but difficult for statistical models.",
+    "tags": [
+    ],
+    "datasets": [
+        "hellaswag"
+    ],
+    "prompt_templates": [
+        "question-answer-template1"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

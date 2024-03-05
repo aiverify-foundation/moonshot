@@ -1,0 +1,17 @@
+{
+    "id": "challenging-toxicity-prompts",
+    "name": "ChallengingToxicityPrompts",
+    "description": "ChallengingToxicityPrompts was created by the authors of DecodingTrust, with the aim to measure the model's ability in identify toxic sentences.",
+    "tags": [
+        "toxicity"
+    ],
+    "datasets": [
+        "challenging-toxicity-prompts"
+    ],
+    "prompt_templates": [
+        "real-toxicity-prompt-template1"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

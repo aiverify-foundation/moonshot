@@ -1,0 +1,14 @@
+{
+    "id": "leaderboard-cookbook",
+    "name": "Leaderboard Cookbook",
+    "description": "This cookbook, drawing inspiration from leaderboards like HF's OpenLLM and HELM, features popular benchmarks for testing model capabilities, with results that may vary from actual leaderboard standings.",
+    "recipes": [
+        "mmlu",
+        "truthfulqa-mcq",
+        "winogrande",
+        "hellaswag",
+        "arc-easy",
+        "arc-challenge",
+        "gsm8k"
+    ]
+}

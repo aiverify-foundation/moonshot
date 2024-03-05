@@ -1,0 +1,15 @@
+{
+    "id": "squad-shifts-tnf",
+    "name": "squad-shifts-tnf",
+    "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement.",
+    "tags": [
+    ],
+    "datasets": [
+        "squad-shifts-tnf"
+    ],
+    "prompt_templates": [
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ]
+}
