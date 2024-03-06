@@ -49,7 +49,8 @@ class SessionService(BaseService):
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
-        return [SessionMetadataModel.model_validate(session) for session in moonshot_api.api_get_all_session_details()]
+        sessions: list[SessionMetadataModel] = moonshot_api.api_get_all_session_details();
+        return [SessionMetadataModel.model_validate(session) for session in sessions]
 
     # @exception_handler
     # def set_current_session(self, session_id: str) -> SessionMetadataModel | None:

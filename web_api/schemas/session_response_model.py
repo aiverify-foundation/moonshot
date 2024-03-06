@@ -8,16 +8,21 @@ class SessionMetadataModel(BaseModel):
     description: str = Field(min_length=1)
     created_epoch: float
     created_datetime: str = Field(min_length=1)
-    chats: list[str]
+    chat_ids: list[str]
     endpoints: list[str] = Field(min_length=1)
-    # metadata_file: str = Field(min_length=1) #TODO - remove 
-    prompt_template: str = "" 
+    prompt_template: str | None = None 
     context_strategy: str | None = None
     filename: str | None = None
     chat_history: dict[str, list[Any]] | None = None
 
     @validator('context_strategy', pre=True)
-    def empty_string_to_default(cls, val: str) -> str | None:
+    def empty_string_to_default_context_strategy(cls, val: str) -> str | None:
+        if val == '':
+            return None
+        return val
+    
+    @validator('prompt_template', pre=True)
+    def empty_string_to_default_prompt_template(cls, val: str) -> str | None:
         if val == '':
             return None
         return val
