@@ -519,11 +519,7 @@ class BenchmarkExecutor:
             # Update progress
             self.benchmark_update_progress(BenchmarkExecutorStatus.COMPLETED)
             self.benchmark_executor_progress.update_progress(
-                cookbook_index=-1,
-                cookbook_name="",
                 recipe_index=len(self.recipes),
-                recipe_name="",
-                recipe_total=len(self.recipes),
                 status=self.status.name,
                 duration=self.duration,
                 results=self.results,
@@ -569,11 +565,6 @@ class BenchmarkExecutor:
             self.benchmark_update_progress(BenchmarkExecutorStatus.COMPLETED)
             self.benchmark_executor_progress.update_progress(
                 cookbook_index=len(self.cookbooks),
-                cookbook_name="",
-                cookbook_total=len(self.cookbooks),
-                recipe_index=-1,
-                recipe_name="",
-                recipe_total=-1,
                 status=self.status.name,
                 duration=self.duration,
                 results=self.results,

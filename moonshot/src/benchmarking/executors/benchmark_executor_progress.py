@@ -39,61 +39,63 @@ class BenchmarkExecutorProgress(BaseModel):
         results: Union[dict, None] = None,
     ):
         """
-        Updates the progress of the current benchmark execution.
+        Updates the progress of the benchmark execution.
 
-        This method updates the progress of the current benchmark execution based on the provided parameters.
-        If a parameter is not provided or is None, the corresponding attribute of the BenchmarkExecutorProgress
-        instance is not updated. If a parameter is provided, the corresponding attribute of the
-        BenchmarkExecutorProgress instance is updated with the provided value.
-
-        After updating the progress, if a progress callback function is set, it is called with the current
-        progress information as a dictionary.
+        This method takes various parameters related to the progress of the benchmark execution and updates the
+        corresponding attributes of the BenchmarkExecutorProgress instance. If there are any changes in the progress,
+        it calls the progress callback function with the current progress information.
 
         Args:
-            cookbook_index (Union[int, None], optional): The index of the current cookbook. Defaults to None.
-            cookbook_name (Union[str, None], optional): The name of the current cookbook. Defaults to None.
+            cookbook_index (Union[int, None], optional): The current index of the cookbook being executed.
+            Defaults to None.
+            cookbook_name (Union[str, None], optional): The name of the current cookbook being executed.
+            Defaults to None.
             cookbook_total (Union[int, None], optional): The total number of cookbooks. Defaults to None.
-            recipe_index (Union[int, None], optional): The index of the current recipe. Defaults to None.
-            recipe_name (Union[str, None], optional): The name of the current recipe. Defaults to None.
+            recipe_index (Union[int, None], optional): The current index of the recipe being executed. Defaults to None.
+            recipe_name (Union[str, None], optional): The name of the current recipe being executed. Defaults to None.
             recipe_total (Union[int, None], optional): The total number of recipes. Defaults to None.
-            duration (Union[int, None], optional): The duration of the current execution. Defaults to None.
-            status (Union[str, None], optional): The status of the current execution. Defaults to None.
-            results (Union[dict, None], optional): The results of the current execution. Defaults to None.
+            duration (Union[int, None], optional): The current duration of the benchmark execution. Defaults to None.
+            status (Union[str, None], optional): The current status of the benchmark execution. Defaults to None.
+            results (Union[dict, None], optional): The current results of the benchmark execution. Defaults to None.
         """
-        if cookbook_index is not None and cookbook_index >= 0:
+        has_changes = False
+        attributes = {
+            "curr_cookbook_name": cookbook_name,
+            "curr_cookbook_total": cookbook_total,
+            "curr_recipe_name": recipe_name,
+            "curr_recipe_total": recipe_total,
+            "curr_duration": duration,
+            "curr_status": status.lower() if status else None,
+            "curr_results": results,
+        }
+        for attr, value in attributes.items():
+            if value is not None and value != getattr(self, attr):
+                has_changes = True
+                setattr(self, attr, value)
+
+        if (
+            cookbook_index is not None
+            and cookbook_index >= 0
+            and cookbook_index != self.curr_cookbook_index
+        ):
+            has_changes = True
             self.curr_cookbook_index = cookbook_index
             self.curr_progress = (
                 self.curr_cookbook_index * self.bm_max_progress_per_cookbook
             )
 
-        if cookbook_name:
-            self.curr_cookbook_name = cookbook_name
-
-        if cookbook_total:
-            self.curr_cookbook_total = cookbook_total
-
-        if recipe_index is not None and recipe_index >= 0:
+        if (
+            recipe_index is not None
+            and recipe_index >= 0
+            and recipe_index != self.curr_recipe_index
+        ):
+            has_changes = True
             self.curr_recipe_index = recipe_index
             self.curr_progress = (
                 self.curr_recipe_index * self.bm_max_progress_per_recipe
             )
 
-        if recipe_name:
-            self.curr_recipe_name = recipe_name
-
-        if recipe_total:
-            self.curr_recipe_total = recipe_total
-
-        if duration:
-            self.curr_duration = duration
-
-        if status:
-            self.curr_status = status.lower()
-
-        if results:
-            self.curr_results = results
-
-        if self.bm_progress_callback_func:
+        if has_changes and self.bm_progress_callback_func:
             self.bm_progress_callback_func(self.get_dict())
 
     def get_dict(self):
