@@ -2,8 +2,8 @@
 from typing import Optional, Any
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
-
 from ..container import Container
+from ..services.utils.exceptions_handler import SessionException
 from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
@@ -23,7 +23,15 @@ async def status():
 async def get_all(
     session_service: SessionService = Depends(Provide[Container.session_service])
 ) -> list[Optional[SessionMetadataModel]]:
-    return session_service.get_sessions()
+    try:
+        return session_service.get_sessions()
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
 @router.get("/v1/sessions/{session_id}")

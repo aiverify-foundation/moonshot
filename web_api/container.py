@@ -6,10 +6,9 @@ from .queue.interface.queue_connection import InterfaceQueueConnection
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
-        ".routes.benchmark",
-        ".routes.dev_testing",
+        # ".routes.benchmark",
+        # ".routes.dev_testing",
         ".app"
     ])
     benchmarking_test_queue: providers.Singleton[InterfaceQueueConnection] = providers.Singleton(InMemoryQueue, queue_name="benchmarking_test_queue")
     session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
-

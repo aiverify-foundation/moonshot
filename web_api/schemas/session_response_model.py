@@ -10,14 +10,14 @@ class SessionMetadataModel(BaseModel):
     created_datetime: str = Field(min_length=1)
     chats: list[str]
     endpoints: list[str] = Field(min_length=1)
-    metadata_file: str = Field(min_length=1)
-    prompt_template: str | None = None 
-    context_strategy: int | None = None
+    # metadata_file: str = Field(min_length=1) #TODO - remove 
+    prompt_template: str = "" 
+    context_strategy: str | None = None
     filename: str | None = None
     chat_history: dict[str, list[Any]] | None = None
 
     @validator('context_strategy', pre=True)
-    def empty_string_to_default(cls, val):
+    def empty_string_to_default(cls, val: str) -> str | None:
         if val == '':
             return None
         return val

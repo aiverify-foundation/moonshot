@@ -5,3 +5,5 @@ class SessionCreateDTO(BaseModel):
     name: str = Field(min_length=3)
     description: str = Field(min_length=3, max_length=1000)
     endpoints: list[str] = Field(min_length=1)
+    context_strategy: str = ""
+    prompt_template: str = ""
