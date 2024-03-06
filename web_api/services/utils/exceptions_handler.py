@@ -9,7 +9,7 @@ class SessionException(Exception):
     def __init__(self, msg: str, method_name: str, error_code: str = 'UnknownSessionError'):
         self.error_code = error_code
         message = f"[SessionException] {error_code} in {method_name} - {msg}"
-        self.msg = message  # Store the message in an attribute
+        self.msg = message 
         super().__init__(message)
         self.logger = logging.getLogger(
             f"{__name__}.{self.__class__.__name__}",

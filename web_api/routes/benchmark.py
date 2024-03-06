@@ -9,7 +9,7 @@ from typing import Any, Optional
 router = APIRouter()
 
 @router.get("/v1/llm_endpoints")
-def get_all() -> list[Optional[EndpointDataModel]]:
+def get_all_endpoints() -> list[Optional[EndpointDataModel]]:
     """
     Get all the endpoints from the database
     """
@@ -25,3 +25,11 @@ def add_new_endpoint(endpoint_data: EndpointDataModel):
         return {"message": "Endpoint added successfully"}
     except SessionException as e:
         return {"message": f"Failed to add endpoint: {e}"}, 500
+    
+@router.get("/v1/connectors")
+def get_all_connectors(): 
+    #TODO - type check and model validation
+    """
+    Get all the connectors from the database
+    """
+    return benchmarking_service.get_all_connectors()

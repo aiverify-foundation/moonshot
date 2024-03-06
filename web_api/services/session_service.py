@@ -1,20 +1,12 @@
 from typing_extensions import TypedDict
+
+from web_api.types.session_types import PromptDetails, SessionChats
 from .base_service import BaseService
 from web_api.services.utils.exceptions_handler import SessionException, exception_handler
 from web_api.schemas.session_create_dto import SessionCreateDTO
 from web_api.schemas.session_response_model import SessionMetadataModel
 import moonshot.api as moonshot_api
 
-
-class PromptDetails(TypedDict):
-    chat_id: int
-    connection_id: str
-    context_strategy: int
-    prompt_template: str
-    prompt: str
-    prepared_prompt: str
-    predicted_result: str
-    duration: str
 
 class SessionService(BaseService):
 
@@ -37,7 +29,7 @@ class SessionService(BaseService):
             endpoints=new_session.endpoints,
             prompt_template=new_session.prompt_template,
             context_strategy=new_session.context_strategy,
-            chats=[],
+            chat_ids=[],
             filename="",
             chat_history=None
         )
@@ -45,7 +37,7 @@ class SessionService(BaseService):
     @exception_handler
     def get_session(self, session_id: str) -> SessionMetadataModel | None:
         session_data = next((session for session in self.get_sessions() if session.session_id == session_id), None)
-        return session_data
+        return SessionMetadataModel.model_validate(session_data)
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
@@ -61,29 +53,22 @@ class SessionService(BaseService):
 
     @exception_handler
     def get_session_chat_history(self, session_id: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
-        try:
-            all_chats = moonshot_api.api_get_session_chats_by_session_id(session_id)
+        all_chats: SessionChats = moonshot_api.api_get_session_chats_by_session_id(session_id)
             # session_previous_prompts: list[PromptDetails] = session.get_session_previous_prompts(history_length)
             # session_chats = session.get_session_chats()
-            # all_chats_dict: dict[str, list[PromptDetails]] = {}
+        all_chats_dict: dict[str, list[PromptDetails]] = {}
             # for i, chat in enumerate(session_chats):
             #     all_chats_dict[chat.get_id()] = session_previous_prompts[i][::-1]
-        except Exception as e:
-            raise SessionException(f"An unexpected error occurred: {e}", __name__)
         
         return all_chats_dict
 
-    # @exception_handler
-    # async def send_prompt(self, session_id: str, user_prompt: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
-    #     user_prompt = user_prompt.strip()
-    #     try:
-    #         session_instance = Session.load_session(session_id)
-    #         await session_instance.send_prompt_async(user_prompt)
-    #         all_chats_dict = self.get_session_chat_history(session_id, history_length)
-    #     except Exception as e:
-    #         raise SessionException(f"An unexpected error occurred: {e}", __name__)
-        
-    #     return all_chats_dict
+    @exception_handler
+    async def send_prompt(self, session_id: str, user_prompt: str, history_length: int | None) -> dict[str, list[PromptDetails]]:
+        user_prompt = user_prompt.strip()
+        moonshot_api.api_send_prompt(session_id, user_prompt)
+        all_chats_dict = self.get_session_chat_history(session_id, history_length)
+    
+        return all_chats_dict
 
     # @exception_handler
     # def select_prompt_template(self, prompt_template_name: str = '') -> bool:

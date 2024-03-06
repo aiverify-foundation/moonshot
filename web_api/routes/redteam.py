@@ -20,7 +20,7 @@ async def status():
 
 @router.get("/v1/sessions")
 @inject
-async def get_all(
+async def get_all_sessions(
     session_service: SessionService = Depends(Provide[Container.session_service])
 ) -> list[Optional[SessionMetadataModel]]:
     try:
@@ -42,15 +42,23 @@ async def get_one(
     length: int = 5,
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> SessionResponseModel:
-    session_data = session_service.get_session(session_id)
-    if include_history:
-        history = session_service.get_session_chat_history(session_id, length)
+    try:
+        session_data = session_service.get_session(session_id)
+        if include_history:
+            history = session_service.get_session_chat_history(session_id, length)
+            if session_data is not None:
+                session_data.chat_history = history
         if session_data is not None:
-            session_data.chat_history = history
-    if session_data is not None:
-        return SessionResponseModel(session=session_data)
-    else:
-        raise HTTPException(status_code=404, detail="Session not found")
+            return SessionResponseModel(session=session_data)
+        else:
+            raise HTTPException(status_code=404, detail="Session not found")
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
 @router.post("/v1/sessions")

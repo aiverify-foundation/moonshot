@@ -2,8 +2,9 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Union
 
 class EndpointDataModel(BaseModel):
+    id: str
     model_config = ConfigDict(from_attributes=True)
-    type: str
+    connector_type: str
     name: str
     uri: str
     token: str
