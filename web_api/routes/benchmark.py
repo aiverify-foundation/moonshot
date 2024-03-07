@@ -35,6 +35,19 @@ def add_new_endpoint(
     except SessionException as e:
         return {"message": f"Failed to add endpoint: {e}"}, 500
     
+@router.delete("/v1/llm_endpoints/{endpoint_id}")
+@inject
+async def delete_endpoint(
+    endpoint_id: str,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
+    ) -> dict[str, str] | tuple[dict[str, str], int]:
+
+    try:
+        benchmarking_service.delete_endpoint(endpoint_id)
+        return {"message": "Endpoint deleted successfully"}
+    except SessionException as e:
+        return {"message": f"Failed to delete endpoint: {e}"}, 500
+    
 @router.get("/v1/connectors")
 @inject
 def get_all_connectors(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])): 
@@ -67,4 +80,15 @@ def create_recipe(
     except SessionException as e:
         return {"message": f"Failed to create recipe: {e}"}, 500
 
+@router.delete("/v1/recipes/{recipe_id}")
+@inject
+async def delete_recipe(
+    recipe_id: str,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
+    ) -> dict[str, str] | tuple[dict[str, str], int]:
 
+    try:
+        benchmarking_service.delete_recipe(recipe_id)
+        return {"message": "Recipe deleted successfully"}
+    except SessionException as e:
+        return {"message": f"Failed to delete endpoint: {e}"}, 500

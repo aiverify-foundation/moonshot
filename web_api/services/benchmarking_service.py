@@ -25,6 +25,10 @@ class BenchmarkingService(BaseService):
         )
 
     @exception_handler
+    def delete_endpoint(self, endpoint_id: str) -> None:
+        moonshot_api.api_delete_endpoint(endpoint_id)
+
+    @exception_handler
     def get_all_connectors(self) -> list[str]:
         connectors = moonshot_api.api_get_all_connectors()
         return connectors
@@ -44,5 +48,9 @@ class BenchmarkingService(BaseService):
             prompt_templates=recipe_data.prompt_templates,
             metrics=recipe_data.metrics
         )
+
+    @exception_handler
+    def delete_recipe(self, recipe_id: str) -> None:
+        moonshot_api.api_delete_recipe(recipe_id)
 
 
