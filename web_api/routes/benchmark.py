@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
 
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
+from web_api.schemas.endpoint_create_dto import EndpointCreateDTO
 from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -25,7 +26,7 @@ def get_all_endpoints(
 @router.post("/v1/llm_endpoints")
 @inject
 def add_new_endpoint(
-    endpoint_data: EndpointDataModel,
+    endpoint_data: EndpointCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """

@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 class EndpointDataModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+    id: str
     connector_type: str
     name: str
     uri: str
