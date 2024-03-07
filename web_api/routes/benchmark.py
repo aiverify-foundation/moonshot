@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
+
+from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
 from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -52,17 +54,11 @@ async def delete_endpoint(
 @inject
 def get_all_connectors(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])): 
     #TODO - type check and model validation
-    """
-    Get all the connectors from the database
-    """
     return benchmarking_service.get_all_connectors()
 
 @router.get("/v1/recipes")
 @inject
 def get_all_recipes(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
-    """
-    Get all the recipes from the database
-    """
     return benchmarking_service.get_all_recipes()
 
 @router.post("/v1/recipes")
@@ -71,9 +67,6 @@ def create_recipe(
     recipe_data: RecipeCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
     ):
-    """
-    Create a new recipe in the database
-    """
     try:
         benchmarking_service.create_recipe(recipe_data)
         return {"message": "Recipe created successfully"}
@@ -92,3 +85,51 @@ async def delete_recipe(
         return {"message": "Recipe deleted successfully"}
     except SessionException as e:
         return {"message": f"Failed to delete endpoint: {e}"}, 500
+    
+
+@router.post("/v1/cookbooks")
+@inject
+def create_cookbook(
+    cookbook_data: CookbookCreateDTO,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
+    ):
+    try:
+        benchmarking_service.create_cookbook(cookbook_data)
+        return {"message": "Cookbook created successfully"}
+    except SessionException as e:
+        return {"message": f"Failed to create cookbook: {e}"}, 500
+
+
+@router.get("/v1/cookbooks")
+@inject
+def get_all_cookbooks(
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
+    ):
+    try:
+        cookbooks = benchmarking_service.get_all_cookbooks()
+        return cookbooks
+    except SessionException as e:
+        return {"message": f"Failed to create cookbook: {e}"}, 500
+    
+@router.get("/v1/cookbooks/{cookbook_id}")
+@inject
+def get_cookbook_by_id(
+    cookbook_id: str,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        cookbook = benchmarking_service.get_cookbook_by_id(cookbook_id)
+        return cookbook
+    except SessionException as e:
+        return {"message": f"Unable to get cookbook: {e}"}, 500
+    
+@router.put("/v1/cookbooks/{cookbook_id}")
+@inject
+def update_cookbook(
+    cookbook_id: str,
+    cookbook_data: CookbookCreateDTO,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        benchmarking_service.update_cookbook(cookbook_data, cookbook_id)
+        return {"message": "Cookbook updated successfully"}
+    except SessionException as e:
+        return {"message": f"Unable to get cookbook: {e}"}, 500
