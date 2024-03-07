@@ -26,4 +26,4 @@ def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
             raise SessionException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
         except Exception as e:
             raise SessionException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
-    return wrapper   
+    return wrapper

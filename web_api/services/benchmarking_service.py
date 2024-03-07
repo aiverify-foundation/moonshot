@@ -17,7 +17,7 @@ def add_endpoint(endpoint_data: EndpointDataModel) -> None:
         endpoint_data (EndpointDataModel): The data model containing the endpoint information.
     """
     moonshot_api.api_create_endpoint(
-        connector_type=endpoint_data.type,
+        connector_type=endpoint_data.connector_type,
         name=endpoint_data.name,
         uri=endpoint_data.uri,
         token=endpoint_data.token,
