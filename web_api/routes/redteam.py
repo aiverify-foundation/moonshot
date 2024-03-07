@@ -67,7 +67,15 @@ async def create(
     session_dto: SessionCreateDTO,
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> SessionResponseModel:
-    return SessionResponseModel(session=session_service.create_session(session_dto))
+    try: 
+        return SessionResponseModel(session=session_service.create_session(session_dto))
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
 @router.put("/v1/sessions/{session_id}")
@@ -90,8 +98,16 @@ async def prompt(
     user_prompt: SessionPromptDTO,
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> dict[str, list[PromptDetails]]:
-    result = await session_service.send_prompt(session_id, user_prompt.prompt, user_prompt.history_length)
-    return result
+    try:
+        result = await session_service.send_prompt(session_id, user_prompt.prompt, user_prompt.history_length)
+        return result
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
 @router.get("/v1/prompt_templates")
@@ -102,20 +118,37 @@ def get_all_prompt_templates(
     """
     Get all the prompt templates from the database
     """
-    return session_service.get_prompt_templates()
+    try:
+        return session_service.get_prompt_templates()
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.put("/v1/prompt_templates/{prompt_template_name}")
+@router.put("/v1/prompt_templates/{session_id}/{prompt_template_name}")
 @inject
 async def set_prompt_template(
+    session_id: str,
     prompt_template_name: str,
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> dict[str, bool]:
     """
     Select a prompt template for the current session
     """
-    result = session_service.select_prompt_template(prompt_template_name)
-    return {"success": result}
+    try:
+        result = session_service.select_prompt_template(session_id,prompt_template_name)
+        return {"success": result}
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
 
 
 @router.delete("/v1/prompt_templates/{prompt_template_name}")
