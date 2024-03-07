@@ -70,15 +70,9 @@ class SessionService(BaseService):
     
         return all_chats_dict
 
-    # @exception_handler
-    # def select_prompt_template(self, prompt_template_name: str = '') -> bool:
-    #     # Check if current session exists
-    #     if Session.current_session:
-    #         if prompt_template_name == '':
-    #             Session.current_session.set_prompt_template()
-    #         else:
-    #             Session.current_session.set_prompt_template(prompt_template_name)
-    #         return True
-
-    #     return False
+    @exception_handler
+    def select_prompt_template(self, session_id: str, prompt_template_name: str = '') -> bool:
+        if moonshot_api.api_update_prompt_template(session_id,prompt_template_name):
+            return True
+        return False
 
