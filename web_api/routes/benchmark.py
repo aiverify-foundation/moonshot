@@ -4,6 +4,7 @@ from dependency_injector.wiring import inject, Provide
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
 from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from web_api.schemas.endpoint_create_dto import EndpointCreateDTO
+from web_api.schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -140,7 +141,7 @@ def update_cookbook(
 # TODO - create cookbook executor should not be a route - the route will probably be high level 'run benchmark' then the executor is created and run by calling a series of ms lib apis
 @router.post("/v1/execute/cookbook")
 @inject
-def create_cookbook_executor(
+def cookbook_executor(
     cookbook_executor_data: CookbookExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
@@ -148,3 +149,16 @@ def create_cookbook_executor(
         return {"message": "Cookbook executed successfully"}
     except SessionException as e:
         return {"message": f"Unable to execute cookbook: {e}"}, 500
+    
+@router.post("/v1/execute/recipe")
+@inject
+def recipe_executor(
+    recipe_executor_data: RecipeExecutorCreateDTO,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        benchmarking_service.execute_recipe(recipe_executor_data)
+        return {"message": "Recipe executed successfully"}
+    except SessionException as e:
+        return {"message": f"Unable to execute recipe: {e}"}, 500
+    
+

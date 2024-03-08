@@ -3,6 +3,7 @@ import moonshot.api as moonshot_api
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
 from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from web_api.schemas.recipe_create_dto import RecipeCreateDTO
+from web_api.schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from web_api.services.base_service import BaseService
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.utils.exceptions_handler import exception_handler
@@ -94,6 +95,7 @@ class BenchmarkingService(BaseService):
     
     @exception_handler
     def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> None:
+        # TODO - instead of directly executing, it should be queued and scheduled as a job
         executor = moonshot_api.api_create_cookbook_executor(
             name=cookbook_executor_data.name,
             cookbooks=cookbook_executor_data.cookbooks,
@@ -104,5 +106,20 @@ class BenchmarkingService(BaseService):
 
         executor.execute()
         executor.close_executor()
+
+    @exception_handler
+    def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
+        # TODO - instead of directly executing, it should be queued and scheduled as a job
+        executor = moonshot_api.api_create_recipe_executor(
+            name=recipe_executor_data.name,
+            recipes=recipe_executor_data.recipes,
+            endpoints=recipe_executor_data.endpoints,
+            num_of_prompts=recipe_executor_data.num_of_prompts,
+            progress_callback_func=self.temp_exec_callback
+        )
+
+        executor.execute()
+        executor.close_executor()
+        
 
     
