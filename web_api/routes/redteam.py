@@ -77,20 +77,6 @@ async def create(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
-
-@router.put("/v1/sessions/{session_id}")
-@inject
-async def set_active_session(
-    session_id: str,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> SessionResponseModel:
-    session_data = session_service.set_current_session(session_id)
-    if session_data is not None:
-        return SessionResponseModel(session=session_data)
-    else:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-
 @router.post("/v1/sessions/{session_id}/prompt")
 @inject
 async def prompt(
