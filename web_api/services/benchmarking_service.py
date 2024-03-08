@@ -92,7 +92,7 @@ class BenchmarkingService(BaseService):
         print(args)
     
     @exception_handler
-    def create_cookbook_executor(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> None:
+    def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> None:
         executor = moonshot_api.api_create_cookbook_executor(
             name=cookbook_executor_data.name,
             cookbooks=cookbook_executor_data.cookbooks,
@@ -100,5 +100,7 @@ class BenchmarkingService(BaseService):
             num_of_prompts=cookbook_executor_data.num_of_prompts,
             progress_callback_func=self.temp_exec_callback
         )
+
+        executor.execute()
 
     
