@@ -89,6 +89,7 @@ class BenchmarkingService(BaseService):
         return cookbooks
     
     def temp_exec_callback(self, args) -> Union[Callable, None]:
+        print("\033[94m" + "-"*100 + "\033[0m")
         print(args)
     
     @exception_handler
@@ -102,5 +103,6 @@ class BenchmarkingService(BaseService):
         )
 
         executor.execute()
+        executor.close_executor()
 
     
