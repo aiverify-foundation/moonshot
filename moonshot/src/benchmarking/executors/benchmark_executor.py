@@ -27,6 +27,8 @@ from moonshot.src.benchmarking.executors.benchmark_executor_types import (
 from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.benchmarking.recipes.recipe import Recipe
+from moonshot.src.benchmarking.results.result import Result
+from moonshot.src.benchmarking.results.result_arguments import ResultArguments
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_manager import ConnectorManager
 from moonshot.src.storage.storage_manager import StorageManager
@@ -55,12 +57,6 @@ class BenchmarkExecutor:
             exec_id=str(self.id),
             exec_name=self.name,
             exec_type=self.type.name,
-            bm_max_progress_per_recipe=int(100.0 / len(self.recipes))
-            if len(self.recipes) > 0
-            else 0,
-            bm_max_progress_per_cookbook=int(100.0 / len(self.cookbooks))
-            if len(self.cookbooks) > 0
-            else 0,
             bm_progress_callback_func=self.progress_callback_func,
         )
 
@@ -443,17 +439,25 @@ class BenchmarkExecutor:
         """
         async for prompt_info in gen_prompt:
             for rec_conn in recipe_connectors:
-                # Update the prompt info with connection id
-                prompt_info.conn_id = rec_conn.id
+                # Create a new prompt info with connection id
+                new_prompt_info = PromptArguments(
+                    rec_id=prompt_info.rec_id,
+                    pt_id=prompt_info.pt_id,
+                    ds_id=prompt_info.ds_id,
+                    prompt_index=prompt_info.prompt_index,
+                    prompt=prompt_info.prompt,
+                    target=prompt_info.target,
+                    conn_id=rec_conn.id,
+                )
 
                 try:
                     # Check if gen_prompt has saved records in cache
                     cache_record = StorageManager.read_benchmark_cache_record(
                         (
-                            prompt_info.rec_id,
-                            prompt_info.conn_id,
-                            prompt_info.pt_id,
-                            prompt_info.prompt,
+                            new_prompt_info.rec_id,
+                            new_prompt_info.conn_id,
+                            new_prompt_info.pt_id,
+                            new_prompt_info.prompt,
                         ),
                         database_instance,
                     )
@@ -461,8 +465,10 @@ class BenchmarkExecutor:
                 except Exception as e:
                     error_message = (
                         f"Error while reading benchmark cache record for prompt_info "
-                        f"[conn_id: {prompt_info.conn_id}, rec_id: {prompt_info.rec_id}, ds_id: {prompt_info.ds_id}, "
-                        f"pt_id: {prompt_info.pt_id}, prompt_index: {prompt_info.prompt_index}] due to error: {str(e)}"
+                        f"[conn_id: {new_prompt_info.conn_id}, rec_id: {new_prompt_info.rec_id}, "
+                        f"ds_id: {new_prompt_info.ds_id}, "
+                        f"pt_id: {new_prompt_info.pt_id}, prompt_index: {new_prompt_info.prompt_index}] due to "
+                        f"error: {str(e)}"
                     )
                     self.handle_error_message(error_message)
                     continue
@@ -471,7 +477,7 @@ class BenchmarkExecutor:
                     if cache_record is None:
                         # Get predictions from connector and create cache records
                         updated_prompt_info = await ConnectorManager.get_prediction(
-                            prompt_info, rec_conn
+                            new_prompt_info, rec_conn
                         )
                         StorageManager.create_benchmark_cache_record(
                             updated_prompt_info.to_tuple(), database_instance
@@ -484,9 +490,10 @@ class BenchmarkExecutor:
 
                 except Exception as e:
                     error_message = (
-                        f"Failed to generate prediction for prompt_info [conn_id: {prompt_info.conn_id}, "
-                        f"rec_id: {prompt_info.rec_id}, ds_id: {prompt_info.ds_id}, pt_id: {prompt_info.pt_id}, "
-                        f"prompt_index: {prompt_info.prompt_index}] due to error: {str(e)}"
+                        f"Failed to generate prediction for prompt_info [conn_id: {new_prompt_info.conn_id}, "
+                        f"rec_id: {new_prompt_info.rec_id}, ds_id: {new_prompt_info.ds_id}, "
+                        f"pt_id: {new_prompt_info.pt_id}, prompt_index: {new_prompt_info.prompt_index}] due to "
+                        f"error: {str(e)}"
                     )
                     self.handle_error_message(error_message)
                     continue
@@ -562,8 +569,6 @@ class BenchmarkExecutor:
             self.benchmark_executor_progress.update_progress(
                 status=self.status.name,
                 duration=self.duration,
-                results=self.results,
-                recipe_total=len(self.recipes),
             )
 
             # Run all recipes
@@ -576,19 +581,11 @@ class BenchmarkExecutor:
                 self.benchmark_executor_progress.update_progress(
                     recipe_index=recipe_index,
                     recipe_name=recipe,
+                    recipe_total=len(self.recipes),
                 )
 
                 # Execute the recipe
-                self._execute_recipe(recipe)
-
-                # Update progress end time and duration
-                self.benchmark_update_progress()
-                self.benchmark_executor_progress.update_progress(
-                    duration=self.duration,
-                    results=self.results,
-                )
-
-            # TODO: Create a result instance and write
+                self.results[recipe] = self._execute_recipe(recipe)
 
             # Update progress
             if not self.error_messages:
@@ -597,7 +594,6 @@ class BenchmarkExecutor:
                     recipe_index=len(self.recipes),
                     status=self.status.name,
                     duration=self.duration,
-                    results=self.results,
                 )
             else:
                 self.benchmark_update_progress(
@@ -607,9 +603,11 @@ class BenchmarkExecutor:
                     recipe_index=len(self.recipes),
                     status=self.status.name,
                     duration=self.duration,
-                    results=self.results,
                     error_messages=self.error_messages,
                 )
+
+            # Create a result instance and write
+            Result.create_result(self._get_current_result_arguments())
 
         elif self.type == BenchmarkExecutorTypes.COOKBOOK:
             print(f"🔃 Running cookbooks ({self.name})... do not close this terminal.")
@@ -620,8 +618,6 @@ class BenchmarkExecutor:
             self.benchmark_executor_progress.update_progress(
                 status=self.status.name,
                 duration=self.duration,
-                results=self.results,
-                cookbook_total=len(self.cookbooks),
             )
 
             # Run all cookbooks
@@ -634,19 +630,14 @@ class BenchmarkExecutor:
                 self.benchmark_executor_progress.update_progress(
                     cookbook_index=cookbook_index,
                     cookbook_name=cookbook,
+                    cookbook_total=len(self.cookbooks),
+                    recipe_index=-1,
+                    recipe_name="",
+                    recipe_total=-1,
                 )
 
                 # Execute the cookbook
-                self._execute_cookbook(cookbook)
-
-                # Update progress end time and duration
-                self.benchmark_update_progress()
-                self.benchmark_executor_progress.update_progress(
-                    duration=self.duration,
-                    results=self.results,
-                )
-
-            # TODO: Create a result instance and write
+                self.results[cookbook] = self._execute_cookbook(cookbook)
 
             # Update progress
             if not self.error_messages:
@@ -655,7 +646,6 @@ class BenchmarkExecutor:
                     cookbook_index=len(self.cookbooks),
                     status=self.status.name,
                     duration=self.duration,
-                    results=self.results,
                 )
             else:
                 self.benchmark_update_progress(
@@ -665,9 +655,11 @@ class BenchmarkExecutor:
                     cookbook_index=len(self.cookbooks),
                     status=self.status.name,
                     duration=self.duration,
-                    results=self.results,
                     error_messages=self.error_messages,
                 )
+
+            # Create a cookbook instance and write
+            Result.create_result(self._get_current_result_arguments())
 
         else:
             print("Failed to execute benchmark due to invalid executor type.")
@@ -682,21 +674,22 @@ class BenchmarkExecutor:
             self.benchmark_executor_progress.update_progress(
                 status=self.status.name,
                 duration=self.duration,
-                results=self.results,
                 error_messages=self.error_messages,
             )
 
-    def _execute_recipe(self, recipe: str) -> None:
+    def _execute_recipe(self, recipe: str) -> dict:
         """
-        Executes a given recipe.
+        Executes a recipe.
 
-        This method takes a recipe as input and performs the following steps:
-        1. Loads various instances related to the recipe.
-        2. Builds a generator pipeline to get prompts and perform predictions.
-        3. Sorts the recipe predictions into groups.
+        This method takes a recipe and executes it. It first loads the recipe instance and then iterates
+        over the endpoints in the recipe. For each endpoint, it updates the progress, executes the endpoint, and
+        then updates the progress again.
 
         Args:
             recipe (str): The recipe to be executed.
+
+        Raises:
+            Exception: If there is an error during the execution of the recipe.
         """
         # ------------------------------------------------------------------------------
         # Part 1: Load instances
@@ -778,6 +771,7 @@ class BenchmarkExecutor:
                         pred.predicted_results for pred in group_list
                     ],
                     "targets": [pred.target for pred in group_list],
+                    "durations": [pred.duration for pred in group_list],
                 }
                 for key, group in groupby(
                     recipe_preds, key=attrgetter("conn_id", "rec_id", "ds_id", "pt_id")
@@ -805,6 +799,7 @@ class BenchmarkExecutor:
         # Load metrics for recipe
         print("Part 4: Performing metrics calculation")
         start_time = time.perf_counter()
+        recipe_results = {}
 
         try:
             for group_recipe_key, group_recipe_value in grouped_recipe_preds.items():
@@ -823,7 +818,27 @@ class BenchmarkExecutor:
                     metrics_result.append(
                         metric.get_results(prompts, predicted_results, targets)  # type: ignore ; ducktyping
                     )
-                self.results[group_recipe_key] = metrics_result
+
+                # Format the results to have data and metrics results.
+                group_data = []
+                durations = group_recipe_value["durations"]
+                for prompt, predicted_result, target, duration in zip(
+                    prompts, predicted_results, targets, durations
+                ):
+                    group_data.append(
+                        {
+                            "prompt": prompt,
+                            "predicted_result": predicted_result,
+                            "target": target,
+                            "duration": duration,
+                        }
+                    )
+
+                # Append results for recipe
+                recipe_results[group_recipe_key] = {
+                    "data": group_data,
+                    "results": metrics_result,
+                }
 
             print(
                 f"Performing metrics calculation for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
@@ -833,7 +848,10 @@ class BenchmarkExecutor:
             error_message = f"Failed to calculate metrics in executing recipe Part 4 due to error: {str(e)}"
             self.handle_error_message(error_message)
 
-    def _execute_cookbook(self, cookbook: str) -> None:
+        finally:
+            return recipe_results
+
+    def _execute_cookbook(self, cookbook: str) -> dict:
         """
         Executes a cookbook.
 
@@ -867,6 +885,7 @@ class BenchmarkExecutor:
         # Part 2: Execute recipes
         # ------------------------------------------------------------------------------
         print("Part 2: Executing cookbook recipes...")
+        recipe_results = {}
         try:
             start_time = time.perf_counter()
             if cookbook_inst:
@@ -875,8 +894,6 @@ class BenchmarkExecutor:
                 self.benchmark_executor_progress.update_progress(
                     status=self.status.name,
                     duration=self.duration,
-                    results=self.results,
-                    recipe_total=len(cookbook_inst.recipes),
                 )
 
                 # Run all recipes
@@ -889,17 +906,18 @@ class BenchmarkExecutor:
                     self.benchmark_executor_progress.update_progress(
                         recipe_index=recipe_index,
                         recipe_name=recipe,
+                        recipe_total=len(cookbook_inst.recipes),
                     )
 
                     # Execute the recipe
-                    self._execute_recipe(recipe)
+                    recipe_results[recipe] = self._execute_recipe(recipe)
 
-                    # Update progress end time and duration
-                    self.benchmark_update_progress()
-                    self.benchmark_executor_progress.update_progress(
-                        duration=self.duration,
-                        results=self.results,
-                    )
+                # Update progress
+                self.benchmark_update_progress()
+                self.benchmark_executor_progress.update_progress(
+                    recipe_index=len(cookbook_inst.recipes),
+                    duration=self.duration,
+                )
 
                 print(
                     f"Executing cookbook [{cookbook_inst.id}] took {(time.perf_counter() - start_time):.4f}s"
@@ -910,6 +928,9 @@ class BenchmarkExecutor:
         except Exception as e:
             error_message = f"Failed to load instances in executing cookbook Part 2 due to error: {str(e)}"
             self.handle_error_message(error_message)
+
+        finally:
+            return recipe_results
 
     def _get_current_benchmark_arguments(self) -> BenchmarkExecutorArguments:
         """
@@ -939,4 +960,29 @@ class BenchmarkExecutor:
             results=self.results,
             status=self.status,
             progress_callback_func=self.progress_callback_func,
+        )
+
+    def _get_current_result_arguments(self) -> ResultArguments:
+        """
+        Constructs the ResultArguments object.
+
+        This method constructs the ResultArguments object using the attributes of the BenchmarkExecutor
+        instance. It then returns the constructed ResultArguments object.
+
+        Returns:
+            ResultArguments: The constructed ResultArguments object.
+        """
+
+        return ResultArguments(
+            id=self.id,
+            name=self.name,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            duration=self.duration,
+            recipes=self.recipes,
+            cookbooks=self.cookbooks,
+            endpoints=self.endpoints,
+            num_of_prompts=self.num_of_prompts,
+            results=self.results,
+            status=self.status,
         )

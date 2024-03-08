@@ -10,8 +10,6 @@ class BenchmarkExecutorProgress(BaseModel):
     exec_type: str
 
     # Benchmarking information
-    bm_max_progress_per_cookbook: int
-    bm_max_progress_per_recipe: int
     bm_progress_callback_func: Union[Callable, None]
 
     # Current cookbook, recipe index and name with its progress
@@ -24,7 +22,6 @@ class BenchmarkExecutorProgress(BaseModel):
     curr_duration: int = 0
     curr_status: str = "pending"
     curr_progress: int = 0
-    curr_results: dict = {}
     curr_error_messages: list = []
 
     def update_progress(
@@ -37,30 +34,20 @@ class BenchmarkExecutorProgress(BaseModel):
         recipe_total: Union[int, None] = None,
         duration: Union[int, None] = None,
         status: Union[str, None] = None,
-        results: Union[dict, None] = None,
         error_messages: Union[list, None] = None,
-    ):
+    ) -> None:
         """
-        Updates the progress of the benchmark execution.
+        Updates the progress of the BenchmarkExecutor.
 
-        This method takes various parameters related to the progress of the benchmark execution and updates the
-        corresponding attributes of the BenchmarkExecutorProgress instance. If there are any changes in the progress,
-        it calls the progress callback function with the current progress information.
+        This method takes the current progress information of the BenchmarkExecutor and updates its attributes
+        accordingly. The attributes that can be updated include: cookbook index, cookbook name, cookbook total,
+        recipe index, recipe name, recipe total, duration, status, and error messages.
 
-        Args:
-            cookbook_index (Union[int, None], optional): The current index of the cookbook being executed.
-            Defaults to None.
-            cookbook_name (Union[str, None], optional): The name of the current cookbook being executed.
-            Defaults to None.
-            cookbook_total (Union[int, None], optional): The total number of cookbooks. Defaults to None.
-            recipe_index (Union[int, None], optional): The current index of the recipe being executed. Defaults to None.
-            recipe_name (Union[str, None], optional): The name of the current recipe being executed. Defaults to None.
-            recipe_total (Union[int, None], optional): The total number of recipes. Defaults to None.
-            duration (Union[int, None], optional): The current duration of the benchmark execution. Defaults to None.
-            status (Union[str, None], optional): The current status of the benchmark execution. Defaults to None.
-            results (Union[dict, None], optional): The current results of the benchmark execution. Defaults to None.
-            error_messages (Union[list, None], optional): The current error messages of the benchmark execution.
-            Defaults to None.
+        This method is useful for tracking the progress of the benchmark execution and can be used for updating
+        the progress information in a user interface or logging system.
+
+        Returns:
+            None
         """
         has_changes = False
 
@@ -72,7 +59,6 @@ class BenchmarkExecutorProgress(BaseModel):
             "curr_recipe_total": recipe_total,
             "curr_duration": duration,
             "curr_status": status.lower() if status else None,
-            "curr_results": results,
         }
         for attr, value in attributes.items():
             if value is not None and value != getattr(self, attr):
@@ -85,28 +71,43 @@ class BenchmarkExecutorProgress(BaseModel):
             self.curr_error_messages = error_messages.copy()
 
         # Update cookbook index and progress
-        if (
-            cookbook_index is not None
-            and cookbook_index >= 0
-            and cookbook_index != self.curr_cookbook_index
-        ):
+        if cookbook_index is not None and cookbook_index != self.curr_cookbook_index:
             has_changes = True
             self.curr_cookbook_index = cookbook_index
-            self.curr_progress = (
-                self.curr_cookbook_index * self.bm_max_progress_per_cookbook
-            )
 
         # Update recipe index and progress
-        if (
-            recipe_index is not None
-            and recipe_index >= 0
-            and recipe_index != self.curr_recipe_index
-        ):
+        if recipe_index is not None and recipe_index != self.curr_recipe_index:
             has_changes = True
             self.curr_recipe_index = recipe_index
-            self.curr_progress = (
-                self.curr_recipe_index * self.bm_max_progress_per_recipe
+
+        # Calculate percentage
+        if self.curr_cookbook_total > 0:
+            if (
+                self.curr_recipe_total > 0
+                and self.curr_cookbook_index != self.curr_cookbook_total
+            ):
+                # Calculate percentage with cookbook and recipe defined
+                per_recipe_percentage = (
+                    100 / self.curr_cookbook_total
+                ) / self.curr_recipe_total
+                self.curr_progress = int(
+                    self.curr_cookbook_index * (100 / self.curr_cookbook_total)
+                ) + int(self.curr_recipe_index * per_recipe_percentage)
+            else:
+                # Calculate percentage with cookbook defined and no recipes defined
+                # Or cookbook index and total is same.
+                self.curr_progress = int(
+                    self.curr_cookbook_index * (100 / self.curr_cookbook_total)
+                )
+
+        elif self.curr_recipe_total > 0:
+            # There is no cookbook, calculate for recipes defined
+            self.curr_progress = int(
+                self.curr_recipe_index * (100 / self.curr_recipe_total)
             )
+        else:
+            # Initialization: set 0
+            self.curr_progress = 0
 
         # Perform callback only when it has changes and is provided.
         if has_changes and self.bm_progress_callback_func:
@@ -117,9 +118,8 @@ class BenchmarkExecutorProgress(BaseModel):
         Returns a dictionary representation of the current benchmark execution progress.
 
         This method constructs a dictionary with the current state of the benchmark execution. The dictionary includes
-        the execution id, name, type, maximum progress per cookbook and recipe, current duration, status,
-        cookbook index, cookbook name, cookbook total, recipe index, recipe name, recipe total, progress, results,
-        and error messages.
+        the execution id, name, type, current duration, status, cookbook index, cookbook name, cookbook total,
+        recipe index, recipe name, recipe total, progress, and error messages.
 
         Returns:
             dict: A dictionary containing the current state of the benchmark execution.
@@ -128,8 +128,6 @@ class BenchmarkExecutorProgress(BaseModel):
             "exec_id": self.exec_id,
             "exec_name": self.exec_name,
             "exec_type": self.exec_type,
-            "bm_max_progress_per_cookbook": self.bm_max_progress_per_cookbook,
-            "bm_max_progress_per_recipe": self.bm_max_progress_per_recipe,
             "curr_duration": self.curr_duration,
             "curr_status": self.curr_status,
             "curr_cookbook_index": self.curr_cookbook_index,
@@ -139,6 +137,5 @@ class BenchmarkExecutorProgress(BaseModel):
             "curr_recipe_name": self.curr_recipe_name,
             "curr_recipe_total": self.curr_recipe_total,
             "curr_progress": self.curr_progress,
-            "curr_results": self.curr_results,
             "curr_error_messages": list(set(self.curr_error_messages)),
         }
