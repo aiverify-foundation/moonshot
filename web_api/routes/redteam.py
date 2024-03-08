@@ -115,7 +115,7 @@ def get_all_prompt_templates(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.put("/v1/prompt_templates/{session_id}/{prompt_template_name}")
+@router.put("/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
 @inject
 async def set_prompt_template(
     session_id: str,
@@ -137,14 +137,23 @@ async def set_prompt_template(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.delete("/v1/prompt_templates/{prompt_template_name}")
+@router.delete("/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
 @inject
 async def unset_prompt_template(
+    session_id: str,
     prompt_template_name: str = '',
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> dict[str, bool]:
     """
     Remove prompt template from the current session
     """
-    result = session_service.select_prompt_template()
-    return {"success": result}
+    try:
+        result = session_service.select_prompt_template(session_id,"")
+        return {"success": result}
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
