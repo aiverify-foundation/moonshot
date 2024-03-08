@@ -1,6 +1,6 @@
 from typing_extensions import TypedDict
 
-from web_api.types.session_types import PromptDetails, SessionChats
+from web_api.types.types import PromptDetails, SessionChats
 from .base_service import BaseService
 from web_api.services.utils.exceptions_handler import SessionException, exception_handler
 from web_api.schemas.session_create_dto import SessionCreateDTO

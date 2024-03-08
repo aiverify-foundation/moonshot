@@ -1,10 +1,10 @@
-from typing import Callable, Union
 import moonshot.api as moonshot_api
-from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
-from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
-from web_api.schemas.recipe_create_dto import RecipeCreateDTO
-from web_api.schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
-from web_api.services.base_service import BaseService
+from ..schemas.cookbook_create_dto import CookbookCreateDTO
+from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
+from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
+from ..services.base_service import BaseService
+from ..status_updater.webhook import Webhook
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.utils.exceptions_handler import exception_handler
 
@@ -89,10 +89,6 @@ class BenchmarkingService(BaseService):
         cookbooks = moonshot_api.api_read_cookbooks(cookbook_ids)
         return cookbooks
     
-    def temp_exec_callback(self, args) -> Union[Callable, None]:
-        print("\033[94m" + "-"*100 + "\033[0m")
-        print(args)
-    
     @exception_handler
     def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> None:
         # TODO - instead of directly executing, it should be queued and scheduled as a job
@@ -101,7 +97,7 @@ class BenchmarkingService(BaseService):
             cookbooks=cookbook_executor_data.cookbooks,
             endpoints=cookbook_executor_data.endpoints,
             num_of_prompts=cookbook_executor_data.num_of_prompts,
-            progress_callback_func=self.temp_exec_callback
+            progress_callback_func=Webhook.on_executor_update
         )
 
         executor.execute()
@@ -115,7 +111,7 @@ class BenchmarkingService(BaseService):
             recipes=recipe_executor_data.recipes,
             endpoints=recipe_executor_data.endpoints,
             num_of_prompts=recipe_executor_data.num_of_prompts,
-            progress_callback_func=self.temp_exec_callback
+            progress_callback_func=Webhook.on_executor_update
         )
 
         executor.execute()
