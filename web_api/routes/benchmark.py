@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
 
-from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
-from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
-from web_api.schemas.endpoint_create_dto import EndpointCreateDTO
-from web_api.schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
+from ..schemas.cookbook_create_dto import CookbookCreateDTO
+from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
+from ..schemas.endpoint_create_dto import EndpointCreateDTO
+from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
