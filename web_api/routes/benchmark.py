@@ -153,11 +153,11 @@ def get_all_cookbooks(
         return cookbooks
     except SessionException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbook: {e.msg}")
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbooks: {e.msg}")
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbook: {e.msg}")
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbooks: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbook: {e.msg}")    
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")    
     
 @router.get("/v1/cookbooks/{cookbook_id}")
 @inject
@@ -168,7 +168,12 @@ def get_cookbook_by_id(
         cookbook = benchmarking_service.get_cookbook_by_id(cookbook_id)
         return cookbook
     except SessionException as e:
-        return {"message": f"Unable to get cookbook: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbook: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbook: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbook: {e.msg}")    
     
 @router.put("/v1/cookbooks/{cookbook_id}")
 @inject
