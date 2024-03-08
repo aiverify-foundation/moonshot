@@ -1,5 +1,6 @@
 import moonshot.api as moonshot_api
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
+from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from web_api.schemas.recipe_create_dto import RecipeCreateDTO
 from web_api.services.base_service import BaseService
 from ..schemas.endpoint_response_model import EndpointDataModel
@@ -85,3 +86,26 @@ class BenchmarkingService(BaseService):
     def get_cookbooks_by_ids(self, cookbook_ids: list[str]) -> list[dict]: 
         cookbooks = moonshot_api.api_read_cookbooks(cookbook_ids)
         return cookbooks
+    
+    def exec_callback(self, args):
+        print(args)
+    
+    @exception_handler
+    def create_cookbook_executor(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> None:
+        moonshot_api.api_create_cookbook_executor(
+            name=cookbook_executor_data.name,
+            cookbooks=cookbook_executor_data.cookbooks,
+            endpoints=cookbook_executor_data.endpoints,
+            num_of_prompts=cookbook_executor_data.num_of_prompts,
+            progress_callback_func=self.exec_callback
+        )
+
+    @exception_handler
+    def get_all_executors(self) -> list[dict]:
+        executors = moonshot_api.api_get_all_executors()
+        return executors
+
+    @exception_handler
+    def delete_executor(self, executor_id: str) -> None:
+        moonshot_api.api_delete_executor(executor_id)
+    

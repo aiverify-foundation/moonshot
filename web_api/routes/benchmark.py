@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
 
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
+from web_api.schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from web_api.schemas.endpoint_create_dto import EndpointCreateDTO
 from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
@@ -134,3 +135,22 @@ def update_cookbook(
         return {"message": "Cookbook updated successfully"}
     except SessionException as e:
         return {"message": f"Unable to get cookbook: {e}"}, 500
+    
+
+@router.post("/v1/executors/cookbook")
+@inject
+def create_cookbook_executor(
+    cookbook_executor_data: CookbookExecutorCreateDTO,
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        benchmarking_service.create_cookbook_executor(cookbook_executor_data)
+        return {"message": "Cookbook created successfully"}
+    except SessionException as e:
+        return {"message": f"Unable to delete cookbook: {e}"}, 500
+    
+@router.get("/v1/executors")
+@inject
+def get_all_executors(
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
+):
+    return benchmarking_service.get_all_executors()
