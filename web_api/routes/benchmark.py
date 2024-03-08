@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
 
 from web_api.schemas.cookbook_create_dto import CookbookCreateDTO
@@ -23,7 +23,15 @@ def get_all_endpoints(
     """
     Get all the endpoints from the database
     """
-    return benchmarking_service.get_all_endpoints()
+    try: 
+        return benchmarking_service.get_all_endpoints()
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to get endpoint: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to get endpoint: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to get endpoint: {e.msg}")    
 
 @router.post("/v1/llm_endpoints")
 @inject
@@ -38,20 +46,29 @@ def add_new_endpoint(
         benchmarking_service.add_endpoint(endpoint_data)
         return {"message": "Endpoint added successfully"}
     except SessionException as e:
-        return {"message": f"Failed to add endpoint: {e}"}, 500
-    
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to add endpoint: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to add endpoint: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to add endpoint: {e.msg}")    
+
 @router.delete("/v1/llm_endpoints/{endpoint_id}")
 @inject
 async def delete_endpoint(
     endpoint_id: str,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:
-
     try:
         benchmarking_service.delete_endpoint(endpoint_id)
         return {"message": "Endpoint deleted successfully"}
     except SessionException as e:
-        return {"message": f"Failed to delete endpoint: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to delete endpoint: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to delete endpoint: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to delete endpoint: {e.msg}")   
     
 @router.get("/v1/connectors")
 @inject
@@ -62,7 +79,15 @@ def get_all_connectors(benchmarking_service: BenchmarkingService = Depends(Provi
 @router.get("/v1/recipes")
 @inject
 def get_all_recipes(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
-    return benchmarking_service.get_all_recipes()
+    try:
+        return benchmarking_service.get_all_recipes()
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes: {e.msg}")   
 
 @router.post("/v1/recipes")
 @inject
@@ -74,7 +99,12 @@ def create_recipe(
         benchmarking_service.create_recipe(recipe_data)
         return {"message": "Recipe created successfully"}
     except SessionException as e:
-        return {"message": f"Failed to create recipe: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to create recipe: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to create recipe: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to create recipe: {e.msg}")    
 
 @router.delete("/v1/recipes/{recipe_id}")
 @inject
@@ -87,7 +117,12 @@ async def delete_recipe(
         benchmarking_service.delete_recipe(recipe_id)
         return {"message": "Recipe deleted successfully"}
     except SessionException as e:
-        return {"message": f"Failed to delete endpoint: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to delete recipe: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to delete recipe: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to delete recipe: {e.msg}")    
     
 
 @router.post("/v1/cookbooks")
@@ -100,7 +135,12 @@ def create_cookbook(
         benchmarking_service.create_cookbook(cookbook_data)
         return {"message": "Cookbook created successfully"}
     except SessionException as e:
-        return {"message": f"Failed to create cookbook: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to create cookbook: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to create cookbook: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to create cookbook: {e.msg}")    
 
 
 @router.get("/v1/cookbooks")
@@ -112,7 +152,12 @@ def get_all_cookbooks(
         cookbooks = benchmarking_service.get_all_cookbooks()
         return cookbooks
     except SessionException as e:
-        return {"message": f"Failed to create cookbook: {e}"}, 500
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbook: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbook: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbook: {e.msg}")    
     
 @router.get("/v1/cookbooks/{cookbook_id}")
 @inject
@@ -135,8 +180,12 @@ def update_cookbook(
         benchmarking_service.update_cookbook(cookbook_data, cookbook_id)
         return {"message": "Cookbook updated successfully"}
     except SessionException as e:
-        return {"message": f"Unable to get cookbook: {e}"}, 500
-    
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to update cookbook: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to update cookbook: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to update cookbook: {e.msg}")    
 
 # TODO - create cookbook executor should not be a route - the route will probably be high level 'run benchmark' then the executor is created and run by calling a series of ms lib apis
 @router.post("/v1/execute/cookbook")
