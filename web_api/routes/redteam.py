@@ -2,6 +2,8 @@
 from typing import Optional, Any
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
+
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..container import Container
 from ..services.utils.exceptions_handler import SessionException
 from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
@@ -36,16 +38,15 @@ async def get_all_sessions(
 
 @router.get("/v1/sessions/{session_id}")
 @inject
-async def get_one(
+async def get_session_by_session_id(
     session_id: str,
     include_history: bool = False,
-    length: int = 5,
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> SessionResponseModel:
     try:
         session_data = session_service.get_session(session_id)
         if include_history:
-            history = session_service.get_session_chat_history(session_id, length)
+            history = session_service.get_session_chat_history(session_id)
             if session_data is not None:
                 session_data.chat_history = history
         if session_data is not None:
@@ -83,9 +84,9 @@ async def prompt(
     session_id: str,
     user_prompt: SessionPromptDTO,
     session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, list[PromptDetails]]:
+    ) -> PromptResponseModel:
     try:
-        result = await session_service.send_prompt(session_id, user_prompt.prompt, user_prompt.history_length)
+        result = await session_service.send_prompt(session_id, user_prompt.prompt)
         return result
     except SessionException as e:
         if e.error_code == "FileNotFound":

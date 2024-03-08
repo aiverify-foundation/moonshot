@@ -3,7 +3,7 @@ from typing_extensions import TypedDict
 class PromptDetails(TypedDict):
     chat_record_id: int
     conn_id: str
-    context_strategy: int
+    context_strategy: str
     prompt_template: str
     prompt: str
     prepared_prompt: str
