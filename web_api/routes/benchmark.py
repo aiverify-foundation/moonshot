@@ -137,6 +137,7 @@ def update_cookbook(
         return {"message": f"Unable to get cookbook: {e}"}, 500
     
 
+# TODO - create cookbook executor should not be a route - the route will probably be high level 'run benchmark' then the executor is created and run by calling a series of ms lib apis
 @router.post("/v1/executors/cookbook")
 @inject
 def create_cookbook_executor(
@@ -147,10 +148,3 @@ def create_cookbook_executor(
         return {"message": "Cookbook created successfully"}
     except SessionException as e:
         return {"message": f"Unable to delete cookbook: {e}"}, 500
-    
-@router.get("/v1/executors")
-@inject
-def get_all_executors(
-    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])
-):
-    return benchmarking_service.get_all_executors()
