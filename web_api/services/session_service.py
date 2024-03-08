@@ -65,7 +65,7 @@ class SessionService(BaseService):
         return False
     
     # TODO - get all prompt template api seems missing
-    # @exception_handler
-    # def get_prompt_templates(self) -> list[Any | None]:
-    #     pass
+    @exception_handler
+    def get_prompt_templates(self) -> list[Any | None]:
+        return []
 
