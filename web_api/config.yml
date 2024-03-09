@@ -5,3 +5,6 @@ log:
   log_file_max_size: 5242880
   log_file_backup_count: 3
 
+asyncio:
+  monitor_task: true
+

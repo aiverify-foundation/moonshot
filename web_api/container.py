@@ -8,14 +8,17 @@ from .queue.implementation.in_memory_queue import InMemoryQueue
 from .queue.interface.queue_connection import InterfaceQueueConnection
 
 class Container(containers.DeclarativeContainer):
-    config = providers.Configuration(yaml_files=["config.yml"])
 
-    wiring_config = containers.WiringConfiguration(modules=[
-        ".routes.redteam",
-        ".routes.benchmark",
-        # ".routes.dev_testing",
-        ".app"
-    ])
+    config = providers.Configuration(yaml_files=["./config.yml"])
+
     benchmarking_test_queue: providers.Singleton[InterfaceQueueConnection] = providers.Singleton(InMemoryQueue, queue_name="benchmarking_test_queue")
     session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
     benchmarking_service: providers.Factory[BenchmarkingService] = providers.Factory(BenchmarkingService)
+
+    wiring_config = containers.WiringConfiguration(modules=[
+        ".app",
+        ".routes.redteam",
+        ".routes.benchmark",
+        ".routes.dev_testing",
+        ".app"
+    ])

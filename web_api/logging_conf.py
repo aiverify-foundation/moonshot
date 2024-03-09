@@ -34,9 +34,6 @@ class ColorizedFormatter(logging.Formatter):
 def configure_logging():
     with open("web_api/config.yml", "r") as ymlfile:
         cfg = yaml.safe_load(ymlfile)
-    print("\033[94m" + "-"*100 + "\033[0m")
-    print(cfg['log']['level'])
-    print("\033[94m" + "-"*100 + "\033[0m")
 
     file_handler = RotatingFileHandler(
         filename=cfg['log']['log_file_path'],

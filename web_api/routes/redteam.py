@@ -1,7 +1,10 @@
 # api/routes.py
+import logging
 from typing import Optional, Any
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from dependency_injector.wiring import inject, Provide
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from ..schemas.prompt_response_model import PromptResponseModel
 from ..container import Container
@@ -11,9 +14,8 @@ from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
 from ..services.session_service import SessionService, PromptDetails
 
-
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 @router.get("/")
 async def status():

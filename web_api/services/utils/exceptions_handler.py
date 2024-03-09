@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Callable
 from pydantic import ValidationError
 
@@ -11,10 +10,6 @@ class SessionException(Exception):
         message = f"[SessionException] {error_code} in {method_name} - {msg}"
         self.msg = message 
         super().__init__(message)
-        self.logger = logging.getLogger(
-            f"{__name__}.{self.__class__.__name__}",
-        )
-        self.logger.error(msg);
 
 def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
