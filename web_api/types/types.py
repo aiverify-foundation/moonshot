@@ -1,3 +1,4 @@
+from typing import NotRequired
 from typing_extensions import TypedDict
 
 class PromptDetails(TypedDict):
@@ -37,4 +38,11 @@ class ExecutionInfo(TypedDict):
     curr_recipe_total: int
     curr_progress: int
     curr_results: dict[str, list[ExecutionResults]]
+
+class UvicornRunArgs(TypedDict, total=False):
+    host: NotRequired[str]
+    port: NotRequired[int]
+    ssl_keyfile: NotRequired[str]
+    ssl_certfile: NotRequired[str]
+
 

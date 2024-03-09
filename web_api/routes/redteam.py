@@ -18,7 +18,9 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 @router.get("/")
-async def status():
+@inject
+async def status(asyncio_monitor_task = Depends(Provide[Container.config.log.level])):
+    logger.warn(asyncio_monitor_task)
     return {"status": "web api is up and running"}
 
 

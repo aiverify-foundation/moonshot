@@ -1,6 +1,4 @@
 import logging
-from typing import Any
-import moonshot.api as moonshot_api
 
 class BaseService:
 

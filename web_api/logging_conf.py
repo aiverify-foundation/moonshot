@@ -3,6 +3,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 import sys
 import yaml
+from dependency_injector import providers
+
 
 
 COLORS = {
@@ -31,22 +33,20 @@ class ColorizedFormatter(logging.Formatter):
         return color + message + COLORS["ENDC"]
 
 
-def configure_logging():
-    with open("web_api/config.yml", "r") as ymlfile:
-        cfg = yaml.safe_load(ymlfile)
+def configure_logging(cfg: providers.Configuration):
 
     file_handler = RotatingFileHandler(
-        filename=cfg['log']['log_file_path'],
-        maxBytes=cfg['log']['log_file_max_size'],
-        backupCount=cfg['log']['log_file_backup_count']
+        filename=cfg.log.log_file_path(),
+        maxBytes=cfg.log.log_file_max_size(),
+        backupCount=cfg.log.log_file_backup_count()
     )
     stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setFormatter(ColorizedFormatter(cfg['log']['format']))
+    stream_handler.setFormatter(ColorizedFormatter(cfg.log.format()))
 
     logging.basicConfig(
         handlers=[file_handler, stream_handler],
-        level=cfg['log']['level'],
-        format=cfg['log']['format'],
+        level=cfg.log.level(),
+        format=cfg.log.format(),
     )
 
     logging.info("Logging is configured.")
