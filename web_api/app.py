@@ -1,15 +1,15 @@
-# api/__init__.py
 import asyncio
 import os
 from contextlib import asynccontextmanager
-from typing import Union
-from fastapi import FastAPI, Request
+from typing import Awaitable, Callable
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from web_api.container import Container
+from .container import Container
 from .routes.redteam import router as red_team_router
 from .routes.benchmark import router as benchmarking_router
 from .routes.dev_testing import router as dev_router
 
+environment = os.getenv("APP_ENV")
 class CustomFastAPI(FastAPI):
     container: Container
 
@@ -23,26 +23,29 @@ async def monitor_tasks(loop: asyncio.AbstractEventLoop):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if os.getenv("APP_ENV") == "DEV":
+    if environment == "DEV":
         loop = asyncio.get_running_loop()
         loop.create_task(monitor_tasks(loop))
     yield
 
 async def startup_event():
-    if os.getenv("APP_ENV") == "DEV":
+    if environment == "DEV":
         loop = asyncio.get_running_loop()
         loop.create_task(monitor_tasks(loop))
 
 def create_app() -> CustomFastAPI:
     container: Container = Container()
-    allowed_origins = os.getenv("ALLOWED_ORIGINS").split(",")
-    app: FastAPI = FastAPI(lifespan=lifespan)
-    @app.middleware("http")
-    async def log_request_origin(request: Request, call_next):
+    container.init_resources()
+    allowed_origins_raw = os.getenv("ALLOWED_ORIGINS")
+    allowed_origins = allowed_origins_raw.split(",") if allowed_origins_raw else []
+    app: CustomFastAPI = CustomFastAPI(lifespan=lifespan)
+    async def log_request_origin(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
         origin = request.headers.get('origin')
         print(f"Request origin: {origin}")
         response = await call_next(request)
         return response
+    if environment == "DEV":
+        app.middleware("http")(log_request_origin)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=allowed_origins,

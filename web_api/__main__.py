@@ -2,6 +2,8 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from threading import Thread
+
+from .logging_conf import configure_logging
 from .queue.interface.queue_connection import InterfaceQueueConnection
 from .queue.queue_job_worker import QueueJobWorker
 from .app import create_app
@@ -11,6 +13,7 @@ def start_app():
     load_dotenv()
     ENABLE_SSL = os.getenv("ENABLE_SSL", "false").lower() in ['true', '1', 't', 'y', 'yes', 'enabled']
     SSL_CERT_PATH = os.getenv("SSL_CERT_PATH")
+    configure_logging()
     app = create_app()
     # singleton_benchmark_test_queue: InterfaceQueueConnection = app.container.benchmarking_test_queue()
     # singleton_benchmark_test_queue.subscribe(QueueJobWorker.run_benchmark_test)

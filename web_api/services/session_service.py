@@ -66,6 +66,7 @@ class SessionService(BaseService):
     
     # TODO - get all prompt template api seems missing
     @exception_handler
-    def get_prompt_templates(self) -> list[Any | None]:
+    def get_prompt_templates(self):
+        self.logger.error("get_prompt_templates not implemented")
         return []
 

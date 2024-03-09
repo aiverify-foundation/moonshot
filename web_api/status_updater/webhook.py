@@ -1,6 +1,5 @@
-from typing import Any
-from web_api.status_updater.interface.benchmark_callback_handler import InterfaceBenchmarkCallbackHandler
-from web_api.types.types import ExecutionInfo
+from .interface.benchmark_callback_handler import InterfaceBenchmarkCallbackHandler
+from ..types.types import ExecutionInfo
 
 
 class Webhook(InterfaceBenchmarkCallbackHandler):
