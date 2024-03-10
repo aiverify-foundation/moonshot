@@ -10,7 +10,7 @@ from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..services.benchmarking_service import BenchmarkingService
 from ..services.utils.exceptions_handler import SessionException
-from typing import Any, Optional
+from typing import Optional
 
 
 router = APIRouter()
@@ -192,17 +192,18 @@ def update_cookbook(
         else:
             raise HTTPException(status_code=500, detail=f"Failed to update cookbook: {e.msg}")    
 
-# TODO - create cookbook executor should not be a route - the route will probably be high level 'run benchmark' then the executor is created and run by calling a series of ms lib apis
 @router.post("/v1/execute/cookbook")
 @inject
-def cookbook_executor(
+async def cookbook_executor(
     cookbook_executor_data: CookbookExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        benchmarking_service.execute_cookbook(cookbook_executor_data)
-        return {"message": "Cookbook executed successfully"}
+        task_id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
+        if task_id:
+            return {"message": "Cookbook executed successfully", "task_id": task_id}
+        raise HTTPException(status_code=500, detail="Failed to execute cookbook")
     except SessionException as e:
-        return {"message": f"Unable to execute cookbook: {e}"}, 500
+        raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
     
 @router.post("/v1/execute/recipe")
 @inject
