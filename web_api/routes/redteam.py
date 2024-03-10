@@ -73,7 +73,9 @@ async def create(
     session_service: SessionService = Depends(Provide[Container.session_service])
     ) -> SessionResponseModel:
     try: 
-        return SessionResponseModel(session=session_service.create_session(session_dto))
+        new_session = session_service.create_session(session_dto)
+        updated_with_chat_ids = session_service.get_session(new_session.session_id)
+        return SessionResponseModel(session=updated_with_chat_ids)
     except SessionException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
