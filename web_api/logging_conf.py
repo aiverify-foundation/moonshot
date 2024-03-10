@@ -1,9 +1,10 @@
 
+import sys
 import logging
 from logging.handlers import RotatingFileHandler
-import sys
-import yaml
+from typing import Literal
 from dependency_injector import providers
+from .types.types import UvicornLoggingConfig
 
 
 
@@ -16,6 +17,7 @@ COLORS = {
     "ENDC": "\033[0m",
     "BOLD": "\033[1m",
     "UNDERLINE": "\033[4m",
+    "WHITE": "\033[97m",
 }
 
 class ColorizedFormatter(logging.Formatter):
@@ -27,13 +29,17 @@ class ColorizedFormatter(logging.Formatter):
         logging.CRITICAL: COLORS["HEADER"],
     }
 
+    def __init__(self, fmt: str, datefmt: str | None = None, style: Literal['%'] = '%', disableColor: bool = False):
+        super().__init__(fmt, datefmt, style)
+        self.disableColor = disableColor
+
     def format(self, record: logging.LogRecord):
         color = str(self.LEVEL_COLORS.get(record.levelno))
         message = super().format(record)
         return color + message + COLORS["ENDC"]
 
 
-def configure_logging(cfg: providers.Configuration):
+def configure_app_logging(cfg: providers.Configuration):
 
     file_handler = RotatingFileHandler(
         filename=cfg.log.log_file_path(),
@@ -50,3 +56,38 @@ def configure_logging(cfg: providers.Configuration):
     )
 
     logging.info("Logging is configured.")
+
+def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingConfig:
+    return {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "default": {
+                "()": "web_api.logging_conf.ColorizedFormatter",
+                "format": cfg.log.format(),
+            },
+            "file_formatter": {
+                "()": "web_api.logging_conf.ColorizedFormatter",
+                "format": cfg.log.format(),
+                "disableColor": True
+            },
+        },
+        "handlers": {
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": cfg.log.log_file_path(),
+                "maxBytes": cfg.log.log_file_max_size(),
+                "backupCount": cfg.log.log_file_backup_count(),
+                "formatter": "file_formatter",
+            },
+            "console": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout",
+                "formatter": "default",
+            },
+        },
+        "root": {
+            "level": cfg.log.level(),
+            "handlers": ["file", "console"],
+        },
+    }

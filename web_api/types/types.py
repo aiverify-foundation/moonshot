@@ -1,4 +1,6 @@
-from typing import NotRequired
+from logging import StreamHandler
+from logging.handlers import RotatingFileHandler
+from typing import Any, Literal, NotRequired, TextIO, Dict, List, Union
 from typing_extensions import TypedDict
 
 class PromptDetails(TypedDict):
@@ -39,10 +41,18 @@ class ExecutionInfo(TypedDict):
     curr_progress: int
     curr_results: dict[str, list[ExecutionResults]]
 
+class UvicornLoggingConfig(TypedDict):
+    version: int
+    formatters: Dict[str, dict[str, Any]]
+    handlers: Dict[str, dict[str, Any]]
+    root: Dict[str, dict[str, Any] | list[str]]
+    disable_existing_loggers: bool
+
+
 class UvicornRunArgs(TypedDict, total=False):
     host: NotRequired[str]
     port: NotRequired[int]
     ssl_keyfile: NotRequired[str]
     ssl_certfile: NotRequired[str]
-
+    log_config: NotRequired[UvicornLoggingConfig]
 
