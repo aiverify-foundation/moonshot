@@ -34,9 +34,12 @@ class ColorizedFormatter(logging.Formatter):
         self.disableColor = disableColor
 
     def format(self, record: logging.LogRecord):
-        color = str(self.LEVEL_COLORS.get(record.levelno))
-        message = super().format(record)
-        return color + message + COLORS["ENDC"]
+        if self.disableColor:
+            return super().format(record)
+        else:
+            color = str(self.LEVEL_COLORS.get(record.levelno))
+            message = super().format(record)
+            return color + message + COLORS["ENDC"]
 
 
 def configure_app_logging(cfg: providers.Configuration):
