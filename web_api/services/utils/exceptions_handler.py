@@ -19,6 +19,8 @@ def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
             raise SessionException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
         except ValidationError as e:
             raise SessionException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
+        except ValueError as e:
+            raise SessionException(f"An value error occurred: {e}", func.__name__, "ValueError")
         except Exception as e:
             raise SessionException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
     return wrapper

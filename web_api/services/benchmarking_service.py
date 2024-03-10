@@ -1,13 +1,11 @@
-import asyncio
 import moonshot.api as moonshot_api
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import inject
 from ..services.benchmark_test_manager import BenchmarkTestManager
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..services.base_service import BaseService
-from ..status_updater.webhook import Webhook
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.utils.exceptions_handler import exception_handler
 
@@ -103,18 +101,9 @@ class BenchmarkingService(BaseService):
 
 
     @exception_handler
-    def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
-        # TODO - instead of directly executing, it should be queued and scheduled as a job
-        executor = moonshot_api.api_create_recipe_executor(
-            name=recipe_executor_data.name,
-            recipes=recipe_executor_data.recipes,
-            endpoints=recipe_executor_data.endpoints,
-            num_of_prompts=recipe_executor_data.num_of_prompts,
-            progress_callback_func=Webhook.on_executor_update
-        )
-
-        executor.execute()
-        executor.close_executor()
+    async def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
+        async_task = self.benchmark_test_manager.schedule_test_task(recipe_executor_data);
+        return async_task.get_name()
         
 
     

@@ -200,20 +200,22 @@ async def cookbook_executor(
     try:
         task_id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
         if task_id:
-            return {"message": "Cookbook executed successfully", "task_id": task_id}
+            return {"message": "Cookbook execution task created", "task_id": task_id}
         raise HTTPException(status_code=500, detail="Failed to execute cookbook")
     except SessionException as e:
         raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
     
 @router.post("/v1/execute/recipe")
 @inject
-def recipe_executor(
+async def recipe_executor(
     recipe_executor_data: RecipeExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        benchmarking_service.execute_recipe(recipe_executor_data)
-        return {"message": "Recipe executed successfully"}
+        task_id = await benchmarking_service.execute_recipe(recipe_executor_data)
+        if task_id:
+            return {"message": "Recipe execution task created", "task_id": task_id}
+        raise HTTPException(status_code=500, detail="Failed to execute Recipe")
     except SessionException as e:
-        return {"message": f"Unable to execute recipe: {e}"}, 500
+        raise HTTPException(status_code=500, detail=f"Unable to execute Recipe: {e}")
     
 
