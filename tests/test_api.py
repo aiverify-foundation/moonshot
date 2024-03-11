@@ -1,9 +1,9 @@
 from moonshot.api import (
     api_create_connector, api_create_connectors, api_create_cookbook, api_create_cookbook_executor, api_create_endpoint, api_create_recipe, api_create_recipe_executor, 
-    api_delete_cookbook, api_delete_endpoint, api_delete_executor, api_delete_metric, api_delete_recipe, api_get_all_connectors, api_get_all_cookbooks, 
+    api_delete_cookbook, api_delete_endpoint, api_delete_executor, api_delete_metric, api_delete_recipe, api_delete_result, api_get_all_connectors, api_get_all_cookbooks, 
     api_get_all_cookbooks_names, api_get_all_endpoints, api_get_all_endpoints_names, api_get_all_executors, api_get_all_executors_names, api_get_all_metrics, api_get_all_recipes, 
-    api_get_all_recipes_names, api_load_executor, api_read_cookbook, api_read_cookbooks, api_read_endpoint, api_read_executor, api_read_recipe, 
-    api_read_recipes, api_update_cookbook, api_update_endpoint, api_update_recipe
+    api_get_all_recipes_names, api_get_all_results, api_get_all_results_name, api_load_executor, api_read_cookbook, api_read_cookbooks, api_read_endpoint, api_read_executor, api_read_recipe, 
+    api_read_recipes, api_read_result, api_read_results, api_update_cookbook, api_update_endpoint, api_update_recipe
 )
 
 # ------------------------------------------------------------------------------
@@ -321,9 +321,9 @@ def executor_callback_fn(progress_args: dict):
 def test_create_recipe_executor():
     bm_executor = api_create_recipe_executor(
         name="my new recipe executor",
-        recipes=["bbq"],
-        endpoints=["openai-gpt35-lionel"],
-        num_of_prompts=1,
+        recipes=["bbq","auto-categorisation"],
+        endpoints=["openai-gpt35-lionel", "openai-gpt35-turbo-16k-lionel"],
+        num_of_prompts=2,
         progress_callback_func=executor_callback_fn
     )
     print("Benchmark Executor Attributes:")
@@ -349,9 +349,9 @@ def test_create_recipe_executor():
 def test_create_cookbook_executor():
     bm_executor = api_create_cookbook_executor(
         name="my new cookbook executor",
-        cookbooks=["bbq-lite-age-cookbook"],
-        endpoints=["openai-gpt35-lionel"],
-        num_of_prompts=1,
+        cookbooks=["bbq-lite-age-cookbook", "bbq-lite-age-cookbook1"],
+        endpoints=["openai-gpt35-lionel", "openai-gpt35-turbo-16k-lionel"],
+        num_of_prompts=2,
         progress_callback_func=executor_callback_fn
     )
     print("Benchmark Executor Attributes:")
@@ -475,6 +475,52 @@ def test_run_benchmark_cookbook_executor_api():
     print("="*100,"\nTest deleting executors")
     test_delete_executor(bm_id)
 
+# ------------------------------------------------------------------------------
+# Results APIs Test
+# ------------------------------------------------------------------------------
+def test_read_result():
+    cookbook_result_name = "cookbook-my-new-cookbook-executor"
+    print(api_read_result(cookbook_result_name))
+
+def test_read_results():
+    cookbook_result_name = "cookbook-my-new-cookbook-executor"
+    recipe_result_name = "recipe-my-new-recipe-executor"
+    results = api_read_results([cookbook_result_name, recipe_result_name])
+    for result_no, result in enumerate(results, 1):
+        print("-"*100)
+        print("Result No. ", result_no)
+        print(result)
+
+def test_delete_result():
+    api_delete_result("1234")
+
+def test_get_all_results():
+    print(api_get_all_results())
+
+def test_get_all_results_names():
+    print(api_get_all_results_name())
+
+def test_run_result_api():
+    # Read result
+    print("="*100,"\nTest reading result")
+    test_read_result()
+
+    # Read results
+    print("="*100,"\nTest reading results")
+    test_read_results()
+
+    # Delete result
+    print("="*100,"\nTest deleting results")
+    test_delete_result()
+    
+    # List all results
+    print("="*100,"\nTest listing all results")
+    test_get_all_results()
+
+    # List all results names
+    print("="*100,"\nTest listing all results names")
+    test_get_all_results_names()
+
 if __name__ == "__main__":
     # Test connector apis
     test_run_connector_api()
@@ -489,5 +535,11 @@ if __name__ == "__main__":
     test_run_benchmark_recipe_executor_api()
     test_run_benchmark_cookbook_executor_api()
 
+    # Test resume run
+
     # Test metric api
     test_run_metric_api()
+
+    # Test result api
+    test_run_result_api()
+    

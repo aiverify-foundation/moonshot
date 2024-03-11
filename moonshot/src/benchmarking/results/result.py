@@ -67,7 +67,7 @@ class Result:
         """
         try:
             # Write as json output
-            StorageManager.create_result(res_args.id, res_args.to_file())
+            StorageManager.create_result(res_args.id, res_args.to_dict())
 
         except Exception as e:
             print(f"Failed to create result: {str(e)}")
@@ -90,7 +90,7 @@ class Result:
             ResultArguments: The arguments of the result.
         """
         try:
-            return ResultArguments(**StorageManager.read_recipe(res_id))
+            return ResultArguments.from_file(StorageManager.read_result(res_id))
 
         except Exception as e:
             print(f"Failed to read result: {str(e)}")
@@ -135,12 +135,14 @@ class Result:
             retn_results = []
             retn_results_ids = []
 
-            results = StorageManager.get_recipes()
+            results = StorageManager.get_results()
             for res in results:
                 if "__" in res:
                     continue
 
-                res_info = ResultArguments(**StorageManager.read_result(Path(res).stem))
+                res_info = ResultArguments.from_file(
+                    StorageManager.read_result(Path(res).stem)
+                )
                 retn_results.append(res_info)
                 retn_results_ids.append(res_info.id)
 

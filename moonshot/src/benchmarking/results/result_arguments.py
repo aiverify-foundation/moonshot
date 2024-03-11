@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from datetime import datetime
 from typing import Any
 
@@ -35,7 +36,84 @@ class ResultArguments(BaseModel):
 
     @classmethod
     def from_file(cls, results: dict) -> ResultArguments:
-        pass
+        """
+        Creates a ResultArguments instance from a dictionary.
+
+        This method extracts metadata from the input dictionary, converts the start and end times from string format
+        to timestamp, and converts the status to a BenchmarkExecutorStatus enum. It also converts any stringified
+        tuples in the results back to tuples.
+
+        Args:
+            results (dict): The input dictionary containing the results and metadata.
+
+        Returns:
+            ResultArguments: An instance of ResultArguments initialized with the data from the input dictionary.
+        """
+        metadata = results.pop("metadata")
+        start_time = datetime.strptime(
+            metadata["start_time"], "%Y%m%d-%H%M%S"
+        ).timestamp()
+        end_time = datetime.strptime(metadata["end_time"], "%Y%m%d-%H%M%S").timestamp()
+        status = BenchmarkExecutorStatus[metadata["status"].upper()]
+
+        # Convert stringified tuples back to tuples
+        results = cls.convert_str_tuples_to_tuples(results)
+
+        return cls(
+            id=metadata["id"],
+            name=metadata["name"],
+            start_time=start_time,
+            end_time=end_time,
+            duration=metadata["duration"],
+            recipes=metadata["recipes"],
+            cookbooks=metadata["cookbooks"],
+            endpoints=metadata["endpoints"],
+            num_of_prompts=metadata["num_of_prompts"],
+            results=results,
+            status=status,
+        )
+
+    @classmethod
+    def convert_str_tuples_to_tuples(cls, data: Any) -> Any:
+        """
+        Converts stringified tuples back to tuples.
+
+        This method takes a dictionary as input and converts all its keys to tuples if they represent a tuple.
+        If the value associated with a key is a dictionary, it recursively converts the keys of that dictionary
+        to tuples as well.
+        If the value is a list, it recursively applies the conversion to each element in the list.
+        If the value is neither a dictionary nor a list, it returns the value as is.
+
+        Args:
+            data (Any): The input data. This could be a dictionary, a list, or any other data type.
+
+        Returns:
+            Any: The input data with all stringified tuples converted back to tuples.
+        """
+        if isinstance(data, dict):
+            return {
+                ast.literal_eval(key)
+                if cls.is_tuple_str(key)
+                else key: cls.convert_str_tuples_to_tuples(value)
+                for key, value in data.items()
+            }
+        elif isinstance(data, list):
+            return [cls.convert_str_tuples_to_tuples(item) for item in data]
+        else:
+            return data
+
+    @staticmethod
+    def is_tuple_str(s: str) -> bool:
+        """
+        Checks if a string represents a tuple.
+
+        Args:
+            s (str): The input string.
+
+        Returns:
+            bool: True if the string represents a tuple, False otherwise.
+        """
+        return s.startswith("(") and s.endswith(")")
 
     def convert_dict_keys_to_str(self, data: Any) -> Any:
         """
@@ -63,15 +141,17 @@ class ResultArguments(BaseModel):
         else:
             return data
 
-    def to_file(self) -> dict:
+    def to_dict(self) -> dict:
         """
-        Converts the ResultArguments object to a dictionary.
+        Converts the instance variables of the class to a dictionary.
 
-        This method takes the attributes of the ResultArguments object and converts them into a dictionary.
-        This dictionary can then be used to write the result information to a JSON file.
+        This method takes the instance variables of the class and converts them into a dictionary.
+        The keys of the dictionary are the names of the instance variables and the values are the values of the
+        instance variables.
+        The dictionary is then returned.
 
         Returns:
-            dict: A dictionary representation of the ResultArguments object.
+            dict: A dictionary representation of the instance variables of the class.
         """
         results = {
             "metadata": {
