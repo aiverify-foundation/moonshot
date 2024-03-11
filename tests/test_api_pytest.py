@@ -52,8 +52,8 @@ def fetch_files_in_dir(dir_path):
 # Connector and Connector endpoints APIs Test
 # ------------------------------------------------------------------------------
 def test_create_connector_endpoint():
-    name="My New GPT4"
-    connector_type="openai-gpt4"
+    name="My New GPT35"
+    connector_type="openai-gpt35"
     uri="1234"
     token="1234"
     max_calls_per_second=256
@@ -76,8 +76,8 @@ def test_create_connector_endpoint():
 
 def test_read_connector_endpoint():
     expected_output = {
-        'name': "My New GPT4",
-        'connector_type':"openai-gpt4",
+        'name': "My New GPT35",
+        'connector_type':"openai-gpt35",
         'uri':"1234",
         'token':"1234",
         'max_calls_per_second':256,
@@ -86,7 +86,7 @@ def test_read_connector_endpoint():
             "hello": "world"
         } 
     }
-    actual_output = api_read_endpoint("my-new-gpt4")
+    actual_output = api_read_endpoint("my-new-gpt35")
 
     # Check if all key-value pairs in expected_output are present in actual_output (unable to determine created-datetime)
     for key, value in expected_output.items():
@@ -95,8 +95,8 @@ def test_read_connector_endpoint():
 
 def test_update_connector_endpoint():
     original_expected_output = {
-        'name': "My New GPT4",
-        'connector_type':"openai-gpt4",
+        'name': "My New GPT35",
+        'connector_type':"openai-gpt35",
         'uri':"1234",
         'token':"1234",
         'max_calls_per_second':256,
@@ -106,9 +106,9 @@ def test_update_connector_endpoint():
         } 
     }
 
-    if all(api_read_endpoint("my-new-gpt4").get(key) == value for key, value in original_expected_output.items()):
-        name="My New GPT4"
-        connector_type="openai-gpt4"
+    if all(api_read_endpoint("my-new-gpt35").get(key) == value for key, value in original_expected_output.items()):
+        name="My New GPT35"
+        connector_type="openai-gpt35"
         uri="4567"
         token="4567"
         max_calls_per_second=10
@@ -128,8 +128,8 @@ def test_update_connector_endpoint():
         )
 
         expected_update_output = {
-            'name': "My New GPT4",
-            'connector_type':"openai-gpt4",
+            'name': "My New GPT35",
+            'connector_type':"openai-gpt35",
             'uri':"4567",
             'token':"4567",
             'max_calls_per_second':10,
@@ -139,7 +139,7 @@ def test_update_connector_endpoint():
             } 
         }
 
-        actual_output = api_read_endpoint("my-new-gpt4")
+        actual_output = api_read_endpoint("my-new-gpt35")
         # Check if all key-value pairs in expected_output are present in actual_output (unable to determine created-datetime)
         for key, value in expected_update_output.items():
             assert key in actual_output
@@ -148,7 +148,7 @@ def test_update_connector_endpoint():
         assert False
 
 def test_delete_connector_endpoint():
-    conn_to_delete = "my-new-gpt4"
+    conn_to_delete = "my-new-gpt35"
     #check file exist first before deleting
     if check_file_exists(f"{EnvironmentVars.CONNECTORS_ENDPOINTS}/{slugify_id(conn_to_delete)}.json"):
         api_delete_endpoint(conn_to_delete)
@@ -177,8 +177,8 @@ def test_get_all_connector_endpoints_name():
     assert  api_read_connector_endpoints == retn_conn_name
 
 def test_create_connector():
-    name="My New GPT4"
-    connector_type="openai-gpt4"
+    name="My New GPT35"
+    connector_type="openai-gpt35"
     uri="1234"
     token="1234"
     max_calls_per_second=256
@@ -198,14 +198,14 @@ def test_create_connector():
     )
 
     # Create new connector
-    assert api_create_connectors(["my-new-gpt4", "my-new-gpt4", "my-new-gpt4"])
+    assert api_create_connectors(["my-new-gpt35", "my-new-gpt35", "my-new-gpt35"])
 
     # Delete file after assertion
-    api_delete_endpoint("my-new-gpt4")
+    api_delete_endpoint("my-new-gpt35")
 
 def test_create_connectors():
-    name="My New GPT4"
-    connector_type="openai-gpt4"
+    name="My New GPT35"
+    connector_type="openai-gpt35"
     uri="1234"
     token="1234"
     max_calls_per_second=256
@@ -225,10 +225,10 @@ def test_create_connectors():
     )
 
     # Create new connector
-    assert api_create_connector("my-new-gpt4")
+    assert api_create_connector("my-new-gpt35")
 
     # Delete file after assertion
-    api_delete_endpoint("my-new-gpt4")
+    api_delete_endpoint("my-new-gpt35")
 
 def test_get_all_connectors():
     expected_output = ['hf-llama2-13b-gptq', 'openai-gpt4', 'claude2', 'openai-gpt35', 'openai-gpt35-turbo-16k', 'hf-gpt2']
