@@ -19,7 +19,10 @@ from moonshot.src.connectors.connector_endpoint_arguments import (
 from moonshot.src.connectors.connector_manager import ConnectorManager
 from moonshot.src.redteaming.session.session_manager import SessionManager
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.redteaming.context_strategy.context_strategy_manager import ContextStrategyManager
+from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
+    ContextStrategyManager,
+)
+from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
@@ -753,41 +756,30 @@ def api_get_all_executors_names() -> list[str]:
 #     return read_results(results_filename)
 
 
-# def api_get_prompt_templates() -> list:
-#     """
-#     Gets a list of prompt templates.
-#     This static method retrieves a list of prompt templates available.
+def api_get_all_prompt_template_details() -> list[dict]:
+    """
+    Retrieves all available prompt template details and returns them as a list of dictionaries.
 
-#     Returns:
-#         list: A list of prompt templates.
-#     """
-#     return get_prompt_templates()
-
-
-# def api_get_prompt_template_names() -> list:
-#     """
-#     Gets a list of prompt template names.
-#     This method retrieves a list of prompt template names available.
-
-#     Returns:
-#         list: A list of prompt template names.
-#     """
-#     return get_prompt_template_names()
+    Returns:
+        list[dict]: A list of dictionaries, each representing the details of a prompt template.
+    """
+    return PromptTemplateManager.get_all_prompt_template_details()
 
 
-# def api_get_all_sessions() -> list:
-#     """
-#     This method retrieves a list of available sessions.
+def api_get_all_prompt_template_names() -> list[str]:
+    """
+    Retrieves all available prompt template names and returns them as a list.
 
-#     Returns:
-#         list: A list of available sessions. Each item in the list represents a session.
-#     """
-#     return get_all_sessions()
+    Returns:
+        list[str]: A list of prompt template names.
+    """
+    return PromptTemplateManager.get_all_prompt_template_names()
 
 
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
+
 
 def api_get_all_session_names() -> list[str]:
     """
@@ -815,7 +807,11 @@ def api_get_all_session_details() -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing the detailed metadata of a session.
     """
-    return [session_metadata.to_dict() for session_metadata in SessionManager.get_all_session_details()]
+
+    return [
+        session_metadata.to_dict()
+        for session_metadata in SessionManager.get_all_session_details()
+    ]
 
 
 def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
@@ -833,7 +829,10 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing a chat session associated with the specified session ID.
     """
-    return [chat_object.to_dict() for chat_object in SessionManager.get_session_chats_by_session_id(session_id)]
+    return [
+        chat_object.to_dict()
+        for chat_object in SessionManager.get_session_chats_by_session_id(session_id)
+    ]
 
 
 def api_create_session(
@@ -841,7 +840,7 @@ def api_create_session(
     description: str,
     endpoints: list,
     context_strategy: str = "",
-    prompt_template: str = ""
+    prompt_template: str = "",
 ) -> Session:
     """
     Creates a new session with the specified parameters and returns the session instance.
@@ -860,7 +859,13 @@ def api_create_session(
     Returns:
         Session: The newly created session instance.
     """
-    return SessionManager.create_session(name, description, endpoints, context_strategy, prompt_template)
+    return SessionManager.create_session(
+        name, description, endpoints, context_strategy, prompt_template
+    )
+
+
+def api_get_session(session_id: str) -> Session:
+    return Session(session_id=session_id)
 
 
 # delete_session
@@ -916,6 +921,7 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
     """
     SessionManager.update_context_strategy(session_id, context_strategy_name)
 
+
 # ------------------------------------------------------------------------------
 # Context Strategy APIs
 # ------------------------------------------------------------------------------
@@ -949,7 +955,7 @@ def api_delete_context_strategy(context_strategy_name: str) -> None:
     Returns:
         None: This method does not return a value, but it will remove the specified context strategy from the system.
     """
-    ContextStrategyManager.delete_context_strategy()
+    ContextStrategyManager.delete_context_strategy(context_strategy_name)
 
 
 def api_update_prompt_template(session_id: str, prompt_template_name: str) -> None:
