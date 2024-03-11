@@ -66,11 +66,11 @@ def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingCon
         "disable_existing_loggers": False,
         "formatters": {
             "default": {
-                "()": "web_api.logging_conf.ColorizedFormatter",
+                "()": "moonshot.integrations.web_api.logging_conf.ColorizedFormatter",
                 "format": cfg.log.format(),
             },
             "file_formatter": {
-                "()": "web_api.logging_conf.ColorizedFormatter",
+                "()": "moonshot.integrations.web_api.logging_conf.ColorizedFormatter",
                 "format": cfg.log.format(),
                 "disableColor": True
             },

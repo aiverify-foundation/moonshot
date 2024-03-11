@@ -1,5 +1,5 @@
 from abc import ABC
-from web_api.types.types import ExecutionInfo
+from ...types.types import ExecutionInfo
 
 class InterfaceBenchmarkCallbackHandler(ABC):
 
