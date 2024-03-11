@@ -2,14 +2,9 @@ import uvicorn
 import os
 import logging
 from dotenv import load_dotenv
-from threading import Thread
-
 from .types.types import UvicornRunArgs
-
 from .container import Container
 from .logging_conf import configure_app_logging, create_uvicorn_log_config
-from .queue.interface.queue_connection import InterfaceQueueConnection
-from .queue.queue_job_worker import QueueJobWorker
 from .app import create_app
 
 
@@ -22,8 +17,6 @@ def start_app():
     ENABLE_SSL = container.config.ssl.enabled()
     SSL_CERT_PATH = container.config.ssl.file_path()
     app = create_app(container.config)
-    # singleton_benchmark_test_queue: InterfaceQueueConnection = app.container.benchmarking_test_queue()
-    # singleton_benchmark_test_queue.subscribe(QueueJobWorker.run_benchmark_test)
     
     run_kwargs: UvicornRunArgs = {}
     run_kwargs['port'] = 5000

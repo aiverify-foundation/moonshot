@@ -10,7 +10,6 @@ from dependency_injector.wiring import providers
 from .container import Container
 from .routes.redteam import router as red_team_router
 from .routes.benchmark import router as benchmarking_router
-from .routes.dev_testing import router as dev_router
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,6 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     
     app.include_router(red_team_router)
     app.include_router(benchmarking_router)
-    app.include_router(dev_router)
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
