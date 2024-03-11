@@ -1,8 +1,8 @@
 import asyncio
 import uuid
 from typing import Any
-import moonshot.api as moonshot_api
-from web_api.schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
+from .... import api as moonshot_api
+from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..status_updater.webhook import Webhook
 from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..services.base_service import BaseService

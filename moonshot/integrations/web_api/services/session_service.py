@@ -3,7 +3,7 @@ from .base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_response_model import SessionMetadataModel
-import moonshot.api as moonshot_api
+from .... import api as moonshot_api
 
 
 class SessionService(BaseService):

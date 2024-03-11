@@ -1,4 +1,4 @@
-import moonshot.api as moonshot_api
+from .... import api as moonshot_api
 from dependency_injector.wiring import inject
 from ..services.benchmark_test_manager import BenchmarkTestManager
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
