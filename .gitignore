@@ -167,3 +167,6 @@ moonshot/data/connectors-endpoints/*.json
 moonshot/data/results/*.json
 moonshot/data/databases/*.db
 moonshot/data/sessions/*.json
+
+# dev settings
+.vscode/
