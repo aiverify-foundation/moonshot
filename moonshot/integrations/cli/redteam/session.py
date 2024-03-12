@@ -19,6 +19,8 @@ def new_session(args) -> None:
     name = args.name
     description = args.description
     endpoints = literal_eval(args.endpoints)
+    context_strategy = args.context_strategy
+    prompt_template = args.prompt_template
 
     # create a new session
     session_instance = Session(name, description, endpoints)
@@ -34,68 +36,68 @@ def new_session(args) -> None:
     update_chat_display()
 
 
-def end_session() -> None:
-    """
-    End the current session.
-    """
-    Session.current_session = None
+# def end_session() -> None:
+#     """
+#     End the current session.
+#     """
+#     Session.current_session = None
 
 
-def list_sessions() -> None:
-    """
-    List all available sessions.
-    """
-    session_list = api_get_all_sessions()
-    if session_list:
-        table = Table("No.", "Session ID", "Contains")
-        for session_index, session_data in enumerate(session_list, 1):
-            (
-                session_id,
-                session_name,
-                session_description,
-                session_created_epoch,
-                session_created_datetime,
-                session_endpoints,
-                session_metadata_file,
-                session_chats,
-                session_prompt_template,
-                session_context_strategy,
-                filename,
-            ) = session_data.values()
-            session_info = (
-                f"[red]id: {session_id}[/red]\n\nCreated: {session_created_datetime}"
-            )
+# def list_sessions() -> None:
+#     """
+#     List all available sessions.
+#     """
+#     session_list = api_get_all_sessions()
+#     if session_list:
+#         table = Table("No.", "Session ID", "Contains")
+#         for session_index, session_data in enumerate(session_list, 1):
+#             (
+#                 session_id,
+#                 session_name,
+#                 session_description,
+#                 session_created_epoch,
+#                 session_created_datetime,
+#                 session_endpoints,
+#                 session_metadata_file,
+#                 session_chats,
+#                 session_prompt_template,
+#                 session_context_strategy,
+#                 filename,
+#             ) = session_data.values()
+#             session_info = (
+#                 f"[red]id: {session_id}[/red]\n\nCreated: {session_created_datetime}"
+#             )
 
-            contains_info = f"[blue]{session_name}[/blue]\n{session_description}\n\n"
-            contains_info += f"[blue]Endpoints:[/blue]\n{session_endpoints}\n\n"
-            contains_info += f"[blue]Metadata file:[/blue]\n{session_metadata_file}\n\n"
-            contains_info += f"[blue]Chat IDs:[/blue]\n{session_chats}"
+#             contains_info = f"[blue]{session_name}[/blue]\n{session_description}\n\n"
+#             contains_info += f"[blue]Endpoints:[/blue]\n{session_endpoints}\n\n"
+#             contains_info += f"[blue]Metadata file:[/blue]\n{session_metadata_file}\n\n"
+#             contains_info += f"[blue]Chat IDs:[/blue]\n{session_chats}"
 
-            table.add_section()
-            table.add_row(str(session_index), session_info, contains_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no sessions found.[/red]")
+#             table.add_section()
+#             table.add_row(str(session_index), session_info, contains_info)
+#         console.print(table)
+#     else:
+#         console.print("[red]There are no sessions found.[/red]")
 
 
-def use_session(args) -> None:
-    """
-    Use or resume a session by specifying its session ID.
-    """
-    session_id = args.session_id
+# def use_session(args) -> None:
+#     """
+#     Use or resume a session by specifying its session ID.
+#     """
+#     session_id = args.session_id
 
-    # load a session
-    session_instance: Session = Session.load_session(session_id)
+#     # load a session
+#     session_instance: Session = Session.load_session(session_id)
 
-    # set the current session
-    Session.current_session = session_instance
-    print(
-        f"Using session: {session_instance.get_session_id()}. "
-        f"Session Chats: {session_instance.get_session_chats()}"
-    )
+#     # set the current session
+#     Session.current_session = session_instance
+#     print(
+#         f"Using session: {session_instance.get_session_id()}. "
+#         f"Session Chats: {session_instance.get_session_chats()}"
+#     )
 
-    # Display chat
-    update_chat_display()
+#     # Display chat
+#     update_chat_display()
 
 
 def update_chat_display() -> None:
@@ -147,16 +149,16 @@ def update_chat_display() -> None:
         console.print("[red]There are no active session.[/red]")
 
 
-# User session arguments
-use_session_args = cmd2.Cmd2ArgumentParser(
-    description="Use an existing red teaming session.",
-    epilog="Example:\n use_session 'my-session-1'",
-)
-use_session_args.add_argument(
-    "session_id",
-    type=str,
-    help="The ID of the session that you want to use",
-)
+# # User session arguments
+# use_session_args = cmd2.Cmd2ArgumentParser(
+#     description="Use an existing red teaming session.",
+#     epilog="Example:\n use_session 'my-session-1'",
+# )
+# use_session_args.add_argument(
+#     "session_id",
+#     type=str,
+#     help="The ID of the session that you want to use",
+# )
 
 # New session arguments
 new_session_args = cmd2.Cmd2ArgumentParser(
