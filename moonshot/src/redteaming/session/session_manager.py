@@ -1,6 +1,6 @@
 import glob
 from pathlib import Path
-from moonshot.src.redteaming.session.session import Session
+from moonshot.src.redteaming.session.session import Session, SessionMetadata
 from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.configs.env_variables import EnvironmentVars
 
@@ -56,7 +56,7 @@ class SessionManager:
         return Session.get_session_chats_by_session_id(session_id)
 
     @staticmethod
-    def get_all_session_details() -> list[Session]:
+    def get_all_session_details() -> list[SessionMetadata]:
         """
         Retrieves and returns the metadata for all sessions.
 
@@ -85,7 +85,6 @@ class SessionManager:
             list: A list of strings, each representing the name of a session
             file found in the session database directory.
         """
-        # TODO
         session_file_path = f"{EnvironmentVars.SESSIONS}"
         filepaths = [
             Path(fp).stem
@@ -117,7 +116,7 @@ class SessionManager:
         Session.send_prompt(session_id, user_prompt)
 
     @staticmethod
-    def update_prompt_template(session_id: str, prompt_template_tuple: tuple) -> None:
+    def update_prompt_template(session_id: str, prompt_template_name: str) -> None:
         """
         Updates the prompt template for a specific session.
 
@@ -126,27 +125,26 @@ class SessionManager:
         associated with the specified session ID using the provided prompt template tuple.
 
         Args:
-            session_id (str): The unique identifier of the session for which the prompt
-            template is to be updated.
-            prompt_template_tuple (tuple): The new prompt template tuple to be assigned to the session.
+            session_id (str): The unique identifier of the session for which the prompt template is to be updated.
+            prompt_template (str): The new prompt template tuple to be assigned to the session.
 
         Returns:
             None: This method does not return a value but updates the prompt template for the specified session.
         """
-        Session.update_prompt_template(session_id, prompt_template_tuple)
+        Session.update_prompt_template(session_id, prompt_template_name)
 
     @staticmethod
-    def update_context_strategy(session_id: str, context_strategy_name: tuple) -> None:
+    def update_context_strategy(session_id: str, context_strategy_name: str) -> None:
         """
         Updates the context strategy for a specific session.
 
         This method delegates the task of updating the context strategy for a session to the
-        `Session.update_context_strategy` method. It enables the modification of the context strategy
-        associated with the specified session ID using the provided context strategy name tuple.
+        `Session.update_context_strategy` method. It allows for modifying the context strategy
+        associated with the specified session ID using the provided context strategy name.
 
         Args:
             session_id (str): The unique identifier of the session for which the context strategy is to be updated.
-            context_strategy_name (tuple): The new context strategy name tuple to be assigned to the session.
+            context_strategy_name (str): The new context strategy name to be assigned to the session.
 
         Returns:
             None: This method does not return a value but updates the context strategy for the specified session.
