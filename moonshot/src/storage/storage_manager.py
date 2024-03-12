@@ -686,9 +686,86 @@ class StorageManager:
         return PromptTemplateInfoGenerator(pt_filepath)
 
     # ------------------------------------------------------------------------------
+    # Results APIs
+    # ------------------------------------------------------------------------------
+    @staticmethod
+    def create_result(res_id: str, res_info: dict) -> None:
+        """
+        Creates new result.
+
+        This method takes a result ID and a dictionary containing result information as input. It writes the result
+        information to a JSON file in the results directory. The file is named using the result ID.
+
+        Args:
+            res_id (str): The ID of the result.
+            res_info (dict): A dictionary containing the result information.
+
+        Returns:
+            None
+        """
+        res_filepath = StorageManager.get_executor_results_filepath(res_id)
+        with open(res_filepath, "w") as json_file:
+            json.dump(res_info, json_file, indent=2)
+
+    @staticmethod
+    def read_result(res_id: str) -> dict:
+        """
+        Reads result from a JSON file.
+
+        This method constructs the file path for the result using the result ID and the designated
+        directory for results. It then opens the result file in read mode and loads the JSON content
+        into a dictionary.
+
+        Args:
+            res_id (str): The ID of the result.
+
+        Returns:
+            dict: A dictionary containing the result information.
+        """
+        res_filepath = StorageManager.get_executor_results_filepath(res_id)
+        with open(res_filepath, "r", encoding="utf-8") as json_file:
+            res_info = json.load(json_file)
+        return res_info
+
+    @staticmethod
+    def delete_result(res_id: str) -> None:
+        """
+        Deletes result.
+
+        This method constructs the file path for the result using the result ID and the designated
+        directory for results. It then deletes the result file.
+
+        Args:
+            res_id (str): The ID of the result.
+
+        Returns:
+            None
+        """
+        # Delete result
+        res_path = Path(StorageManager.get_executor_results_filepath(res_id))
+
+        try:
+            res_path.unlink(missing_ok=True)
+
+        except FileNotFoundError:
+            pass
+
+    @staticmethod
+    def get_results() -> Iterator[str]:
+        """
+        Retrieves all result IDs.
+
+        This method retrieves all the result IDs from the designated directory for results. It uses the glob module
+        to find all JSON files in the directory, and then extracts the result IDs from the file names.
+
+        Returns:
+            Iterator[str]: An iterator that yields the IDs of all results.
+        """
+        return glob.iglob(f"{EnvironmentVars.RESULTS}/*.json")
+
+    # ------------------------------------------------------------------------------
     # Redteaming APIs
     # ------------------------------------------------------------------------------
-
     @staticmethod
     def get_session_database_filepath(se_id: str) -> str:
         """

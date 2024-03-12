@@ -12,14 +12,17 @@ from moonshot.src.benchmarking.executors.benchmark_executor_types import (
 from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.benchmarking.results.result import Result
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.connectors.connector_manager import ConnectorManager
-from moonshot.src.redteaming.session.session_manager import SessionManager
+from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
+    ContextStrategyManager,
+)
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.redteaming.context_strategy.context_strategy_manager import ContextStrategyManager
+from moonshot.src.redteaming.session.session_manager import SessionManager
 
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
@@ -730,27 +733,69 @@ def api_get_all_executors_names() -> list[str]:
     return executors_names
 
 
-# def api_get_all_results() -> list:
-#     """
-#     This function retrieves a list of available results.
+# ------------------------------------------------------------------------------
+# Results APIs
+# ------------------------------------------------------------------------------
+def api_read_result(res_id: str) -> dict:
+    """
+    Reads a result and returns its information.
 
-#     Returns:
-#         list: A list of available results. Each item in the list represents a result.
-#     """
-#     return get_all_results()
+    This function takes a result ID as input, reads the corresponding database file from the storage manager,
+    and returns a dictionary containing the result's information.
+
+    Args:
+        res_id (str): The ID of the result.
+
+    Returns:
+        dict: A dictionary containing the result's information.
+    """
+    return Result.read_result(res_id).to_dict()
 
 
-# def api_read_results(results_filename: str) -> dict:
-#     """
-#     This function retrieves the contents of a results file.
+def api_read_results(res_ids: list[str]) -> list[dict]:
+    """
+    This function takes a list of result ids as input and reads the corresponding results.
 
-#     Args:
-#         results_filename: The file name of the results.
+    Args:
+        res_ids (list[str]): The list of ids of the results to be read.
 
-#     Returns:
-#         dict: A dictionary of results.
-#     """
-#     return read_results(results_filename)
+    Returns:
+        list[dict]: A list of dictionaries, each representing a result.
+    """
+    return [Result.read_result(res_id).to_dict() for res_id in res_ids]
+
+
+def api_delete_result(res_id: str) -> None:
+    """
+    This function takes a result id as input and deletes the corresponding result.
+
+    Args:
+        res_id (str): The id of the result to be deleted.
+    """
+    Result.delete_result(res_id)
+
+
+def api_get_all_results() -> list[dict]:
+    """
+    This function retrieves all available results and returns them as a list of dictionaries. Each dictionary
+    represents a result and contains its information.
+
+    Returns:
+        list[dict]: A list of dictionaries, each representing a result.
+    """
+    _, results = Result.get_available_results()
+    return [result.to_dict() for result in results]
+
+
+def api_get_all_results_name() -> list[str]:
+    """
+    This function retrieves all available result names and returns them as a list.
+
+    Returns:
+        list[str]: A list of result names.
+    """
+    results_name, _ = Result.get_available_results()
+    return results_name
 
 
 # def api_get_prompt_templates() -> list:
@@ -789,6 +834,7 @@ def api_get_all_executors_names() -> list[str]:
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
 
+
 def api_get_all_session_names() -> list[str]:
     """
     Retrieves and returns the names (IDs) of all sessions currently managed.
@@ -815,7 +861,10 @@ def api_get_all_session_details() -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing the detailed metadata of a session.
     """
-    return [session_metadata.to_dict() for session_metadata in SessionManager.get_all_session_details()]
+    return [
+        session_metadata.to_dict()
+        for session_metadata in SessionManager.get_all_session_details()
+    ]
 
 
 def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
@@ -833,7 +882,10 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing a chat session associated with the specified session ID.
     """
-    return [chat_object.to_dict() for chat_object in SessionManager.get_session_chats_by_session_id(session_id)]
+    return [
+        chat_object.to_dict()
+        for chat_object in SessionManager.get_session_chats_by_session_id(session_id)
+    ]
 
 
 def api_create_session(
@@ -841,7 +893,7 @@ def api_create_session(
     description: str,
     endpoints: list,
     context_strategy: str = "",
-    prompt_template: str = ""
+    prompt_template: str = "",
 ) -> Session:
     """
     Creates a new session with the specified parameters and returns the session instance.
@@ -860,7 +912,9 @@ def api_create_session(
     Returns:
         Session: The newly created session instance.
     """
-    return SessionManager.create_session(name, description, endpoints, context_strategy, prompt_template)
+    return SessionManager.create_session(
+        name, description, endpoints, context_strategy, prompt_template
+    )
 
 
 # delete_session
@@ -915,6 +969,7 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
         None: This method does not return a value but updates the context strategy for the specified session.
     """
     SessionManager.update_context_strategy(session_id, context_strategy_name)
+
 
 # ------------------------------------------------------------------------------
 # Context Strategy APIs
