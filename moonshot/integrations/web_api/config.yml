@@ -1,0 +1,22 @@
+app_environment: ${APP_ENVIRONMENT:DEV}
+
+log:
+  level: ${LOG_LEVEL:DEBUG}
+  format: "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s"
+  log_file_path: "moonshot/integrations/web_api/log/web_api.log"
+  log_file_max_size: 5242880
+  log_file_backup_count: 3
+
+asyncio:
+  monitor_task: false
+
+ssl:
+  enabled: ${ENABLE_SSL:false}
+  file_path: "./web_api/certs"
+  cert_filename: "cert.pem"
+  key_filename: "key.pem"
+
+cors:
+  enabled: false
+  allowed_origins: "http://localhost:3000"
+

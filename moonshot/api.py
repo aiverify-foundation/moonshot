@@ -12,18 +12,21 @@ from moonshot.src.benchmarking.executors.benchmark_executor_types import (
 from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.benchmarking.results.result import Result
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.connectors.connector_manager import ConnectorManager
-from moonshot.src.redteaming.session.session_manager import SessionManager
+from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
+    ContextStrategyManager,
+)
 from moonshot.src.redteaming.session.session import Session
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
 from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
-
+from moonshot.src.redteaming.session.session_manager import SessionManager
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
 # ------------------------------------------------------------------------------
@@ -733,22 +736,31 @@ def api_get_all_executors_names() -> list[str]:
     return executors_names
 
 
-# def api_get_all_results() -> list:
-#     """
-#     This function retrieves a list of available results.
+# ------------------------------------------------------------------------------
+# Results APIs
+# ------------------------------------------------------------------------------
+def api_read_result(res_id: str) -> dict:
+    """
+    Reads a result and returns its information.
 
-#     Returns:
-#         list: A list of available results. Each item in the list represents a result.
-#     """
-#     return get_all_results()
+    This function takes a result ID as input, reads the corresponding database file from the storage manager,
+    and returns a dictionary containing the result's information.
+
+    Args:
+        res_id (str): The ID of the result.
+
+    Returns:
+        dict: A dictionary containing the result's information.
+    """
+    return Result.read_result(res_id).to_dict()
 
 
-# def api_read_results(results_filename: str) -> dict:
-#     """
-#     This function retrieves the contents of a results file.
+def api_read_results(res_ids: list[str]) -> list[dict]:
+    """
+    This function takes a list of result ids as input and reads the corresponding results.
 
-#     Args:
-#         results_filename: The file name of the results.
+    Args:
+        res_ids (list[str]): The list of ids of the results to be read.
 
 #     Returns:
 #         dict: A dictionary of results.
@@ -779,6 +791,7 @@ def api_get_all_prompt_template_names() -> list[str]:
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
+
 
 
 def api_get_all_session_names() -> list[str]:
@@ -834,7 +847,6 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
         for chat_object in SessionManager.get_session_chats_by_session_id(session_id)
     ]
 
-
 def api_create_session(
     name: str,
     description: str,
@@ -865,10 +877,21 @@ def api_create_session(
 
 
 def api_get_session(session_id: str) -> Session:
+    """
+    Retrieves and returns a session object based on the provided session ID.
+
+    This API endpoint fetches a session object identified by the session ID and returns it to the caller.
+    It is useful for obtaining detailed information about a specific session within the system.
+
+    Args:
+        session_id (str): The unique identifier of the session to retrieve.
+
+    Returns:
+        Session: The session object associated with the specified session ID.
+    """
     return Session(session_id=session_id)
 
 
-# delete_session
 def api_delete_session(session_id: str) -> None:
     """
     Deletes a session based on the provided session ID.
@@ -920,6 +943,7 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
         None: This method does not return a value but updates the context strategy for the specified session.
     """
     SessionManager.update_context_strategy(session_id, context_strategy_name)
+
 
 
 # ------------------------------------------------------------------------------
