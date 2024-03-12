@@ -22,11 +22,9 @@ from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
-    ContextStrategyManager,
-)
 from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.session.session_manager import SessionManager
+
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
 # ------------------------------------------------------------------------------
@@ -762,10 +760,43 @@ def api_read_results(res_ids: list[str]) -> list[dict]:
     Args:
         res_ids (list[str]): The list of ids of the results to be read.
 
-#     Returns:
-#         dict: A dictionary of results.
-#     """
-#     return read_results(results_filename)
+    Returns:
+        list[dict]: A list of dictionaries, each representing a result.
+    """
+    return [Result.read_result(res_id).to_dict() for res_id in res_ids]
+
+
+def api_delete_result(res_id: str) -> None:
+    """
+    This function takes a result id as input and deletes the corresponding result.
+
+    Args:
+        res_id (str): The id of the result to be deleted.
+    """
+    Result.delete_result(res_id)
+
+
+def api_get_all_results() -> list[dict]:
+    """
+    This function retrieves all available results and returns them as a list of dictionaries. Each dictionary
+    represents a result and contains its information.
+
+    Returns:
+        list[dict]: A list of dictionaries, each representing a result.
+    """
+    _, results = Result.get_available_results()
+    return [result.to_dict() for result in results]
+
+
+def api_get_all_results_name() -> list[str]:
+    """
+    This function retrieves all available result names and returns them as a list.
+
+    Returns:
+        list[str]: A list of result names.
+    """
+    results_name, _ = Result.get_available_results()
+    return results_name
 
 
 def api_get_all_prompt_template_details() -> list[dict]:
@@ -791,7 +822,6 @@ def api_get_all_prompt_template_names() -> list[str]:
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
-
 
 
 def api_get_all_session_names() -> list[str]:
@@ -846,6 +876,7 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
         chat_object.to_dict()
         for chat_object in SessionManager.get_session_chats_by_session_id(session_id)
     ]
+
 
 def api_create_session(
     name: str,
@@ -943,7 +974,6 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
         None: This method does not return a value but updates the context strategy for the specified session.
     """
     SessionManager.update_context_strategy(session_id, context_strategy_name)
-
 
 
 # ------------------------------------------------------------------------------
