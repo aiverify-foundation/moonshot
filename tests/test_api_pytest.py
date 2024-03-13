@@ -45,7 +45,7 @@ def slugify_id(name):
     return slugify(name, lowercase=True)
 
 def fetch_files_in_dir(dir_path):
-    return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+    return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f)) and f != "placeholder"]
 
 
 # ------------------------------------------------------------------------------
