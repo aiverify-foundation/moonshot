@@ -1,4 +1,3 @@
-import pytest
 import json
 import os
 from slugify import slugify
@@ -174,7 +173,7 @@ def test_get_all_connector_endpoints_name():
             conn_info = json.load(json_file)
             retn_conn_name.append(conn_info['id'])
         
-    assert  api_read_connector_endpoints == retn_conn_name
+    assert set(api_read_connector_endpoints) == set(retn_conn_name)
 
 def test_create_connector():
     name="My New GPT35"
@@ -232,10 +231,7 @@ def test_create_connectors():
 
 def test_get_all_connectors():
     expected_output = ['hf-llama2-13b-gptq', 'openai-gpt4', 'claude2', 'openai-gpt35', 'openai-gpt35-turbo-16k', 'hf-gpt2']
-    #need to modify if got more
-    print(api_get_all_connectors())
-    print(expected_output)
-    assert expected_output == api_get_all_connectors()
+    assert set(expected_output) == set(api_get_all_connectors())
     
 # ------------------------------------------------------------------------------
 # Cookbook APIs Test
