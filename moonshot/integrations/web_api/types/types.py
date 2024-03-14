@@ -24,12 +24,11 @@ SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
 
 ExecutiResultItem = dict[str, float]
 ExecutionResults = dict[str, list[ExecutiResultItem]]
-class ExecutionInfo(TypedDict):
+
+class CookbookTestRunProgress(TypedDict):
     exec_id: str
     exec_name: str
     exec_type: str
-    bm_max_progress_per_cookbook: int
-    bm_max_progress_per_recipe: int
     curr_duration: int
     curr_status: str
     curr_cookbook_index: int
@@ -39,7 +38,7 @@ class ExecutionInfo(TypedDict):
     curr_recipe_name: str
     curr_recipe_total: int
     curr_progress: int
-    curr_results: dict[str, list[ExecutionResults]]
+    curr_error_messages: List[str]
 
 class UvicornLoggingConfig(TypedDict):
     version: int
