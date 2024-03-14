@@ -87,8 +87,9 @@ class ConnectorManager:
         Updates an existing endpoint with new information.
 
         This method takes a ConnectorEndpointArguments object as input, which contains the new information for the
-        endpoint. It first deletes the existing endpoint with the same ID, then creates a new endpoint with the
-        updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+        endpoint. Instead of deleting and recreating the endpoint, it directly updates the existing endpoint file
+        with the new information. If the operation fails for any reason, an exception is raised and the error
+        is printed.
 
         Args:
             ep_args (ConnectorEndpointArguments): An object containing the new information for the endpoint.
@@ -97,9 +98,11 @@ class ConnectorManager:
             Exception: If there is an error during the update operation.
         """
         try:
-            ep_id = slugify(ep_args.name, lowercase=True)
-            ConnectorManager.delete_endpoint(ep_id)
-            ConnectorManager.create_endpoint(ep_args)
+            # Convert the endpoint arguments to a dictionary
+            ep_info = ep_args.to_dict()
+
+            # Write the updated endpoint information to the file
+            StorageManager.create_connector_endpoint(ep_args.id, ep_info)
 
         except Exception as e:
             print(f"Failed to update endpoint: {str(e)}")

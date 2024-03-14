@@ -73,19 +73,17 @@ class StorageManager:
 
         This method deletes the endpoint information from a JSON file specified by the endpoint ID. It constructs
         the file path using the endpoint ID and the designated directory for connector endpoints. The method
-        then deletes the JSON file. If the file does not exist, it does nothing.
+        then deletes the JSON file. This ensures that the endpoint information is permanently removed.
 
         Args:
             ep_id (str): The ID of the endpoint.
+
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         # Delete connector endpoint
         ep_path = Path(f"{EnvironmentVars.CONNECTORS_ENDPOINTS}/{ep_id}.json")
-
-        try:
-            ep_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        ep_path.unlink()
 
     @staticmethod
     def get_connector_endpoints() -> Iterator[str]:
@@ -193,20 +191,19 @@ class StorageManager:
         """
         Deletes a cookbook.
 
-        This method takes a cookbook ID as input, constructs the file path using the cookbook ID and the designated
-        directory for cookbooks, and deletes the corresponding JSON file. If the file does not exist, it does nothing.
+        This method takes a cookbook ID as input, deletes the corresponding JSON file from the directory specified by
+        `EnvironmentVars.COOKBOOKS`. If the operation fails for any reason, an exception is raised and the
+        error is printed.
 
         Args:
-            cb_id (str): The ID of the cookbook.
+            cb_id (str): The ID of the cookbook to delete.
+
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         # Delete cookbook
         cb_path = Path(f"{EnvironmentVars.COOKBOOKS}/{cb_id}.json")
-
-        try:
-            cb_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        cb_path.unlink()
 
     @staticmethod
     def get_cookbooks() -> Iterator[str]:
@@ -266,23 +263,21 @@ class StorageManager:
     @staticmethod
     def delete_recipe(rec_id: str) -> None:
         """
-        Deletes the recipe information from a JSON file.
+        Deletes a recipe.
 
-        This method deletes the recipe information from a JSON file specified by the recipe ID. It constructs
-        the file path using the recipe ID and the designated directory for recipes. The method
-        then deletes the JSON file.
+        This method takes a recipe ID as input, deletes the corresponding JSON file from the directory specified by
+        `EnvironmentVars.RECIPES`. If the operation fails for any reason, an exception is raised and the
+        error is printed.
 
         Args:
-            rec_id (str): The ID of the recipe.
+            rec_id (str): The ID of the recipe to delete.
+
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         # Delete recipe
         rec_path = Path(f"{EnvironmentVars.RECIPES}/{rec_id}.json")
-
-        try:
-            rec_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        rec_path.unlink()
 
     @staticmethod
     def get_recipes() -> Iterator[str]:
@@ -320,29 +315,21 @@ class StorageManager:
     @staticmethod
     def delete_metric(met_id: str) -> None:
         """
-        Deletes a metric by its ID.
+        Deletes a metric.
 
-        This method deletes a metric by its ID. It first constructs the file path for the metric using the metric ID
-        and the designated directory for metrics. It then attempts to delete the file at this path.
-        If the file does not exist, it does nothing.
+        This method takes a metric ID as input, deletes the corresponding Python file from the directory specified by
+        `EnvironmentVars.METRICS`. If the operation fails for any reason, an exception is raised and the
+        error is printed.
 
         Args:
             met_id (str): The ID of the metric to delete.
 
-        Returns:
-            None
-
         Raises:
-            FileNotFoundError: If the file does not exist.
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         # Delete metric
         met_path = Path(f"{EnvironmentVars.METRICS}/{met_id}.py")
-
-        try:
-            met_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        met_path.unlink()
 
     @staticmethod
     def get_metrics() -> Iterator[str]:
@@ -512,20 +499,16 @@ class StorageManager:
 
         This method removes the executor's database by deleting the database file in the executor's directory
         using the be_id.
-        If the database file does not exist, it does nothing.
+        If the database file does not exist, it raises a FileNotFoundError.
 
         Args:
             be_id (str): The benchmark executor ID of the database to be removed.
 
-        Returns:
-            None
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         db_path = Path(StorageManager.get_executor_database_filepath(be_id))
-        try:
-            db_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        db_path.unlink()
 
     @staticmethod
     def remove_executor_results(be_id: str) -> None:
@@ -534,20 +517,16 @@ class StorageManager:
 
         This method removes the executor's results by deleting the results file in the executor's directory
         using the be_id.
-        If the results file does not exist, it does nothing.
+        If the results file does not exist, it raises a FileNotFoundError.
 
         Args:
             be_id (str): The benchmark executor ID of the results to be removed.
 
-        Returns:
-            None
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         res_path = Path(StorageManager.get_executor_results_filepath(be_id))
-        try:
-            res_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        res_path.unlink()
 
     @staticmethod
     def get_executors() -> Iterator[str]:
@@ -730,25 +709,21 @@ class StorageManager:
     @staticmethod
     def delete_result(res_id: str) -> None:
         """
-        Deletes result.
+        Deletes a result.
 
-        This method constructs the file path for the result using the result ID and the designated
-        directory for results. It then deletes the result file.
+        This method takes a result ID as input, deletes the corresponding JSON file from the directory specified by
+        `EnvironmentVars.RESULTS`. If the operation fails for any reason, an exception is raised and the
+        error is printed.
 
         Args:
-            res_id (str): The ID of the result.
+            res_id (str): The ID of the result to delete.
 
-        Returns:
-            None
+        Raises:
+            Exception: If there is an error during file deletion or any other operation within the method.
         """
         # Delete result
         res_path = Path(StorageManager.get_executor_results_filepath(res_id))
-
-        try:
-            res_path.unlink(missing_ok=True)
-
-        except FileNotFoundError:
-            pass
+        res_path.unlink()
 
     @staticmethod
     def get_results() -> Iterator[str]:
