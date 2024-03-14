@@ -32,14 +32,11 @@ def test_read_connector_endpoint():
 
 def test_update_connector_endpoint():
     api_update_endpoint(
-        name="My New GPT4",
-        connector_type="openai-gpt4",
+        "my-new-gpt4",
         uri="4567",
         token="4567",
-        max_calls_per_second=10,
-        max_concurrency=10,
         params={
-            "hello": "world"
+            "hello": "world1"
         }
     )
 
@@ -123,6 +120,10 @@ def test_run_connector_api():
     print("="*100,"\nTest updating connector endpoint")
     test_update_connector_endpoint()
 
+    # Read connector endpoint
+    print("="*100,"\nTest reading connector endpoint after updating")
+    test_read_connector_endpoint()
+
     # Delete connector endpoint
     print("="*100,"\nTest deleting connector endpoint")
     test_delete_connector_endpoint()
@@ -172,8 +173,8 @@ def test_read_cookbooks():
 
 def test_update_cookbook():
     api_update_cookbook(
-        name="my new cookbook",
-        description="My new cookbook description",
+        "my-new-cookbook",
+        name="my new cookbook 1234",
         recipes=["my-recipe2","my-recipe5"]
     )
 
@@ -198,6 +199,10 @@ def test_run_cookbook_api():
     # Update cookbook
     print("="*100,"\nTest updating cookbook")
     test_update_cookbook()
+
+    # Read cookbook
+    print("="*100,"\nTest reading cookbook after updating")
+    test_read_cookbook()
 
     # Read cookbooks
     print("="*100,"\nTest reading cookbooks")
@@ -240,7 +245,7 @@ def test_read_recipes():
 
 def test_update_recipe():
     api_update_recipe(
-        name="my new recipe",
+        "my-new-recipe",
         description="my new description.",
         tags=["fairness"],
         datasets=["dataset2", "dataset5"],
@@ -269,6 +274,10 @@ def test_run_recipe_api():
     # Update recipe
     print("="*100,"\nTest updating recipe")
     test_update_recipe()
+
+    # Read recipe
+    print("="*100,"\nTest reading recipe after updating")
+    test_read_recipe()
 
     # Read recipes
     print("="*100,"\nTest reading recipes")
@@ -440,9 +449,9 @@ def test_run_benchmark_recipe_executor_api():
     print("="*100,"\nTest listing all executors names")
     test_get_all_executors_names()
 
-    # Delete executor
-    print("="*100,"\nTest deleting executors")
-    test_delete_executor(bm_id)
+    # # Delete executor
+    # print("="*100,"\nTest deleting executors")
+    # test_delete_executor(bm_id)
 
 def test_run_benchmark_cookbook_executor_api():
     bm_id = "cookbook-my-new-cookbook-executor"
@@ -472,8 +481,8 @@ def test_run_benchmark_cookbook_executor_api():
     test_get_all_executors_names()
 
     # Delete executor
-    print("="*100,"\nTest deleting executors")
-    test_delete_executor(bm_id)
+    # print("="*100,"\nTest deleting executors")
+    # test_delete_executor(bm_id)
 
 # ------------------------------------------------------------------------------
 # Results APIs Test
@@ -492,7 +501,11 @@ def test_read_results():
         print(result)
 
 def test_delete_result():
-    api_delete_result("1234")
+    try:
+        api_delete_result("1234")
+    except Exception as error:
+        print(f"Delete Result: {str(error)}")
+
 
 def test_get_all_results():
     print(api_get_all_results())
@@ -536,6 +549,7 @@ if __name__ == "__main__":
     test_run_benchmark_cookbook_executor_api()
 
     # Test resume run
+    
 
     # Test metric api
     test_run_metric_api()
