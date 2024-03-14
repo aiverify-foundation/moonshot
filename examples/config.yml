@@ -1,0 +1,21 @@
+asyncio:
+  monitor_task: false
+
+ssl:
+  enabled: false
+  file_path: "/path/to/your/ssl/certs"
+  cert_filename: "cert.pem"
+  key_filename: "key.pem"
+
+log:
+  logging: true
+  level: DEBUG
+  format: "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s"
+  log_file_path: "/path/to/write/moonshot.logs"
+  log_file_max_size: 5242880
+  log_file_backup_count: 3
+
+cors:
+  enabled: false
+  allowed_origins: "http://localhost:3000"
+
