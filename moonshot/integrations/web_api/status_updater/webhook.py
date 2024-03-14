@@ -2,11 +2,10 @@ import json
 import logging
 import requests
 
-from ..services.base_service import BaseService
 from .interface.benchmark_callback_handler import InterfaceBenchmarkCallbackHandler
 from ..types.types import CookbookTestRunProgress
 
-class Webhook(InterfaceBenchmarkCallbackHandler, BaseService):
+class Webhook(InterfaceBenchmarkCallbackHandler):
 
   @staticmethod
   def on_executor_update(progress_data: CookbookTestRunProgress) -> None:
