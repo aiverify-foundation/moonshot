@@ -27,7 +27,7 @@ def start_app():
     
     run_kwargs: UvicornRunArgs = {}
     run_kwargs['port'] = 5000
-    run_kwargs['host'] = "127.0.0.1"
+    run_kwargs['host'] = "0.0.0.0"
     run_kwargs['log_config'] = create_uvicorn_log_config(container.config)
     if ENABLE_SSL:
         if not SSL_CERT_PATH:
