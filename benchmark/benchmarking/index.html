@@ -919,17 +919,24 @@
 <li>Recipe: Consists minimally of a benchmark dataset and the scoring mechnism(s) to be used to score it. (Prompt template is optional)</li>
 <li>Cookbook: A curated set of recipes to run.</li>
 </ul>
-<p><strong>To run a cookbook via CLI</strong>
-1. Activate <strong>Interactive Mode</strong>: <code>python -m moonshot cli interactive</code>
-2. Run the help command for run_cookbook to better understand its usage.
+<p><strong>To run a cookbook via CLI</strong></p>
+<ol>
+<li>
+<p>Activate <strong>Interactive Mode</strong>: <code>python -m moonshot cli interactive</code></p>
+</li>
+<li>
+<p>Run the help command for run_cookbook to better understand its usage.
     <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>run_cookbook --help
 </span></code></pre></div>
     To run one prompt from the cookbook 'bbq-lite-age-cookbook' on the LLM endpoint 'my-openai-gpt35', enter:
     <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>run_cookbook -n 1 &quot;[&#39;bbq-lite-age-cookbook&#39;]&quot; &quot;[&#39;my-openai-gpt35&#39;]&quot;
-</span></code></pre></div>
-3. Results will be displayed as a table and stored in <code>src/moonshot/data/results/</code></p>
-<div class="language-text highlight"><pre><span></span><code>![Benchmark results](../res/benchmark-results.png)
-</code></pre></div>
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Results will be displayed as a table and stored in <code>src/moonshot/data/results/</code></p>
+<p><img alt="Benchmark results" src="../../res/benchmark-results.png" /></p>
+</li>
+</ol>
 <p><strong>Running Evaluation Benchmarks - Commands</strong>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>list_cookbooks<span class="w">        </span>Get<span class="w"> </span>a<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>available<span class="w"> </span>cookbooks.
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>view_cookbook<span class="w">         </span>View<span class="w"> </span>contents<span class="w"> </span>of<span class="w"> </span>a<span class="w"> </span>cookbook.
