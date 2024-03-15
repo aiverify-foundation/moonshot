@@ -1,4 +1,8 @@
 from dependency_injector import containers, providers
+
+from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
+
+from .status_updater.webhook import Webhook
 from .services.benchmarking_service import BenchmarkingService
 from .services.session_service import SessionService
 from .services.benchmark_test_manager import BenchmarkTestManager
@@ -32,11 +36,18 @@ class Container(containers.DeclarativeContainer):
         }
     })
 
-    benchmark_test_manager: providers.Singleton[BenchmarkTestManager] = providers.Singleton(BenchmarkTestManager)
+    benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(BenchmarkTestState)
+    webhook: providers.Singleton[Webhook] = providers.Singleton(
+        Webhook,
+        benchmark_test_state=benchmark_test_state)
+    benchmark_test_manager: providers.Singleton[BenchmarkTestManager] = providers.Singleton(
+        BenchmarkTestManager,
+        benchmark_test_state=benchmark_test_state,
+        webhook=webhook)
     session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
     benchmarking_service: providers.Factory[BenchmarkingService] = providers.Factory(
         BenchmarkingService,
-        benchmark_test_manager=benchmark_test_manager
+        benchmark_test_manager=benchmark_test_manager,
     )
 
     wiring_config = containers.WiringConfiguration(modules=[
