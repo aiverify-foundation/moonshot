@@ -9,6 +9,7 @@ from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..services.benchmarking_service import BenchmarkingService
+from ..services.benchmark_test_state import BenchmarkTestState, BenchmarkTaskInfo
 from ..services.utils.exceptions_handler import SessionException
 from typing import Optional
 
@@ -198,9 +199,9 @@ async def cookbook_executor(
     cookbook_executor_data: CookbookExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        task_id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
-        if task_id:
-            return {"message": "Cookbook execution task created", "task_id": task_id}
+        id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
+        if id:
+            return {"message": "Cookbook execution task created", "id": id}
         raise HTTPException(status_code=500, detail="Failed to execute cookbook")
     except SessionException as e:
         raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
@@ -219,3 +220,24 @@ async def recipe_executor(
         raise HTTPException(status_code=500, detail=f"Unable to execute Recipe: {e}")
     
 
+@router.get("/v1/executors/status")
+@inject
+def get_execution_progress(
+    benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
+    try:
+        state = benchmark_state.get_state()
+        for _, item in state.items():
+            item.pop("async_task", None)
+            # Flatten the "status" dictionary into the task dictionary
+            if "status" in item:
+                status = item.pop("status")
+                item.update(status)  
+        
+        return state
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")    

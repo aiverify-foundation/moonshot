@@ -105,8 +105,8 @@ class Recipe:
         Updates an existing recipe with new information.
 
         This method takes a RecipeArguments object as input, which contains the new information for the
-        recipe. It first deletes the existing recipe with the same ID, then creates a new recipe with the
-        updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+        recipe. It directly updates the existing recipe file with the new information. If the operation fails
+        for any reason, an exception is raised and the error is printed.
 
         Args:
             rec_args (RecipeArguments): An object containing the new information for the recipe.
@@ -115,9 +115,11 @@ class Recipe:
             Exception: If there is an error during the update operation.
         """
         try:
-            rec_id = slugify(rec_args.name, lowercase=True)
-            Recipe.delete_recipe(rec_id)
-            Recipe.create_recipe(rec_args)
+            # Convert the recipe arguments to a dictionary
+            rec_info = rec_args.to_dict()
+
+            # Write the updated recipe information to the file
+            StorageManager.create_recipe(rec_args.id, rec_info)
 
         except Exception as e:
             print(f"Failed to update recipe: {str(e)}")

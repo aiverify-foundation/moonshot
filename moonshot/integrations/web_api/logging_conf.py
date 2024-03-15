@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from typing import Literal
 from dependency_injector import providers
 from .types.types import UvicornLoggingConfig
-
+import os
 
 
 COLORS = {
@@ -41,11 +41,16 @@ class ColorizedFormatter(logging.Formatter):
             message = super().format(record)
             return color + message + COLORS["ENDC"]
 
+def create_logging_dir(log_file_path: str):
+    if not os.path.exists(log_file_path):
+        os.makedirs(log_file_path)
 
 def configure_app_logging(cfg: providers.Configuration):
+    if cfg.log.logging():
+        create_logging_dir(cfg.log.log_file_path())
 
     file_handler = RotatingFileHandler(
-        filename=cfg.log.log_file_path(),
+        filename=cfg.log.log_file_path()+"/web_api.log",
         maxBytes=cfg.log.log_file_max_size(),
         backupCount=cfg.log.log_file_backup_count()
     )
@@ -61,6 +66,9 @@ def configure_app_logging(cfg: providers.Configuration):
     logging.info("Logging is configured.")
 
 def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingConfig:
+    if cfg.log.logging():
+        create_logging_dir(cfg.log.log_file_path())
+
     return {
         "version": 1,
         "disable_existing_loggers": False,
@@ -78,7 +86,7 @@ def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingCon
         "handlers": {
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
-                "filename": cfg.log.log_file_path(),
+                "filename": cfg.log.log_file_path()+"/web_api.log",
                 "maxBytes": cfg.log.log_file_max_size(),
                 "backupCount": cfg.log.log_file_backup_count(),
                 "formatter": "file_formatter",

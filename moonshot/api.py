@@ -25,11 +25,10 @@ from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
 from moonshot.src.redteaming.session.session import Session
 from moonshot.src.redteaming.session.session_manager import SessionManager
 
+
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
 # ------------------------------------------------------------------------------
-
-
 def api_set_environment_variables(env_vars: dict) -> None:
     """
     Sets the environment variables for the current session.
@@ -108,15 +107,7 @@ def api_read_endpoint(ep_id: str) -> dict:
     return ConnectorManager.read_endpoint(ep_id).to_dict()
 
 
-def api_update_endpoint(
-    name: str,
-    connector_type: str,
-    uri: str,
-    token: str,
-    max_calls_per_second: int,
-    max_concurrency: int,
-    params: dict,
-) -> None:
+def api_update_endpoint(ep_id: str, **kwargs) -> None:
     """
     Updates an existing endpoint in the connector manager.
 
@@ -125,29 +116,31 @@ def api_update_endpoint(
     ConnectorManager's update_endpoint method to update the endpoint.
 
     Args:
-        name (str): The name of the endpoint.
-        connector_type (str): The type of the connector.
-        uri (str): The URI for the connector.
-        token (str): The token for the connector.
-        max_calls_per_second (int): The maximum number of API calls allowed per second.
-        max_concurrency (int): The maximum number of concurrent API calls.
-        params (dict): Additional parameters for the connector.
+        kwargs: A dictionary of arguments for the endpoint. Possible keys are:
+            name (str): The name of the endpoint.
+            connector_type (str): The type of the connector.
+            uri (str): The URI for the connector.
+            token (str): The token for the connector.
+            max_calls_per_second (int): The maximum number of API calls allowed per second.
+            max_concurrency (int): The maximum number of concurrent API calls.
+            params (dict): Additional parameters for the connector.
 
     Returns:
         None
     """
-    connector_endpoint_args = ConnectorEndpointArguments(
-        id="",
-        name=name,
-        connector_type=connector_type,
-        uri=uri,
-        token=token,
-        max_calls_per_second=max_calls_per_second,
-        max_concurrency=max_concurrency,
-        params=params,
-        created_date="",
-    )
-    ConnectorManager.update_endpoint(connector_endpoint_args)
+    # Check if the endpoint exists
+    try:
+        existing_endpoint = ConnectorManager.read_endpoint(ep_id)
+    except Exception:
+        raise RuntimeError(f"Endpoint with ID '{ep_id}' does not exist")
+
+    # Update the fields of the existing endpoint with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_endpoint, key):
+            setattr(existing_endpoint, key, value)
+
+    # Update the endpoint
+    ConnectorManager.update_endpoint(existing_endpoint)
 
 
 def api_delete_endpoint(ep_id: str) -> None:
@@ -310,34 +303,40 @@ def api_read_cookbooks(cb_ids: list[str]) -> list[dict]:
     return [Cookbook.read_cookbook(cb_id).to_dict() for cb_id in cb_ids]
 
 
-def api_update_cookbook(
-    name: str,
-    description: str,
-    recipes: list[str],
-) -> None:
+def api_update_cookbook(cb_id: str, **kwargs) -> None:
     """
-    Updates an existing cookbook with new information.
+    Updates an existing cookbook in the cookbook manager.
 
-    This function takes a cookbook ID and a CookbookArguments object as input, which contains the new information for
-    the cookbook. It first deletes the existing cookbook with the same ID, then creates a new cookbook with the
-    updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+    This function updates an existing cookbook in the cookbook manager using the provided cookbook details.
+    It first checks if the cookbook exists, then updates the fields of the existing cookbook with the provided kwargs,
+    and finally calls the Cookbook's update_cookbook method to update the cookbook.
 
     Args:
         cb_id (str): The ID of the cookbook to update.
-        name (str): The new name of the cookbook.
-        description (str): The new description of the cookbook.
-        recipes (list[str]): The new list of recipes for the cookbook.
+        kwargs: A dictionary of arguments for the cookbook. Possible keys are:
+            name (str): The name of the cookbook.
+            description (str): The description of the cookbook.
+            recipes (list[str]): The list of recipes in the cookbook.
 
     Raises:
-        Exception: If there is an error during the update operation.
+        RuntimeError: If the cookbook with the provided ID does not exist.
+
+    Returns:
+        None
     """
-    cb_args = CookbookArguments(
-        id="",
-        name=name,
-        description=description,
-        recipes=recipes,
-    )
-    Cookbook.update_cookbook(cb_args)
+    # Check if the cookbook exists
+    try:
+        existing_cookbook = Cookbook.read_cookbook(cb_id)
+    except Exception:
+        raise RuntimeError(f"Cookbook with ID '{cb_id}' does not exist")
+
+    # Update the fields of the existing cookbook with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_cookbook, key):
+            setattr(existing_cookbook, key, value)
+
+    # Update the cookbook
+    Cookbook.update_cookbook(existing_cookbook)
 
 
 def api_delete_cookbook(cb_id: str) -> None:
@@ -463,39 +462,43 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
     return [Recipe.read_recipe(rec_id).to_dict() for rec_id in rec_ids]
 
 
-def api_update_recipe(
-    name: str,
-    description: str,
-    tags: list[str],
-    datasets: list[str],
-    prompt_templates: list[str],
-    metrics: list[str],
-) -> None:
+def api_update_recipe(rec_id: str, **kwargs) -> None:
     """
-    Updates an existing recipe with new information.
+    Updates an existing recipe in the recipe manager.
 
-    This function takes a set of arguments for a recipe, including its name, description, tags, datasets,
-    prompt templates, and metrics. It first deletes the existing recipe with the same ID, then creates a new
-    recipe with the updated information.
+    This function updates an existing recipe in the recipe manager using the provided recipe details.
+    It first checks if the recipe exists, then updates the fields of the existing recipe with the provided kwargs,
+    and finally calls the Recipe's update_recipe method to update the recipe.
 
     Args:
-        name (str): The name of the recipe.
-        description (str): The description of the recipe.
-        tags (list[str]): The tags associated with the recipe.
-        datasets (list[str]): The datasets used in the recipe.
-        prompt_templates (list[str]): The prompt templates used in the recipe.
-        metrics (list[str]): The metrics used in the recipe.
+        rec_id (str): The ID of the recipe to update.
+        kwargs: A dictionary of arguments for the recipe. Possible keys are:
+            name (str): The name of the recipe.
+            description (str): The description of the recipe.
+            tags (list[str]): The tags associated with the recipe.
+            datasets (list[str]): The datasets used in the recipe.
+            prompt_templates (list[str]): The prompt templates used in the recipe.
+            metrics (list[str]): The metrics used in the recipe.
+
+    Raises:
+        RuntimeError: If the recipe with the provided ID does not exist.
+
+    Returns:
+        None
     """
-    rec_args = RecipeArguments(
-        id="",
-        name=name,
-        description=description,
-        tags=tags,
-        datasets=datasets,
-        prompt_templates=prompt_templates,
-        metrics=metrics,
-    )
-    Recipe.update_recipe(rec_args)
+    # Check if the recipe exists
+    try:
+        existing_recipe = Recipe.read_recipe(rec_id)
+    except Exception:
+        raise RuntimeError(f"Recipe with ID '{rec_id}' does not exist")
+
+    # Update the fields of the existing recipe with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_recipe, key):
+            setattr(existing_recipe, key, value)
+
+    # Update the endpoint
+    Recipe.update_recipe(existing_recipe)
 
 
 def api_delete_recipe(rec_id: str) -> None:
