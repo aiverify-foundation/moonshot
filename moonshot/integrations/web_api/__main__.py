@@ -13,7 +13,6 @@ def start_app():
     container: Container = Container()
     #use our own config.yml 
     config_file= dotenv_values().get("MS_WEB_API_CONFIG")
-    print(config_file)
     if config_file is None:
         container.config.from_default()
     else:
