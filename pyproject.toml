@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "openai==0.28.1",
-    "python-slugify==8.0.1",
+    "python-slugify==8.0.4",
     "bert-score==0.3.13",
     "nltk==3.8.1",
     "py-readability-metrics==1.4.5",
