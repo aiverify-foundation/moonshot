@@ -18,11 +18,11 @@ from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.connectors.connector_manager import ConnectorManager
+from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.session.session_manager import SessionManager
 
 # ------------------------------------------------------------------------------
@@ -940,7 +940,7 @@ def api_delete_session(session_id: str) -> None:
     SessionManager.delete_session(session_id)
 
 
-def api_send_prompt(session_id: str, user_prompt: str) -> None:
+async def api_send_prompt(session_id: str, user_prompt: str) -> None:
     """
     Sends a user-defined prompt to a specific session.
 
@@ -955,7 +955,7 @@ def api_send_prompt(session_id: str, user_prompt: str) -> None:
     Returns:
         None: This method does not return a value but triggers the sending of the user prompt to the specified session.
     """
-    SessionManager.send_prompt(session_id, user_prompt)
+    await SessionManager.send_prompt(session_id, user_prompt)
 
 
 def api_update_context_strategy(session_id: str, context_strategy_name: str) -> None:
