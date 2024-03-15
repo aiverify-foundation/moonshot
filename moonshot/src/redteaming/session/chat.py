@@ -65,21 +65,23 @@ class Chat:
         chat_id: str = "",
     ):
         if chat_id:
+            db_chat_id = chat_id.replace("-", "_")
             # There is an existing chat
-            self.chat_id = chat_id
+            self.chat_id = db_chat_id
             self.endpoint = endpoint
-            self.chat_history = self.load_chat_history(session_db_instance, chat_id)
+            self.chat_history = self.load_chat_history(session_db_instance, db_chat_id)
         else:
             # No existing chat, create new chat
             created_datetime = created_datetime.replace("-", "_")
             chat_id = f"{slugify(endpoint)}_{created_datetime}"
-            StorageManager.create_chat_history_storage(chat_id, session_db_instance)
+            db_chat_id = chat_id.replace("-", "_")
+            StorageManager.create_chat_history_storage(db_chat_id, session_db_instance)
             chat_meta_tuple = (chat_id, endpoint, created_epoch, created_datetime)
             StorageManager.create_chat_metadata_record(
                 chat_meta_tuple, session_db_instance
             )
 
-            self.chat_id = chat_id
+            self.chat_id = db_chat_id
             self.endpoint = endpoint
             self.chat_history = [ChatRecord]
 
