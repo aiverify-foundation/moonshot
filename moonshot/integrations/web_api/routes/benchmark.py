@@ -206,6 +206,21 @@ async def cookbook_executor(
     except SessionException as e:
         raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
     
+
+@router.post("/v1/execute/cookbook/{executor_id}")
+@inject
+async def update_cookbook_executor(
+    executor_id: str,
+    cancel: bool = False,  # Added query parameter 'cancel' with a default value of False
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        if cancel:
+            await benchmarking_service.cancel_executor(executor_id)
+            return {"message": f"Cookbook execution task {executor_id} cancelled"}
+        raise HTTPException(status_code=500, detail="Failed to execute cookbook")
+    except SessionException as e:
+        raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
+    
 @router.post("/v1/execute/recipe")
 @inject
 async def recipe_executor(
@@ -226,6 +241,8 @@ def get_execution_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
     try:
         state = benchmark_state.get_state()
+        if not state:
+            return {}
         for _, item in state.items():
             item.pop("async_task", None)
             # Flatten the "status" dictionary into the task dictionary
