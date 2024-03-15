@@ -6,7 +6,7 @@ from moonshot.integrations.web_api.types.types import CookbookTestRunProgress
 class BenchmarkTaskInfo(TypedDict):
     async_task: asyncio.Task[Any]
     status: CookbookTestRunProgress | None
-  
+
 class BenchmarkTestState(BaseService):
     state: dict[str, BenchmarkTaskInfo] = {}
 
@@ -23,5 +23,8 @@ class BenchmarkTestState(BaseService):
         self.state[executor_id]["async_task"].cancel();
         self.logger.debug(f"Task {executor_id} has been cancelled")
 
-    def update_state(self, updates: CookbookTestRunProgress):
+    def update_state(self, updates: CookbookTestRunProgress) -> None:
         self.state[updates["exec_id"]]["status"] = updates
+
+    def get_state(self) -> dict[str, BenchmarkTaskInfo]:
+        return self.state

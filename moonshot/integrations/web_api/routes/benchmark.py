@@ -9,6 +9,7 @@ from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..services.benchmarking_service import BenchmarkingService
+from ..services.benchmark_test_state import BenchmarkTestState, BenchmarkTaskInfo
 from ..services.utils.exceptions_handler import SessionException
 from typing import Optional
 
@@ -219,3 +220,19 @@ async def recipe_executor(
         raise HTTPException(status_code=500, detail=f"Unable to execute Recipe: {e}")
     
 
+@router.get("/v1/status/execute")
+@inject
+def get_execution_progress(
+    benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
+    try:
+        state = benchmark_state.get_state()
+        for task in state.values():
+            task.pop("async_task", None) 
+        return state
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")    
