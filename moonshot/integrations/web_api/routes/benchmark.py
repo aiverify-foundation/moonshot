@@ -198,9 +198,9 @@ async def cookbook_executor(
     cookbook_executor_data: CookbookExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        task_id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
-        if task_id:
-            return {"message": "Cookbook execution task created", "task_id": task_id}
+        id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
+        if id:
+            return {"message": "Cookbook execution task created", "id": id}
         raise HTTPException(status_code=500, detail="Failed to execute cookbook")
     except SessionException as e:
         raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
