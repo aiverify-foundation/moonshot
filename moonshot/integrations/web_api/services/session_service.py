@@ -64,9 +64,8 @@ class SessionService(BaseService):
             return True
         return False
     
-    # TODO - get all prompt template api seems missing
     @exception_handler
     def get_prompt_templates(self):
-        self.logger.error("get_prompt_templates not implemented")
-        return []
+        templates = moonshot_api.api_get_all_prompt_template_details()
+        return templates
 

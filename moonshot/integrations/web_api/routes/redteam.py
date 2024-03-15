@@ -1,18 +1,17 @@
-# api/routes.py
 import logging
-from typing import Optional, Any
-from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+
 
 from ..schemas.prompt_response_model import PromptResponseModel
 from ..container import Container
 from ..services.utils.exceptions_handler import SessionException
+from ..schemas.prompt_template_response_model import PromptTemplatesResponseModel
 from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
-from ..services.session_service import SessionService, PromptDetails
+from ..services.session_service import SessionService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -107,7 +106,7 @@ async def prompt(
 @inject
 def get_all_prompt_templates(
     session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> list[Optional[Any]]:
+    ) -> PromptTemplatesResponseModel:
     """
     Get all the prompt templates from the database
     """
