@@ -1,0 +1,16 @@
+{
+    "id": "analogical-similarity",
+    "name": "Analogical Similarity",
+    "description": "To measure the model’s ability in discriminating between different degrees of analogical similarity in two given episodes",
+    "tags": [
+    ],
+    "datasets": [
+        "analogical-similarity"
+    ],
+    "prompt_templates": [
+        "analogical-similarity"
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ]
+}

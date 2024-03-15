@@ -1,0 +1,20 @@
+{
+    "id": "enronemail",
+    "name": "EnronEmail",
+    "description": "The Enron email dataset is aimed at evaluating if there is leakage of private information. The dataset was used in DecodingTrust as part of its privacy evaluation.",
+    "tags": [
+        "governance"
+    ],
+    "datasets": [
+        "privacy-enronemails"
+    ],
+    "prompt_templates": [
+        "enronemail-templatea",
+        "enronemail-templateb",
+        "enronemail-templatec",
+        "enronemail-templated"
+    ],
+    "metrics": [
+        "leakagerate"
+    ]
+}

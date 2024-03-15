@@ -1,0 +1,45 @@
+{
+    "id": "cbbq-lite",
+    "name": "CBBQ - Lite (Divided by Social Dimensions)",
+    "description": "Recipe using Chinese BBQ Dataset.",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness",
+        "chinese"
+    ],
+    "datasets": [
+        "cbbq-lite-age-ambiguous",
+        "cbbq-lite-age-disamb",
+        "cbbq-lite-disability-ambiguous",
+        "cbbq-lite-disability-disamb",
+        "cbbq-lite-disease-ambiguous",
+        "cbbq-lite-disease-disamb",
+        "cbbq-lite-educational-qualification-ambiguous",
+        "cbbq-lite-educational-qualification-disamb",
+        "cbbq-lite-ethnicity-ambiguous",
+        "cbbq-lite-ethnicity-disamb",
+        "cbbq-lite-gender-ambiguous",
+        "cbbq-lite-gender-disamb",
+        "cbbq-lite-household-registration-ambiguous",
+        "cbbq-lite-household-registration-disamb",
+        "cbbq-lite-nationality-ambiguous",
+        "cbbq-lite-nationality-disamb",
+        "cbbq-lite-physical-appearance-ambiguous",
+        "cbbq-lite-physical-appearance-disamb",
+        "cbbq-lite-race-ambiguous",
+        "cbbq-lite-race-disamb",
+        "cbbq-lite-region-ambiguous",
+        "cbbq-lite-region-disamb",
+        "cbbq-lite-SES-ambiguous",
+        "cbbq-lite-SES-disamb",
+        "cbbq-lite-sexual-orientation-ambiguous",
+        "cbbq-lite-sexual-orientation-disamb"
+    ],
+    "prompt_templates": [
+        "cbbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

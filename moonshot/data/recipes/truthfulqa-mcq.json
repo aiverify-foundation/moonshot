@@ -1,0 +1,16 @@
+{
+    "id": "truthfulqa-mcq",
+    "name": "TruthfulQA (MCQ)",
+    "description": "TruthfulQA aims to measure the truthfulness of a model. This is a MCQ version.",
+    "tags": [
+    ],
+    "datasets": [
+        "truthfulqa-mcq"
+    ],
+    "prompt_templates": [
+        "truthfulqa-template2"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

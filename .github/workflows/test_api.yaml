@@ -1,0 +1,44 @@
+name: Run pytest on pull request
+
+on:
+  pull_request:
+    branches:
+      - dev_main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: dev_main
+          fetch-depth: 0 
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create a openai-gpt35 endpoint
+        run: |
+            echo '{
+                "type": "openai-gpt35",
+                "name": "my-openai-gpt35",
+                "uri": "", 
+                "token": "${{ secrets.OPENAI_GPT35_TOKEN }}",
+                "max_calls_per_second": 100,
+                "max_concurrency": 100,
+                "params": {
+                    "timeout": 600,
+                    "allow_retries": true,
+                    "num_of_retries": 3
+                }
+            }' > moonshot/data/connectors/my-openai-gpt35.json
+
+      - name: Run Pytest
+        run: pytest tests/test_api_pytest.py

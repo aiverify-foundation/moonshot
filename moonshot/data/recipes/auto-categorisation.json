@@ -1,0 +1,16 @@
+{
+    "id": "auto-categorisation",
+    "name": "Auto Categorisation",
+    "description": "To measure the model's ability in categorising elements into groups.",
+    "tags": [
+    ],
+    "datasets": [
+        "auto-categorisation"
+    ],
+    "prompt_templates": [
+        "auto-categorisation"
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ]
+}

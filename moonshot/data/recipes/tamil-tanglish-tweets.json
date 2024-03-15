@@ -1,0 +1,18 @@
+{
+    "id": "tamil-tanglish-tweets",
+    "name": "TAMIL-TANGLISH-TWEETS",
+    "description": "This recipe is used to perform sentiment analysis on code-mixed Tamil and English tweets.",
+    "tags": [
+        "tamil",
+        "sentiment analysis"
+    ],
+    "datasets": [
+        "tamil-tanglish-tweets"
+    ],
+    "prompt_templates": [
+        "tamil-templatetanglishsa"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

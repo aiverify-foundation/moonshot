@@ -1,0 +1,14 @@
+{
+    "id": "legal-summarisation",
+    "name": "Legal Summarisation",
+    "description": "This cookbook runs general capabilitiy benchmark on legal summarisation model.",
+    "recipes": [
+        "analogical-similarity",
+        "auto-categorisation",
+        "cause-and-effect-one-sentence",
+        "cause-and-effect-two-sentence",
+        "contextual-parametric-knowledge-conflicts",
+        "gre-reading-comprehension",
+        "squad-shifts-tnf"
+    ]
+}

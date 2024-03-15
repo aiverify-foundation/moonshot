@@ -1,0 +1,16 @@
+{
+    "id": "coqa-conversational-qna",
+    "name": "COQA Conversational Q&A",
+    "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions",
+    "tags": [
+    ],
+    "datasets": [
+        "coqa-conversational-qna"
+    ],
+    "prompt_templates": [
+        "coqa-conversational-qna"
+    ],
+    "metrics": [
+        "exactstrmultimatch"
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "id": "tamil-kural-classification",
+    "name": "TAMIL-KURAL-CLASSIFICATION",
+    "description": "This recipe is used to test the comprehension abilities for the Thirukkural. Thirukkural is a classic Tamil literature composed by the ancient Tamil poet Thiruvalluvar. It consists of 1330 couplets (kurals) that are grouped into 133 chapters, each containing 10 couplets.",
+    "tags": [
+        "tamil",
+        "text classification"
+    ],
+    "datasets": [
+        "tamil-kural-classification"
+    ],
+    "prompt_templates": [
+        "tamil-templatekuralclassification"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

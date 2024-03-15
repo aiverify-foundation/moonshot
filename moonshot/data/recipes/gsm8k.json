@@ -1,0 +1,16 @@
+{
+    "id": "gsm8k",
+    "name": "GSM8K",
+    "description": "To measure model's ability in solvinggrade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations.",
+    "tags": [
+    ],
+    "datasets": [
+        "gsm8k"
+    ],
+    "prompt_templates": [
+        "gsm8k-template1"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

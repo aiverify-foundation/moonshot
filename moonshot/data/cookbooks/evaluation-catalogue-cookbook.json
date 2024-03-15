@@ -1,0 +1,24 @@
+{
+    "id": "evaluation-catalogue-cookbook",
+    "name": "IMDA's LLM Evaluation Catalogue",
+    "description": "This is a test cookbook for evaluation catalogue.",
+    "recipes": [
+        "truthfulqa-mcq",
+        "bbq-ambiguous",
+        "real-toxicity-prompts-completion",
+        "fairness-uciadult",
+        "enron-email",
+        "advglue-mnli-adv",
+        "advglue-mnli-benign",
+        "advglue-mnlimm-adv",
+        "advglue-mnlimm-benign",
+        "advglue-qnli-adv",
+        "advglue-qnli-benign",
+        "advglue-qqp-adv",
+        "advglue-qqp-benign",
+        "advglue-rte-adv",
+        "advglue-rte-benign",
+        "advglue-sst2-adv",
+        "advglue-sst2-benign"
+    ]
+}

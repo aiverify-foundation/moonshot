@@ -1,0 +1,16 @@
+{
+    "id": "cause-and-effect-one-sentence",
+    "name": "Cause and Effect (One Sentence)",
+    "description": "To measure the model's ability in understanding cause and effect.",
+    "tags": [
+    ],
+    "datasets": [
+        "cause-and-effect-one-sentence"
+    ],
+    "prompt_templates": [
+        "cause-and-effect-one-sentence"
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ]
+}

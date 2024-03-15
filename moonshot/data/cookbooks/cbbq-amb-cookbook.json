@@ -1,0 +1,22 @@
+{
+    "id": "cbbq-amb-cookbook",
+    "name": "CBBQ (Ambiguous)",
+    "description": "This is a cookbook that consists all the ambiguous questions from CBBQ.",
+    "recipes": [
+        "cbbq-lite-educational-qualification-amb",
+        "cbbq-lite-disease-amb",
+        "cbbq-lite-ethnicity-amb",
+        "cbbq-lite-nationality-amb",
+        "cbbq-lite-gender-amb",
+        "cbbq-lite-physical-appearance-amb",
+        "cbbq-lite-region-amb",
+        "cbbq-lite-race-amb",
+        "cbbq-lite-age-amb",
+        "cbbq-lite-race-amb",
+        "cbbq-lite-race-amb",
+        "cbbq-lite-disability-amb",
+        "cbbq-lite-SES-amb",
+        "cbbq-lite-sexual-orientation-amb",
+        "cbbq-lite-household-registration-amb"
+    ]
+}
