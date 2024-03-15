@@ -220,14 +220,19 @@ async def recipe_executor(
         raise HTTPException(status_code=500, detail=f"Unable to execute Recipe: {e}")
     
 
-@router.get("/v1/status/execute")
+@router.get("/v1/executors/status")
 @inject
 def get_execution_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
     try:
         state = benchmark_state.get_state()
-        for task in state.values():
-            task.pop("async_task", None) 
+        for _, item in state.items():
+            item.pop("async_task", None)
+            # Flatten the "status" dictionary into the task dictionary
+            if "status" in item:
+                status = item.pop("status")
+                item.update(status)  
+        
         return state
     except SessionException as e:
         if e.error_code == "FileNotFound":
