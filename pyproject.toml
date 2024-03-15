@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "moonshot"
-version = "0.11.2"
+version = "0.1.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -54,6 +54,7 @@ all = [
 
 [project.urls]
 Repository = "https://github.com/moonshot-admin/moonshot"
+Documentation = "https://moonshot-admin.github.io/moonshot/"
 Issues = "https://github.com/moonshot-admin/moonshot/issues"
 
 [tool.hatch.metadata]

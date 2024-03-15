@@ -83,7 +83,7 @@ To run Moonshot in Interactive Mode:
 $ python -m moonshot cli interactive
 ```
 
-Additional instructions on CLI is located [here](#).
+Additional instructions on CLI can be found in the [documentation](https://moonshot-admin.github.io/moonshot/).
 
 ## License
 Licensed under [Apache Software License 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
