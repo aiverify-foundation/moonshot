@@ -82,6 +82,7 @@ async def create(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.post("/v1/sessions/{session_id}/prompt")
 @inject
 async def prompt(
@@ -131,8 +132,9 @@ async def set_prompt_template(
     Select a prompt template for the current session
     """
     try:
-        result = session_service.select_prompt_template(session_id,prompt_template_name)
-        return {"success": result}
+        # rely on exception for now. TODO - ms lib to return or raise feedback
+        session_service.select_prompt_template(session_id,prompt_template_name)
+        return {"success": True }
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -153,8 +155,67 @@ async def unset_prompt_template(
     Remove prompt template from the current session
     """
     try:
-        result = session_service.select_prompt_template(session_id,"")
-        return {"success": result}
+        # rely on exception for now. TODO - ms lib to return or raise feedback
+        session_service.select_prompt_template(session_id,"")
+        return {"success": True }
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.get("/v1/context_strategies")
+@inject
+def get_all_context_strategies(
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> list[str]:
+    try:
+        return session_service.get_ctx_strategies()
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.put("/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
+@inject
+async def set_context_strategy(
+    session_id: str,
+    ctx_strategy_name: str,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, bool]:
+
+    try:
+        # rely on exception for now. TODO - ms lib to return or raise feedback
+        session_service.select_ctx_strategy(session_id, ctx_strategy_name)
+        return {"success": True }
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.delete("/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
+@inject
+async def unset_context_strategy(
+    session_id: str,
+    ctx_strategy_name: str = '',
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, bool]:
+
+    try:
+        # rely on exception for now. TODO - ms lib to return or raise feedback
+        session_service.select_ctx_strategy(session_id, "")
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)

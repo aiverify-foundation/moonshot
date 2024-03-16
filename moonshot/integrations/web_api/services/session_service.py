@@ -1,3 +1,4 @@
+from typing import Any
 from ..types.types import PromptDetails, SessionChats
 from .base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
@@ -59,13 +60,20 @@ class SessionService(BaseService):
         return all_chats_dict
 
     @exception_handler
-    def select_prompt_template(self, session_id: str, prompt_template_name: str = '') -> bool:
-        if moonshot_api.api_update_prompt_template(session_id,prompt_template_name):
-            return True
-        return False
+    def select_prompt_template(self, session_id: str, prompt_template_name: str = ''):
+        moonshot_api.api_update_prompt_template(session_id,prompt_template_name)
     
     @exception_handler
-    def get_prompt_templates(self):
+    def get_prompt_templates(self) -> list[dict[str, Any]]:
         templates = moonshot_api.api_get_all_prompt_template_details()
         return templates
-
+    
+    @exception_handler
+    def get_ctx_strategies(self) -> list[str]:
+        strategies = moonshot_api.api_get_all_context_strategy_names()
+        return strategies
+    
+    @exception_handler
+    def select_ctx_strategy(self, session_id: str, ctx_strategy_name: str) -> None:
+        moonshot_api.api_update_context_strategy(session_id, ctx_strategy_name)
+    
