@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
 
+from ..types.types import BenchmarkCollectionType
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..schemas.endpoint_create_dto import EndpointCreateDTO
@@ -9,7 +10,7 @@ from ..container import Container
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..services.benchmarking_service import BenchmarkingService
-from ..services.benchmark_test_state import BenchmarkTestState, BenchmarkTaskInfo
+from ..services.benchmark_test_state import BenchmarkTestState
 from ..services.utils.exceptions_handler import SessionException
 from typing import Optional
 
@@ -193,51 +194,28 @@ def update_cookbook(
         else:
             raise HTTPException(status_code=500, detail=f"Failed to update cookbook: {e.msg}")    
 
-@router.post("/v1/execute/cookbook")
+@router.post("/v1/benchmarks")
 @inject
-async def cookbook_executor(
-    cookbook_executor_data: CookbookExecutorCreateDTO,
+async def benchmark_executor(
+    type: BenchmarkCollectionType,
+    data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        id = await benchmarking_service.execute_cookbook(cookbook_executor_data)
+        if type is BenchmarkCollectionType.COOKBOOK:
+            id = await benchmarking_service.execute_cookbook(data)
+        elif type is BenchmarkCollectionType.RECIPE:
+            id = await benchmarking_service.execute_recipe(data)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid query parameter: type")
         if id:
-            return {"message": "Cookbook execution task created", "id": id}
-        raise HTTPException(status_code=500, detail="Failed to execute cookbook")
+            return {"message": "Execution task created", "id": id}
     except SessionException as e:
-        raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
+        raise HTTPException(status_code=500, detail=f"Unable to create and execute benchmark: {e}")
     
 
-@router.post("/v1/execute/cookbook/{executor_id}")
+@router.get("/v1/benchmarks/status")
 @inject
-async def update_cookbook_executor(
-    executor_id: str,
-    cancel: bool = False,  # Added query parameter 'cancel' with a default value of False
-    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
-    try:
-        if cancel:
-            await benchmarking_service.cancel_executor(executor_id)
-            return {"message": f"Cookbook execution task {executor_id} cancelled"}
-        raise HTTPException(status_code=500, detail="Failed to execute cookbook")
-    except SessionException as e:
-        raise HTTPException(status_code=500, detail=f"Unable to execute cookbook: {e}")
-    
-@router.post("/v1/execute/recipe")
-@inject
-async def recipe_executor(
-    recipe_executor_data: RecipeExecutorCreateDTO,
-    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
-    try:
-        task_id = await benchmarking_service.execute_recipe(recipe_executor_data)
-        if task_id:
-            return {"message": "Recipe execution task created", "task_id": task_id}
-        raise HTTPException(status_code=500, detail="Failed to execute Recipe")
-    except SessionException as e:
-        raise HTTPException(status_code=500, detail=f"Unable to execute Recipe: {e}")
-    
-
-@router.get("/v1/executors/status")
-@inject
-def get_execution_progress(
+def get_benchmark_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
     try:
         state = benchmark_state.get_state()
@@ -256,5 +234,4 @@ def get_execution_progress(
             raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")
         elif e.error_code == "ValidationError":
             raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
-        else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")    
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")

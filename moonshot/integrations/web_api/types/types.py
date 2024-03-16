@@ -1,7 +1,6 @@
-from logging import StreamHandler
-from logging.handlers import RotatingFileHandler
-from typing import Any, Literal, NotRequired, TextIO, Dict, List, Union
+from typing import Any, NotRequired, List
 from typing_extensions import TypedDict
+from enum import Enum
 
 class PromptDetails(TypedDict):
     chat_record_id: int
@@ -42,9 +41,9 @@ class CookbookTestRunProgress(TypedDict):
 
 class UvicornLoggingConfig(TypedDict):
     version: int
-    formatters: Dict[str, dict[str, Any]]
-    handlers: Dict[str, dict[str, Any]]
-    root: Dict[str, dict[str, Any] | list[str]]
+    formatters: dict[str, dict[str, Any]]
+    handlers: dict[str, dict[str, Any]]
+    root: dict[str, dict[str, Any] | list[str]]
     disable_existing_loggers: bool
 
 
@@ -54,4 +53,9 @@ class UvicornRunArgs(TypedDict, total=False):
     ssl_keyfile: NotRequired[str]
     ssl_certfile: NotRequired[str]
     log_config: NotRequired[UvicornLoggingConfig]
+
+
+class BenchmarkCollectionType(Enum):
+    COOKBOOK = "cookbook"
+    RECIPE = "recipe"
 

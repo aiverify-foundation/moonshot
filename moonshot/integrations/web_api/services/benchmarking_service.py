@@ -98,12 +98,17 @@ class BenchmarkingService(BaseService):
     async def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> str:
         id = self.benchmark_test_manager.schedule_test_task(cookbook_executor_data);
         return id
-    
+
     @exception_handler
     async def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
         async_task = self.benchmark_test_manager.schedule_test_task(recipe_executor_data);
         return async_task.get_name()
         
+    @exception_handler
+    def get_all_results(self) -> list[dict]:
+        results = moonshot_api.api_get_all_results()
+        return results
+
     @exception_handler
     @inject
     async def cancel_executor(self, executor_id: str) -> None:
