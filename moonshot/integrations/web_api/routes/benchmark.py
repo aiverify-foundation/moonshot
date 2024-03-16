@@ -234,4 +234,15 @@ def get_benchmark_progress(
             raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")
         elif e.error_code == "ValidationError":
             raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
+
+@router.get("/v1/results")
+@inject
+async def get_all_results(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        results = await benchmarking_service.get_all_results()
+        return results
+    except SessionException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Unable to find results file: {e.msg}")
+        else:
             raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")

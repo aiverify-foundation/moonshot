@@ -45,7 +45,7 @@ class Container(containers.DeclarativeContainer):
         benchmark_test_state=benchmark_test_state,
         webhook=webhook)
     session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
-    benchmarking_service: providers.Factory[BenchmarkingService] = providers.Factory(
+    benchmarking_service: providers.Singleton[BenchmarkingService] = providers.Singleton(
         BenchmarkingService,
         benchmark_test_manager=benchmark_test_manager,
     )

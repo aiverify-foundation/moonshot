@@ -94,7 +94,6 @@ class BenchmarkingService(BaseService):
         return cookbooks
     
     @exception_handler
-    @inject
     async def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> str:
         id = self.benchmark_test_manager.schedule_test_task(cookbook_executor_data);
         return id
@@ -110,6 +109,5 @@ class BenchmarkingService(BaseService):
         return results
 
     @exception_handler
-    @inject
     async def cancel_executor(self, executor_id: str) -> None:
         self.benchmark_test_manager.cancel_task(executor_id);
