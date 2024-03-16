@@ -884,7 +884,7 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
 def api_create_session(
     name: str,
     description: str,
-    endpoints: list,
+    endpoints: list[str],
     context_strategy: str = "",
     prompt_template: str = "",
 ) -> Session:

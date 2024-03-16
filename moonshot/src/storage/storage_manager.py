@@ -786,7 +786,8 @@ class StorageManager:
     # create session and chat metadata tables
     @staticmethod
     def create_session_storage(
-        session_metadata: tuple, db_instance: DBAccessor
+        session_metadata: tuple[str, str, str, str, float, str, str, str],
+        db_instance: DBAccessor,
     ) -> None:
         """
         Initializes the storage for a new session by creating necessary tables and inserting session metadata.
@@ -816,7 +817,9 @@ class StorageManager:
 
     # create chat history table
     @staticmethod
-    def create_chat_history_storage(chat_id: str, db_instance: DBAccessor) -> None:
+    def create_chat_history_storage(
+        chat_id: str, session_db_instance: DBAccessor
+    ) -> None:
         """
         Initializes the storage for chat history by creating a dedicated table for a specific chat session.
 
@@ -833,14 +836,14 @@ class StorageManager:
             RuntimeError: If the db_instance is not initialized, indicating that the database connection
             could not be established.
         """
-        if db_instance:
-            DatabaseManager.create_chat_history_table(db_instance, chat_id)
+        if session_db_instance:
+            DatabaseManager.create_chat_history_table(session_db_instance, chat_id)
         else:
             raise RuntimeError("db instance is not initialised.")
 
     @staticmethod
     def create_chat_metadata_record(
-        chat_metadata: tuple, db_instance: DBAccessor
+        chat_metadata: tuple[str, str, float, float], session_db_instance: DBAccessor
     ) -> None:
         """
         Inserts a new chat metadata record into the database.
@@ -858,16 +861,18 @@ class StorageManager:
             RuntimeError: If the db_instance is not initialized, indicating a failure to
             establish a database connection.
         """
-        if db_instance:
-            DatabaseManager.create_chat_metadata_record(db_instance, chat_metadata)
+        if session_db_instance:
+            DatabaseManager.create_chat_metadata_record(
+                session_db_instance, chat_metadata
+            )
 
         else:
             raise RuntimeError("db instance is not initialised.")
 
     # update session metadata with chat ids
     @staticmethod
-    def update_session_metata_with_chat_info(
-        chat_info: tuple, db_instance: DBAccessor
+    def update_session_metadata_with_chat_info(
+        chat_info: tuple[str, str], db_instance: DBAccessor
     ) -> None:
         """
         Updates session metadata with chat information in the database.
@@ -895,7 +900,9 @@ class StorageManager:
 
     # get session metadata
     @staticmethod
-    def get_session_metata(db_instance: DBAccessor) -> None:
+    def get_session_metadata(
+        db_instance: DBAccessor,
+    ) -> tuple[str, str, str, str, float, str, str, str]:
         """
         Retrieves and returns the session metadata from the database.
 
@@ -921,7 +928,7 @@ class StorageManager:
 
     # get all chat metadata in a session
     @staticmethod
-    def get_session_chat_metadata(db_instance: DBAccessor) -> None:
+    def get_session_chat_metadata(db_instance: DBAccessor) -> list[tuple]:
         """
         Retrieves all chat metadata associated with a session from the database.
 
@@ -934,7 +941,7 @@ class StorageManager:
             db_instance (DBAccessor): The database accessor instance used for reading the chat metadata.
 
         Returns:
-            A list of chat metadata records if available, None otherwise.
+            A list of chat metadata records in tuple if available, None otherwise.
 
         Raises:
             RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
@@ -949,7 +956,7 @@ class StorageManager:
     @staticmethod
     def get_chat_history_for_one_endpoint(
         chat_id: str, db_instance: DBAccessor
-    ) -> None:
+    ) -> list[tuple]:
         """
         Retrieves the chat history for a specific chat session from the database.
 
@@ -979,7 +986,9 @@ class StorageManager:
     # get a chat record for the prompt
     @staticmethod
     def create_chat_record(
-        chat_record_tuple: tuple, db_instance: DBAccessor, chat_id: str
+        chat_record_tuple: tuple[str, str, str, str, str, str, float, str],
+        db_instance: DBAccessor,
+        chat_id: str,
     ) -> None:
         """
         Inserts a new chat record into the database for a specific chat session.
@@ -1009,7 +1018,7 @@ class StorageManager:
 
     @staticmethod
     def update_prompt_template(
-        db_instance: DBAccessor, prompt_template_tuple: tuple
+        db_instance: DBAccessor, prompt_template_tuple: tuple[str, str]
     ) -> None:
         """
         Updates the prompt template in the database.
@@ -1030,7 +1039,7 @@ class StorageManager:
 
     @staticmethod
     def update_context_strategy(
-        db_instance: DBAccessor, context_strategy_tuple: tuple
+        db_instance: DBAccessor, context_strategy_tuple: tuple[str, str]
     ) -> None:
         """
         Updates the context strategy in the database.

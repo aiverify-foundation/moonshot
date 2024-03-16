@@ -8,6 +8,7 @@ from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateM
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
+from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.storage_manager import StorageManager
 from slugify import slugify
 
@@ -15,15 +16,15 @@ from slugify import slugify
 class ChatRecord:
     def __init__(
         self,
-        chat_record_id,
-        conn_id,
-        context_strategy,
-        prompt_template,
-        prompt,
-        prepared_prompt,
-        predicted_result,
-        duration,
-        prompt_time,
+        chat_record_id: str,
+        conn_id: str,
+        context_strategy: str,
+        prompt_template: str,
+        prompt: str,
+        prepared_prompt: str,
+        predicted_result: str,
+        duration: str,
+        prompt_time: str,
     ):
         self.chat_record_id = chat_record_id
         self.conn_id = conn_id
@@ -35,7 +36,7 @@ class ChatRecord:
         self.duration = duration
         self.prompt_time = prompt_time
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str]:
         """
         Converts the ChatRecord instance into a dictionary.
 
@@ -58,12 +59,13 @@ class ChatRecord:
 class Chat:
     def __init__(
         self,
-        session_db_instance,
-        endpoint: str = None,
-        created_epoch: float = None,
-        created_datetime: float = None,
+        session_db_instance: DBAccessor,
+        endpoint: str = "",
+        created_epoch: float = 0.0,
+        created_datetime: str = "",
         chat_id: str = "",
     ):
+        self.chat_history = []
         if chat_id:
             db_chat_id = chat_id.replace("-", "_")
             # There is an existing chat
@@ -72,11 +74,16 @@ class Chat:
             self.chat_history = self.load_chat_history(session_db_instance, db_chat_id)
         else:
             # No existing chat, create new chat
-            created_datetime = created_datetime.replace("-", "_")
+            created_datetime = str(created_datetime).replace("-", "_")
             chat_id = f"{slugify(endpoint)}_{created_datetime}"
             db_chat_id = chat_id.replace("-", "_")
             StorageManager.create_chat_history_storage(db_chat_id, session_db_instance)
-            chat_meta_tuple = (chat_id, endpoint, created_epoch, created_datetime)
+            chat_meta_tuple: tuple[str, str, float, float] = (
+                chat_id,
+                endpoint,
+                created_epoch,
+                created_datetime,
+            )
             StorageManager.create_chat_metadata_record(
                 chat_meta_tuple, session_db_instance
             )
@@ -85,7 +92,7 @@ class Chat:
             self.endpoint = endpoint
             self.chat_history = [ChatRecord]
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str]:
         """
         Converts the Chat instance into a dictionary.
 
@@ -99,6 +106,7 @@ class Chat:
         list_of_chat_history_dict = [
             chat_record.to_dict() for chat_record in self.chat_history
         ]
+
         return {
             "chat_id": self.chat_id,
             "endpoint": self.endpoint,
@@ -106,7 +114,9 @@ class Chat:
         }
 
     @classmethod
-    def load_chat(cls, db_instance, chat_id: str, endpoint: str = None) -> Chat:
+    def load_chat(
+        cls, session_db_instance: DBAccessor, chat_id: str, endpoint: str = ""
+    ) -> Chat:
         """
         Class method to load a Chat instance for a given chat ID and optional endpoint.
 
@@ -118,14 +128,18 @@ class Chat:
             cls: The class from which this method is called.
             db_instance: The database instance associated with the chat session.
             chat_id (str): The unique identifier for the chat session.
-            endpoint (str, optional): The endpoint associated with the chat session. Defaults to None.
+            endpoint (str, optional): The endpoint associated with the chat session. Defaults to empty string.
 
         Returns:
             Chat: An instance of the Chat class initialized with the provided parameters.
         """
-        return cls(session_db_instance=db_instance, chat_id=chat_id, endpoint=endpoint)
+        return cls(
+            session_db_instance=session_db_instance, chat_id=chat_id, endpoint=endpoint
+        )
 
-    def load_chat_history(self, db_instance, chat_id) -> list[ChatRecord]:
+    def load_chat_history(
+        self, session_db_instance: DBAccessor, chat_id: str
+    ) -> list[ChatRecord]:
         """
         Loads the chat history for a specific chat ID.
 
@@ -141,7 +155,7 @@ class Chat:
             list[ChatRecord]: A list of ChatRecord instances representing the chat history.
         """
         list_of_chat_record_tuples = StorageManager.get_chat_history_for_one_endpoint(
-            chat_id, db_instance
+            chat_id, session_db_instance
         )
         list_of_chat_records = [
             ChatRecord(*chat_record_tuple)
@@ -151,9 +165,9 @@ class Chat:
 
     @staticmethod
     async def send_prompt(
-        session_db_instance,
+        session_db_instance: DBAccessor,
         chat_id: str,
-        endpoint,
+        endpoint: str,
         user_prompt: str,
         context_strategy_name: str = "",
         prompt_template_name: str = "",
@@ -221,7 +235,7 @@ class Chat:
         )
 
         # stores chat prompts, predictions and its config into DB
-        chat_record_tuple = (
+        chat_record_tuple: tuple[str, str, str, str, str, str, float, str] = (
             "",
             context_strategy_name,
             prompt_template_name,

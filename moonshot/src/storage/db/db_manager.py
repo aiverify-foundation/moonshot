@@ -4,20 +4,20 @@ from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.db.db_sql_queries import (
     sql_create_cache_records,
     sql_create_cache_table,
+    sql_create_chat_metadata_record,
+    sql_create_chat_metadata_table,
     sql_create_metadata_records,
     sql_create_metadata_table,
+    sql_create_session_metadata_record,
+    sql_create_session_metadata_table,
     sql_read_cache_records,
     sql_read_metadata_records,
-    sql_update_metadata_records,
-    sql_create_session_metadata_table,
-    sql_create_chat_metadata_table,
-    sql_create_chat_metadata_record,
-    sql_create_session_metadata_record,
-    sql_update_session_metadata_chat,
-    sql_read_session_metadata,
     sql_read_session_chat_metadata,
+    sql_read_session_metadata,
     sql_update_context_strategy,
+    sql_update_metadata_records,
     sql_update_prompt_template,
+    sql_update_session_metadata_chat,
 )
 from moonshot.src.storage.db.db_sqlite import DBSqlite
 from moonshot.src.storage.db.db_types import DatabaseTypes
@@ -261,7 +261,8 @@ class DatabaseManager:
 
     @staticmethod
     def create_session_metadata_record(
-        db_instance: DBAccessor, session_metadata: tuple
+        db_instance: DBAccessor,
+        session_metadata: tuple[str, str, str, str, float, str, str, str],
     ) -> None:
         """
         Creates a session metadata record in the database.
@@ -337,7 +338,7 @@ class DatabaseManager:
 
     @staticmethod
     def create_chat_metadata_record(
-        db_instance: DBAccessor, chat_metadata: tuple
+        db_instance: DBAccessor, chat_metadata: tuple[str, str, float, float]
     ) -> None:
         """
         Inserts a new chat metadata record into the chat metadata table in the database.
@@ -361,7 +362,7 @@ class DatabaseManager:
 
     @staticmethod
     def update_session_metadata_with_chat_info(
-        db_instance: DBAccessor, chat_info: tuple
+        db_instance: DBAccessor, chat_info: tuple[str, str]
     ) -> None:
         """
         Updates session metadata with chat information in the database.
@@ -383,7 +384,9 @@ class DatabaseManager:
             db_instance.update_record(chat_info, sql_update_session_metadata_chat)
 
     @staticmethod
-    def read_session_metadata(db_instance: DBAccessor) -> None:
+    def read_session_metadata(
+        db_instance: DBAccessor,
+    ) -> Union[tuple[str, str, str, str, float, str, str, str], None]:
         """
         Reads and returns the first record of session metadata from the database.
 
@@ -402,7 +405,7 @@ class DatabaseManager:
             return db_instance.read_table(sql_read_session_metadata)[0]
 
     @staticmethod
-    def read_session_chat_metadata(db_instance: DBAccessor) -> None:
+    def read_session_chat_metadata(db_instance: DBAccessor) -> Union[list[tuple], None]:
         """
         Reads and returns chat metadata for a session from the database.
 
@@ -418,11 +421,13 @@ class DatabaseManager:
         """
         if db_instance:
             return db_instance.read_table(sql_read_session_chat_metadata)
+        else:
+            return []
 
     @staticmethod
     def read_chat_history_for_one_endpoint(
         db_instance: DBAccessor, chat_id: str
-    ) -> None:
+    ) -> list[tuple]:
         """
         Reads and returns the chat history for a specific chat ID from the database.
 
@@ -443,7 +448,9 @@ class DatabaseManager:
 
     @staticmethod
     def create_chat_record(
-        db_instance: DBAccessor, chat_record_tuple: tuple, chat_id: str
+        db_instance: DBAccessor,
+        chat_record_tuple: tuple[str, str, str, str, str, str, float, str],
+        chat_id: str,
     ) -> None:
         """
         Inserts a new chat record into the specified chat history table in the database.
@@ -470,7 +477,7 @@ class DatabaseManager:
 
     @staticmethod
     def update_prompt_template(
-        db_instance: DBAccessor, prompt_template_tuple: tuple
+        db_instance: DBAccessor, prompt_template_tuple: tuple["str", "str"]
     ) -> None:
         """
         Updates the prompt template in the database.
@@ -491,7 +498,7 @@ class DatabaseManager:
 
     @staticmethod
     def update_context_strategy(
-        db_instance: DBAccessor, context_strategy_tuple: tuple
+        db_instance: DBAccessor, context_strategy_tuple: tuple["str", "str"]
     ) -> None:
         """
         Updates the context strategy in the database.
