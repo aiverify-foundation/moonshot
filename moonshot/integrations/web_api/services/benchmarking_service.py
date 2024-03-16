@@ -1,6 +1,8 @@
-from .... import api as moonshot_api
 from dependency_injector.wiring import inject
+from .... import api as moonshot_api
+from ..types.types import BenchmarkResult
 from ..services.benchmark_test_manager import BenchmarkTestManager
+from ..services.utils.results_formatter import transform_web_format
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -94,16 +96,27 @@ class BenchmarkingService(BaseService):
         return cookbooks
     
     @exception_handler
-    @inject
     async def execute_cookbook(self, cookbook_executor_data: CookbookExecutorCreateDTO) -> str:
         id = self.benchmark_test_manager.schedule_test_task(cookbook_executor_data);
         return id
-
 
     @exception_handler
     async def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
         async_task = self.benchmark_test_manager.schedule_test_task(recipe_executor_data);
         return async_task.get_name()
-        
-
     
+    @exception_handler
+    def get_all_results(self, executor_id: str | None = None) -> list[BenchmarkResult] | BenchmarkResult | None:
+        results: list[BenchmarkResult] = moonshot_api.api_get_all_results()
+        if not executor_id:
+            # returning in raw format because tranforming a big list is probably expensive
+            return results
+        
+        for result in results:
+            if result["metadata"]["id"] == executor_id:
+                return transform_web_format(result)
+        return None
+
+    @exception_handler
+    async def cancel_executor(self, executor_id: str) -> None:
+        self.benchmark_test_manager.cancel_task(executor_id);
