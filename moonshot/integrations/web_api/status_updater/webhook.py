@@ -15,9 +15,7 @@ class Webhook(InterfaceBenchmarkCallbackHandler):
 
     def on_executor_update(self, progress_data: CookbookTestRunProgress) -> None:
         logger = logging.getLogger();
-        print("\033[94m" + "-"*100 + "\033[0m")
         logger.debug(json.dumps(progress_data, indent=2))
-        
         self.benchmark_test_state.update_state(progress_data)
         url = os.getenv("MOONSHOT_UI_CALLBACK_URL", "http://localhost:3000/api/v1/benchmarks/status")
 
