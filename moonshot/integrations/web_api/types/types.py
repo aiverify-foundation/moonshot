@@ -1,5 +1,5 @@
-from typing import Any, NotRequired, List
-from typing_extensions import TypedDict
+from typing import Any, Dict, NotRequired, List
+from typing_extensions import TypedDict, Annotated
 from enum import Enum
 
 class PromptDetails(TypedDict):
@@ -59,3 +59,21 @@ class BenchmarkCollectionType(Enum):
     COOKBOOK = "cookbook"
     RECIPE = "recipe"
 
+
+class ResultMetadata(TypedDict):
+    id: str
+    name: str
+    start_time: str
+    end_time: str
+    duration: int
+    recipes: List[str]
+    cookbooks: List[str]
+    endpoints: List[str]
+    num_of_prompts: int
+    status: str
+
+class RequiredMetadata(TypedDict):
+    metadata: ResultMetadata
+
+class BenchmarkResult(TypedDict, RequiredMetadata):
+    pass

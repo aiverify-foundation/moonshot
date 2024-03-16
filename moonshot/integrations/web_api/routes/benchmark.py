@@ -235,11 +235,16 @@ def get_benchmark_progress(
         elif e.error_code == "ValidationError":
             raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
 
-@router.get("/v1/benchmarks/result")
+@router.get("/v1/benchmarks/results/{executor_id}")
 @inject
-async def get_all_results(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+async def get_all_results(
+    executor_id: str | None = None,    
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        results = benchmarking_service.get_all_results()
+        if not executor_id:
+            results = benchmarking_service.get_all_results()
+        else:
+            results = benchmarking_service.get_all_results(executor_id)
         return results
     except SessionException as e:
         if e.error_code == "FileNotFound":
