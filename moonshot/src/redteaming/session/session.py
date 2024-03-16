@@ -1,14 +1,15 @@
-import time
-from slugify import slugify
-from datetime import datetime
 import os
+import time
 from ast import literal_eval
+from datetime import datetime
 from pathlib import Path
 
-from moonshot.src.storage.storage_manager import StorageManager
-from moonshot.src.redteaming.session.chat import Chat
+from slugify import slugify
+
 from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.storage.db.db_accessor import DBAccessor
+from moonshot.src.storage.storage_manager import StorageManager
 
 
 class SessionMetadata:
@@ -70,82 +71,62 @@ class Session:
             db_filepath = f"{EnvironmentVars.SESSIONS}/{session_id}.db"
             if Path(db_filepath).exists():
                 self.db_instance = StorageManager.create_session_database_connection(
-                    self.session_id
+                    session_id
                 )
+                self.metadata = self.get_session_metadata_by_id(session_id)
             else:
                 print("Unable to resume existing session. Please create a new session.")
         else:
             # There is no existing session, create new session
-            self.name = name
-            self.description = description
-            self.created_epoch = time.time()
-            self.created_datetime = datetime.fromtimestamp(self.created_epoch).strftime(
+            created_epoch = time.time()
+            created_datetime = datetime.fromtimestamp(created_epoch).strftime(
                 "%Y%m%d-%H%M%S"
             )
-            self.endpoints = endpoints
-            self.prompt_template = prompt_template
-            self.context_strategy = context_strategy
-            session_id = f"{slugify(name)}_{self.created_datetime}"
-            self.session_id = session_id
-            self.create_new_session()
+            session_id = f"{slugify(name)}_{created_datetime}"
 
-    def create_new_session(self) -> None:
+            session_meta_tuple = (
+                session_id,
+                name,
+                description,
+                str(endpoints),
+                created_epoch,
+                created_datetime,
+                context_strategy,
+                prompt_template,
+            )
+            self.create_new_session(session_meta_tuple, endpoints)
+            self.metadata = self.get_session_metadata_by_id(session_id)
+
+    def create_new_session(self, session_meta_tuple: tuple, endpoints: list) -> None:
         """
-        Creates a new session with associated metadata and initializes storage structures.
+        Creates a new session in the database with the provided metadata and endpoints.
 
-        This method performs several key operations to establish a new session:
-        1. It compiles session metadata into a tuple, including session ID, name, description, endpoints, creation time,
-        context strategy, and prompt template.
-        2. It establishes a database connection for the session and creates necessary storage structures, including
-        session and chat metadata tables.
-        3. It inserts the session metadata into the database.
-        4. For each endpoint associated with the session, it creates a chat instance, initializes chat tables, and
-        updates the session metadata with the chat IDs.
-
-        The method ensures that all necessary database tables and records are created for the session and its chats,
-        setting up a complete environment for managing session and chat data.
+        Args:
+            session_meta_tuple (tuple): A tuple containing session metadata.
+            endpoints (list): A list of endpoints associated with the session.
 
         Returns:
-            None: This method does not return a value.
+            None
         """
-        session_meta_tuple = (
-            self.session_id,
-            self.name,
-            self.description,
-            str(self.endpoints),
-            self.created_epoch,
-            self.created_datetime,
-            self.context_strategy,
-            self.prompt_template,
-        )
+        session_id = session_meta_tuple[0]
+        created_epoch = session_meta_tuple[4]
+        created_datetime = session_meta_tuple[5]
 
-        # creates db, session and chat metadata tables, and insert session metadata
+        # creates db, session, and chat metadata tables, and inserts session metadata
         session_db_instance = StorageManager.create_session_database_connection(
-            self.session_id
+            session_id
         )
         StorageManager.create_session_storage(session_meta_tuple, session_db_instance)
 
-        # creates chat tables, update chat metadata and update session metadata with chat ids
+        # creates chat tables, updates chat metadata, and updates session metadata with chat ids
         list_of_chats = [
-            Chat(
-                session_db_instance, endpoint, self.created_epoch, self.created_datetime
-            )
-            for endpoint in self.endpoints
+            Chat(session_db_instance, endpoint, created_epoch, created_datetime)
+            for endpoint in endpoints
         ]
         chat_ids = [chat.chat_id for chat in list_of_chats]
         StorageManager.update_session_metata_with_chat_info(
-            (str(chat_ids), self.session_id), session_db_instance
+            (str(chat_ids), session_id), session_db_instance
         )
-
-    def get_session_metadata(self) -> SessionMetadata:
-        """
-        Retrieves session metadata from the database and returns it as a SessionMetadata instance.
-
-        Returns:
-            SessionMetadata: An instance of SessionMetadata populated with the session's metadata.
-        """
-        session_metadata = self.db_instance.read_session_metadata()
-        return SessionMetadata(*session_metadata)
 
     @staticmethod
     def get_connection_instance_by_session_id(session_id: str) -> DBAccessor:
@@ -236,19 +217,7 @@ class Session:
             print(f"Successfully deleted Session - {session_id}")
 
     @staticmethod
-    def prepare_prompt(
-        prompt: str, context_strategy: str = "", prompt_template: str = ""
-    ) -> str:
-        # TODO call CS and PT manager to prepare prompts
-        if context_strategy:
-            prompt += " context strategy added"
-        if prompt_template:
-            prompt += "prompt template added"
-        return prompt
-
-    @staticmethod
-    def send_prompt(session_id: str, user_prompt: str) -> None:
-        # TODO
+    async def send_prompt(session_id: str, user_prompt: str) -> None:
         # get session db connection
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
@@ -257,21 +226,19 @@ class Session:
             *StorageManager.get_session_metata(session_db_instance)
         )
 
-        # get cs, pt and chat ids from session metadata
+        # get cs, pt, endpoint chat ids from session metadata
         context_strategy = session_metadata.context_strategy
         prompt_template = session_metadata.prompt_template
+        list_of_endpoints = literal_eval(session_metadata.endpoints)
         list_of_chat_ids = literal_eval(session_metadata.chat_ids)
 
-        # get final prompt after processing user prompt with cs and pt
-        prepared_prompt = Session.prepare_prompt(
-            user_prompt, context_strategy, prompt_template
-        )
-        for chat_id in list_of_chat_ids:
-            Chat.send_prompt(
+        # pass required configuration to individual chats to send prompt
+        for chat_id, endpoint in zip(list_of_chat_ids, list_of_endpoints):
+            await Chat.send_prompt(
                 session_db_instance,
                 chat_id,
+                endpoint,
                 user_prompt,
-                prepared_prompt,
                 context_strategy,
                 prompt_template,
             )

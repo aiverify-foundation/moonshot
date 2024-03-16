@@ -943,7 +943,7 @@ def api_delete_session(session_id: str) -> None:
     SessionManager.delete_session(session_id)
 
 
-def api_send_prompt(session_id: str, user_prompt: str) -> None:
+async def api_send_prompt(session_id: str, user_prompt: str) -> None:
     """
     Sends a user-defined prompt to a specific session.
 
@@ -958,7 +958,7 @@ def api_send_prompt(session_id: str, user_prompt: str) -> None:
     Returns:
         None: This method does not return a value but triggers the sending of the user prompt to the specified session.
     """
-    SessionManager.send_prompt(session_id, user_prompt)
+    await SessionManager.send_prompt(session_id, user_prompt)
 
 
 def api_update_context_strategy(session_id: str, context_strategy_name: str) -> None:
