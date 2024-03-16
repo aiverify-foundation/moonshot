@@ -75,5 +75,7 @@ class ResultMetadata(TypedDict):
 class RequiredMetadata(TypedDict):
     metadata: ResultMetadata
 
-class BenchmarkResult(TypedDict, RequiredMetadata):
-    pass
+class BenchmarkResult(TypedDict, RequiredMetadata, total=False):
+    # This indicates that any other keys should map to dictionaries, but this is not enforced by static type checkers.
+    # It serves more as documentation for developers.
+    additional_properties: dict[str, Any]

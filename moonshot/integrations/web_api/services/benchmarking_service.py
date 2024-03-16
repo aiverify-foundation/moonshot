@@ -1,8 +1,8 @@
-from typing import TypedDict, cast
-from moonshot.integrations.web_api.types.types import BenchmarkResult, ResultMetadata
-from .... import api as moonshot_api
 from dependency_injector.wiring import inject
+from .... import api as moonshot_api
+from ..types.types import BenchmarkResult
 from ..services.benchmark_test_manager import BenchmarkTestManager
+from ..services.utils.results_formatter import transform_web_format
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -109,11 +109,12 @@ class BenchmarkingService(BaseService):
     def get_all_results(self, executor_id: str | None = None) -> list[BenchmarkResult] | BenchmarkResult | None:
         results: list[BenchmarkResult] = moonshot_api.api_get_all_results()
         if not executor_id:
+            # returning in raw format because tranforming a big list is probably expensive
             return results
         
         for result in results:
             if result["metadata"]["id"] == executor_id:
-                return result
+                return transform_web_format(result)
         return None
 
     @exception_handler
