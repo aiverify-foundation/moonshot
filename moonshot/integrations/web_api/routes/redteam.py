@@ -6,7 +6,7 @@ from dependency_injector.wiring import inject, Provide
 
 from ..schemas.prompt_response_model import PromptResponseModel
 from ..container import Container
-from ..services.utils.exceptions_handler import SessionException
+from ..services.utils.exceptions_handler import ServiceException
 from ..schemas.prompt_template_response_model import PromptTemplatesResponseModel
 from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
@@ -29,7 +29,7 @@ async def get_all_sessions(
 ) -> list[Optional[SessionMetadataModel]]:
     try:
         return session_service.get_sessions()
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -55,7 +55,7 @@ async def get_session_by_session_id(
             return SessionResponseModel(session=session_data)
         else:
             raise HTTPException(status_code=404, detail="Session not found")
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -74,7 +74,7 @@ async def create(
         new_session = session_service.create_session(session_dto)
         updated_with_chat_ids = session_service.get_session(new_session.session_id)
         return SessionResponseModel(session=updated_with_chat_ids)
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -92,7 +92,7 @@ async def prompt(
     try:
         result = await session_service.send_prompt(session_id, user_prompt.prompt)
         return result
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -111,7 +111,7 @@ def get_all_prompt_templates(
     """
     try:
         return session_service.get_prompt_templates()
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -133,7 +133,7 @@ async def set_prompt_template(
     try:
         result = session_service.select_prompt_template(session_id,prompt_template_name)
         return {"success": result}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":
@@ -155,7 +155,7 @@ async def unset_prompt_template(
     try:
         result = session_service.select_prompt_template(session_id,"")
         return {"success": result}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
         elif e.error_code == "ValidationError":

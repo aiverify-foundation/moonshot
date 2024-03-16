@@ -1,13 +1,13 @@
 from typing import Any, Callable
 from pydantic import ValidationError
 
-class SessionException(Exception):
+class ServiceException(Exception):
     error_code: str
     msg: str
 
     def __init__(self, msg: str, method_name: str, error_code: str = 'UnknownSessionError'):
         self.error_code = error_code
-        message = f"[SessionException] {error_code} in {method_name} - {msg}"
+        message = f"[ServiceException] {error_code} in {method_name} - {msg}"
         self.msg = message 
         super().__init__(message)
 
@@ -16,11 +16,11 @@ def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
         try:
             return func(*args, **kwargs)
         except FileNotFoundError as e:
-            raise SessionException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
+            raise ServiceException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
         except ValidationError as e:
-            raise SessionException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
+            raise ServiceException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
         except ValueError as e:
-            raise SessionException(f"An value error occurred: {e}", func.__name__, "ValueError")
+            raise ServiceException(f"An value error occurred: {e}", func.__name__, "ValueError")
         except Exception as e:
-            raise SessionException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
+            raise ServiceException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
     return wrapper

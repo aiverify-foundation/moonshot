@@ -11,7 +11,7 @@ from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.recipe_create_dto import RecipeCreateDTO
 from ..services.benchmarking_service import BenchmarkingService
 from ..services.benchmark_test_state import BenchmarkTestState
-from ..services.utils.exceptions_handler import SessionException
+from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
 
 
@@ -27,7 +27,7 @@ def get_all_endpoints(
     """
     try: 
         return benchmarking_service.get_all_endpoints()
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to get endpoint: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -47,7 +47,7 @@ def add_new_endpoint(
     try:
         benchmarking_service.add_endpoint(endpoint_data)
         return {"message": "Endpoint added successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to add endpoint: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -64,7 +64,7 @@ async def delete_endpoint(
     try:
         benchmarking_service.delete_endpoint(endpoint_id)
         return {"message": "Endpoint deleted successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to delete endpoint: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -83,7 +83,7 @@ def get_all_connectors(benchmarking_service: BenchmarkingService = Depends(Provi
 def get_all_recipes(benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
         return benchmarking_service.get_all_recipes()
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -100,7 +100,7 @@ def create_recipe(
     try:
         benchmarking_service.create_recipe(recipe_data)
         return {"message": "Recipe created successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to create recipe: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -118,7 +118,7 @@ async def delete_recipe(
     try:
         benchmarking_service.delete_recipe(recipe_id)
         return {"message": "Recipe deleted successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to delete recipe: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -136,7 +136,7 @@ def create_cookbook(
     try:
         benchmarking_service.create_cookbook(cookbook_data)
         return {"message": "Cookbook created successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to create cookbook: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -153,7 +153,7 @@ def get_all_cookbooks(
     try:
         cookbooks = benchmarking_service.get_all_cookbooks()
         return cookbooks
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbooks: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -169,7 +169,7 @@ def get_cookbook_by_id(
     try:
         cookbook = benchmarking_service.get_cookbook_by_id(cookbook_id)
         return cookbook
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbook: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -186,7 +186,7 @@ def update_cookbook(
     try:
         benchmarking_service.update_cookbook(cookbook_data, cookbook_id)
         return {"message": "Cookbook updated successfully"}
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to update cookbook: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -209,7 +209,7 @@ async def benchmark_executor(
             raise HTTPException(status_code=400, detail="Invalid query parameter: type")
         if id:
             return {"message": "Execution task created", "id": id}
-    except SessionException as e:
+    except ServiceException as e:
         raise HTTPException(status_code=500, detail=f"Unable to create and execute benchmark: {e}")
     
 
@@ -229,7 +229,7 @@ def get_benchmark_progress(
                 item.update(status)  
         
         return state
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")
         elif e.error_code == "ValidationError":
@@ -246,7 +246,7 @@ async def get_all_results(
         else:
             results = benchmarking_service.get_all_results(executor_id)
         return results
-    except SessionException as e:
+    except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Unable to find results file: {e.msg}")
         else:
