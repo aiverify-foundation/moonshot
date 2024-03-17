@@ -2,6 +2,7 @@ import glob
 import inspect
 import os
 from pathlib import Path
+from typing import Any, Optional
 
 from moonshot.src.configs.env_variables import EnvironmentVars
 from moonshot.src.utils.import_modules import (
@@ -15,7 +16,7 @@ class ContextStrategyManager:
         pass
 
     @staticmethod
-    def get_all_context_strategy_names() -> list:
+    def get_all_context_strategy_names() -> list[str]:
         """
         Retrieves the names of all context strategy files.
 
@@ -60,27 +61,10 @@ class ContextStrategyManager:
                 f"Successfully deleted Context Strategy file: - {context_strategy_name}"
             )
 
-    def get_previous_prompts(self, num_of_previous_prompts: int) -> list:
-        """
-        Retrieves a list of previous prompts from the chat metadata database.
-
-        Args:
-            num_of_previous_prompts (int): The number of previous prompts to retrieve.
-
-        Returns:
-            list: A list of dictionaries representing the previous prompts.
-        """
-        if num_of_previous_prompts > 0:
-            prev_prompts = self.chat_metadata.db_instance.read_chat_records(
-                num_of_previous_prompts
-            )
-            return [self._convert_tuple_to_dict(chat) for chat in prev_prompts]
-        return []
-
     @staticmethod
     def process_prompt_cs(
-        user_prompt: str, context_strategy_name: str, list_of_chats: list
-    ) -> str:
+        user_prompt: str, context_strategy_name: str, list_of_chats: list[dict]
+    ) -> Optional[str]:
         context_strategy_instance = ContextStrategyManager.load_context_strategy_module(
             context_strategy_name
         )
@@ -94,10 +78,24 @@ class ContextStrategyManager:
             print(
                 "Cannot load context strategy. Make sure the name of the context strategy is correct."
             )
-            return
+            return None
 
     @staticmethod
-    def load_context_strategy_module(context_strategy_name: str) -> str:
+    def load_context_strategy_module(context_strategy_name: str) -> Any:
+        """
+        Loads a context strategy module by its name.
+
+        This method attempts to load a context strategy module specified by the context_strategy_name argument.
+        It first creates a module specification using the create_module_spec function. If the specification exists,
+        it imports the module and iterates through its attributes to find a class that matches the module name.
+        If such a class is found, it is returned; otherwise, None is returned.
+
+        Args:
+            context_strategy_name (str): The name of the context strategy module to load.
+
+        Returns:
+            Optional[Type]: The loaded context strategy class if found, None otherwise.
+        """
         module_spec = create_module_spec(
             context_strategy_name,
             f"{EnvironmentVars.CONTEXT_STRATEGY}/{context_strategy_name}.py",

@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 
 from jinja2 import Template
-
 from moonshot.src.configs.env_variables import EnvironmentVars
 
 
@@ -12,7 +11,7 @@ class PromptTemplateManager:
         pass
 
     @staticmethod
-    def get_all_prompt_template_names() -> list:
+    def get_all_prompt_template_names() -> list[str]:
         """
         Retrieve the names of all prompt templates available.
 

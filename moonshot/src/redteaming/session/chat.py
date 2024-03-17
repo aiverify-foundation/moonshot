@@ -3,8 +3,6 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Union
 
-from slugify import slugify
-
 from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.connectors.connector_manager import ConnectorManager
 from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
@@ -13,6 +11,7 @@ from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
 )
 from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.storage_manager import StorageManager
+from slugify import slugify
 
 
 class ChatRecord:
@@ -80,7 +79,7 @@ class Chat:
             chat_id = f"{slugify(endpoint)}_{created_datetime}"
             db_chat_id = chat_id.replace("-", "_")
             StorageManager.create_chat_history_storage(db_chat_id, session_db_instance)
-            chat_meta_tuple: tuple[str, str, float, float] = (
+            chat_meta_tuple = (
                 chat_id,
                 endpoint,
                 created_epoch,
@@ -158,10 +157,12 @@ class Chat:
         list_of_chat_record_tuples = StorageManager.get_chat_history_for_one_endpoint(
             chat_id, session_db_instance
         )
-        list_of_chat_records = [
-            ChatRecord(*chat_record_tuple)
-            for chat_record_tuple in list_of_chat_record_tuples
-        ]
+        list_of_chat_records = []
+        if list_of_chat_record_tuples:
+            list_of_chat_records = [
+                ChatRecord(*chat_record_tuple)
+                for chat_record_tuple in list_of_chat_record_tuples
+            ]
         return list_of_chat_records
 
     @staticmethod
@@ -236,7 +237,7 @@ class Chat:
         )
 
         # stores chat prompts, predictions and its config into DB
-        chat_record_tuple: tuple[str, str, str, str, str, str, float, str] = (
+        chat_record_tuple = (
             "",
             context_strategy_name,
             prompt_template_name,

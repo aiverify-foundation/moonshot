@@ -786,7 +786,7 @@ class StorageManager:
     # create session and chat metadata tables
     @staticmethod
     def create_session_storage(
-        session_metadata: tuple[str, str, str, str, float, str, str, str],
+        session_metadata: tuple,
         db_instance: DBAccessor,
     ) -> None:
         """
@@ -843,7 +843,7 @@ class StorageManager:
 
     @staticmethod
     def create_chat_metadata_record(
-        chat_metadata: tuple[str, str, float, float], session_db_instance: DBAccessor
+        chat_metadata: tuple, session_db_instance: DBAccessor
     ) -> None:
         """
         Inserts a new chat metadata record into the database.
@@ -872,7 +872,7 @@ class StorageManager:
     # update session metadata with chat ids
     @staticmethod
     def update_session_metadata_with_chat_info(
-        chat_info: tuple[str, str], db_instance: DBAccessor
+        chat_info: tuple, db_instance: DBAccessor
     ) -> None:
         """
         Updates session metadata with chat information in the database.
@@ -1018,7 +1018,7 @@ class StorageManager:
 
     @staticmethod
     def update_prompt_template(
-        db_instance: DBAccessor, prompt_template_tuple: tuple[str, str]
+        db_instance: DBAccessor, prompt_template_tuple: tuple
     ) -> None:
         """
         Updates the prompt template in the database.
@@ -1039,7 +1039,7 @@ class StorageManager:
 
     @staticmethod
     def update_context_strategy(
-        db_instance: DBAccessor, context_strategy_tuple: tuple[str, str]
+        db_instance: DBAccessor, context_strategy_tuple: tuple
     ) -> None:
         """
         Updates the context strategy in the database.

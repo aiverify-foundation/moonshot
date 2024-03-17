@@ -12,7 +12,9 @@ class SampleContextStrategy:
     """
 
     @staticmethod
-    def add_in_context(user_prompt: str, list_of_previous_prompts: list = None) -> str:
+    def add_in_context(
+        user_prompt: str, list_of_previous_prompts: list[dict] = []
+    ) -> str:
         """
         Adds previous prompts to the user prompt.
 
