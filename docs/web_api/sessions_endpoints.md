@@ -34,15 +34,14 @@ This endpoint is use to get all sessions.
 
 
 <details>
-    <summary> [GET] /v1/sessions/{session_id}?include_history={boolean}&length={int} </summary>
+    <summary> [GET] /v1/sessions/{session_id}?include_history={boolean} </summary>
 This endpoint is use to session details by ID.
 <br/>
 <b> Parameters (path)</b>:
 <br/> <code>session_id</code>: The ID of the session to retrieve.
 <br/> <code>include_history</code>: A boolean to determine if you want to retrieve the history
-<br/> <code>length</code>: The length of the history you want to retrieve
 <br/>
-<b>Example</b> : <code>/v1/sessions/testsession1_20240315-043147?include_history=true&length=2</code>
+<b>Example</b> : <code>/v1/sessions/testsession1_20240315-043147?include_history=true</code>
 <br/>
 <b>Success Response: </b>
 ```json
