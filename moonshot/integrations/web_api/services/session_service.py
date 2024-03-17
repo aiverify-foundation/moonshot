@@ -20,28 +20,30 @@ class SessionService(BaseService):
         )
 
         return SessionMetadataModel(
-            session_id=new_session.session_id,
-            name=new_session.name,
-            description=new_session.description,
-            created_epoch=new_session.created_epoch,
-            created_datetime=new_session.created_datetime,
-            endpoints=new_session.endpoints,
-            prompt_template=new_session.prompt_template,
-            context_strategy=new_session.context_strategy,
-            chat_ids=[],
-            filename="",
+            session_id=new_session.metadata.session_id,
+            name=new_session.metadata.  name,
+            description=new_session.metadata.description,
+            created_epoch=new_session.metadata.created_epoch,
+            created_datetime=new_session.metadata.created_datetime,
+            endpoints=new_session.metadata.endpoints,
+            prompt_template=new_session.metadata.prompt_template,
+            context_strategy=new_session.metadata.context_strategy,
+            chat_ids=new_session.metadata.chat_ids,
             chat_history=None
         )
 
     @exception_handler
     def get_session(self, session_id: str) -> SessionMetadataModel | None:
-        session_data = next((session for session in self.get_sessions() if session.session_id == session_id), None)
-        return SessionMetadataModel.model_validate(session_data)
+        sessions = self.get_sessions()
+        for session in sessions:
+            if session and session["session_id"] == session_id:
+                return SessionMetadataModel.model_validate(session)
+        return None
+        
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
-        sessions: list[SessionMetadataModel] = moonshot_api.api_get_all_session_details();
-        return [SessionMetadataModel.model_validate(session) for session in sessions]
+        return moonshot_api.api_get_all_session_details();
 
 
     @exception_handler
@@ -49,13 +51,13 @@ class SessionService(BaseService):
         session_chats: SessionChats = moonshot_api.api_get_session_chats_by_session_id(session_id)
         all_chats_dict: dict[str, list[PromptDetails]] = {}
         for chat in session_chats:
-            all_chats_dict[chat['chat_id']] = chat['chat_history'][::-1]
+            all_chats_dict[chat['chat_id']] = chat['chat_history']
         return all_chats_dict
 
     @exception_handler
     async def send_prompt(self, session_id: str, user_prompt: str) -> dict[str, list[PromptDetails]]:
         user_prompt = user_prompt.strip()
-        moonshot_api.api_send_prompt(session_id, user_prompt)
+        await moonshot_api.api_send_prompt(session_id, user_prompt)
         all_chats_dict = self.get_session_chat_history(session_id)
         return all_chats_dict
 

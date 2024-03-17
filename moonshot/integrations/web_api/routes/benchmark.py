@@ -237,14 +237,24 @@ def get_benchmark_progress(
 
 @router.get("/v1/benchmarks/results/{executor_id}")
 @inject
-async def get_all_results(
-    executor_id: str | None = None,    
+async def get_one_results(
+    executor_id: str,    
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        if not executor_id:
-            results = benchmarking_service.get_all_results()
+        results = benchmarking_service.get_all_results(executor_id)
+        return results
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Unable to find results file: {e.msg}")
         else:
-            results = benchmarking_service.get_all_results(executor_id)
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")
+        
+@router.get("/v1/benchmarks/results")
+@inject
+async def get_all_results(
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
+    try:
+        results = benchmarking_service.get_all_results()
         return results
     except ServiceException as e:
         if e.error_code == "FileNotFound":
