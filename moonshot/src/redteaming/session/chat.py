@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Union
 
 from slugify import slugify
 
@@ -91,9 +92,9 @@ class Chat:
 
             self.chat_id = db_chat_id
             self.endpoint = endpoint
-            self.chat_history = [ChatRecord]
+            self.chat_history: list[ChatRecord] = []
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, Union[str, list[dict[str, str]]]]:
         """
         Converts the Chat instance into a dictionary.
 

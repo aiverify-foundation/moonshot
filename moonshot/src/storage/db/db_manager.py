@@ -262,7 +262,7 @@ class DatabaseManager:
     @staticmethod
     def create_session_metadata_record(
         db_instance: DBAccessor,
-        session_metadata: tuple[str, str, str, str, float, str, str, str],
+        session_metadata: tuple,
     ) -> None:
         """
         Creates a session metadata record in the database.
@@ -338,7 +338,7 @@ class DatabaseManager:
 
     @staticmethod
     def create_chat_metadata_record(
-        db_instance: DBAccessor, chat_metadata: tuple[str, str, float, float]
+        db_instance: DBAccessor, chat_metadata: tuple
     ) -> None:
         """
         Inserts a new chat metadata record into the chat metadata table in the database.
@@ -386,7 +386,7 @@ class DatabaseManager:
     @staticmethod
     def read_session_metadata(
         db_instance: DBAccessor,
-    ) -> Union[tuple[str, str, str, str, float, str, str, str], None]:
+    ) -> Union[tuple, None]:
         """
         Reads and returns the first record of session metadata from the database.
 
@@ -402,7 +402,8 @@ class DatabaseManager:
             The first record of session metadata if available, None otherwise.
         """
         if db_instance:
-            return db_instance.read_table(sql_read_session_metadata)[0]
+            records = db_instance.read_table(sql_read_session_metadata)
+            return records[0] if records else None
 
     @staticmethod
     def read_session_chat_metadata(db_instance: DBAccessor) -> Union[list[tuple], None]:
@@ -427,7 +428,7 @@ class DatabaseManager:
     @staticmethod
     def read_chat_history_for_one_endpoint(
         db_instance: DBAccessor, chat_id: str
-    ) -> list[tuple]:
+    ) -> Union[list[tuple], None]:
         """
         Reads and returns the chat history for a specific chat ID from the database.
 
@@ -449,7 +450,7 @@ class DatabaseManager:
     @staticmethod
     def create_chat_record(
         db_instance: DBAccessor,
-        chat_record_tuple: tuple[str, str, str, str, str, str, float, str],
+        chat_record_tuple: tuple,
         chat_id: str,
     ) -> None:
         """

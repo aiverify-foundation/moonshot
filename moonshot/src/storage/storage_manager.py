@@ -3,7 +3,7 @@ import glob
 import json
 import os
 from pathlib import Path
-from typing import Iterator, Union
+from typing import Iterator, Optional, Union
 
 from moonshot.src.benchmarking.executors.benchmark_executor_types import (
     BenchmarkExecutorTypes,
@@ -902,24 +902,24 @@ class StorageManager:
     @staticmethod
     def get_session_metadata(
         db_instance: DBAccessor,
-    ) -> tuple[str, str, str, str, float, str, str, str]:
+    ) -> Optional[tuple]:
         """
-        Retrieves and returns the session metadata from the database.
+        Fetches and returns the session metadata from the database.
 
-        This method is responsible for fetching the metadata of a session from the database using the provided
-        database instance. It calls a specific method in the DatabaseManager to execute the operation. If the
-        database instance is valid, it returns the session metadata. This operation is crucial for accessing
-        session-specific information that may be needed for various application functionalities.
+        This method is tasked with retrieving the metadata of a specific session from the database. It does this by
+        utilizing the provided database instance and calling a designated method in the DatabaseManager to carry out
+        the operation. If the database instance is valid, the session metadata is returned. This function is vital
+        for obtaining session-specific details that may be required for different application features.
 
         Args:
-            db_instance (DBAccessor): The database accessor instance used for reading the session metadata.
+            db_instance (DBAccessor): The instance of the database accessor used to fetch the session metadata.
 
         Returns:
-            The session metadata if available, None otherwise.
+            The session metadata if it exists, None otherwise.
 
         Raises:
-            RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
-                        to a lack of a valid database connection.
+            RuntimeError: If the db_instance is not initialized, signifying that the operation cannot continue due
+                        to the absence of a valid database connection.
         """
         if db_instance:
             return DatabaseManager.read_session_metadata(db_instance)
@@ -928,7 +928,7 @@ class StorageManager:
 
     # get all chat metadata in a session
     @staticmethod
-    def get_session_chat_metadata(db_instance: DBAccessor) -> list[tuple]:
+    def get_session_chat_metadata(db_instance: DBAccessor) -> Optional[list[tuple]]:
         """
         Retrieves all chat metadata associated with a session from the database.
 
@@ -941,7 +941,7 @@ class StorageManager:
             db_instance (DBAccessor): The database accessor instance used for reading the chat metadata.
 
         Returns:
-            A list of chat metadata records in tuple if available, None otherwise.
+            Optional[list[tuple]]: A list of chat metadata records if available, None otherwise.
 
         Raises:
             RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due
@@ -956,7 +956,7 @@ class StorageManager:
     @staticmethod
     def get_chat_history_for_one_endpoint(
         chat_id: str, db_instance: DBAccessor
-    ) -> list[tuple]:
+    ) -> Optional[list[tuple]]:
         """
         Retrieves the chat history for a specific chat session from the database.
 
@@ -970,7 +970,7 @@ class StorageManager:
             db_instance (DBAccessor): The database accessor instance used for executing the read operation.
 
         Returns:
-            A list of chat history records if available, None otherwise.
+            Optional[list[tuple]]: A list of chat history records if available, None otherwise.
 
         Raises:
             RuntimeError: If the db_instance is not initialized, indicating that the operation cannot proceed due to
@@ -986,7 +986,7 @@ class StorageManager:
     # get a chat record for the prompt
     @staticmethod
     def create_chat_record(
-        chat_record_tuple: tuple[str, str, str, str, str, str, float, str],
+        chat_record_tuple: tuple,
         db_instance: DBAccessor,
         chat_id: str,
     ) -> None:
