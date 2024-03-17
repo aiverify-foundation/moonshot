@@ -34,13 +34,16 @@ class SessionService(BaseService):
 
     @exception_handler
     def get_session(self, session_id: str) -> SessionMetadataModel | None:
-        session_data = next((session for session in self.get_sessions() if session.session_id == session_id), None)
-        return SessionMetadataModel.model_validate(session_data)
+        sessions = self.get_sessions()
+        for session in sessions:
+            if session and session["session_id"] == session_id:
+                return SessionMetadataModel.model_validate(session)
+        return None
+        
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
-        sessions: list[SessionMetadataModel] = moonshot_api.api_get_all_session_details();
-        return [SessionMetadataModel.model_validate(session) for session in sessions]
+        return moonshot_api.api_get_all_session_details();
 
 
     @exception_handler
