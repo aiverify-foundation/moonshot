@@ -51,7 +51,7 @@ class SessionService(BaseService):
         session_chats: SessionChats = moonshot_api.api_get_session_chats_by_session_id(session_id)
         all_chats_dict: dict[str, list[PromptDetails]] = {}
         for chat in session_chats:
-            all_chats_dict[chat['chat_id']] = chat['chat_history'][::-1]
+            all_chats_dict[chat['chat_id']] = chat['chat_history']
         return all_chats_dict
 
     @exception_handler
