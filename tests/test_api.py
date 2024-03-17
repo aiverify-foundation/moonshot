@@ -22,7 +22,6 @@ if __name__ == "__main__":
 
     # Test resume run
 
-
     # Test metric api
     test_run_metric_api()
 

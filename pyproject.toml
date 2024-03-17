@@ -2,11 +2,25 @@
 requires = ["hatchling","hatch-build-scripts"]
 build-backend = "hatchling.build"
 
+[build-system]
+requires = ["hatchling","hatch-build-scripts"]
+build-backend = "hatchling.build"
+
 [project]
 name = "moonshot"
 version = "0.1.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
+]
+description = "A simple and modular tool to evaluate and red-team any LLM application."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: Apache Software License"
 ]
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 readme = "README.md"

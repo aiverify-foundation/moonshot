@@ -19,11 +19,11 @@ class SessionMetadata:
         name: str = "",
         description: str = "",
         endpoints: str = "",
-        created_epoch: str = "",
+        created_epoch: float = 0.0,
         created_datetime: str = "",
         context_strategy: str = "",
         prompt_template: str = "",
-        chat_ids="",
+        chat_ids: str = "",
     ):
         self.session_id = session_id
         self.name = name
@@ -35,7 +35,7 @@ class SessionMetadata:
         self.prompt_template = prompt_template
         self.chat_ids = chat_ids
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str]:
         """
         Converts the SessionMetadata instance into a dictionary.
 
@@ -47,7 +47,7 @@ class SessionMetadata:
             "name": self.name,
             "description": self.description,
             "endpoints": self.endpoints,
-            "created_epoch": self.created_epoch,
+            "created_epoch": str(self.created_epoch),
             "created_datetime": self.created_datetime,
             "context_strategy": self.context_strategy,
             "prompt_template": self.prompt_template,
@@ -61,10 +61,10 @@ class Session:
         self,
         name: str = "",
         description: str = "",
-        endpoints: list = "",
+        endpoints: list[str] = [],
         session_id: str = "",
-        prompt_template="",
-        context_strategy="",
+        prompt_template: str = "",
+        context_strategy: str = "",
     ):
         if session_id:
             # Check if session_id is valid
@@ -97,7 +97,11 @@ class Session:
             self.create_new_session(session_meta_tuple, endpoints)
             self.metadata = self.get_session_metadata_by_id(session_id)
 
-    def create_new_session(self, session_meta_tuple: tuple, endpoints: list) -> None:
+    def create_new_session(
+        self,
+        session_meta_tuple: tuple[str, str, str, str, float, str, str, str],
+        endpoints: list[str],
+    ) -> None:
         """
         Creates a new session in the database with the provided metadata and endpoints.
 
@@ -123,8 +127,8 @@ class Session:
             Chat(session_db_instance, endpoint, created_epoch, created_datetime)
             for endpoint in endpoints
         ]
-        chat_ids = [chat.chat_id for chat in list_of_chats]
-        StorageManager.update_session_metata_with_chat_info(
+        chat_ids = [str(chat.chat_id) for chat in list_of_chats]
+        StorageManager.update_session_metadata_with_chat_info(
             (str(chat_ids), session_id), session_db_instance
         )
 
@@ -166,8 +170,10 @@ class Session:
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
-        session_metadata = StorageManager.get_session_metata(session_db_instance)
-        session_metadata = SessionMetadata(*session_metadata)
+        session_metadata_tuple = StorageManager.get_session_metadata(
+            session_db_instance
+        )
+        session_metadata = SessionMetadata(*session_metadata_tuple)
 
         # parse string of lists to lists. they are stored as string as the db does not support
         session_metadata.endpoints = literal_eval(session_metadata.endpoints)
@@ -175,7 +181,7 @@ class Session:
         return session_metadata
 
     @staticmethod
-    def get_session_chats_by_session_id(session_id) -> list[Chat]:
+    def get_session_chats_by_session_id(session_id: str) -> list[Chat]:
         """
         Retrieves and returns a list of Chat instances for all chats associated with a given session ID.
 
@@ -193,16 +199,19 @@ class Session:
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
-        list_of_chat_metadata = StorageManager.get_session_chat_metadata(
-            session_db_instance
-        )
+        list_of_chat_metadata: list[
+            tuple[str, str]
+        ] = StorageManager.get_session_chat_metadata(session_db_instance)
+
         return [
-            Chat.load_chat(session_db_instance, chat_metadata[0], chat_metadata[1])
+            Chat.load_chat(
+                session_db_instance, str(chat_metadata[0]), str(chat_metadata[1])
+            )
             for chat_metadata in list_of_chat_metadata
         ]
 
     @staticmethod
-    def delete_session(session_id) -> None:
+    def delete_session(session_id: str) -> None:
         """
         Deletes the database file associated with a given session ID.
 
@@ -223,24 +232,24 @@ class Session:
             session_id
         )
         session_metadata = SessionMetadata(
-            *StorageManager.get_session_metata(session_db_instance)
+            *StorageManager.get_session_metadata(session_db_instance)
         )
 
         # get cs, pt, endpoint chat ids from session metadata
-        context_strategy = session_metadata.context_strategy
-        prompt_template = session_metadata.prompt_template
-        list_of_endpoints = literal_eval(session_metadata.endpoints)
-        list_of_chat_ids = literal_eval(session_metadata.chat_ids)
+        context_strategy_name: str = session_metadata.context_strategy
+        prompt_template_name: str = session_metadata.prompt_template
+        list_of_endpoints: list[str] = literal_eval(session_metadata.endpoints)
+        list_of_chat_ids: list[str] = literal_eval(session_metadata.chat_ids)
 
         # pass required configuration to individual chats to send prompt
         for chat_id, endpoint in zip(list_of_chat_ids, list_of_endpoints):
             await Chat.send_prompt(
-                session_db_instance,
-                chat_id,
-                endpoint,
-                user_prompt,
-                context_strategy,
-                prompt_template,
+                session_db_instance=session_db_instance,
+                chat_id=chat_id,
+                endpoint=str(endpoint),
+                user_prompt=user_prompt,
+                context_strategy_name=context_strategy_name,
+                prompt_template_name=prompt_template_name,
             )
 
     @staticmethod

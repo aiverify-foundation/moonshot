@@ -14,7 +14,7 @@ class SessionManager:
     def create_session(
         name: str,
         description: str,
-        endpoints: list,
+        endpoints: list[str],
         context_strategy: str = "",
         prompt_template: str = "",
     ) -> Session:
@@ -75,7 +75,7 @@ class SessionManager:
         ]
 
     @staticmethod
-    def get_all_session_names() -> list:
+    def get_all_session_names() -> list[str]:
         """
         Retrieves the names of all session files stored in the predefined session database directory.
         This method searches for all `.db` files within the session path, excluding any files that contain
