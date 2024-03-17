@@ -57,7 +57,7 @@ class SessionService(BaseService):
     @exception_handler
     async def send_prompt(self, session_id: str, user_prompt: str) -> dict[str, list[PromptDetails]]:
         user_prompt = user_prompt.strip()
-        moonshot_api.api_send_prompt(session_id, user_prompt)
+        await moonshot_api.api_send_prompt(session_id, user_prompt)
         all_chats_dict = self.get_session_chat_history(session_id)
         return all_chats_dict
 
