@@ -12,7 +12,6 @@ class SessionMetadataModel(BaseModel):
     endpoints: list[str] = Field(min_length=1)
     prompt_template: str | None = None 
     context_strategy: str | None = None
-    filename: str | None = None
     chat_history: dict[str, list[Any]] | None = None
 
     @validator('context_strategy', pre=True)

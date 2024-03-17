@@ -20,16 +20,15 @@ class SessionService(BaseService):
         )
 
         return SessionMetadataModel(
-            session_id=new_session.session_id,
-            name=new_session.name,
-            description=new_session.description,
-            created_epoch=new_session.created_epoch,
-            created_datetime=new_session.created_datetime,
-            endpoints=new_session.endpoints,
-            prompt_template=new_session.prompt_template,
-            context_strategy=new_session.context_strategy,
-            chat_ids=[],
-            filename="",
+            session_id=new_session.metadata.session_id,
+            name=new_session.metadata.  name,
+            description=new_session.metadata.description,
+            created_epoch=new_session.metadata.created_epoch,
+            created_datetime=new_session.metadata.created_datetime,
+            endpoints=new_session.metadata.endpoints,
+            prompt_template=new_session.metadata.prompt_template,
+            context_strategy=new_session.metadata.context_strategy,
+            chat_ids=new_session.metadata.chat_ids,
             chat_history=None
         )
 
