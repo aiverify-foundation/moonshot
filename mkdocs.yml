@@ -54,7 +54,7 @@ nav:
   - Getting Started: 
     - Installation : getting_started/installation.md
   - Understanding Moonshot:
-    - Moonshot 101: getting_started/introduction.md
+    - Moonshot 101: understanding_moonshot/introduction.md
     - API: understanding_moonshot/api.md
   - Integrations: 
     - Web API:
