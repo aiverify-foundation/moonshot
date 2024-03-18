@@ -33,7 +33,7 @@ This endpoint is use to get all endpoints.
         "connector_type": "openai-gpt35-turbo-16k",
         "name": "openaigpt35TurboTest2",
         "uri": "https://api.openai.com/v1/chat/completions",
-        "token": "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",
+        "token": "tokens",
         "max_calls_per_second": 10,
         "max_concurrency": 1,
         "params": {
@@ -67,7 +67,7 @@ This endpoint is use to create new endpoints.
   "name": "openaigpt35TurboTest2",
   "connector_type": "openai-gpt35-turbo-16k",
   "uri": "https://api.openai.com/v1/chat/completions",
-  "token": "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",
+  "token": "token",
   "max_calls_per_second": 10,
   "max_concurrency": 1,
   "params": {

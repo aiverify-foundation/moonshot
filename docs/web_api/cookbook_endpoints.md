@@ -118,16 +118,6 @@ This endpoint is use to update an existing cookbook.
     "description": "string",
     "recipes": ["string"]
 }
-
-- **Parameters (path)**
-    - `cookbook_id`: The ID of the cookbook to retrieve.
-- **Parameters (body)**
-```json
-{
-    "name": "string",
-    "description": "string",
-    "recipes": ["string"]
-}
 ``` 
 <b>Example</b> 
 <br/>
