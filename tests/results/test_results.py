@@ -2,8 +2,8 @@ import shutil
 
 from moonshot.api import (
     api_delete_result,
-    api_get_all_results,
-    api_get_all_results_name,
+    api_get_all_result,
+    api_get_all_result_name,
     api_read_result,
     api_read_results,
 )
@@ -59,12 +59,12 @@ def test_delete_result():
         print("Delete results if exist: FAILED")
 
 
-def test_get_all_results():
-    print(api_get_all_results())
+def test_get_all_result():
+    print(api_get_all_result())
 
 
-def test_get_all_results_names():
-    print(api_get_all_results_name())
+def test_get_all_result_name():
+    print(api_get_all_result_name())
 
 
 def test_run_result_api():
@@ -78,11 +78,11 @@ def test_run_result_api():
 
     # List all results
     print("=" * 100, "\nTest listing all results")
-    test_get_all_results()
+    test_get_all_result()
 
     # List all results names
     print("=" * 100, "\nTest listing all results names")
-    test_get_all_results_names()
+    test_get_all_result_name()
 
     # Delete result
     print("=" * 100, "\nTest deleting results")

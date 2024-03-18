@@ -4,11 +4,11 @@ from moonshot.api import (
     api_create_session,
     api_delete_context_strategy,
     api_delete_session,
-    api_get_all_context_strategy_names,
-    api_get_all_prompt_template_details,
-    api_get_all_prompt_template_names,
-    api_get_all_session_details,
-    api_get_all_session_names,
+    api_get_all_context_strategy_name,
+    api_get_all_prompt_template_detail,
+    api_get_all_prompt_template_name,
+    api_get_all_session_detail,
+    api_get_all_session_name,
     api_get_session_chats_by_session_id,
     api_send_prompt,
     api_update_context_strategy,
@@ -28,14 +28,14 @@ def test_create_session():
 
 
 def test_get_all_session_names():
-    print(api_get_all_session_names())
+    print(api_get_all_session_name())
 
 def test_api_get_session_chats_by_session_id(session_id):
     for chat in api_get_session_chats_by_session_id(session_id):
         print(chat, "\n")
 
 def test_api_get_all_session_details():
-    for session_detail in api_get_all_session_details():
+    for session_detail in api_get_all_session_detail():
         print(session_detail, "\n")
 
 
@@ -48,11 +48,11 @@ def test_api_delete_session(session_id):
 
 
 def test_api_get_all_prompt_template_details():
-    return api_get_all_prompt_template_details()
+    return api_get_all_prompt_template_detail()
 
 
 def test_api_get_all_context_strategy_names():
-    print(api_get_all_context_strategy_names())
+    print(api_get_all_context_strategy_name())
 
 
 def test_api_delete_context_strategy(context_strategy_name):
@@ -68,11 +68,11 @@ def test_api_update_prompt_template(session_id, prompt_template):
 
 
 def test_api_get_all_prompt_template_names():
-    for prompt_template_name in api_get_all_prompt_template_names():
+    for prompt_template_name in api_get_all_prompt_template_name():
         print(prompt_template_name)
 
 def test_get_all_prompt_template_details():
-    for prompt_template_details in api_get_all_prompt_template_details():
+    for prompt_template_details in api_get_all_prompt_template_detail():
         print(prompt_template_details)
 
 
