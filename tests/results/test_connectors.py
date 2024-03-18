@@ -3,9 +3,9 @@ from moonshot.api import (
     api_create_connectors,
     api_create_endpoint,
     api_delete_endpoint,
-    api_get_all_connectors,
-    api_get_all_endpoints,
-    api_get_all_endpoints_names,
+    api_get_all_connector_type,
+    api_get_all_endpoint,
+    api_get_all_endpoint_name,
     api_read_endpoint,
     api_update_endpoint,
 )
@@ -52,12 +52,12 @@ def test_delete_connector_endpoint():
         print("Delete endpoint if exist: FAILED")
 
 
-def test_get_all_connector_endpoints():
-    print(api_get_all_endpoints())
+def test_get_all_connector_endpoint():
+    print(api_get_all_endpoint())
 
 
-def test_get_all_connector_endpoints_name():
-    print(api_get_all_endpoints_names())
+def test_get_all_connector_endpoint_name():
+    print(api_get_all_endpoint_name())
 
 
 def test_create_connector():
@@ -114,8 +114,8 @@ def test_create_connectors():
     test_delete_connector_endpoint()
 
 
-def test_get_all_connectors():
-    print(api_get_all_connectors())
+def test_get_all_connector_type():
+    print(api_get_all_connector_type())
 
 
 def test_run_connector_api():
@@ -143,12 +143,12 @@ def test_run_connector_api():
     test_delete_connector_endpoint()
 
     # List all connector endpoints
-    print("=" * 100, "\nTest listing all connector endpoints")
-    test_get_all_connector_endpoints()
+    print("=" * 100, "\nTest listing all connector endpoint")
+    test_get_all_connector_endpoint()
 
     # List all connector endpoints names
-    print("=" * 100, "\nTest listing all connector endpoints names")
-    test_get_all_connector_endpoints_name()
+    print("=" * 100, "\nTest listing all connector endpoint names")
+    test_get_all_connector_endpoint_name()
 
 
 # ------------------------------------------------------------------------------
@@ -163,5 +163,5 @@ print("=" * 100, "\nTest creating new connectors")
 test_create_connectors()
 
 # Create new connectors
-print("=" * 100, "\nTest getting all connectors")
-test_get_all_connectors()
+print("=" * 100, "\nTest getting all connector type")
+test_get_all_connector_type()

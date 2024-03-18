@@ -4,8 +4,8 @@ from moonshot.api import (
     api_create_cookbook_executor,
     api_create_recipe_executor,
     api_delete_executor,
-    api_get_all_executors,
-    api_get_all_executors_names,
+    api_get_all_executor,
+    api_get_all_executor_name,
     api_load_executor,
     api_read_executor,
 )
@@ -127,12 +127,12 @@ def test_delete_executor(bm_id: str):
         print("Delete executor if exist: FAILED")
 
 
-def test_get_all_executors():
-    print(api_get_all_executors())
+def test_get_all_executor():
+    print(api_get_all_executor())
 
 
-def test_get_all_executors_names():
-    print(api_get_all_executors_names())
+def test_get_all_executor_name():
+    print(api_get_all_executor_name())
 
 
 def test_run_benchmark_recipe_executor_api():
@@ -165,12 +165,12 @@ def test_run_benchmark_recipe_executor_api():
     test_read_executor(bm_id)
 
     # List all executor
-    print("=" * 100, "\nTest listing all executors")
-    test_get_all_executors()
+    print("=" * 100, "\nTest listing all executor")
+    test_get_all_executor()
 
     # List all executor names
-    print("=" * 100, "\nTest listing all executors names")
-    test_get_all_executors_names()
+    print("=" * 100, "\nTest listing all executor name")
+    test_get_all_executor_name()
 
     # Delete executor
     print("=" * 100, "\nTest deleting executors")
@@ -207,12 +207,12 @@ def test_run_benchmark_cookbook_executor_api():
     test_read_executor(bm_id)
 
     # List all executor
-    print("=" * 100, "\nTest listing all executors")
-    test_get_all_executors()
+    print("=" * 100, "\nTest listing all executor")
+    test_get_all_executor()
 
     # List all executor names
-    print("=" * 100, "\nTest listing all executors names")
-    test_get_all_executors_names()
+    print("=" * 100, "\nTest listing all executor name")
+    test_get_all_executor_name()
 
     # Delete executor
     print("=" * 100, "\nTest deleting executors")

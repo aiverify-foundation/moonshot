@@ -1,8 +1,8 @@
 from moonshot.api import (
     api_create_cookbook,
     api_delete_cookbook,
-    api_get_all_cookbooks,
-    api_get_all_cookbooks_names,
+    api_get_all_cookbook,
+    api_get_all_cookbook_name,
     api_read_cookbook,
     api_read_cookbooks,
     api_update_cookbook,
@@ -58,12 +58,12 @@ def test_delete_cookbook():
         print("Delete cookbook if exist: FAILED")
 
 
-def test_get_all_cookbooks():
-    print(api_get_all_cookbooks())
+def test_get_all_cookbook():
+    print(api_get_all_cookbook())
 
 
-def test_get_all_cookbooks_names():
-    print(api_get_all_cookbooks_names())
+def test_get_all_cookbook_name():
+    print(api_get_all_cookbook_name())
 
 
 def test_run_cookbook_api():
@@ -92,9 +92,9 @@ def test_run_cookbook_api():
     test_delete_cookbook()
 
     # List all cookbooks
-    print("=" * 100, "\nTest listing all cookbooks")
-    test_get_all_cookbooks()
+    print("=" * 100, "\nTest listing all cookbook")
+    test_get_all_cookbook()
 
     # List all cookbooks names
-    print("=" * 100, "\nTest listing all cookbooks names")
-    test_get_all_cookbooks_names()
+    print("=" * 100, "\nTest listing all cookbook name")
+    test_get_all_cookbook_name()

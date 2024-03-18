@@ -1,4 +1,4 @@
-from moonshot.api import api_delete_metric, api_get_all_metrics
+from moonshot.api import api_delete_metric, api_get_all_metric
 
 
 # ------------------------------------------------------------------------------
@@ -6,7 +6,7 @@ from moonshot.api import api_delete_metric, api_get_all_metrics
 # ------------------------------------------------------------------------------
 def test_get_all_metrics():
     # List all metrics
-    print(api_get_all_metrics())
+    print(api_get_all_metric())
 
 
 def test_delete_metric():

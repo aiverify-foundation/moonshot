@@ -1,8 +1,8 @@
 from moonshot.api import (
     api_create_recipe,
     api_delete_recipe,
-    api_get_all_recipes,
-    api_get_all_recipes_names,
+    api_get_all_recipe,
+    api_get_all_recipe_name,
     api_read_recipe,
     api_read_recipes,
     api_update_recipe,
@@ -62,12 +62,12 @@ def test_delete_recipe():
         print("Delete recipe if exist: FAILED")
 
 
-def test_get_all_recipes():
-    print(api_get_all_recipes())
+def test_get_all_recipe():
+    print(api_get_all_recipe())
 
 
-def test_get_all_recipes_names():
-    print(api_get_all_recipes_names())
+def test_get_all_recipe_name():
+    print(api_get_all_recipe_name())
 
 
 def test_run_recipe_api():
@@ -96,9 +96,9 @@ def test_run_recipe_api():
     test_delete_recipe()
 
     # List all recipes
-    print("=" * 100, "\nTest listing all recipes")
-    test_get_all_recipes()
+    print("=" * 100, "\nTest listing all recipe")
+    test_get_all_recipe()
 
     # List all recipes names
-    print("=" * 100, "\nTest listing all recipes names")
-    test_get_all_recipes_names()
+    print("=" * 100, "\nTest listing all recipe name")
+    test_get_all_recipe_name()
