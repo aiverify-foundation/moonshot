@@ -3,8 +3,8 @@ requires = ["hatchling","hatch-build-scripts"]
 build-backend = "hatchling.build"
 
 [project]
-name = "moonshot"
-version = "0.2.3"
+name = "projectmoonshot-imda"
+version = "0.2.5"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -33,7 +33,8 @@ dependencies = [
     "spacy==3.7.4",
     "sentence-transformers==2.5.1",
     "ijson==3.2.3",
-    "jinja2==3.1.3"
+    "jinja2==3.1.3",
+    "pylcs==0.1.1"
 ]
 
 [project.optional-dependencies]
@@ -48,8 +49,8 @@ cli = [
     "rich==13.7.1",
 ]
 all = [
-    "moonshot[web-api]",
-    "moonshot[cli]",
+    "projectmoonshot-imda[web-api]",
+    "projectmoonshot-imda[cli]",
 ]
 
 [project.urls]
@@ -61,8 +62,8 @@ Issues = "https://github.com/moonshot-admin/moonshot/issues"
 allow-direct-references = true
 
 [tool.poetry]
-name = "moonshot"
-version = "0.1.0"
+name = "projectmoonshot-imda"
+version = "0.2.5"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -84,6 +85,7 @@ spacy = "3.7.4"
 sentence-transformers = "2.5.1"
 ijson = "3.2.3"
 jinja2 = "3.1.3"
+pylcs = "0.1.1"
 typing-extensions = "4.10.0"
 fastapi = "0.110.0"
 uvicorn = "0.28.0"
