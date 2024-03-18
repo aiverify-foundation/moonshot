@@ -1,0 +1,9 @@
+{
+  "id": "truthful-cookbook",
+  "name": "Truthful Cookbook",
+  "description": "This Cookbook will evaluated the truthfulness of my Model",
+  "recipes": [
+    "truthfulqa-mcq",
+    "truthfulqa-open-ended"
+  ]
+}
