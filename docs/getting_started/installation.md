@@ -2,7 +2,7 @@
 The source code is available on GitHub at: [https://github.com/moonshot-admin/moonshot](https://github.com/moonshot-admin/moonshot).
 
 ## Installation from PyPi
-*You can find the Moonshot Package [here](pypi.com).*
+*You can find the Moonshot Package [here](https://pypi.org/project/projectmoonshot-imda/).*
 
 This project requires Python <span style="color:red;">3.11</span>
  or later. Make sure you have Python 3.11 installed on your system before proceeding with installation and usage.
