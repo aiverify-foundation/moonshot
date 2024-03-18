@@ -43,7 +43,7 @@ class SessionService(BaseService):
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
-        return moonshot_api.api_get_all_session_details();
+        return moonshot_api.api_get_all_session_detail();
 
 
     @exception_handler
@@ -67,12 +67,12 @@ class SessionService(BaseService):
     
     @exception_handler
     def get_prompt_templates(self) -> list[dict[str, Any]]:
-        templates = moonshot_api.api_get_all_prompt_template_details()
+        templates = moonshot_api.api_get_all_prompt_template_detail()
         return templates
     
     @exception_handler
     def get_ctx_strategies(self) -> list[str]:
-        strategies = moonshot_api.api_get_all_context_strategy_names()
+        strategies = moonshot_api.api_get_all_context_strategy_name()
         return strategies
     
     @exception_handler

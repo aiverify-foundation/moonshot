@@ -191,17 +191,20 @@ class ConnectorManager:
             raise e
 
     @staticmethod
-    def get_available_connectors() -> list[str]:
+    def get_available_connector_types() -> list[str]:
         """
-        Retrieves a list of available connectors by scanning a specified directory for Python files.
+        Retrieves a list of all available connector types.
 
-        This method scans the directory specified by the `EnvironmentVars.CONNECTORS` environment variable for
-        Python files, excluding any that are special or private files (denoted by "__" in their names). It
-        extracts and returns the stem (the filename without the extension) of each Python file found, which
-        represents the available connector names.
+        This method uses the `StorageManager.get_connectors` method to find all Python files in the directory
+        specified by the `EnvironmentVars.CONNECTORS` environment variable. It then filters out any files that are not
+        meant to be exposed as connectors (those containing "__" in their names). The method returns a list of the
+        names of these connector types.
 
         Returns:
-            list[str]: A list of the names of available connectors.
+            list[str]: A list of strings, each representing the name of a connector type.
+
+        Raises:
+            Exception: If there is an error during the retrieval of connector types.
         """
         try:
             return [
