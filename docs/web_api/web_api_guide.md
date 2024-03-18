@@ -2,6 +2,13 @@
 
 Moonshot WebAPI is built using FastAPI. This guide will help you get started and configure your environment.
 
+To run Moonshot Web API:
+```
+$ python -m moonshot web_api
+```
+
+For instructions on setting up the Moonshot UI, please refer to the [Moonshot UI repository](https://github.com/moonshot-admin/moonshot-ui).
+
 ## Getting Started
 
 By default, Moonshot WebAPI uses its own configuration settings. However, you can customize these settings by providing your own `.env` file in the directory where you are running Moonshot.

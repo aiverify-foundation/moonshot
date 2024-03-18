@@ -9,7 +9,7 @@ This project requires Python <span style="color:red;">3.11</span>
 
 To install Moonshot, there are 4 methods that you can choose from.
 
-```bash
+```
 $ pip install projectmoonshot-imda # To install Moonshot library.
 $ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the web API.
 ```
@@ -19,9 +19,6 @@ The command `$ pip install projectmoonshot-imda` installs the basic Moonshot lib
 
 ### Enabling Moonshot Web API
 The command `$ pip install "projectmoonshot-imda[web-api]"` installs the Moonshot library and also enables the web API. This allows you to interact with Moonshot through HTTP requests, which can be useful if you're building a web application or if you need to access Moonshot from a remote machine.
-
-$ pip install moonshot
-Each installation command installs only the necessary dependencies required to run Moonshot based on your specific use case.
 
 ## Installation from Source
 1. Download the source files by cloning this repositiry. i.e. Git clone (via SSH):
