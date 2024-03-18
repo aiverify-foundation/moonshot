@@ -118,6 +118,7 @@ This endpoint is use to update an existing cookbook.
     "description": "string",
     "recipes": ["string"]
 }
+
 ``` 
 <b>Example</b> 
 <br/>
