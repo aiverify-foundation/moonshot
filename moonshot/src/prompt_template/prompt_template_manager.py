@@ -41,7 +41,11 @@ class PromptTemplateManager:
         list_of_pt_contents = []
         for pt_name in list_of_pt_names:
             try:
-                pt_file = open(f"{EnvironmentVars.PROMPT_TEMPLATES}/{pt_name}.json")
+                pt_file = open(
+                    f"{EnvironmentVars.PROMPT_TEMPLATES}/{pt_name}.json",
+                    "r",
+                    encoding="utf-8",
+                )
                 pt_contents = json.load(pt_file)
                 name = pt_contents["name"]
                 description = pt_contents["description"]
@@ -69,7 +73,7 @@ class PromptTemplateManager:
             prompt_template_file = (
                 f"{EnvironmentVars.PROMPT_TEMPLATES}/{prompt_template_name}.json"
             )
-            with open(prompt_template_file, "r") as json_file:
+            with open(prompt_template_file, "r", encoding="utf-8") as json_file:
                 prompt_template_details = json.load(json_file)
                 template = prompt_template_details["template"]
                 jinja_template = Template(template)
