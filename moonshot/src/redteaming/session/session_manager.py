@@ -1,8 +1,9 @@
 import glob
 from pathlib import Path
-from moonshot.src.redteaming.session.session import Session, SessionMetadata
-from moonshot.src.redteaming.session.chat import Chat
+
 from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.redteaming.session.chat import Chat
+from moonshot.src.redteaming.session.session import Session, SessionMetadata
 
 
 class SessionManager:
@@ -13,7 +14,7 @@ class SessionManager:
     def create_session(
         name: str,
         description: str,
-        endpoints: list,
+        endpoints: list[str],
         context_strategy: str = "",
         prompt_template: str = "",
     ) -> Session:
@@ -74,7 +75,7 @@ class SessionManager:
         ]
 
     @staticmethod
-    def get_all_session_names() -> list:
+    def get_all_session_names() -> list[str]:
         """
         Retrieves the names of all session files stored in the predefined session database directory.
         This method searches for all `.db` files within the session path, excluding any files that contain
@@ -111,9 +112,8 @@ class SessionManager:
         Session.delete_session(session_id)
 
     @staticmethod
-    def send_prompt(session_id: str, user_prompt: str) -> None:
-        # TODO
-        Session.send_prompt(session_id, user_prompt)
+    async def send_prompt(session_id: str, user_prompt: str) -> None:
+        await Session.send_prompt(session_id, user_prompt)
 
     @staticmethod
     def update_prompt_template(session_id: str, prompt_template_name: str) -> None:

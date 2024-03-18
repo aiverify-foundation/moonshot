@@ -1,7 +1,6 @@
-from logging import StreamHandler
-from logging.handlers import RotatingFileHandler
-from typing import Any, Literal, NotRequired, TextIO, Dict, List, Union
-from typing_extensions import TypedDict
+from typing import Any, Dict, NotRequired, List
+from typing_extensions import TypedDict, Annotated
+from enum import Enum
 
 class PromptDetails(TypedDict):
     chat_record_id: int
@@ -42,9 +41,9 @@ class CookbookTestRunProgress(TypedDict):
 
 class UvicornLoggingConfig(TypedDict):
     version: int
-    formatters: Dict[str, dict[str, Any]]
-    handlers: Dict[str, dict[str, Any]]
-    root: Dict[str, dict[str, Any] | list[str]]
+    formatters: dict[str, dict[str, Any]]
+    handlers: dict[str, dict[str, Any]]
+    root: dict[str, dict[str, Any] | list[str]]
     disable_existing_loggers: bool
 
 
@@ -55,3 +54,28 @@ class UvicornRunArgs(TypedDict, total=False):
     ssl_certfile: NotRequired[str]
     log_config: NotRequired[UvicornLoggingConfig]
 
+
+class BenchmarkCollectionType(Enum):
+    COOKBOOK = "cookbook"
+    RECIPE = "recipe"
+
+
+class ResultMetadata(TypedDict):
+    id: str
+    name: str
+    start_time: str
+    end_time: str
+    duration: int
+    recipes: List[str]
+    cookbooks: List[str]
+    endpoints: List[str]
+    num_of_prompts: int
+    status: str
+
+class RequiredMetadata(TypedDict):
+    metadata: ResultMetadata
+
+class BenchmarkResult(TypedDict, RequiredMetadata, total=False):
+    # This indicates that any other keys should map to dictionaries, but this is not enforced by static type checkers.
+    # It serves more as documentation for developers.
+    additional_properties: dict[str, Any]

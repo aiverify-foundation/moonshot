@@ -30,9 +30,11 @@ def test_create_session():
 def test_get_all_session_names():
     print(api_get_all_session_names())
 
+
 def test_api_get_session_chats_by_session_id(session_id):
     for chat in api_get_session_chats_by_session_id(session_id):
         print(chat, "\n")
+
 
 def test_api_get_all_session_details():
     for session_detail in api_get_all_session_details():
@@ -70,6 +72,7 @@ def test_api_update_prompt_template(session_id, prompt_template):
 def test_api_get_all_prompt_template_names():
     for prompt_template_name in api_get_all_prompt_template_names():
         print(prompt_template_name)
+
 
 def test_get_all_prompt_template_details():
     for prompt_template_details in api_get_all_prompt_template_details():
