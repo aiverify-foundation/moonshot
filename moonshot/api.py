@@ -159,7 +159,7 @@ def api_delete_endpoint(ep_id: str) -> None:
     ConnectorManager.delete_endpoint(ep_id)
 
 
-def api_get_all_endpoints() -> list[dict]:
+def api_get_all_endpoint() -> list[dict]:
     """
     Retrieves a list of all available endpoints.
 
@@ -174,7 +174,7 @@ def api_get_all_endpoints() -> list[dict]:
     return [endpoint.to_dict() for endpoint in endpoints]
 
 
-def api_get_all_endpoints_names() -> list[str]:
+def api_get_all_endpoint_name() -> list[str]:
     """
     Retrieves a list of all endpoint names.
 
@@ -226,18 +226,17 @@ def api_create_connectors(ep_ids: list[str]) -> list[Connector]:
     ]
 
 
-def api_get_all_connectors() -> list[str]:
+def api_get_all_connector_type() -> list[str]:
     """
-    Retrieves a list of all available connectors.
+    Retrieves a list of all available connector types.
 
-    This function calls the ConnectorManager's get_available_connectors method to retrieve a list of all available
-    connectors. It returns a list of connector names, which are the names of Python files in the specified directory
-    excluding any special or private files (denoted by "__" in their names).
+    This function calls the ConnectorManager's get_available_connector_types method to retrieve a list of all available
+    connector types. It returns the list of connector types.
 
     Returns:
-        list[str]: A list of the names of available connectors.
+        list[str]: A list of connector types.
     """
-    return ConnectorManager.get_available_connectors()
+    return ConnectorManager.get_available_connector_types()
 
 
 # ------------------------------------------------------------------------------
@@ -352,7 +351,7 @@ def api_delete_cookbook(cb_id: str) -> None:
     Cookbook.delete_cookbook(cb_id)
 
 
-def api_get_all_cookbooks() -> list[dict]:
+def api_get_all_cookbook() -> list[dict]:
     """
     Retrieves all available cookbooks.
 
@@ -367,7 +366,7 @@ def api_get_all_cookbooks() -> list[dict]:
     return [cookbook.to_dict() for cookbook in cookbooks]
 
 
-def api_get_all_cookbooks_names() -> list[str]:
+def api_get_all_cookbook_name() -> list[str]:
     """
     Retrieves the names of all available cookbooks.
 
@@ -518,7 +517,7 @@ def api_delete_recipe(rec_id: str) -> None:
     Recipe.delete_recipe(rec_id)
 
 
-def api_get_all_recipes() -> list[dict]:
+def api_get_all_recipe() -> list[dict]:
     """
     Retrieves all available recipes.
 
@@ -532,7 +531,7 @@ def api_get_all_recipes() -> list[dict]:
     return [recipe.to_dict() for recipe in recipes]
 
 
-def api_get_all_recipes_names() -> list[str]:
+def api_get_all_recipe_name() -> list[str]:
     """
     Retrieves all available recipe names.
 
@@ -566,7 +565,7 @@ def api_delete_metric(met_id: str) -> None:
     Metric.delete_metric(met_id)
 
 
-def api_get_all_metrics() -> list[str]:
+def api_get_all_metric() -> list[str]:
     """
     Retrieves all available metrics.
 
@@ -714,7 +713,7 @@ def api_delete_executor(be_id: str) -> None:
     BenchmarkExecutor.delete_executor(be_id)
 
 
-def api_get_all_executors() -> list[dict]:
+def api_get_all_executor() -> list[dict]:
     """
     This function retrieves all available executors and returns them as a list of dictionaries. Each dictionary
     represents an executor and contains its information.
@@ -726,7 +725,7 @@ def api_get_all_executors() -> list[dict]:
     return [executor.to_dict() for executor in executors]
 
 
-def api_get_all_executors_names() -> list[str]:
+def api_get_all_executor_name() -> list[str]:
     """
     This function retrieves all available executor names and returns them as a list.
 
@@ -779,7 +778,7 @@ def api_delete_result(res_id: str) -> None:
     Result.delete_result(res_id)
 
 
-def api_get_all_results() -> list[dict]:
+def api_get_all_result() -> list[dict]:
     """
     This function retrieves all available results and returns them as a list of dictionaries. Each dictionary
     represents a result and contains its information.
@@ -791,7 +790,7 @@ def api_get_all_results() -> list[dict]:
     return [result.to_dict() for result in results]
 
 
-def api_get_all_results_name() -> list[str]:
+def api_get_all_result_name() -> list[str]:
     """
     This function retrieves all available result names and returns them as a list.
 
@@ -802,7 +801,7 @@ def api_get_all_results_name() -> list[str]:
     return results_name
 
 
-def api_get_all_prompt_template_details() -> list[dict]:
+def api_get_all_prompt_template_detail() -> list[dict]:
     """
     Retrieves all available prompt template details and returns them as a list of dictionaries.
 
@@ -812,7 +811,7 @@ def api_get_all_prompt_template_details() -> list[dict]:
     return PromptTemplateManager.get_all_prompt_template_details()
 
 
-def api_get_all_prompt_template_names() -> list[str]:
+def api_get_all_prompt_template_name() -> list[str]:
     """
     Retrieves all available prompt template names and returns them as a list.
 
@@ -827,7 +826,7 @@ def api_get_all_prompt_template_names() -> list[str]:
 # ------------------------------------------------------------------------------
 
 
-def api_get_all_session_names() -> list[str]:
+def api_get_all_session_name() -> list[str]:
     """
     Retrieves and returns the names (IDs) of all sessions currently managed.
 
@@ -841,7 +840,7 @@ def api_get_all_session_names() -> list[str]:
     return SessionManager.get_all_session_names()
 
 
-def api_get_all_session_details() -> list[dict]:
+def api_get_all_session_detail() -> list[dict]:
     """
     Retrieves and returns detailed metadata for all sessions currently managed.
 
@@ -984,7 +983,7 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
 # ------------------------------------------------------------------------------
 
 
-def api_get_all_context_strategy_names() -> list[str]:
+def api_get_all_context_strategy_name() -> list[str]:
     """
     Retrieves and returns the names of all context strategies currently available.
 

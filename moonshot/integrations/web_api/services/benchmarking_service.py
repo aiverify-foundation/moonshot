@@ -18,7 +18,7 @@ class BenchmarkingService(BaseService):
 
     @exception_handler
     def get_all_endpoints(self) -> list[EndpointDataModel | None]:
-        endpoints = moonshot_api.api_get_all_endpoints()
+        endpoints = moonshot_api.api_get_all_endpoint()
         return [EndpointDataModel.model_validate(endpoint) for endpoint in endpoints]
 
 
@@ -40,12 +40,12 @@ class BenchmarkingService(BaseService):
 
     @exception_handler
     def get_all_connectors(self) -> list[str]:
-        connectors = moonshot_api.api_get_all_connectors()
+        connectors = moonshot_api.api_get_all_connector_type()
         return connectors
 
     @exception_handler
     def get_all_recipes(self) -> list[dict]:
-        recipes = moonshot_api.api_get_all_recipes()
+        recipes = moonshot_api.api_get_all_recipe()
         return recipes
 
     @exception_handler
@@ -82,7 +82,7 @@ class BenchmarkingService(BaseService):
 
     @exception_handler
     def get_all_cookbooks(self) -> dict:
-        cookbooks = moonshot_api.api_get_all_cookbooks()
+        cookbooks = moonshot_api.api_get_all_cookbook()
         return cookbooks
 
     @exception_handler
@@ -107,7 +107,7 @@ class BenchmarkingService(BaseService):
     
     @exception_handler
     def get_all_results(self, executor_id: str | None = None) -> list[BenchmarkResult] | BenchmarkResult | None:
-        results: list[BenchmarkResult] = moonshot_api.api_get_all_results()
+        results: list[BenchmarkResult] = moonshot_api.api_get_all_result()
         if not executor_id:
             # returning in raw format because tranforming a big list is probably expensive
             return results

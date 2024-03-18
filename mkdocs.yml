@@ -1,0 +1,68 @@
+site_name: Moonshot Documentation
+repo_url: https://github.com/moonshot-admin/moonshot
+
+plugins:
+  - search
+  - mkdocstrings
+
+extra_css:
+  - stylesheets/custom_style.css
+
+theme:
+  features:
+      - navigation.sections
+      - navigation.indexes
+      - navigation.footer
+      - navigation.top
+  
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: custom
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: custom
+      accent: lime
+  locale: en
+  include_sidebar: false
+
+markdown_extensions:
+  - markdown.extensions.extra
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - footnotes
+  - pymdownx.details
+  - pymdownx.mark
+  - attr_list
+
+nav: 
+  - Home : index.md
+  - Getting Started: 
+    - Installation : getting_started/installation.md
+  - Understanding Moonshot:
+    - Moonshot 101: understanding_moonshot/introduction.md
+    - API: understanding_moonshot/api.md
+  - Integrations: 
+    - Web API:
+      - Get Started with WebAPI : web_api/web_api_guide.md
+      - Connectors Endpoints: web_api/connector_endpoints.md
+      - Cookbooks Endpoints: web_api/cookbook_endpoints.md
+      - Recipes Endpoints: web_api/recipe_endpoints.md
+      - Sessions Endpoints: web_api/sessions_endpoints.md
+      - Prompt Templates Endpoints: web_api/prompt_template_endpoints.md
+  - Examples : examples/example.md
+  - Acknowledgement : acknowledgement/acknowledgement.md
