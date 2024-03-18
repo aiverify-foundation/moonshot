@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.1.0**
+**Version 0.2.3**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
@@ -41,10 +41,8 @@ Moonshot is a tool designed for AI developers and security experts to evaluate a
 ### Installation
 The source code is available on GitHub at: [https://github.com/moonshot-admin/moonshot](https://github.com/moonshot-admin/moonshot)
 ```
-$ pip install moonshot
-$ pip install moonshot[cli] #To enable running Moonshot using the CLI.
-$ pip install moonshot[web-api] #To enable running Moonshot using the web API.
-$ pip install moonshot[all] #To enable running Moonshot using the CLI and web API.
+$ pip install projectmoonshot-imda # To install Moonshot library.
+$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the web API.
 ```
 #### Installation from source
 1. Download the source files by cloning this repository. i.e. Git clone (via SSH): 
@@ -68,22 +66,10 @@ $ pip install moonshot[all] #To enable running Moonshot using the CLI and web AP
 ### Web API
 To run Moonshot Web API:
 ```
-$ python -m moonshot web_api
+$ python -m moonshot web-api
 ```
 
-### CLI
-Two modes are available on the Moonshot CLI: Command-Based Mode and Interactive Mode. 
-
-To run Moonshot in Command-Based Mode: 
-```
-$ python -m moonshot cli <command>
-```
-To run Moonshot in Interactive Mode:
-```
-$ python -m moonshot cli interactive
-```
-
-Additional instructions on CLI can be found in the [documentation](https://moonshot-admin.github.io/moonshot/).
+For instructions on setting up the Moonshot UI, please refer to the [Moonshot UI repository](https://github.com/moonshot-admin/moonshot-ui).
 
 ## Acknowledgements
 
