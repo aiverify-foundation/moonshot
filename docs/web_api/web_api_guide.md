@@ -4,7 +4,7 @@ Moonshot WebAPI is built using FastAPI. This guide will help you get started and
 
 To run Moonshot Web API:
 ```
-$ python -m moonshot web_api
+$ python -m moonshot web-api
 ```
 
 For instructions on setting up the Moonshot UI, please refer to the [Moonshot UI repository](https://github.com/moonshot-admin/moonshot-ui).
