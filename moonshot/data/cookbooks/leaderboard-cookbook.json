@@ -7,8 +7,7 @@
         "truthfulqa-mcq",
         "winogrande",
         "hellaswag",
-        "arc-easy",
-        "arc-challenge",
+        "arc",
         "gsm8k"
     ]
 }
