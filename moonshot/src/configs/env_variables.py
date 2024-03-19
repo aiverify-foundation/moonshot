@@ -1,4 +1,6 @@
 import importlib.resources
+from typing import Union
+
 from dotenv import dotenv_values
 
 __app_name__ = "moonshot"
@@ -50,4 +52,45 @@ class EnvironmentVars:
     SESSIONS = env_vars.get(
         "SESSIONS", importlib.resources.files(__app_name__).joinpath("data/sessions")
     )
-    ENABLE_MULTIPROCESSING = env_vars.get("ENABLE_MULTIPROCESSING", "true")
+
+    @staticmethod
+    def load_env(env_dict: Union[dict, None] = None) -> None:
+        """
+        This method is used to load environment variables from a given dictionary.
+        If the dictionary is not provided, it will use an empty dictionary.
+
+        The method will set the class attributes with the corresponding values from the dictionary.
+        If a key from the class attributes is not found in the dictionary, it will raise a KeyError.
+
+        Args:
+            env_dict (Union[dict, None]): A dictionary containing the environment variables to be loaded.
+                                          If None, an empty dictionary will be used.
+
+        Raises:
+            KeyError: If a key from the class attributes is not found in the provided dictionary.
+        """
+        if env_dict is None:
+            env_dict = dict()
+
+        keys = [
+            "CONNECTORS_ENDPOINTS",
+            "CONNECTORS",
+            "RECIPES",
+            "COOKBOOKS",
+            "DATASETS",
+            "PROMPT_TEMPLATES",
+            "METRICS",
+            "METRICS_CONFIG",
+            "CONTEXT_STRATEGY",
+            "RESULTS",
+            "DATABASES",
+            "SESSIONS",
+        ]
+
+        for key in keys:
+            if key in env_dict:
+                setattr(EnvironmentVars, key, env_dict[key])
+            else:
+                print(
+                    f"Unable to set {key}, not found in the provided environment variables."
+                )

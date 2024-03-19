@@ -547,17 +547,17 @@ class BenchmarkExecutor:
         else:
             print("Unable to update executor progress: db_instance is not initialised.")
 
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """
         Executes the benchmark based on its type.
 
-        This method checks the type of the benchmark and executes it accordingly. If the type is 'RECIPE',
-        it runs the recipes and updates the progress. If the type is 'COOKBOOK', it loads the cookbook instance,
-        iterates over the recipes in the cookbook, updates the progress, executes the recipe, and then updates
-        the progress again.
+        This method identifies the type of the benchmark and performs the execution accordingly. If the type
+        is 'RECIPE', it processes the recipes and updates the progress. If the type is 'COOKBOOK', it loads the
+        cookbook instance, traverses through the recipes in the cookbook, updates the progress, carries out the
+        recipe, and then updates the progress once more.
 
         Raises:
-            Exception: If there is an error during the execution of the benchmark.
+            Exception: If an error occurs during the benchmark execution.
         """
         # Execute the benchmark executor based on its type
         if self.type == BenchmarkExecutorTypes.RECIPE:
@@ -585,7 +585,7 @@ class BenchmarkExecutor:
                 )
 
                 # Execute the recipe
-                self.results[recipe] = self._execute_recipe(recipe)
+                self.results[recipe] = await self._execute_recipe(recipe)
 
             # Update progress
             if not self.error_messages:
@@ -637,7 +637,7 @@ class BenchmarkExecutor:
                 )
 
                 # Execute the cookbook
-                self.results[cookbook] = self._execute_cookbook(cookbook)
+                self.results[cookbook] = await self._execute_cookbook(cookbook)
 
             # Update progress
             if not self.error_messages:
@@ -677,20 +677,26 @@ class BenchmarkExecutor:
                 error_messages=self.error_messages,
             )
 
-    def _execute_recipe(self, recipe: str) -> dict:
+    async def _execute_recipe(self, recipe: str) -> dict:
         """
         Executes a recipe.
 
-        This method takes a recipe and executes it. It first loads the recipe instance and then iterates
-        over the endpoints in the recipe. For each endpoint, it updates the progress, executes the endpoint, and
-        then updates the progress again.
+        This method accepts a recipe as an argument and executes it. The execution process involves loading the recipe
+        instance and iterating over the endpoints defined in the recipe. For each endpoint, the method updates the
+        progress, executes the endpoint, and then updates the progress once more.
 
         Args:
             recipe (str): The recipe to be executed.
 
         Raises:
-            Exception: If there is an error during the execution of the recipe.
+            Exception: If an error occurs during the execution of the recipe.
         """
+        # ------------------------------------------------------------------------------
+        # Part 0: Get asyncio running loop
+        # ------------------------------------------------------------------------------
+        print("Part 0: Loading asyncio running loop...")
+        loop = asyncio.get_running_loop()
+
         # ------------------------------------------------------------------------------
         # Part 1: Load instances
         # ------------------------------------------------------------------------------
@@ -736,9 +742,11 @@ class BenchmarkExecutor:
         try:
             start_time = time.perf_counter()
             if recipe_inst:
-                recipe_preds = asyncio.run(
+                task = loop.create_task(
                     self._execute_benchmark_pipeline(recipe_inst, recipe_eps)
                 )
+                await task
+                recipe_preds = task.result()
                 print(
                     f"Predicting prompts for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
                 )
@@ -851,16 +859,18 @@ class BenchmarkExecutor:
         finally:
             return recipe_results
 
-    def _execute_cookbook(self, cookbook: str) -> dict:
+    async def _execute_cookbook(self, cookbook: str) -> dict:
         """
         Executes a cookbook.
 
         This method takes a cookbook and executes it. It first loads the cookbook instance and then iterates
-        over the recipes in the cookbook. For each recipe, it updates the progress, executes the recipe, and
-        then updates the progress again.
+        over the recipes in the cookbook. For each recipe, it executes the recipe and stores the results.
 
         Args:
             cookbook (str): The cookbook to be executed.
+
+        Returns:
+            dict: A dictionary containing the results of executing each recipe in the cookbook.
 
         Raises:
             Exception: If there is an error during the execution of the cookbook.
@@ -910,7 +920,7 @@ class BenchmarkExecutor:
                     )
 
                     # Execute the recipe
-                    recipe_results[recipe] = self._execute_recipe(recipe)
+                    recipe_results[recipe] = await self._execute_recipe(recipe)
 
                 # Update progress
                 self.benchmark_update_progress()
