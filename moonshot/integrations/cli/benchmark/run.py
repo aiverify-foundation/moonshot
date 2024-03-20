@@ -4,36 +4,59 @@ from rich.table import Table
 
 from moonshot.api import api_get_all_executor
 
-# from moonshot.api import api_get_all_runs, api_load_run
-# from moonshot.integrations.cli.benchmark.cookbook import generate_cookbook_table
-# from moonshot.integrations.cli.benchmark.recipe import generate_recipe_table
-# from moonshot.src.benchmarking.run import RunTypes
-
 console = Console()
 
 
+# ------------------------------------------------------------------------------
+# CLI Functions
+# ------------------------------------------------------------------------------
 def list_runs() -> None:
     """
-    Get a list of available runs.
+    This function lists all the runs. It fetches the list of all runs from the API and then displays them in a tabular
+    format on the console.
+    Each row of the table contains the run index, run id and a string that contains information about the run such as
+    recipes, cookbooks, endpoints, number of prompts and the database path.
+    If there are no runs, it displays a message saying "There are no runs found."
     """
     runs_list = api_get_all_executor()
+    display_runs(runs_list)
+
+
+# ------------------------------------------------------------------------------
+# Helper functions: Display on cli
+# ------------------------------------------------------------------------------
+def display_runs(runs_list) -> None:
+    """
+    This function displays the runs on the console in a tabular format. It takes a list of runs as input.
+    Each row of the table contains the run index, run id and a string that contains information about the run such as
+    recipes, cookbooks, endpoints, number of prompts and the database path.
+    If there are no runs, it displays a message saying "There are no runs found."
+
+    Parameters:
+        runs_list (list): A list of runs. Each run is a dictionary that contains information about the run.
+
+    Returns:
+        None
+    """
     if runs_list:
         table = Table("No.", "Run id", "Contains")
         for run_index, run_data in enumerate(runs_list, 1):
             (
                 run_id,
                 run_type,
-                arguments,
                 start_time,
                 end_time,
                 duration,
                 db_file,
-                filepath,
+                error_messages,
+                results_file,
                 recipes,
                 cookbooks,
                 endpoints,
                 num_of_prompts,
                 results,
+                status,
+                progress_callback_func,
             ) = run_data.values()
             run_info = f"[red]id: {run_id}[/red]\n"
 
@@ -53,47 +76,9 @@ def list_runs() -> None:
         console.print("[red]There are no runs found.[/red]")
 
 
-# def resume_run(args) -> None:
-#     """
-#     Resume an interrupted run with the specified run id.
-#     """
-#     run_id = args.run_id
-
-#     resume_run_instance = api_load_run(run_id)
-#     resume_run_results = resume_run_instance.create_run()
-#     if (
-#         resume_run_results
-#         and resume_run_instance.run_metadata.run_type == RunTypes.RECIPE
-#     ):
-#         # Display recipe results
-#         generate_recipe_table(
-#             resume_run_instance.run_metadata.recipes,
-#             resume_run_instance.run_metadata.endpoints,
-#             resume_run_results,
-#         )
-#         console.print(
-#             f"[blue]Results saved in {resume_run_instance.run_metadata.filepath}[/blue]"
-#         )
-
-#     elif (
-#         resume_run_results
-#         and resume_run_instance.run_metadata.run_type == RunTypes.COOKBOOK
-#     ):
-#         # Display cookbook results
-#         generate_cookbook_table(
-#             resume_run_instance.run_metadata.endpoints, resume_run_results
-#         )
-#         console.print(
-#             f"[blue]Results saved in {resume_run_instance.run_metadata.filepath}[/blue]"
-#         )
-
-#     else:
-#         console.print("[red]There are no results.[/red]")
-
-#     # Print run stats
-#     console.print(resume_run_instance.get_run_stats())
-
-
+# ------------------------------------------------------------------------------
+# Cmd2 Arguments Parsers
+# ------------------------------------------------------------------------------
 # Resume run arguments
 resume_run_args = cmd2.Cmd2ArgumentParser(
     description="Resume an interrupted run.", epilog="Example:\n resume_run 12345"

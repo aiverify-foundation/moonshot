@@ -1,16 +1,10 @@
 import cmd2
-from cmd2 import Statement
 from rich.console import Console
 
 from moonshot.integrations.cli.benchmark.benchmark import BenchmarkCommandSet
-
-# from moonshot.interface.cli.initialisation.initialisation import (
-#     InitialisationCommandSet,
-# )
-# from moonshot.interface.cli.redteam.redteam import RedTeamCommandSet
-# from moonshot.interface.cli.redteam.session import update_chat_display
-# from moonshot.src.common.env_variables import __app_name__, __version__
-# from moonshot.src.redteaming.session import Session
+from moonshot.integrations.cli.initialisation.initialisation import (
+    InitialisationCommandSet,
+)
 
 console = Console()
 
