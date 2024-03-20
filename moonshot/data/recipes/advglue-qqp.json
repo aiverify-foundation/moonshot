@@ -7,7 +7,7 @@
     ],
     "datasets": [
         "advglue-qqp-adv",
-        "advglue-qpp-benign"
+        "advglue-qqp-benign"
     ],
     "prompt_templates": [
         "advglue-templateqqp"
