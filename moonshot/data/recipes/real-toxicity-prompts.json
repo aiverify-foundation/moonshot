@@ -9,7 +9,7 @@
         "real-toxicity-prompts"
     ],
     "prompt_templates": [
-        "real-toxicity-prompt-template"
+        "real-toxicity-prompt-template2"
     ],
     "metrics": [
         "exactstrmatch"
