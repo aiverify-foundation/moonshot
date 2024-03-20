@@ -3,13 +3,18 @@ from rich.console import Console
 
 from moonshot.api import api_get_all_context_strategy_name, api_update_context_strategy
 from moonshot.src.configs.active_session_cfg import active_session
+import argparse
 
 console = Console()
 
 
-def use_context_strategy(args) -> None:
+def use_context_strategy(args: argparse.Namespace) -> None:
     """
-    Use a context strategy for processing previous prompts (i.e. summarise past 3 prompts)
+    Use a context strategy for process the user's prompt (i.e. summarise past 3 prompts and add
+    it to the current user's prompt)
+
+    Args:
+        args: A namespace with the context strategy parameters. Expected to have 'context_strategy'.
     """
     new_context_strategy_name = args.context_strategy
     # Check if current session exists
@@ -43,10 +48,7 @@ def clear_context_strategy() -> None:
     # Check if current session exists
     if active_session:
         active_session["context_strategy"] = ""
-        print(
-            f"Cleared context strategy. "
-            f"Context Strategy: {active_session['context_strategy']}."
-        )
+        print("Cleared context strategy.")
     else:
         print(
             "There is no active session. Activate a session to send a prompt with a context strategy."
@@ -62,5 +64,4 @@ use_context_strategy_args.add_argument(
     "context_strategy",
     type=str,
     help="The name of the context strategy to use",
-    choices=api_get_all_context_strategy_name(),
 )

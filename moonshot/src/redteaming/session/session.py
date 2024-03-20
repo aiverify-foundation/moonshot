@@ -66,10 +66,21 @@ class Session:
         prompt_template: str = "",
         context_strategy: str = "",
     ):
+
+        # Checks if context strategy exists if it's specified
+        if context_strategy:
+            self.check_file_exists("context_strategy", context_strategy)
+
+        # Checks if prompt template exists if it's specified
+        if prompt_template:
+            self.check_file_exists("prompt_template", prompt_template)
+        # Existing session
         if session_id:
             # Check if session_id is valid
             db_filepath = f"{EnvironmentVars.SESSIONS}/{session_id}.db"
+
             if Path(db_filepath).exists():
+
                 self.db_instance = StorageManager.create_session_database_connection(
                     session_id
                 )
@@ -78,8 +89,9 @@ class Session:
                 raise RuntimeError(
                     f"Unable to resume existing session {session_id}. Please create a new session."
                 )
+
+        # New session
         else:
-            # There is no existing session, create new session
             created_epoch = time.time()
             created_datetime = datetime.fromtimestamp(created_epoch).strftime(
                 "%Y%m%d-%H%M%S"
@@ -276,6 +288,7 @@ class Session:
         Returns:
             None: This method does not return a value but updates the prompt template for the specified session.
         """
+        Session.check_file_exists("prompt_template", prompt_template_name)
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
@@ -300,9 +313,38 @@ class Session:
         Returns:
             None: This method does not return a value but updates the context strategy for the specified session.
         """
+        Session.check_file_exists("context_strategy", context_strategy_name)
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
         StorageManager.update_context_strategy(
             session_db_instance, (context_strategy_name, session_id)
         )
+
+    @staticmethod
+    def check_file_exists(file_type: str, file_name: str) -> str:
+        """
+        Checks if a file exists in the corresponding directory. If the file does not exist, it returns an error message.
+
+        Args:
+            file_type (str): The type of the file. It can be either 'prompt_template' or 'context_strategy'.
+            file_name (str): The name of the file to be checked.
+
+        Returns:
+            str: An error message if the file does not exist. Returns an empty string if the file exists.
+
+        """
+        if file_type == "prompt_template":
+            file_path = f"{EnvironmentVars.PROMPT_TEMPLATES}/{file_name}.json"
+            file_type = "Prompt Template"
+        else:
+            file_path = f"{EnvironmentVars.CONTEXT_STRATEGY}/{file_name}.py"
+            file_type = "Context Strategy"
+
+        try:
+            open(file_path, "r")
+        except IOError:
+            print(
+                f"{file_type} {file_name} does not seem to exist at {file_path}. Please select something available."
+            )
+            raise

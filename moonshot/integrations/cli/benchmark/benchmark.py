@@ -2,18 +2,6 @@ import argparse
 
 import cmd2
 
-from moonshot.integrations.cli.benchmark.connectors import (
-    add_endpoint,
-    add_endpoint_args,
-    delete_endpoint,
-    delete_endpoint_args,
-    list_connector_types,
-    list_endpoints,
-    update_endpoint,
-    update_endpoint_args,
-    view_endpoint,
-    view_endpoint_args,
-)
 from moonshot.integrations.cli.benchmark.cookbook import (
     add_cookbook,
     add_cookbook_args,
@@ -58,11 +46,6 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # List contents
     # ------------------------------------------------------------------------------
-    def do_list_connector_types(self, _: cmd2.Statement) -> None:
-        list_connector_types()
-
-    def do_list_endpoints(self, _: cmd2.Statement) -> None:
-        list_endpoints()
 
     def do_list_cookbooks(self, _: cmd2.Statement) -> None:
         list_cookbooks()
@@ -79,9 +62,6 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # Add contents
     # ------------------------------------------------------------------------------
-    @cmd2.with_argparser(add_endpoint_args)
-    def do_add_endpoint(self, args: argparse.Namespace) -> None:
-        add_endpoint(args)
 
     @cmd2.with_argparser(add_cookbook_args)
     def do_add_cookbook(self, args: argparse.Namespace) -> None:
@@ -94,9 +74,6 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # Delete contents
     # ------------------------------------------------------------------------------
-    @cmd2.with_argparser(delete_endpoint_args)
-    def do_delete_endpoint(self, args: argparse.Namespace) -> None:
-        delete_endpoint(args)
 
     @cmd2.with_argparser(delete_cookbook_args)
     def do_delete_cookbook(self, args: argparse.Namespace) -> None:
@@ -113,9 +90,6 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # Update contents
     # ------------------------------------------------------------------------------
-    @cmd2.with_argparser(update_endpoint_args)
-    def do_update_endpoint(self, args: argparse.Namespace) -> None:
-        update_endpoint(args)
 
     @cmd2.with_argparser(update_cookbook_args)
     def do_update_cookbook(self, args: argparse.Namespace) -> None:
@@ -128,6 +102,7 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # Run contents
     # ------------------------------------------------------------------------------
+
     @cmd2.with_argparser(run_cookbook_args)
     def do_run_cookbook(self, args: argparse.Namespace) -> None:
         run_cookbook(args)
@@ -139,9 +114,6 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # View contents
     # ------------------------------------------------------------------------------
-    @cmd2.with_argparser(view_endpoint_args)
-    def do_view_endpoint(self, args: argparse.Namespace) -> None:
-        view_endpoint(args)
 
     @cmd2.with_argparser(view_cookbook_args)
     def do_view_cookbook(self, args: argparse.Namespace) -> None:

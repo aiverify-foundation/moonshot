@@ -2,6 +2,7 @@ import asyncio
 from ast import literal_eval
 
 import cmd2
+from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -94,7 +95,7 @@ def list_sessions() -> None:
 
 def use_session(args) -> None:
     """
-    Use or resume a session by specifying its session ID.
+    Resumes a session by specifying its session ID.
     """
     global active_session
     session_id = args.session_id
@@ -129,49 +130,49 @@ def send_prompt(session_id: str, user_prompt: str) -> None:
 
 def update_chat_display() -> None:
     """
-    Updates and displays the chat history for the active session in a structured table format.
+    Updates the chat display for the active session.
 
-    This function retrieves the chat history for the currently active session and displays it in a table format.
-    Each chat is presented in its own column with details about prepared prompts and their corresponding responses.
+    This function retrieves the chat details for the active session and prepares a table display for the chat history.
+    The table includes columns for the chat ID, prepared prompts, and the prompt/response pairs.
+    If there is no active session, a message is printed to the console.
     """
     global active_session
 
     if active_session:
-        print(f"Updating chat display for session: {active_session['session_id']}")
         list_of_chats_with_details = api_get_session_chats_by_session_id(
             active_session["session_id"]
         )
 
         # Prepare for table display
         table = Table(expand=True)
+        table_list = []
         for chat_with_details in list_of_chats_with_details:
-            chat_id_column = chat_with_details["chat_id"]
-            table.add_column(chat_id_column, justify="center")
-            chat_table = Table(expand=True)
-            chat_table.add_column("Prepared Prompts", justify="left", style="cyan")
-            chat_table.add_column("Prompt/Response", justify="left")
+            table.add_column(chat_with_details["chat_id"], justify="center")
+            new_table = Table(expand=True)
+            new_table.add_column("Prepared Prompts", justify="left", style="cyan")
+            new_table.add_column("Prompt/Response", justify="left")
 
-            for chat_history_item in chat_with_details["chat_history"]:
-                prepared_prompt = chat_history_item["prepared_prompt"]
-                prompt = chat_history_item["prompt"]
-                predicted_result = chat_history_item["predicted_result"]
-                chat_table.add_row(
-                    prepared_prompt,
-                    f"[magenta]{prompt}[/magenta] \n|---> [green]{predicted_result}[/green]",
+            list_of_chat_history = chat_with_details["chat_history"]
+            for prompt in list_of_chat_history:
+                new_table.add_row(
+                    prompt["prepared_prompt"],
+                    f"[magenta]{prompt['prompt']}[/magenta] \n|---> [green]{prompt['predicted_result']}[/green]",
                 )
-            table.add_row(Panel(chat_table, title=chat_id_column))
+                new_table.add_section()
+            table_list.append(new_table)
+            table.add_row(*table_list)
 
-        # Display table
+        # # Display table
         panel = Panel.fit(
-            table,
-            title=f"Session: {active_session['session_id']}",
+            Columns([table], expand=True),
+            title=active_session["session_id"],
             border_style="red",
             title_align="left",
         )
         console.print(panel)
 
     else:
-        console.print("[red]There is no active session.[/red]")
+        console.print("[red]There are no active session.[/red]")
 
 
 # User session arguments
@@ -203,9 +204,11 @@ new_session_args.add_argument(
     type=str,
     help="Endpoints of the new session",
 )
+
 new_session_args.add_argument(
     "context_strategy", type=str, help="Name of the context strategy module", nargs="?"
 )
+
 new_session_args.add_argument(
     "prompt_template", type=str, help="Name of the prompt template", nargs="?"
 )
