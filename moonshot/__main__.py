@@ -1,7 +1,6 @@
 import sys
 import warnings
-
-from moonshot.interfaces.cli.cli import CommandLineInterface
+from moonshot.integrations.web_api import __main__ as web_api
 
 """
 Run the Moonshot application
@@ -9,24 +8,16 @@ Run the Moonshot application
 # Setting the warnings to be ignored
 warnings.filterwarnings("ignore")
 
-
 def main():
-    cli_instance = CommandLineInterface()
-    if "interactive" in sys.argv:
-        # Run in interactive mode
-        cli_instance.debug = True
-        cli_instance.cmdloop("Starting moonshot interactive prompt...")
-    else:
-        # Run in non-interactive mode
-        arguments = sys.argv[1:]
-        if arguments:
-            arguments = f"{sys.argv[1]} "
-            for arg in sys.argv[2:]:
-                arguments += f'"{arg}" '
-            cli_instance.onecmd(arguments)
-        else:
-            cli_instance.onecmd("help")
-
+    if len(sys.argv) < 2:
+        print("Invalid number of argument given.")
+        sys.exit(1)
+    option = sys.argv[1]
+    if option == "web-api":
+        web_api.start_app()
+    else: 
+        print("Unrecognized arguments. Please use web-api")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

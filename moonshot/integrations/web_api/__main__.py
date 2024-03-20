@@ -1,7 +1,7 @@
 import uvicorn
 import os
 import logging
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 from .types.types import UvicornRunArgs
 from .container import Container
 from .logging_conf import configure_app_logging, create_uvicorn_log_config
@@ -11,7 +11,13 @@ from .app import create_app
 def start_app():
     load_dotenv()
     container: Container = Container()
-    container.config.from_yaml("moonshot/integrations/web_api/config.yml", required=True)
+    #use our own config.yml 
+    config_file = dotenv_values().get("MS_WEB_API_CONFIG")
+    if config_file is None:
+        container.config.from_default()
+    else:
+        container.config.from_yaml(f"{config_file}", required=True)
+        
     configure_app_logging(container.config)
     logging.info(f"Environment: {container.config.app_environment()}")
     ENABLE_SSL = container.config.ssl.enabled()
@@ -19,8 +25,11 @@ def start_app():
     app = create_app(container.config)
     
     run_kwargs: UvicornRunArgs = {}
-    run_kwargs['port'] = 5000
-    run_kwargs['host'] = "0.0.0.0"
+    port = dotenv_values().get("HOST_PORT", 5000)
+    if port is not None:
+        port = int(port)
+    run_kwargs['port'] = port
+    run_kwargs['host'] = dotenv_values().get("HOST_ADDRESS", "127.0.0.1")
     run_kwargs['log_config'] = create_uvicorn_log_config(container.config)
     if ENABLE_SSL:
         if not SSL_CERT_PATH:

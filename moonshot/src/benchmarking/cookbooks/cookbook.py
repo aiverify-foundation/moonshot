@@ -98,8 +98,8 @@ class Cookbook:
         Updates an existing cookbook with new information.
 
         This method takes a CookbookArguments object as input, which contains the new information for the
-        cookbook. It first deletes the existing cookbook with the same ID, then creates a new cookbook with the
-        updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+        cookbook. It directly updates the existing cookbook file with the new information. If the operation fails
+        for any reason, an exception is raised and the error is printed.
 
         Args:
             cb_args (CookbookArguments): An object containing the new information for the cookbook.
@@ -108,9 +108,11 @@ class Cookbook:
             Exception: If there is an error during the update operation.
         """
         try:
-            cb_id = slugify(cb_args.name, lowercase=True)
-            Cookbook.delete_cookbook(cb_id)
-            Cookbook.create_cookbook(cb_args)
+            # Convert the cookbook arguments to a dictionary
+            cb_info = cb_args.to_dict()
+
+            # Write the updated cookbook information to the file
+            StorageManager.create_cookbook(cb_args.id, cb_info)
 
         except Exception as e:
             print(f"Failed to update cookbook: {str(e)}")

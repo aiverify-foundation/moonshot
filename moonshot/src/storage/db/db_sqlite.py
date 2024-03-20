@@ -159,7 +159,7 @@ class DBSqlite(DBAccessor):
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")
 
-    def read_table(self, read_table_sql: str) -> Union[list, None]:
+    def read_table(self, read_table_sql: str) -> Union[list[tuple], None]:
         """
         Executes a SQL query to read data from a table and returns the results.
 

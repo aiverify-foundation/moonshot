@@ -13,23 +13,23 @@ from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.benchmarking.results.result import Result
+from moonshot.src.configs.env_variables import EnvironmentVars
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.connectors.connector_manager import ConnectorManager
+from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.session.session_manager import SessionManager
+
 
 # ------------------------------------------------------------------------------
 # Environment Variables APIs
 # ------------------------------------------------------------------------------
-
-
 def api_set_environment_variables(env_vars: dict) -> None:
     """
     Sets the environment variables for the current session.
@@ -40,7 +40,7 @@ def api_set_environment_variables(env_vars: dict) -> None:
     Returns:
         None
     """
-    pass
+    EnvironmentVars.load_env(env_vars)
 
 
 # ------------------------------------------------------------------------------
@@ -108,15 +108,7 @@ def api_read_endpoint(ep_id: str) -> dict:
     return ConnectorManager.read_endpoint(ep_id).to_dict()
 
 
-def api_update_endpoint(
-    name: str,
-    connector_type: str,
-    uri: str,
-    token: str,
-    max_calls_per_second: int,
-    max_concurrency: int,
-    params: dict,
-) -> None:
+def api_update_endpoint(ep_id: str, **kwargs) -> None:
     """
     Updates an existing endpoint in the connector manager.
 
@@ -125,29 +117,31 @@ def api_update_endpoint(
     ConnectorManager's update_endpoint method to update the endpoint.
 
     Args:
-        name (str): The name of the endpoint.
-        connector_type (str): The type of the connector.
-        uri (str): The URI for the connector.
-        token (str): The token for the connector.
-        max_calls_per_second (int): The maximum number of API calls allowed per second.
-        max_concurrency (int): The maximum number of concurrent API calls.
-        params (dict): Additional parameters for the connector.
+        kwargs: A dictionary of arguments for the endpoint. Possible keys are:
+            name (str): The name of the endpoint.
+            connector_type (str): The type of the connector.
+            uri (str): The URI for the connector.
+            token (str): The token for the connector.
+            max_calls_per_second (int): The maximum number of API calls allowed per second.
+            max_concurrency (int): The maximum number of concurrent API calls.
+            params (dict): Additional parameters for the connector.
 
     Returns:
         None
     """
-    connector_endpoint_args = ConnectorEndpointArguments(
-        id="",
-        name=name,
-        connector_type=connector_type,
-        uri=uri,
-        token=token,
-        max_calls_per_second=max_calls_per_second,
-        max_concurrency=max_concurrency,
-        params=params,
-        created_date="",
-    )
-    ConnectorManager.update_endpoint(connector_endpoint_args)
+    # Check if the endpoint exists
+    try:
+        existing_endpoint = ConnectorManager.read_endpoint(ep_id)
+    except Exception:
+        raise RuntimeError(f"Endpoint with ID '{ep_id}' does not exist")
+
+    # Update the fields of the existing endpoint with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_endpoint, key):
+            setattr(existing_endpoint, key, value)
+
+    # Update the endpoint
+    ConnectorManager.update_endpoint(existing_endpoint)
 
 
 def api_delete_endpoint(ep_id: str) -> None:
@@ -166,7 +160,7 @@ def api_delete_endpoint(ep_id: str) -> None:
     ConnectorManager.delete_endpoint(ep_id)
 
 
-def api_get_all_endpoints() -> list[dict]:
+def api_get_all_endpoint() -> list[dict]:
     """
     Retrieves a list of all available endpoints.
 
@@ -181,7 +175,7 @@ def api_get_all_endpoints() -> list[dict]:
     return [endpoint.to_dict() for endpoint in endpoints]
 
 
-def api_get_all_endpoints_names() -> list[str]:
+def api_get_all_endpoint_name() -> list[str]:
     """
     Retrieves a list of all endpoint names.
 
@@ -233,18 +227,17 @@ def api_create_connectors(ep_ids: list[str]) -> list[Connector]:
     ]
 
 
-def api_get_all_connectors() -> list[str]:
+def api_get_all_connector_type() -> list[str]:
     """
-    Retrieves a list of all available connectors.
+    Retrieves a list of all available connector types.
 
-    This function calls the ConnectorManager's get_available_connectors method to retrieve a list of all available
-    connectors. It returns a list of connector names, which are the names of Python files in the specified directory
-    excluding any special or private files (denoted by "__" in their names).
+    This function calls the ConnectorManager's get_available_connector_types method to retrieve a list of all available
+    connector types. It returns the list of connector types.
 
     Returns:
-        list[str]: A list of the names of available connectors.
+        list[str]: A list of connector types.
     """
-    return ConnectorManager.get_available_connectors()
+    return ConnectorManager.get_available_connector_types()
 
 
 # ------------------------------------------------------------------------------
@@ -310,34 +303,40 @@ def api_read_cookbooks(cb_ids: list[str]) -> list[dict]:
     return [Cookbook.read_cookbook(cb_id).to_dict() for cb_id in cb_ids]
 
 
-def api_update_cookbook(
-    name: str,
-    description: str,
-    recipes: list[str],
-) -> None:
+def api_update_cookbook(cb_id: str, **kwargs) -> None:
     """
-    Updates an existing cookbook with new information.
+    Updates an existing cookbook in the cookbook manager.
 
-    This function takes a cookbook ID and a CookbookArguments object as input, which contains the new information for
-    the cookbook. It first deletes the existing cookbook with the same ID, then creates a new cookbook with the
-    updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+    This function updates an existing cookbook in the cookbook manager using the provided cookbook details.
+    It first checks if the cookbook exists, then updates the fields of the existing cookbook with the provided kwargs,
+    and finally calls the Cookbook's update_cookbook method to update the cookbook.
 
     Args:
         cb_id (str): The ID of the cookbook to update.
-        name (str): The new name of the cookbook.
-        description (str): The new description of the cookbook.
-        recipes (list[str]): The new list of recipes for the cookbook.
+        kwargs: A dictionary of arguments for the cookbook. Possible keys are:
+            name (str): The name of the cookbook.
+            description (str): The description of the cookbook.
+            recipes (list[str]): The list of recipes in the cookbook.
 
     Raises:
-        Exception: If there is an error during the update operation.
+        RuntimeError: If the cookbook with the provided ID does not exist.
+
+    Returns:
+        None
     """
-    cb_args = CookbookArguments(
-        id="",
-        name=name,
-        description=description,
-        recipes=recipes,
-    )
-    Cookbook.update_cookbook(cb_args)
+    # Check if the cookbook exists
+    try:
+        existing_cookbook = Cookbook.read_cookbook(cb_id)
+    except Exception:
+        raise RuntimeError(f"Cookbook with ID '{cb_id}' does not exist")
+
+    # Update the fields of the existing cookbook with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_cookbook, key):
+            setattr(existing_cookbook, key, value)
+
+    # Update the cookbook
+    Cookbook.update_cookbook(existing_cookbook)
 
 
 def api_delete_cookbook(cb_id: str) -> None:
@@ -353,7 +352,7 @@ def api_delete_cookbook(cb_id: str) -> None:
     Cookbook.delete_cookbook(cb_id)
 
 
-def api_get_all_cookbooks() -> list[dict]:
+def api_get_all_cookbook() -> list[dict]:
     """
     Retrieves all available cookbooks.
 
@@ -368,7 +367,7 @@ def api_get_all_cookbooks() -> list[dict]:
     return [cookbook.to_dict() for cookbook in cookbooks]
 
 
-def api_get_all_cookbooks_names() -> list[str]:
+def api_get_all_cookbook_name() -> list[str]:
     """
     Retrieves the names of all available cookbooks.
 
@@ -463,39 +462,43 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
     return [Recipe.read_recipe(rec_id).to_dict() for rec_id in rec_ids]
 
 
-def api_update_recipe(
-    name: str,
-    description: str,
-    tags: list[str],
-    datasets: list[str],
-    prompt_templates: list[str],
-    metrics: list[str],
-) -> None:
+def api_update_recipe(rec_id: str, **kwargs) -> None:
     """
-    Updates an existing recipe with new information.
+    Updates an existing recipe in the recipe manager.
 
-    This function takes a set of arguments for a recipe, including its name, description, tags, datasets,
-    prompt templates, and metrics. It first deletes the existing recipe with the same ID, then creates a new
-    recipe with the updated information.
+    This function updates an existing recipe in the recipe manager using the provided recipe details.
+    It first checks if the recipe exists, then updates the fields of the existing recipe with the provided kwargs,
+    and finally calls the Recipe's update_recipe method to update the recipe.
 
     Args:
-        name (str): The name of the recipe.
-        description (str): The description of the recipe.
-        tags (list[str]): The tags associated with the recipe.
-        datasets (list[str]): The datasets used in the recipe.
-        prompt_templates (list[str]): The prompt templates used in the recipe.
-        metrics (list[str]): The metrics used in the recipe.
+        rec_id (str): The ID of the recipe to update.
+        kwargs: A dictionary of arguments for the recipe. Possible keys are:
+            name (str): The name of the recipe.
+            description (str): The description of the recipe.
+            tags (list[str]): The tags associated with the recipe.
+            datasets (list[str]): The datasets used in the recipe.
+            prompt_templates (list[str]): The prompt templates used in the recipe.
+            metrics (list[str]): The metrics used in the recipe.
+
+    Raises:
+        RuntimeError: If the recipe with the provided ID does not exist.
+
+    Returns:
+        None
     """
-    rec_args = RecipeArguments(
-        id="",
-        name=name,
-        description=description,
-        tags=tags,
-        datasets=datasets,
-        prompt_templates=prompt_templates,
-        metrics=metrics,
-    )
-    Recipe.update_recipe(rec_args)
+    # Check if the recipe exists
+    try:
+        existing_recipe = Recipe.read_recipe(rec_id)
+    except Exception:
+        raise RuntimeError(f"Recipe with ID '{rec_id}' does not exist")
+
+    # Update the fields of the existing recipe with the provided kwargs
+    for key, value in kwargs.items():
+        if hasattr(existing_recipe, key):
+            setattr(existing_recipe, key, value)
+
+    # Update the endpoint
+    Recipe.update_recipe(existing_recipe)
 
 
 def api_delete_recipe(rec_id: str) -> None:
@@ -515,7 +518,7 @@ def api_delete_recipe(rec_id: str) -> None:
     Recipe.delete_recipe(rec_id)
 
 
-def api_get_all_recipes() -> list[dict]:
+def api_get_all_recipe() -> list[dict]:
     """
     Retrieves all available recipes.
 
@@ -529,7 +532,7 @@ def api_get_all_recipes() -> list[dict]:
     return [recipe.to_dict() for recipe in recipes]
 
 
-def api_get_all_recipes_names() -> list[str]:
+def api_get_all_recipe_name() -> list[str]:
     """
     Retrieves all available recipe names.
 
@@ -563,7 +566,7 @@ def api_delete_metric(met_id: str) -> None:
     Metric.delete_metric(met_id)
 
 
-def api_get_all_metrics() -> list[str]:
+def api_get_all_metric() -> list[str]:
     """
     Retrieves all available metrics.
 
@@ -711,7 +714,7 @@ def api_delete_executor(be_id: str) -> None:
     BenchmarkExecutor.delete_executor(be_id)
 
 
-def api_get_all_executors() -> list[dict]:
+def api_get_all_executor() -> list[dict]:
     """
     This function retrieves all available executors and returns them as a list of dictionaries. Each dictionary
     represents an executor and contains its information.
@@ -723,7 +726,7 @@ def api_get_all_executors() -> list[dict]:
     return [executor.to_dict() for executor in executors]
 
 
-def api_get_all_executors_names() -> list[str]:
+def api_get_all_executor_name() -> list[str]:
     """
     This function retrieves all available executor names and returns them as a list.
 
@@ -776,7 +779,7 @@ def api_delete_result(res_id: str) -> None:
     Result.delete_result(res_id)
 
 
-def api_get_all_results() -> list[dict]:
+def api_get_all_result() -> list[dict]:
     """
     This function retrieves all available results and returns them as a list of dictionaries. Each dictionary
     represents a result and contains its information.
@@ -788,7 +791,7 @@ def api_get_all_results() -> list[dict]:
     return [result.to_dict() for result in results]
 
 
-def api_get_all_results_name() -> list[str]:
+def api_get_all_result_name() -> list[str]:
     """
     This function retrieves all available result names and returns them as a list.
 
@@ -799,7 +802,7 @@ def api_get_all_results_name() -> list[str]:
     return results_name
 
 
-def api_get_all_prompt_template_details() -> list[dict]:
+def api_get_all_prompt_template_detail() -> list[dict]:
     """
     Retrieves all available prompt template details and returns them as a list of dictionaries.
 
@@ -809,7 +812,7 @@ def api_get_all_prompt_template_details() -> list[dict]:
     return PromptTemplateManager.get_all_prompt_template_details()
 
 
-def api_get_all_prompt_template_names() -> list[str]:
+def api_get_all_prompt_template_name() -> list[str]:
     """
     Retrieves all available prompt template names and returns them as a list.
 
@@ -824,7 +827,7 @@ def api_get_all_prompt_template_names() -> list[str]:
 # ------------------------------------------------------------------------------
 
 
-def api_get_all_session_names() -> list[str]:
+def api_get_all_session_name() -> list[str]:
     """
     Retrieves and returns the names (IDs) of all sessions currently managed.
 
@@ -838,7 +841,7 @@ def api_get_all_session_names() -> list[str]:
     return SessionManager.get_all_session_names()
 
 
-def api_get_all_session_details() -> list[dict]:
+def api_get_all_session_detail() -> list[dict]:
     """
     Retrieves and returns detailed metadata for all sessions currently managed.
 
@@ -881,7 +884,7 @@ def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
 def api_create_session(
     name: str,
     description: str,
-    endpoints: list,
+    endpoints: list[str],
     context_strategy: str = "",
     prompt_template: str = "",
 ) -> Session:
@@ -940,7 +943,7 @@ def api_delete_session(session_id: str) -> None:
     SessionManager.delete_session(session_id)
 
 
-def api_send_prompt(session_id: str, user_prompt: str) -> None:
+async def api_send_prompt(session_id: str, user_prompt: str) -> None:
     """
     Sends a user-defined prompt to a specific session.
 
@@ -955,7 +958,7 @@ def api_send_prompt(session_id: str, user_prompt: str) -> None:
     Returns:
         None: This method does not return a value but triggers the sending of the user prompt to the specified session.
     """
-    SessionManager.send_prompt(session_id, user_prompt)
+    await SessionManager.send_prompt(session_id, user_prompt)
 
 
 def api_update_context_strategy(session_id: str, context_strategy_name: str) -> None:
@@ -981,7 +984,7 @@ def api_update_context_strategy(session_id: str, context_strategy_name: str) -> 
 # ------------------------------------------------------------------------------
 
 
-def api_get_all_context_strategy_names() -> list[str]:
+def api_get_all_context_strategy_name() -> list[str]:
     """
     Retrieves and returns the names of all context strategies currently available.
 

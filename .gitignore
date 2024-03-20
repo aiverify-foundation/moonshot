@@ -170,3 +170,6 @@ moonshot/data/sessions/*.json
 
 # dev settings
 .vscode/
+
+# build files
+dist/

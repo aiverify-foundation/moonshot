@@ -4,21 +4,14 @@
     "description": "This is a test cookbook for evaluation catalogue.",
     "recipes": [
         "truthfulqa-mcq",
-        "bbq-ambiguous",
+        "bbq",
         "real-toxicity-prompts-completion",
         "fairness-uciadult",
         "enron-email",
-        "advglue-mnli-adv",
-        "advglue-mnli-benign",
-        "advglue-mnlimm-adv",
-        "advglue-mnlimm-benign",
-        "advglue-qnli-adv",
-        "advglue-qnli-benign",
-        "advglue-qqp-adv",
-        "advglue-qqp-benign",
-        "advglue-rte-adv",
-        "advglue-rte-benign",
-        "advglue-sst2-adv",
-        "advglue-sst2-benign"
+        "advglue-mnli",
+        "advglue-qnli",
+        "advglue-qqp",
+        "advglue-rte",
+        "advglue-sst2"
     ]
 }

@@ -1,22 +1,31 @@
 from __future__ import annotations
-from slugify import slugify
-from datetime import datetime
 
+from datetime import datetime
+from typing import Union
+
+from moonshot.src.benchmarking.prompt_arguments import PromptArguments
+from moonshot.src.connectors.connector_manager import ConnectorManager
+from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
+from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
+    ContextStrategyManager,
+)
+from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.storage_manager import StorageManager
+from slugify import slugify
 
 
 class ChatRecord:
     def __init__(
         self,
-        chat_record_id,
-        conn_id,
-        context_strategy,
-        prompt_template,
-        prompt,
-        prepared_prompt,
-        predicted_result,
-        duration,
-        prompt_time,
+        chat_record_id: str,
+        conn_id: str,
+        context_strategy: str,
+        prompt_template: str,
+        prompt: str,
+        prepared_prompt: str,
+        predicted_result: str,
+        duration: str,
+        prompt_time: str,
     ):
         self.chat_record_id = chat_record_id
         self.conn_id = conn_id
@@ -28,7 +37,7 @@ class ChatRecord:
         self.duration = duration
         self.prompt_time = prompt_time
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str]:
         """
         Converts the ChatRecord instance into a dictionary.
 
@@ -51,32 +60,40 @@ class ChatRecord:
 class Chat:
     def __init__(
         self,
-        session_db_instance,
-        endpoint: str = None,
-        created_epoch: float = None,
-        created_datetime: float = None,
+        session_db_instance: DBAccessor,
+        endpoint: str = "",
+        created_epoch: float = 0.0,
+        created_datetime: str = "",
         chat_id: str = "",
     ):
+        self.chat_history = []
         if chat_id:
+            db_chat_id = chat_id.replace("-", "_")
             # There is an existing chat
-            self.chat_id = chat_id
+            self.chat_id = db_chat_id
             self.endpoint = endpoint
-            self.chat_history = self.load_chat_history(session_db_instance, chat_id)
+            self.chat_history = self.load_chat_history(session_db_instance, db_chat_id)
         else:
             # No existing chat, create new chat
-            created_datetime = created_datetime.replace("-", "_")
+            created_datetime = str(created_datetime).replace("-", "_")
             chat_id = f"{slugify(endpoint)}_{created_datetime}"
-            StorageManager.create_chat_history_storage(chat_id, session_db_instance)
-            chat_meta_tuple = (chat_id, endpoint, created_epoch, created_datetime)
+            db_chat_id = chat_id.replace("-", "_")
+            StorageManager.create_chat_history_storage(db_chat_id, session_db_instance)
+            chat_meta_tuple = (
+                chat_id,
+                endpoint,
+                created_epoch,
+                created_datetime,
+            )
             StorageManager.create_chat_metadata_record(
                 chat_meta_tuple, session_db_instance
             )
 
-            self.chat_id = chat_id
+            self.chat_id = db_chat_id
             self.endpoint = endpoint
-            self.chat_history = [ChatRecord]
+            self.chat_history: list[ChatRecord] = []
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Union[str, list[dict[str, str]]]]:
         """
         Converts the Chat instance into a dictionary.
 
@@ -97,7 +114,9 @@ class Chat:
         }
 
     @classmethod
-    def load_chat(cls, db_instance, chat_id: str, endpoint: str = None) -> Chat:
+    def load_chat(
+        cls, session_db_instance: DBAccessor, chat_id: str, endpoint: str = ""
+    ) -> Chat:
         """
         Class method to load a Chat instance for a given chat ID and optional endpoint.
 
@@ -109,14 +128,18 @@ class Chat:
             cls: The class from which this method is called.
             db_instance: The database instance associated with the chat session.
             chat_id (str): The unique identifier for the chat session.
-            endpoint (str, optional): The endpoint associated with the chat session. Defaults to None.
+            endpoint (str, optional): The endpoint associated with the chat session. Defaults to empty string.
 
         Returns:
             Chat: An instance of the Chat class initialized with the provided parameters.
         """
-        return cls(session_db_instance=db_instance, chat_id=chat_id, endpoint=endpoint)
+        return cls(
+            session_db_instance=session_db_instance, chat_id=chat_id, endpoint=endpoint
+        )
 
-    def load_chat_history(self, db_instance, chat_id) -> list[ChatRecord]:
+    def load_chat_history(
+        self, session_db_instance: DBAccessor, chat_id: str
+    ) -> list[ChatRecord]:
         """
         Loads the chat history for a specific chat ID.
 
@@ -132,49 +155,98 @@ class Chat:
             list[ChatRecord]: A list of ChatRecord instances representing the chat history.
         """
         list_of_chat_record_tuples = StorageManager.get_chat_history_for_one_endpoint(
-            chat_id, db_instance
+            chat_id, session_db_instance
         )
-        list_of_chat_records = [
-            ChatRecord(*chat_record_tuple)
-            for chat_record_tuple in list_of_chat_record_tuples
-        ]
+        list_of_chat_records = []
+        if list_of_chat_record_tuples:
+            list_of_chat_records = [
+                ChatRecord(*chat_record_tuple)
+                for chat_record_tuple in list_of_chat_record_tuples
+            ]
         return list_of_chat_records
 
     @staticmethod
-    def send_prompt(
-        session_db_instance,
-        chat_id,
-        user_prompt,
-        prepared_prompt,
-        context_strategy,
-        prompt_template,
+    async def send_prompt(
+        session_db_instance: DBAccessor,
+        chat_id: str,
+        endpoint: str,
+        user_prompt: str,
+        context_strategy_name: str = "",
+        prompt_template_name: str = "",
     ) -> None:
-        chat_obj = Chat(session_db_instance=session_db_instance, chat_id=chat_id)
-        prepared_prompt_dict = {"data": [{"prompt": prepared_prompt}]}
-        predicted_result = chat_obj.get_prediction(
-            prepared_prompt_dict, "connection_object"
+        """
+        Sends a prompt message to the chat session.
+
+        This method sends a prompt message to the chat session based on the user input prompt. It optionally
+        processes the prompt with a context strategy and/or a prompt template before sending it to the endpoint.
+
+        Args:
+            session_db_instance: The database instance associated with the chat session.
+            chat_id (str): The unique identifier for the chat session.
+            endpoint: The endpoint to which the prompt message will be sent.
+            user_prompt (str): The user input prompt message.
+            context_strategy_name (str, optional): The name of the context strategy to process the prompt.
+            Defaults to "".
+            prompt_template_name (str, optional): The name of the prompt template to process the prompt.
+            Defaults to "".
+        """
+        prepared_prompt = user_prompt
+
+        # process prompt with context strategy if it is set
+        if context_strategy_name:
+            chat_obj = Chat.load_chat(session_db_instance, chat_id, endpoint)
+            list_of_chat_records = [
+                chat_record.to_dict() for chat_record in chat_obj.chat_history
+            ]
+
+            # sort the chat records by time in descending order if it's not already sorted
+            sorted_list_of_chat_records_time_desc = sorted(
+                list_of_chat_records, key=lambda i: i["prompt_time"], reverse=True
+            )
+            prepared_prompt = ContextStrategyManager.process_prompt_cs(
+                prepared_prompt,
+                context_strategy_name,
+                sorted_list_of_chat_records_time_desc,
+            )
+
+        # process prompt with prompt template if it is set
+        if prompt_template_name:
+            prepared_prompt = PromptTemplateManager.process_prompt_pt(
+                prepared_prompt, prompt_template_name
+            )
+        endpoint_instance = ConnectorManager.create_connector(
+            ConnectorManager.read_endpoint(endpoint)
         )
 
-        # TODO
-        connection_id = "conn_id_123"
-        duration = "2 secs"
-        prompt_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        # put variables into PromptArguments before passing it to get_prediction
+        new_prompt_info = PromptArguments(
+            rec_id="",
+            pt_id="",
+            ds_id="",
+            prompt_index=1,
+            prompt=prepared_prompt,
+            target="",
+            conn_id="",
+        )
 
-        # TODO callback with partial
+        prompt_start_time = datetime.now()
+
+        # sends prompt to endpoint
+        prediction_response = await ConnectorManager.get_prediction(
+            new_prompt_info, endpoint_instance
+        )
+
+        # stores chat prompts, predictions and its config into DB
         chat_record_tuple = (
-            connection_id,
-            context_strategy,
-            prompt_template,
+            "",
+            context_strategy_name,
+            prompt_template_name,
             user_prompt,
             prepared_prompt,
-            predicted_result,
-            duration,
-            prompt_time,
+            prediction_response.predicted_results,
+            prediction_response.duration,
+            prompt_start_time.strftime("%m/%d/%Y, %H:%M:%S"),
         )
         StorageManager.create_chat_record(
             chat_record_tuple, session_db_instance, chat_id
         )
-
-    def get_prediction(self, prepared_prompt, connection_object) -> str:
-        # TODO
-        return "predicted results"

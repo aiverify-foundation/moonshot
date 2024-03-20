@@ -87,8 +87,9 @@ class ConnectorManager:
         Updates an existing endpoint with new information.
 
         This method takes a ConnectorEndpointArguments object as input, which contains the new information for the
-        endpoint. It first deletes the existing endpoint with the same ID, then creates a new endpoint with the
-        updated information. If the operation fails for any reason, an exception is raised and the error is printed.
+        endpoint. Instead of deleting and recreating the endpoint, it directly updates the existing endpoint file
+        with the new information. If the operation fails for any reason, an exception is raised and the error
+        is printed.
 
         Args:
             ep_args (ConnectorEndpointArguments): An object containing the new information for the endpoint.
@@ -97,9 +98,11 @@ class ConnectorManager:
             Exception: If there is an error during the update operation.
         """
         try:
-            ep_id = slugify(ep_args.name, lowercase=True)
-            ConnectorManager.delete_endpoint(ep_id)
-            ConnectorManager.create_endpoint(ep_args)
+            # Convert the endpoint arguments to a dictionary
+            ep_info = ep_args.to_dict()
+
+            # Write the updated endpoint information to the file
+            StorageManager.create_connector_endpoint(ep_args.id, ep_info)
 
         except Exception as e:
             print(f"Failed to update endpoint: {str(e)}")
@@ -188,17 +191,20 @@ class ConnectorManager:
             raise e
 
     @staticmethod
-    def get_available_connectors() -> list[str]:
+    def get_available_connector_types() -> list[str]:
         """
-        Retrieves a list of available connectors by scanning a specified directory for Python files.
+        Retrieves a list of all available connector types.
 
-        This method scans the directory specified by the `EnvironmentVars.CONNECTORS` environment variable for
-        Python files, excluding any that are special or private files (denoted by "__" in their names). It
-        extracts and returns the stem (the filename without the extension) of each Python file found, which
-        represents the available connector names.
+        This method uses the `StorageManager.get_connectors` method to find all Python files in the directory
+        specified by the `EnvironmentVars.CONNECTORS` environment variable. It then filters out any files that are not
+        meant to be exposed as connectors (those containing "__" in their names). The method returns a list of the
+        names of these connector types.
 
         Returns:
-            list[str]: A list of the names of available connectors.
+            list[str]: A list of strings, each representing the name of a connector type.
+
+        Raises:
+            Exception: If there is an error during the retrieval of connector types.
         """
         try:
             return [
