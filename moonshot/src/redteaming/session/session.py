@@ -75,7 +75,9 @@ class Session:
                 )
                 self.metadata = self.get_session_metadata_by_id(session_id)
             else:
-                print("Unable to resume existing session. Please create a new session.")
+                raise RuntimeError(
+                    f"Unable to resume existing session {session_id}. Please create a new session."
+                )
         else:
             # There is no existing session, create new session
             created_epoch = time.time()
@@ -99,8 +101,8 @@ class Session:
 
     def create_new_session(
         self,
-        session_meta_tuple: tuple[str, str, str, str, float, str, str, str],
-        endpoints: list[str],
+        session_meta_tuple: tuple,
+        endpoints: list,
     ) -> None:
         """
         Creates a new session in the database with the provided metadata and endpoints.
@@ -112,25 +114,30 @@ class Session:
         Returns:
             None
         """
-        session_id = session_meta_tuple[0]
-        created_epoch = session_meta_tuple[4]
-        created_datetime = session_meta_tuple[5]
+        try:
+            session_id = session_meta_tuple[0]
+            created_epoch = session_meta_tuple[4]
+            created_datetime = session_meta_tuple[5]
 
-        # creates db, session, and chat metadata tables, and inserts session metadata
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        StorageManager.create_session_storage(session_meta_tuple, session_db_instance)
+            # creates db, session, and chat metadata tables, and inserts session metadata
+            session_db_instance = StorageManager.create_session_database_connection(
+                session_id
+            )
+            StorageManager.create_session_storage(
+                session_meta_tuple, session_db_instance
+            )
 
-        # creates chat tables, updates chat metadata, and updates session metadata with chat ids
-        list_of_chats = [
-            Chat(session_db_instance, endpoint, created_epoch, created_datetime)
-            for endpoint in endpoints
-        ]
-        chat_ids = [str(chat.chat_id) for chat in list_of_chats]
-        StorageManager.update_session_metadata_with_chat_info(
-            (str(chat_ids), session_id), session_db_instance
-        )
+            # creates chat tables, updates chat metadata, and updates session metadata with chat ids
+            list_of_chats = [
+                Chat(session_db_instance, endpoint, created_epoch, created_datetime)
+                for endpoint in endpoints
+            ]
+            chat_ids = [str(chat.chat_id) for chat in list_of_chats]
+            StorageManager.update_session_metadata_with_chat_info(
+                (str(chat_ids), session_id), session_db_instance
+            )
+        except Exception:
+            raise
 
     @staticmethod
     def get_connection_instance_by_session_id(session_id: str) -> DBAccessor:
@@ -199,9 +206,9 @@ class Session:
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
-        list_of_chat_metadata: list[
-            tuple[str, str]
-        ] = StorageManager.get_session_chat_metadata(session_db_instance)
+        list_of_chat_metadata: list[tuple[str, str]] = (
+            StorageManager.get_session_chat_metadata(session_db_instance)
+        )
 
         return [
             Chat.load_chat(
