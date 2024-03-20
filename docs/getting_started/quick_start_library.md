@@ -95,7 +95,9 @@ api_create_endpoint(
 ## Benchmarking
 
 ### Step 1: Create Custom Recipe/Cookbook (Optional)
-Optionally, you can create your own custom recipe consisting of a dataset, metric, and prep and post prompts. This step allows you to tailor the benchmarking process to their specific needs and objectives.
+Optionally, you can create your own custom recipe consisting of a dataset, metric, and prep and post prompts. 
+
+This step allows you to tailor the benchmarking process to their specific needs and objectives.
 - To add a new recipe, we will use `api_create_recipe()`. We will use dataset and prompt template from the default moonshot library as an example.
 ```python
 api_create_recipe(
@@ -186,6 +188,10 @@ show_session_chats(api_get_session_chats_by_session_id(session_id))
 
 ### Step 3: Remove and Adding Prompt Templates or Context Strategy
 Optionally, you can remove or add prompt templates and context strategy to customize the toolkit's behavior.
+
+Prompt Template serves as a skeleton for constructing input text that prompts the model to generate.
+
+By indicating Context Strategy, you will be including n-number of previous prompts context to be included in your prompt.
 
 ```python
 context_strategy = "add_previous_prompt"
