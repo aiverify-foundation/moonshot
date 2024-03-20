@@ -6,6 +6,17 @@ Moonshot is a comprehensive Large Language Model (LLM) Evaluation tool designed 
 
 Model Connectors in Moonshot enable users to integrate new models into the toolkit by connecting to their Large Language Models (LLMs) via API connectors. This feature empowers users to create and modify LLM endpoints within Moonshot, facilitating customized testing and benchmarking scenarios tailored to their specific needs.
 
+## Benchmark
+A benchmark refers to a standardized set of tasks or datasets used to assess the performance of a Language Model, such as Large Language Models (LLMs) like GPT (Generative Pre-trained Transformer) models. These benchmarks are crucial for evaluating the capabilities and limitations of LLMs across various natural language processing tasks.
+
+A benchmark typically includes:
+
+1. Task Description: Clear instructions on the task(s) to be performed by the Language Model. Tasks can vary widely and may include text generation, summarization, question answering, sentiment analysis, etc.
+2. Datasets: The benchmark provides one or more datasets relevant to the task(s) being evaluated. These datasets often come with labeled examples or ground truth annotations to facilitate evaluation.
+3. Evaluation Metrics: Standardized metrics are used to quantify the performance of the Language Model on the given tasks. These metrics could include accuracy, precision, recall, F1 score, perplexity, etc., depending on the nature of the task.
+
+Benchmarks are essential for comparing different Language Models objectively and for tracking progress in the field of natural language processing. They provide a standardized framework for researchers to evaluate and improve the performance of their models. Additionally, benchmarks serve as a means of fostering collaboration and facilitating the development of more robust and reliable Language Models.
+
 ## During a Run
 
 During a run in Moonshot, the toolkit executes the selected Cookbook and interacts with the model endpoints chosen by the users. This process allows for the evaluation of LLM applications against predefined benchmarks and test scenarios.
