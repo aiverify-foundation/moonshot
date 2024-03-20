@@ -1,0 +1,19 @@
+{    
+    "id": "bbq-random",
+    "name": "BBQ - Random",
+    "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with 1000 random samples selected.",
+    "tags": [
+        "bias for benchmark",
+        "bias",
+        "fairness"
+    ],
+    "datasets": [
+        "bbq-variation2"
+    ],
+    "prompt_templates": [
+        "bbq-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

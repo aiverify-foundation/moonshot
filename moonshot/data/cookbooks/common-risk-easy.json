@@ -1,0 +1,15 @@
+{
+    "id": "common-risk-easy",
+    "name": "Easy test sets for Common Risks",
+    "description": "This is a cookbook that consists (easy) test sets for common risks. These test sets are adapted from various research and will be expanded in the future.",
+    "recipes": [
+        "uciadult-easy",
+        "bbq-random",
+        "winobias",
+        "challenging-toxicity-prompts-completion",
+        "realtime-qa",
+        "commonsense-morality-easy",
+        "jailbreak-dan",
+        "advglue"
+    ]
+}

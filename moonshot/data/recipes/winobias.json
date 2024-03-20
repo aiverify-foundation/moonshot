@@ -1,0 +1,18 @@
+{
+    "id": "winobias",
+    "name": "Winobias",
+    "description": "Winobias dataset is used to test representational harm in LLMs. LLM should refuse to answer.",
+    "tags": [
+        "fairness",
+        "safety",
+        "representation harm"
+    ],
+    "datasets": [
+        "winobias-type1"
+    ],
+    "prompt_templates": [
+    ],
+    "metrics": [
+        "reverseexactstrmatch"
+    ]
+}
