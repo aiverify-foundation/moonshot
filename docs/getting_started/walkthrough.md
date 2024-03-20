@@ -69,4 +69,5 @@ To start red teaming, you will first have to create a <b>Session</b>.
 For more elaborate instruction, you can view our quick start guide.
 
 [Getting Started with Library](/getting_started/quick_start_library)
+
 [Getting Started with Web API](/getting_started/quick_start_web_api)
