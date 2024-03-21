@@ -66,18 +66,32 @@ class Session:
         prompt_template: str = "",
         context_strategy: str = "",
     ):
+
+        # Checks if context strategy exists if it's specified
+        if context_strategy:
+            self.check_file_exists("context_strategy", context_strategy)
+
+        # Checks if prompt template exists if it's specified
+        if prompt_template:
+            self.check_file_exists("prompt_template", prompt_template)
+        # Existing session
         if session_id:
             # Check if session_id is valid
             db_filepath = f"{EnvironmentVars.SESSIONS}/{session_id}.db"
+
             if Path(db_filepath).exists():
+
                 self.db_instance = StorageManager.create_session_database_connection(
                     session_id
                 )
                 self.metadata = self.get_session_metadata_by_id(session_id)
             else:
-                print("Unable to resume existing session. Please create a new session.")
+                raise RuntimeError(
+                    f"Unable to resume existing session {session_id}. Please create a new session."
+                )
+
+        # New session
         else:
-            # There is no existing session, create new session
             created_epoch = time.time()
             created_datetime = datetime.fromtimestamp(created_epoch).strftime(
                 "%Y%m%d-%H%M%S"
@@ -99,8 +113,8 @@ class Session:
 
     def create_new_session(
         self,
-        session_meta_tuple: tuple[str, str, str, str, float, str, str, str],
-        endpoints: list[str],
+        session_meta_tuple: tuple,
+        endpoints: list,
     ) -> None:
         """
         Creates a new session in the database with the provided metadata and endpoints.
@@ -112,25 +126,30 @@ class Session:
         Returns:
             None
         """
-        session_id = session_meta_tuple[0]
-        created_epoch = session_meta_tuple[4]
-        created_datetime = session_meta_tuple[5]
+        try:
+            session_id = session_meta_tuple[0]
+            created_epoch = session_meta_tuple[4]
+            created_datetime = session_meta_tuple[5]
 
-        # creates db, session, and chat metadata tables, and inserts session metadata
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        StorageManager.create_session_storage(session_meta_tuple, session_db_instance)
+            # creates db, session, and chat metadata tables, and inserts session metadata
+            session_db_instance = StorageManager.create_session_database_connection(
+                session_id
+            )
+            StorageManager.create_session_storage(
+                session_meta_tuple, session_db_instance
+            )
 
-        # creates chat tables, updates chat metadata, and updates session metadata with chat ids
-        list_of_chats = [
-            Chat(session_db_instance, endpoint, created_epoch, created_datetime)
-            for endpoint in endpoints
-        ]
-        chat_ids = [str(chat.chat_id) for chat in list_of_chats]
-        StorageManager.update_session_metadata_with_chat_info(
-            (str(chat_ids), session_id), session_db_instance
-        )
+            # creates chat tables, updates chat metadata, and updates session metadata with chat ids
+            list_of_chats = [
+                Chat(session_db_instance, endpoint, created_epoch, created_datetime)
+                for endpoint in endpoints
+            ]
+            chat_ids = [str(chat.chat_id) for chat in list_of_chats]
+            StorageManager.update_session_metadata_with_chat_info(
+                (str(chat_ids), session_id), session_db_instance
+            )
+        except Exception:
+            raise
 
     @staticmethod
     def get_connection_instance_by_session_id(session_id: str) -> DBAccessor:
@@ -199,9 +218,9 @@ class Session:
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
-        list_of_chat_metadata: list[
-            tuple[str, str]
-        ] = StorageManager.get_session_chat_metadata(session_db_instance)
+        list_of_chat_metadata: list[tuple[str, str]] = (
+            StorageManager.get_session_chat_metadata(session_db_instance)
+        )
 
         return [
             Chat.load_chat(
@@ -269,6 +288,7 @@ class Session:
         Returns:
             None: This method does not return a value but updates the prompt template for the specified session.
         """
+        Session.check_file_exists("prompt_template", prompt_template_name)
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
@@ -293,9 +313,38 @@ class Session:
         Returns:
             None: This method does not return a value but updates the context strategy for the specified session.
         """
+        Session.check_file_exists("context_strategy", context_strategy_name)
         session_db_instance = StorageManager.create_session_database_connection(
             session_id
         )
         StorageManager.update_context_strategy(
             session_db_instance, (context_strategy_name, session_id)
         )
+
+    @staticmethod
+    def check_file_exists(file_type: str, file_name: str) -> str:
+        """
+        Checks if a file exists in the corresponding directory. If the file does not exist, it returns an error message.
+
+        Args:
+            file_type (str): The type of the file. It can be either 'prompt_template' or 'context_strategy'.
+            file_name (str): The name of the file to be checked.
+
+        Returns:
+            str: An error message if the file does not exist. Returns an empty string if the file exists.
+
+        """
+        if file_type == "prompt_template":
+            file_path = f"{EnvironmentVars.PROMPT_TEMPLATES}/{file_name}.json"
+            file_type = "Prompt Template"
+        else:
+            file_path = f"{EnvironmentVars.CONTEXT_STRATEGY}/{file_name}.py"
+            file_type = "Context Strategy"
+
+        try:
+            open(file_path, "r")
+        except IOError:
+            print(
+                f"{file_type} {file_name} does not seem to exist at {file_path}. Please select something available."
+            )
+            raise
