@@ -26,9 +26,7 @@ def main():
         else:
             arguments = sys.argv[2:]
             if arguments:
-                arguments = f"{sys.argv[2]} "
-                for arg in sys.argv[2:]:
-                    arguments += f'"{arg}" '
+                arguments = " ".join(arguments)
                 cli_instance.onecmd(arguments)
             else:
                 cli_instance.onecmd("help")
