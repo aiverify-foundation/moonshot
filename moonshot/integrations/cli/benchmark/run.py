@@ -1,4 +1,3 @@
-import cmd2
 from rich.console import Console
 from rich.table import Table
 
@@ -74,13 +73,3 @@ def display_runs(runs_list) -> None:
         console.print(table)
     else:
         console.print("[red]There are no runs found.[/red]")
-
-
-# ------------------------------------------------------------------------------
-# Cmd2 Arguments Parsers
-# ------------------------------------------------------------------------------
-# Resume run arguments
-resume_run_args = cmd2.Cmd2ArgumentParser(
-    description="Resume an interrupted run.", epilog="Example:\n resume_run 12345"
-)
-resume_run_args.add_argument("run_id", type=str, help="id of the run to resume")

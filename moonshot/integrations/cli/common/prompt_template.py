@@ -10,7 +10,6 @@ def list_prompt_templates() -> None:
     """
     List all prompt templates available.
     """
-    # print(api_get_all_prompt_template_detail())
     prompt_template_list = api_get_all_prompt_template_detail()
     table = Table(
         "No.",
