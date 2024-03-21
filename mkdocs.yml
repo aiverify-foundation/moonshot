@@ -1,4 +1,4 @@
-site_name: Moonshot Documentation
+site_name: Moonshot
 repo_url: https://github.com/moonshot-admin/moonshot
 
 plugins:
@@ -58,15 +58,15 @@ nav:
     - Installation : getting_started/installation.md
     - Walkthrough: getting_started/walkthrough.md
     - Quick Start Guide (Library): getting_started/quick_start_library.md
-    - Quick Start Guide (WebAPI): getting_started/quick_start_web_api.md
+    - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
   - Integrations: 
     - Web API:
-      - Get Started with WebAPI : web_api/web_api_guide.md
-      - Connectors Endpoints: web_api/connector_endpoints.md
-      - Cookbooks Endpoints: web_api/cookbook_endpoints.md
-      - Recipes Endpoints: web_api/recipe_endpoints.md
-      - Sessions Endpoints: web_api/sessions_endpoints.md
-      - Prompt Templates Endpoints: web_api/prompt_template_endpoints.md
+      - Get Started with Web API : web_api/web_api_guide.md
+      - Connector Endpoints: web_api/connector_endpoints.md
+      - Cookbook Endpoints: web_api/cookbook_endpoints.md
+      - Recipe Endpoints: web_api/recipe_endpoints.md
+      - Session Endpoints: web_api/sessions_endpoints.md
+      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md

@@ -1,6 +1,6 @@
 # Walkthrough
 
-Users can use this tool to run benchmark tests and perform red teaming on LLMs. Before doing these, we need to configure a LLM endpoint to connect to. Currently, these are the connectors we support out of the box for connectiong to LLMs:
+Moonshot can be used to run benchmarks and red team. To perform this, an LLM endpoint must be configured to connect to an LLM/LLM application you wish to test. Currently, these are the connector types that is supported out of the box for connectiong to LLMs:
     
 | Connector Types | LLM Connector Name |
 | --- | ----------- |
@@ -9,11 +9,11 @@ Users can use this tool to run benchmark tests and perform red teaming on LLMs. 
 | OpenAI GPT3.5 |`openai-gpt35` |
 | Hugging Face Llama2 13B GPTQ | `hf-llama2-13b-gptq` |
 | Anthropic Claude2    | `claude2` |
-| OpenAI GPT2 (Hugging Face)    | `hf-gpt2` |
+| OpenAI GPT2 (hosted on Hugging Face)    | `hf-gpt2` |
 
-## Configuring Your Endpoints
+## Configuring Endpoints
 
-If you see the Connector Types you wish to connect to in our list of supported connectors, good for you! You can simply configure the connector by referring to [sample-my-gpt4-config.json](#) by doing the following:
+If your required connector type is available in our list, simply configure the connector by referring to [sample-my-gpt4-config.json](#). Ensure the following:
     
 1. Make a copy of the sample JSON file in the same directory and rename the file to your liking. Let's say I want to connect to GPT4, and I have renamed the file to  ```my-gpt4-config.json ```.
 
@@ -35,7 +35,7 @@ If you see the Connector Types you wish to connect to in our list of supported c
     }
     ```
 
-If you do not see the connector for the LLM you want to connect to, fret not. You can refer to how we define our connectors [here](https://github.com/moonshot-admin/moonshot/tree/new_dev_main/moonshot/data/connectors) and create your own. You can simply make a copy of the Python in the same directory, modify the name of the class and the logic inside the file. 
+If you do not see the connector for the LLM/LLM application you would like to connect to, refer to how we define our connectors [here](https://github.com/moonshot-admin/moonshot/tree/new_dev_main/moonshot/data/connectors) and create your own. You can simply make a copy of the Python file in the same directory, modify the classname and the logic inside the file. 
 
 When you have configured your connector, you can start doing your benchmark tests and red teaming!
 
@@ -44,7 +44,7 @@ To start running a benchmark, you will have to first select your Recipe or Cookb
 
 <b>Recipe</b>: A file which contains the dataset(s), prompt template(s) and metric(s) to run for a benchmark. 
 
-<b>Cookbook</b>: A file which contains a collection of <b>Recipes</b>
+<b>Cookbook</b>: A file which contains a collection of <b>Recipes</b>.
 
 1. Select a Recipe/Cookbook to run 
 
@@ -57,13 +57,13 @@ To start running a benchmark, you will have to first select your Recipe or Cookb
 
 To start red teaming, you will first have to create a <b>Session</b>. 
 
-<b>Session</b>: A Session helps users to send prompts to multiple LLM endpoints. Each LLM endpoint will have a <b>Chat</b>, which stores the conversation between users and the LLM. 
+<b>Session</b>: A Session helps users send prompts to multiple LLMs/LLM applications. Each session will comprise of <b>Chats</b>, which stores the conversation between users and the LLM/LLM application. 
 
 1. Create/Resume a Session
 
 2. Send a prompt
 
-3. View the responses from the LLM
+3. View the responses from the LLM/LLM application
 
 ## Quick Start Guides
 For more elaborate instruction, you can view our quick start guide.
