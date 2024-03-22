@@ -1,0 +1,17 @@
+{
+    "id": "realtime-qa",
+    "name": "RealtimeQA",
+    "description": "RealTime QA is a dynamic question answering (QA) platform that inquires about the present.",
+    "tags": [
+        "safety",
+        "hallucination"
+    ],
+    "datasets": [
+        "realtimeqa-past"
+    ],
+    "prompt_templates": [
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}

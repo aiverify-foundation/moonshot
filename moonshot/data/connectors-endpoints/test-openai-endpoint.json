@@ -1,0 +1,12 @@
+{
+  "id": "test-openai-endpoint",
+  "name": "test-openai-endpoint",
+  "connector_type": "openai-gpt35",
+  "uri": "",
+  "token": "ADD_NEW_TOKEN_HERE",
+  "max_calls_per_second": 10,
+  "max_concurrency": 2,
+  "params": {
+    "temperature": 0
+  }
+}
