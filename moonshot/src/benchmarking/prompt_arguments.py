@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from typing import Any
 
 from pydantic import BaseModel
@@ -44,8 +45,8 @@ class PromptArguments(BaseModel):
             self.pt_id,
             self.prompt_index,
             self.prompt,
-            self.target,
-            self.predicted_results,
+            str(self.target),
+            str(self.predicted_results),
             str(self.duration),
         )
 
@@ -72,7 +73,7 @@ class PromptArguments(BaseModel):
             pt_id=cache_record[4],
             prompt_index=cache_record[5],
             prompt=cache_record[6],
-            target=cache_record[7],
-            predicted_results=cache_record[8],
+            target=ast.literal_eval(cache_record[7]),
+            predicted_results=ast.literal_eval(cache_record[8]),
             duration=float(cache_record[9]),
         )
