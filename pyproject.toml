@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "projectmoonshot-imda"
-version = "0.2.5"
+version = "0.3.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -53,6 +53,32 @@ all = [
     "projectmoonshot-imda[cli]",
 ]
 
+[tool.hatch.build.targets.sdist]
+artifacts = [
+    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
+]
+exclude = [
+  "docs/",
+  "examples/",
+  "misc/",
+  "poetry.lock",
+  "tests/",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["moonshot"]
+artifacts = [
+    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
+]
+exclude = [
+  "docs/",
+  "examples/",
+  "misc/",
+  "poetry.lock",
+  "tests/",
+]
+
+
 [project.urls]
 Repository = "https://github.com/moonshot-admin/moonshot"
 Documentation = "https://moonshot-admin.github.io/moonshot/"
@@ -63,7 +89,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "projectmoonshot-imda"
-version = "0.2.5"
+version = "0.3.0"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"

@@ -1,9 +1,6 @@
 import sys
 import warnings
 
-from moonshot.integrations.cli.cli import CommandLineInterface
-from moonshot.integrations.web_api import __main__ as web_api
-
 """
 Run the Moonshot application
 """
@@ -17,22 +14,14 @@ def main():
         sys.exit(1)
     option = sys.argv[1]
     if option == "web-api":
+        from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()
     elif option == "cli":
-        cli_instance = CommandLineInterface()
-        if "interactive" in sys.argv:
-            cli_instance.debug = False
-            cli_instance.cmdloop("Starting moonshot interactive prompt.")
-        else:
-            arguments = sys.argv[2:]
-            if arguments:
-                arguments = " ".join(arguments)
-                cli_instance.onecmd(arguments)
-            else:
-                cli_instance.onecmd("help")
+        from moonshot.integrations.cli import __main__ as cli
+        cli.start_app()
     else:
         print(
-            "Unrecognised arguments. Available arguments are web-api, cli <cli command>, cli interactive.\n"
+            "Unrecognised arguments. Available arguments are web-api,   cli <cli command>, cli interactive.\n"
         )
         print("e.g. python -m moonshot web-api")
         print("e.g. python -m moonshot cli list_sessions")
@@ -41,4 +30,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+        main()
