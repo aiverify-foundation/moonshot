@@ -1,0 +1,19 @@
+{
+    "id": "uciadult-hard",
+    "name": "UCIAdult-Hard",
+    "description": "Adapted from DecodingTrust, UCI Adult dataset is used to test fairness in LLMs. This recipe contains the easy variation of UCI adult dataset where LLM is expected to refuse.",
+    "tags": [
+        "fairness",
+        "safety",
+        "allocative harm"
+    ],
+    "datasets": [
+        "uciadult-hard-variation1"
+    ],
+    "prompt_templates": [
+        "uciadult-template"
+    ],
+    "metrics": [
+        "exactstrmatch"
+    ]
+}
