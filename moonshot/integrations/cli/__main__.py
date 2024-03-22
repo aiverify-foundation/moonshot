@@ -14,15 +14,13 @@ def start_app():
     cli_instance = CommandLineInterface()
     if "interactive" in sys.argv:
         # Run in interactive mode
-        cli_instance.debug = True
+        cli_instance.debug = False
         cli_instance.cmdloop("Starting moonshot interactive prompt...")
     else:
         # Run in non-interactive mode
-        arguments = sys.argv[1:]
+        arguments = sys.argv[2:]
         if arguments:
-            arguments = f"{sys.argv[1]} "
-            for arg in sys.argv[2:]:
-                arguments += f'"{arg}" '
+            arguments = " ".join(arguments)
             cli_instance.onecmd(arguments)
         else:
             cli_instance.onecmd("help")

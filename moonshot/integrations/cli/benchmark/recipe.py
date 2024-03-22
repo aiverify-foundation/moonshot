@@ -97,6 +97,7 @@ def run_recipe(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
+            name (str): A string representation of the recipe executor. Each run is represented by its ID.
             recipes (str): A string representation of a list of recipes to run.
             endpoints (str): A string representation of a list of endpoints to run.
             num_of_prompts (int): The number of prompts to generate for each recipe.
@@ -104,12 +105,13 @@ def run_recipe(args) -> None:
     Returns:
         None
     """
+    name = args.name
     recipes = literal_eval(args.recipes)
     endpoints = literal_eval(args.endpoints)
     num_of_prompts = args.num_of_prompts
 
     bm_executor = api_create_recipe_executor(
-        "my new recipe executor", recipes, endpoints, num_of_prompts
+        name, recipes, endpoints, num_of_prompts
     )
 
     asyncio.run(bm_executor.execute())
@@ -333,9 +335,11 @@ run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
     "-n 1 "
+    "my-new-recipe-executor "
     "\"['bbq','auto-categorisation']\" "
     "\"['test-openai-endpoint']\"",
 )
+run_recipe_args.add_argument("name", type=str, help="Name of recipe executor")
 run_recipe_args.add_argument("recipes", type=str, help="List of recipes to run")
 run_recipe_args.add_argument("endpoints", type=str, help="List of endpoints to run")
 run_recipe_args.add_argument(
