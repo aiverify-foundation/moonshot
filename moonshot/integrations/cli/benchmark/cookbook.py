@@ -94,13 +94,14 @@ def run_cookbook(args) -> None:
     Returns:
         None
     """
+    name = args.name
     cookbooks = literal_eval(args.cookbooks)
     endpoints = literal_eval(args.endpoints)
     num_of_prompts = args.num_of_prompts
 
     # Run the recipes with the defined endpoints
     bm_executor = api_create_cookbook_executor(
-        "my new cookbook executor", cookbooks, endpoints, num_of_prompts
+        name, cookbooks, endpoints, num_of_prompts
     )
 
     asyncio.run(bm_executor.execute())
@@ -342,9 +343,11 @@ run_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Run a cookbook.",
     epilog="Example:\n run_cookbook "
     "-n 1 "
+    "my-new-cookbook-executor "
     "\"['bbq-lite-age-cookbook']\" "
     "\"['test-openai-endpoint']\"",
 )
+run_cookbook_args.add_argument("name", type=str, help="Name of cookbook executor")
 run_cookbook_args.add_argument("cookbooks", type=str, help="List of cookbooks to run")
 run_cookbook_args.add_argument("endpoints", type=str, help="List of endpoints to run")
 run_cookbook_args.add_argument(
