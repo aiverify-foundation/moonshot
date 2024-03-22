@@ -71,3 +71,5 @@ For more elaborate instruction, you can view our quick start guide.
 [Getting Started with Library](/getting_started/quick_start_library)
 
 [Getting Started with Web API](/getting_started/quick_start_web_api)
+
+[Getting Started with CLI](/getting_started/quick_start_cli)
