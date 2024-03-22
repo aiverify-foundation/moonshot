@@ -26,6 +26,19 @@ The Moonshot Web API enables you to interact with the Moonshot Library through H
 $ pip install "projectmoonshot-imda[web-api]"
 ```
 
+### Enabling Moonshot CLI
+The Moonshot CLI enables you to interact with the Moonshot Library through your terminal. This allows you to run Moonshot commands directly from your terminal. 
+
+```
+$ pip install "projectmoonshot-imda[cli]"
+```
+
+### Enabling Both CLI and WebAPI
+This command enales you to interact with the Moonshot Library through HTTP requests and CLI. It gives you the most flexibility, as you can interact with Moonshot through both command-line commands and HTTP requests.
+```
+$ pip install "projectmoonshot-imda[all]"
+```
+
 ## Installation from Source
 The source code is available on GitHub [here](https://github.com/moonshot-admin/moonshot).
 

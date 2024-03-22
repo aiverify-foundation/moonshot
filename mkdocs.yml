@@ -67,6 +67,11 @@ nav:
       - Recipe Endpoints: web_api/recipe_endpoints.md
       - Session Endpoints: web_api/sessions_endpoints.md
       - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
+    - CLI: 
+      - Get Started with CLI : cli/cli_guide.md
+      - Connecting to LLMs: cli/connecting_endpoints.md
+      - Running Benchmark: cli/benchmarking.md
+      - Running Red Teaming: cli/red_teaming.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md
