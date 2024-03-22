@@ -87,6 +87,7 @@ def run_cookbook(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
+            name (str): A string representation of the cookbook executor. Each run is represented by its ID.
             cookbooks (str): A string representation of a list of cookbooks. Each cookbook is represented by its ID.
             endpoints (str): A string representation of a list of endpoints. Each endpoint is represented by its ID.
             num_of_prompts (int): The number of prompts to be used in the cookbook.
