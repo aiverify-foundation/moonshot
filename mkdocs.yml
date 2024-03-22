@@ -73,6 +73,12 @@ nav:
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
       - Running Red Teaming: cli/red_teaming.md
+    - Web UI Guide: 
+      - Get Started with Web UI: web_ui/web_ui_guide.md
+      - Model Endpoints: web_ui/model_endpoint.md
+      - Running Benchmark: web_ui/run_benchmark_test.md
+      - Cookbook: web_ui/cookbook.md
+      - Red Teaming: web_ui/red_teaming.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md
