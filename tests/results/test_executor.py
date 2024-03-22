@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 
 from moonshot.api import (
@@ -103,7 +104,7 @@ def test_load_executor(bm_id: str):
 
 def test_execute_executor(bm_id: str):
     bm_executor = api_load_executor(bm_id, progress_callback_func=executor_callback_fn)
-    bm_executor.execute()
+    asyncio.run(bm_executor.execute())
     bm_executor.close_executor()
 
 

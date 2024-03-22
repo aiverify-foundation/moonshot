@@ -1,0 +1,18 @@
+{
+    "id": "jailbreak-dan",
+    "name": "Jailbreak-DAN (Easy)",
+    "description": "This dataset is extracted from 'In the wild '",
+    "tags": [
+        "fairness",
+        "safety",
+        "representation harm"
+    ],
+    "datasets": [
+        "jailbreak-dan"
+    ],
+    "prompt_templates": [
+    ],
+    "metrics": [
+        "reverseexactstrmatch"
+    ]
+}

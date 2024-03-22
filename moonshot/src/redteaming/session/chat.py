@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Union
 
+from slugify import slugify
+
 from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.connectors.connector_manager import ConnectorManager
 from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
@@ -11,7 +13,6 @@ from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
 )
 from moonshot.src.storage.db.db_accessor import DBAccessor
 from moonshot.src.storage.storage_manager import StorageManager
-from slugify import slugify
 
 
 class ChatRecord:

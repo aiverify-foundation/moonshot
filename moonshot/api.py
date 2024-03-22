@@ -13,6 +13,7 @@ from moonshot.src.benchmarking.metrics.metric import Metric
 from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.benchmarking.results.result import Result
+from moonshot.src.configs.env_variables import EnvironmentVars
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
@@ -39,7 +40,7 @@ def api_set_environment_variables(env_vars: dict) -> None:
     Returns:
         None
     """
-    pass
+    EnvironmentVars.load_env(env_vars)
 
 
 # ------------------------------------------------------------------------------

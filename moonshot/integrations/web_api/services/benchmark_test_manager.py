@@ -57,7 +57,7 @@ class BenchmarkTestManager(BaseService):
         id = slugify(prefix + name, lowercase=True)
         return id
 
-    def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
+    async def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
         try:
             if isinstance(executor_input_data, CookbookExecutorCreateDTO):
                 executor = moonshot_api.api_create_cookbook_executor(
@@ -78,22 +78,19 @@ class BenchmarkTestManager(BaseService):
         except Exception as e:
             self.logger.error(f"Failed to execute benchmark - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
-        executor.execute()
+        await executor.execute()
         executor.close_executor()
 
-    # Note: schedule_test_task must be run within an async context. 
-    # It should be within Uvicorn's async context in this application.
     def schedule_test_task(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> str:
         task_id = self.generate_unique_task_id()
-        # benchmark.execute is long running I/O bound. Executing it in separate thread
-        # Note: executor instance must be created in the same thread as it is executed because
-        # SQLite, by default, restricts database connection objects to the thread in which they were created
         if isinstance(executor_input_data, CookbookExecutorCreateDTO):
             type = BenchmarkExecutorTypes.COOKBOOK
-            exec_benchmark_coroutine = asyncio.to_thread(self.create_executor_and_execute, executor_input_data)
+            #previously, executor.execute() was synchronous, so we run it on separate thread.
+            #now that it is awaitable, we just run it in the same thread
+            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
         else:
             type = BenchmarkExecutorTypes.RECIPE
-            exec_benchmark_coroutine = asyncio.to_thread(self.create_executor_and_execute, executor_input_data) 
+            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
         
         task = asyncio.create_task(exec_benchmark_coroutine, name=task_id)
         def on_executor_completion(task: asyncio.Task[Any]):
