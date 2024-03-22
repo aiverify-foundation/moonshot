@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.2.5**
+**Version 0.3.0**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
