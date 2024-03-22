@@ -78,6 +78,7 @@ _Note: When changing the reference folder for data, users will no longer be able
 
 ### Step 4: Connecting End Points
 You can establish connectivity to an LLM or LLM application by creating an endpoint within your environment.
+
 - View the list of connector types available in Moonshot with:
 ```
 api_get_all_connector_type()
@@ -107,6 +108,7 @@ api_create_endpoint(
 You can create a custom recipe consisting of a dataset, metric and prompt templates.
 
 This step allows you to tailor the benchmarking process to your specific need and objective.
+
 - To add a new recipe, use `api_create_recipe()`. The code snippet below uses a dataset and prompt template from the baseline benchmarks available in Moonshot.
 ```python
 api_create_recipe(
@@ -129,6 +131,7 @@ api_create_cookbook(
 
 ### Step 2: Select Recipe/Cookbook to Run a Benchmark
 To run a benchmark, select a recipe or cookbook that aligns with your desired evaluation or analysis objective.
+
 - To start benchmarking using a recipe, use `api_create_recipe_executor()`.
 ```python
 recipes = ["auto-categorisation-2"]
@@ -157,7 +160,7 @@ bm_executor = api_create_cookbook_executor(
 ```
 
 ### Step 3: View Results
-The results will be stored in the `moonshot/data/results` directory or the custom path that is defined during the Set Up process.
+The results will be stored in the `moonshot/data/results` directory or the custom path that is defined during the [Set Up](#step-3-environment-variables-optional) process.
 
 Analyze the output to gain insight into the performance your model/application.
 

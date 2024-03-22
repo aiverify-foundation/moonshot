@@ -41,7 +41,8 @@ DATABASES = "/path/to/your/databases"
 SESSIONS = "/path/to/your/sessions"
 
 ```
-_Note: When changing the reference folder for data, users will no longer be able to access the stock cookbooks. To access these cookbooks, users should copy over their respctive json files and dependencies_
+!!! Note
+    When changing the reference folder for data, users will no longer be able to access the stock cookbooks. To access these cookbooks, users should copy over their respctive json files and dependencies_
 
 ## Starting the Web API Server
 
