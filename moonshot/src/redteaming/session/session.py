@@ -70,10 +70,13 @@ class Session:
         # Checks if context strategy exists if it's specified
         if context_strategy:
             self.check_file_exists("context_strategy", context_strategy)
-
+        else:
+            context_strategy = ""
         # Checks if prompt template exists if it's specified
         if prompt_template:
             self.check_file_exists("prompt_template", prompt_template)
+        else:
+            prompt_template = ""
         # Existing session
         if session_id:
             # Check if session_id is valid
