@@ -61,7 +61,8 @@ exclude = [
   "docs/",
   "examples/",
   "misc/",
-  "tests/"
+  "poetry.lock",
+  "tests/",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -73,7 +74,8 @@ exclude = [
   "docs/",
   "examples/",
   "misc/",
-  "tests/"
+  "poetry.lock",
+  "tests/",
 ]
 
 
