@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.3.2**
+**Version 0.3.3**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
@@ -42,7 +42,7 @@ For full documentation on installation and user guide, please refer to: https://
 The source code is available on GitHub at: [https://github.com/moonshot-admin/moonshot](https://github.com/moonshot-admin/moonshot)
 ```
 $ pip install projectmoonshot-imda # To install Moonshot library.
-$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the wWb API.
+$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the Web API.
 $ pip install "projectmoonshot-imda[cli]" # To enable running Moonshot using the CLI.
 $ pip install "projectmoonshot-imda[all]" # To enable running Moonshot Web API and Web API.
 
