@@ -22,7 +22,7 @@ A simple and modular tool to evaluate and red-team any LLM application.
 
 Moonshot is a tool designed for AI developers and security experts to evaluate and red-team any LLM/ LLM application. In this initial version, Moonshot can be used through its interative Command Line Interface, within python notebooks [(example)](https://github.com/moonshot-admin/moonshot/tree/main/examples/test-openai-gpt35.ipynb), or even seamlessly integrated into your model development workflow to to run repeatable tests.
 
-
+For full documentation on installation and user guide, please refer to: https://moonshot-admin.github.io/moonshot.
 
 ## Getting Started
 ### Prerequisites
