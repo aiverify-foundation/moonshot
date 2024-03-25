@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.3.0**
+**Version 0.3.2**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
@@ -42,7 +42,10 @@ Moonshot is a tool designed for AI developers and security experts to evaluate a
 The source code is available on GitHub at: [https://github.com/moonshot-admin/moonshot](https://github.com/moonshot-admin/moonshot)
 ```
 $ pip install projectmoonshot-imda # To install Moonshot library.
-$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the web API.
+$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the wWb API.
+$ pip install "projectmoonshot-imda[cli]" # To enable running Moonshot using the CLI.
+$ pip install "projectmoonshot-imda[all]" # To enable running Moonshot Web API and Web API.
+
 ```
 #### Installation from source
 1. Download the source files by cloning this repository. i.e. Git clone (via SSH): 
@@ -70,6 +73,23 @@ $ python -m moonshot web-api
 ```
 
 For instructions on setting up the Moonshot UI, please refer to the [Moonshot UI repository](https://github.com/moonshot-admin/moonshot-ui).
+
+### CLI
+To run Moonshot CLI:
+```
+$ python -m moonshot cli interactive
+```
+
+For guide on how to use Moonshot, please refer to the [Quick Start Guide for Moonshot CLI](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_cli/)
+
+## Quick Start Guides
+For more elaborate instruction, you can view our quick start guide.
+
+[Getting Started with Library](/getting_started/quick_start_library)
+
+[Getting Started with Web API](/getting_started/quick_start_web_api)
+
+[Getting Started with CLI](/getting_started/quick_start_cli)
 
 ## Acknowledgements
 
