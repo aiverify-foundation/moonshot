@@ -1,4 +1,4 @@
-site_name: Moonshot Documentation
+site_name: Moonshot
 repo_url: https://github.com/moonshot-admin/moonshot
 
 plugins:
@@ -51,18 +51,34 @@ markdown_extensions:
 
 nav: 
   - Home : index.md
-  - Getting Started: 
-    - Installation : getting_started/installation.md
   - Understanding Moonshot:
     - Moonshot 101: understanding_moonshot/introduction.md
     - API: understanding_moonshot/api.md
-  - Integrations: 
+  - Getting Started: 
+    - Installation : getting_started/installation.md
+    - Walkthrough: getting_started/walkthrough.md
+    - Quick Start Guide (Library): getting_started/quick_start_library.md
+    - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
+    - Quick Start Guide (CLI): getting_started/quick_start_cli.md
+  - User Guide: 
     - Web API:
-      - Get Started with WebAPI : web_api/web_api_guide.md
-      - Connectors Endpoints: web_api/connector_endpoints.md
-      - Cookbooks Endpoints: web_api/cookbook_endpoints.md
-      - Recipes Endpoints: web_api/recipe_endpoints.md
-      - Sessions Endpoints: web_api/sessions_endpoints.md
-      - Prompt Templates Endpoints: web_api/prompt_template_endpoints.md
+      - Get Started with Web API : web_api/web_api_guide.md
+      - Connector Endpoints: web_api/connector_endpoints.md
+      - Cookbook Endpoints: web_api/cookbook_endpoints.md
+      - Recipe Endpoints: web_api/recipe_endpoints.md
+      - Session Endpoints: web_api/sessions_endpoints.md
+      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
+    - CLI: 
+      - Get Started with CLI : cli/cli_guide.md
+      - Connecting to LLMs: cli/connecting_endpoints.md
+      - Running Benchmark: cli/benchmarking.md
+      - Running Red Teaming: cli/red_teaming.md
+    - Web UI Guide: 
+      - Get Started with Web UI: web_ui/web_ui_guide.md
+      - Model Endpoints: web_ui/model_endpoint.md
+      - Running Benchmark: web_ui/run_benchmark_test.md
+      - Cookbook: web_ui/cookbook.md
+      - Red Teaming: web_ui/red_teaming.md
+  - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md

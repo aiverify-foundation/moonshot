@@ -65,6 +65,8 @@ $ pip install "projectmoonshot-imda[all]" # To enable running Moonshot Web API a
     $ pip install -r requirements.txt
     ```
 
+    </br>
+
 ## Running Moonshot
 ### Web API
 To run Moonshot Web API:
@@ -90,6 +92,8 @@ For more elaborate instruction, you can view our quick start guide.
 [Getting Started with Web API](/getting_started/quick_start_web_api)
 
 [Getting Started with CLI](/getting_started/quick_start_cli)
+
+
 
 ## Acknowledgements
 
