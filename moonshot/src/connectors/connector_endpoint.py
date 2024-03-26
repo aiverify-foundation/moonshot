@@ -1,22 +1,17 @@
-import time
 from pathlib import Path
-from typing import Callable, Union
 
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
-from moonshot.src.benchmarking.prompt_arguments import PromptArguments
-from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.storage.storage_manager import StorageManager
 
 
-class ConnectorManager:
-    # Endpoint functions
+class ConnectorEndpoint:
     @staticmethod
-    def create_endpoint(ep_args: ConnectorEndpointArguments) -> None:
+    def create(ep_args: ConnectorEndpointArguments) -> None:
         """
         Creates a new endpoint and stores its information in a JSON file.
 
@@ -55,7 +50,7 @@ class ConnectorManager:
 
     @staticmethod
     @validate_arguments
-    def read_endpoint(ep_id: str) -> ConnectorEndpointArguments:
+    def read(ep_id: str) -> ConnectorEndpointArguments:
         """
         Reads an endpoint and returns its information.
 
@@ -82,7 +77,7 @@ class ConnectorManager:
             raise e
 
     @staticmethod
-    def update_endpoint(ep_args: ConnectorEndpointArguments) -> None:
+    def update(ep_args: ConnectorEndpointArguments) -> None:
         """
         Updates an existing endpoint with new information.
 
@@ -110,7 +105,7 @@ class ConnectorManager:
 
     @staticmethod
     @validate_arguments
-    def delete_endpoint(ep_id: str) -> None:
+    def delete(ep_id: str) -> None:
         """
         Deletes an endpoint.
 
@@ -132,7 +127,7 @@ class ConnectorManager:
             raise e
 
     @staticmethod
-    def get_available_endpoints() -> tuple[list[str], list[ConnectorEndpointArguments]]:
+    def get_available_items() -> tuple[list[str], list[ConnectorEndpointArguments]]:
         """
         Retrieves a list of available endpoints and their information.
 
@@ -164,111 +159,4 @@ class ConnectorManager:
 
         except Exception as e:
             print(f"Failed to get available endpoints: {str(e)}")
-            raise e
-
-    # Connector functions
-    @staticmethod
-    def create_connector(ep_args: ConnectorEndpointArguments) -> Connector:
-        """
-        Creates a connector object based on the provided endpoint arguments.
-
-        This method takes a ConnectorEndpointArguments object, which contains the necessary information
-        to initialize and return a Connector object. The Connector object is created by calling the
-        `load_connector` method, which dynamically loads and initializes the connector based on the
-        endpoint arguments provided.
-
-        Args:
-            ep_args (ConnectorEndpointArguments): The endpoint arguments required to create the connector.
-
-        Returns:
-            Connector: An initialized Connector object based on the provided endpoint arguments.
-        """
-        try:
-            return Connector.load_connector(ep_args)
-
-        except Exception as e:
-            print(f"Failed to create connector: {str(e)}")
-            raise e
-
-    @staticmethod
-    def get_available_connector_types() -> list[str]:
-        """
-        Retrieves a list of all available connector types.
-
-        This method uses the `StorageManager.get_connectors` method to find all Python files in the directory
-        specified by the `EnvironmentVars.CONNECTORS` environment variable. It then filters out any files that are not
-        meant to be exposed as connectors (those containing "__" in their names). The method returns a list of the
-        names of these connector types.
-
-        Returns:
-            list[str]: A list of strings, each representing the name of a connector type.
-
-        Raises:
-            Exception: If there is an error during the retrieval of connector types.
-        """
-        try:
-            return [
-                Path(fp).stem
-                for fp in StorageManager.get_connectors()
-                if "__" not in fp
-            ]
-
-        except Exception as e:
-            print(f"Failed to get available connectors: {str(e)}")
-            raise e
-
-    @staticmethod
-    async def get_prediction(
-        generated_prompt: PromptArguments,
-        connector: Connector,
-        prompt_callback: Union[Callable, None] = None,
-    ) -> PromptArguments:
-        """
-        Generates a prediction for a given prompt using a specified connector.
-
-        This method takes a `generated_prompt` object, which contains the prompt to be predicted, and a `connector`
-        object, which is used to generate the prediction. The method also optionally takes a `prompt_callback` function,
-        which is called after the prediction is generated.
-
-        The method first prints a message indicating that it is predicting the prompt. It then records the start time
-        and uses the `connector` to generate a prediction for the `generated_prompt`. The duration of the prediction
-        is calculated and stored in the `generated_prompt`.
-
-        If a `prompt_callback` function is provided, it is called with the `generated_prompt` and `connector.id` as
-        arguments.
-
-        The method then returns the `generated_prompt` with the generated prediction and duration.
-
-        Args:
-            generated_prompt (PromptArguments): The prompt to be predicted.
-            connector (Connector): The connector to be used for prediction.
-            prompt_callback (Union[Callable, None]): An optional callback function to be called after prediction.
-
-        Returns:
-            PromptArguments: The `generated_prompt` with the generated prediction and duration.
-
-        Raises:
-            Exception: If there is an error during prediction.
-        """
-        try:
-            print(f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]")
-
-            start_time = time.perf_counter()
-            generated_prompt.predicted_results = await connector.get_response(
-                generated_prompt.prompt
-            )
-            generated_prompt.duration = time.perf_counter() - start_time
-            print(
-                f"[Prompt {generated_prompt.prompt_index}] took {generated_prompt.duration:.4f}s"
-            )
-
-            # Call prompt callback
-            if prompt_callback:
-                prompt_callback(generated_prompt, connector.id)
-
-            # Return the updated prompt
-            return generated_prompt
-
-        except Exception as e:
-            print(f"Failed to get prediction: {str(e)}")
             raise e

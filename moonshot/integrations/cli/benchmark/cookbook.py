@@ -113,7 +113,7 @@ def run_cookbook(args) -> None:
         bm_executor.results_file,
         bm_executor.duration,
     )
-    bm_executor.close_executor()
+    bm_executor.close()
 
 
 def update_cookbook(args) -> None:

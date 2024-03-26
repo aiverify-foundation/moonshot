@@ -20,7 +20,7 @@ class Recipe:
         self.metrics = rec_args.metrics
 
     @classmethod
-    def load_recipe(cls, rec_id: str) -> Recipe:
+    def load(cls, rec_id: str) -> Recipe:
         """
         Loads a recipe from a JSON file.
 
@@ -38,7 +38,7 @@ class Recipe:
         return cls(RecipeArguments(**rec_info))
 
     @staticmethod
-    def create_recipe(rec_args: RecipeArguments) -> None:
+    def create(rec_args: RecipeArguments) -> None:
         """
         Creates a new recipe and stores its information in a JSON file.
 
@@ -76,7 +76,7 @@ class Recipe:
 
     @staticmethod
     @validate_arguments
-    def read_recipe(rec_id: str) -> RecipeArguments:
+    def read(rec_id: str) -> RecipeArguments:
         """
         Reads a recipe and returns its information.
 
@@ -100,7 +100,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    def update_recipe(rec_args: RecipeArguments) -> None:
+    def update(rec_args: RecipeArguments) -> None:
         """
         Updates an existing recipe with new information.
 
@@ -127,7 +127,7 @@ class Recipe:
 
     @staticmethod
     @validate_arguments
-    def delete_recipe(rec_id: str) -> None:
+    def delete(rec_id: str) -> None:
         """
         Deletes a recipe.
 
@@ -149,7 +149,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    def get_available_recipes() -> tuple[list[str], list[RecipeArguments]]:
+    def get_available_items() -> tuple[list[str], list[RecipeArguments]]:
         """
         Returns a list of available recipes.
 

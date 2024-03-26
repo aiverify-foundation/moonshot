@@ -1,21 +1,16 @@
 from __future__ import annotations
 
-import inspect
 from pathlib import Path
-from typing import Any
 
 from pydantic.v1 import validate_arguments
 
 from moonshot.src.storage.storage_manager import StorageManager
-from moonshot.src.utils.import_modules import (
-    create_module_spec,
-    import_module_from_spec,
-)
+from moonshot.src.utils.import_modules import get_instance
 
 
 class Metric:
     @classmethod
-    def load_metric(cls, met_id: str) -> Metric:
+    def load(cls, met_id: str) -> Metric:
         """
         Loads a metric by its ID.
 
@@ -32,7 +27,9 @@ class Metric:
         Raises:
             RuntimeError: If the metric instance cannot be found.
         """
-        metric_instance = cls._get_metric_instance(met_id)
+        metric_instance = get_instance(
+            met_id, StorageManager.get_metric_filepath(met_id)
+        )
         if metric_instance:
             return metric_instance()
         else:
@@ -40,7 +37,7 @@ class Metric:
 
     @staticmethod
     @validate_arguments
-    def delete_metric(met_id: str) -> None:
+    def delete(met_id: str) -> None:
         """
         Deletes a metric by its ID.
 
@@ -65,7 +62,7 @@ class Metric:
             raise e
 
     @staticmethod
-    def get_available_metrics() -> list[str]:
+    def get_available_items() -> list[str]:
         """
         Retrieves the list of available metrics.
 
@@ -94,51 +91,3 @@ class Metric:
         except Exception as e:
             print(f"Failed to get available metrics: {str(e)}")
             raise e
-
-    @staticmethod
-    def _get_metric_instance(met_id: str) -> Any:
-        """
-        Retrieves the instance of the metric class.
-
-        This method retrieves the instance of the metric class by calling the `create_module_spec` method with the
-        metric ID and the file path of the metric.
-
-        It then checks if the module specification exists. If it does, it imports the module and iterates through
-        the attributes of the module.
-
-        For each attribute, it gets the attribute object and checks if the attribute is a class and if it has the
-        same module name as the metric ID.
-
-        If it does, it returns the attribute object.
-
-        Args:
-            met_id (str): The ID of the metric.
-
-        Returns:
-            Any: The instance of the metric class if found, else None.
-
-        Raises:
-            None
-        """
-        # Create the module specification
-        module_spec = create_module_spec(
-            met_id,
-            StorageManager.get_metric_filepath(met_id),
-        )
-
-        # Check if the module specification exists
-        if module_spec:
-            # Import the module
-            module = import_module_from_spec(module_spec)
-
-            # Iterate through the attributes of the module
-            for attr in dir(module):
-                # Get the attribute object
-                obj = getattr(module, attr)
-
-                # Check if the attribute is a class and has the same module name as the connector type
-                if inspect.isclass(obj) and obj.__module__ == met_id:
-                    return obj
-
-        # Return None if no instance of the metric class is found
-        return None

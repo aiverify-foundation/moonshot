@@ -23,7 +23,7 @@ class Result:
         self.status = res_args.status
 
     @classmethod
-    def load_result(cls, res_id: str) -> Result:
+    def load(cls, res_id: str) -> Result:
         """
         Loads a result by its ID.
 
@@ -51,7 +51,7 @@ class Result:
         return cls(res_info)
 
     @staticmethod
-    def create_result(res_args: ResultArguments) -> None:
+    def create(res_args: ResultArguments) -> None:
         """
         Creates a new result.
 
@@ -75,7 +75,7 @@ class Result:
 
     @staticmethod
     @validate_arguments
-    def read_result(res_id: str) -> ResultArguments:
+    def read(res_id: str) -> ResultArguments:
         """
         Reads the result's arguments from the storage.
 
@@ -98,7 +98,7 @@ class Result:
 
     @staticmethod
     @validate_arguments
-    def delete_result(res_id: str) -> None:
+    def delete(res_id: str) -> None:
         """
         Deletes an existing result.
 
@@ -119,7 +119,7 @@ class Result:
             raise e
 
     @staticmethod
-    def get_available_results() -> tuple[list[str], list[ResultArguments]]:
+    def get_available_items() -> tuple[list[str], list[ResultArguments]]:
         """
         Retrieves the available results.
 

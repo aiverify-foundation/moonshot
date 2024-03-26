@@ -17,7 +17,7 @@ class Cookbook:
         self.recipes = cb_args.recipes
 
     @classmethod
-    def load_cookbook(cls, cb_id: str) -> Cookbook:
+    def load(cls, cb_id: str) -> Cookbook:
         """
         Loads a cookbook from a JSON file.
 
@@ -35,7 +35,7 @@ class Cookbook:
         return cls(CookbookArguments(**cb_info))
 
     @staticmethod
-    def create_cookbook(cb_args: CookbookArguments) -> None:
+    def create(cb_args: CookbookArguments) -> None:
         """
         Creates a new cookbook and stores its information in a JSON file.
 
@@ -69,7 +69,8 @@ class Cookbook:
             raise e
 
     @staticmethod
-    def read_cookbook(cb_id: str) -> CookbookArguments:
+    @validate_arguments
+    def read(cb_id: str) -> CookbookArguments:
         """
         Reads a cookbook and returns its information.
 
@@ -93,7 +94,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    def update_cookbook(cb_args: CookbookArguments) -> None:
+    def update(cb_args: CookbookArguments) -> None:
         """
         Updates an existing cookbook with new information.
 
@@ -120,7 +121,7 @@ class Cookbook:
 
     @staticmethod
     @validate_arguments
-    def delete_cookbook(cb_id: str) -> None:
+    def delete(cb_id: str) -> None:
         """
         Deletes a cookbook.
 
@@ -142,7 +143,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    def get_available_cookbooks() -> tuple[list[str], list[CookbookArguments]]:
+    def get_available_items() -> tuple[list[str], list[CookbookArguments]]:
         """
         Returns a list of available cookbooks.
 

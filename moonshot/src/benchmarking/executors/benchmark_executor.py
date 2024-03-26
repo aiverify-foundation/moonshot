@@ -30,7 +30,7 @@ from moonshot.src.benchmarking.recipes.recipe import Recipe
 from moonshot.src.benchmarking.results.result import Result
 from moonshot.src.benchmarking.results.result_arguments import ResultArguments
 from moonshot.src.connectors.connector import Connector
-from moonshot.src.connectors.connector_manager import ConnectorManager
+from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
 from moonshot.src.storage.storage_manager import StorageManager
 
 
@@ -61,7 +61,51 @@ class BenchmarkExecutor:
         )
 
     @classmethod
-    def create_executor(cls, be_args: BenchmarkExecutorArguments) -> BenchmarkExecutor:
+    def load(
+        cls, be_id: str, progress_callback_func: Union[Callable, None] = None
+    ) -> BenchmarkExecutor:
+        """
+        Loads an executor by its ID.
+
+        This method loads an executor by its ID. It first checks if the executor database file exists.
+        If it does, it creates a database connection and reads the executor storage.
+        It then sets the database instance and progress callback function in the BenchmarkExecutorArguments object.
+        If the database file does not exist, it raises a RuntimeError.
+
+        Args:
+            be_id (str): The ID of the executor to load.
+            progress_callback_func (Union[Callable, None]): The progress callback function for the executor.
+
+        Returns:
+            BenchmarkExecutor: The loaded executor instance.
+
+        Raises:
+            RuntimeError: If the executor database file does not exist.
+            Exception: If there is an error during executor loading.
+        """
+        db_instance = None
+        try:
+            # Check if the executor database file exists. If it does not exist, raise an error.
+            if not Path(StorageManager.get_executor_database_filepath(be_id)).exists():
+                raise RuntimeError(
+                    "Unable to create executor because the database file does not exists."
+                )
+
+            db_instance = StorageManager.create_executor_database_connection(be_id)
+            be_args = BenchmarkExecutorArguments.from_tuple(
+                StorageManager.read_executor_storage(be_id, db_instance)
+            )
+            be_args.database_instance = db_instance
+            be_args.progress_callback_func = progress_callback_func
+
+            return cls(be_args)
+
+        except Exception as e:
+            print(f"Failed to load executor: {str(e)}")
+            raise e
+
+    @classmethod
+    def create(cls, be_args: BenchmarkExecutorArguments) -> BenchmarkExecutor:
         """
         Creates a new BenchmarkExecutor instance.
 
@@ -126,75 +170,9 @@ class BenchmarkExecutor:
             print(f"Failed to create executor: {str(e)}")
             raise e
 
-    @classmethod
-    def load_executor(
-        cls, be_id: str, progress_callback_func: Union[Callable, None] = None
-    ) -> BenchmarkExecutor:
-        """
-        Loads an executor by its ID.
-
-        This method loads an executor by its ID. It first checks if the executor database file exists.
-        If it does, it creates a database connection and reads the executor storage.
-        It then sets the database instance and progress callback function in the BenchmarkExecutorArguments object.
-        If the database file does not exist, it raises a RuntimeError.
-
-        Args:
-            be_id (str): The ID of the executor to load.
-            progress_callback_func (Union[Callable, None]): The progress callback function for the executor.
-
-        Returns:
-            BenchmarkExecutor: The loaded executor instance.
-
-        Raises:
-            RuntimeError: If the executor database file does not exist.
-            Exception: If there is an error during executor loading.
-        """
-        db_instance = None
-        try:
-            # Check if the executor database file exists. If it does not exist, raise an error.
-            if not Path(StorageManager.get_executor_database_filepath(be_id)).exists():
-                raise RuntimeError(
-                    "Unable to create executor because the database file does not exists."
-                )
-
-            db_instance = StorageManager.create_executor_database_connection(be_id)
-            be_args = BenchmarkExecutorArguments.from_tuple(
-                StorageManager.read_executor_storage(be_id, db_instance)
-            )
-            be_args.database_instance = db_instance
-            be_args.progress_callback_func = progress_callback_func
-
-            return cls(be_args)
-
-        except Exception as e:
-            print(f"Failed to load executor: {str(e)}")
-            raise e
-
-    @staticmethod
-    def delete_executor(be_id: str) -> None:
-        """
-        Deletes an existing executor.
-
-        This function takes a BenchmarkExecutor ID as input. It first deletes the executor's database and results
-        using the StorageManager. If there is an error during the deletion, the error is printed and re-raised.
-
-        Args:
-            be_id (str): The ID of the executor to be deleted.
-
-        Raises:
-            Exception: If there is an error during executor deletion.
-        """
-        try:
-            StorageManager.remove_executor_database(be_id)
-            StorageManager.remove_executor_results(be_id)
-
-        except Exception as e:
-            print(f"Failed to delete executor: {str(e)}")
-            raise e
-
     @staticmethod
     @validate_arguments
-    def read_executor_arguments(be_id: str) -> BenchmarkExecutorArguments:
+    def read(be_id: str) -> BenchmarkExecutorArguments:
         """
         Reads the executor's arguments from the storage.
 
@@ -227,7 +205,29 @@ class BenchmarkExecutor:
                 StorageManager.close_executor_database_connection(db_instance)
 
     @staticmethod
-    def get_available_executors() -> tuple[list[str], list[BenchmarkExecutorArguments]]:
+    def delete(be_id: str) -> None:
+        """
+        Deletes an existing executor.
+
+        This function takes a BenchmarkExecutor ID as input. It first deletes the executor's database and results
+        using the StorageManager. If there is an error during the deletion, the error is printed and re-raised.
+
+        Args:
+            be_id (str): The ID of the executor to be deleted.
+
+        Raises:
+            Exception: If there is an error during executor deletion.
+        """
+        try:
+            StorageManager.remove_executor_database(be_id)
+            StorageManager.remove_executor_results(be_id)
+
+        except Exception as e:
+            print(f"Failed to delete executor: {str(e)}")
+            raise e
+
+    @staticmethod
+    def get_available_items() -> tuple[list[str], list[BenchmarkExecutorArguments]]:
         """
         Retrieves all available benchmark executors.
 
@@ -267,7 +267,7 @@ class BenchmarkExecutor:
             print(f"Failed to get available executors: {str(e)}")
             raise e
 
-    def close_executor(self) -> None:
+    def close(self) -> None:
         """
         Closes the executor's database connection.
 
@@ -476,7 +476,7 @@ class BenchmarkExecutor:
                 try:
                     if cache_record is None:
                         # Get predictions from connector and create cache records
-                        updated_prompt_info = await ConnectorManager.get_prediction(
+                        updated_prompt_info = await Connector.get_prediction(
                             new_prompt_info, rec_conn
                         )
                         StorageManager.create_benchmark_cache_record(
@@ -607,7 +607,7 @@ class BenchmarkExecutor:
                 )
 
             # Create a result instance and write
-            Result.create_result(self._get_current_result_arguments())
+            Result.create(self._get_current_result_arguments())
 
         elif self.type == BenchmarkExecutorTypes.COOKBOOK:
             print(f"🔃 Running cookbooks ({self.name})... do not close this terminal.")
@@ -659,7 +659,7 @@ class BenchmarkExecutor:
                 )
 
             # Create a cookbook instance and write
-            Result.create_result(self._get_current_result_arguments())
+            Result.create(self._get_current_result_arguments())
 
         else:
             print("Failed to execute benchmark due to invalid executor type.")
@@ -706,16 +706,14 @@ class BenchmarkExecutor:
         metrics_instances = []
         try:
             start_time = time.perf_counter()
-            recipe_inst = Recipe.load_recipe(recipe)
+            recipe_inst = Recipe.load(recipe)
             print(
                 f"Load recipe instance took {(time.perf_counter() - start_time):.4f}s"
             )
 
             start_time = time.perf_counter()
             recipe_eps = [
-                ConnectorManager.create_connector(
-                    ConnectorManager.read_endpoint(endpoint)
-                )
+                Connector.create(ConnectorEndpoint.read(endpoint))
                 for endpoint in self.endpoints
             ]
             print(
@@ -723,9 +721,7 @@ class BenchmarkExecutor:
             )
 
             start_time = time.perf_counter()
-            metrics_instances = [
-                Metric.load_metric(metric) for metric in recipe_inst.metrics
-            ]
+            metrics_instances = [Metric.load(metric) for metric in recipe_inst.metrics]
             print(f"Load metrics took {(time.perf_counter() - start_time):.4f}s")
 
         except Exception as e:
@@ -882,7 +878,7 @@ class BenchmarkExecutor:
         cookbook_inst = None
         try:
             start_time = time.perf_counter()
-            cookbook_inst = Cookbook.load_cookbook(cookbook)
+            cookbook_inst = Cookbook.load(cookbook)
             print(
                 f"Load cookbook instance took {(time.perf_counter() - start_time):.4f}s"
             )

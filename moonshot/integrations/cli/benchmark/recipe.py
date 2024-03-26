@@ -110,9 +110,7 @@ def run_recipe(args) -> None:
     endpoints = literal_eval(args.endpoints)
     num_of_prompts = args.num_of_prompts
 
-    bm_executor = api_create_recipe_executor(
-        name, recipes, endpoints, num_of_prompts
-    )
+    bm_executor = api_create_recipe_executor(name, recipes, endpoints, num_of_prompts)
 
     asyncio.run(bm_executor.execute())
     show_recipe_results(
@@ -122,7 +120,7 @@ def run_recipe(args) -> None:
         bm_executor.results_file,
         bm_executor.duration,
     )
-    bm_executor.close_executor()
+    bm_executor.close()
 
 
 def update_recipe(args) -> None:
