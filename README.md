@@ -87,11 +87,11 @@ For guide on how to use Moonshot, please refer to the [Quick Start Guide for Moo
 ## Quick Start Guides
 For more elaborate instruction, you can view our quick start guide.
 
-[Getting Started with Library](/getting_started/quick_start_library)
+[Getting Started with Library](docs/getting_started/quick_start_library.md)
 
-[Getting Started with Web API](/getting_started/quick_start_web_api)
+[Getting Started with Web API](docs/getting_started/quick_start_web_api.md)
 
-[Getting Started with CLI](/getting_started/quick_start_cli)
+[Getting Started with CLI](docs/getting_started/quick_start_cli.md)
 
 
 
