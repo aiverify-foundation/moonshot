@@ -162,7 +162,7 @@ moonshot > use_session -h # To view the parameter required to use a session.
 
 Once you entered a session, your command prompt should change to look like this with the value of `session_id` being of a certain value. 
 ```
-moonshot (my-new-session_{session_id}) [PT: None, CS: None] >
+moonshot (my-new-session_{session_id}) [PT: , CS: ] >
 ```
 
 ### Step 3: Remove and Adding Prompt Tempaltes or Context Strategies
@@ -197,7 +197,7 @@ clear_context_strategy
 ```
 Your prompt template and context strategy should be unloaded and your command prompt will look like this: 
 ```
-moonshot (my-new-session_{session_id}) [PT: None, CS: None] >
+moonshot (my-new-session_{session_id}) [PT: , CS: ] >
 ```
 ### Step 4: Analyze Results
 Analyze the results from benchmarking or red teaming to assess the security posture or vulnerabilities of the target systems. Interpret the responses to identify potential weaknesses or areas for improvement in the tested environment.

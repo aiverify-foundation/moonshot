@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.3.3**
+**Version 0.3.4**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
@@ -87,11 +87,11 @@ For guide on how to use Moonshot, please refer to the [Quick Start Guide for Moo
 ## Quick Start Guides
 For more elaborate instruction, you can view our quick start guide.
 
-[Getting Started with Library](/getting_started/quick_start_library)
+[Getting Started with Library](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_library/)
 
-[Getting Started with Web API](/getting_started/quick_start_web_api)
+[Getting Started with Web API](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_web_api/)
 
-[Getting Started with CLI](/getting_started/quick_start_cli)
+[Getting Started with CLI](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_cli)
 
 
 
