@@ -8,10 +8,10 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, Union
 
-from moonshot.src.benchmarking.prompt_arguments import PromptArguments
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
+from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.storage.storage_manager import StorageManager
 from moonshot.src.utils.import_modules import get_instance
 
@@ -207,10 +207,10 @@ class Connector:
 
     @staticmethod
     async def get_prediction(
-        generated_prompt: PromptArguments,
+        generated_prompt: ConnectorPromptArguments,
         connector: Connector,
         prompt_callback: Union[Callable, None] = None,
-    ) -> PromptArguments:
+    ) -> ConnectorPromptArguments:
         """
         Generates a prediction for a given prompt using a specified connector.
 
@@ -228,12 +228,12 @@ class Connector:
         The method then returns the `generated_prompt` with the generated prediction and duration.
 
         Args:
-            generated_prompt (PromptArguments): The prompt to be predicted.
+            generated_prompt (ConnectorPromptArguments): The prompt to be predicted.
             connector (Connector): The connector to be used for prediction.
             prompt_callback (Union[Callable, None]): An optional callback function to be called after prediction.
 
         Returns:
-            PromptArguments: The `generated_prompt` with the generated prediction and duration.
+            ConnectorPromptArguments: The `generated_prompt` with the generated prediction and duration.
 
         Raises:
             Exception: If there is an error during prediction.

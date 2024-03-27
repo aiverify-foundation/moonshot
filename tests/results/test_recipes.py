@@ -20,6 +20,8 @@ def test_create_recipe():
         datasets=["dataset1", "dataset2"],
         prompt_templates=["prompt-template1"],
         metrics=["metrics1", "metrics2"],
+        type="benchmark",
+        attack_strategies=[]
     )
 
 

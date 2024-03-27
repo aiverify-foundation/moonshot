@@ -22,27 +22,18 @@ class RecipeArguments(BaseModel):
 
     type: RecipeType  # type (RecipeType): The type of recipe.
 
-    attack_modules: list[
-        str
-    ]  # attack_modules (list): The list of attack modules in the recipe.
-
-    context_strategies: list[
-        str
-    ]  # context_strategies (list): The list of context strategies in the recipe.
+    attack_strategies: list[
+        dict
+    ]  # attack_strategies (list): The list of attack strategies in the recipe.
 
     def to_dict(self) -> dict:
         """
-        Converts the RecipeArguments instance into a dictionary.
-
-        This method takes all the attributes of the RecipeArguments instance and constructs a dictionary
-        with attribute names as keys and their corresponding values. This includes the id, name, description, tags,
-        datasets, prompt_templates, and metrics. This dictionary can be used for serialization purposes,
-        such as storing the recipe information in a JSON file or sending it over a network.
+        Convert the RecipeArguments object to a dictionary.
 
         Returns:
-            dict: A dictionary representation of the RecipeArguments instance.
+            dict: A dictionary representation of the RecipeArguments object.
+            The keys are the attribute names and the values are the attribute values.
         """
-
         return {
             "id": self.id,
             "name": self.name,
@@ -51,7 +42,6 @@ class RecipeArguments(BaseModel):
             "datasets": self.datasets,
             "prompt_templates": self.prompt_templates,
             "metrics": self.metrics,
-            "type": self.type.name,
-            "attack_modules": self.attack_modules,
-            "context_strategies": self.context_strategies,
+            "type": self.type.name.lower(),
+            "attack_strategies": self.attack_strategies,
         }

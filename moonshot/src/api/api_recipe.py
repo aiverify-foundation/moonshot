@@ -14,14 +14,13 @@ def api_create_recipe(
     prompt_templates: list[str],
     metrics: list[str],
     type: str,
-    attack_modules: list[str],
-    context_strategies: list[str],
+    attack_strategies: list[dict],
 ) -> None:
     """
     Creates a new recipe and stores it in json.
 
     This function takes a variety of parameters, including the name, description, tags, datasets,
-    prompt templates, metrics, type, attack modules, and context strategies of the recipe.
+    prompt templates, metrics, type, attack strategies, and context strategies of the recipe.
     It then creates a new RecipeArguments object with these parameters, and calls the Recipe.create
     method to store the new recipe in the json file.
 
@@ -36,8 +35,7 @@ def api_create_recipe(
         prompt_templates (list[str]): The prompt templates used by the recipe.
         metrics (list[str]): The metrics used by the recipe.
         type (str): The type of the recipe.
-        attack_modules (list[str]): The attack modules used by the recipe.
-        context_strategies (list[str]): The context strategies used by the recipe.
+        attack_strategies (list[dict]): The attack strategies used by the recipe.
 
     Returns:
         None
@@ -51,8 +49,7 @@ def api_create_recipe(
         prompt_templates=prompt_templates,
         metrics=metrics,
         type=RecipeType(type),
-        attack_modules=attack_modules,
-        context_strategies=context_strategies,
+        attack_strategies=attack_strategies,
     )
     Recipe.create(rec_args)
 
