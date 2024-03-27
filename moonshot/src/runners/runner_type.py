@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class BenchmarkExecutorTypes(Enum):
+class RunnerType(Enum):
     RECIPE = "recipe"
     COOKBOOK = "cookbook"

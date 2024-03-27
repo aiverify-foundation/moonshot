@@ -1,4 +1,4 @@
-from moonshot.src.benchmarking.results.result import Result
+from moonshot.src.results.result import Result
 
 
 # ------------------------------------------------------------------------------

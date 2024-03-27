@@ -20,6 +20,15 @@ class EnvironmentVars:
     RECIPES = env_vars.get(
         "RECIPES", importlib.resources.files(__app_name__).joinpath("data/recipes")
     )
+    RECIPES_PROCESSING_MODULES = env_vars.get(
+        "RECIPES_PROCESSING_MODULES",
+        importlib.resources.files(__app_name__).joinpath(
+            "data/recipes-processing-modules"
+        ),
+    )
+    RUNNERS = env_vars.get(
+        "RUNNERS", importlib.resources.files(__app_name__).joinpath("data/runners")
+    )
     COOKBOOKS = env_vars.get(
         "COOKBOOKS", importlib.resources.files(__app_name__).joinpath("data/cookbooks")
     )
@@ -76,6 +85,8 @@ class EnvironmentVars:
             "CONNECTORS_ENDPOINTS",
             "CONNECTORS",
             "RECIPES",
+            "RECIPES_PROCESSING_MODULES",
+            "RUNNERS",
             "COOKBOOKS",
             "DATASETS",
             "PROMPT_TEMPLATES",

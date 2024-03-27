@@ -1,4 +1,4 @@
-from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
+from moonshot.src.prompt_templates.prompt_template_manager import PromptTemplateManager
 
 
 # ------------------------------------------------------------------------------

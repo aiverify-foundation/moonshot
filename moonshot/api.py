@@ -25,15 +25,6 @@ from moonshot.src.api.api_cookbook import (
     api_update_cookbook,
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
-from moonshot.src.api.api_executor import (
-    api_create_cookbook_executor,
-    api_create_recipe_executor,
-    api_delete_executor,
-    api_get_all_executor,
-    api_get_all_executor_name,
-    api_load_executor,
-    api_read_executor,
-)
 from moonshot.src.api.api_metrics import api_delete_metric, api_get_all_metric
 from moonshot.src.api.api_prompt_template import (
     api_get_all_prompt_template_detail,
@@ -54,6 +45,15 @@ from moonshot.src.api.api_result import (
     api_get_all_result_name,
     api_read_result,
     api_read_results,
+)
+from moonshot.src.api.api_runner import (
+    api_create_cookbook_runner,
+    api_create_recipe_runner,
+    api_delete_runner,
+    api_get_all_runner,
+    api_get_all_runner_name,
+    api_load_runner,
+    api_read_runner,
 )
 from moonshot.src.api.api_session import (
     api_create_session,
@@ -87,13 +87,13 @@ __all__ = [
     "api_read_cookbooks",
     "api_update_cookbook",
     "api_set_environment_variables",
-    "api_create_cookbook_executor",
-    "api_create_recipe_executor",
-    "api_delete_executor",
-    "api_get_all_executor",
-    "api_get_all_executor_name",
-    "api_load_executor",
-    "api_read_executor",
+    "api_create_cookbook_runner",
+    "api_create_recipe_runner",
+    "api_delete_runner",
+    "api_get_all_runner",
+    "api_get_all_runner_name",
+    "api_load_runner",
+    "api_read_runner",
     "api_delete_metric",
     "api_get_all_metric",
     "api_get_all_prompt_template_detail",

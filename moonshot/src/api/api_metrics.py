@@ -1,4 +1,4 @@
-from moonshot.src.benchmarking.metrics.metric import Metric
+from moonshot.src.metrics.metric import Metric
 
 
 # ------------------------------------------------------------------------------

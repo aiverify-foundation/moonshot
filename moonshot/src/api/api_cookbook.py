@@ -1,5 +1,5 @@
-from moonshot.src.benchmarking.cookbooks.cookbook import Cookbook
-from moonshot.src.benchmarking.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.cookbooks.cookbook import Cookbook
+from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 
 
 # ------------------------------------------------------------------------------

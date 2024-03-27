@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
-from moonshot.src.benchmarking.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 from moonshot.src.storage.storage_manager import StorageManager
 
 

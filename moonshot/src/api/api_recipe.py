@@ -1,5 +1,6 @@
-from moonshot.src.benchmarking.recipes.recipe import Recipe
-from moonshot.src.benchmarking.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.recipes.recipe import Recipe
+from moonshot.src.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.recipes.recipe_type import RecipeType
 
 
 # ------------------------------------------------------------------------------
@@ -12,29 +13,35 @@ def api_create_recipe(
     datasets: list[str],
     prompt_templates: list[str],
     metrics: list[str],
+    type: str,
+    attack_modules: list[str],
+    context_strategies: list[str],
 ) -> None:
     """
-    Creates a new recipe.
+    Creates a new recipe and stores it in json.
 
-    This function takes a name, description, tags, datasets, prompt templates, and metrics as input, and creates a
-    new recipe. It constructs a RecipeArguments object with the provided details and then calls the Recipe's
-    create_recipe method to add the new recipe.
+    This function takes a variety of parameters, including the name, description, tags, datasets,
+    prompt templates, metrics, type, attack modules, and context strategies of the recipe.
+    It then creates a new RecipeArguments object with these parameters, and calls the Recipe.create
+    method to store the new recipe in the json file.
+
+    Note: The id of the recipe is generated from the name of the recipe using the slugify function,
+    so it does not need to be provided.
 
     Args:
-        name (str): The name of the new recipe.
+        name (str): The name of the recipe.
         description (str): The description of the recipe.
         tags (list[str]): The tags associated with the recipe.
-        datasets (list[str]): The datasets used in the recipe.
-        prompt_templates (list[str]): The prompt templates used in the recipe.
-        metrics (list[str]): The metrics used in the recipe.
+        datasets (list[str]): The datasets used by the recipe.
+        prompt_templates (list[str]): The prompt templates used by the recipe.
+        metrics (list[str]): The metrics used by the recipe.
+        type (str): The type of the recipe.
+        attack_modules (list[str]): The attack modules used by the recipe.
+        context_strategies (list[str]): The context strategies used by the recipe.
 
     Returns:
         None
     """
-    # Create a new recipe
-    # We do not need to provide the id.
-    # This is because during creation:
-    # 1. the id is slugify from the name and stored as id.
     rec_args = RecipeArguments(
         id="",
         name=name,
@@ -43,6 +50,9 @@ def api_create_recipe(
         datasets=datasets,
         prompt_templates=prompt_templates,
         metrics=metrics,
+        type=RecipeType(type),
+        attack_modules=attack_modules,
+        context_strategies=context_strategies,
     )
     Recipe.create(rec_args)
 
@@ -84,27 +94,19 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
 
 def api_update_recipe(rec_id: str, **kwargs) -> None:
     """
-    Updates an existing recipe in the recipe manager.
+    Updates a recipe with the provided fields.
 
-    This function updates an existing recipe in the recipe manager using the provided recipe details.
-    It first checks if the recipe exists, then updates the fields of the existing recipe with the provided kwargs,
-    and finally calls the Recipe's update_recipe method to update the recipe.
+    This function takes a recipe ID and a variable number of keyword arguments as input.
+    It first checks if the recipe with the given ID exists. If it does, it updates the fields
+    of the existing recipe with the provided keyword arguments. If the recipe does not exist,
+    it raises a RuntimeError.
 
     Args:
         rec_id (str): The ID of the recipe to update.
-        kwargs: A dictionary of arguments for the recipe. Possible keys are:
-            name (str): The name of the recipe.
-            description (str): The description of the recipe.
-            tags (list[str]): The tags associated with the recipe.
-            datasets (list[str]): The datasets used in the recipe.
-            prompt_templates (list[str]): The prompt templates used in the recipe.
-            metrics (list[str]): The metrics used in the recipe.
+        **kwargs: Variable number of keyword arguments representing the fields to update.
 
     Raises:
-        RuntimeError: If the recipe with the provided ID does not exist.
-
-    Returns:
-        None
+        RuntimeError: If the recipe with the given ID does not exist.
     """
     # Check if the recipe exists
     try:

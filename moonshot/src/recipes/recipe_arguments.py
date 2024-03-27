@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from moonshot.src.recipes.recipe_type import RecipeType
+
 
 class RecipeArguments(BaseModel):
     id: str  # id (str): The ID of the recipe.
@@ -17,6 +19,16 @@ class RecipeArguments(BaseModel):
     ]  # prompt_templates (list): The list of prompt templates in the recipe.
 
     metrics: list[str]  # metrics (list): The list of metrics in the recipe.
+
+    type: RecipeType  # type (RecipeType): The type of recipe.
+
+    attack_modules: list[
+        str
+    ]  # attack_modules (list): The list of attack modules in the recipe.
+
+    context_strategies: list[
+        str
+    ]  # context_strategies (list): The list of context strategies in the recipe.
 
     def to_dict(self) -> dict:
         """
@@ -39,4 +51,7 @@ class RecipeArguments(BaseModel):
             "datasets": self.datasets,
             "prompt_templates": self.prompt_templates,
             "metrics": self.metrics,
+            "type": self.type.name,
+            "attack_modules": self.attack_modules,
+            "context_strategies": self.context_strategies,
         }
