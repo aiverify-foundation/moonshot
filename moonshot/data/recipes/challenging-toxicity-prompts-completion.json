@@ -13,5 +13,7 @@
     ],
     "metrics": [
         "toxicity-classifier"
-    ]
+    ],
+    "type": "benchmark",
+    "attack_strategies": []
 }
