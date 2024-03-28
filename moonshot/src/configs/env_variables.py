@@ -1,8 +1,7 @@
 import importlib.resources
 from enum import Enum
+from pathlib import Path
 from typing import Union
-
-from dotenv import dotenv_values
 
 __app_name__ = "moonshot"
 
@@ -25,7 +24,7 @@ class EnvVariables(Enum):
 
 
 class EnvironmentVars:
-    env_vars = dotenv_values(".env")
+    env_vars = {}
 
     CONNECTORS_ENDPOINTS = env_vars.get(
         EnvVariables.CONNECTORS_ENDPOINTS.value,
@@ -108,11 +107,20 @@ class EnvironmentVars:
             env_dict = dict()
 
         keys = [e.value for e in EnvVariables]
-
+        unset_keys = []
         for key in keys:
             if key in env_dict:
-                setattr(EnvironmentVars, key, env_dict[key])
+                given_path = Path(env_dict[key])
+                if given_path.exists():
+                    setattr(EnvironmentVars, key, env_dict[key])
+                else:
+                    print(
+                        f"Unable to set {key}. The provided path {given_path} does not exist. ",
+                        "The stock set will be used.",
+                    )
             else:
-                print(
-                    f"Unable to set {key}, not found in the provided environment variables."
-                )
+                unset_keys.append(key)
+        if unset_keys:
+            print(
+                f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
+            )

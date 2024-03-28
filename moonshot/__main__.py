@@ -1,6 +1,7 @@
 import sys
 import warnings
-
+from dotenv import dotenv_values
+from moonshot.api import api_set_environment_variables
 """
 Run the Moonshot application
 """
@@ -13,6 +14,7 @@ def main():
         print("Invalid number of argument given.")
         sys.exit(1)
     option = sys.argv[1]
+    api_set_environment_variables(dotenv_values(".env"))
     if option == "web-api":
         from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "projectmoonshot-imda"
-version = "0.3.0"
+version = "0.3.4"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -89,7 +89,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "projectmoonshot-imda"
-version = "0.3.0"
+version = "0.3.4"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"

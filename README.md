@@ -11,7 +11,7 @@
                |__/                                                              
 
 ```
-**Version 0.3.0**
+**Version 0.3.4**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
@@ -22,7 +22,7 @@ A simple and modular tool to evaluate and red-team any LLM application.
 
 Moonshot is a tool designed for AI developers and security experts to evaluate and red-team any LLM/ LLM application. In this initial version, Moonshot can be used through its interative Command Line Interface, within python notebooks [(example)](https://github.com/moonshot-admin/moonshot/tree/main/examples/test-openai-gpt35.ipynb), or even seamlessly integrated into your model development workflow to to run repeatable tests.
 
-
+For full documentation on installation and user guide, please refer to: https://moonshot-admin.github.io/moonshot.
 
 ## Getting Started
 ### Prerequisites
@@ -42,7 +42,10 @@ Moonshot is a tool designed for AI developers and security experts to evaluate a
 The source code is available on GitHub at: [https://github.com/moonshot-admin/moonshot](https://github.com/moonshot-admin/moonshot)
 ```
 $ pip install projectmoonshot-imda # To install Moonshot library.
-$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the web API.
+$ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the Web API.
+$ pip install "projectmoonshot-imda[cli]" # To enable running Moonshot using the CLI.
+$ pip install "projectmoonshot-imda[all]" # To enable running Moonshot Web API and Web API.
+
 ```
 #### Installation from source
 1. Download the source files by cloning this repository. i.e. Git clone (via SSH): 
@@ -62,6 +65,8 @@ $ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using
     $ pip install -r requirements.txt
     ```
 
+    </br>
+
 ## Running Moonshot
 ### Web API
 To run Moonshot Web API:
@@ -70,6 +75,25 @@ $ python -m moonshot web-api
 ```
 
 For instructions on setting up the Moonshot UI, please refer to the [Moonshot UI repository](https://github.com/moonshot-admin/moonshot-ui).
+
+### CLI
+To run Moonshot CLI:
+```
+$ python -m moonshot cli interactive
+```
+
+For guide on how to use Moonshot, please refer to the [Quick Start Guide for Moonshot CLI](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_cli/)
+
+## Quick Start Guides
+For more elaborate instruction, you can view our quick start guide.
+
+[Getting Started with Library](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_library/)
+
+[Getting Started with Web API](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_web_api/)
+
+[Getting Started with CLI](https://moonshot-admin.github.io/moonshot/getting_started/quick_start_cli)
+
+
 
 ## Acknowledgements
 
