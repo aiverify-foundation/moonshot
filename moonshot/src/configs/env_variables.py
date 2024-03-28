@@ -49,8 +49,13 @@ class EnvironmentVars:
     DATABASES = env_vars.get(
         "DATABASES", importlib.resources.files(__app_name__).joinpath("data/databases")
     )
-    SESSIONS = env_vars.get(
-        "SESSIONS", importlib.resources.files(__app_name__).joinpath("data/sessions")
+    ATTACK_MODULE = env_vars.get(
+        "ATTACK_MODULE",
+        importlib.resources.files(__app_name__).joinpath("data/attack-modules"),
+    )
+    STOP_STRATEGY = env_vars.get(
+        "STOP_STRATEGY",
+        importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
     )
 
     @staticmethod
@@ -85,6 +90,8 @@ class EnvironmentVars:
             "RESULTS",
             "DATABASES",
             "SESSIONS",
+            "ATTACK_MODULE",
+            "STOP_STRATEGY",
         ]
 
         for key in keys:
