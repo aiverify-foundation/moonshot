@@ -1,6 +1,6 @@
 from moonshot.api import (
-    api_create_connector,
-    api_create_connectors,
+    api_create_connector_from_endpoint, 
+    api_create_connectors_from_endpoints,
     api_create_endpoint,
     api_delete_endpoint,
     api_get_all_connector_type,
@@ -60,12 +60,12 @@ def test_get_all_connector_endpoint_name():
     print(api_get_all_endpoint_name())
 
 
-def test_create_connector():
+def test_create_connector_from_ep():
     # Recreate connector endpoint
     test_create_connector_endpoint()
 
     # Create new connector
-    connector = api_create_connector("my-new-gpt4")
+    connector = api_create_connector_from_endpoint("my-new-gpt4")
     print(connector)
     print("Connector ID: ", connector.id)
     print("Connector Endpoint: ", connector.endpoint)
@@ -86,12 +86,12 @@ def test_create_connector():
     test_delete_connector_endpoint()
 
 
-def test_create_connectors():
+def test_create_connectors_from_eps():
     # Recreate connector endpoint
     test_create_connector_endpoint()
 
     # Create new connector
-    connectors = api_create_connectors(["my-new-gpt4", "my-new-gpt4", "my-new-gpt4"])
+    connectors = api_create_connectors_from_endpoints(["my-new-gpt4", "my-new-gpt4", "my-new-gpt4"])
     for connector_no, connector in enumerate(connectors, 1):
         print("-" * 100)
         print("Connector No. ", connector_no)
@@ -118,7 +118,7 @@ def test_get_all_connector_type():
     print(api_get_all_connector_type())
 
 
-def test_run_connector_api():
+def test_run_connector_endpoints_api():
     # ------------------------------------------------------------------------------
     # Connector endpoints APIs Test
     # ------------------------------------------------------------------------------
@@ -150,18 +150,18 @@ def test_run_connector_api():
     print("=" * 100, "\nTest listing all connector endpoint names")
     test_get_all_connector_endpoint_name()
 
+def test_run_connector_api():
+    # ------------------------------------------------------------------------------
+    # Connector APIs Test
+    # ------------------------------------------------------------------------------
+    # Create new connector
+    print("=" * 100, "\nTest creating new connector from endpoints")
+    test_create_connector_from_ep()
 
-# ------------------------------------------------------------------------------
-# Connector APIs Test
-# ------------------------------------------------------------------------------
-# Create new connector
-print("=" * 100, "\nTest creating new connector")
-test_create_connector()
+    # Create new connectors
+    print("=" * 100, "\nTest creating new connectors")
+    test_create_connectors_from_eps()
 
-# Create new connectors
-print("=" * 100, "\nTest creating new connectors")
-test_create_connectors()
-
-# Create new connectors
-print("=" * 100, "\nTest getting all connector type")
-test_get_all_connector_type()
+    # Create new connectors
+    print("=" * 100, "\nTest getting all connector type")
+    test_get_all_connector_type()

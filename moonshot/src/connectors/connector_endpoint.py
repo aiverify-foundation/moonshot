@@ -3,30 +3,31 @@ from pathlib import Path
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.storage.storage_manager import StorageManager
+from moonshot.src.storage.storage import Storage
 
 
 class ConnectorEndpoint:
     @staticmethod
     def create(ep_args: ConnectorEndpointArguments) -> None:
         """
-        Creates a new endpoint and stores its information in a JSON file.
+        Generates a new endpoint and saves its details in a JSON file.
 
-        This method takes the arguments provided in the `ep_args` parameter, generates a unique endpoint ID by
-        slugifying the endpoint name, and then constructs a dictionary with the endpoint's information. It then
-        writes this information to a JSON file named after the endpoint ID within the directory specified by
-        `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation fails for any reason, an exception is raised
-        and the error is printed.
+        This function accepts the arguments in the `ep_args` parameter, creates a unique endpoint ID by
+        slugifying the endpoint name, and then builds a dictionary with the endpoint's details. It then
+        saves this information to a JSON file named after the endpoint ID in the directory specified by
+        `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation fails for any reason, an exception is thrown
+        and the error is logged.
 
         Args:
-            ep_args (ConnectorEndpointArguments): An object containing the necessary information to create a
+            ep_args (ConnectorEndpointArguments): An object that holds the necessary details to generate a
             new endpoint.
 
         Raises:
-            Exception: If there is an error during file writing or any other operation within the method.
+            Exception: If there is an error during the file writing process or any other operation within the function.
         """
         try:
             ep_id = slugify(ep_args.name, lowercase=True)
@@ -42,7 +43,9 @@ class ConnectorEndpoint:
             }
 
             # Write as json output
-            StorageManager.create_connector_endpoint(ep_id, ep_info)
+            Storage.create_object(
+                EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, ep_info, "json"
+            )
 
         except Exception as e:
             print(f"Failed to create endpoint: {str(e)}")
@@ -52,52 +55,82 @@ class ConnectorEndpoint:
     @validate_arguments
     def read(ep_id: str) -> ConnectorEndpointArguments:
         """
-        Reads an endpoint and returns its information.
+        Fetches the details of a given endpoint.
 
-        This method takes an endpoint ID as input, reads the corresponding JSON file from the directory specified by
-        `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a ConnectorEndpointArguments object containing the
-        endpoint's information. If the operation fails for any reason, an exception is raised and the error is printed.
+        This method takes an endpoint ID as input, finds the corresponding JSON file in the directory
+        specified by `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a ConnectorEndpointArguments object
+        that contains the endpoint's details. If any error arises during the process, an exception is raised and the
+        error message is logged.
 
         Args:
-            ep_id (str): The ID of the endpoint to read.
+            ep_id (str): The unique ID of the endpoint to be fetched.
 
         Returns:
-            ConnectorEndpointArguments: An object containing the endpoint's information.
+            ConnectorEndpointArguments: An object encapsulating the details of the fetched endpoint.
 
         Raises:
-            Exception: If there is an error during file reading or any other operation within the method.
+            Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return ConnectorEndpointArguments(
-                **StorageManager.read_connector_endpoint(ep_id)
-            )
+            return ConnectorEndpointArguments(**ConnectorEndpoint._read_endpoint(ep_id))
 
         except Exception as e:
             print(f"Failed to read endpoint: {str(e)}")
             raise e
 
     @staticmethod
-    def update(ep_args: ConnectorEndpointArguments) -> None:
+    def _read_endpoint(ep_id: str):
         """
-        Updates an existing endpoint with new information.
+        Reads the endpoint information from a JSON file and adds the creation datetime.
 
-        This method takes a ConnectorEndpointArguments object as input, which contains the new information for the
-        endpoint. Instead of deleting and recreating the endpoint, it directly updates the existing endpoint file
-        with the new information. If the operation fails for any reason, an exception is raised and the error
-        is printed.
+        This method accepts an endpoint ID as an argument, locates the corresponding JSON file in the directory
+        defined by `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a dictionary that encapsulates the endpoint's
+        details along with its creation datetime. If any error occurs during the process, it is handled by the calling
+        method.
 
         Args:
-            ep_args (ConnectorEndpointArguments): An object containing the new information for the endpoint.
+            ep_id (str): The unique identifier of the endpoint to be retrieved.
+
+        Returns:
+            dict: A dictionary containing the details of the retrieved endpoint along with its creation datetime.
+        """
+        connector_endpoint_info = Storage.read_object(
+            EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json"
+        )
+        creation_datetime = Storage.get_creation_datetime(
+            EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json"
+        )
+        connector_endpoint_info["created_date"] = creation_datetime.replace(
+            microsecond=0
+        ).isoformat(" ")
+        return connector_endpoint_info
+
+    @staticmethod
+    def update(ep_args: ConnectorEndpointArguments) -> None:
+        """
+        Modifies an existing endpoint with provided details.
+
+        This method accepts a ConnectorEndpointArguments object, which holds the updated information for the
+        endpoint. Rather than erasing and recreating the endpoint, it directly modifies the existing endpoint file
+        with the new details. If any error arises during the operation, an exception is thrown and the error
+        is logged.
+
+        Args:
+            ep_args (ConnectorEndpointArguments): An instance encapsulating the updated details for the endpoint.
 
         Raises:
-            Exception: If there is an error during the update operation.
+            Exception: If an error is encountered during the update process.
         """
         try:
             # Convert the endpoint arguments to a dictionary
+            # Remove created_date if it exists
             ep_info = ep_args.to_dict()
+            ep_info.pop("created_date", None)
 
             # Write the updated endpoint information to the file
-            StorageManager.create_connector_endpoint(ep_args.id, ep_info)
+            Storage.create_object(
+                EnvVariables.CONNECTORS_ENDPOINTS.name, ep_args.id, ep_info, "json"
+            )
 
         except Exception as e:
             print(f"Failed to update endpoint: {str(e)}")
@@ -107,20 +140,20 @@ class ConnectorEndpoint:
     @validate_arguments
     def delete(ep_id: str) -> None:
         """
-        Deletes an endpoint.
+        Removes a specified endpoint.
 
-        This method takes an endpoint ID as input, deletes the corresponding JSON file from the directory specified by
-        `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation fails for any reason, an exception is raised and the
-        error is printed.
+        This method requires an endpoint ID as an argument, and proceeds to delete the corresponding JSON file from
+        the directory defined by `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation encounters any issues, an
+        exception is thrown and the error message is outputted.
 
         Args:
-            ep_id (str): The ID of the endpoint to delete.
+            ep_id (str): The unique identifier of the endpoint to be removed.
 
         Raises:
-            Exception: If there is an error during file deletion or any other operation within the method.
+            Exception: If an error occurs during the deletion process or any other operation within the method.
         """
         try:
-            StorageManager.delete_connector_endpoint(ep_id)
+            Storage.delete_object(EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json")
 
         except Exception as e:
             print(f"Failed to delete endpoint: {str(e)}")
@@ -129,28 +162,29 @@ class ConnectorEndpoint:
     @staticmethod
     def get_available_items() -> tuple[list[str], list[ConnectorEndpointArguments]]:
         """
-        Retrieves a list of available endpoints and their information.
+        Fetches the details of all available endpoints.
 
-        This method scans the designated directory for connector endpoints, reads each endpoint's information from its
-        JSON file, and compiles a list of endpoint IDs and their corresponding information. It filters out any files
-        that do not represent valid endpoints (e.g., system files starting with "__"). The method returns a tuple
-        containing a list of endpoint IDs and a list of dictionaries, each containing the information of an endpoint.
+        This method traverses the specified directory for connector endpoints, reads the information of each endpoint
+        from its corresponding JSON file, and assembles a list of endpoint IDs along with their respective details.
+        It excludes any files that are not valid endpoints (for instance, system files that begin with "__").
+        The method returns a tuple comprising a list of endpoint IDs and a list of ConnectorEndpointArguments objects,
+        each encapsulating the details of an endpoint.
 
         Returns:
-            tuple[list[str], list[dict]]: A tuple containing a list of endpoint IDs and a list of dictionaries with
-            endpoint information.
+            tuple[list[str], list[ConnectorEndpointArguments]]: A tuple containing a list of endpoint IDs and a list of
+            ConnectorEndpointArguments objects with endpoint details.
         """
         try:
             retn_eps = []
             retn_eps_ids = []
 
-            eps = StorageManager.get_connector_endpoints()
+            eps = Storage.get_objects(EnvVariables.CONNECTORS_ENDPOINTS.name, "json")
             for ep in eps:
                 if "__" in ep:
                     continue
 
                 ep_info = ConnectorEndpointArguments(
-                    **StorageManager.read_connector_endpoint(Path(ep).stem)
+                    **ConnectorEndpoint._read_endpoint(Path(ep).stem)
                 )
                 retn_eps.append(ep_info)
                 retn_eps_ids.append(ep_info.id)

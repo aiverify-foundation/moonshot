@@ -8,11 +8,12 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, Union
 
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
-from moonshot.src.storage.storage_manager import StorageManager
+from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
 
@@ -128,25 +129,27 @@ class Connector:
     @classmethod
     def load(cls, ep_args: ConnectorEndpointArguments) -> Connector:
         """
-        Loads a connector instance based on the provided endpoint arguments.
+        This method dynamically loads a connector instance based on the provided endpoint arguments.
 
-        This method utilizes the connector type specified in the `ep_args` to dynamically load the corresponding
-        connector class. It then instantiates the connector with the provided endpoint arguments. If the
-        specified connector type does not match any available connector classes, a RuntimeError is raised.
+        The connector type specified in the `ep_args` is used to dynamically load the corresponding
+        connector class. The connector is then instantiated with the provided endpoint arguments. If the
+        specified connector type does not correspond to any available connector classes, a RuntimeError is raised.
 
         Args:
-            ep_args (ConnectorEndpointArguments): The endpoint arguments containing the connector type and
+            ep_args (ConnectorEndpointArguments): The endpoint arguments which include the connector type and
             other necessary information.
 
         Returns:
-            Connector: An instance of the specified connector class initialized with the given endpoint arguments.
+            Connector: An instance of the specified connector class, initialized with the given endpoint arguments.
 
         Raises:
-            RuntimeError: If no connector class matches the specified connector type.
+            RuntimeError: If the specified connector type does not match any available connector classes.
         """
         connector_instance = get_instance(
             ep_args.connector_type,
-            StorageManager.get_connector_filepath(ep_args.connector_type),
+            Storage.get_filepath(
+                EnvVariables.CONNECTORS.name, ep_args.connector_type, "py"
+            ),
         )
         if connector_instance:
             return connector_instance(ep_args)
@@ -181,23 +184,23 @@ class Connector:
     @staticmethod
     def get_available_items() -> list[str]:
         """
-        Retrieves a list of all available connector types.
+        Fetches a list of all available connector types.
 
-        This method uses the `StorageManager.get_connectors` method to find all Python files in the directory
-        specified by the `EnvironmentVars.CONNECTORS` environment variable. It then filters out any files that are not
-        meant to be exposed as connectors (those containing "__" in their names). The method returns a list of the
+        This method employs the `get_connectors` method to locate all Python files in the directory
+        defined by the `EnvironmentVars.CONNECTORS` environment variable. It subsequently excludes any files that are
+        not intended to be exposed as connectors (those containing "__" in their names). The method yields a list of the
         names of these connector types.
 
         Returns:
-            list[str]: A list of strings, each representing the name of a connector type.
+            list[str]: A list of strings, each denoting the name of a connector type.
 
         Raises:
-            Exception: If there is an error during the retrieval of connector types.
+            Exception: If an error occurs during the extraction of connector types.
         """
         try:
             return [
                 Path(fp).stem
-                for fp in StorageManager.get_connectors()
+                for fp in Storage.get_objects(EnvVariables.CONNECTORS.name, "py")
                 if "__" not in fp
             ]
 

@@ -1,6 +1,6 @@
 from moonshot.src.api.api_connector import (
-    api_create_connector,
-    api_create_connectors,
+    api_create_connector_from_endpoint,
+    api_create_connectors_from_endpoints,
     api_get_all_connector_type,
 )
 from moonshot.src.api.api_connector_endpoint import (
@@ -68,8 +68,8 @@ from moonshot.src.api.api_session import (
 )
 
 __all__ = [
-    "api_create_connector",
-    "api_create_connectors",
+    "api_create_connector_from_endpoint",
+    "api_create_connectors_from_endpoints",
     "api_get_all_connector_type",
     "api_create_endpoint",
     "api_delete_endpoint",

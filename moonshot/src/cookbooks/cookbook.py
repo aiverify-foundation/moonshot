@@ -5,8 +5,9 @@ from pathlib import Path
 from pydantic.v1 import validate_arguments
 from slugify import slugify
 
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
-from moonshot.src.storage.storage_manager import StorageManager
+from moonshot.src.storage.storage import Storage
 
 
 class Cookbook:
@@ -19,38 +20,37 @@ class Cookbook:
     @classmethod
     def load(cls, cb_id: str) -> Cookbook:
         """
-        Loads a cookbook from a JSON file.
+        This method loads a cookbook from a JSON file.
 
-        This method reads the cookbook information from a JSON file specified by the cookbook ID. It constructs
-        the file path using the cookbook ID and the designated directory for cookbooks. The method
-        then reads the JSON file and returns the cookbook information as a dictionary.
+        It uses the cookbook ID to construct the file path for the JSON file in the designated cookbook directory.
+        The method then reads the JSON file and returns the cookbook information as a Cookbook instance.
 
         Args:
-            cb_id (str): The ID of the cookbook.
+            cb_id (str): The unique identifier of the cookbook.
 
         Returns:
-            Cookbook: An instance of the Cookbook class with the loaded cookbook information.
+            Cookbook: An instance of the Cookbook class populated with the loaded cookbook information.
         """
-        cb_info = StorageManager.read_cookbook(cb_id)
+        cb_info = Storage.read_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
         return cls(CookbookArguments(**cb_info))
 
     @staticmethod
     def create(cb_args: CookbookArguments) -> None:
         """
-        Creates a new cookbook and stores its information in a JSON file.
+        This method is responsible for creating a new cookbook and storing its details in a JSON file.
 
-        This method takes the arguments provided in the `cb_args` parameter, generates a unique cookbook ID by
-        slugifying the cookbook name, and then constructs a dictionary with the cookbook's information. It then
-        writes this information to a JSON file named after the cookbook ID within the directory specified by
-        `EnvironmentVars.COOKBOOKS`. If the operation fails for any reason, an exception is raised
-        and the error is printed.
+        The function accepts `cb_args` parameter which contains the necessary details for creating a new cookbook.
+        It generates a unique ID for the cookbook by slugifying the cookbook name. After that, it constructs a
+        dictionary with the cookbook's details and writes this information to a JSON file. The JSON file is named after
+        the cookbook ID and is stored in the directory specified by `EnvironmentVars.COOKBOOKS`.
+
+        If the operation encounters any error, an exception is raised and the error message is printed.
 
         Args:
-            cb_args (CookbookArguments): An object containing the necessary information to create a
-            new cookbook.
+            cb_args (CookbookArguments): An object that holds the necessary details for creating a new cookbook.
 
         Raises:
-            Exception: If there is an error during file writing or any other operation within the method.
+            Exception: If there is an error during the file writing process or any other operation within the method.
         """
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
@@ -62,7 +62,7 @@ class Cookbook:
             }
 
             # Write as json output
-            StorageManager.create_cookbook(cb_id, cb_info)
+            Storage.create_object(EnvVariables.COOKBOOKS.name, cb_id, cb_info, "json")
 
         except Exception as e:
             print(f"Failed to create cookbook: {str(e)}")
@@ -72,22 +72,25 @@ class Cookbook:
     @validate_arguments
     def read(cb_id: str) -> CookbookArguments:
         """
-        Reads a cookbook and returns its information.
+        Retrieves the details of a specified cookbook.
 
-        This method takes a cookbook ID as input, reads the corresponding JSON file from the directory specified by
-        `EnvironmentVars.COOKBOOKS`, and returns a CookbookArguments object containing the cookbook's information.
+        This method accepts a cookbook ID as an argument, locates the corresponding JSON file in the directory
+        defined by `EnvironmentVars.COOKBOOKS`, and returns a CookbookArguments object that encapsulates the cookbook's
+        details. If any error occurs during the process, an exception is raised and the error message is logged.
 
         Args:
-            cb_id (str): The ID of the cookbook.
+            cb_id (str): The unique identifier of the cookbook to be retrieved.
 
         Returns:
-            CookbookArguments: An object containing the cookbook's information.
+            CookbookArguments: An object encapsulating the details of the retrieved cookbook.
 
         Raises:
-            Exception: If there is an error during file reading or any other operation within the method.
+            Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return CookbookArguments(**StorageManager.read_cookbook(cb_id))
+            return CookbookArguments(
+                **Storage.read_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
+            )
 
         except Exception as e:
             print(f"Failed to read cookbook: {str(e)}")
@@ -96,24 +99,26 @@ class Cookbook:
     @staticmethod
     def update(cb_args: CookbookArguments) -> None:
         """
-        Updates an existing cookbook with new information.
+        Modifies an existing cookbook with provided details.
 
-        This method takes a CookbookArguments object as input, which contains the new information for the
-        cookbook. It directly updates the existing cookbook file with the new information. If the operation fails
-        for any reason, an exception is raised and the error is printed.
+        This method accepts a CookbookArguments object, which holds the updated information for the
+        cookbook. It directly modifies the existing cookbook file with the new details. If any error arises during the
+        operation, an exception is thrown and the error is logged.
 
         Args:
-            cb_args (CookbookArguments): An object containing the new information for the cookbook.
+            cb_args (CookbookArguments): An instance encapsulating the updated details for the cookbook.
 
         Raises:
-            Exception: If there is an error during the update operation.
+            Exception: If an error is encountered during the update process.
         """
         try:
             # Convert the cookbook arguments to a dictionary
             cb_info = cb_args.to_dict()
 
             # Write the updated cookbook information to the file
-            StorageManager.create_cookbook(cb_args.id, cb_info)
+            Storage.create_object(
+                EnvVariables.COOKBOOKS.name, cb_args.id, cb_info, "json"
+            )
 
         except Exception as e:
             print(f"Failed to update cookbook: {str(e)}")
@@ -125,18 +130,18 @@ class Cookbook:
         """
         Deletes a cookbook.
 
-        This method takes a cookbook ID as input, deletes the corresponding JSON file from the directory specified by
-        `EnvironmentVars.COOKBOOKS`. If the operation fails for any reason, an exception is raised and the
-        error is printed.
+        This method accepts a cookbook ID (cb_id) as an argument and attempts to delete the corresponding JSON file
+        from the directory specified by `EnvironmentVars.COOKBOOKS`. If the operation encounters any issues, an
+        exception is raised and the error message is logged.
 
         Args:
-            cb_id (str): The ID of the cookbook to delete.
+            cb_id (str): The unique identifier of the cookbook to be deleted.
 
         Raises:
-            Exception: If there is an error during file deletion or any other operation within the method.
+            Exception: If an error occurs during the file deletion process or any other operation within the method.
         """
         try:
-            StorageManager.delete_cookbook(cb_id)
+            Storage.delete_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
 
         except Exception as e:
             print(f"Failed to delete cookbook: {str(e)}")
@@ -145,31 +150,33 @@ class Cookbook:
     @staticmethod
     def get_available_items() -> tuple[list[str], list[CookbookArguments]]:
         """
-        Returns a list of available cookbooks.
+        Retrieves and returns all available cookbooks.
 
-        This method retrieves all the cookbooks stored in the directory specified by `EnvironmentVars.COOKBOOKS`.
-        It ignores any files with "__" in their names. For each valid cookbook file, it reads the file and constructs
-        a CookbookArguments object with the cookbook's information. It then appends the CookbookArguments object and the
-        cookbook ID to their respective lists.
+        This method scans the directory specified by `EnvironmentVars.COOKBOOKS` and identifies all stored cookbook
+        files. It excludes any files that contain "__" in their names. For each valid cookbook file, the method reads
+        the file content and constructs a CookbookArguments object encapsulating the cookbook's details.
+        Both the CookbookArguments object and the cookbook ID are then appended to their respective lists.
 
         Returns:
-            tuple[list[str], list[CookbookArguments]]: A tuple containing a list of cookbook IDs and a list of
-            CookbookArguments objects.
+            tuple[list[str], list[CookbookArguments]]: A tuple where the first element is a list of cookbook IDs and
+            the second element is a list of CookbookArguments objects representing the details of each cookbook.
 
         Raises:
-            Exception: If there is an error during file reading or any other operation within the method.
+            Exception: If an error occurs during the file reading process or any other operation within the method.
         """
         try:
             retn_cbs = []
             retn_cbs_ids = []
 
-            cbs = StorageManager.get_cookbooks()
+            cbs = Storage.get_objects(EnvVariables.COOKBOOKS.name, "json")
             for cb in cbs:
                 if "__" in cb:
                     continue
 
                 cb_info = CookbookArguments(
-                    **StorageManager.read_cookbook(Path(cb).stem)
+                    **Storage.read_object(
+                        EnvVariables.COOKBOOKS.name, Path(cb).stem, "json"
+                    )
                 )
                 retn_cbs.append(cb_info)
                 retn_cbs_ids.append(cb_info.id)

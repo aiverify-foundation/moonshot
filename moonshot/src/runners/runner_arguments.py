@@ -36,10 +36,20 @@ class RunnerArguments(BaseModel):
     ] = None  # The progress callback function for the Run.
 
     def to_dict(self) -> dict:
+        """
+        Convert the RunnerArguments object to a dictionary.
+
+        This method converts the attributes of the RunnerArguments object into a dictionary. The keys of the dictionary
+        are the attribute names and the values are the attribute values. The attributes that are not exported to the
+        dictionary are 'database_instance' and 'progress_callback_func'.
+
+        Returns:
+            dict: A dictionary representation of the RunnerArguments object.
+        """
         return {
             "id": self.id,
             "name": self.name,
-            "run_type": self.run_type,
+            "run_type": self.run_type.name.lower(),
             "database_file": self.database_file,
             "recipes": self.recipes,
             "cookbooks": self.cookbooks,

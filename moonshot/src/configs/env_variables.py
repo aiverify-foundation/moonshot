@@ -1,4 +1,5 @@
 import importlib.resources
+from enum import Enum
 from typing import Union
 
 from dotenv import dotenv_values
@@ -6,60 +7,85 @@ from dotenv import dotenv_values
 __app_name__ = "moonshot"
 
 
+class EnvVariables(Enum):
+    CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
+    CONNECTORS = "CONNECTORS"
+    RECIPES = "RECIPES"
+    RECIPES_PROCESSING_MODULES = "RECIPES_PROCESSING_MODULES"
+    RUNNERS = "RUNNERS"
+    COOKBOOKS = "COOKBOOKS"
+    DATASETS = "DATASETS"
+    PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
+    METRICS = "METRICS"
+    METRICS_CONFIG = "METRICS_CONFIG"
+    CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
+    RESULTS = "RESULTS"
+    DATABASES = "DATABASES"
+    SESSIONS = "SESSIONS"
+
+
 class EnvironmentVars:
     env_vars = dotenv_values(".env")
 
     CONNECTORS_ENDPOINTS = env_vars.get(
-        "CONNECTORS_ENDPOINTS",
+        EnvVariables.CONNECTORS_ENDPOINTS.value,
         importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"),
     )
     CONNECTORS = env_vars.get(
-        "CONNECTORS",
+        EnvVariables.CONNECTORS.value,
         importlib.resources.files(__app_name__).joinpath("data/connectors"),
     )
     RECIPES = env_vars.get(
-        "RECIPES", importlib.resources.files(__app_name__).joinpath("data/recipes")
+        EnvVariables.RECIPES.value,
+        importlib.resources.files(__app_name__).joinpath("data/recipes"),
     )
     RECIPES_PROCESSING_MODULES = env_vars.get(
-        "RECIPES_PROCESSING_MODULES",
+        EnvVariables.RECIPES_PROCESSING_MODULES.value,
         importlib.resources.files(__app_name__).joinpath(
             "data/recipes-processing-modules"
         ),
     )
     RUNNERS = env_vars.get(
-        "RUNNERS", importlib.resources.files(__app_name__).joinpath("data/runners")
+        EnvVariables.RUNNERS.value,
+        importlib.resources.files(__app_name__).joinpath("data/runners"),
     )
     COOKBOOKS = env_vars.get(
-        "COOKBOOKS", importlib.resources.files(__app_name__).joinpath("data/cookbooks")
+        EnvVariables.COOKBOOKS.value,
+        importlib.resources.files(__app_name__).joinpath("data/cookbooks"),
     )
     DATASETS = env_vars.get(
-        "DATASETS", importlib.resources.files(__app_name__).joinpath("data/datasets")
+        EnvVariables.DATASETS.value,
+        importlib.resources.files(__app_name__).joinpath("data/datasets"),
     )
     PROMPT_TEMPLATES = env_vars.get(
-        "PROMPT_TEMPLATES",
+        EnvVariables.PROMPT_TEMPLATES.value,
         importlib.resources.files(__app_name__).joinpath("data/prompt-templates"),
     )
     METRICS = env_vars.get(
-        "METRICS", importlib.resources.files(__app_name__).joinpath("data/metrics")
+        EnvVariables.METRICS.value,
+        importlib.resources.files(__app_name__).joinpath("data/metrics"),
     )
     METRICS_CONFIG = env_vars.get(
-        "METRICS_CONFIG",
+        EnvVariables.METRICS_CONFIG.value,
         importlib.resources.files(__app_name__).joinpath(
             "data/metrics/metrics_config.json"
         ),
     )
     CONTEXT_STRATEGY = env_vars.get(
-        "CONTEXT_STRATEGY",
+        EnvVariables.CONTEXT_STRATEGY.value,
         importlib.resources.files(__app_name__).joinpath("data/context-strategy"),
     )
     RESULTS = env_vars.get(
-        "RESULTS", importlib.resources.files(__app_name__).joinpath("data/results")
+        EnvVariables.RESULTS.value,
+        importlib.resources.files(__app_name__).joinpath("data/results"),
     )
     DATABASES = env_vars.get(
-        "DATABASES", importlib.resources.files(__app_name__).joinpath("data/databases")
+        EnvVariables.DATABASES.value,
+        importlib.resources.files(__app_name__).joinpath("data/databases"),
     )
     SESSIONS = env_vars.get(
-        "SESSIONS", importlib.resources.files(__app_name__).joinpath("data/sessions")
+        EnvVariables.SESSIONS.value,
+        importlib.resources.files(__app_name__).joinpath("data/sessions"),
     )
 
     @staticmethod
@@ -81,22 +107,7 @@ class EnvironmentVars:
         if env_dict is None:
             env_dict = dict()
 
-        keys = [
-            "CONNECTORS_ENDPOINTS",
-            "CONNECTORS",
-            "RECIPES",
-            "RECIPES_PROCESSING_MODULES",
-            "RUNNERS",
-            "COOKBOOKS",
-            "DATASETS",
-            "PROMPT_TEMPLATES",
-            "METRICS",
-            "METRICS_CONFIG",
-            "CONTEXT_STRATEGY",
-            "RESULTS",
-            "DATABASES",
-            "SESSIONS",
-        ]
+        keys = [e.value for e in EnvVariables]
 
         for key in keys:
             if key in env_dict:

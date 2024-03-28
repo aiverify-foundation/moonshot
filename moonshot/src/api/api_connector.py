@@ -5,7 +5,7 @@ from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
 # ------------------------------------------------------------------------------
 # Connector APIs
 # ------------------------------------------------------------------------------
-def api_create_connector(ep_id: str) -> Connector:
+def api_create_connector_from_endpoint(ep_id: str) -> Connector:
     """
     Creates a connector based on the provided endpoint ID.
 
@@ -22,7 +22,7 @@ def api_create_connector(ep_id: str) -> Connector:
     return Connector.create(ConnectorEndpoint.read(ep_id))
 
 
-def api_create_connectors(ep_ids: list[str]) -> list[Connector]:
+def api_create_connectors_from_endpoints(ep_ids: list[str]) -> list[Connector]:
     """
     Creates connectors for multiple endpoints based on their IDs.
 
