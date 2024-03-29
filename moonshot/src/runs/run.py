@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Union
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
-from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
+from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe import Recipe
@@ -76,7 +75,7 @@ class Run:
             status=self.status.name, error_messages=self.error_messages
         )
 
-    def update_progress(self, status: Union[RunStatus, None] = None) -> None:
+    def update_progress(self, status: RunStatus | None = None) -> None:
         """
         This method is used to update the progress of a run. It takes an optional status as input,
         updates the end time and duration of the run, and if a status is provided, updates the run status as well.
@@ -84,7 +83,7 @@ class Run:
         If no database instance is available, it prints an error message.
 
         Args:
-            status (Union[RunStatus, None]): The status to be updated. Default is None.
+            status (RunStatus | None): The status to be updated. Default is None.
 
         Returns:
             None

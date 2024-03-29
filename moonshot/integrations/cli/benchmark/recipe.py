@@ -7,7 +7,7 @@ from rich.table import Table
 
 from moonshot.api import (
     api_create_recipe,
-    api_create_recipe_executor,
+    api_create_recipe_runner,
     api_delete_recipe,
     api_get_all_recipe,
     api_read_recipe,
@@ -25,9 +25,9 @@ def add_recipe(args) -> None:
     Add a new recipe.
 
     This function creates a new recipe with the specified parameters.
-    It first converts the tags, dataset, prompt_templates, and metrics arguments from a string to a list using the
-    literal_eval function from the ast module. Then, it calls the api_create_recipe function from the moonshot.api
-    module to create the new recipe.
+    It first converts the tags, dataset, prompt_templates, metrics, and attack_strategies arguments from a string
+    to a list using the literal_eval function from the ast module. Then, it calls the api_create_recipe function
+    from the moonshot.api module to create the new recipe.
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
@@ -37,6 +37,8 @@ def add_recipe(args) -> None:
             dataset (str): A string representation of a list of datasets.
             prompt_templates (str): A string representation of a list of prompt templates.
             metrics (str): A string representation of a list of metrics.
+            type (str): The type of the recipe.
+            attack_strategies (str): A string representation of a list of attack strategies.
 
     Returns:
         None
@@ -45,9 +47,17 @@ def add_recipe(args) -> None:
     datasets = literal_eval(args.dataset)
     prompt_templates = literal_eval(args.prompt_templates)
     metrics = literal_eval(args.metrics)
+    attack_strategies = literal_eval(args.attack_strategies)
 
     api_create_recipe(
-        args.name, args.description, tags, datasets, prompt_templates, metrics
+        args.name,
+        args.description,
+        tags,
+        datasets,
+        prompt_templates,
+        metrics,
+        args.type,
+        attack_strategies,
     )
 
 
@@ -110,17 +120,17 @@ def run_recipe(args) -> None:
     endpoints = literal_eval(args.endpoints)
     num_of_prompts = args.num_of_prompts
 
-    bm_executor = api_create_recipe_executor(name, recipes, endpoints, num_of_prompts)
+    rec_runner = api_create_recipe_runner(name, recipes, endpoints, num_of_prompts)
 
-    asyncio.run(bm_executor.execute())
-    show_recipe_results(
-        recipes,
-        endpoints,
-        bm_executor.results,
-        bm_executor.results_file,
-        bm_executor.duration,
-    )
-    bm_executor.close()
+    asyncio.run(rec_runner.run())
+    # show_recipe_results(
+    #     recipes,
+    #     endpoints,
+    #     bm_executor.results,
+    #     bm_executor.results_file,
+    #     bm_executor.duration,
+    # )
+    rec_runner.close()
 
 
 def update_recipe(args) -> None:

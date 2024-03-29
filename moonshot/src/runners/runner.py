@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable
 
 from pydantic.v1 import validate_arguments
 from slugify import slugify
@@ -49,7 +49,7 @@ class Runner:
 
     @classmethod
     def load(
-        cls, runner_id: str, progress_callback_func: Union[Callable, None] = None
+        cls, runner_id: str, progress_callback_func: Callable | None = None
     ) -> Runner:
         """
         This method is responsible for loading an existing runner.
@@ -62,7 +62,7 @@ class Runner:
 
         Args:
             runner_id (str): The unique identifier of the runner to be loaded.
-            progress_callback_func (Union[Callable, None]): An optional callback function for tracking the progress of
+            progress_callback_func (Callable | None): An optional callback function for tracking the progress of
             the runner.
 
         Returns:

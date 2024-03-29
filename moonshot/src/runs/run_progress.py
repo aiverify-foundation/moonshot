@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable
 
 from pydantic import BaseModel
 
@@ -10,7 +10,7 @@ class RunProgress(BaseModel):
     exec_type: str
 
     # Benchmarking information
-    bm_progress_callback_func: Union[Callable, None]
+    bm_progress_callback_func: Callable | None
 
     # Current cookbook, recipe index and name with its progress
     curr_cookbook_index: int = -1
@@ -26,15 +26,15 @@ class RunProgress(BaseModel):
 
     def update_progress(
         self,
-        cookbook_index: Union[int, None] = None,
-        cookbook_name: Union[str, None] = None,
-        cookbook_total: Union[int, None] = None,
-        recipe_index: Union[int, None] = None,
-        recipe_name: Union[str, None] = None,
-        recipe_total: Union[int, None] = None,
-        duration: Union[int, None] = None,
-        status: Union[str, None] = None,
-        error_messages: Union[list, None] = None,
+        cookbook_index: int | None = None,
+        cookbook_name: str | None = None,
+        cookbook_total: int | None = None,
+        recipe_index: int | None = None,
+        recipe_name: str | None = None,
+        recipe_total: int | None = None,
+        duration: int | None = None,
+        status: str | None = None,
+        error_messages: list | None = None,
     ) -> None:
         """
         Updates the progress of the BenchmarkExecutor.

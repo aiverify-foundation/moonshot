@@ -1,5 +1,5 @@
 from moonshot.src.connectors.connector import Connector
-from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
+from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 
 
 # ------------------------------------------------------------------------------

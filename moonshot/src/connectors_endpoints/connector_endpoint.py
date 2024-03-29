@@ -4,7 +4,7 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
-from moonshot.src.connectors.connector_endpoint_arguments import (
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.storage.storage import Storage

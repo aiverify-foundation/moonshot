@@ -2,6 +2,7 @@ import cmd2
 from cmd2 import Statement
 from rich.console import Console
 
+from moonshot.integrations.cli.active_session_cfg import active_session
 from moonshot.integrations.cli.benchmark.benchmark import BenchmarkCommandSet
 from moonshot.integrations.cli.common.common import CommonCommandSet
 from moonshot.integrations.cli.initialisation.initialisation import (
@@ -9,7 +10,6 @@ from moonshot.integrations.cli.initialisation.initialisation import (
 )
 from moonshot.integrations.cli.redteam.redteam import RedTeamCommandSet
 from moonshot.integrations.cli.redteam.session import send_prompt, update_chat_display
-from moonshot.src.configs.active_session_cfg import active_session
 
 console = Console()
 

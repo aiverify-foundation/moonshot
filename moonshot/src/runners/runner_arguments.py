@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Union
+from typing import Any, Callable
 
 from pydantic import BaseModel
 
@@ -27,13 +27,13 @@ class RunnerArguments(BaseModel):
     # ------------------------------------------------------------------------------
     # These attributes are not exported to dict
     # ------------------------------------------------------------------------------
-    database_instance: Union[
-        Any, None
-    ] = None  # The database instance associated with the Run.
+    database_instance: Any | None = (
+        None  # The database instance associated with the Run.
+    )
 
-    progress_callback_func: Union[
-        Callable, None
-    ] = None  # The progress callback function for the Run.
+    progress_callback_func: Callable | None = (
+        None  # The progress callback function for the Run.
+    )
 
     def to_dict(self) -> dict:
         """

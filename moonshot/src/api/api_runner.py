@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable
 
 from moonshot.src.runners.runner import Runner
 from moonshot.src.runners.runner_arguments import RunnerArguments
@@ -13,7 +13,7 @@ def api_create_recipe_runner(
     recipes: list[str],
     endpoints: list[str],
     num_of_prompts: int,
-    progress_callback_func: Union[Callable, None] = None,
+    progress_callback_func: Callable | None = None,
 ) -> Runner:
     """
     Creates a new recipe runner.
@@ -30,7 +30,7 @@ def api_create_recipe_runner(
         recipes (list[str]): The recipes to be used by the runner.
         endpoints (list[str]): The endpoints to be used by the runner.
         num_of_prompts (int): The number of prompts to be used by the runner.
-        progress_callback_func (Union[Callable, None]): The progress callback function to be used by the runner.
+        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
 
     Returns:
         Runner: A new Runner object.
@@ -56,7 +56,7 @@ def api_create_cookbook_runner(
     cookbooks: list[str],
     endpoints: list[str],
     num_of_prompts: int,
-    progress_callback_func: Union[Callable, None] = None,
+    progress_callback_func: Callable | None = None,
 ) -> Runner:
     """
     Creates a new cookbook runner.
@@ -73,7 +73,7 @@ def api_create_cookbook_runner(
         cookbooks (list[str]): The cookbooks to be used by the runner.
         endpoints (list[str]): The endpoints to be used by the runner.
         num_of_prompts (int): The number of prompts to be used by the runner.
-        progress_callback_func (Union[Callable, None]): The progress callback function to be used by the runner.
+        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
 
     Returns:
         Runner: A new Runner object.
@@ -95,7 +95,7 @@ def api_create_cookbook_runner(
 
 
 def api_load_runner(
-    runner_id: str, progress_callback_func: Union[Callable, None] = None
+    runner_id: str, progress_callback_func: Callable | None = None
 ) -> Runner:
     """
     Loads a runner based on the provided runner ID.
@@ -105,7 +105,7 @@ def api_load_runner(
 
     Args:
         runner_id (str): The ID of the runner to be loaded.
-        progress_callback_func (Union[Callable, None]): The progress callback function to be used by the runner.
+        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
 
     Returns:
         Runner: An initialized Runner object.

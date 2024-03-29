@@ -1,50 +1,72 @@
 import datetime
 import glob
-import json
 import os
 from pathlib import Path
 from typing import Iterator
 
-from moonshot.src.configs.env_variables import EnvironmentVars
-from moonshot.src.storage.db.db_accessor import DBAccessor
-from moonshot.src.storage.db.db_manager import DatabaseManager
+from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
+from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.utils.import_modules import get_instance
 
 
 class Storage:
     @staticmethod
     def create_object(
-        obj_type: str, obj_id: str, obj_info: dict, obj_extension: str
-    ) -> None:
+        obj_type: str,
+        obj_id: str,
+        obj_info: dict,
+        obj_extension: str,
+        obj_mod_type: str = "jsonio",
+    ) -> bool:
         """
-        Writes the object information to a JSON file.
+        Writes the object information to a file.
 
         Args:
             obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
             obj_id (str): The ID of the object.
             obj_info (dict): A dictionary containing the object information.
             obj_extension (str): The file extension (e.g., 'json', 'py').
+            obj_mod_type (str, optional): The module type for object serialization. Defaults to 'json'.
         """
         obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
-        with open(obj_filepath, "w") as json_file:
-            json.dump(obj_info, json_file, indent=2)
+        obj_mod_instance = get_instance(
+            obj_mod_type,
+            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
+        )
+        if obj_mod_instance:
+            return obj_mod_instance(obj_filepath).create_file(obj_info)
+        else:
+            raise RuntimeError(
+                f"Unable to get defined object module instance - {obj_mod_instance}"
+            )
 
     @staticmethod
-    def read_object(obj_type: str, obj_id: str, obj_extension: str) -> dict:
+    def read_object(
+        obj_type: str, obj_id: str, obj_extension: str, obj_mod_type: str = "jsonio"
+    ) -> dict:
         """
-        Reads the object information from a JSON file.
+        Reads the object information from a file.
 
         Args:
             obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
             obj_id (str): The ID of the object.
             obj_extension (str): The file extension (e.g., 'json', 'py').
+            obj_mod_type (str, optional): The module type for object deserialization. Defaults to 'json'.
 
         Returns:
             dict: A dictionary containing the object information.
         """
         obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
-        with open(obj_filepath, "r", encoding="utf-8") as json_file:
-            obj_info = json.load(json_file)
-        return obj_info
+        obj_mod_instance = get_instance(
+            obj_mod_type,
+            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
+        )
+        if obj_mod_instance:
+            return obj_mod_instance(obj_filepath).read_file()
+        else:
+            raise RuntimeError(
+                f"Unable to get defined object module instance - {obj_mod_instance}"
+            )
 
     @staticmethod
     def delete_object(obj_type: str, obj_id: str, obj_extension: str) -> None:
@@ -131,24 +153,44 @@ class Storage:
 
     @staticmethod
     def create_database_connection(
-        obj_type: str, obj_id: str, obj_extension: str
+        obj_type: str, obj_id: str, obj_extension: str, db_mod_type: str = "sqlite"
     ) -> DBAccessor:
         """
-        Creates a database connection for the object.
+        Establishes a database connection for a specific object.
 
         Args:
-            obj_type (str): The type of the object (e.g., 'runner', 'recipe', 'cookbook').
-            obj_id (str): The ID of the object.
-            obj_extension (str): The file extension (e.g., 'json', 'py').
+            obj_type (str): The type of the object for which the database connection is to be established
+            (e.g., 'runner', 'recipe', 'cookbook').
+
+            obj_id (str): The unique identifier of the object for which the database connection is to be established.
+
+            obj_extension (str): The file extension of the object for which the database connection is to be established
+            (e.g., 'json', 'py').
+
+            db_mod_type (str): The type of database module to use for establishing the connection (e.g., 'sqlite).
+            Defaults to 'sqlite'.
 
         Returns:
-            DBAccessor: The database accessor instance.
+            DBAccessor: An instance of the database accessor, which can be used to interact with the database.
         """
-        database_file = Path(Storage.get_filepath(obj_type, obj_id, obj_extension))
-        database_instance = DatabaseManager.create_connection(str(database_file))
-        if not database_instance:
-            raise RuntimeError("db instance is not initialised.")
-        return database_instance
+        database_instance = get_instance(
+            db_mod_type,
+            Storage.get_filepath(
+                EnvVariables.DATABASES_MODULES.name, db_mod_type, "py"
+            ),
+        )
+        if database_instance:
+            database_instance = database_instance(
+                Path(Storage.get_filepath(obj_type, obj_id, obj_extension))
+            )
+            if database_instance.create_connection():
+                return database_instance
+            else:
+                raise RuntimeError(f"Failed to create connection - {db_mod_type}")
+        else:
+            raise RuntimeError(
+                f"Unable to get defined database instance - {db_mod_type}"
+            )
 
     @staticmethod
     def close_database_connection(database_instance: DBAccessor) -> None:

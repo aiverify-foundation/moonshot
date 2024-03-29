@@ -4,7 +4,7 @@ import aiohttp
 from aiohttp import ClientResponse
 
 from moonshot.src.connectors.connector import Connector, perform_retry
-from moonshot.src.connectors.connector_endpoint_arguments import (
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 

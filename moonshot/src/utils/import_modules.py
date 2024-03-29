@@ -2,12 +2,9 @@ import importlib.util
 import inspect
 from importlib.machinery import ModuleSpec
 from types import ModuleType
-from typing import Union
 
 
-def create_module_spec(
-    module_name: str, module_file_path: str
-) -> Union[None, ModuleSpec]:
+def create_module_spec(module_name: str, module_file_path: str) -> None | ModuleSpec:
     """
     A helper method to create module specifications if it does not exist
 
@@ -16,7 +13,7 @@ def create_module_spec(
         module_file_path (str): Input module file path to be imported
 
     Returns:
-        Union[None, ModuleSpec]: Generated module specifications for importing or error
+        None | ModuleSpec: Generated module specifications for importing or error
     """
     try:
         if (
@@ -41,7 +38,7 @@ def create_module_spec(
         return None
 
 
-def import_module_from_spec(module_spec: ModuleSpec) -> Union[ModuleType, None]:
+def import_module_from_spec(module_spec: ModuleSpec) -> ModuleType | None:
     """
     A helper method to import python module using module specifications
 
@@ -49,7 +46,7 @@ def import_module_from_spec(module_spec: ModuleSpec) -> Union[ModuleType, None]:
         module_spec (ModuleSpec): A generated module specifications for the module to be imported
 
     Returns:
-        Union[ModuleType, None]: An imported module
+        ModuleType | None: An imported module
     """
     if module_spec is None or not isinstance(module_spec, ModuleSpec):
         return None

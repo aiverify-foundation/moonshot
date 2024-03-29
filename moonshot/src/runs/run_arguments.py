@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Union
-
 from pydantic import BaseModel
 
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db.db_accessor import DBAccessor
+from moonshot.src.storage.db_accessor import DBAccessor
 
 
 class RunArguments(BaseModel):
@@ -21,7 +19,7 @@ class RunArguments(BaseModel):
 
     num_of_prompts: int  # Number of prompts for the Run.
 
-    database_instance: Union[DBAccessor, None]  # Database instance for the Run.
+    database_instance: DBAccessor | None  # Database instance for the Run.
 
     results_file: str  # The results file associated with the Run.
 

@@ -1,16 +1,18 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import Any, Union
+from typing import Any
 
 
 class DBAccessor:
     @abstractmethod
-    def create_connection(self) -> Union[Any, None]:
+    def create_connection(self) -> Any | None:
         """
         This method is used to create a connection to the database. The details of the connection
         are implementation specific and should be provided by the concrete class that inherits from this abstract class.
 
         Returns:
-            Union[Any, None]: The connection object if successful, None otherwise.
+            Any | None: The connection object if successful, None otherwise.
         """
         pass
 
@@ -52,7 +54,7 @@ class DBAccessor:
         pass
 
     @abstractmethod
-    def read_table(self, read_table_sql: str) -> Union[list[tuple], None]:
+    def read_table(self, read_table_sql: str) -> list[tuple] | None:
         """
         Executes a SQL query to read data from a table and returns the results.
 
@@ -64,12 +66,12 @@ class DBAccessor:
             read_table_sql (str): The SQL query string used to read data from a table.
 
         Returns:
-            Union[list, None]: A list of tuples representing the rows fetched by the query if successful.
+            list | None: A list of tuples representing the rows fetched by the query if successful.
         """
         pass
 
     @abstractmethod
-    def read_record(self, record: tuple, read_record_sql: str) -> Union[tuple, None]:
+    def read_record(self, record: tuple, read_record_sql: str) -> tuple | None:
         """
         This method is used to read a record from the database. The details of the operation
         are implementation specific and should be provided by the concrete class that inherits from this abstract class.
@@ -79,7 +81,7 @@ class DBAccessor:
             read_record_sql (str): The SQL query to read a record.
 
         Returns:
-            Union[tuple, None]: The record if found, None otherwise.
+            tuple | None: The record if found, None otherwise.
         """
         pass
 

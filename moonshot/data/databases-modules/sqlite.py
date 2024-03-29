@@ -1,11 +1,9 @@
 import sqlite3
-from pathlib import Path
-from typing import Union
 
-from moonshot.src.storage.db.db_accessor import DBAccessor
+from moonshot.src.storage.db_accessor import DBAccessor
 
 
-class DBSqlite(DBAccessor):
+class SQLite(DBAccessor):
     def __init__(self, db_path: str):
         self.db_path = db_path
         self.sqlite_conn = None
@@ -25,8 +23,6 @@ class DBSqlite(DBAccessor):
             bool: True if the connection is successfully established, False otherwise.
         """
         try:
-            # Create directories if they don't exist
-            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
             self.sqlite_conn = sqlite3.connect(self.db_path)
             print(f"Established connection to database ({self.db_path})")
             return True
@@ -81,9 +77,7 @@ class DBSqlite(DBAccessor):
             except sqlite3.Error as sqlite3_error:
                 print(f"Error creating table for database - {str(sqlite3_error)}")
 
-    def create_record(
-        self, record: tuple, create_record_sql: str
-    ) -> Union[tuple, None]:
+    def create_record(self, record: tuple, create_record_sql: str) -> tuple | None:
         """
         Inserts a new record into the SQLite database using the provided SQL query and record.
 
@@ -107,7 +101,7 @@ class DBSqlite(DBAccessor):
             except sqlite3.Error as sqlite3_error:
                 print(f"Error inserting record into database - {str(sqlite3_error)}")
 
-    def read_record(self, record: tuple, read_record_sql: str) -> Union[tuple, None]:
+    def read_record(self, record: tuple, read_record_sql: str) -> tuple | None:
         """
         Reads a record from the SQLite database using the provided SQL query and record.
 
@@ -159,7 +153,7 @@ class DBSqlite(DBAccessor):
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")
 
-    def read_table(self, read_table_sql: str) -> Union[list[tuple], None]:
+    def read_table(self, read_table_sql: str) -> list[tuple] | None:
         """
         Executes a SQL query to read data from a table and returns the results.
 
@@ -171,7 +165,7 @@ class DBSqlite(DBAccessor):
             read_table_sql (str): The SQL query string used to read data from a table.
 
         Returns:
-            Union[list, None]: A list of tuples representing the rows fetched by the query if successful.
+            list | None: A list of tuples representing the rows fetched by the query if successful.
         """
         if self.sqlite_conn:
             try:

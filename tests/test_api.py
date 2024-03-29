@@ -1,9 +1,9 @@
-from tests.results.test_connectors import test_run_connector_api, test_run_connector_endpoints_api
-from tests.results.test_cookbooks import test_run_cookbook_api
-from tests.results.test_metrics import test_run_metric_api
-from tests.results.test_recipes import test_run_recipe_api
-from tests.results.test_runner import test_run_runner_cookbook_api, test_run_runner_recipe_api
-from tests.results.test_results import test_run_result_api
+from tests.test_connectors import test_run_connector_api, test_run_connector_endpoints_api
+from tests.test_cookbooks import test_run_cookbook_api
+from tests.test_metrics import test_run_metric_api
+from tests.test_recipes import test_run_recipe_api
+from tests.test_runner import test_run_runner_cookbook_api, test_run_runner_recipe_api
+from tests.test_results import test_run_result_api
 
 
 if __name__ == "__main__":
