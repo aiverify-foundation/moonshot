@@ -57,7 +57,7 @@ def get_all_endpoints_name(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
 ) -> list[Optional[str]]:
     """
-    Get all the endpoints from the database
+    Get all the endpoints name from the database
     """
     try:
         return endpoint_service.get_all_endpoints_names()
@@ -97,6 +97,9 @@ async def update_endpoint(
     endpoint_data: EndpointCreateDTO,
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:
+    """
+    Update an existing endpoint in the database
+    """
     try:
         endpoint_service.update_endpoint(endpoint_id, endpoint_data)
         return {"message": "Endpoint updated successfully"}
@@ -115,6 +118,9 @@ async def delete_endpoint(
     endpoint_id: str,
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:
+    """
+    Delete an existing endpoint in the database
+    """
     try:
         endpoint_service.delete_endpoint(endpoint_id)
         return {"message": "Endpoint deleted successfully"}
@@ -124,11 +130,24 @@ async def delete_endpoint(
         elif e.error_code == "ValidationError":
             raise HTTPException(status_code=400, detail=f"Failed to delete endpoint: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to delete endpoint: {e.msg}")   
+            raise HTTPException(status_code=500, detail=f"Failed to delete endpoint: {e.msg}")      
     
     
 @router.get("/v1/connectors")
 @inject
-def get_all_connectors(endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])): 
+def get_all_connectors(
+    endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
+    ) -> list[Optional[str]]:
+    """
+    Get all the connectors type from the database
+    """
     #TODO - type check and model validation
-    return endpoint_service.get_all_connectors() 
+    try:
+        return endpoint_service.get_all_connectors() 
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to delete endpoint: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to delete endpoint: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to delete endpoint: {e.msg}")      
