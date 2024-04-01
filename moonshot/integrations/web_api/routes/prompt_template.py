@@ -33,6 +33,9 @@ def get_all_prompt_templates(
 def get_all_context_strategies(
     prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
     ) -> list[str]:
+    """
+    Get all the context strategies from the database
+    """
     try:
         return prompt_template_service.get_ctx_strategies()
     except ServiceException as e:
@@ -43,3 +46,23 @@ def get_all_context_strategies(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
         
+
+@router.delete("/v1/context_strategies/{ctx_strategy_name}")
+@inject
+def delete_context_strategy(
+    ctx_strategy_name: str,
+    prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
+    ) -> dict[str, bool]:
+    """
+    Delete context strategies from the database
+    """
+    try:
+        prompt_template_service.delete_ctx_strategy(ctx_strategy_name)
+        return {"success": True}
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
