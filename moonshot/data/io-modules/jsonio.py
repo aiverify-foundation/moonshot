@@ -1,4 +1,5 @@
 import json
+from io import TextIOWrapper
 
 from moonshot.src.storage.object_accessor import ObjectAccessor
 
@@ -37,6 +38,20 @@ class JSONIO(ObjectAccessor):
             with open(self.json_path, "r", encoding="utf-8") as json_file:
                 obj_info = json.load(json_file)
             return obj_info
+        except FileNotFoundError:
+            print(f"No file found at {self.json_path}")
+            return None
+
+    def read_file_raw(self) -> TextIOWrapper | None:
+        """
+        This method opens a JSON file at the path specified during the class instantiation for reading.
+
+        Returns:
+            TextIOWrapper | None: Returns a TextIOWrapper object if the file was successfully opened, otherwise None.
+        """
+        try:
+            return open(self.json_path, "r", encoding="utf-8")
+
         except FileNotFoundError:
             print(f"No file found at {self.json_path}")
             return None

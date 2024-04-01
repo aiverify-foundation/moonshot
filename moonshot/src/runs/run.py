@@ -24,7 +24,6 @@ class Run:
         error_messages,results,status)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
-
     sql_update_run_record = """
         UPDATE run_table SET run_type=?,recipes=?,cookbooks=?,endpoints=?,num_of_prompts=?,results_file=?,
         start_time=?,end_time=?,duration=?,error_messages=?,results=?,status=?
@@ -50,6 +49,7 @@ class Run:
         self.results = run_args.results
         self.status = run_args.status
 
+        # These attributes will be the default processing module
         self.benchmark_processing_module = "benchmarking"
         self.redteam_processing_module = "redteaming"
 
@@ -100,7 +100,9 @@ class Run:
                 Run.sql_update_run_record,
             )
         else:
-            print("Unable to update run progress: db_instance is not initialised.")
+            print(
+                "[Run] Unable to update run progress: db_instance is not initialised."
+            )
 
     def get_run_arguments(self) -> RunArguments:
         """
@@ -130,10 +132,10 @@ class Run:
 
     async def run(self) -> None:
         """
-        This method is responsible for executing a given run.
+        This method is responsible for executing a run.
 
-        It accepts a run type as an argument. The method first creates a run record in the database if a
-        database instance is available.
+        The run type is determined by the instance attribute 'run_type'. The method first creates a run record in
+        the database if a database instance is available.
         It then checks the run type and runs the appropriate process based on the run type.
         If the run type is RECIPE, it runs all the recipes and updates the progress and results accordingly.
         If the run type is not recognized, it raises a RuntimeError.
@@ -174,7 +176,7 @@ class Run:
             # Run all recipes
             for recipe_index, recipe in enumerate(self.recipes, 0):
                 print(
-                    f"Running recipe {recipe}... ({recipe_index+1}/{len(self.recipes)})"
+                    f"[Run] Running recipe {recipe}... ({recipe_index+1}/{len(self.recipes)})"
                 )
 
                 # Update progress
@@ -204,9 +206,6 @@ class Run:
                     error_messages=self.error_messages,
                 )
 
-            # Create a result instance and write
-            # Result.create(self._get_current_result_arguments())
-
         elif self.run_type is RunnerType.COOKBOOK:
             print(
                 f"🔃 Running cookbooks ({self.cookbooks})... do not close this terminal."
@@ -223,7 +222,7 @@ class Run:
             # Run all cookbooks
             for cookbook_index, cookbook in enumerate(self.cookbooks, 0):
                 print(
-                    f"Running cookbook {cookbook}... ({cookbook_index+1}/{len(self.cookbooks)})"
+                    f"[Run] Running cookbook {cookbook}... ({cookbook_index+1}/{len(self.cookbooks)})"
                 )
 
                 # Update progress
@@ -256,11 +255,8 @@ class Run:
                     error_messages=self.error_messages,
                 )
 
-            # Create a cookbook instance and write
-            # Result.create(self._get_current_result_arguments())
-
         else:
-            print("Failed to run benchmark due to invalid run type.")
+            print("[Run] Failed to run benchmark due to invalid run type.")
             self.handle_error_message(
                 "Failed to run benchmark due to invalid run type."
             )
@@ -295,13 +291,13 @@ class Run:
         # ------------------------------------------------------------------------------
         # Part 1: Load instances
         # ------------------------------------------------------------------------------
-        print("Part 1: Loading various cookbook instances...")
+        print("[Run] Part 1: Loading various cookbook instances...")
         cookbook_inst = None
         try:
             start_time = time.perf_counter()
             cookbook_inst = Cookbook.load(cookbook)
             print(
-                f"Load cookbook instance took {(time.perf_counter() - start_time):.4f}s"
+                f"[Run] Load cookbook instance took {(time.perf_counter() - start_time):.4f}s"
             )
 
         except Exception as e:
@@ -311,7 +307,7 @@ class Run:
         # ------------------------------------------------------------------------------
         # Part 2: Run recipes
         # ------------------------------------------------------------------------------
-        print("Part 2: Running cookbook recipes...")
+        print("[Run] Part 2: Running cookbook recipes...")
         recipe_results = {}
         try:
             start_time = time.perf_counter()
@@ -326,7 +322,7 @@ class Run:
                 # Run all recipes
                 for recipe_index, recipe in enumerate(cookbook_inst.recipes, 0):
                     print(
-                        f"Running recipe {recipe}... ({recipe_index+1}/{len(cookbook_inst.recipes)})"
+                        f"[Run] Running recipe {recipe}... ({recipe_index+1}/{len(cookbook_inst.recipes)})"
                     )
 
                     # Update progress
@@ -347,7 +343,7 @@ class Run:
                 )
 
                 print(
-                    f"Running cookbook [{cookbook_inst.id}] took {(time.perf_counter() - start_time):.4f}s"
+                    f"[Run] Running cookbook [{cookbook_inst.id}] took {(time.perf_counter() - start_time):.4f}s"
                 )
             else:
                 raise RuntimeError("cookbook_inst is None")
@@ -381,13 +377,13 @@ class Run:
         # ------------------------------------------------------------------------------
         # Part 0: Get asyncio running loop
         # ------------------------------------------------------------------------------
-        print("Part 0: Loading asyncio running loop...")
+        print("[Run] Part 0: Loading asyncio running loop...")
         loop = asyncio.get_running_loop()
 
         # ------------------------------------------------------------------------------
         # Part 1: Load instances
         # ------------------------------------------------------------------------------
-        print("Part 1: Loading various recipe instances...")
+        print("[Run] Part 1: Loading various recipe instances...")
         recipe_inst = None
         recipe_eps = []
         metrics_instances = []
@@ -395,7 +391,7 @@ class Run:
             start_time = time.perf_counter()
             recipe_inst = Recipe.load(recipe)
             print(
-                f"Load recipe instance took {(time.perf_counter() - start_time):.4f}s"
+                f"[Run] Load recipe instance took {(time.perf_counter() - start_time):.4f}s"
             )
 
             start_time = time.perf_counter()
@@ -404,12 +400,12 @@ class Run:
                 for endpoint in self.endpoints
             ]
             print(
-                f"Load recipe endpoints instances took {(time.perf_counter() - start_time):.4f}s"
+                f"[Run] Load recipe endpoints instances took {(time.perf_counter() - start_time):.4f}s"
             )
 
             start_time = time.perf_counter()
             metrics_instances = [Metric.load(metric) for metric in recipe_inst.metrics]
-            print(f"Load metrics took {(time.perf_counter() - start_time):.4f}s")
+            print(f"[Run] Load metrics took {(time.perf_counter() - start_time):.4f}s")
 
         except Exception as e:
             error_message = f"Failed to load instances in running recipe Part 1 due to error: {str(e)}"
@@ -418,7 +414,7 @@ class Run:
         # ------------------------------------------------------------------------------
         # Part 2: Invoke recipe processing modules to process
         # ------------------------------------------------------------------------------
-        print("Part 2: Invoke recipe processing module...")
+        print("[Run] Part 2: Invoke recipe processing module...")
         start_time = time.perf_counter()
         recipe_results = {}
         try:
@@ -453,8 +449,17 @@ class Run:
                 )
 
             # Run the rec_proc_instance for it to generate
+            print(
+                f"[Run] Performing processing for recipe [{recipe}] using processing module: {selected_rec_proc_module}"
+            )
             recipe_results = await rec_proc_instance.generate(
-                loop, recipe_inst, recipe_eps, metrics_instances
+                loop,
+                self.database_instance,
+                self.num_of_prompts,
+                recipe_inst,
+                recipe_eps,
+                metrics_instances,
+                self.handle_error_message,
             )
 
         except Exception as e:
@@ -466,6 +471,6 @@ class Run:
 
         finally:
             print(
-                f"Performing processing for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
+                f"[Run] Performing processing for recipe [{recipe}] took {(time.perf_counter() - start_time):.4f}s"
             )
             return recipe_results

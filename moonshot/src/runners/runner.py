@@ -8,6 +8,8 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.results.result import Result
+from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runs.run import Run
 from moonshot.src.runs.run_arguments import RunArguments
@@ -274,13 +276,15 @@ class Runner:
         """
         Executes the runner instance.
 
-        This method is tasked with executing the runner instance. It first prepares the necessary run arguments,
-        then initiates a new run. The execution of the run is performed asynchronously.
+        This method is responsible for executing the runner instance.
+        It first prepares the necessary run arguments, then initiates a new run.
+        The execution of the run is performed asynchronously.
 
         Raises:
             Exception: If an error is encountered during the preparation of the run arguments or during the
             execution of the run.
         """
+        # Prepare the run arguments
         new_run_args = RunArguments(
             run_type=self.run_type,
             recipes=self.recipes,
@@ -304,5 +308,27 @@ class Runner:
             results={},
             status=RunStatus.PENDING,
         )
+
+        # Execute a new run with the run arguments
+        print(f"[Runner] {self.id} - Running...")
         current_run = Run(new_run_args)
         await current_run.run()
+        print(f"[Runner] {self.id} - Run completed.")
+
+        # Create result from run
+        print(f"[Runner] {self.id} - Writing result...")
+        new_result_args = ResultArguments(
+            id=self.id,
+            name=self.name,
+            start_time=current_run.start_time,
+            end_time=current_run.end_time,
+            duration=current_run.duration,
+            recipes=self.recipes,
+            cookbooks=self.cookbooks,
+            endpoints=self.endpoints,
+            num_of_prompts=self.num_of_prompts,
+            results=current_run.results,
+            status=current_run.status,
+        )
+        Result.create(new_result_args)
+        print(f"[Runner] {self.id} - Run results written to {current_run.results_file}")

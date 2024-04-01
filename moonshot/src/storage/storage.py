@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import Iterator
 
+from pyparsing import Generator
+
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.utils.import_modules import get_instance
@@ -35,6 +37,63 @@ class Storage:
         )
         if obj_mod_instance:
             return obj_mod_instance(obj_filepath).create_file(obj_info)
+        else:
+            raise RuntimeError(
+                f"Unable to get defined object module instance - {obj_mod_instance}"
+            )
+
+    @staticmethod
+    def read_object_generator(
+        obj_type: str,
+        obj_id: str,
+        obj_extension: str,
+        item_path: str,
+        obj_mod_type: str = "generatorio",
+    ) -> Generator:
+        """
+        Returns a generator that yields items from a JSON file.
+
+        This method uses the provided object type, object ID, and object extension to construct the file path
+        of the JSON file.
+
+        It then uses the 'jsonio' module to open the JSON file and the 'generatorio' module to create a generator
+        that yields items from the JSON file.
+
+        The item path is used to specify the path to the items in the JSON file.
+
+        Args:
+            obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
+            obj_id (str): The ID of the object.
+            obj_extension (str): The file extension (e.g., 'json', 'py').
+            item_path (str): The path to the items in the JSON file.
+            obj_mod_type (str, optional): The module type for object deserialization. Defaults to 'generatorio'.
+
+        Returns:
+            Callable: A generator that yields items from the JSON file.
+
+        Raises:
+            RuntimeError: If there is an error getting the object module instance or the object file module instance.
+        """
+        # Get jsonio object to return raw file instance
+        obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
+        obj_file_instance = get_instance(
+            obj_mod_type,
+            Storage.get_filepath(EnvVariables.IO_MODULES.name, "jsonio", "py"),
+        )
+        if obj_file_instance:
+            obj_file_instance = obj_file_instance(obj_filepath).read_file_raw()
+        else:
+            raise RuntimeError(
+                f"Unable to get defined object file module instance - {obj_file_instance}"
+            )
+
+        # Get generator object to return gen object
+        obj_mod_instance = get_instance(
+            obj_mod_type,
+            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
+        )
+        if obj_mod_instance:
+            return obj_mod_instance(obj_file_instance, item_path)
         else:
             raise RuntimeError(
                 f"Unable to get defined object module instance - {obj_mod_instance}"
@@ -250,6 +309,30 @@ class Storage:
         """
         if database_instance:
             database_instance.create_record(data, sql_create_record)
+        else:
+            raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
+    def read_database_record(
+        database_instance: DBAccessor, data: tuple, sql_read_record: str
+    ) -> tuple | None:
+        """
+        Reads a record from the database.
+
+        This method is used to retrieve a record from the database. If the database instance is not initialised,
+        it raises a RuntimeError. If the database instance is initialised, it calls the read_record method of the
+        database instance and returns the record if found.
+
+        Args:
+            database_instance (DBAccessor): The database accessor instance.
+            data (tuple): The data to be matched for reading the record.
+            sql_read_records (str): The SQL query to read a record.
+
+        Returns:
+            tuple | None: The record if found, None otherwise.
+        """
+        if database_instance:
+            return database_instance.read_record(data, sql_read_record)
         else:
             raise RuntimeError("Database instance is not initialised.")
 
