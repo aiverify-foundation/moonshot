@@ -4,6 +4,7 @@ from moonshot.integrations.web_api.services.benchmark_test_state import Benchmar
 
 from .status_updater.webhook import Webhook
 from .services.benchmarking_service import BenchmarkingService
+from .services.prompt_template_service import PromptTemplateService
 from .services.endpoint_service import EndpointService
 from .services.recipe_service import RecipeService
 from .services.cookbook_service import CookbookService
@@ -49,6 +50,9 @@ class Container(containers.DeclarativeContainer):
         benchmark_test_state=benchmark_test_state,
         webhook=webhook)
     session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
+    prompt_template_service: providers.Singleton[PromptTemplateService] = providers.Singleton(
+        PromptTemplateService,
+    )
     benchmarking_service: providers.Singleton[BenchmarkingService] = providers.Singleton(
         BenchmarkingService,
         benchmark_test_manager=benchmark_test_manager,
@@ -67,11 +71,11 @@ class Container(containers.DeclarativeContainer):
     )
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
+        ".routes.prompt_template",
         ".routes.benchmark",
-        ".routes.endpoint_routes",
-        ".routes.recipe_routes",
-        ".routes.cookbook_routes",
-        ".routes.benchmark_result_routes",
+        ".routes.endpoint",
+        ".routes.recipe",
+        ".routes.cookbook",
+        ".routes.benchmark_result",
         ".services.benchmarking_service"
     ])
-    

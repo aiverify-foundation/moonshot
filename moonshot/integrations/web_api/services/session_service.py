@@ -64,16 +64,7 @@ class SessionService(BaseService):
     @exception_handler
     def select_prompt_template(self, session_id: str, prompt_template_name: str = ''):
         moonshot_api.api_update_prompt_template(session_id,prompt_template_name)
-    
-    @exception_handler
-    def get_prompt_templates(self) -> list[dict[str, Any]]:
-        templates = moonshot_api.api_get_all_prompt_template_detail()
-        return templates
-    
-    @exception_handler
-    def get_ctx_strategies(self) -> list[str]:
-        strategies = moonshot_api.api_get_all_context_strategy_name()
-        return strategies
+
     
     @exception_handler
     def select_ctx_strategy(self, session_id: str, ctx_strategy_name: str) -> None:
