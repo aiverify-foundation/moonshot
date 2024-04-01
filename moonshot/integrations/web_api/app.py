@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from dependency_injector.wiring import providers
 from .container import Container
 from .routes.redteam import router as red_team_router
-from .routes.benchmark import router as benchmarking_router
+from .routes import benchmark, endpoint_routes, recipe_routes, cookbook_routes, benchmark_result_routes
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,11 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
         app.middleware("http")(log_request_origin)
     
     app.include_router(red_team_router)
-    app.include_router(benchmarking_router)
+    app.include_router(benchmark.router)
+    app.include_router(endpoint_routes.router)
+    app.include_router(recipe_routes.router)
+    app.include_router(cookbook_routes.router)
+    app.include_router(benchmark_result_routes.router)
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:

@@ -4,7 +4,11 @@ from moonshot.integrations.web_api.services.benchmark_test_state import Benchmar
 
 from .status_updater.webhook import Webhook
 from .services.benchmarking_service import BenchmarkingService
+from .services.endpoint_service import EndpointService
+from .services.recipe_service import RecipeService
+from .services.cookbook_service import CookbookService
 from .services.session_service import SessionService
+from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 import importlib.resources
 
@@ -49,9 +53,25 @@ class Container(containers.DeclarativeContainer):
         BenchmarkingService,
         benchmark_test_manager=benchmark_test_manager,
     )
-
+    endpoint_service: providers.Singleton[EndpointService] = providers.Singleton(
+        EndpointService,
+    )
+    recipe_service: providers.Singleton[RecipeService] = providers.Singleton(
+        RecipeService,
+    )
+    cookbook_service: providers.Singleton[CookbookService] = providers.Singleton(
+        CookbookService,
+    )
+    benchmark_result_service: providers.Singleton[BenchmarkResultService] = providers.Singleton(
+        BenchmarkResultService,
+    )
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
         ".routes.benchmark",
+        ".routes.endpoint_routes",
+        ".routes.recipe_routes",
+        ".routes.cookbook_routes",
+        ".routes.benchmark_result_routes",
         ".services.benchmarking_service"
     ])
+    
