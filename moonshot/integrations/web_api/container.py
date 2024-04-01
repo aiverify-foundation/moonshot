@@ -11,6 +11,8 @@ from .services.cookbook_service import CookbookService
 from .services.session_service import SessionService
 from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
+from .services.metric_service import MetricService
+
 import importlib.resources
 
 class Container(containers.DeclarativeContainer):
@@ -69,6 +71,9 @@ class Container(containers.DeclarativeContainer):
     benchmark_result_service: providers.Singleton[BenchmarkResultService] = providers.Singleton(
         BenchmarkResultService,
     )
+    metric_service: providers.Singleton[MetricService] = providers.Singleton(
+        MetricService,
+    )
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
         ".routes.prompt_template",
@@ -77,5 +82,6 @@ class Container(containers.DeclarativeContainer):
         ".routes.recipe",
         ".routes.cookbook",
         ".routes.benchmark_result",
+        ".routes.metric",
         ".services.benchmarking_service"
     ])
