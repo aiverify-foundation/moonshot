@@ -58,6 +58,11 @@ class EnvironmentVars:
         importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
     )
 
+    SESSIONS = env_vars.get(
+        "SESSIONS",
+        importlib.resources.files(__app_name__).joinpath("data/sessions"),
+    )
+
     @staticmethod
     def load_env(env_dict: Union[dict, None] = None) -> None:
         """
