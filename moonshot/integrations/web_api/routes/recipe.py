@@ -113,7 +113,7 @@ async def update_recipe(
 
 @router.delete("/v1/recipes/{recipe_id}")
 @inject
-async def delete_recipe(
+def delete_recipe(
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:

@@ -114,7 +114,7 @@ def update_cookbook(
 
 @router.delete("/v1/cookbooks/{cb_id}")
 @inject
-async def delete_cookbook(
+def delete_cookbook(
     cb_id: str,
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:
