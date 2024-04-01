@@ -28,7 +28,7 @@ async def get_all_sessions(
     session_service: SessionService = Depends(Provide[Container.session_service])
 ) -> list[Optional[SessionMetadataModel]]:
     try:
-        return session_service.get_sessions()
+        return session_service.get_all_session()
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -37,6 +37,22 @@ async def get_all_sessions(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
+@router.get("/v1/sessions/name")
+@inject
+async def get_all_sessions_name(
+    session_service: SessionService = Depends(Provide[Container.session_service])
+) -> list[str]:
+    try:
+        return session_service.get_all_sessions_names()
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+        
 
 @router.get("/v1/sessions/{session_id}")
 @inject
@@ -93,6 +109,24 @@ async def prompt(
     try:
         result = await session_service.send_prompt(session_id, user_prompt.prompt)
         return result
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.delete("/v1/sessions/{session_id}")
+@inject
+async def delete_session(
+    session_id: str,
+    session_service: SessionService = Depends(Provide[Container.session_service])
+    ) -> dict[str, bool]:
+    try:
+        session_service.delete_session(session_id)
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
