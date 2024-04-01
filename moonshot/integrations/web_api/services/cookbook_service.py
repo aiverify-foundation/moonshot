@@ -23,22 +23,16 @@ class CookbookService(BaseService):
 
 
     @exception_handler
-    def get_cookbook_by_id(self, cookbook_id: str) -> CookbookCreateDTO | None: 
-        cookbook = moonshot_api.api_read_cookbook(cookbook_id)
-        return CookbookCreateDTO.model_validate(cookbook)
-    
-    
-    @exception_handler
-    def get_cookbook_by_ids(self, cookbook_ids: list[str]) -> list[CookbookCreateDTO | None]: 
-        cookbooks = moonshot_api.api_read_cookbooks(cookbook_ids)
-        return [CookbookCreateDTO.model_validate(cookbook) for cookbook in cookbooks]
-    
-
-    @exception_handler
     def get_all_cookbooks_names(self) -> list[str]:
         cookbooks = moonshot_api.api_get_all_cookbook_name()
         return cookbooks
     
+
+    @exception_handler
+    def get_cookbook_by_id(self, cookbook_id: str) -> CookbookCreateDTO | None: 
+        cookbook = moonshot_api.api_read_cookbook(cookbook_id)
+        return CookbookCreateDTO.model_validate(cookbook)
+
 
     @exception_handler
     def update_cookbook(self, cookbook_data: CookbookCreateDTO, cookbook_id: str) -> None:
