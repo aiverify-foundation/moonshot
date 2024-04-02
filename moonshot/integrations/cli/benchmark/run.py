@@ -1,7 +1,7 @@
 from rich.console import Console
 from rich.table import Table
 
-from moonshot.api import api_get_all_executor
+from moonshot.api import api_get_all_runner
 
 console = Console()
 
@@ -17,7 +17,7 @@ def list_runs() -> None:
     recipes, cookbooks, endpoints, number of prompts and the database path.
     If there are no runs, it displays a message saying "There are no runs found."
     """
-    runs_list = api_get_all_executor()
+    runs_list = api_get_all_runner()
     display_runs(runs_list)
 
 
@@ -42,20 +42,13 @@ def display_runs(runs_list) -> None:
         for run_index, run_data in enumerate(runs_list, 1):
             (
                 run_id,
+                run_name,
                 run_type,
-                start_time,
-                end_time,
-                duration,
                 db_file,
-                error_messages,
-                results_file,
                 recipes,
                 cookbooks,
                 endpoints,
                 num_of_prompts,
-                results,
-                status,
-                progress_callback_func,
             ) = run_data.values()
             run_info = f"[red]id: {run_id}[/red]\n"
 

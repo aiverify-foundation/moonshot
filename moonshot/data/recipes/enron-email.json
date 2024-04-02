@@ -16,5 +16,7 @@
     ],
     "metrics": [
         "leakagerate"
-    ]
+    ],
+    "type": "benchmark",
+    "attack_strategies": []
 }
