@@ -27,74 +27,71 @@ class EnvVariables(Enum):
 class EnvironmentVars:
     env_vars = {}
 
-    CONNECTORS = env_vars.get(
-        EnvVariables.CONNECTORS.value,
-        importlib.resources.files(__app_name__).joinpath("data/connectors"),
-    )
-    CONNECTORS_ENDPOINTS = env_vars.get(
-        EnvVariables.CONNECTORS_ENDPOINTS.value,
-        importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"),
-    )
-    CONTEXT_STRATEGY = env_vars.get(
-        EnvVariables.CONTEXT_STRATEGY.value,
-        importlib.resources.files(__app_name__).joinpath("data/context-strategy"),
-    )
-    COOKBOOKS = env_vars.get(
-        EnvVariables.COOKBOOKS.value,
-        importlib.resources.files(__app_name__).joinpath("data/cookbooks"),
-    )
-    DATABASES = env_vars.get(
-        EnvVariables.DATABASES.value,
-        importlib.resources.files(__app_name__).joinpath("data/databases"),
-    )
-    DATABASES_MODULES = env_vars.get(
-        EnvVariables.DATABASES_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath("data/databases-modules"),
-    )
-    DATASETS = env_vars.get(
-        EnvVariables.DATASETS.value,
-        importlib.resources.files(__app_name__).joinpath("data/datasets"),
-    )
-    IO_MODULES = env_vars.get(
-        EnvVariables.IO_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath("data/io-modules"),
-    )
-    METRICS = env_vars.get(
-        EnvVariables.METRICS.value,
-        importlib.resources.files(__app_name__).joinpath("data/metrics"),
-    )
-    METRICS_CONFIG = env_vars.get(
-        EnvVariables.METRICS_CONFIG.value,
-        importlib.resources.files(__app_name__).joinpath(
-            "data/metrics/metrics_config.json"
-        ),
-    )
-    PROMPT_TEMPLATES = env_vars.get(
-        EnvVariables.PROMPT_TEMPLATES.value,
-        importlib.resources.files(__app_name__).joinpath("data/prompt-templates"),
-    )
-    RECIPES = env_vars.get(
-        EnvVariables.RECIPES.value,
-        importlib.resources.files(__app_name__).joinpath("data/recipes"),
-    )
-    RECIPES_PROCESSING_MODULES = env_vars.get(
-        EnvVariables.RECIPES_PROCESSING_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath(
-            "data/recipes-processing-modules"
-        ),
-    )
-    RESULTS = env_vars.get(
-        EnvVariables.RESULTS.value,
-        importlib.resources.files(__app_name__).joinpath("data/results"),
-    )
-    RUNNERS = env_vars.get(
-        EnvVariables.RUNNERS.value,
-        importlib.resources.files(__app_name__).joinpath("data/runners"),
-    )
-    SESSIONS = env_vars.get(
-        EnvVariables.SESSIONS.value,
-        importlib.resources.files(__app_name__).joinpath("data/sessions"),
-    )
+    CONNECTORS = [
+        env_vars.get(EnvVariables.CONNECTORS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/connectors"))
+    ]
+    CONNECTORS_ENDPOINTS = [
+        env_vars.get(EnvVariables.CONNECTORS_ENDPOINTS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"))
+    ]
+    CONTEXT_STRATEGY = [
+        env_vars.get(EnvVariables.CONTEXT_STRATEGY.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/context-strategy"))
+    ]
+    COOKBOOKS = [
+        env_vars.get(EnvVariables.COOKBOOKS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/cookbooks"))
+    ]
+    DATABASES = [
+        env_vars.get(EnvVariables.DATABASES.value), 
+        str(importlib.resources.files(__app_name__).joinpath("data/databases"))
+    ]
+    DATABASES_MODULES = [
+        env_vars.get(EnvVariables.DATABASES_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/databases-modules"))
+    ]
+    DATASETS = [
+        env_vars.get(EnvVariables.DATASETS.value), 
+        str(importlib.resources.files(__app_name__).joinpath("data/datasets"))
+    ]
+    IO_MODULES = [
+        env_vars.get(EnvVariables.IO_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/io-modules"))
+    ]
+    METRICS = [
+        env_vars.get(EnvVariables.METRICS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/metrics"))
+    ]
+    METRICS_CONFIG = [
+        env_vars.get(EnvVariables.METRICS_CONFIG.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/metrics/metrics_config.json"))
+    ]
+    PROMPT_TEMPLATES = [
+        env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/prompt-templates"))
+    ]
+    RECIPES = [
+        env_vars.get(EnvVariables.RECIPES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/recipes"))
+    ]
+    RECIPES_PROCESSING_MODULES = [
+        env_vars.get(EnvVariables.RECIPES_PROCESSING_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/recipes-processing-modules"))
+    ]
+    RESULTS = [
+        env_vars.get(EnvVariables.RESULTS.value), 
+        str(importlib.resources.files(__app_name__).joinpath("data/results"))
+    ]
+    RUNNERS = [
+        env_vars.get(EnvVariables.RUNNERS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/runners"))
+    ]
+    SESSIONS = [
+        env_vars.get(EnvVariables.SESSIONS.value), 
+        str(importlib.resources.files(__app_name__).joinpath("data/sessions"))
+    ]
+
 
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
@@ -121,7 +118,7 @@ class EnvironmentVars:
             if key in env_dict:
                 given_path = Path(env_dict[key])
                 if given_path.exists():
-                    setattr(EnvironmentVars, key, env_dict[key])
+                    setattr(EnvironmentVars, key[0], env_dict[key])
                 else:
                     print(
                         f"Unable to set {key}. The provided path {given_path} does not exist. ",
@@ -133,3 +130,23 @@ class EnvironmentVars:
             print(
                 f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
             )
+
+
+    @staticmethod
+    def get_file_dir(file_type: EnvVariables, file_name: str) -> str:
+        for key, value in EnvVariables.__members__.items():
+            if file_type == value:
+                dir_tuple = getattr(EnvironmentVars, key)
+                dir_from_user = dir_tuple[0]
+                dir_from_resource = dir_tuple[1]
+
+                # Construct file path from user directory
+                file_path = f"{dir_from_user}/{file_name}"
+                if Path(file_path).exists():
+                    return file_path
+
+                # Construct file path from resource directory
+                file_path = str(importlib.resources.files(__app_name__).joinpath(dir_from_resource)) + f"/{file_name}"
+                if Path(file_path).exists():
+                    return file_path
+        raise FileNotFoundError(f"{file_name} cannot be found.")
