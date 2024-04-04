@@ -134,7 +134,19 @@ class EnvironmentVars:
 
     @staticmethod
     def get_file_path(file_type: EnvVariables, file_name: str) -> str:
-
+        """
+        This method retrieves the file path for a specific file type and file name.
+        
+        Args:
+            file_type (EnvVariables): The type of file to retrieve.
+            file_name (str): The name of the file to retrieve.
+        
+        Returns:
+            str: The file path of the specified file if found.
+        
+        Raises:
+            FileNotFoundError: If the specified file cannot be found in either the user-defined path or the resource path.
+        """
         path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
 
         if path_from_user is not None:
@@ -151,6 +163,15 @@ class EnvironmentVars:
 
     @staticmethod
     def get_file_directory(file_type: EnvVariables) -> str:
+        """
+        This method retrieves the directory path for a specific file type.
+        
+        Args:
+            file_type (EnvVariables): The type of file to retrieve the directory path for.
+        
+        Returns:
+            str: The directory path of the specified file type.
+        """
         path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
 
         if path_from_user is not None:
