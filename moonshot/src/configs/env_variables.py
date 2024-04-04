@@ -147,4 +147,14 @@ class EnvironmentVars:
             return str(resource_file_path)
                 
         raise FileNotFoundError(f"{file_name} cannot be found.")
+    
+
+    @staticmethod
+    def get_file_directory(file_type: EnvVariables) -> str:
+        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
+
+        if path_from_user is not None:
+            return str(Path(path_from_user))
         
+        return str(Path(path_from_resource))
+    
