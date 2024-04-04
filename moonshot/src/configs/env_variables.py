@@ -1,60 +1,103 @@
 import importlib.resources
-from typing import Union
+from enum import Enum
 from pathlib import Path
-from dotenv import dotenv_values
 
 __app_name__ = "moonshot"
 
 
-class EnvironmentVars:    
+class EnvVariables(Enum):
+    CONNECTORS = "CONNECTORS"
+    CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
+    CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
+    COOKBOOKS = "COOKBOOKS"
+    DATABASES = "DATABASES"
+    DATABASES_MODULES = "DATABASES_MODULES"
+    DATASETS = "DATASETS"
+    IO_MODULES = "IO_MODULES"
+    METRICS = "METRICS"
+    METRICS_CONFIG = "METRICS_CONFIG"
+    PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
+    RECIPES = "RECIPES"
+    RECIPES_PROCESSING_MODULES = "RECIPES_PROCESSING_MODULES"
+    RESULTS = "RESULTS"
+    RUNNERS = "RUNNERS"
+    SESSIONS = "SESSIONS"
+
+
+class EnvironmentVars:
     env_vars = {}
 
-    CONNECTORS_ENDPOINTS = env_vars.get(
-        "CONNECTORS_ENDPOINTS",
-        importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"),
-    )
     CONNECTORS = env_vars.get(
-        "CONNECTORS",
+        EnvVariables.CONNECTORS.value,
         importlib.resources.files(__app_name__).joinpath("data/connectors"),
     )
-    RECIPES = env_vars.get(
-        "RECIPES", importlib.resources.files(__app_name__).joinpath("data/recipes")
+    CONNECTORS_ENDPOINTS = env_vars.get(
+        EnvVariables.CONNECTORS_ENDPOINTS.value,
+        importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"),
+    )
+    CONTEXT_STRATEGY = env_vars.get(
+        EnvVariables.CONTEXT_STRATEGY.value,
+        importlib.resources.files(__app_name__).joinpath("data/context-strategy"),
     )
     COOKBOOKS = env_vars.get(
-        "COOKBOOKS", importlib.resources.files(__app_name__).joinpath("data/cookbooks")
+        EnvVariables.COOKBOOKS.value,
+        importlib.resources.files(__app_name__).joinpath("data/cookbooks"),
+    )
+    DATABASES = env_vars.get(
+        EnvVariables.DATABASES.value,
+        importlib.resources.files(__app_name__).joinpath("data/databases"),
+    )
+    DATABASES_MODULES = env_vars.get(
+        EnvVariables.DATABASES_MODULES.value,
+        importlib.resources.files(__app_name__).joinpath("data/databases-modules"),
     )
     DATASETS = env_vars.get(
-        "DATASETS", importlib.resources.files(__app_name__).joinpath("data/datasets")
+        EnvVariables.DATASETS.value,
+        importlib.resources.files(__app_name__).joinpath("data/datasets"),
     )
-    PROMPT_TEMPLATES = env_vars.get(
-        "PROMPT_TEMPLATES",
-        importlib.resources.files(__app_name__).joinpath("data/prompt-templates"),
+    IO_MODULES = env_vars.get(
+        EnvVariables.IO_MODULES.value,
+        importlib.resources.files(__app_name__).joinpath("data/io-modules"),
     )
     METRICS = env_vars.get(
-        "METRICS", importlib.resources.files(__app_name__).joinpath("data/metrics")
+        EnvVariables.METRICS.value,
+        importlib.resources.files(__app_name__).joinpath("data/metrics"),
     )
     METRICS_CONFIG = env_vars.get(
-        "METRICS_CONFIG",
+        EnvVariables.METRICS_CONFIG.value,
         importlib.resources.files(__app_name__).joinpath(
             "data/metrics/metrics_config.json"
         ),
     )
-    CONTEXT_STRATEGY = env_vars.get(
-        "CONTEXT_STRATEGY",
-        importlib.resources.files(__app_name__).joinpath("data/context-strategy"),
+    PROMPT_TEMPLATES = env_vars.get(
+        EnvVariables.PROMPT_TEMPLATES.value,
+        importlib.resources.files(__app_name__).joinpath("data/prompt-templates"),
+    )
+    RECIPES = env_vars.get(
+        EnvVariables.RECIPES.value,
+        importlib.resources.files(__app_name__).joinpath("data/recipes"),
+    )
+    RECIPES_PROCESSING_MODULES = env_vars.get(
+        EnvVariables.RECIPES_PROCESSING_MODULES.value,
+        importlib.resources.files(__app_name__).joinpath(
+            "data/recipes-processing-modules"
+        ),
     )
     RESULTS = env_vars.get(
-        "RESULTS", importlib.resources.files(__app_name__).joinpath("data/results")
+        EnvVariables.RESULTS.value,
+        importlib.resources.files(__app_name__).joinpath("data/results"),
     )
-    DATABASES = env_vars.get(
-        "DATABASES", importlib.resources.files(__app_name__).joinpath("data/databases")
+    RUNNERS = env_vars.get(
+        EnvVariables.RUNNERS.value,
+        importlib.resources.files(__app_name__).joinpath("data/runners"),
     )
     SESSIONS = env_vars.get(
-        "SESSIONS", importlib.resources.files(__app_name__).joinpath("data/sessions")
+        EnvVariables.SESSIONS.value,
+        importlib.resources.files(__app_name__).joinpath("data/sessions"),
     )
 
     @staticmethod
-    def load_env(env_dict: Union[dict, None] = None) -> None:
+    def load_env(env_dict: dict | None = None) -> None:
         """
         This method is used to load environment variables from a given dictionary.
         If the dictionary is not provided, it will use an empty dictionary.
@@ -63,7 +106,7 @@ class EnvironmentVars:
         If a key from the class attributes is not found in the dictionary, it will raise a KeyError.
 
         Args:
-            env_dict (Union[dict, None]): A dictionary containing the environment variables to be loaded.
+            env_dict (dict | None): A dictionary containing the environment variables to be loaded.
                                           If None, an empty dictionary will be used.
 
         Raises:
@@ -72,20 +115,7 @@ class EnvironmentVars:
         if env_dict is None:
             env_dict = dict()
 
-        keys = [
-            "CONNECTORS_ENDPOINTS",
-            "CONNECTORS",
-            "RECIPES",
-            "COOKBOOKS",
-            "DATASETS",
-            "PROMPT_TEMPLATES",
-            "METRICS",
-            "METRICS_CONFIG",
-            "CONTEXT_STRATEGY",
-            "RESULTS",
-            "DATABASES",
-            "SESSIONS",
-        ]
+        keys = [e.value for e in EnvVariables]
         unset_keys = []
         for key in keys:
             if key in env_dict:
@@ -93,8 +123,13 @@ class EnvironmentVars:
                 if given_path.exists():
                     setattr(EnvironmentVars, key, env_dict[key])
                 else:
-                    print(f"Unable to set {key}. The provided path {given_path} does not exist. The stock set will be used.")
+                    print(
+                        f"Unable to set {key}. The provided path {given_path} does not exist. ",
+                        "The stock set will be used.",
+                    )
             else:
                 unset_keys.append(key)
         if unset_keys:
-            print(f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used.")
+            print(
+                f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
+            )

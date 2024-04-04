@@ -12,5 +12,7 @@
     ],
     "metrics": [
         "advglue"
-    ]
+    ],
+    "type": "benchmark",
+    "attack_strategies": []
 }

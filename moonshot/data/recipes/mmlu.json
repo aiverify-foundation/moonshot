@@ -12,5 +12,7 @@
     ],
     "metrics": [
         "exactstrmatch"
-    ]
+    ],
+    "type": "benchmark",
+    "attack_strategies": []
 }

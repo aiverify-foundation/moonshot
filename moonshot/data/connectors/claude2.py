@@ -5,7 +5,7 @@ from anthropic import AI_PROMPT, HUMAN_PROMPT
 from anthropic.types import Completion
 
 from moonshot.src.connectors.connector import Connector, perform_retry
-from moonshot.src.connectors.connector_endpoint_arguments import (
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 

@@ -6,7 +6,8 @@ from typing import Union
 from slugify import slugify
 
 from moonshot.src.benchmarking.prompt_arguments import PromptArguments
-from moonshot.src.connectors.connector_manager import ConnectorManager
+from moonshot.src.connectors.connector import Connector
+from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
 from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
@@ -215,9 +216,7 @@ class Chat:
             prepared_prompt = PromptTemplateManager.process_prompt_pt(
                 prepared_prompt, prompt_template_name
             )
-        endpoint_instance = ConnectorManager.create_connector(
-            ConnectorManager.read_endpoint(endpoint)
-        )
+        endpoint_instance = Connector.create(ConnectorEndpoint.read(endpoint))
 
         # put variables into PromptArguments before passing it to get_prediction
         new_prompt_info = PromptArguments(
@@ -233,7 +232,7 @@ class Chat:
         prompt_start_time = datetime.now()
 
         # sends prompt to endpoint
-        prediction_response = await ConnectorManager.get_prediction(
+        prediction_response = await Connector.get_prediction(
             new_prompt_info, endpoint_instance
         )
 

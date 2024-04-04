@@ -14,7 +14,7 @@ from moonshot.api import (
     api_get_session_chats_by_session_id,
     api_send_prompt,
 )
-from moonshot.src.configs.active_session_cfg import active_session
+from moonshot.integrations.cli.active_session_cfg import active_session
 
 console = Console()
 
@@ -32,7 +32,7 @@ def new_session(args) -> None:
         args: A namespace with the session parameters. Expected to have 'name', 'description', 'endpoints',
               'context_strategy'(optional), and 'prompt_template'(optional).
     """
-    global active_session
+    # global active_session
     name = args.name
     description = args.description
     endpoints = literal_eval(args.endpoints)

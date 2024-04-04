@@ -1,9 +1,10 @@
+import argparse
+
 import cmd2
 from rich.console import Console
 
 from moonshot.api import api_update_prompt_template
-from moonshot.src.configs.active_session_cfg import active_session
-import argparse
+from moonshot.integrations.cli.active_session_cfg import active_session
 
 console = Console()
 

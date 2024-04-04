@@ -1,21 +1,20 @@
 from __future__ import annotations
 
 import asyncio
-import inspect
 import time
 from abc import abstractmethod
 from asyncio import sleep
 from functools import wraps
-from typing import Any
+from pathlib import Path
+from typing import Callable
 
-from moonshot.src.connectors.connector_endpoint_arguments import (
+from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.storage.storage_manager import StorageManager
-from moonshot.src.utils.import_modules import (
-    create_module_spec,
-    import_module_from_spec,
-)
+from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.import_modules import get_instance
 
 
 def perform_retry(func):
@@ -128,25 +127,30 @@ class Connector:
         pass
 
     @classmethod
-    def load_connector(cls, ep_args: ConnectorEndpointArguments) -> Connector:
+    def load(cls, ep_args: ConnectorEndpointArguments) -> Connector:
         """
-        Loads a connector instance based on the provided endpoint arguments.
+        This method dynamically loads a connector instance based on the provided endpoint arguments.
 
-        This method utilizes the connector type specified in the `ep_args` to dynamically load the corresponding
-        connector class. It then instantiates the connector with the provided endpoint arguments. If the
-        specified connector type does not match any available connector classes, a RuntimeError is raised.
+        The connector type specified in the `ep_args` is used to dynamically load the corresponding
+        connector class. The connector is then instantiated with the provided endpoint arguments. If the
+        specified connector type does not correspond to any available connector classes, a RuntimeError is raised.
 
         Args:
-            ep_args (ConnectorEndpointArguments): The endpoint arguments containing the connector type and
+            ep_args (ConnectorEndpointArguments): The endpoint arguments which include the connector type and
             other necessary information.
 
         Returns:
-            Connector: An instance of the specified connector class initialized with the given endpoint arguments.
+            Connector: An instance of the specified connector class, initialized with the given endpoint arguments.
 
         Raises:
-            RuntimeError: If no connector class matches the specified connector type.
+            RuntimeError: If the specified connector type does not match any available connector classes.
         """
-        connector_instance = cls._get_connector_instance(ep_args.connector_type)
+        connector_instance = get_instance(
+            ep_args.connector_type,
+            Storage.get_filepath(
+                EnvVariables.CONNECTORS.name, ep_args.connector_type, "py"
+            ),
+        )
         if connector_instance:
             return connector_instance(ep_args)
         else:
@@ -155,40 +159,107 @@ class Connector:
             )
 
     @staticmethod
-    def _get_connector_instance(connector_type: str) -> Any:
+    def create(ep_args: ConnectorEndpointArguments) -> Connector:
         """
-        Dynamically retrieves a connector class instance based on the connector type.
+        Creates a connector object based on the provided endpoint arguments.
 
-        This method searches for a Python module that matches the given connector type within a predefined directory.
-        It then attempts to find a class within that module that corresponds to the connector type. If such a class
-        is found, it is returned as the connector class instance. If no matching class is found within the module,
-        or if the module does not exist, this method returns None.
+        This method takes a ConnectorEndpointArguments object, which contains the necessary information
+        to initialize and return a Connector object. The Connector object is created by calling the
+        `load_connector` method, which dynamically loads and initializes the connector based on the
+        endpoint arguments provided.
 
         Args:
-            connector_type (str): The type of the connector to retrieve, which corresponds to the module and class name.
+            ep_args (ConnectorEndpointArguments): The endpoint arguments required to create the connector.
 
         Returns:
-            Any: An instance of the found connector class, or None if no matching class is found.
+            Connector: An initialized Connector object based on the provided endpoint arguments.
         """
-        # Create the module specification
-        module_spec = create_module_spec(
-            connector_type,
-            StorageManager.get_connector_filepath(connector_type),
-        )
+        try:
+            return Connector.load(ep_args)
 
-        # Check if the module specification exists
-        if module_spec:
-            # Import the module
-            module = import_module_from_spec(module_spec)
+        except Exception as e:
+            print(f"Failed to create connector: {str(e)}")
+            raise e
 
-            # Iterate through the attributes of the module
-            for attr in dir(module):
-                # Get the attribute object
-                obj = getattr(module, attr)
+    @staticmethod
+    def get_available_items() -> list[str]:
+        """
+        Fetches a list of all available connector types.
 
-                # Check if the attribute is a class and has the same module name as the connector type
-                if inspect.isclass(obj) and obj.__module__ == connector_type:
-                    return obj
+        This method employs the `get_connectors` method to locate all Python files in the directory
+        defined by the `EnvironmentVars.CONNECTORS` environment variable. It subsequently excludes any files that are
+        not intended to be exposed as connectors (those containing "__" in their names). The method yields a list of the
+        names of these connector types.
 
-        # Return None if no instance of the metric class is found
-        return None
+        Returns:
+            list[str]: A list of strings, each denoting the name of a connector type.
+
+        Raises:
+            Exception: If an error occurs during the extraction of connector types.
+        """
+        try:
+            return [
+                Path(fp).stem
+                for fp in Storage.get_objects(EnvVariables.CONNECTORS.name, "py")
+                if "__" not in fp
+            ]
+
+        except Exception as e:
+            print(f"Failed to get available connectors: {str(e)}")
+            raise e
+
+    @staticmethod
+    async def get_prediction(
+        generated_prompt: ConnectorPromptArguments,
+        connector: Connector,
+        prompt_callback: Callable | None = None,
+    ) -> ConnectorPromptArguments:
+        """
+        Generates a prediction for a given prompt using a specified connector.
+
+        This method takes a `generated_prompt` object, which contains the prompt to be predicted, and a `connector`
+        object, which is used to generate the prediction. The method also optionally takes a `prompt_callback` function,
+        which is called after the prediction is generated.
+
+        The method first prints a message indicating that it is predicting the prompt. It then records the start time
+        and uses the `connector` to generate a prediction for the `generated_prompt`. The duration of the prediction
+        is calculated and stored in the `generated_prompt`.
+
+        If a `prompt_callback` function is provided, it is called with the `generated_prompt` and `connector.id` as
+        arguments.
+
+        The method then returns the `generated_prompt` with the generated prediction and duration.
+
+        Args:
+            generated_prompt (ConnectorPromptArguments): The prompt to be predicted.
+            connector (Connector): The connector to be used for prediction.
+            prompt_callback (Callable | None): An optional callback function to be called after prediction.
+
+        Returns:
+            ConnectorPromptArguments: The `generated_prompt` with the generated prediction and duration.
+
+        Raises:
+            Exception: If there is an error during prediction.
+        """
+        try:
+            print(f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]")
+
+            start_time = time.perf_counter()
+            generated_prompt.predicted_results = await connector.get_response(
+                generated_prompt.prompt
+            )
+            generated_prompt.duration = time.perf_counter() - start_time
+            print(
+                f"[Prompt {generated_prompt.prompt_index}] took {generated_prompt.duration:.4f}s"
+            )
+
+            # Call prompt callback
+            if prompt_callback:
+                prompt_callback(generated_prompt, connector.id)
+
+            # Return the updated prompt
+            return generated_prompt
+
+        except Exception as e:
+            print(f"Failed to get prediction: {str(e)}")
+            raise e
