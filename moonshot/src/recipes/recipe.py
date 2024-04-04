@@ -97,9 +97,11 @@ class Recipe:
             Exception: If an error occurs during the file reading process or any other operation within the method.
         """
         try:
-            return RecipeArguments(
-                **Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
-            )
+            obj_results = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
+            if obj_results:
+                return RecipeArguments(**obj_results)
+            else:
+                raise RuntimeError(f"Unable to get results for {rec_id}.")
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")

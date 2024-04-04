@@ -14,6 +14,7 @@ from moonshot.api import (
     api_read_recipes,
     api_update_cookbook,
 )
+from moonshot.src.api.api_runner import api_get_all_runner_name, api_load_runner
 
 console = Console()
 
@@ -38,8 +39,11 @@ def add_cookbook(args) -> None:
     Returns:
         None
     """
-    recipes = literal_eval(args.recipes)
-    api_create_cookbook(args.name, args.description, recipes)
+    try:
+        recipes = literal_eval(args.recipes)
+        api_create_cookbook(args.name, args.description, recipes)
+    except Exception as e:
+        print(f"[add_cookbook]: {str(e)}")
 
 
 def list_cookbooks() -> None:
@@ -53,8 +57,11 @@ def list_cookbooks() -> None:
     Returns:
         None
     """
-    cookbooks_list = api_get_all_cookbook()
-    display_cookbooks(cookbooks_list)
+    try:
+        cookbooks_list = api_get_all_cookbook()
+        display_cookbooks(cookbooks_list)
+    except Exception as e:
+        print(f"[list_cookbooks]: {str(e)}")
 
 
 def view_cookbook(args) -> None:
@@ -72,46 +79,61 @@ def view_cookbook(args) -> None:
     Returns:
         None
     """
-    cookbook_info = api_read_cookbook(args.cookbook)
-    display_view_cookbook(cookbook_info)
+    try:
+        cookbook_info = api_read_cookbook(args.cookbook)
+        display_view_cookbook(cookbook_info)
+    except Exception as e:
+        print(f"[view_cookbook]: {str(e)}")
 
 
 def run_cookbook(args) -> None:
     """
     Run a specific cookbook.
 
-    This function runs a specific cookbook by calling the api_create_cookbook_executor function from the
-    moonshot.api module using the cookbook and endpoints provided in the args.
-    It then executes the cookbook using the execute method of the created executor and displays the results using the
-    show_cookbook_results function.
+    This function initiates the execution of a specific cookbook by invoking the api_create_cookbook_executor function
+    from the moonshot.api module. The function uses the cookbook and endpoints provided in the args to create
+    an executor. The cookbook is then executed using the run method of the created executor. The results of the
+    execution are displayed using the show_cookbook_results function.
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
-            name (str): A string representation of the cookbook executor. Each run is represented by its ID.
-            cookbooks (str): A string representation of a list of cookbooks. Each cookbook is represented by its ID.
-            endpoints (str): A string representation of a list of endpoints. Each endpoint is represented by its ID.
+            name (str): A unique identifier for the cookbook executor. Each execution is represented by its unique ID.
+            cookbooks (str): A string representation of a list of cookbooks. Each cookbook is identified by its
+                             unique ID.
+            endpoints (str): A string representation of a list of endpoints. Each endpoint is identified by its
+                             unique ID.
             num_of_prompts (int): The number of prompts to be used in the cookbook.
 
     Returns:
         None
     """
-    name = args.name
-    cookbooks = literal_eval(args.cookbooks)
-    endpoints = literal_eval(args.endpoints)
-    num_of_prompts = args.num_of_prompts
+    try:
+        name = args.name
+        cookbooks = literal_eval(args.cookbooks)
+        endpoints = literal_eval(args.endpoints)
+        num_of_prompts = args.num_of_prompts
 
-    # Run the recipes with the defined endpoints
-    cb_runner = api_create_cookbook_runner(name, cookbooks, endpoints, num_of_prompts)
+        # Run the recipes with the defined endpoints
+        if name in api_get_all_runner_name():
+            cb_runner = api_load_runner(name)
+        else:
+            cb_runner = api_create_cookbook_runner(
+                name, cookbooks, endpoints, num_of_prompts
+            )
 
-    asyncio.run(cb_runner.run())
-    # show_cookbook_results(
-    #     cookbooks,
-    #     endpoints,
-    #     bm_executor.results,
-    #     bm_executor.results_file,
-    #     bm_executor.duration,
-    # )
-    cb_runner.close()
+        asyncio.run(cb_runner.run())
+
+        run_arguments_info = cb_runner.get_latest_run_arguments()
+        show_cookbook_results(
+            cookbooks,
+            endpoints,
+            run_arguments_info.results,
+            run_arguments_info.results_file,
+            run_arguments_info.duration,
+        )
+        cb_runner.close()
+    except Exception as e:
+        print(f"[run_cookbook]: {str(e)}")
 
 
 def update_cookbook(args) -> None:
@@ -124,15 +146,18 @@ def update_cookbook(args) -> None:
     Args:
         args: A namespace object from argparse. It should have the following attributes:
             cookbook (str): The name of the cookbook to update.
-            update_kwargs (str): A string representation of a list of tuples. Each tuple contains a key
+            update_values (str): A string representation of a list of tuples. Each tuple contains a key
             and a value to update in the cookbook.
 
     Returns:
         None
     """
-    cookbook = args.cookbook
-    update_values = dict(literal_eval(args.update_kwargs))
-    api_update_cookbook(cookbook, **update_values)
+    try:
+        cookbook = args.cookbook
+        update_values = dict(literal_eval(args.update_values))
+        api_update_cookbook(cookbook, **update_values)
+    except Exception as e:
+        print(f"[update_cookbook]: {str(e)}")
 
 
 def delete_cookbook(args) -> None:
@@ -149,7 +174,10 @@ def delete_cookbook(args) -> None:
     Returns:
         None
     """
-    api_delete_cookbook(args.cookbook)
+    try:
+        api_delete_cookbook(args.cookbook)
+    except Exception as e:
+        print(f"[delete_cookbook]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------
@@ -207,19 +235,27 @@ def display_view_cookbook(cookbook_info):
                 name,
                 description,
                 tags,
-                dataset,
+                datasets,
                 prompt_templates,
                 metrics,
+                rec_type,
+                attack_strategies,
             ) = recipe.values()
-            recipe_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\nTags:\n{tags}"
-            dataset_info = f"[blue]Dataset[/blue]: {dataset}"
+            recipe_info = (
+                f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
+                f"Tags:\n{tags}\n\nType:\n{rec_type}"
+            )
+            datasets_info = "[blue]Datasets[/blue]:" + "".join(
+                f"\n{i + 1}. {item}" for i, item in enumerate(datasets)
+            )
             prompt_templates_info = "[blue]Prompt Templates[/blue]:" + "".join(
                 f"\n{i + 1}. {item}" for i, item in enumerate(prompt_templates)
             )
             metrics_info = "[blue]Metrics[/blue]:" + "".join(
                 f"\n{i + 1}. {item}" for i, item in enumerate(metrics)
             )
-            contains_info = f"{dataset_info}\n{prompt_templates_info}\n{metrics_info}"
+            attack_strategies = f"[blue]Attack Strategies[/blue]:\n{attack_strategies}"
+            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_strategies}"
             table.add_section()
             table.add_row(str(recipes_id), recipe_info, contains_info)
         console.print(table)
@@ -315,12 +351,13 @@ add_cookbook_args.add_argument(
 # Update cookbook arguments
 update_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Update a cookbook.",
-    epilog="Example:\n update_cookbook my-new-cookbook "
+    epilog="available keys: \n  name: Name of cookbook \n  description: Description of cookbook "
+    "\n  recipes: recipes in cookbook \n\nExample:\n update_cookbook my-new-cookbook "
     "\"[('name', 'my-special-bbq-cookbook'), ('recipes', ['my-recipe2', 'my-recipe3'])]\" ",
 )
 update_cookbook_args.add_argument("cookbook", type=str, help="Name of the cookbook")
 update_cookbook_args.add_argument(
-    "update_kwargs", type=str, help="Update cookbook key/value"
+    "update_values", type=str, help="Update cookbook key/value"
 )
 
 # View cookbook arguments

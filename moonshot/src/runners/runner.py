@@ -272,6 +272,22 @@ class Runner:
         """
         pass
 
+    def get_latest_run_arguments(self) -> RunArguments:
+        """
+        Retrieves the arguments of the latest run.
+
+        This method retrieves the arguments of the most recent run from the database.
+        It uses the load method of the Run class to get the RunArguments object of the latest run.
+        If the database instance is not provided, it raises a RuntimeError.
+
+        Returns:
+            RunArguments: An object containing the details of the latest run.
+
+        Raises:
+            RuntimeError: If the database instance is not available.
+        """
+        return Run.load(self.database_instance)
+
     async def run(self) -> None:
         """
         Executes the runner instance.

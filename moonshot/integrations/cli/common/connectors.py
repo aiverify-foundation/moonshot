@@ -39,17 +39,20 @@ def add_endpoint(args) -> None:
     Returns:
         None
     """
-    params_dict = literal_eval(args.params)
+    try:
+        params_dict = literal_eval(args.params)
 
-    api_create_endpoint(
-        args.name,
-        args.connector_type,
-        args.uri,
-        args.token,
-        args.max_calls_per_second,
-        args.max_concurrency,
-        params_dict,
-    )
+        api_create_endpoint(
+            args.name,
+            args.connector_type,
+            args.uri,
+            args.token,
+            args.max_calls_per_second,
+            args.max_concurrency,
+            params_dict,
+        )
+    except Exception as e:
+        print(f"[add_endpoint]: {str(e)}")
 
 
 def list_endpoints() -> None:
@@ -62,8 +65,11 @@ def list_endpoints() -> None:
     Returns:
         None
     """
-    endpoint_list = api_get_all_endpoint()
-    display_endpoints(endpoint_list)
+    try:
+        endpoint_list = api_get_all_endpoint()
+        display_endpoints(endpoint_list)
+    except Exception as e:
+        print(f"[list_endpoints]: {str(e)}")
 
 
 def list_connector_types() -> None:
@@ -76,8 +82,11 @@ def list_connector_types() -> None:
     Returns:
         None
     """
-    connector_type_list = api_get_all_connector_type()
-    display_connector_types(connector_type_list)
+    try:
+        connector_type_list = api_get_all_connector_type()
+        display_connector_types(connector_type_list)
+    except Exception as e:
+        print(f"[list_connector_types]: {str(e)}")
 
 
 def view_endpoint(args) -> None:
@@ -95,8 +104,11 @@ def view_endpoint(args) -> None:
     Returns:
         None
     """
-    endpoint_info = api_read_endpoint(args.endpoint)
-    display_endpoints([endpoint_info])
+    try:
+        endpoint_info = api_read_endpoint(args.endpoint)
+        display_endpoints([endpoint_info])
+    except Exception as e:
+        print(f"[view_endpoint]: {str(e)}")
 
 
 def update_endpoint(args) -> None:
@@ -115,9 +127,12 @@ def update_endpoint(args) -> None:
     Returns:
         None
     """
-    endpoint = args.endpoint
-    update_values = dict(literal_eval(args.update_kwargs))
-    api_update_endpoint(endpoint, **update_values)
+    try:
+        endpoint = args.endpoint
+        update_values = dict(literal_eval(args.update_kwargs))
+        api_update_endpoint(endpoint, **update_values)
+    except Exception as e:
+        print(f"[update_endpoint]: {str(e)}")
 
 
 def delete_endpoint(args) -> None:
@@ -134,7 +149,10 @@ def delete_endpoint(args) -> None:
     Returns:
         None
     """
-    api_delete_endpoint(args.endpoint)
+    try:
+        api_delete_endpoint(args.endpoint)
+    except Exception as e:
+        print(f"[delete_endpoint]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------
@@ -250,7 +268,9 @@ add_endpoint_args.add_argument("params", type=str, help="Params of the new endpo
 # Update endpoint arguments
 update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
-    epilog="Example:\n update_endpoint test-openai-endpoint "
+    epilog="available keys: \n  name: Name of endpoint \n  uri: URI of endpoint \n  token: token of endpoint "
+    "\n  max_calls_per_second: Rate limit max calls per second \n  max_concurrency: Rate limit max concurrency "
+    "\n  params: Extra arguments for the endpoint \n\nExample:\n update_endpoint test-openai-endpoint "
     "\"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]\" ",
 )
 update_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
@@ -268,6 +288,6 @@ view_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint
 # Delete endpoint arguments
 delete_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Delete an endpoint.",
-    epilog="Example:\n delete_endpoint test-openai-endpoint",
+    epilog="Example:\n delete_endpoint my-openai-endpoint",
 )
 delete_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
