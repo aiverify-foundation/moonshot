@@ -136,15 +136,15 @@ class EnvironmentVars:
     def get_file_dir(file_type: EnvVariables, file_name: str) -> str:
 
         dir_from_user, dir_from_resource = getattr(EnvironmentVars, file_type.value)
-        # Construct file path from user directory
-        file_path = f"{dir_from_user}/{file_name}"
-        file_path = os.path.join(dir_from_user, file_name)
-        if Path(file_path).exists():
-            return file_path
 
-        # Construct file path from resource directory
-        file_path = os.path.join(dir_from_resource, file_name)
-        if Path(file_path).exists():
-            return file_path
+        if dir_from_user is not None:
+            user_file_path = Path(dir_from_user) / file_name
+            if Path(user_file_path).exists():
+                return str(user_file_path)
+        
+        resource_file_path = Path(dir_from_resource) / file_name
+        if Path(resource_file_path).exists():
+            return str(resource_file_path)
+                
         raise FileNotFoundError(f"{file_name} cannot be found.")
         
