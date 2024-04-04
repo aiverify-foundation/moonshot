@@ -1,7 +1,7 @@
 import importlib.resources
 from enum import Enum
 from pathlib import Path
-import os 
+
 __app_name__ = "moonshot"
 
 
