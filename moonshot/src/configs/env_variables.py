@@ -133,16 +133,16 @@ class EnvironmentVars:
 
 
     @staticmethod
-    def get_file_dir(file_type: EnvVariables, file_name: str) -> str:
+    def get_file_path(file_type: EnvVariables, file_name: str) -> str:
 
-        dir_from_user, dir_from_resource = getattr(EnvironmentVars, file_type.value)
+        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
 
-        if dir_from_user is not None:
-            user_file_path = Path(dir_from_user) / file_name
+        if path_from_user is not None:
+            user_file_path = Path(path_from_user) / file_name
             if Path(user_file_path).exists():
                 return str(user_file_path)
         
-        resource_file_path = Path(dir_from_resource) / file_name
+        resource_file_path = Path(path_from_resource) / file_name
         if Path(resource_file_path).exists():
             return str(resource_file_path)
                 
