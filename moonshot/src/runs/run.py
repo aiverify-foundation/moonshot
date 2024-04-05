@@ -13,6 +13,7 @@ from moonshot.src.recipes.recipe_type import RecipeType
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_arguments import RunArguments
 from moonshot.src.runs.run_status import RunStatus
+from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -28,6 +29,9 @@ class Run:
         UPDATE run_table SET run_type=?,recipes=?,cookbooks=?,endpoints=?,num_of_prompts=?,results_file=?,
         start_time=?,end_time=?,duration=?,error_messages=?,results=?,status=?
         WHERE run_id=(SELECT MAX(run_id) FROM run_table)
+    """
+    sql_read_run_record = """
+        SELECT * from run_table WHERE run_id=(SELECT MAX(run_id) FROM run_table)
     """
 
     def __init__(self, run_args: RunArguments) -> None:
@@ -53,6 +57,33 @@ class Run:
         self.benchmark_processing_module = "benchmarking"
         self.redteam_processing_module = "redteaming"
 
+    @staticmethod
+    def load(database_instance: DBAccessor | None) -> RunArguments:
+        """
+        Loads the latest run data from the database.
+
+        This method retrieves the most recent run data from the database. If the database instance is not provided,
+        it raises a RuntimeError. If the database instance is provided, it invokes the read_record method of the
+        database instance and returns a RunArguments object created from the retrieved record.
+
+        Returns:
+            RunArguments: An object containing the details of the latest run.
+        """
+        if database_instance:
+            run_arguments_info = Storage.read_database_record(
+                database_instance,
+                (),
+                Run.sql_read_run_record,
+            )
+            if run_arguments_info:
+                return RunArguments.from_tuple(run_arguments_info)
+            else:
+                raise RuntimeError(
+                    f"Failed to get database record: {database_instance}"
+                )
+        else:
+            raise RuntimeError(f"Failed to get database instance: {database_instance}")
+
     def handle_error_message(self, error_message: str) -> None:
         """
         This method is used to handle error messages during the execution of a run. It takes an error message as input,
@@ -71,9 +102,10 @@ class Run:
 
         # Update the progress status
         self.update_progress(RunStatus.RUNNING_WITH_ERRORS)
-        self.progress.update_progress(
-            status=self.status.name, error_messages=self.error_messages
-        )
+        if self.progress:
+            self.progress.update_progress(
+                status=self.status.name, error_messages=self.error_messages
+            )
 
     def update_progress(self, status: RunStatus | None = None) -> None:
         """
@@ -168,10 +200,11 @@ class Run:
 
             # Update progress
             self.update_progress(RunStatus.RUNNING)
-            self.progress.update_progress(
-                status=self.status.name,
-                duration=self.duration,
-            )
+            if self.progress:
+                self.progress.update_progress(
+                    status=self.status.name,
+                    duration=self.duration,
+                )
 
             # Run all recipes
             for recipe_index, recipe in enumerate(self.recipes, 0):
@@ -180,11 +213,12 @@ class Run:
                 )
 
                 # Update progress
-                self.progress.update_progress(
-                    recipe_index=recipe_index,
-                    recipe_name=recipe,
-                    recipe_total=len(self.recipes),
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        recipe_index=recipe_index,
+                        recipe_name=recipe,
+                        recipe_total=len(self.recipes),
+                    )
 
                 # Run the recipe
                 self.results[recipe] = await self._run_recipe(recipe)
@@ -192,19 +226,21 @@ class Run:
             # Update progress
             if not self.error_messages:
                 self.update_progress(RunStatus.COMPLETED)
-                self.progress.update_progress(
-                    recipe_index=len(self.recipes),
-                    status=self.status.name,
-                    duration=self.duration,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        recipe_index=len(self.recipes),
+                        status=self.status.name,
+                        duration=self.duration,
+                    )
             else:
                 self.update_progress(RunStatus.COMPLETED_WITH_ERRORS)
-                self.progress.update_progress(
-                    recipe_index=len(self.recipes),
-                    status=self.status.name,
-                    duration=self.duration,
-                    error_messages=self.error_messages,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        recipe_index=len(self.recipes),
+                        status=self.status.name,
+                        duration=self.duration,
+                        error_messages=self.error_messages,
+                    )
 
         elif self.run_type is RunnerType.COOKBOOK:
             print(
@@ -214,10 +250,11 @@ class Run:
 
             # Update progress
             self.update_progress(RunStatus.RUNNING)
-            self.progress.update_progress(
-                status=self.status.name,
-                duration=self.duration,
-            )
+            if self.progress:
+                self.progress.update_progress(
+                    status=self.status.name,
+                    duration=self.duration,
+                )
 
             # Run all cookbooks
             for cookbook_index, cookbook in enumerate(self.cookbooks, 0):
@@ -226,14 +263,15 @@ class Run:
                 )
 
                 # Update progress
-                self.progress.update_progress(
-                    cookbook_index=cookbook_index,
-                    cookbook_name=cookbook,
-                    cookbook_total=len(self.cookbooks),
-                    recipe_index=-1,
-                    recipe_name="",
-                    recipe_total=-1,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        cookbook_index=cookbook_index,
+                        cookbook_name=cookbook,
+                        cookbook_total=len(self.cookbooks),
+                        recipe_index=-1,
+                        recipe_name="",
+                        recipe_total=-1,
+                    )
 
                 # Run the cookbook
                 self.results[cookbook] = await self._run_cookbook(cookbook)
@@ -241,19 +279,21 @@ class Run:
             # Update progress
             if not self.error_messages:
                 self.update_progress(RunStatus.COMPLETED)
-                self.progress.update_progress(
-                    cookbook_index=len(self.cookbooks),
-                    status=self.status.name,
-                    duration=self.duration,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        cookbook_index=len(self.cookbooks),
+                        status=self.status.name,
+                        duration=self.duration,
+                    )
             else:
                 self.update_progress(RunStatus.COMPLETED_WITH_ERRORS)
-                self.progress.update_progress(
-                    cookbook_index=len(self.cookbooks),
-                    status=self.status.name,
-                    duration=self.duration,
-                    error_messages=self.error_messages,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        cookbook_index=len(self.cookbooks),
+                        status=self.status.name,
+                        duration=self.duration,
+                        error_messages=self.error_messages,
+                    )
 
         else:
             print("[Run] Failed to run benchmark due to invalid run type.")
@@ -263,11 +303,12 @@ class Run:
 
             # Update progress
             self.update_progress(RunStatus.COMPLETED_WITH_ERRORS)
-            self.progress.update_progress(
-                status=self.status.name,
-                duration=self.duration,
-                error_messages=self.error_messages,
-            )
+            if self.progress:
+                self.progress.update_progress(
+                    status=self.status.name,
+                    duration=self.duration,
+                    error_messages=self.error_messages,
+                )
 
     async def _run_cookbook(self, cookbook: str) -> dict:
         """
@@ -314,10 +355,11 @@ class Run:
             if cookbook_inst:
                 # Update progress
                 self.update_progress()
-                self.progress.update_progress(
-                    status=self.status.name,
-                    duration=self.duration,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        status=self.status.name,
+                        duration=self.duration,
+                    )
 
                 # Run all recipes
                 for recipe_index, recipe in enumerate(cookbook_inst.recipes, 0):
@@ -326,21 +368,23 @@ class Run:
                     )
 
                     # Update progress
-                    self.progress.update_progress(
-                        recipe_index=recipe_index,
-                        recipe_name=recipe,
-                        recipe_total=len(cookbook_inst.recipes),
-                    )
+                    if self.progress:
+                        self.progress.update_progress(
+                            recipe_index=recipe_index,
+                            recipe_name=recipe,
+                            recipe_total=len(cookbook_inst.recipes),
+                        )
 
                     # Run the recipe
                     recipe_results[recipe] = await self._run_recipe(recipe)
 
                 # Update progress
                 self.update_progress()
-                self.progress.update_progress(
-                    recipe_index=len(cookbook_inst.recipes),
-                    duration=self.duration,
-                )
+                if self.progress:
+                    self.progress.update_progress(
+                        recipe_index=len(cookbook_inst.recipes),
+                        duration=self.duration,
+                    )
 
                 print(
                     f"[Run] Running cookbook [{cookbook_inst.id}] took {(time.perf_counter() - start_time):.4f}s"

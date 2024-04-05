@@ -17,8 +17,11 @@ def list_runs() -> None:
     recipes, cookbooks, endpoints, number of prompts and the database path.
     If there are no runs, it displays a message saying "There are no runs found."
     """
-    runs_list = api_get_all_runner()
-    display_runs(runs_list)
+    try:
+        runs_list = api_get_all_runner()
+        display_runs(runs_list)
+    except Exception as e:
+        print(f"[list_runs]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------

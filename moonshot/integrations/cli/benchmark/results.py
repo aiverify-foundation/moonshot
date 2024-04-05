@@ -25,8 +25,11 @@ def list_results() -> None:
     Returns:
         None
     """
-    results_list = api_get_all_result_name()
-    display_results(results_list)
+    try:
+        results_list = api_get_all_result_name()
+        display_results(results_list)
+    except Exception as e:
+        print(f"[list_results]: {str(e)}")
 
 
 def view_result(args) -> None:
@@ -45,11 +48,14 @@ def view_result(args) -> None:
     Returns:
         None
     """
-    result_info = api_read_result(args.result_filename)
-    if args.result_filename.startswith("cookbook"):
-        display_view_cookbook_result(args.result_filename, result_info)
-    else:
-        display_view_recipe_result(args.result_filename, result_info)
+    try:
+        result_info = api_read_result(args.result_filename)
+        if args.result_filename.startswith("cookbook"):
+            display_view_cookbook_result(args.result_filename, result_info)
+        else:
+            display_view_recipe_result(args.result_filename, result_info)
+    except Exception as e:
+        print(f"[view_result]: {str(e)}")
 
 
 def delete_result(args) -> None:
@@ -66,7 +72,10 @@ def delete_result(args) -> None:
     Returns:
         None
     """
-    api_delete_result(args.result)
+    try:
+        api_delete_result(args.result)
+    except Exception as e:
+        print(f"[delete_result]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------

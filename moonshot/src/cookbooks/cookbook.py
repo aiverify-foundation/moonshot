@@ -88,9 +88,13 @@ class Cookbook:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return CookbookArguments(
-                **Storage.read_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
+            obj_results = Storage.read_object(
+                EnvVariables.COOKBOOKS.name, cb_id, "json"
             )
+            if obj_results:
+                return CookbookArguments(**obj_results)
+            else:
+                raise RuntimeError(f"Unable to get results for {cb_id}.")
 
         except Exception as e:
             print(f"Failed to read cookbook: {str(e)}")
