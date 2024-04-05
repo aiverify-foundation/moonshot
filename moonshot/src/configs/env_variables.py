@@ -117,18 +117,16 @@ class EnvironmentVars:
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
         """
-        This method is used to load environment variables from a given dictionary.
-        If the dictionary is not provided, it will use an empty dictionary.
+        This method is used to load environment variables from a provided dictionary.
+        If the dictionary is not provided, it defaults to an empty dictionary.
 
-        The method will set the class attributes with the corresponding values from the dictionary.
-        If a key from the class attributes is not found in the dictionary, it will raise a KeyError.
+        The method updates the class attributes with the corresponding values from the dictionary.
+        If a key from the class attributes is not found in the dictionary, it will not be updated and a
+        message will be printed.
 
         Args:
             env_dict (dict | None): A dictionary containing the environment variables to be loaded.
-                                          If None, an empty dictionary will be used.
-
-        Raises:
-            KeyError: If a key from the class attributes is not found in the provided dictionary.
+                                    If None, an empty dictionary will be used.
         """
         if env_dict is None:
             env_dict = dict()
@@ -179,16 +177,13 @@ class EnvironmentVars:
     @staticmethod
     def get_file_directory(file_type: str) -> list[str]:
         """
-        This method fetches the directory path or paths for a given file type.
+        This method retrieves the directory paths associated with a specified file type.
 
         Args:
-            file_type (str): The category of file for which the directory path is to be fetched.
+            file_type (str): The type of file for which the directory paths are to be retrieved.
 
         Returns:
-            list[str]: The directory path or paths of the requested file type.
-
-        Raises:
-            FileNotFoundError: If the directory cannot be found.
+            list[str]: A list containing the directory paths associated with the given file type.
         """
         path_from_user, path_from_resource = getattr(EnvironmentVars, file_type)
 
