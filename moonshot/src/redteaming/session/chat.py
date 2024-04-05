@@ -5,15 +5,15 @@ from typing import Union
 
 from slugify import slugify
 
-from moonshot.src.benchmarking.prompt_arguments import PromptArguments
+from moonshot.api import api_create_connector_from_endpoint
 from moonshot.src.connectors.connector import Connector
-from moonshot.src.connectors.connector_endpoint import ConnectorEndpoint
-from moonshot.src.prompt_template.prompt_template_manager import PromptTemplateManager
+from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.prompt_templates.prompt_template_manager import PromptTemplateManager
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
-from moonshot.src.storage.db.db_accessor import DBAccessor
-from moonshot.src.storage.storage_manager import StorageManager
+from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.storage import Storage
 
 
 class ChatRecord:
@@ -60,6 +60,12 @@ class ChatRecord:
 
 
 class Chat:
+    sql_create_chat_metadata_record = """
+            INSERT INTO chat_metadata_table (
+            chat_id,endpoint,created_epoch,created_datetime)
+            VALUES(?,?,?,?)
+    """
+
     def __init__(
         self,
         session_db_instance: DBAccessor,
@@ -80,15 +86,35 @@ class Chat:
             created_datetime = str(created_datetime).replace("-", "_")
             chat_id = f"{slugify(endpoint)}_{created_datetime}"
             db_chat_id = chat_id.replace("-", "_")
-            StorageManager.create_chat_history_storage(db_chat_id, session_db_instance)
+
+            sql_create_chat_history_table = f"""
+                CREATE TABLE IF NOT EXISTS {db_chat_id} (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                connection_id text NOT NULL,
+                context_strategy int,
+                prompt_template text,
+                prompt text NOT NULL,
+                prepared_prompt text NOT NULL,
+                predicted_result text NOT NULL,
+                duration text NOT NULL,
+                prompt_time text NOT NULL
+                );
+            """
+            Storage.create_database_table(
+                session_db_instance, sql_create_chat_history_table
+            )
+
             chat_meta_tuple = (
                 chat_id,
                 endpoint,
                 created_epoch,
                 created_datetime,
             )
-            StorageManager.create_chat_metadata_record(
-                chat_meta_tuple, session_db_instance
+
+            Storage.create_database_record(
+                session_db_instance,
+                chat_meta_tuple,
+                Chat.sql_create_chat_metadata_record,
             )
 
             self.chat_id = db_chat_id
@@ -156,9 +182,11 @@ class Chat:
         Returns:
             list[ChatRecord]: A list of ChatRecord instances representing the chat history.
         """
-        list_of_chat_record_tuples = StorageManager.get_chat_history_for_one_endpoint(
-            chat_id, session_db_instance
+        sql_read_chat_history_for_one_endpoint = f"""SELECT * FROM {chat_id}"""
+        list_of_chat_record_tuples = Storage.read_database_records(
+            session_db_instance, sql_read_chat_history_for_one_endpoint
         )
+
         list_of_chat_records = []
         if list_of_chat_record_tuples:
             list_of_chat_records = [
@@ -216,17 +244,11 @@ class Chat:
             prepared_prompt = PromptTemplateManager.process_prompt_pt(
                 prepared_prompt, prompt_template_name
             )
-        endpoint_instance = Connector.create(ConnectorEndpoint.read(endpoint))
+        endpoint_instance = api_create_connector_from_endpoint(endpoint)
 
         # put variables into PromptArguments before passing it to get_prediction
-        new_prompt_info = PromptArguments(
-            rec_id="",
-            pt_id="",
-            ds_id="",
-            prompt_index=1,
-            prompt=prepared_prompt,
-            target="",
-            conn_id="",
+        new_prompt_info = ConnectorPromptArguments(
+            prompt_index=1, prompt=prepared_prompt, target=""
         )
 
         prompt_start_time = datetime.now()
@@ -247,6 +269,11 @@ class Chat:
             prediction_response.duration,
             prompt_start_time.strftime("%m/%d/%Y, %H:%M:%S"),
         )
-        StorageManager.create_chat_record(
-            chat_record_tuple, session_db_instance, chat_id
+
+        sql_create_chat_record = f"""
+            INSERT INTO {chat_id} (connection_id,context_strategy,prompt_template,prompt,
+            prepared_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?)
+            """
+        Storage.create_database_record(
+            session_db_instance, chat_record_tuple, sql_create_chat_record
         )

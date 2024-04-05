@@ -22,6 +22,8 @@ class EnvVariables(Enum):
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
+    ATTACK_MODULES = "ATTACK_MODULES"
+    STOP_STRATEGIES = "STOP_STRATEGIES"
 
 
 class EnvironmentVars:
@@ -91,18 +93,18 @@ class EnvironmentVars:
         EnvVariables.RUNNERS.value,
         importlib.resources.files(__app_name__).joinpath("data/runners"),
     )
-    ATTACK_MODULE = env_vars.get(
-        "ATTACK_MODULE",
-        importlib.resources.files(__app_name__).joinpath("data/attack-modules"),
-    )
-    STOP_STRATEGY = env_vars.get(
-        "STOP_STRATEGY",
-        importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
-    )
-
     SESSIONS = env_vars.get(
         EnvVariables.SESSIONS.value,
         importlib.resources.files(__app_name__).joinpath("data/sessions"),
+    )
+
+    ATTACK_MODULES = env_vars.get(
+        "ATTACK_MODULES",
+        importlib.resources.files(__app_name__).joinpath("data/attack-modules"),
+    )
+    STOP_STRATEGIES = env_vars.get(
+        "STOP_STRATEGIES",
+        importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
     )
 
     @staticmethod
