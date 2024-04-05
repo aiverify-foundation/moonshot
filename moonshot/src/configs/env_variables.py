@@ -29,69 +29,80 @@ class EnvironmentVars:
 
     CONNECTORS = [
         env_vars.get(EnvVariables.CONNECTORS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/connectors"))
+        str(importlib.resources.files(__app_name__).joinpath("data/connectors")),
     ]
     CONNECTORS_ENDPOINTS = [
         env_vars.get(EnvVariables.CONNECTORS_ENDPOINTS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"))
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/connectors-endpoints"
+            )
+        ),
     ]
     CONTEXT_STRATEGY = [
         env_vars.get(EnvVariables.CONTEXT_STRATEGY.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/context-strategy"))
+        str(importlib.resources.files(__app_name__).joinpath("data/context-strategy")),
     ]
     COOKBOOKS = [
         env_vars.get(EnvVariables.COOKBOOKS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/cookbooks"))
+        str(importlib.resources.files(__app_name__).joinpath("data/cookbooks")),
     ]
     DATABASES = [
-        env_vars.get(EnvVariables.DATABASES.value), 
-        str(importlib.resources.files(__app_name__).joinpath("data/databases"))
+        env_vars.get(EnvVariables.DATABASES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/databases")),
     ]
     DATABASES_MODULES = [
         env_vars.get(EnvVariables.DATABASES_MODULES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/databases-modules"))
+        str(importlib.resources.files(__app_name__).joinpath("data/databases-modules")),
     ]
     DATASETS = [
-        env_vars.get(EnvVariables.DATASETS.value), 
-        str(importlib.resources.files(__app_name__).joinpath("data/datasets"))
+        env_vars.get(EnvVariables.DATASETS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/datasets")),
     ]
     IO_MODULES = [
         env_vars.get(EnvVariables.IO_MODULES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/io-modules"))
+        str(importlib.resources.files(__app_name__).joinpath("data/io-modules")),
     ]
     METRICS = [
         env_vars.get(EnvVariables.METRICS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/metrics"))
+        str(importlib.resources.files(__app_name__).joinpath("data/metrics")),
     ]
     METRICS_CONFIG = [
         env_vars.get(EnvVariables.METRICS_CONFIG.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/metrics/metrics_config.json"))
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/metrics/metrics_config.json"
+            )
+        ),
     ]
     PROMPT_TEMPLATES = [
         env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/prompt-templates"))
+        str(importlib.resources.files(__app_name__).joinpath("data/prompt-templates")),
     ]
     RECIPES = [
         env_vars.get(EnvVariables.RECIPES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/recipes"))
+        str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
     ]
     RECIPES_PROCESSING_MODULES = [
         env_vars.get(EnvVariables.RECIPES_PROCESSING_MODULES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/recipes-processing-modules"))
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/recipes-processing-modules"
+            )
+        ),
     ]
     RESULTS = [
-        env_vars.get(EnvVariables.RESULTS.value), 
-        str(importlib.resources.files(__app_name__).joinpath("data/results"))
+        env_vars.get(EnvVariables.RESULTS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/results")),
     ]
     RUNNERS = [
         env_vars.get(EnvVariables.RUNNERS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/runners"))
+        str(importlib.resources.files(__app_name__).joinpath("data/runners")),
     ]
     SESSIONS = [
-        env_vars.get(EnvVariables.SESSIONS.value), 
-        str(importlib.resources.files(__app_name__).joinpath("data/sessions"))
+        env_vars.get(EnvVariables.SESSIONS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
     ]
-
 
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
@@ -131,51 +142,47 @@ class EnvironmentVars:
                 f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
             )
 
-
     @staticmethod
-    def get_file_path(file_type: EnvVariables, file_name: str) -> str:
+    def get_file_path(file_type: str, file_name: str) -> str:
         """
-        This method retrieves the file path for a specific file type and file name.
-        
+        This method fetches the file path for a given file type and file name.
+
         Args:
-            file_type (EnvVariables): The type of file to retrieve.
-            file_name (str): The name of the file to retrieve.
-        
+            file_type (str): The category of file for which the file path is to be fetched.
+            file_name (str): The name of the file for which the file path is to be fetched.
+
         Returns:
-            str: The file path of the specified file if found.
-        
+            str: The file path of the requested file.
+
         Raises:
-            FileNotFoundError: If the specified file cannot be found in either the user-defined path or the resource path.
+            FileNotFoundError: If the file cannot be found.
         """
-        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
+        directories = EnvironmentVars.get_file_directory(file_type)
 
-        if path_from_user is not None:
-            user_file_path = Path(path_from_user) / file_name
-            if Path(user_file_path).exists():
-                return str(user_file_path)
-        
-        resource_file_path = Path(path_from_resource) / file_name
-        if Path(resource_file_path).exists():
-            return str(resource_file_path)
-                
+        for directory in directories:
+            file_path = Path(directory) / file_name
+            if Path(file_path).exists():
+                return str(file_path)
+
         raise FileNotFoundError(f"{file_name} cannot be found.")
-    
 
     @staticmethod
-    def get_file_directory(file_type: EnvVariables) -> str:
+    def get_file_directory(file_type: str) -> list[str]:
         """
-        This method retrieves the directory path for a specific file type.
-        
+        This method fetches the directory path or paths for a given file type.
+
         Args:
-            file_type (EnvVariables): The type of file to retrieve the directory path for.
-        
+            file_type (str): The category of file for which the directory path is to be fetched.
+
         Returns:
-            str: The directory path of the specified file type.
+            list[str]: The directory path or paths of the requested file type.
+
+        Raises:
+            FileNotFoundError: If the directory cannot be found.
         """
-        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type.value)
+        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type)
 
         if path_from_user is not None:
-            return str(Path(path_from_user))
-        
-        return str(Path(path_from_resource))
-    
+            return [path_from_user, path_from_resource]
+        else:
+            return [path_from_resource]

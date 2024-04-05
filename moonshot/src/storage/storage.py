@@ -1,6 +1,7 @@
 import datetime
 import glob
 import os
+from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
@@ -30,7 +31,7 @@ class Storage:
             obj_extension (str): The file extension (e.g., 'json', 'py').
             obj_mod_type (str, optional): The module type for object serialization. Defaults to 'json'.
         """
-        obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         obj_mod_instance = get_instance(
             obj_mod_type,
             Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
@@ -75,7 +76,7 @@ class Storage:
             RuntimeError: If there is an error getting the object module instance or the object file module instance.
         """
         # Get jsonio object to return raw file instance
-        obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         obj_file_instance = get_instance(
             obj_mod_type,
             Storage.get_filepath(EnvVariables.IO_MODULES.name, "jsonio", "py"),
@@ -115,7 +116,7 @@ class Storage:
         Returns:
             dict: A dictionary containing the object information.
         """
-        obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         obj_mod_instance = get_instance(
             obj_mod_type,
             Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
@@ -137,9 +138,7 @@ class Storage:
             obj_id (str): The ID of the object.
             obj_extension (str): The file extension (e.g., 'json', 'py').
         """
-        obj_filepath = Path(
-            f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
-        )
+        obj_filepath = Path(Storage.get_filepath(obj_type, obj_id, obj_extension))
         if obj_filepath.exists():
             obj_filepath.unlink()
         else:
@@ -148,7 +147,7 @@ class Storage:
     @staticmethod
     def get_objects(obj_type: str, obj_extension: str) -> Iterator[str]:
         """
-        Retrieves all the object files with the specified extension.
+        Retrieves all the object files with the specified extension from one or more directories.
 
         Args:
             obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
@@ -157,7 +156,10 @@ class Storage:
         Returns:
             Iterator[str]: An iterator that yields the filepaths of the object files.
         """
-        return glob.iglob(f"{getattr(EnvironmentVars, obj_type)}/*.{obj_extension}")
+        directories = EnvironmentVars.get_file_directory(obj_type)
+        return chain.from_iterable(
+            glob.iglob(f"{directory}/*.{obj_extension}") for directory in directories
+        )
 
     @staticmethod
     def get_creation_datetime(obj_type: str, obj_id: str, obj_extension: str):
@@ -172,8 +174,9 @@ class Storage:
         Returns:
             datetime: The creation datetime of the object.
         """
-        obj_filepath = f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
-        creation_timestamp = os.path.getctime(obj_filepath)
+        creation_timestamp = os.path.getctime(
+            Storage.get_filepath(obj_type, obj_id, obj_extension)
+        )
         creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
         return creation_datetime
 
@@ -190,7 +193,7 @@ class Storage:
         Returns:
             str: The file path of the object.
         """
-        return f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
+        return EnvironmentVars.get_file_path(obj_type, f"{obj_id}.{obj_extension}")
 
     @staticmethod
     def is_object_exists(obj_type: str, obj_id: str, obj_extension: str) -> bool:
@@ -205,10 +208,7 @@ class Storage:
         Returns:
             bool: True if the object exists, False otherwise.
         """
-        obj_filepath = Path(
-            f"{getattr(EnvironmentVars, obj_type)}/{obj_id}.{obj_extension}"
-        )
-        return obj_filepath.exists()
+        return Path(Storage.get_filepath(obj_type, obj_id, obj_extension)).exists()
 
     @staticmethod
     def create_database_connection(
