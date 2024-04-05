@@ -28,7 +28,7 @@ async def get_all_sessions(
     session_service: SessionService = Depends(Provide[Container.session_service])
 ) -> list[Optional[SessionMetadataModel]]:
     try:
-        return session_service.get_sessions()
+        return session_service.get_all_session()
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -37,6 +37,22 @@ async def get_all_sessions(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
+@router.get("/v1/sessions/name")
+@inject
+async def get_all_sessions_name(
+    session_service: SessionService = Depends(Provide[Container.session_service])
+) -> list[str]:
+    try:
+        return session_service.get_all_sessions_names()
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+        
 
 @router.get("/v1/sessions/{session_id}")
 @inject
@@ -102,16 +118,15 @@ async def prompt(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.get("/v1/prompt_templates")
+@router.delete("/v1/sessions/{session_id}")
 @inject
-def get_all_prompt_templates(
+async def delete_session(
+    session_id: str,
     session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> PromptTemplatesResponseModel:
-    """
-    Get all the prompt templates from the database
-    """
+    ) -> dict[str, bool]:
     try:
-        return session_service.get_prompt_templates()
+        session_service.delete_session(session_id)
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -158,22 +173,6 @@ async def unset_prompt_template(
         # rely on exception for now. TODO - ms lib to return or raise feedback
         session_service.select_prompt_template(session_id,"")
         return {"success": True }
-    except ServiceException as e:
-        if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=e.msg)
-        elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=e.msg)
-        else:
-            raise HTTPException(status_code=500, detail=e.msg)
-
-
-@router.get("/v1/context_strategies")
-@inject
-def get_all_context_strategies(
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> list[str]:
-    try:
-        return session_service.get_ctx_strategies()
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)

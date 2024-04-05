@@ -337,6 +337,30 @@ class Storage:
             raise RuntimeError("Database instance is not initialised.")
 
     @staticmethod
+    def read_database_records(
+        database_instance: DBAccessor, sql_read_records: str
+    ) -> list[tuple] | None:
+        """
+        Reads records from the database.
+
+        This method is used to retrieve records from the database. If the database instance is not initialised,
+        it raises a RuntimeError. If the database instance is initialised, it calls the read_records method of the
+        database instance and returns the record if found.
+
+        Args:
+            database_instance (DBAccessor): The database accessor instance.
+            data (tuple): The data to be matched for reading the record.
+            sql_read_records (str): The SQL query to read a record.
+
+        Returns:
+            tuple | None: The record if found, None otherwise.
+        """
+        if database_instance:
+            return database_instance.read_records(sql_read_records)
+        else:
+            raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
     def update_database_record(
         database_instance: DBAccessor, data: tuple, sql_update_record: str
     ) -> None:

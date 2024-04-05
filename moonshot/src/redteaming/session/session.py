@@ -1,15 +1,13 @@
-import os
 import time
 from ast import literal_eval
 from datetime import datetime
-from pathlib import Path
 
 from slugify import slugify
 
-from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
-from moonshot.src.storage.db.db_accessor import DBAccessor
-from moonshot.src.storage.storage_manager import StorageManager
+from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.storage import Storage
 
 
 class SessionMetadata:
@@ -56,6 +54,49 @@ class SessionMetadata:
 
 
 class Session:
+    sql_update_session_metadata_chat = """
+        UPDATE session_metadata_table SET chat_ids=? WHERE session_id=?
+    """
+    sql_read_session_metadata = """
+            SELECT * from session_metadata_table
+    """
+    sql_read_session_chat_metadata = """
+            SELECT * from chat_metadata_table
+    """
+    sql_update_prompt_template = """
+            UPDATE session_metadata_table SET prompt_template=? WHERE session_id =?
+    """
+    sql_update_context_strategy = """
+            UPDATE session_metadata_table SET context_strategy=? WHERE session_id =?
+    """
+    sql_create_session_metadata_table = """
+            CREATE TABLE IF NOT EXISTS session_metadata_table (
+            session_id text PRIMARY KEY NOT NULL,
+            name text NOT NULL,
+            description text NOT NULL,
+            endpoints text NOT NULL,
+            created_epoch INTEGER NOT NULL,
+            created_datetime text NOT NULL,
+            context_strategy text,
+            prompt_template text,
+            chat_ids text
+            );
+    """
+    sql_create_chat_metadata_table = """
+            CREATE TABLE IF NOT EXISTS chat_metadata_table (
+            chat_id text PRIMARY KEY,
+            endpoint text NOT NULL,
+            created_epoch INTEGER NOT NULL,
+            created_datetime text NOT NULL
+            );
+    """
+
+    sql_create_session_metadata_record = """
+        INSERT INTO session_metadata_table (
+        session_id,name,description,endpoints,created_epoch,created_datetime,context_strategy,prompt_template)
+        VALUES(?,?,?,?,?,?,?,?)
+    """
+
     def __init__(
         # TODO system prompt
         self,
@@ -67,25 +108,30 @@ class Session:
         context_strategy: str = "",
     ):
 
-        # Checks if context strategy exists if it's specified
+        # Checks if cs and pt exist if they are specified
         if context_strategy:
-            self.check_file_exists("context_strategy", context_strategy)
-        else:
-            context_strategy = ""
-        # Checks if prompt template exists if it's specified
+            if not Storage.is_object_exists(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy, "py"
+            ):
+                raise RuntimeError(
+                    f"Unable to find Context Strategy {context_strategy}. Please select another one."
+                )
         if prompt_template:
-            self.check_file_exists("prompt_template", prompt_template)
-        else:
-            prompt_template = ""
-        # Existing session
+            if not Storage.is_object_exists(
+                EnvVariables.PROMPT_TEMPLATES.name, prompt_template, "json"
+            ):
+                raise RuntimeError(
+                    f"Unable to find Prompt Template {prompt_template}. Please select another one."
+                )
+
+        # There is an existing session
         if session_id:
             # Check if session_id is valid
-            db_filepath = f"{EnvironmentVars.SESSIONS}/{session_id}.db"
-
-            if Path(db_filepath).exists():
-
-                self.db_instance = StorageManager.create_session_database_connection(
-                    session_id
+            if Storage.is_object_exists(EnvVariables.SESSIONS.name, session_id, "db"):
+                self.db_instance = Storage.create_database_connection(
+                    obj_type=EnvVariables.DATABASES.name,
+                    obj_id=session_id,
+                    obj_extension="db",
                 )
                 self.metadata = self.get_session_metadata_by_id(session_id)
             else:
@@ -133,23 +179,31 @@ class Session:
             session_id = session_meta_tuple[0]
             created_epoch = session_meta_tuple[4]
             created_datetime = session_meta_tuple[5]
-
-            # creates db, session, and chat metadata tables, and inserts session metadata
-            session_db_instance = StorageManager.create_session_database_connection(
-                session_id
-            )
-            StorageManager.create_session_storage(
-                session_meta_tuple, session_db_instance
+            session_db_instance = Storage.create_database_connection(
+                EnvVariables.SESSIONS.name, session_id, "db"
             )
 
             # creates chat tables, updates chat metadata, and updates session metadata with chat ids
+            Storage.create_database_table(
+                session_db_instance, Session.sql_create_session_metadata_table
+            )
+            Storage.create_database_table(
+                session_db_instance, Session.sql_create_chat_metadata_table
+            )
+            Storage.create_database_record(
+                session_db_instance,
+                session_meta_tuple,
+                Session.sql_create_session_metadata_record,
+            )
             list_of_chats = [
                 Chat(session_db_instance, endpoint, created_epoch, created_datetime)
                 for endpoint in endpoints
             ]
             chat_ids = [str(chat.chat_id) for chat in list_of_chats]
-            StorageManager.update_session_metadata_with_chat_info(
-                (str(chat_ids), session_id), session_db_instance
+            Storage.update_database_record(
+                session_db_instance,
+                (str(chat_ids), session_id),
+                Session.sql_update_session_metadata_chat,
             )
         except Exception:
             raise
@@ -167,9 +221,11 @@ class Session:
         Returns:
             A database connection instance specific to the session identified by session_id.
         """
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
+
+        session_db_instance = Storage.create_database_connection(
+            obj_type=EnvVariables.SESSIONS.name, obj_id=session_id, obj_extension="db"
         )
+
         return session_db_instance
 
     @staticmethod
@@ -189,18 +245,23 @@ class Session:
             SessionMetadata: An instance of SessionMetadata populated with the session's metadata, including
                             converted 'endpoints' and 'chat_ids' fields.
         """
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        session_metadata_tuple = StorageManager.get_session_metadata(
-            session_db_instance
-        )
-        session_metadata = SessionMetadata(*session_metadata_tuple)
 
-        # parse string of lists to lists. they are stored as string as the db does not support
-        session_metadata.endpoints = literal_eval(session_metadata.endpoints)
-        session_metadata.chat_ids = literal_eval(session_metadata.chat_ids)
-        return session_metadata
+        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
+        session_metadata_records = Storage.read_database_records(
+            session_db_instance, Session.sql_read_session_metadata
+        )
+        if session_metadata_records is not None:
+            session_metadata_tuple = session_metadata_records[0]
+            session_metadata = SessionMetadata(*session_metadata_tuple)
+
+            # parse string of lists to lists. they are stored as string as the db does not support
+            session_metadata.endpoints = literal_eval(session_metadata.endpoints)
+            session_metadata.chat_ids = literal_eval(session_metadata.chat_ids)
+            return session_metadata
+        else:
+            raise RuntimeError(
+                "Unable to retrieve Session metadata. Please create a new Session"
+            )
 
     @staticmethod
     def get_session_chats_by_session_id(session_id: str) -> list[Chat]:
@@ -218,19 +279,22 @@ class Session:
         Returns:
             list: A list of Chat instances, each representing a chat session associated with the specified session ID.
         """
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        list_of_chat_metadata: list[tuple[str, str]] = (
-            StorageManager.get_session_chat_metadata(session_db_instance)
+        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
+        list_of_chat_metadata = Storage.read_database_records(
+            session_db_instance, Session.sql_read_session_chat_metadata
         )
 
-        return [
-            Chat.load_chat(
-                session_db_instance, str(chat_metadata[0]), str(chat_metadata[1])
+        if list_of_chat_metadata is not None:
+            return [
+                Chat.load_chat(
+                    session_db_instance, str(chat_metadata[0]), str(chat_metadata[1])
+                )
+                for chat_metadata in list_of_chat_metadata
+            ]
+        else:
+            raise RuntimeError(
+                "Unable to retrieve Chat metadata. Please create a new Session"
             )
-            for chat_metadata in list_of_chat_metadata
-        ]
 
     @staticmethod
     def delete_session(session_id: str) -> None:
@@ -241,7 +305,7 @@ class Session:
             session_id (str): The unique identifier for the session whose database file is to be deleted.
         """
         try:
-            os.remove(f"{EnvironmentVars.SESSIONS}/{session_id}.db")
+            Storage.delete_object(EnvVariables.SESSIONS.name, session_id, "db")
         except OSError as e:
             print(f"Failed to delete Session file: {e.filename} - {e.strerror}")
         else:
@@ -250,28 +314,32 @@ class Session:
     @staticmethod
     async def send_prompt(session_id: str, user_prompt: str) -> None:
         # get session db connection
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
+        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
+        session_metadata_records = Storage.read_database_records(
+            session_db_instance, Session.sql_read_session_metadata
         )
-        session_metadata = SessionMetadata(
-            *StorageManager.get_session_metadata(session_db_instance)
-        )
+        if session_metadata_records is not None:
+            session_metadata_tuple = session_metadata_records[0]
+            session_metadata = SessionMetadata(*session_metadata_tuple)
+            # get cs, pt, endpoint chat ids from session metadata
+            context_strategy_name: str = session_metadata.context_strategy
+            prompt_template_name: str = session_metadata.prompt_template
+            list_of_endpoints: list[str] = literal_eval(session_metadata.endpoints)
+            list_of_chat_ids: list[str] = literal_eval(session_metadata.chat_ids)
 
-        # get cs, pt, endpoint chat ids from session metadata
-        context_strategy_name: str = session_metadata.context_strategy
-        prompt_template_name: str = session_metadata.prompt_template
-        list_of_endpoints: list[str] = literal_eval(session_metadata.endpoints)
-        list_of_chat_ids: list[str] = literal_eval(session_metadata.chat_ids)
-
-        # pass required configuration to individual chats to send prompt
-        for chat_id, endpoint in zip(list_of_chat_ids, list_of_endpoints):
-            await Chat.send_prompt(
-                session_db_instance=session_db_instance,
-                chat_id=chat_id,
-                endpoint=str(endpoint),
-                user_prompt=user_prompt,
-                context_strategy_name=context_strategy_name,
-                prompt_template_name=prompt_template_name,
+            # pass required configuration to individual chats to send prompt
+            for chat_id, endpoint in zip(list_of_chat_ids, list_of_endpoints):
+                await Chat.send_prompt(
+                    session_db_instance=session_db_instance,
+                    chat_id=chat_id,
+                    endpoint=str(endpoint),
+                    user_prompt=user_prompt,
+                    context_strategy_name=context_strategy_name,
+                    prompt_template_name=prompt_template_name,
+                )
+        else:
+            raise RuntimeError(
+                "Unable to retrieve Session metadata. Please create a new Session"
             )
 
     @staticmethod
@@ -291,12 +359,17 @@ class Session:
         Returns:
             None: This method does not return a value but updates the prompt template for the specified session.
         """
-        Session.check_file_exists("prompt_template", prompt_template_name)
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        StorageManager.update_prompt_template(
-            session_db_instance, (prompt_template_name, session_id)
+        if not Storage.is_object_exists(
+            EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
+        ):
+            raise RuntimeError(
+                f"Unable to find Prompt Template {prompt_template_name}. Please select another one."
+            )
+        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
+        Storage.update_database_record(
+            session_db_instance,
+            (prompt_template_name, session_id),
+            Session.sql_update_prompt_template,
         )
 
     @staticmethod
@@ -316,38 +389,16 @@ class Session:
         Returns:
             None: This method does not return a value but updates the context strategy for the specified session.
         """
-        Session.check_file_exists("context_strategy", context_strategy_name)
-        session_db_instance = StorageManager.create_session_database_connection(
-            session_id
-        )
-        StorageManager.update_context_strategy(
-            session_db_instance, (context_strategy_name, session_id)
-        )
 
-    @staticmethod
-    def check_file_exists(file_type: str, file_name: str) -> str:
-        """
-        Checks if a file exists in the corresponding directory. If the file does not exist, it returns an error message.
-
-        Args:
-            file_type (str): The type of the file. It can be either 'prompt_template' or 'context_strategy'.
-            file_name (str): The name of the file to be checked.
-
-        Returns:
-            str: An error message if the file does not exist. Returns an empty string if the file exists.
-
-        """
-        if file_type == "prompt_template":
-            file_path = f"{EnvironmentVars.PROMPT_TEMPLATES}/{file_name}.json"
-            file_type = "Prompt Template"
-        else:
-            file_path = f"{EnvironmentVars.CONTEXT_STRATEGY}/{file_name}.py"
-            file_type = "Context Strategy"
-
-        try:
-            open(file_path, "r")
-        except IOError:
-            print(
-                f"{file_type} {file_name} does not seem to exist at {file_path}. Please select something available."
+        if not Storage.is_object_exists(
+            EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+        ):
+            raise RuntimeError(
+                f"Unable to find Context Strategy {context_strategy_name}. Please select another one."
             )
-            raise
+        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
+        Storage.update_database_record(
+            session_db_instance,
+            (context_strategy_name, session_id),
+            Session.sql_update_context_strategy,
+        )

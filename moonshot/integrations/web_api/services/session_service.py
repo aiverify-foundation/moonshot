@@ -32,6 +32,13 @@ class SessionService(BaseService):
             chat_history=None
         )
 
+
+    @exception_handler
+    def get_all_session(self) -> list[SessionMetadataModel]:
+        sessions = moonshot_api.api_get_all_session_detail()
+        return [SessionMetadataModel.model_validate(session) for session in sessions]
+
+    
     @exception_handler
     def get_session(self, session_id: str) -> SessionMetadataModel | None:
         sessions = self.get_sessions()
@@ -40,6 +47,12 @@ class SessionService(BaseService):
                 return SessionMetadataModel.model_validate(session)
         return None
         
+
+    @exception_handler
+    def get_all_sessions_names(self) -> list[str]:
+        sessions = moonshot_api.api_get_all_session_name()
+        return sessions
+
 
     @exception_handler
     def get_sessions(self) -> list[SessionMetadataModel | None]:
@@ -60,20 +73,16 @@ class SessionService(BaseService):
         await moonshot_api.api_send_prompt(session_id, user_prompt)
         all_chats_dict = self.get_session_chat_history(session_id)
         return all_chats_dict
+    
+    
+    @exception_handler
+    def delete_session(self, session_id: str) -> None:
+        moonshot_api.api_delete_session(session_id)
 
     @exception_handler
     def select_prompt_template(self, session_id: str, prompt_template_name: str = ''):
         moonshot_api.api_update_prompt_template(session_id,prompt_template_name)
-    
-    @exception_handler
-    def get_prompt_templates(self) -> list[dict[str, Any]]:
-        templates = moonshot_api.api_get_all_prompt_template_detail()
-        return templates
-    
-    @exception_handler
-    def get_ctx_strategies(self) -> list[str]:
-        strategies = moonshot_api.api_get_all_context_strategy_name()
-        return strategies
+
     
     @exception_handler
     def select_ctx_strategy(self, session_id: str, ctx_strategy_name: str) -> None:
