@@ -2,8 +2,7 @@ import glob
 import inspect
 import os
 from pathlib import Path
-from typing import Any, Optional
-
+from typing import Any
 from moonshot.src.configs.env_variables import EnvironmentVars
 from moonshot.src.utils.import_modules import (
     create_module_spec,
@@ -64,7 +63,7 @@ class ContextStrategyManager:
     @staticmethod
     def process_prompt_cs(
         user_prompt: str, context_strategy_name: str, list_of_chats: list[dict]
-    ) -> Optional[str]:
+    ) -> str:
         context_strategy_instance = ContextStrategyManager.load_context_strategy_module(
             context_strategy_name
         )
