@@ -6,6 +6,7 @@ __app_name__ = "moonshot"
 
 
 class EnvVariables(Enum):
+    ATTACK_MODULES = "ATTACK_MODULES"
     CONNECTORS = "CONNECTORS"
     CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
     CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
@@ -22,13 +23,16 @@ class EnvVariables(Enum):
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
-    ATTACK_MODULES = "ATTACK_MODULES"
     STOP_STRATEGIES = "STOP_STRATEGIES"
 
 
 class EnvironmentVars:
     env_vars = {}
 
+    ATTACK_MODULES = [
+        env_vars.get(EnvVariables.ATTACK_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/attack-modules")),
+    ]
     CONNECTORS = [
         env_vars.get(EnvVariables.CONNECTORS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/connectors")),
@@ -105,15 +109,10 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.SESSIONS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
     ]
-
-    ATTACK_MODULES = env_vars.get(
-        "ATTACK_MODULES",
-        importlib.resources.files(__app_name__).joinpath("data/attack-modules"),
-    )
-    STOP_STRATEGIES = env_vars.get(
-        "STOP_STRATEGIES",
-        importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
-    )
+    STOP_STRATEGIES = [
+        env_vars.get(EnvVariables.STOP_STRATEGIES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/stop-strategies")),
+    ]
 
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
