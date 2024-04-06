@@ -151,28 +151,28 @@ class EnvironmentVars:
             )
 
     @staticmethod
-    def get_file_path(file_type: str, file_name: str) -> str:
+    def get_file_path(file_type: str, file_name: str, ignore_existance: bool) -> str:
         """
-        This method fetches the file path for a given file type and file name.
+        This method is used to get the file path for a given file type and file name.
+        If the ignore existance flag is set to True, it returns the file path even if the file does not exist.
 
         Args:
-            file_type (str): The category of file for which the file path is to be fetched.
-            file_name (str): The name of the file for which the file path is to be fetched.
+            file_type (str): The type of the file (e.g., 'recipe', 'cookbook').
+            file_name (str): The name of the file.
+            ignore_existance (bool): A flag indicating whether to return the file path
+                             even if the file does not exist.
 
         Returns:
-            str: The file path of the requested file.
-
-        Raises:
-            FileNotFoundError: If the file cannot be found.
+            str: The file path of the file.
         """
-        directories = EnvironmentVars.get_file_directory(file_type)
-
-        for directory in directories:
+        for directory in EnvironmentVars.get_file_directory(file_type):
             file_path = Path(directory) / file_name
-            if Path(file_path).exists():
+            if ignore_existance:
                 return str(file_path)
-
-        raise FileNotFoundError(f"{file_name} cannot be found.")
+            else:
+                if Path(file_path).exists():
+                    return str(file_path)
+        return ""
 
     @staticmethod
     def get_file_directory(file_type: str) -> list[str]:

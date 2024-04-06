@@ -1,7 +1,9 @@
+import cmd2
 from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_get_all_runner
+from moonshot.src.api.api_runner import api_delete_runner, api_read_runner
 
 console = Console()
 
@@ -22,6 +24,44 @@ def list_runs() -> None:
         display_runs(runs_list)
     except Exception as e:
         print(f"[list_runs]: {str(e)}")
+
+
+def view_run(args) -> None:
+    """
+    This function views a specific run. It takes the run id as an argument, calls the API to read the run and then
+    displays the run information in a tabular format on the console. If there is an error, it catches the exception
+    and displays the error message.
+
+    Parameters:
+        args (dict): A dictionary that contains the run id.
+
+    Returns:
+        None
+    """
+    try:
+        run_info = api_read_runner(args.run)
+        display_runs([run_info])
+    except Exception as e:
+        print(f"[view_run]: {str(e)}")
+
+
+def delete_run(args) -> None:
+    """
+    This function deletes a specific run. It takes the run id as an argument, calls the API to delete the run and then
+    displays a message saying "Run deleted." If there is an error, it catches the exception and displays the error
+    message.
+
+    Parameters:
+        args (dict): A dictionary that contains the run id.
+
+    Returns:
+        None
+    """
+    try:
+        api_delete_runner(args.run)
+        print("[delete_run]: Run deleted.")
+    except Exception as e:
+        print(f"[delete_run]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------
@@ -57,10 +97,23 @@ def display_runs(runs_list) -> None:
 
             contains_info = ""
             if recipes:
-                contains_info += f"[blue]Recipes:[/blue]\n{recipes}\n\n"
+                contains_info += (
+                    "[blue]Recipes:[/blue]"
+                    + "".join(f"\n{i + 1}. {item}" for i, item in enumerate(recipes))
+                    + "\n\n"
+                )
             elif cookbooks:
-                contains_info += f"[blue]Cookbooks:[/blue]\n{cookbooks}\n\n"
-            contains_info += f"[blue]Endpoints:[/blue]\n{endpoints}\n\n"
+                contains_info += (
+                    "[blue]Cookbooks:[/blue]"
+                    + "".join(f"\n{i + 1}. {item}" for i, item in enumerate(cookbooks))
+                    + "\n\n"
+                )
+
+            contains_info += (
+                "[blue]Endpoints:[/blue]"
+                + "".join(f"\n{i + 1}. {item}" for i, item in enumerate(endpoints))
+                + "\n\n"
+            )
             contains_info += f"[blue]Number of Prompts:[/blue]\n{num_of_prompts}\n\n"
             contains_info += f"[blue]Database path:[/blue]\n{db_file}"
 
@@ -69,3 +122,21 @@ def display_runs(runs_list) -> None:
         console.print(table)
     else:
         console.print("[red]There are no runs found.[/red]")
+
+
+# ------------------------------------------------------------------------------
+# Cmd2 Arguments Parsers
+# ------------------------------------------------------------------------------
+# View run arguments
+view_run_args = cmd2.Cmd2ArgumentParser(
+    description="View a run.",
+    epilog="Example:\n view_run my-new-recipe-executor",
+)
+view_run_args.add_argument("run", type=str, help="Name of the run")
+
+# Delete run arguments
+delete_run_args = cmd2.Cmd2ArgumentParser(
+    description="Delete a run.",
+    epilog="Example:\n delete_run my-new-recipe-executor",
+)
+delete_run_args.add_argument("run", type=str, help="Name of the run")

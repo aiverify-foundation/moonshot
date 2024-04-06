@@ -31,17 +31,20 @@ class Storage:
             obj_extension (str): The file extension (e.g., 'json', 'py').
             obj_mod_type (str, optional): The module type for object serialization. Defaults to 'json'.
         """
-        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
-        obj_mod_instance = get_instance(
-            obj_mod_type,
-            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
-        )
-        if obj_mod_instance:
-            return obj_mod_instance(obj_filepath).create_file(obj_info)
-        else:
-            raise RuntimeError(
-                f"Unable to get defined object module instance - {obj_mod_instance}"
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
+        if obj_filepath:
+            obj_mod_instance = get_instance(
+                obj_mod_type,
+                Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
+            if obj_mod_instance:
+                return obj_mod_instance(obj_filepath).create_file(obj_info)
+            else:
+                raise RuntimeError(
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                )
+        else:
+            raise RuntimeError("Unable to create object.")
 
     @staticmethod
     def read_object_generator(
@@ -76,17 +79,20 @@ class Storage:
             RuntimeError: If there is an error getting the object module instance or the object file module instance.
         """
         # Get jsonio object to return raw file instance
-        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
-        obj_file_instance = get_instance(
-            obj_mod_type,
-            Storage.get_filepath(EnvVariables.IO_MODULES.name, "jsonio", "py"),
-        )
-        if obj_file_instance:
-            obj_file_instance = obj_file_instance(obj_filepath).read_file_raw()
-        else:
-            raise RuntimeError(
-                f"Unable to get defined object file module instance - {obj_file_instance}"
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
+        if obj_filepath:
+            obj_file_instance = get_instance(
+                obj_mod_type,
+                Storage.get_filepath(EnvVariables.IO_MODULES.name, "jsonio", "py"),
             )
+            if obj_file_instance:
+                obj_file_instance = obj_file_instance(obj_filepath).read_file_raw()
+            else:
+                raise RuntimeError(
+                    f"Unable to get defined object file module instance - {obj_file_instance}"
+                )
+        else:
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
         # Get generator object to return gen object
         obj_mod_instance = get_instance(
@@ -117,16 +123,19 @@ class Storage:
             dict: A dictionary containing the object information.
         """
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
-        obj_mod_instance = get_instance(
-            obj_mod_type,
-            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
-        )
-        if obj_mod_instance:
-            return obj_mod_instance(obj_filepath).read_file()
-        else:
-            raise RuntimeError(
-                f"Unable to get defined object module instance - {obj_mod_instance}"
+        if obj_filepath:
+            obj_mod_instance = get_instance(
+                obj_mod_type,
+                Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
+            if obj_mod_instance:
+                return obj_mod_instance(obj_filepath).read_file()
+            else:
+                raise RuntimeError(
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                )
+        else:
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
     def delete_object(obj_type: str, obj_id: str, obj_extension: str) -> None:
@@ -138,11 +147,11 @@ class Storage:
             obj_id (str): The ID of the object.
             obj_extension (str): The file extension (e.g., 'json', 'py').
         """
-        obj_filepath = Path(Storage.get_filepath(obj_type, obj_id, obj_extension))
-        if obj_filepath.exists():
-            obj_filepath.unlink()
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
+        if obj_filepath:
+            Path(obj_filepath).unlink()
         else:
-            raise RuntimeError(f"No {obj_type} found with ID: {obj_id}")
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
     def get_objects(obj_type: str, obj_extension: str) -> Iterator[str]:
@@ -174,26 +183,37 @@ class Storage:
         Returns:
             datetime: The creation datetime of the object.
         """
-        creation_timestamp = os.path.getctime(
-            Storage.get_filepath(obj_type, obj_id, obj_extension)
-        )
-        creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
-        return creation_datetime
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
+        if obj_filepath:
+            creation_timestamp = os.path.getctime(obj_filepath)
+            creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
+            return creation_datetime
+        else:
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
-    def get_filepath(obj_type: str, obj_id: str, obj_extension: str) -> str:
+    def get_filepath(
+        obj_type: str, obj_id: str, obj_extension: str, ignore_existance: bool = False
+    ) -> str:
         """
-        Constructs the file path for the object.
+        Retrieves the file path for an object.
+
+        This method uses the provided object type, object ID, and object extension to construct the file path
+        of the object. If the creation flag is set to True, it returns the file path even if the file does not exist.
 
         Args:
             obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
             obj_id (str): The ID of the object.
             obj_extension (str): The file extension (e.g., 'json', 'py').
+            ignore_existance (bool, optional): A flag indicating whether to return the file path
+                                        even if the file does not exist. Defaults to False.
 
         Returns:
             str: The file path of the object.
         """
-        return EnvironmentVars.get_file_path(obj_type, f"{obj_id}.{obj_extension}")
+        return EnvironmentVars.get_file_path(
+            obj_type, f"{obj_id}.{obj_extension}", ignore_existance
+        )
 
     @staticmethod
     def is_object_exists(obj_type: str, obj_id: str, obj_extension: str) -> bool:
@@ -208,7 +228,11 @@ class Storage:
         Returns:
             bool: True if the object exists, False otherwise.
         """
-        return Path(Storage.get_filepath(obj_type, obj_id, obj_extension)).exists()
+        filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
+        if filepath:
+            return Path(filepath).exists()
+        else:
+            return False
 
     @staticmethod
     def create_database_connection(
@@ -240,7 +264,7 @@ class Storage:
         )
         if database_instance:
             database_instance = database_instance(
-                Path(Storage.get_filepath(obj_type, obj_id, obj_extension))
+                Path(Storage.get_filepath(obj_type, obj_id, obj_extension, True))
             )
             if database_instance.create_connection():
                 return database_instance

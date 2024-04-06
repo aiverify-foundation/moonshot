@@ -35,7 +35,13 @@ from moonshot.integrations.cli.benchmark.results import (
     view_result,
     view_result_args,
 )
-from moonshot.integrations.cli.benchmark.run import list_runs
+from moonshot.integrations.cli.benchmark.run import (
+    delete_run,
+    delete_run_args,
+    list_runs,
+    view_run,
+    view_run_args,
+)
 
 
 @cmd2.with_default_category("Moonshot Benchmarking")
@@ -87,6 +93,10 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_delete_result(self, args: argparse.Namespace) -> None:
         delete_result(args)
 
+    @cmd2.with_argparser(delete_run_args)
+    def do_delete_run(self, args: argparse.Namespace) -> None:
+        delete_run(args)
+
     # ------------------------------------------------------------------------------
     # Update contents
     # ------------------------------------------------------------------------------
@@ -126,3 +136,7 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     @cmd2.with_argparser(view_result_args)
     def do_view_result(self, args: argparse.Namespace) -> None:
         view_result(args)
+
+    @cmd2.with_argparser(view_run_args)
+    def do_view_run(self, args: argparse.Namespace) -> None:
+        view_run(args)

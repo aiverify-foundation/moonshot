@@ -50,10 +50,12 @@ def view_result(args) -> None:
     """
     try:
         result_info = api_read_result(args.result_filename)
-        if args.result_filename.startswith("cookbook"):
+        if result_info["metadata"].get("cookbooks"):
             display_view_cookbook_result(args.result_filename, result_info)
-        else:
+        elif result_info["metadata"].get("recipes"):
             display_view_recipe_result(args.result_filename, result_info)
+        else:
+            print("[view_result]: Unable to determine cookbook or recipe")
     except Exception as e:
         print(f"[view_result]: {str(e)}")
 
@@ -74,6 +76,7 @@ def delete_result(args) -> None:
     """
     try:
         api_delete_result(args.result)
+        print("[delete_result]: Result deleted.")
     except Exception as e:
         print(f"[delete_result]: {str(e)}")
 

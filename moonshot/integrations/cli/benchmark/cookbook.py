@@ -42,6 +42,7 @@ def add_cookbook(args) -> None:
     try:
         recipes = literal_eval(args.recipes)
         api_create_cookbook(args.name, args.description, recipes)
+        print("[add_cookbook]: Cookbook created.")
     except Exception as e:
         print(f"[add_cookbook]: {str(e)}")
 
@@ -156,6 +157,7 @@ def update_cookbook(args) -> None:
         cookbook = args.cookbook
         update_values = dict(literal_eval(args.update_values))
         api_update_cookbook(cookbook, **update_values)
+        print("[update_cookbook]: Cookbook updated.")
     except Exception as e:
         print(f"[update_cookbook]: {str(e)}")
 
@@ -176,6 +178,7 @@ def delete_cookbook(args) -> None:
     """
     try:
         api_delete_cookbook(args.cookbook)
+        print("[delete_cookbook]: Cookbook deleted.")
     except Exception as e:
         print(f"[delete_cookbook]: {str(e)}")
 
@@ -229,7 +232,7 @@ def display_view_cookbook(cookbook_info):
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table("No.", "Recipe", "Contains")
-        for recipes_id, recipe in enumerate(recipes_list, 1):
+        for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
                 name,
@@ -245,19 +248,38 @@ def display_view_cookbook(cookbook_info):
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
                 f"Tags:\n{tags}\n\nType:\n{rec_type}"
             )
-            datasets_info = "[blue]Datasets[/blue]:" + "".join(
-                f"\n{i + 1}. {item}" for i, item in enumerate(datasets)
-            )
-            prompt_templates_info = "[blue]Prompt Templates[/blue]:" + "".join(
-                f"\n{i + 1}. {item}" for i, item in enumerate(prompt_templates)
-            )
-            metrics_info = "[blue]Metrics[/blue]:" + "".join(
-                f"\n{i + 1}. {item}" for i, item in enumerate(metrics)
-            )
-            attack_strategies = f"[blue]Attack Strategies[/blue]:\n{attack_strategies}"
-            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_strategies}"
+
+            if datasets:
+                datasets_info = "[blue]Datasets[/blue]:" + "".join(
+                    f"\n{i + 1}. {item}" for i, item in enumerate(datasets)
+                )
+            else:
+                datasets_info = "[blue]Datasets[/blue]: nil"
+
+            if prompt_templates:
+                prompt_templates_info = "[blue]Prompt Templates[/blue]:" + "".join(
+                    f"\n{i + 1}. {item}" for i, item in enumerate(prompt_templates)
+                )
+            else:
+                prompt_templates_info = "[blue]Prompt Templates[/blue]: nil"
+
+            if metrics:
+                metrics_info = "[blue]Metrics[/blue]:" + "".join(
+                    f"\n{i + 1}. {item}" for i, item in enumerate(metrics)
+                )
+            else:
+                metrics_info = "[blue]Metrics[/blue]: nil"
+
+            if attack_strategies:
+                attack_strategies_info = "[blue]Attack Strategies[/blue]:" + "".join(
+                    f"\n{i + 1}. {item}" for i, item in enumerate(attack_strategies)
+                )
+            else:
+                attack_strategies_info = "[blue]Attack Strategies[/blue]: nil"
+
+            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_strategies_info}"
             table.add_section()
-            table.add_row(str(recipes_id), recipe_info, contains_info)
+            table.add_row(str(recipe_id), recipe_info, contains_info)
         console.print(table)
     else:
         console.print("[red]There are no recipes found for the cookbook.[/red]")
