@@ -15,7 +15,9 @@ class RecipeService(BaseService):
             tags=recipe_data.tags,
             datasets=recipe_data.datasets,
             prompt_templates=recipe_data.prompt_templates,
-            metrics=recipe_data.metrics
+            metrics=recipe_data.metrics,
+            type=recipe_data.type,
+            attack_strategies=recipe_data.attack_strategies
         )
     
 
@@ -46,7 +48,9 @@ class RecipeService(BaseService):
             tags=recipe_data.tags,
             datasets=recipe_data.datasets,
             prompt_templates=recipe_data.prompt_templates,
-            metrics=recipe_data.metrics
+            metrics=recipe_data.metrics,
+            type=recipe_data.type,
+            attack_strategies=recipe_data.attack_strategies
         )
 
 

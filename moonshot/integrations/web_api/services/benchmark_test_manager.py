@@ -4,7 +4,7 @@ from typing import Any, TypedDict
 from slugify import slugify
 from dependency_injector.wiring import inject
 
-from moonshot.src.benchmarking.executors.benchmark_executor_types import BenchmarkExecutorTypes
+from moonshot.src.runners.runner_type import RunnerType
 
 from .... import api as moonshot_api
 from ..types.types import CookbookTestRunProgress
@@ -44,14 +44,14 @@ class BenchmarkTestManager(BaseService):
         self.logger.debug(f"Task {task.get_name()} has completed")
 
     #TODO - get executor id from excutor instance somehow
-    def get_executor_id(self, type: BenchmarkExecutorTypes, name: str) -> str:
+    def get_executor_id(self, type: RunnerType, name: str) -> str:
         # This is a temporary workaround to get exec id without awaiting the long running execution
         # Unable to run execute separately because instance creation needs to be in the same async task
         # Use the same slugify pattern that ms lib uses to get the ID upfront
         # Review and refactor required for this - ID needs to be from MS lib
         prefix = (
                 "recipe-"
-                if type == BenchmarkExecutorTypes.RECIPE
+                if type == RunnerType.RECIPE
                 else "cookbook-"
             )
         id = slugify(prefix + name, lowercase=True)
@@ -60,7 +60,7 @@ class BenchmarkTestManager(BaseService):
     async def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
         try:
             if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-                executor = moonshot_api.api_create_cookbook_executor(
+                executor = moonshot_api.api_create_cookbook_runner(
                     name=executor_input_data.name,
                     cookbooks=executor_input_data.cookbooks,
                     endpoints=executor_input_data.endpoints,
@@ -68,7 +68,7 @@ class BenchmarkTestManager(BaseService):
                     progress_callback_func=self.webhook.on_executor_update
                 )
             else:
-                executor = moonshot_api.api_create_recipe_executor(
+                executor = moonshot_api.api_create_recipe_runner(
                     name=executor_input_data.name,
                     recipes=executor_input_data.recipes,
                     endpoints=executor_input_data.endpoints,
@@ -78,18 +78,18 @@ class BenchmarkTestManager(BaseService):
         except Exception as e:
             self.logger.error(f"Failed to execute benchmark - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
-        await executor.execute()
-        executor.close_executor()
+        await executor.run()
+        executor.cancel()
 
     def schedule_test_task(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> str:
         task_id = self.generate_unique_task_id()
         if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-            type = BenchmarkExecutorTypes.COOKBOOK
+            type = RunnerType.COOKBOOK
             #previously, executor.execute() was synchronous, so we run it on separate thread.
             #now that it is awaitable, we just run it in the same thread
             exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
         else:
-            type = BenchmarkExecutorTypes.RECIPE
+            type = RunnerType.RECIPE
             exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
         
         task = asyncio.create_task(exec_benchmark_coroutine, name=task_id)
