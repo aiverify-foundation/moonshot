@@ -113,6 +113,8 @@ def api_update_recipe(rec_id: str, **kwargs) -> None:
 
     # Update the fields of the existing recipe with the provided kwargs
     for key, value in kwargs.items():
+        if key == "type":
+            value = RecipeType(value)
         if hasattr(existing_recipe, key):
             setattr(existing_recipe, key, value)
 
