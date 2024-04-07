@@ -1,10 +1,9 @@
 import argparse
 
 import cmd2
-from rich.console import Console
-
 from moonshot.api import api_update_prompt_template
 from moonshot.integrations.cli.active_session_cfg import active_session
+from rich.console import Console
 
 console = Console()
 
@@ -40,6 +39,7 @@ def clear_prompt_template() -> None:
     """
     # Check if current session exists
     if active_session:
+        api_update_prompt_template(active_session["session_id"], "")
         active_session["prompt_template"] = ""
         print("Cleared prompt template.")
     else:

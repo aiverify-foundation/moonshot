@@ -2,12 +2,11 @@ import time
 from ast import literal_eval
 from datetime import datetime
 
-from slugify import slugify
-
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
+from slugify import slugify
 
 
 class SessionMetadata:
@@ -107,7 +106,6 @@ class Session:
         prompt_template: str = "",
         context_strategy: str = "",
     ):
-
         # Checks if cs and pt exist if they are specified
         if context_strategy:
             if not Storage.is_object_exists(
@@ -146,6 +144,11 @@ class Session:
                 "%Y%m%d-%H%M%S"
             )
             session_id = f"{slugify(name)}_{created_datetime}"
+
+            if not context_strategy:
+                context_strategy = ""
+            if not prompt_template:
+                prompt_template = ""
 
             session_meta_tuple = (
                 session_id,
@@ -190,6 +193,7 @@ class Session:
             Storage.create_database_table(
                 session_db_instance, Session.sql_create_chat_metadata_table
             )
+
             Storage.create_database_record(
                 session_db_instance,
                 session_meta_tuple,
@@ -359,12 +363,13 @@ class Session:
         Returns:
             None: This method does not return a value but updates the prompt template for the specified session.
         """
-        if not Storage.is_object_exists(
-            EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
-        ):
-            raise RuntimeError(
-                f"Unable to find Prompt Template {prompt_template_name}. Please select another one."
-            )
+        if prompt_template_name != "":
+            if not Storage.is_object_exists(
+                EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
+            ):
+                raise RuntimeError(
+                    f"Unable to find Prompt Template {prompt_template_name}. Please select another one."
+                )
         session_db_instance = Session.get_connection_instance_by_session_id(session_id)
         Storage.update_database_record(
             session_db_instance,
@@ -390,12 +395,13 @@ class Session:
             None: This method does not return a value but updates the context strategy for the specified session.
         """
 
-        if not Storage.is_object_exists(
-            EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
-        ):
-            raise RuntimeError(
-                f"Unable to find Context Strategy {context_strategy_name}. Please select another one."
-            )
+        if context_strategy_name != "":
+            if not Storage.is_object_exists(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+            ):
+                raise RuntimeError(
+                    f"Unable to find Context Strategy {context_strategy_name}. Please select another one."
+                )
         session_db_instance = Session.get_connection_instance_by_session_id(session_id)
         Storage.update_database_record(
             session_db_instance,
