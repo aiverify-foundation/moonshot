@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 from jinja2 import Template
-
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
+from moonshot.src.storage.storage import Storage
 
 
 class PromptTemplateManager:
@@ -72,14 +72,10 @@ class PromptTemplateManager:
         Returns:
             str: The processed user prompt based on the template.
         """
-        try:
-            prompt_template_file = (
-                f"{EnvironmentVars.PROMPT_TEMPLATES}/{prompt_template_name}.json"
-            )
-            with open(prompt_template_file, "r", encoding="utf-8") as json_file:
-                prompt_template_details = json.load(json_file)
-                template = prompt_template_details["template"]
-                jinja_template = Template(template)
-                return jinja_template.render({"prompt": user_prompt})
-        except Exception as e:
-            raise e
+
+        prompt_template_file = Storage.read_object(
+            EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
+        )
+        template = prompt_template_file["template"]
+        jinja_template = Template(template)
+        return jinja_template.render({"prompt": user_prompt})

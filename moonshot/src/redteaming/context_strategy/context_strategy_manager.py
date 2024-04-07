@@ -1,13 +1,10 @@
 import glob
-import inspect
 import os
 from pathlib import Path
-from typing import Any
-from moonshot.src.configs.env_variables import EnvironmentVars
-from moonshot.src.utils.import_modules import (
-    create_module_spec,
-    import_module_from_spec,
-)
+
+from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
+from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.import_modules import get_instance
 
 
 class ContextStrategyManager:
@@ -63,9 +60,12 @@ class ContextStrategyManager:
     @staticmethod
     def process_prompt_cs(
         user_prompt: str, context_strategy_name: str, list_of_chats: list[dict]
-    ) -> str:
-        context_strategy_instance = ContextStrategyManager.load_context_strategy_module(
-            context_strategy_name
+    ) -> str | None:
+        context_strategy_instance = get_instance(
+            context_strategy_name,
+            Storage.get_filepath(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+            ),
         )
 
         if context_strategy_instance:
@@ -78,41 +78,3 @@ class ContextStrategyManager:
                 "Cannot load context strategy. Make sure the name of the context strategy is correct."
             )
             return None
-
-    @staticmethod
-    def load_context_strategy_module(context_strategy_name: str) -> Any:
-        """
-        Loads a context strategy module by its name.
-
-        This method attempts to load a context strategy module specified by the context_strategy_name argument.
-        It first creates a module specification using the create_module_spec function. If the specification exists,
-        it imports the module and iterates through its attributes to find a class that matches the module name.
-        If such a class is found, it is returned; otherwise, None is returned.
-
-        Args:
-            context_strategy_name (str): The name of the context strategy module to load.
-
-        Returns:
-            Optional[Type]: The loaded context strategy class if found, None otherwise.
-        """
-        module_spec = create_module_spec(
-            context_strategy_name,
-            f"{EnvironmentVars.CONTEXT_STRATEGY}/{context_strategy_name}.py",
-        )
-
-        # Check if the module specification exists
-        if module_spec:
-            # Import the module
-            module = import_module_from_spec(module_spec)
-
-            # Iterate through the attributes of the module
-            for attr in dir(module):
-                # Get the attribute object
-                obj = getattr(module, attr)
-
-                # Check if the attribute is a class and has the same module name as the context strategy name
-                if inspect.isclass(obj) and obj.__module__ == context_strategy_name:
-                    return obj
-
-        # Return None if no instance of the context strategy class is found
-        return None
