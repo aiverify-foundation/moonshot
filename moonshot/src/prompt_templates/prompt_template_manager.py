@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 from jinja2 import Template
-
-from moonshot.src.configs.env_variables import EnvironmentVars
+from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
+from moonshot.src.storage.storage import Storage
 
 
 class PromptTemplateManager:
@@ -20,7 +20,9 @@ class PromptTemplateManager:
             list: A list of prompt template names.
         """
         try:
-            prompt_template_file_path = f"{EnvironmentVars.PROMPT_TEMPLATES}"
+            prompt_template_file_path = EnvironmentVars.get_file_directory(
+                EnvVariables.PROMPT_TEMPLATES.name
+            )[0]
             filepaths = [
                 Path(fp).stem
                 for fp in glob.iglob(f"{prompt_template_file_path}/*.json")
@@ -43,7 +45,7 @@ class PromptTemplateManager:
         for pt_name in list_of_pt_names:
             try:
                 pt_file = open(
-                    f"{EnvironmentVars.PROMPT_TEMPLATES}/{pt_name}.json",
+                    f"{EnvironmentVars.get_file_directory(EnvVariables.PROMPT_TEMPLATES.name)[0]}/{pt_name}.json",
                     "r",
                     encoding="utf-8",
                 )
@@ -70,14 +72,10 @@ class PromptTemplateManager:
         Returns:
             str: The processed user prompt based on the template.
         """
-        try:
-            prompt_template_file = (
-                f"{EnvironmentVars.PROMPT_TEMPLATES}/{prompt_template_name}.json"
-            )
-            with open(prompt_template_file, "r", encoding="utf-8") as json_file:
-                prompt_template_details = json.load(json_file)
-                template = prompt_template_details["template"]
-                jinja_template = Template(template)
-                return jinja_template.render({"prompt": user_prompt})
-        except Exception as e:
-            raise e
+
+        prompt_template_file = Storage.read_object(
+            EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
+        )
+        template = prompt_template_file["template"]
+        jinja_template = Template(template)
+        return jinja_template.render({"prompt": user_prompt})

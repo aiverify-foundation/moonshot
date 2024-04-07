@@ -6,6 +6,7 @@ __app_name__ = "moonshot"
 
 
 class EnvVariables(Enum):
+    ATTACK_MODULES = "ATTACK_MODULES"
     CONNECTORS = "CONNECTORS"
     CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
     CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
@@ -22,106 +23,110 @@ class EnvVariables(Enum):
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
-    ATTACK_MODULES = "ATTACK_MODULES"
     STOP_STRATEGIES = "STOP_STRATEGIES"
 
 
 class EnvironmentVars:
     env_vars = {}
 
-    CONNECTORS = env_vars.get(
-        EnvVariables.CONNECTORS.value,
-        importlib.resources.files(__app_name__).joinpath("data/connectors"),
-    )
-    CONNECTORS_ENDPOINTS = env_vars.get(
-        EnvVariables.CONNECTORS_ENDPOINTS.value,
-        importlib.resources.files(__app_name__).joinpath("data/connectors-endpoints"),
-    )
-    CONTEXT_STRATEGY = env_vars.get(
-        EnvVariables.CONTEXT_STRATEGY.value,
-        importlib.resources.files(__app_name__).joinpath("data/context-strategy"),
-    )
-    COOKBOOKS = env_vars.get(
-        EnvVariables.COOKBOOKS.value,
-        importlib.resources.files(__app_name__).joinpath("data/cookbooks"),
-    )
-    DATABASES = env_vars.get(
-        EnvVariables.DATABASES.value,
-        importlib.resources.files(__app_name__).joinpath("data/databases"),
-    )
-    DATABASES_MODULES = env_vars.get(
-        EnvVariables.DATABASES_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath("data/databases-modules"),
-    )
-    DATASETS = env_vars.get(
-        EnvVariables.DATASETS.value,
-        importlib.resources.files(__app_name__).joinpath("data/datasets"),
-    )
-    IO_MODULES = env_vars.get(
-        EnvVariables.IO_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath("data/io-modules"),
-    )
-    METRICS = env_vars.get(
-        EnvVariables.METRICS.value,
-        importlib.resources.files(__app_name__).joinpath("data/metrics"),
-    )
-    METRICS_CONFIG = env_vars.get(
-        EnvVariables.METRICS_CONFIG.value,
-        importlib.resources.files(__app_name__).joinpath(
-            "data/metrics/metrics_config.json"
+    ATTACK_MODULES = [
+        env_vars.get(EnvVariables.ATTACK_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/attack-modules")),
+    ]
+    CONNECTORS = [
+        env_vars.get(EnvVariables.CONNECTORS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/connectors")),
+    ]
+    CONNECTORS_ENDPOINTS = [
+        env_vars.get(EnvVariables.CONNECTORS_ENDPOINTS.value),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/connectors-endpoints"
+            )
         ),
-    )
-    PROMPT_TEMPLATES = env_vars.get(
-        EnvVariables.PROMPT_TEMPLATES.value,
-        importlib.resources.files(__app_name__).joinpath("data/prompt-templates"),
-    )
-    RECIPES = env_vars.get(
-        EnvVariables.RECIPES.value,
-        importlib.resources.files(__app_name__).joinpath("data/recipes"),
-    )
-    RECIPES_PROCESSING_MODULES = env_vars.get(
-        EnvVariables.RECIPES_PROCESSING_MODULES.value,
-        importlib.resources.files(__app_name__).joinpath(
-            "data/recipes-processing-modules"
+    ]
+    CONTEXT_STRATEGY = [
+        env_vars.get(EnvVariables.CONTEXT_STRATEGY.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/context-strategy")),
+    ]
+    COOKBOOKS = [
+        env_vars.get(EnvVariables.COOKBOOKS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/cookbooks")),
+    ]
+    DATABASES = [
+        env_vars.get(EnvVariables.DATABASES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/databases")),
+    ]
+    DATABASES_MODULES = [
+        env_vars.get(EnvVariables.DATABASES_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/databases-modules")),
+    ]
+    DATASETS = [
+        env_vars.get(EnvVariables.DATASETS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/datasets")),
+    ]
+    IO_MODULES = [
+        env_vars.get(EnvVariables.IO_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/io-modules")),
+    ]
+    METRICS = [
+        env_vars.get(EnvVariables.METRICS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/metrics")),
+    ]
+    METRICS_CONFIG = [
+        env_vars.get(EnvVariables.METRICS_CONFIG.value),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/metrics/metrics_config.json"
+            )
         ),
-    )
-    RESULTS = env_vars.get(
-        EnvVariables.RESULTS.value,
-        importlib.resources.files(__app_name__).joinpath("data/results"),
-    )
-    RUNNERS = env_vars.get(
-        EnvVariables.RUNNERS.value,
-        importlib.resources.files(__app_name__).joinpath("data/runners"),
-    )
-    SESSIONS = env_vars.get(
-        EnvVariables.SESSIONS.value,
-        importlib.resources.files(__app_name__).joinpath("data/sessions"),
-    )
-
-    ATTACK_MODULES = env_vars.get(
-        "ATTACK_MODULES",
-        importlib.resources.files(__app_name__).joinpath("data/attack-modules"),
-    )
-    STOP_STRATEGIES = env_vars.get(
-        "STOP_STRATEGIES",
-        importlib.resources.files(__app_name__).joinpath("data/stop-strategies"),
-    )
+    ]
+    PROMPT_TEMPLATES = [
+        env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/prompt-templates")),
+    ]
+    RECIPES = [
+        env_vars.get(EnvVariables.RECIPES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
+    ]
+    RECIPES_PROCESSING_MODULES = [
+        env_vars.get(EnvVariables.RECIPES_PROCESSING_MODULES.value),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/recipes-processing-modules"
+            )
+        ),
+    ]
+    RESULTS = [
+        env_vars.get(EnvVariables.RESULTS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/results")),
+    ]
+    RUNNERS = [
+        env_vars.get(EnvVariables.RUNNERS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/runners")),
+    ]
+    SESSIONS = [
+        env_vars.get(EnvVariables.SESSIONS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
+    ]
+    STOP_STRATEGIES = [
+        env_vars.get(EnvVariables.STOP_STRATEGIES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/stop-strategies")),
+    ]
 
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
         """
-        This method is used to load environment variables from a given dictionary.
-        If the dictionary is not provided, it will use an empty dictionary.
+        This method is used to load environment variables from a provided dictionary.
+        If the dictionary is not provided, it defaults to an empty dictionary.
 
-        The method will set the class attributes with the corresponding values from the dictionary.
-        If a key from the class attributes is not found in the dictionary, it will raise a KeyError.
+        The method updates the class attributes with the corresponding values from the dictionary.
+        If a key from the class attributes is not found in the dictionary, it will not be updated and a
+        message will be printed.
 
         Args:
             env_dict (dict | None): A dictionary containing the environment variables to be loaded.
-                                          If None, an empty dictionary will be used.
-
-        Raises:
-            KeyError: If a key from the class attributes is not found in the provided dictionary.
+                                    If None, an empty dictionary will be used.
         """
         if env_dict is None:
             env_dict = dict()
@@ -132,7 +137,7 @@ class EnvironmentVars:
             if key in env_dict:
                 given_path = Path(env_dict[key])
                 if given_path.exists():
-                    setattr(EnvironmentVars, key, env_dict[key])
+                    EnvironmentVars.__dict__[key][0] = str(given_path)
                 else:
                     print(
                         f"Unable to set {key}. The provided path {given_path} does not exist. ",
@@ -144,3 +149,45 @@ class EnvironmentVars:
             print(
                 f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
             )
+
+    @staticmethod
+    def get_file_path(file_type: str, file_name: str, ignore_existance: bool) -> str:
+        """
+        This method is used to get the file path for a given file type and file name.
+        If the ignore existance flag is set to True, it returns the file path even if the file does not exist.
+
+        Args:
+            file_type (str): The type of the file (e.g., 'recipe', 'cookbook').
+            file_name (str): The name of the file.
+            ignore_existance (bool): A flag indicating whether to return the file path
+                             even if the file does not exist.
+
+        Returns:
+            str: The file path of the file.
+        """
+        for directory in EnvironmentVars.get_file_directory(file_type):
+            file_path = Path(directory) / file_name
+            if ignore_existance:
+                return str(file_path)
+            else:
+                if Path(file_path).exists():
+                    return str(file_path)
+        return ""
+
+    @staticmethod
+    def get_file_directory(file_type: str) -> list[str]:
+        """
+        This method retrieves the directory paths associated with a specified file type.
+
+        Args:
+            file_type (str): The type of file for which the directory paths are to be retrieved.
+
+        Returns:
+            list[str]: A list containing the directory paths associated with the given file type.
+        """
+        path_from_user, path_from_resource = getattr(EnvironmentVars, file_type)
+
+        if path_from_user is not None:
+            return [path_from_user, path_from_resource]
+        else:
+            return [path_from_resource]

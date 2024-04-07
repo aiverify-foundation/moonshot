@@ -51,6 +51,7 @@ def add_endpoint(args) -> None:
             args.max_concurrency,
             params_dict,
         )
+        print("[add_endpoint]: Endpoint created.")
     except Exception as e:
         print(f"[add_endpoint]: {str(e)}")
 
@@ -131,6 +132,7 @@ def update_endpoint(args) -> None:
         endpoint = args.endpoint
         update_values = dict(literal_eval(args.update_kwargs))
         api_update_endpoint(endpoint, **update_values)
+        print("[update_endpoint]: Endpoint updated.")
     except Exception as e:
         print(f"[update_endpoint]: {str(e)}")
 
@@ -151,6 +153,7 @@ def delete_endpoint(args) -> None:
     """
     try:
         api_delete_endpoint(args.endpoint)
+        print("[delete_endpoint]: Endpoint deleted.")
     except Exception as e:
         print(f"[delete_endpoint]: {str(e)}")
 
@@ -270,7 +273,7 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
     epilog="available keys: \n  name: Name of endpoint \n  uri: URI of endpoint \n  token: token of endpoint "
     "\n  max_calls_per_second: Rate limit max calls per second \n  max_concurrency: Rate limit max concurrency "
-    "\n  params: Extra arguments for the endpoint \n\nExample:\n update_endpoint test-openai-endpoint "
+    "\n  params: Extra arguments for the endpoint \n\nExample:\n update_endpoint my-openai-endpoint "
     "\"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]\" ",
 )
 update_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")

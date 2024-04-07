@@ -131,7 +131,7 @@ class Runner:
                 "endpoints": runner_args.endpoints,
                 "num_of_prompts": runner_args.num_of_prompts,
                 "database_file": Storage.get_filepath(
-                    EnvVariables.DATABASES.name, runner_id, "db"
+                    EnvVariables.DATABASES.name, runner_id, "db", True
                 ),
                 "progress_callback_func": runner_args.progress_callback_func,
             }
@@ -309,7 +309,7 @@ class Runner:
             num_of_prompts=self.num_of_prompts,
             database_instance=self.database_instance,
             results_file=Storage.get_filepath(
-                EnvVariables.RESULTS.name, self.id, "json"
+                EnvVariables.RESULTS.name, self.id, "json", True
             ),
             progress=RunProgress(
                 exec_id=str(self.id),
