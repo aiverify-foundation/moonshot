@@ -34,7 +34,7 @@ $ pip install "projectmoonshot-imda[cli]"
 ```
 
 ### Enabling Both CLI and WebAPI
-This command enales you to interact with the Moonshot Library through HTTP requests and CLI. It gives you the most flexibility, as you can interact with Moonshot through both command-line commands and HTTP requests.
+This command enables you to interact with the Moonshot Library through HTTP requests and CLI. It gives you the most flexibility, as you can interact with Moonshot through both command-line commands and HTTP requests.
 ```
 $ pip install "projectmoonshot-imda[all]"
 ```
