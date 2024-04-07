@@ -122,6 +122,7 @@ class RedTeaming:
                     prompt_templates=self.recipe_instance.prompt_templates,
                     metric_instances=self.metrics_instances,
                     context_strategies=context_strategy_insts,
+                    db_instance=self.database_instance,
                 )
                 loaded_attack_modules.append(AttackModule.load(am_arguments))
 

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from abc import abstractmethod
+
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.metrics.metric import Metric
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -34,3 +37,9 @@ class StopStrategy:
             raise RuntimeError(
                 f"Unable to get defined stop strategy instance - {ss_id}"
             )
+
+    @abstractmethod
+    def stop_red_teaming_attack(
+        self, no_of_iterations: int, llm_response: str, metric_instances: list[Metric]
+    ) -> bool:
+        pass

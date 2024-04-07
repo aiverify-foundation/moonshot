@@ -30,9 +30,11 @@ def test_create_session():
 def test_get_all_session_names():
     print(api_get_all_session_name())
 
+
 def test_api_get_session_chats_by_session_id(session_id):
     for chat in api_get_session_chats_by_session_id(session_id):
         print(chat, "\n")
+
 
 def test_api_get_all_session_details():
     for session_detail in api_get_all_session_detail():
@@ -71,6 +73,7 @@ def test_api_get_all_prompt_template_names():
     for prompt_template_name in api_get_all_prompt_template_name():
         print(prompt_template_name)
 
+
 def test_get_all_prompt_template_details():
     for prompt_template_details in api_get_all_prompt_template_detail():
         print(prompt_template_details)
@@ -89,17 +92,16 @@ async def main():
     # Get all session details
     test_api_get_all_session_details()
 
-    # # Create session, send prompt and create chat in DB
+    # Create session, send prompt and create chat in DB
     created_session = test_create_session()
     await test_send_prompt(created_session.metadata.session_id, "chewing gum")
 
     # Get session chats (only session chats) by id
-    session_id = "my-test-session"
-    test_api_get_session_chats_by_session_id(session_id)
+    test_api_get_session_chats_by_session_id(created_session.metadata.session_id)
 
-    # Delete session
-    # TODO by tester: enter name of SAMPLE session to be deleted
-    test_api_delete_session("")
+    # # Delete session
+    # # TODO by tester: enter name of SAMPLE session to be deleted
+    # test_api_delete_session("")
 
     # ------------------------------------------------------------------------------
     # Context Strategy endpoints APIs Test
@@ -110,8 +112,8 @@ async def main():
 
     # Delete context strategy
     # TODO by tester: enter name of SAMPLE context strategy to be deleted
-    context_strategy_name = ""
-    test_api_delete_context_strategy(context_strategy_name)
+    # context_strategy_name = ""
+    # test_api_delete_context_strategy(context_strategy_name)
 
     # ------------------------------------------------------------------------------
     # Prompt Template endpoints APIs Test
@@ -130,12 +132,12 @@ async def main():
     # Create session for subsequent context strategy and prompt template tests
     created_session_for_pt_cs = test_create_session()
     # Update prompt template and context strategy
-    context_strategy_name = "sample_context_strat"
+    context_strategy_name = "add_previous_prompt"
     test_api_update_context_strategy(
         created_session_for_pt_cs.metadata.session_id, context_strategy_name
     )
     # # Update prompt template
-    prompt_template_name = "sample_prompt_template"
+    prompt_template_name = "mmlu"
     test_api_update_prompt_template(
         created_session_for_pt_cs.metadata.session_id, prompt_template_name
     )

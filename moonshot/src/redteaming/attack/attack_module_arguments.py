@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -22,6 +24,9 @@ class AttackModuleArguments(BaseModel):
 
     # list of context strategy instance to be used (if any)
     context_strategies: list = []
+
+    # DBAccessor for the attack module to access DB data
+    db_instance: Any
 
     # a dict that contains other params that is required by the attack module (if any)
     params: dict = {}
