@@ -54,7 +54,7 @@ class BenchmarkTestManager(BaseService):
                 if type == RunnerType.RECIPE
                 else "cookbook-"
             )
-        id = slugify(prefix + name, lowercase=True)
+        id = slugify( name, lowercase=True)
         return id
 
     async def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
