@@ -63,11 +63,11 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
         return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes name: {e.msg}")
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes name: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")       
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}")       
                          
 
 @router.get("/v1/recipes/{recipe_id}")
