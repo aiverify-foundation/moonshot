@@ -3,6 +3,8 @@ from dependency_injector.wiring import inject, Provide
 
 from ..container import Container
 from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_response_dto import RecipeResponseDTO
+
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
@@ -73,7 +75,7 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
 def get_recipe_by_id(
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> RecipeCreateDTO | None:
+    ) -> RecipeResponseDTO | None:
     """
     Get a recipe from the database
     """

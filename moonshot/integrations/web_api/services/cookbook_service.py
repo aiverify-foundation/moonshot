@@ -1,6 +1,7 @@
 from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
+from ..schemas.cookbook_response_dto import CookbookResponeDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 
@@ -17,9 +18,9 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_all_cookbooks(self) -> list[CookbookCreateDTO | None]:
+    def get_all_cookbooks(self) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
-        return [CookbookCreateDTO.model_validate(cookbook) for cookbook in cookbooks]
+        return [CookbookResponeDTO.model_validate(cookbook) for cookbook in cookbooks]
 
 
     @exception_handler
@@ -29,9 +30,9 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_cookbook_by_id(self, cookbook_id: str) -> CookbookCreateDTO | None: 
+    def get_cookbook_by_id(self, cookbook_id: str) -> CookbookResponeDTO | None: 
         cookbook = moonshot_api.api_read_cookbook(cookbook_id)
-        return CookbookCreateDTO.model_validate(cookbook)
+        return CookbookResponeDTO.model_validate(cookbook)
 
 
     @exception_handler
