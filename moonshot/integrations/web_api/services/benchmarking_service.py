@@ -18,8 +18,8 @@ class BenchmarkingService(BaseService):
 
     @exception_handler
     async def execute_recipe(self, recipe_executor_data: RecipeExecutorCreateDTO):
-        async_task = self.benchmark_test_manager.schedule_test_task(recipe_executor_data);
-        return async_task.get_name()
+        id = self.benchmark_test_manager.schedule_test_task(recipe_executor_data);
+        return id
 
     @exception_handler
     async def cancel_executor(self, executor_id: str) -> None:
