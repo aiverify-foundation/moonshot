@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import ast
 from datetime import datetime
-from typing import Any
 
 from pydantic import BaseModel
 
@@ -47,15 +45,12 @@ class ResultArguments(BaseModel):
         Returns:
             ResultArguments: An instance of ResultArguments initialized with the data from the input dictionary.
         """
-        metadata = results.pop("metadata")
+        metadata = results["metadata"]
         start_time = datetime.strptime(
             metadata["start_time"], "%Y%m%d-%H%M%S"
         ).timestamp()
         end_time = datetime.strptime(metadata["end_time"], "%Y%m%d-%H%M%S").timestamp()
         status = RunStatus[metadata["status"].upper()]
-
-        # Convert stringified tuples back to tuples
-        results = cls.convert_str_tuples_to_tuples(results)
 
         return cls(
             id=metadata["id"],
@@ -67,77 +62,112 @@ class ResultArguments(BaseModel):
             cookbooks=metadata["cookbooks"],
             endpoints=metadata["endpoints"],
             num_of_prompts=metadata["num_of_prompts"],
-            results=results,
+            results=results["results"],
             status=status,
         )
 
-    @classmethod
-    def convert_str_tuples_to_tuples(cls, data: Any) -> Any:
+    def format_results(self) -> dict:
         """
-        Converts stringified tuples back to tuples.
+        This method formats the results of the BenchmarkExecutor.
 
-        This method takes a dictionary as input and converts all its keys to tuples if they represent a tuple.
-        If the value associated with a key is a dictionary, it recursively converts the keys of that dictionary
-        to tuples as well.
-        If the value is a list, it recursively applies the conversion to each element in the list.
-        If the value is neither a dictionary nor a list, it returns the value as is.
-
-        Args:
-            data (Any): The input data. This could be a dictionary, a list, or any other data type.
+        The formatting is based on whether the BenchmarkExecutor was executed with cookbooks or recipes.
+        If cookbooks were utilized, the '_format_results_cookbooks' method is invoked to format the results.
+        If recipes were utilized, the '_format_results_recipes' method is invoked to format the results.
 
         Returns:
-            Any: The input data with all stringified tuples converted back to tuples.
+            dict: A dictionary that contains the formatted results.
+
+        Raises:
+            RuntimeError: If the BenchmarkExecutor was not executed with either cookbooks or recipes.
         """
-        if isinstance(data, dict):
-            return {
-                ast.literal_eval(key)
-                if cls.is_tuple_str(key)
-                else key: cls.convert_str_tuples_to_tuples(value)
-                for key, value in data.items()
+        if self.cookbooks:
+            formatted_results = {
+                "cookbooks": self._format_results_cookbooks(
+                    self.cookbooks, self.results
+                )
             }
-        elif isinstance(data, list):
-            return [cls.convert_str_tuples_to_tuples(item) for item in data]
-        else:
-            return data
-
-    @staticmethod
-    def is_tuple_str(s: str) -> bool:
-        """
-        Checks if a string represents a tuple.
-
-        Args:
-            s (str): The input string.
-
-        Returns:
-            bool: True if the string represents a tuple, False otherwise.
-        """
-        return s.startswith("(") and s.endswith(")")
-
-    def convert_dict_keys_to_str(self, data: Any) -> Any:
-        """
-        Converts the keys of a dictionary to strings.
-
-        This method takes a dictionary as input and converts all its keys to strings.
-        If the value associated with a key is a dictionary, it recursively converts the keys of that dictionary
-        to strings as well.
-        If the value is a list, it recursively applies the conversion to each element in the list.
-        If the value is neither a dictionary nor a list, it returns the value as is.
-
-        Args:
-            data (Any): The input data. This could be a dictionary, a list, or any other data type.
-
-        Returns:
-            Any: The input data with all dictionary keys converted to strings.
-        """
-        if isinstance(data, dict):
-            return {
-                str(key): self.convert_dict_keys_to_str(value)
-                for key, value in data.items()
+        elif self.recipes:
+            formatted_results = {
+                "recipes": self._format_results_recipes(self.recipes, self.results)
             }
-        elif isinstance(data, list):
-            return [self.convert_dict_keys_to_str(item) for item in data]
         else:
-            return data
+            raise RuntimeError(
+                "Unable to determine cookbooks or recipes for formatting results."
+            )
+
+        return formatted_results
+
+    def _format_results_cookbooks(
+        self, cookbook_list: list[str], cookbook_results: dict
+    ) -> list:
+        """
+        This method formats the results for a given list of cookbooks.
+
+        The method loops through each cookbook in the list. For every cookbook, it creates a dictionary that contains
+        the cookbook id and a list of formatted recipes. Each formatted recipe is a dictionary that includes the
+        recipe id and a list of models. The list of models is generated by invoking the
+        '_format_results_recipes' method.
+        """
+        formatted_results = []
+        for cookbook in cookbook_list:
+            cookbook_dict = {
+                "id": cookbook,
+                "recipes": self._format_results_recipes(
+                    list(cookbook_results[cookbook].keys()), cookbook_results[cookbook]
+                ),
+            }
+            formatted_results.append(cookbook_dict)
+        return formatted_results
+
+    def _format_results_recipes(
+        self, recipes_list: list[str], recipes_results: dict
+    ) -> list:
+        """
+        This method formats the results for a list of recipes.
+
+        It iterates over the list of recipes. For each recipe, it creates a dictionary that includes the recipe
+        id and a list of models. Each model is a dictionary that includes the model id and a list of
+        datasets.
+
+        Each dataset is a dictionary that includes the dataset id and a list of prompt templates.
+        Each prompt template is a dictionary that includes the prompt template id, data, and metrics.
+
+        Args:
+            recipes_list (list): A list of recipe ids.
+
+        Returns:
+            list: A list of dictionaries. Each dictionary represents a formatted result for a recipe.
+        """
+        formatted_results = []
+        for recipe in recipes_list:
+            recipe_dict = {"id": recipe, "models": []}
+            recipe_results = recipes_results[recipe]
+
+            # Getting unique datasets, endpoints, and prompt templates
+            unique_endpoints = set()
+            unique_datasets = set()
+            unique_prompt_templates = set()
+            for key_ep, _, key_ds, key_pt in recipe_results.keys():
+                unique_endpoints.add(key_ep)
+                unique_datasets.add(key_ds)
+                unique_prompt_templates.add(key_pt)
+
+            for ep in unique_endpoints:
+                ep_dict = {"id": ep, "datasets": []}
+                for ds in unique_datasets:
+                    ds_dict = {"id": ds, "prompt_templates": []}
+                    for pt in unique_prompt_templates:
+                        pt_dict = {
+                            "id": pt,
+                            "data": recipe_results[(ep, recipe, ds, pt)]["data"],
+                            "metrics": recipe_results[(ep, recipe, ds, pt)]["results"],
+                        }
+                        ds_dict["prompt_templates"].append(pt_dict)
+                    ep_dict["datasets"].append(ds_dict)
+                recipe_dict["models"].append(ep_dict)
+            formatted_results.append(recipe_dict)
+
+        return formatted_results
 
     def to_dict(self) -> dict:
         """
@@ -168,6 +198,6 @@ class ResultArguments(BaseModel):
                 "num_of_prompts": self.num_of_prompts,
                 "status": self.status.name.lower(),
             },
+            "results": self.results,
         }
-        results.update(self.convert_dict_keys_to_str(self.results))
         return results
