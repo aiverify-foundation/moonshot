@@ -19,7 +19,9 @@ class EnvVariables(Enum):
     METRICS_CONFIG = "METRICS_CONFIG"
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
-    RECIPES_PROCESSING_MODULES = "RECIPES_PROCESSING_MODULES"
+    RECIPES_MODULES = "RECIPES_MODULES"
+    REPORTS = "REPORTS"
+    REPORTS_MODULES = "REPORTS_MODULES"
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
@@ -89,13 +91,17 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RECIPES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
     ]
-    RECIPES_PROCESSING_MODULES = [
-        env_vars.get(EnvVariables.RECIPES_PROCESSING_MODULES.value),
-        str(
-            importlib.resources.files(__app_name__).joinpath(
-                "data/recipes-processing-modules"
-            )
-        ),
+    RECIPES_MODULES = [
+        env_vars.get(EnvVariables.RECIPES_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/recipes-modules")),
+    ]
+    REPORTS = [
+        env_vars.get(EnvVariables.REPORTS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/reports")),
+    ]
+    REPORTS_MODULES = [
+        env_vars.get(EnvVariables.REPORTS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/reports-modules")),
     ]
     RESULTS = [
         env_vars.get(EnvVariables.RESULTS.value),
