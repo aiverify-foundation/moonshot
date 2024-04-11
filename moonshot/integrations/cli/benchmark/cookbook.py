@@ -337,25 +337,23 @@ def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> 
                 cookbook_result = tmp_result
                 break
 
-        for recipe in cookbook_result["recipes"]:
-            endpoint_results = list()
-            for endpoint in endpoints:
-                output_results = {}
+        if cookbook_result:
+            for recipe in cookbook_result["recipes"]:
+                endpoint_results = list()
+                for endpoint in endpoints:
+                    output_results = {}
 
-                # Get endpoint result
-                ep_result = {}
-                for tmp_result in recipe["models"]:
-                    if tmp_result["id"] == endpoint:
-                        ep_result = tmp_result
+                    # Get endpoint result
+                    for tmp_result in recipe["models"]:
+                        if tmp_result["id"] == endpoint:
+                            for ds in tmp_result["datasets"]:
+                                for pt in ds["prompt_templates"]:
+                                    output_results[(ds["id"], pt["id"])] = pt["metrics"]
 
-                for ds in ep_result["datasets"]:
-                    for pt in ds["prompt_templates"]:
-                        output_results[(ds["id"], pt["id"])] = pt["metrics"]
-
-                endpoint_results.append(str(output_results))
-            table.add_section()
-            table.add_row(str(index), cookbook, recipe["id"], *endpoint_results)
-            index += 1
+                    endpoint_results.append(str(output_results))
+                table.add_section()
+                table.add_row(str(index), cookbook, recipe["id"], *endpoint_results)
+                index += 1
 
     # Display table
     console.print(table)

@@ -20,8 +20,7 @@ class EnvVariables(Enum):
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
     RECIPES_MODULES = "RECIPES_MODULES"
-    REPORTS = "REPORTS"
-    REPORTS_MODULES = "REPORTS_MODULES"
+    REPORTS_ANALYSIS_MODULES = "REPORTS_ANALYSIS_MODULES"
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
@@ -95,13 +94,13 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RECIPES_MODULES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/recipes-modules")),
     ]
-    REPORTS = [
-        env_vars.get(EnvVariables.REPORTS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/reports")),
-    ]
-    REPORTS_MODULES = [
-        env_vars.get(EnvVariables.REPORTS_MODULES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/reports-modules")),
+    REPORTS_ANALYSIS_MODULES = [
+        env_vars.get(EnvVariables.REPORTS_ANALYSIS_MODULES.value),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/reports-analysis-modules"
+            )
+        ),
     ]
     RESULTS = [
         env_vars.get(EnvVariables.RESULTS.value),
