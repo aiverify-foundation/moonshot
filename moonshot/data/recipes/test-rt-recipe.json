@@ -1,0 +1,29 @@
+{
+    "id": "test-rt-recipe",
+    "name": "test-rt-recipe",
+    "description": "Description of test-rt-recipe.",
+    "tags": [
+        "redteaming"
+    ],
+    "datasets": [
+        "test-rt-ds"
+    ],
+    
+    "prompt_templates": [
+        "test-rt-pt",
+        "auto-categorisation"
+    ],
+    "metrics": [
+        "exactstrmatch"
+],
+    "type": "redteam",
+    "attack_strategies": [
+        {
+            "attack_module": "sample_attack_module",
+            "stop_strategies": [
+                "sample_stop_strategy"
+            ],
+            "context_strategies": ["add_previous_prompt"]
+        }
+    ]
+}

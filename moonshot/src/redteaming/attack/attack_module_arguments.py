@@ -7,6 +7,9 @@ class AttackModuleArguments(BaseModel):
     # name of the attack module
     name: str
 
+    # id of the recipe used
+    recipe_id: str
+
     # list of Connector instance to connect to the endpoints specified in the Recipe
     connector_instances: list
 
