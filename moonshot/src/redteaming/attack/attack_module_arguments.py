@@ -10,6 +10,9 @@ class AttackModuleArguments(BaseModel):
     # id of the recipe used
     recipe_id: str
 
+    # num of prompts used
+    num_of_prompts: int
+
     # list of Connector instance to connect to the endpoints specified in the Recipe
     connector_instances: list
 

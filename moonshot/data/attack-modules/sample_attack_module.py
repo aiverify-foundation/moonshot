@@ -21,7 +21,7 @@ class SampleAttackModule(AttackModule):
             (
                 conn_inst
                 for conn_inst in self.connector_instances
-                if conn_inst.id == "my-openai-gpt35"
+                if conn_inst.id == "my-openai-gpt4"
             ),
             None,
         )
@@ -35,7 +35,7 @@ class SampleAttackModule(AttackModule):
         )
 
         if target_llm_connector and toxic_llm_connector:
-            print("\n", "=" * 200)
+            print("=" * 200)
             print(
                 f"Preparing prompts and sending prompts to toxic generator LLM - ({toxic_llm_connector.id})"
             )
@@ -44,21 +44,27 @@ class SampleAttackModule(AttackModule):
             )
 
             toxic_prompts = [result async for result in toxic_prompt_generator]
+
+            print("=" * 200)
             print(
-                f"Sending prompts generated from target llm {toxic_llm_connector.id} -> {target_llm_connector.id}"
+                f"Sending prompts generated from Toxic LLM [{toxic_llm_connector.id}] \
+                    -> Target LLM [{target_llm_connector.id}]"
             )
-            print("\n", "=" * 200)
+            print("\n")
 
             iteration_count = 1
             for toxic_prompt in toxic_prompts:
                 print(
-                    f'Sending "{toxic_prompt.connector_prompt.predicted_results}" -> {target_llm_connector.id}'
+                    f"Sending prompt [{toxic_prompt.connector_prompt.predicted_results}] -> \
+                        Target LLM [{target_llm_connector.id}]"
                 )
                 result = await self.send_prompt(
                     target_llm_connector,
                     toxic_prompt.connector_prompt.predicted_results,
                 )
-                print(f'{target_llm_connector.id} -> "{result}"')
+                print(
+                    f'Response from Target LLM [{target_llm_connector.id}] -> prompt ["{result}"]'
+                )
                 if self.check_stop_condition(
                     toxic_prompt.connector_prompt.prompt,
                     iteration_count,
@@ -74,4 +80,6 @@ class SampleAttackModule(AttackModule):
                 iteration_count += 1
                 print("=" * 200, "\n")
 
-            print("Stopping red teaming as there is no more prompt to send.")
+            print(
+                "Stopping red teaming as there is no more data in the dataset to send."
+            )

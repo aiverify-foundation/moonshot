@@ -22,8 +22,7 @@
             "attack_module": "sample_attack_module",
             "stop_strategies": [
                 "sample_stop_strategy"
-            ],
-            "context_strategies": ["add_previous_prompt"]
+            ]
         }
     ]
 }

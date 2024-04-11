@@ -117,6 +117,7 @@ class RedTeaming:
                 am_arguments = AttackModuleArguments(
                     name=attack_module_name,
                     recipe_id=recipe_inst.id,
+                    num_of_prompts=self.num_of_prompts,
                     connector_instances=recipe_eps,
                     stop_strategy_instances=stop_strategy_insts,
                     datasets=self.recipe_instance.datasets,

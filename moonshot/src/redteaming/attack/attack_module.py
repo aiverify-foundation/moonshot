@@ -17,13 +17,14 @@ from moonshot.src.utils.import_modules import get_instance
 
 # variable to cap the number of prompts sent to the LLMs in case the stop condition
 # of the attack does not get fulfilled
-MAX_NO_ITERATIONS = 10
+MAX_NO_ITERATIONS = 5
 
 
 class AttackModule:
     def __init__(self, am_args: AttackModuleArguments):
         self.name = am_args.name
         self.recipe_id = am_args.recipe_id
+        self.num_of_prompts = am_args.num_of_prompts
         self.connector_instances = am_args.connector_instances
         self.stop_strategy_instances = am_args.stop_strategy_instances
         self.datasets = am_args.datasets
@@ -212,7 +213,6 @@ class AttackModule:
         Raises:
             Exception: If there is an error during file reading or any other operation within the method.
         """
-        # print("Preparing datasets and prompt templates...")
         if self.prompt_templates:
 
             # prepare prompt template generator
@@ -229,8 +229,17 @@ class AttackModule:
                     )
                     for prompt_index, prompt in enumerate(ds_info, 1):
                         try:
+                            if (
+                                self.num_of_prompts != 0
+                                and prompt_index > self.num_of_prompts
+                            ):
+                                break
+
                             rendered_prompt = jinja2_template.render(
                                 {"prompt": prompt["input"]}
+                            )
+                            print(
+                                f"Generating prompt with dataset [{ds_id}] and prompt template [{pt_id}]."
                             )
                             yield PromptArguments(
                                 rec_id=self.recipe_id,
@@ -260,6 +269,12 @@ class AttackModule:
                 )
                 for prompt_index, prompt in enumerate(ds_info, 1):
                     try:
+                        if (
+                            self.num_of_prompts != 0
+                            and prompt_index > self.num_of_prompts
+                        ):
+                            break
+
                         yield PromptArguments(
                             rec_id=self.recipe_id,
                             pt_id=pt_id,
@@ -338,13 +353,11 @@ class AttackModule:
             )
             self.write_record_to_db(chat_record_tuple, llm_connector.id)
 
-            # perform check and decide if red teaming should be stopped
-            if self.check_stop_condition(
-                new_prompt_info.connector_prompt.prompt,
-                iteration_count,
+            print(
+                "Generated prompt:",
                 new_prompt_info.connector_prompt.predicted_results,
-            ):
-                break
+                "\n",
+            )
 
             # hit max no. of default iterations
             if iteration_count >= self.get_max_no_iterations():
