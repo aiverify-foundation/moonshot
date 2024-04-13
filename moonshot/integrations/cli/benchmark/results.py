@@ -1,5 +1,3 @@
-import ast
-
 import cmd2
 from rich.console import Console
 from rich.table import Table
@@ -51,9 +49,9 @@ def view_result(args) -> None:
     try:
         result_info = api_read_result(args.result_filename)
         if result_info["metadata"].get("cookbooks"):
-            display_view_cookbook_result(args.result_filename, result_info)
+            display_view_cookbook_result(result_info)
         elif result_info["metadata"].get("recipes"):
-            display_view_recipe_result(args.result_filename, result_info)
+            display_view_recipe_result(result_info)
         else:
             print("[view_result]: Unable to determine cookbook or recipe")
     except Exception as e:
@@ -107,7 +105,7 @@ def display_results(results_list):
         console.print("[red]There are no results found.[/red]")
 
 
-def display_view_recipe_result(result_file, result_info):
+def display_view_recipe_result(result_info):
     """
     Display the recipe result.
 
@@ -117,22 +115,18 @@ def display_view_recipe_result(result_file, result_info):
     moonshot.integrations.cli.benchmark.recipe module to display the recipe results.
 
     Args:
-        result_file (str): The name of the result file.
         result_info (dict): The result info.
 
     Returns:
         None
     """
-    converted_result_info = convert_string_tuples_in_dict(result_info)
-    recipes = converted_result_info["metadata"]["recipes"]
-    endpoints = converted_result_info["metadata"]["endpoints"]
-    duration = converted_result_info["metadata"]["duration"]
-    show_recipe_results(
-        recipes, endpoints, converted_result_info, result_file, duration
-    )
+    recipes = result_info["metadata"]["recipes"]
+    endpoints = result_info["metadata"]["endpoints"]
+    duration = result_info["metadata"]["duration"]
+    show_recipe_results(recipes, endpoints, result_info, duration)
 
 
-def display_view_cookbook_result(result_file, result_info):
+def display_view_cookbook_result(result_info):
     """
     Display the cookbook result.
 
@@ -142,52 +136,15 @@ def display_view_cookbook_result(result_file, result_info):
     moonshot.integrations.cli.benchmark.cookbook module to display the cookbook results.
 
     Args:
-        result_file (str): The name of the result file.
         result_info (dict): The result info.
 
     Returns:
         None
     """
-    converted_result_info = convert_string_tuples_in_dict(result_info)
-    cookbooks = converted_result_info["metadata"]["cookbooks"]
-    endpoints = converted_result_info["metadata"]["endpoints"]
-    duration = converted_result_info["metadata"]["duration"]
-    show_cookbook_results(
-        cookbooks, endpoints, converted_result_info, result_file, duration
-    )
-
-
-def convert_string_tuples_in_dict(d):
-    """
-    Convert string tuples in a dictionary to actual tuples.
-
-    This function takes a dictionary as an argument. It iterates over the dictionary items and tries to convert each key
-    to a tuple using the literal_eval function from the ast module. If the key can be converted to a tuple, it uses the
-    converted tuple as the new key. If the key cannot be converted to a tuple, it uses the original key. If the value
-    associated with the key is a dictionary, it calls the function recursively to convert any string tuples in the
-    nested dictionary. Finally, it returns the new dictionary with the converted keys.
-
-    Args:
-        d (dict): The original dictionary.
-
-    Returns:
-        new_dict (dict): The new dictionary with the converted keys.
-    """
-    new_dict = {}
-    for k, v in d.items():
-        # Try to convert key to tuple
-        try:
-            new_key = ast.literal_eval(k)
-        except (ValueError, SyntaxError):
-            new_key = k
-
-        # If value is a dictionary, call the function recursively
-        if isinstance(v, dict):
-            new_dict[new_key] = convert_string_tuples_in_dict(v)
-        else:
-            new_dict[new_key] = v
-
-    return new_dict
+    cookbooks = result_info["metadata"]["cookbooks"]
+    endpoints = result_info["metadata"]["endpoints"]
+    duration = result_info["metadata"]["duration"]
+    show_cookbook_results(cookbooks, endpoints, result_info, duration)
 
 
 # ------------------------------------------------------------------------------
