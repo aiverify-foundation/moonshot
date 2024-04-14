@@ -19,8 +19,7 @@ class Recipe:
         self.datasets = rec_args.datasets
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
-        self.type = rec_args.type
-        self.attack_strategies = rec_args.attack_strategies
+        self.attack_modules = rec_args.attack_modules
 
     @classmethod
     def load(cls, rec_id: str) -> Recipe:
@@ -67,8 +66,7 @@ class Recipe:
                 "datasets": rec_args.datasets,
                 "prompt_templates": rec_args.prompt_templates,
                 "metrics": rec_args.metrics,
-                "type": rec_args.type.name.lower(),
-                "attack_strategies": rec_args.attack_strategies,
+                "attack_modules": rec_args.attack_modules,
             }
 
             # Write as json output
