@@ -1,8 +1,5 @@
 from ast import literal_eval
 
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-
 from moonshot.src.api.api_cookbook import api_read_cookbooks
 from moonshot.src.api.api_recipe import api_read_recipes
 from moonshot.src.api.api_result import api_read_result
@@ -84,24 +81,6 @@ class ResultsComparator(ReportAnalysisInterface):
             "result_ids": "The result ids to be compared",
             "endpoint_ids": "The endpoint ids to be compared",
         }
-
-    @timeit
-    def validate_output(self, output: dict) -> bool:
-        """
-        Validates the given output against the defined JSON schema.
-
-        Args:
-            output (dict): The output data to validate.
-
-        Returns:
-            bool: True if the output is valid, False otherwise.
-        """
-        try:
-            validate(instance=output, schema=self.output_schema)
-            return True
-        except ValidationError as e:
-            print(f"Validation Error: {e}")
-            return False
 
     @timeit
     def get_metadata(self) -> dict | None:
@@ -202,7 +181,7 @@ class ResultsComparator(ReportAnalysisInterface):
 
         # ------------------ PART 5 ------------------
         # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict):
+        if self.validate_output(response_dict, ResultsComparator.output_schema):
             return response_dict
         else:
             raise RuntimeError(

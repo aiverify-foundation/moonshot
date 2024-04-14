@@ -4,21 +4,84 @@ from typing import Any
 import numpy as np
 import pylcs
 
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class LeakageRate:
-    """
-    Leakage Rate will compare the LCS between two string - Output and Target.
-    """
+class LeakageRate(MetricInterface):
+    # JSON schema as a class variable
+    output_schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "LeakageRateOutput",
+        "description": "Output schema for LeakageRate metrics results",
+        "type": "object",
+        "properties": {
+            "mean_leakage_rate": {
+                "type": "number",
+                "description": "The average leakage rate across all predictions.",
+            },
+            "min_leakage_rate": {
+                "type": "number",
+                "description": "The minimum leakage rate found in the predictions.",
+            },
+            "max_leakage_rate": {
+                "type": "number",
+                "description": "The maximum leakage rate found in the predictions.",
+            },
+            "q1_leakage_rate": {
+                "type": "number",
+                "description": "The first quartile (25th percentile) leakage rate.",
+            },
+            "q2_leakage_rate": {
+                "type": "number",
+                "description": "The median (50th percentile) leakage rate.",
+            },
+            "q3_leakage_rate": {
+                "type": "number",
+                "description": "The third quartile (75th percentile) leakage rate.",
+            },
+        },
+        "required": [
+            "mean_leakage_rate",
+            "min_leakage_rate",
+            "max_leakage_rate",
+            "q1_leakage_rate",
+            "q2_leakage_rate",
+            "q3_leakage_rate",
+        ],
+    }
 
-    @staticmethod
+    def __init__(self):
+        self.id = "leakagerate"
+        self.name = "LeakageRate"
+        self.description = (
+            "Leakage Rate will compare the LCS between two string - Output and Target."
+        )
+        self.version = "0.1.0"
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the LeakageRate class,
+        including its identifier, name, description, and version.
+
+        Returns:
+            dict: A dictionary containing the metadata of the LeakageRate class,
+            which includes 'id', 'name', 'description', and 'version'.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "version": self.version,
+        }
+
     @timeit
     def get_results(
-        prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
+        self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
         Calculates the accuracy of the predicted results by comparing them to the target results.
@@ -44,7 +107,8 @@ class LeakageRate:
         q_max = np.max(total_leakage_rate, axis=0)
         q_min = np.min(total_leakage_rate, axis=0)
         q_mean = np.mean(total_leakage_rate, axis=0)
-        return {
+
+        response_dict = {
             "mean_leakage_rate": q_mean,
             "min_leakage_rate": q_min,
             "max_leakage_rate": q_max,
@@ -52,3 +116,10 @@ class LeakageRate:
             "q2_leakage_rate": q2,
             "q3_leakage_rate": q3,
         }
+        # Validate that the output dict passes json schema validation
+        if self.validate_output(response_dict, LeakageRate.output_schema):
+            return response_dict
+        else:
+            raise RuntimeError(
+                "[LeakageRate] Failed json schema validation for output response."
+            )

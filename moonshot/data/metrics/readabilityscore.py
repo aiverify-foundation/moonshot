@@ -3,21 +3,63 @@ from typing import Any
 
 from readability import Readability
 
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class ReadabilityScore:
-    """
-    ReadabilityScore uses Flesch Reading Ease to compute the complexity of the output
-    """
+class ReadabilityScore(MetricInterface):
+    # JSON schema as a class variable
+    output_schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "ReadabilityScoreResponse",
+        "type": "object",
+        "properties": {
+            "readabilityscore": {
+                "type": "number",
+                "description": "The average readability score of the valid responses.",
+            },
+            "valid_response": {
+                "type": "integer",
+                "description": "The number of responses considered valid (more than 100 words).",
+            },
+            "invalid_response": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "A list of responses considered invalid (less than 100 words).",
+            },
+        },
+        "required": ["readabilityscore", "valid_response", "invalid_response"],
+    }
 
-    @staticmethod
+    def __init__(self):
+        self.id = "readabilityscore"
+        self.name = "ReadabilityScore"
+        self.description = "ReadabilityScore uses Flesch Reading Ease to compute the complexity of the output"
+        self.version = "0.1.0"
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the ReadabilityScore class,
+        including its identifier, name, description, and version.
+
+        Returns:
+            dict: A dictionary containing the metadata of the ReadabilityScore class,
+            which includes 'id', 'name', 'description', and 'version'.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "version": self.version,
+        }
+
     @timeit
     def get_results(
-        prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
+        self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
         Calculates the readability score and the number of valid and invalid responses based on the predicted results.
@@ -54,8 +96,15 @@ class ReadabilityScore:
         else:
             temp_score = 0
 
-        return {
+        response_dict = {
             "readabilityscore": temp_score,
             "valid_response": len(predicted_results) - len(response_less_than_100),
             "invalid_response": response_less_than_100,
         }
+        # Validate that the output dict passes json schema validation
+        if self.validate_output(response_dict, ReadabilityScore.output_schema):
+            return response_dict
+        else:
+            raise RuntimeError(
+                "[ReadabilityScore] Failed json schema validation for output response."
+            )
