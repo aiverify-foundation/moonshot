@@ -67,6 +67,9 @@ class Result:
             Exception: If there is an error during result creation.
         """
         try:
+            # Format results
+            res_args.results = res_args.format_results()
+
             # Write as json output
             Storage.create_object(
                 EnvVariables.RESULTS.name, res_args.id, res_args.to_dict(), "json"

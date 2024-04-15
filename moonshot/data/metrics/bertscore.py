@@ -3,23 +3,65 @@ from typing import Any
 
 import bert_score
 
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class BertScore:
+class BertScore(MetricInterface):
     """
     BertScore uses Bert to check for the similarity in embedding between two sentences.
     Code reference from:
     https://github.com/Tiiiger/bert_score/blob/master/bert_score_cli/score.py
     """
 
-    @staticmethod
+    # JSON schema as a class variable
+    output_schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "BertScore",
+        "type": "object",
+        "properties": {
+            "bertscore": {
+                "type": "object",
+                "properties": {
+                    "precision": {"type": "number"},
+                    "recall": {"type": "number"},
+                    "f1": {"type": "number"},
+                },
+                "required": ["precision", "recall", "f1"],
+            }
+        },
+        "required": ["bertscore"],
+    }
+
+    def __init__(self):
+        self.id = "bertscore"
+        self.name = "BertScore"
+        self.description = "BertScore uses Bert to check for the similarity in embedding between two sentences."
+        self.version = "0.1.0"
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the BertScore class, including its identifier,
+        name, description, and version.
+
+        Returns:
+            dict: A dictionary containing the metadata of the BertScore class, which includes 'id',
+            'name', 'description', and 'version'.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "version": self.version,
+        }
+
     @timeit
     def get_results(
-        prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
+        self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
         Calculate the BERTScore precision, recall, and F1 score between the predicted results and the target results.
@@ -46,10 +88,18 @@ class BertScore:
         precision_value = avg_scores[0].cpu().item()
         recall_value = avg_scores[1].cpu().item()
         f1_value = avg_scores[2].cpu().item()
-        return {
+
+        response_dict = {
             "bertscore": {
                 "precision": precision_value,
                 "recall": recall_value,
                 "f1": f1_value,
             }
         }
+        # Validate that the output dict passes json schema validation
+        if self.validate_output(response_dict, BertScore.output_schema):
+            return response_dict
+        else:
+            raise RuntimeError(
+                "[BertScore] Failed json schema validation for output response."
+            )

@@ -13,6 +13,7 @@ from moonshot.api import (
     api_read_recipe,
     api_update_recipe,
 )
+from moonshot.src.api.api_result import api_read_result
 from moonshot.src.api.api_runner import api_get_all_runner_name, api_load_runner
 
 console = Console()
@@ -146,16 +147,14 @@ def run_recipe(args) -> None:
             )
 
         asyncio.run(rec_runner.run())
-
-        run_arguments_info = rec_runner.get_latest_run_arguments()
-        show_recipe_results(
-            recipes,
-            endpoints,
-            run_arguments_info.results,
-            run_arguments_info.results_file,
-            run_arguments_info.duration,
-        )
         rec_runner.close()
+
+        # Display results
+        result_info = api_read_result(name)
+        show_recipe_results(
+            recipes, endpoints, result_info, result_info["metadata"]["duration"]
+        )
+
     except Exception as e:
         print(f"[run_recipe]: {str(e)}")
 
@@ -278,7 +277,7 @@ def display_recipes(recipes_list):
         console.print("[red]There are no recipes found.[/red]")
 
 
-def show_recipe_results(recipes, endpoints, recipe_results, results_file, duration):
+def show_recipe_results(recipes, endpoints, recipe_results, duration):
     """
     Show the results of the recipe benchmarking.
 
@@ -291,7 +290,6 @@ def show_recipe_results(recipes, endpoints, recipe_results, results_file, durati
         recipes (list): A list of recipes that were benchmarked.
         endpoints (list): A list of endpoints that were used in the benchmarking.
         recipe_results (dict): A dictionary with the results of the recipe benchmarking.
-        results_file (str): The location of the results file.
         duration (float): The time taken to run the benchmarking in seconds.
 
     Returns:
@@ -300,7 +298,6 @@ def show_recipe_results(recipes, endpoints, recipe_results, results_file, durati
     if recipe_results:
         # Display recipe results
         generate_recipe_table(recipes, endpoints, recipe_results)
-        console.print(f"[blue]Results saved in {results_file}[/blue]")
     else:
         console.print("[red]There are no results.[/red]")
 
@@ -329,16 +326,28 @@ def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None
     """
     table = Table("", "Recipe", *endpoints)
     for recipe_index, recipe in enumerate(recipes, 1):
-        endpoint_results = list()
-        for endpoint in endpoints:
-            tmp_results = {}
-            for result_key, result_value in results[recipe].items():
-                if set((endpoint, recipe)).issubset(result_key):
-                    result_ep, result_recipe, result_ds, result_pt = result_key
-                    tmp_results[(result_ds, result_pt)] = result_value["results"]
-            endpoint_results.append(str(tmp_results))
-        table.add_section()
-        table.add_row(str(recipe_index), recipe, *endpoint_results)
+        # Get recipe result
+        recipe_result = {}
+        for tmp_result in results["results"]["recipes"]:
+            if tmp_result["id"] == recipe:
+                recipe_result = tmp_result
+                break
+
+        if recipe_result:
+            endpoint_results = list()
+            for endpoint in endpoints:
+                output_results = {}
+
+                # Get endpoint result
+                for tmp_result in recipe_result["models"]:
+                    if tmp_result["id"] == endpoint:
+                        for ds in tmp_result["datasets"]:
+                            for pt in ds["prompt_templates"]:
+                                output_results[(ds["id"], pt["id"])] = pt["metrics"]
+
+                endpoint_results.append(str(output_results))
+            table.add_section()
+            table.add_row(str(recipe_index), recipe, *endpoint_results)
     # Display table
     console.print(table)
 

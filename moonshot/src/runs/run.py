@@ -480,7 +480,7 @@ class Run:
             rec_proc_instance = get_instance(
                 selected_rec_proc_module,
                 Storage.get_filepath(
-                    EnvVariables.RECIPES_PROCESSING_MODULES.name,
+                    EnvVariables.RECIPES_MODULES.name,
                     selected_rec_proc_module,
                     "py",
                 ),

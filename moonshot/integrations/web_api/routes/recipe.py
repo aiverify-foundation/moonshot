@@ -3,6 +3,8 @@ from dependency_injector.wiring import inject, Provide
 
 from ..container import Container
 from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_response_dto import RecipeResponseDTO
+
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
@@ -61,11 +63,11 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
         return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes name: {e.msg}")
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes name: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")       
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}")       
                          
 
 @router.get("/v1/recipes/{recipe_id}")
@@ -73,7 +75,7 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
 def get_recipe_by_id(
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> RecipeCreateDTO | None:
+    ) -> RecipeResponseDTO | None:
     """
     Get a recipe from the database
     """

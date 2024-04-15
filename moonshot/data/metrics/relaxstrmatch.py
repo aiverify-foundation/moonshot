@@ -2,22 +2,55 @@ import logging
 import re
 from typing import Any
 
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class RelaxStrMatch:
+class RelaxStrMatch(MetricInterface):
     """
     RelaxStrMatch will remove symbols and spaces before comparing the output from language model with the expected
     target.
     """
 
-    @staticmethod
+    # JSON schema as a class variable
+    output_schema = {
+        "type": "object",
+        "properties": {"relax_str_match": {"type": "number"}},
+        "required": ["relax_str_match"],
+    }
+
+    def __init__(self):
+        self.id = "relaxstrmatch"
+        self.name = "RelaxStrMatch"
+        self.description = (
+            "RelaxStrMatch will remove symbols and spaces before comparing the output from language "
+            "model with the expected target."
+        )
+        self.version = "0.1.0"
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the RelaxStrMatch class,
+        including its identifier, name, description, and version.
+
+        Returns:
+            dict: A dictionary containing the metadata of the RelaxStrMatch class,
+            which includes 'id', 'name', 'description', and 'version'.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "version": self.version,
+        }
+
     @timeit
     def get_results(
-        prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
+        self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
         Calculates the accuracy of the predicted results by comparing them to the target results.
@@ -58,4 +91,11 @@ class RelaxStrMatch:
                 if result == target:
                     correct += 1
 
-        return {"relax_str_match": float(correct / total)}
+        response_dict = {"relax_str_match": float(correct / total)}
+        # Validate that the output dict passes json schema validation
+        if self.validate_output(response_dict, RelaxStrMatch.output_schema):
+            return response_dict
+        else:
+            raise RuntimeError(
+                "[RelaxStrMatch] Failed json schema validation for output response."
+            )

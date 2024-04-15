@@ -3,23 +3,88 @@ from typing import Any
 
 from transformers import pipeline
 
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class SpellingScore:
+class SpellingScore(MetricInterface):
     """
     SpellingScore uses Levenshetein Distance to find permutations within an edit distance of 2 form the original word
     before comparing to known words in a word frequency list.
     This code uses pyspellchecker (https://pypi.org/project/pyspellchecker/).
     """
 
-    @staticmethod
+    # JSON schema as a class variable
+    output_schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+            "spellingscore": {
+                "type": "object",
+                "properties": {
+                    "corrected": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "corrected": {"type": "string"},
+                                "error": {"type": "string"},
+                                "misspell": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                },
+                                "total_number_of_words": {"type": "integer"},
+                                "total_number_of_misspelled": {"type": "integer"},
+                            },
+                            "required": [
+                                "total_number_of_words",
+                                "total_number_of_misspelled",
+                            ],
+                            "additionalProperties": False,
+                        },
+                    },
+                    "spelling_score": {"type": "number"},
+                },
+                "required": ["corrected", "spelling_score"],
+                "additionalProperties": False,
+            }
+        },
+        "required": ["spellingscore"],
+        "additionalProperties": False,
+    }
+
+    def __init__(self):
+        self.id = "spelling"
+        self.name = "SpellingScore"
+        self.description = (
+            "SpellingScore uses Levenshetein Distance to find permutations within an edit distance of 2 "
+            "form the original word before comparing to known words in a word frequency list."
+        )
+        self.version = "0.1.0"
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the SpellingScore class,
+        including its identifier, name, description, and version.
+
+        Returns:
+            dict: A dictionary containing the metadata of the SpellingScore class,
+            which includes 'id', 'name', 'description', and 'version'.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "version": self.version,
+        }
+
     @timeit
     def get_results(
-        prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
+        self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
         Generate the function comment for the given function body in a markdown code block with
@@ -72,4 +137,11 @@ class SpellingScore:
             "spelling_score": (total_number_of_words - total_number_of_misspelled)
             / total_number_of_words,
         }
-        return {"spellingscore": scores}
+        response_dict = {"spellingscore": scores}
+        # Validate that the output dict passes json schema validation
+        if self.validate_output(response_dict, SpellingScore.output_schema):
+            return response_dict
+        else:
+            raise RuntimeError(
+                "[SpellingScore] Failed json schema validation for output response."
+            )

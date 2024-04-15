@@ -1,6 +1,7 @@
 from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_response_dto import RecipeResponseDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 
@@ -22,9 +23,9 @@ class RecipeService(BaseService):
     
 
     @exception_handler
-    def get_all_recipes(self) -> list[RecipeCreateDTO | None]:
+    def get_all_recipes(self) -> list[RecipeResponseDTO | None]:
         recipes = moonshot_api.api_get_all_recipe()
-        return [RecipeCreateDTO.model_validate(recipe) for recipe in recipes]
+        return [RecipeResponseDTO.model_validate(recipe) for recipe in recipes]
     
 
     @exception_handler
@@ -34,9 +35,9 @@ class RecipeService(BaseService):
 
 
     @exception_handler
-    def get_recipe_by_id(self, recipe_id: str) -> RecipeCreateDTO | None: 
+    def get_recipe_by_id(self, recipe_id: str) -> RecipeResponseDTO | None: 
         recipe = moonshot_api.api_read_recipe(recipe_id)
-        return RecipeCreateDTO.model_validate(recipe)
+        return RecipeResponseDTO.model_validate(recipe)
 
 
     @exception_handler

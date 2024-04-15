@@ -14,6 +14,7 @@ from moonshot.api import (
     api_read_recipes,
     api_update_cookbook,
 )
+from moonshot.src.api.api_result import api_read_result
 from moonshot.src.api.api_runner import api_get_all_runner_name, api_load_runner
 
 console = Console()
@@ -123,16 +124,14 @@ def run_cookbook(args) -> None:
             )
 
         asyncio.run(cb_runner.run())
-
-        run_arguments_info = cb_runner.get_latest_run_arguments()
-        show_cookbook_results(
-            cookbooks,
-            endpoints,
-            run_arguments_info.results,
-            run_arguments_info.results_file,
-            run_arguments_info.duration,
-        )
         cb_runner.close()
+
+        # Display results
+        result_info = api_read_result(name)
+        show_cookbook_results(
+            cookbooks, endpoints, result_info, result_info["metadata"]["duration"]
+        )
+
     except Exception as e:
         print(f"[run_cookbook]: {str(e)}")
 
@@ -285,9 +284,7 @@ def display_view_cookbook(cookbook_info):
         console.print("[red]There are no recipes found for the cookbook.[/red]")
 
 
-def show_cookbook_results(
-    cookbooks, endpoints, cookbook_results, results_file, duration
-):
+def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
     """
     Show the results of the cookbook benchmarking.
 
@@ -300,7 +297,6 @@ def show_cookbook_results(
         cookbooks (list): A list of cookbooks.
         endpoints (list): A list of endpoints.
         cookbook_results (dict): A dictionary with the results of the cookbook benchmarking.
-        results_file (str): The file where the results are saved.
         duration (float): The duration of the run.
 
     Returns:
@@ -309,7 +305,6 @@ def show_cookbook_results(
     if cookbook_results:
         # Display recipe results
         generate_cookbook_table(cookbooks, endpoints, cookbook_results)
-        console.print(f"[blue]Results saved in {results_file}[/blue]")
     else:
         console.print("[red]There are no results.[/red]")
 
@@ -317,7 +312,7 @@ def show_cookbook_results(
     console.print(f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n{'='*50}")
 
 
-def generate_cookbook_table(cookbooks, endpoints: list, results: dict) -> None:
+def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> None:
     """
     Generate a table with the cookbook results.
 
@@ -335,19 +330,31 @@ def generate_cookbook_table(cookbooks, endpoints: list, results: dict) -> None:
     table = Table("", "Cookbook", "Recipe", *endpoints)
     index = 1
     for cookbook in cookbooks:
-        cookbook_results = results[cookbook]
-        for recipe_name, recipe_results in cookbook_results.items():
-            endpoint_results = list()
-            for endpoint in endpoints:
-                tmp_results = {}
-                for result_key, result_value in results[cookbook][recipe_name].items():
-                    if set((endpoint, recipe_name)).issubset(result_key):
-                        result_ep, result_recipe, result_ds, result_pt = result_key
-                        tmp_results[(result_ds, result_pt)] = result_value["results"]
-                endpoint_results.append(str(tmp_results))
-            table.add_section()
-            table.add_row(str(index), cookbook, recipe_name, *endpoint_results)
-            index += 1
+        # Get cookbook result
+        cookbook_result = {}
+        for tmp_result in results["results"]["cookbooks"]:
+            if tmp_result["id"] == cookbook:
+                cookbook_result = tmp_result
+                break
+
+        if cookbook_result:
+            for recipe in cookbook_result["recipes"]:
+                endpoint_results = list()
+                for endpoint in endpoints:
+                    output_results = {}
+
+                    # Get endpoint result
+                    for tmp_result in recipe["models"]:
+                        if tmp_result["id"] == endpoint:
+                            for ds in tmp_result["datasets"]:
+                                for pt in ds["prompt_templates"]:
+                                    output_results[(ds["id"], pt["id"])] = pt["metrics"]
+
+                    endpoint_results.append(str(output_results))
+                table.add_section()
+                table.add_row(str(index), cookbook, recipe["id"], *endpoint_results)
+                index += 1
+
     # Display table
     console.print(table)
 

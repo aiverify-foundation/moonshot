@@ -79,7 +79,7 @@ class Storage:
             RuntimeError: If there is an error getting the object module instance or the object file module instance.
         """
         # Get jsonio object to return raw file instance
-        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         if obj_filepath:
             obj_file_instance = get_instance(
                 obj_mod_type,
