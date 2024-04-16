@@ -16,7 +16,10 @@ from .routes import (
     recipe, 
     benchmark_result, 
     prompt_template, 
-    metric, runner
+    metric, 
+    runner,
+    dataset,
+    attack_modules
     )
 
 logger = logging.getLogger(__name__)
@@ -80,6 +83,9 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     app.include_router(benchmark_result.router)
     app.include_router(metric.router)
     app.include_router(runner.router)
+    app.include_router(dataset.router)
+    app.include_router(attack_modules.router)
+    
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
