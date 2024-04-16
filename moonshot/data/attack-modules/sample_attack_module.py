@@ -1,3 +1,5 @@
+from moonshot.src.connectors.connector import Connector
+from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
@@ -16,70 +18,71 @@ class SampleAttackModule(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
 
-        # # gets the required LLM connectors to send the prompts to
-        target_llm_connector = next(
-            (
-                conn_inst
-                for conn_inst in self.connector_instances
-                if conn_inst.id == "my-openai-gpt4"
-            ),
-            None,
-        )
-        toxic_llm_connector = next(
-            (
-                conn_inst
-                for conn_inst in self.connector_instances
-                if conn_inst.id == "my-openai-gpt35"
-            ),
-            None,
+        # create toxic llm connector
+        toxic_llm_endpoint = "my-openai-gpt4"
+        toxic_llm_connector = Connector.create(
+            ConnectorEndpoint.read(toxic_llm_endpoint)
         )
 
-        if target_llm_connector and toxic_llm_connector:
+        try:
             print("=" * 200)
-            print(
-                f"Preparing prompts and sending prompts to toxic generator LLM - ({toxic_llm_connector.id})"
-            )
-            toxic_prompt_generator = self._generate_predictions(
-                self._generate_prompts(), toxic_llm_connector
-            )
-
-            toxic_prompts = [result async for result in toxic_prompt_generator]
-
-            print("=" * 200)
-            print(
-                f"Sending prompts generated from Toxic LLM [{toxic_llm_connector.id}] \
-                    -> Target LLM [{target_llm_connector.id}]"
-            )
-            print("\n")
-
-            iteration_count = 1
-            for toxic_prompt in toxic_prompts:
+            if toxic_llm_connector:
                 print(
-                    f"Sending prompt [{toxic_prompt.connector_prompt.predicted_results}] -> \
-                        Target LLM [{target_llm_connector.id}]"
+                    f"Preparing prompts and sending prompts to toxic generator LLM - ({toxic_llm_connector.id})"
                 )
-                result = await self.send_prompt(
-                    target_llm_connector,
-                    toxic_prompt.connector_prompt.predicted_results,
+                toxic_prompt_generator = self._generate_predictions(
+                    self._generate_prompts(), toxic_llm_connector
                 )
-                print(
-                    f'Response from Target LLM [{target_llm_connector.id}] -> prompt ["{result}"]'
-                )
-                if self.check_stop_condition(
-                    toxic_prompt.connector_prompt.prompt,
-                    iteration_count,
-                    toxic_prompt.connector_prompt.predicted_results,
-                ):
-                    return toxic_prompt.connector_prompt.predicted_results
+                toxic_prompts = [result async for result in toxic_prompt_generator]
 
-                if iteration_count >= self.get_max_no_iterations():
+                # send toxic prompts to all LLMs in the session
+                iteration_count = 1
+                for toxic_prompt in toxic_prompts:
                     print(
-                        f"Stopping red teaming as max number of iterations is hit({self.get_max_no_iterations()})..."
+                        f"Iteration: {iteration_count}. Sending toxic prompt [{toxic_prompt}] to target LLMs."
                     )
-                    return ""
-                iteration_count += 1
-                print("=" * 200, "\n")
+                    for target_llm_connector in self.connector_instances:
+                        print("=" * 200)
+                        print(
+                            f"Sending prompt to Target LLM [{target_llm_connector.id}]\n"
+                        )
+                        result = await self.send_prompt(
+                            target_llm_connector,
+                            toxic_prompt.connector_prompt.predicted_results,
+                        )
+                        print(
+                            f'Response from Target LLM [{target_llm_connector.id}] -> prompt ["{result}"]'
+                        )
+                        if self.check_stop_condition(
+                            toxic_prompt.connector_prompt.predicted_results, result
+                        ):
+                            return ""
 
+                    # hit soft cap
+                    if iteration_count >= self.get_max_no_iterations():
+                        print(
+                            "Maximum number of iterations hit. Stopping red teaming..."
+                        )
+                        break
+                print(
+                    "There is no more data in the dataset to send. Stopping red teaming..."
+                )
+
+        except Exception as e:
+            print(f"Unable to carry out red teaming attack: {str(e)}")
+
+    def check_stop_condition(self, prompt: str, predicted_results: str) -> bool:
+        for metric in self.metric_instances:
+            metric_score_dict = metric.get_results([prompt], [predicted_results], [])
+            metric_key = "exact_str_match"
+            expected_metric_score = 1
+            metric_score = metric_score_dict.get(metric_key, None)
             print(
-                "Stopping red teaming as there is no more data in the dataset to send."
+                f"Expected {metric_key} score: {expected_metric_score}. Current metric score: {metric_score}."
             )
+            if metric_score >= expected_metric_score:
+                print(
+                    "Red teaming condition has been fulfilled. Stopping red teaming..."
+                )
+                return True
+        return False

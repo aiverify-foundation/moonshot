@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from pathlib import Path
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
@@ -48,3 +49,69 @@ class ContextStrategy:
     @abstractmethod
     def get_number_of_prev_prompts(self, no_prev_prompts: int):
         pass
+
+    @staticmethod
+    def get_all_context_strategy_names() -> list[str]:
+        """
+        Retrieves the names of all context strategy files.
+
+        This method fetches the names of all context strategy files by scanning the directory specified in the
+        EnvironmentVars. It filters out filenames containing double underscores before returning the list
+        of context strategy names.
+
+        Returns:
+            list: A list of context strategy file names.
+        """
+        filepaths = []
+        context_strategy_files = Storage.get_objects(
+            EnvVariables.CONTEXT_STRATEGY.name, "json"
+        )
+        for context_strategy in context_strategy_files:
+            filepaths.append(Path(context_strategy).stem)
+        return filepaths
+
+    @staticmethod
+    def delete_context_strategy(context_strategy_name: str) -> None:
+        """
+        Deletes a context strategy file.
+
+        This method attempts to delete the specified context strategy file.
+        It constructs the file path using the EnvironmentVars and the context strategy name.
+        If the deletion is successful, it prints a success message; otherwise, it prints an error message.
+
+        Args:
+            context_strategy_name (str): The name of the context strategy file to delete.
+
+        Returns:
+            None
+        """
+        try:
+            Storage.delete_object(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "json"
+            )
+
+        except Exception as e:
+            print(f"Failed to context strategy: {str(e)}")
+            raise e
+
+    @staticmethod
+    def process_prompt_cs(
+        user_prompt: str, context_strategy_name: str, list_of_chats: list[dict]
+    ) -> str | None:
+        context_strategy_instance = get_instance(
+            context_strategy_name,
+            Storage.get_filepath(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+            ),
+        )
+
+        if context_strategy_instance:
+            context_strategy_instance = context_strategy_instance()
+            # TODO make number of previous prompts an input from user.
+            # Currently it is configured in the context strategy module itself
+            return context_strategy_instance.add_in_context(user_prompt, list_of_chats)
+        else:
+            print(
+                "Cannot load context strategy. Make sure the name of the context strategy is correct."
+            )
+            return None

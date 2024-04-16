@@ -8,10 +8,8 @@ from slugify import slugify
 from moonshot.api import api_create_connector_from_endpoint
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
-from moonshot.src.prompt_templates.prompt_template_manager import PromptTemplateManager
-from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
-    ContextStrategyManager,
-)
+from moonshot.src.prompt_templates.prompt_template import PromptTemplate
+from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
 
@@ -233,7 +231,7 @@ class Chat:
             sorted_list_of_chat_records_time_desc = sorted(
                 list_of_chat_records, key=lambda i: i["prompt_time"], reverse=True
             )
-            prepared_prompt = ContextStrategyManager.process_prompt_cs(
+            prepared_prompt = ContextStrategy.process_prompt_cs(
                 prepared_prompt,
                 context_strategy_name,
                 sorted_list_of_chat_records_time_desc,
@@ -241,7 +239,7 @@ class Chat:
 
         # process prompt with prompt template if it is set
         if prompt_template_name:
-            prepared_prompt = PromptTemplateManager.process_prompt_pt(
+            prepared_prompt = PromptTemplate.process_prompt_pt(
                 prepared_prompt, prompt_template_name
             )
         endpoint_instance = api_create_connector_from_endpoint(endpoint)

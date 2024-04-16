@@ -24,7 +24,6 @@ class EnvVariables(Enum):
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
     SESSIONS = "SESSIONS"
-    STOP_STRATEGIES = "STOP_STRATEGIES"
 
 
 class EnvironmentVars:
@@ -114,11 +113,7 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.SESSIONS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
     ]
-    STOP_STRATEGIES = [
-        env_vars.get(EnvVariables.STOP_STRATEGIES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/stop-strategies")),
-    ]
-
+    
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
         """

@@ -16,9 +16,6 @@ class AttackModuleArguments(BaseModel):
     # list of Connector instance to connect to the endpoints specified in the Recipe
     connector_instances: list
 
-    # list of Stop Strategy instances used to stop the automated red teaming
-    stop_strategy_instances: list
-
     # list of names of datasets to be used (if any)
     datasets: list = []
 

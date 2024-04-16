@@ -17,7 +17,7 @@ from moonshot.src.utils.import_modules import get_instance
 
 # variable to cap the number of prompts sent to the LLMs in case the stop condition
 # of the attack does not get fulfilled
-MAX_NO_ITERATIONS = 5
+MAX_NO_ITERATIONS = 2
 
 
 class AttackModule:
@@ -26,7 +26,6 @@ class AttackModule:
         self.recipe_id = am_args.recipe_id
         self.num_of_prompts = am_args.num_of_prompts
         self.connector_instances = am_args.connector_instances
-        self.stop_strategy_instances = am_args.stop_strategy_instances
         self.datasets = am_args.datasets
         self.prompt_templates = am_args.prompt_templates
         self.metric_instances = am_args.metric_instances
@@ -99,30 +98,13 @@ class AttackModule:
         """
         return MAX_NO_ITERATIONS
 
-    def check_stop_condition(
-        self,
-        prompt: str,
-        iteration_count: int,
-        llm_response: str,
-    ) -> bool:
+    def check_stop_condition(self):
         """
-        Checks if any stop strategy triggers the end of the red teaming attack based on the prompt iteration count
-        and LLM response.
-
-        Args:
-            iteration_count (int): The current prompt iteration count.
-            llm_response (str): The response from the LLM model.
-
-        Returns:
-            bool: True if any stop strategy triggers the end of the attack, False otherwise.
+        Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
+        Stop condition can be number of prompts sent to the target LLM(s), the response from the LLM matching
+        a certain word, or the response from the LLM having a certain metric score.
         """
-        for stop_strategy in self.stop_strategy_instances:
-            if stop_strategy.stop_red_teaming_attack(
-                prompt, iteration_count, llm_response, self.metric_instances
-            ):
-                print("Stopping red teaming as criteria is fulfilled...")
-                return True
-        return False
+        pass
 
     async def send_prompt(
         self,
@@ -227,7 +209,9 @@ class AttackModule:
                     ds_info = Storage.read_object_generator(
                         EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
                     )
+                    x = 0
                     for prompt_index, prompt in enumerate(ds_info, 1):
+                        x += 1
                         try:
                             if (
                                 self.num_of_prompts != 0
@@ -325,7 +309,6 @@ class AttackModule:
         Raises:
             Exception: If there is an error during cache reading or any other operation within the method.
         """
-        iteration_count = 1
         async for prompt_info in gen_prompt:
             # Create a new prompt info with connection id
             new_prompt_info = PromptArguments(
@@ -358,13 +341,6 @@ class AttackModule:
                 new_prompt_info.connector_prompt.predicted_results,
                 "\n",
             )
-
-            # hit max no. of default iterations
-            if iteration_count >= self.get_max_no_iterations():
-                print("Stopping red teaming as maximum number of iteration is hit.")
-                break
-            iteration_count += 1
-
             yield new_prompt_info
 
 

@@ -1,12 +1,14 @@
 import time
 from ast import literal_eval
 from datetime import datetime
+from pathlib import Path
+
+from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
-from slugify import slugify
 
 
 class SessionMetadata:
@@ -103,8 +105,8 @@ class Session:
         description: str = "",
         endpoints: list[str] = [],
         session_id: str = "",
-        prompt_template: str = "",
         context_strategy: str = "",
+        prompt_template: str = "",
     ):
         # Checks if cs and pt exist if they are specified
         if context_strategy:
@@ -408,3 +410,39 @@ class Session:
             (context_strategy_name, session_id),
             Session.sql_update_context_strategy,
         )
+
+    @staticmethod
+    def get_all_session_names() -> list[str]:
+        """
+        Retrieves the names of all session files stored in the predefined session database directory.
+        This method searches for all `.db` files within the session path, excluding any files that contain
+        double underscores in their names. It returns a list of the file names
+        (without the `.db` extension) of the found session files.
+
+        Returns:
+            list: A list of strings, each representing the name of a session
+            file found in the session database directory.
+        """
+        filepaths = []
+        session_data_db_files = Storage.get_objects(EnvVariables.SESSIONS.name, "db")
+        for session_data in session_data_db_files:
+            filepaths.append(Path(session_data).stem)
+        return filepaths
+
+    @staticmethod
+    def get_all_session_details() -> list[SessionMetadata]:
+        """
+        Retrieves and returns the metadata for all sessions.
+
+        This method compiles a list of all session names (IDs) by invoking `Session.get_all_session_names()`
+        and then fetches the metadata for each session by calling `Session.get_session_metadata_by_id`
+        for each session name. It effectively aggregates the metadata for all sessions, providing
+        a comprehensive overview of all sessions managed by the Session.
+
+        Returns:
+            list: A list of SessionMetadata instances, each containing the metadata for a specific session.
+        """
+        return [
+            Session.get_session_metadata_by_id(session_name)
+            for session_name in Session.get_all_session_names()
+        ]

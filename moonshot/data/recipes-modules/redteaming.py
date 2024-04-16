@@ -9,7 +9,6 @@ from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
-from moonshot.src.redteaming.attack.stop_strategy import StopStrategy
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
 
@@ -97,12 +96,6 @@ class RedTeaming:
                 # get name of attack module
                 attack_module_name = attack_strategy["attack_module"]
 
-                # iterate through stop_strategies, load the modules and store in list
-                stop_strategy_insts = [
-                    StopStrategy.load(stop_strategy_name)
-                    for stop_strategy_name in attack_strategy["stop_strategies"]
-                ]
-
                 # load context strategy is specified
                 context_strategy_insts = []
                 if "context_strategies" in attack_strategy.keys():
@@ -119,7 +112,6 @@ class RedTeaming:
                     recipe_id=recipe_inst.id,
                     num_of_prompts=self.num_of_prompts,
                     connector_instances=recipe_eps,
-                    stop_strategy_instances=stop_strategy_insts,
                     datasets=self.recipe_instance.datasets,
                     prompt_templates=self.recipe_instance.prompt_templates,
                     metric_instances=self.metrics_instances,
@@ -148,4 +140,4 @@ class RedTeaming:
             )
             responses_from_attack_module.append(attack_module_response)
 
-        return {"responses_from_att_modules": responses_from_attack_module}
+        return {}
