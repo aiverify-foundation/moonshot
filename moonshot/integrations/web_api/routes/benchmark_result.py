@@ -34,11 +34,11 @@ async def get_all_results_name(
         return results
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve results: {e.msg}")
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve cookbooks: {e.msg}")
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve results: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")       
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve results: {e.msg}")       
 
 
 @router.get("/v1/results/{executor_id}")
