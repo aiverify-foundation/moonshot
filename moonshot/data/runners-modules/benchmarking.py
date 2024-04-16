@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import copy
 import time
 from itertools import groupby
 from operator import attrgetter
@@ -236,7 +237,10 @@ class Benchmarking:
         )
 
         try:
-            return [result async for result in gen_result]
+            output = []
+            async for result in gen_result:
+                output.append(copy.deepcopy(result))
+            return output
 
         except Exception as e:
             error_message = f"[BenchmarkingError] Failed to consume predictions due to error: {str(e)}"
