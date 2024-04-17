@@ -1,0 +1,19 @@
+{
+    "id": "medical-reasoning",
+    "name": "Medical Reasoning",
+    "description": "This recipe is used to test whether a model is able to do medical reasoning. If the model is able to pass with flying colors, it reflects that this model is good in medical reasoning.",
+    "tags": [
+        "healthcare",
+        "medical-reasoning",
+        "capabilities"
+    ],
+    "datasets": [
+        "mmc-medical-reasoning"
+    ],
+    "prompt_templates": [],
+    "metrics": [
+        "exactstrmatch"
+    ],
+    "type": "benchmark",
+    "attack_strategies": []
+}
