@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 from typing import Callable
 
@@ -10,33 +11,10 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
-from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.storage.storage import Storage
 
 
 class Runner:
-    sql_create_run_table = """
-        CREATE TABLE IF NOT EXISTS run_table (
-        run_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        runner_type text NOT NULL,
-        runner_args text NOT NULL,
-        endpoints text NOT NULL,
-        results_file text NOT NULL,
-        start_time INTEGER NOT NULL,
-        end_time INTEGER NOT NULL,
-        duration INTEGER NOT NULL,
-        error_messages text NOT NULL,
-        results text NOT NULL,
-        status text NOT NULL
-        );
-    """
-    sql_create_session_table = """
-        CREATE TABLE IF NOT EXISTS session_table (
-        session_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        endpoints text NOT NULL
-        );
-    """
-
     def __init__(self, runner_args: RunnerArguments) -> None:
         self.id = runner_args.id
         self.name = runner_args.name
@@ -44,6 +22,10 @@ class Runner:
         self.database_instance = runner_args.database_instance
         self.database_file = runner_args.database_file
         self.progress_callback_func = runner_args.progress_callback_func
+
+        # Set current run
+        self.current_operation = None
+        self.current_operation_lock = asyncio.Lock()  # Mutex lock for current operation
 
     @classmethod
     def load(
@@ -130,14 +112,6 @@ class Runner:
             runner_args = RunnerArguments(**runner_info)
             runner_args.database_instance = Storage.create_database_connection(
                 EnvVariables.DATABASES.name, runner_id, "db"
-            )
-
-            # Create run and session table
-            Storage.create_database_table(
-                runner_args.database_instance, Runner.sql_create_run_table
-            )
-            Storage.create_database_table(
-                runner_args.database_instance, Runner.sql_create_session_table
             )
 
             # Create runner file
@@ -291,30 +265,33 @@ class Runner:
         Raises:
             Exception: If any error occurs during the setup or execution of the benchmark run.
         """
-        # Create new benchmark recipe test run
-        print(f"[Runner] {self.id} - Running benchmark recipe run...")
-        current_run = Run(
-            RunnerType.BENCHMARK,
-            {
-                "recipes": recipes,
-                "num_of_prompts": num_of_prompts,
-                "system_prompt": system_prompt,
-                "runner_processing_module": runner_processing_module,
-            },
-            self.database_instance,
-            self.endpoints,
-            Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-            RunProgress(
-                exec_id=str(self.id),
-                exec_name=self.name,
-                exec_type=RunnerType.BENCHMARK.name,
-                bm_progress_callback_func=self.progress_callback_func,
-            ),
-        )
+        async with self.current_operation_lock:  # Acquire the lock
+            # Create new benchmark recipe test run
+            print(f"[Runner] {self.id} - Running benchmark recipe run...")
+            self.current_operation = Run(
+                self.id,
+                RunnerType.BENCHMARK,
+                {
+                    "recipes": recipes,
+                    "num_of_prompts": num_of_prompts,
+                    "system_prompt": system_prompt,
+                    "runner_processing_module": runner_processing_module,
+                },
+                self.database_instance,
+                self.endpoints,
+                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+                self.progress_callback_func,
+            )
+            # Note: The lock is held during setup but should be released before long-running operations
 
+        # Execute the long-running operation outside of the lock
         # Run new benchmark recipe test run
-        await current_run.run()
-        print(f"[Runner] {self.id} - Benchmark recipe run completed.")
+        await self.current_operation.run()
+
+        # After completion, reset current_operation to None within the lock
+        async with self.current_operation_lock:
+            self.current_operation = None
+            print(f"[Runner] {self.id} - Benchmark recipe run completed and reset.")
 
     async def run_cookbooks(
         self,
@@ -340,30 +317,33 @@ class Runner:
         Raises:
             Exception: If any error occurs during the setup or execution of the benchmark run.
         """
-        # Create new benchmark cookbook test run
-        print(f"[Runner] {self.id} - Running benchmark cookbook run...")
-        current_run = Run(
-            RunnerType.BENCHMARK,
-            {
-                "cookbooks": cookbooks,
-                "num_of_prompts": num_of_prompts,
-                "system_prompt": system_prompt,
-                "runner_processing_module": runner_processing_module,
-            },
-            self.database_instance,
-            self.endpoints,
-            Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-            RunProgress(
-                exec_id=str(self.id),
-                exec_name=self.name,
-                exec_type=RunnerType.BENCHMARK.name,
-                bm_progress_callback_func=self.progress_callback_func,
-            ),
-        )
+        async with self.current_operation_lock:  # Acquire the lock
+            # Create new benchmark cookbook test run
+            print(f"[Runner] {self.id} - Running benchmark cookbook run...")
+            self.current_operation = Run(
+                self.id,
+                RunnerType.BENCHMARK,
+                {
+                    "cookbooks": cookbooks,
+                    "num_of_prompts": num_of_prompts,
+                    "system_prompt": system_prompt,
+                    "runner_processing_module": runner_processing_module,
+                },
+                self.database_instance,
+                self.endpoints,
+                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+                self.progress_callback_func,
+            )
+            # Note: The lock is held during setup but should be released before long-running operations
 
+        # Execute the long-running operation outside of the lock
         # Run new benchmark cookbook test run
-        await current_run.run()
-        print(f"[Runner] {self.id} - Benchmark cookbook run completed.")
+        await self.current_operation.run()
+
+        # After completion, reset current_operation to None within the lock
+        async with self.current_operation_lock:
+            self.current_operation = None
+            print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
 
     async def run(self, runner_type: RunnerType, runner_args: dict) -> None:
         """
@@ -382,34 +362,46 @@ class Runner:
             Exception: If an unknown runner type is provided.
         """
         if runner_type is RunnerType.BENCHMARK:
-            # Create new benchmark test run
-            print(f"[Runner] {self.id} - Running benchmark run...")
-            current_run = Run(
-                runner_type,
-                runner_args,
-                self.database_instance,
-                self.endpoints,
-                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-                RunProgress(
-                    exec_id=str(self.id),
-                    exec_name=self.name,
-                    exec_type=runner_type.name,
-                    bm_progress_callback_func=self.progress_callback_func,
-                ),
-            )
+            async with self.current_operation_lock:  # Acquire the lock
+                # Create new benchmark test run
+                print(f"[Runner] {self.id} - Running benchmark run...")
+                self.current_operation = Run(
+                    self.id,
+                    runner_type,
+                    runner_args,
+                    self.database_instance,
+                    self.endpoints,
+                    Storage.get_filepath(
+                        EnvVariables.RESULTS.name, self.id, "json", True
+                    ),
+                    self.progress_callback_func,
+                )
+                # Note: The lock is held during setup but should be released before long-running operations
 
+            # Execute the long-running operation outside of the lock
             # Run new benchmark test run
-            await current_run.run()
-            print(f"[Runner] {self.id} - Benchmark run completed.")
+            await self.current_operation.run()
+
+            # After completion, reset current_operation to None within the lock
+            async with self.current_operation_lock:
+                self.current_operation = None
+                print(f"[Runner] {self.id} - Benchmark run completed and reset.")
 
         elif runner_type is RunnerType.REDTEAM:
-            # Create new redteaming test session
-            print(f"[Runner] {self.id} - Running redteaming session...")
-            # current_session = Session(runner_type, runner_args)
+            async with self.current_operation_lock:  # Acquire the lock
+                # Create new redteaming test session
+                print(f"[Runner] {self.id} - Running redteaming session...")
+                # self.current_operation = Session(runner_type, runner_args)
+                # Note: The lock is held during setup but should be released before long-running operations
 
-            # # Run new redteaming test session
-            # await current_session.run()
-            # print(f"[Runner] {self.id} - Redteaming session completed.")
+            # Execute the long-running operation outside of the lock
+            # Run new redteaming test run
+            # await self.current_operation.run()
+
+            # After completion, reset current_operation to None within the lock
+            async with self.current_operation_lock:
+                self.current_operation = None
+                print(f"[Runner] {self.id} - Redteaming session completed.")
 
         else:
             # Unknown runner type.
