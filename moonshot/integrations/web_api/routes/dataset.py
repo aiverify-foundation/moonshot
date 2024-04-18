@@ -9,7 +9,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.get("/v1/dataset")
+@router.get("/v1/datasets")
 @inject
 def get_all_datasets(dataset_service: DatasetService = Depends(Provide[Container.dataset_service])
     ):
@@ -27,7 +27,7 @@ def get_all_datasets(dataset_service: DatasetService = Depends(Provide[Container
             raise HTTPException(status_code=500, detail=f"Failed to retrieve datasets: {e.msg}")   
 
 
-@router.get("/v1/dataset/{dataset_id}")
+@router.get("/v1/datasets/{dataset_id}")
 @inject 
 def get_dataset_by_id(
     dataset_id: str,

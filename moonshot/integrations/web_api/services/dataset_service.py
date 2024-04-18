@@ -11,12 +11,27 @@ class DatasetService(BaseService):
     def get_all_datasets(self) -> list[DatasetResponseDTO | None]:
         # datasets = moonshot_api.api_get_all_dataset()
         datasets = [{
-            "id": "dummy_dataset",
-            "name": "dummy_dataset",
-            "description": "dummy_dataset",
+            "id": "dummy_dataset_1",
+            "name": "dummy_dataset_1",
+            "description": "dummy_dataset_1",
             "keywords": ["dummy_dataset"],
             "examples": ["dummy_dataset"]
-        }]
+        },
+        {
+            "id": "dummy_dataset_2",
+            "name": "dummy_dataset_2",
+            "description": "dummy_dataset_2",
+            "keywords": ["dummy_dataset"],
+            "examples": ["dummy_dataset"]
+        },
+        {
+            "id": "dummy_dataset_3",
+            "name": "dummy_dataset_3",
+            "description": "dummy_dataset_3",
+            "keywords": ["dummy_dataset"],
+            "examples": ["dummy_dataset"]
+        }
+        ]
         return [DatasetResponseDTO.model_validate(dataset) for dataset in datasets]    
 
 
