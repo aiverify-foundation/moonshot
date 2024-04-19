@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import abstractmethod
 from pathlib import Path
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -39,16 +38,6 @@ class ContextStrategy:
             raise RuntimeError(
                 f"Unable to get defined context strategy instance - {cs_id}"
             )
-
-    @abstractmethod
-    def add_in_context(
-        self, user_prompt: str, list_of_previous_prompts: list[dict] = []
-    ):
-        pass
-
-    @abstractmethod
-    def get_number_of_prev_prompts(self, no_prev_prompts: int):
-        pass
 
     @staticmethod
     def get_all_context_strategy_names() -> list[str]:
