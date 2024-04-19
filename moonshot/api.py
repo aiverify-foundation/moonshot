@@ -53,8 +53,7 @@ from moonshot.src.api.api_result import (
     api_read_results,
 )
 from moonshot.src.api.api_runner import (
-    api_create_cookbook_runner,
-    api_create_recipe_runner,
+    api_create_runner,
     api_delete_runner,
     api_get_all_runner,
     api_get_all_runner_name,
@@ -93,8 +92,7 @@ __all__ = [
     "api_read_cookbooks",
     "api_update_cookbook",
     "api_set_environment_variables",
-    "api_create_cookbook_runner",
-    "api_create_recipe_runner",
+    "api_create_runner",
     "api_delete_runner",
     "api_get_all_runner",
     "api_get_all_runner_name",

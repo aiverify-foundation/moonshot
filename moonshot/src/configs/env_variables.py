@@ -19,10 +19,10 @@ class EnvVariables(Enum):
     METRICS_CONFIG = "METRICS_CONFIG"
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
-    RECIPES_MODULES = "RECIPES_MODULES"
     REPORTS_ANALYSIS_MODULES = "REPORTS_ANALYSIS_MODULES"
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
+    RUNNERS_MODULES = "RUNNERS_MODULES"
     SESSIONS = "SESSIONS"
 
 
@@ -89,10 +89,6 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RECIPES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
     ]
-    RECIPES_MODULES = [
-        env_vars.get(EnvVariables.RECIPES_MODULES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/recipes-modules")),
-    ]
     REPORTS_ANALYSIS_MODULES = [
         env_vars.get(EnvVariables.REPORTS_ANALYSIS_MODULES.value),
         str(
@@ -109,11 +105,15 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RUNNERS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/runners")),
     ]
+    RUNNERS_MODULES = [
+        env_vars.get(EnvVariables.RUNNERS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/runners-modules")),
+    ]
     SESSIONS = [
         env_vars.get(EnvVariables.SESSIONS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
     ]
-    
+
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
         """

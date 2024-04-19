@@ -13,6 +13,5 @@
     "metrics": [
         "relaxstrmatch"
     ],
-    "type": "benchmark",
-    "attack_strategies": []
+    "attack_modules": []
 }

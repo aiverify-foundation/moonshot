@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import time
+import asyncio
 from pathlib import Path
 from typing import Callable
 
@@ -8,46 +8,24 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
-from moonshot.src.results.result import Result
-from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runners.runner_arguments import RunnerArguments
+from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
-from moonshot.src.runs.run_arguments import RunArguments
-from moonshot.src.runs.run_progress import RunProgress
-from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.storage import Storage
 
 
 class Runner:
-    sql_create_run_table = """
-        CREATE TABLE IF NOT EXISTS run_table (
-        run_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        run_type text NOT NULL,
-        recipes text,
-        cookbooks text,
-        endpoints text NOT NULL,
-        num_of_prompts INTEGER NOT NULL,
-        results_file text NOT NULL,
-        start_time INTEGER NOT NULL,
-        end_time INTEGER NOT NULL,
-        duration INTEGER NOT NULL,
-        error_messages text NOT NULL,
-        results text NOT NULL,
-        status text NOT NULL
-        );
-    """
-
     def __init__(self, runner_args: RunnerArguments) -> None:
         self.id = runner_args.id
         self.name = runner_args.name
-        self.run_type = runner_args.run_type
-        self.recipes = runner_args.recipes
-        self.cookbooks = runner_args.cookbooks
         self.endpoints = runner_args.endpoints
-        self.num_of_prompts = runner_args.num_of_prompts
         self.database_instance = runner_args.database_instance
         self.database_file = runner_args.database_file
         self.progress_callback_func = runner_args.progress_callback_func
+
+        # Set current run
+        self.current_operation = None
+        self.current_operation_lock = asyncio.Lock()  # Mutex lock for current operation
 
     @classmethod
     def load(
@@ -79,7 +57,7 @@ class Runner:
                 EnvVariables.RUNNERS.name, runner_id, "json"
             ):
                 raise RuntimeError(
-                    "Unable to create runner because the runner file does not exists."
+                    "[Runner] Unable to create runner because the runner file does not exists."
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
@@ -89,29 +67,29 @@ class Runner:
             return cls(runner_args)
 
         except Exception as e:
-            print(f"Failed to load runner: {str(e)}")
+            print(f"[Runner] Failed to load runner: {str(e)}")
             raise e
 
     @classmethod
     def create(cls, runner_args: RunnerArguments) -> Runner:
         """
-        This method is responsible for creating a new runner.
+        Creates a new runner instance.
 
-        It accepts a RunnerArguments object as an argument, from which it generates a runner_id based on the
-        runner's name.
-        The method then checks if a runner file with the same id already exists.
-        If such a file is found, it raises a RuntimeError.
-        If no such file is found, it creates a new runner file and establishes a new database connection.
-        Finally, it returns a new instance of the Runner class.
+        This method takes a RunnerArguments object to generate a unique runner_id from the runner's name.
+        It checks for the existence of a runner file with the same id.
+        If found, a RuntimeError is raised to indicate the conflict.
+        Otherwise, it proceeds to create a new runner file and sets up a database connection for the runner.
+        A new Runner class instance, initialized with the provided arguments, is then returned.
 
         Args:
-            runner_args (RunnerArguments): The parameters for the runner.
+            runner_args (RunnerArguments): The configuration parameters for creating the runner.
 
         Returns:
-            Runner: A newly created instance of the Runner class.
+            Runner: An instance of the Runner class, newly created with the specified arguments.
 
         Raises:
-            RuntimeError: If a runner file with the same id already exists.
+            RuntimeError: Raised if a runner file with the generated runner_id already exists,
+            indicating a duplicate runner.
         """
         try:
             runner_id = slugify(runner_args.name, lowercase=True)
@@ -119,17 +97,13 @@ class Runner:
             # Check if runner file exists. If it exists, raise an error.
             if Storage.is_object_exists(EnvVariables.RUNNERS.name, runner_id, "json"):
                 raise RuntimeError(
-                    "Unable to create runner because the runner file exists."
+                    "[Runner] Unable to create runner because the runner file exists."
                 )
 
             runner_info = {
                 "id": runner_id,
                 "name": runner_args.name,
-                "run_type": runner_args.run_type,
-                "recipes": runner_args.recipes,
-                "cookbooks": runner_args.cookbooks,
                 "endpoints": runner_args.endpoints,
-                "num_of_prompts": runner_args.num_of_prompts,
                 "database_file": Storage.get_filepath(
                     EnvVariables.DATABASES.name, runner_id, "db", True
                 ),
@@ -140,11 +114,6 @@ class Runner:
                 EnvVariables.DATABASES.name, runner_id, "db"
             )
 
-            # Create run table
-            Storage.create_database_table(
-                runner_args.database_instance, Runner.sql_create_run_table
-            )
-
             # Create runner file
             Storage.create_object(
                 EnvVariables.RUNNERS.name, runner_id, runner_args.to_dict(), "json"
@@ -152,7 +121,7 @@ class Runner:
             return cls(runner_args)
 
         except Exception as e:
-            print(f"Failed to create runner: {str(e)}")
+            print(f"[Runner] Failed to create runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -179,7 +148,7 @@ class Runner:
             )
 
         except Exception as e:
-            print(f"Failed to read runner: {str(e)}")
+            print(f"[Runner] Failed to read runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -202,7 +171,7 @@ class Runner:
             Storage.delete_object(EnvVariables.DATABASES.name, runner_id, "db")
 
         except Exception as e:
-            print(f"Failed to delete runner: {str(e)}")
+            print(f"[Runner] Failed to delete runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -243,7 +212,7 @@ class Runner:
             return retn_runners_ids, retn_runners
 
         except Exception as e:
-            print(f"Failed to get available runners: {str(e)}")
+            print(f"[Runner] Failed to get available runners: {str(e)}")
             raise e
 
     def close(self) -> None:
@@ -272,79 +241,168 @@ class Runner:
         """
         pass
 
-    def get_latest_run_arguments(self) -> RunArguments:
+    async def run_recipes(
+        self,
+        recipes: list[str],
+        num_of_prompts: int = 0,
+        system_prompt: str = "",
+        runner_processing_module: str = "benchmarking",
+    ) -> None:
         """
-        Retrieves the arguments of the latest run.
+        Asynchronously runs a set of recipes for benchmarking.
 
-        This method retrieves the arguments of the most recent run from the database.
-        It uses the load method of the Run class to get the RunArguments object of the latest run.
-        If the database instance is not provided, it raises a RuntimeError.
+        This method is responsible for initiating a benchmark run with a specified set of recipes. It creates a new
+        benchmark run instance, configures it with the provided recipes, number of prompts, system prompt, and
+        runner processing module, and then starts the run asynchronously.
 
-        Returns:
-            RunArguments: An object containing the details of the latest run.
+        Args:
+            recipes (list[str]): A list of recipe names to be run.
+            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run. Defaults to 0.
+            system_prompt (str, optional): A system prompt to be used in the benchmark run. Defaults to an empty string.
+            runner_processing_module (str, optional): The processing module to be used for the run.
+            Defaults to "benchmarking".
 
         Raises:
-            RuntimeError: If the database instance is not available.
+            Exception: If any error occurs during the setup or execution of the benchmark run.
         """
-        return Run.load(self.database_instance)
+        async with self.current_operation_lock:  # Acquire the lock
+            # Create new benchmark recipe test run
+            print(f"[Runner] {self.id} - Running benchmark recipe run...")
+            self.current_operation = Run(
+                self.id,
+                RunnerType.BENCHMARK,
+                {
+                    "recipes": recipes,
+                    "num_of_prompts": num_of_prompts,
+                    "system_prompt": system_prompt,
+                    "runner_processing_module": runner_processing_module,
+                },
+                self.database_instance,
+                self.endpoints,
+                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+                self.progress_callback_func,
+            )
+            # Note: The lock is held during setup but should be released before long-running operations
 
-    async def run(self) -> None:
+        # Execute the long-running operation outside of the lock
+        # Run new benchmark recipe test run
+        await self.current_operation.run()
+
+        # After completion, reset current_operation to None within the lock
+        async with self.current_operation_lock:
+            self.current_operation = None
+            print(f"[Runner] {self.id} - Benchmark recipe run completed and reset.")
+
+    async def run_cookbooks(
+        self,
+        cookbooks: list[str],
+        num_of_prompts: int = 0,
+        system_prompt: str = "",
+        runner_processing_module: str = "benchmarking",
+    ) -> None:
         """
-        Executes the runner instance.
+        Asynchronously runs a set of cookbooks for benchmarking.
 
-        This method is responsible for executing the runner instance.
-        It first prepares the necessary run arguments, then initiates a new run.
-        The execution of the run is performed asynchronously.
+        This method is responsible for initiating a benchmark run with a specified set of cookbooks. It creates a new
+        benchmark run instance, configures it with the provided cookbooks, number of prompts, system prompt, and
+        runner processing module, and then starts the run asynchronously.
+
+        Args:
+            cookbooks (list[str]): A list of cookbook names to be run.
+            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run. Defaults to 0.
+            system_prompt (str, optional): A system prompt to be used in the benchmark run. Defaults to an empty string.
+            runner_processing_module (str, optional): The processing module to be used for the run.
+            Defaults to "benchmarking".
 
         Raises:
-            Exception: If an error is encountered during the preparation of the run arguments or during the
-            execution of the run.
+            Exception: If any error occurs during the setup or execution of the benchmark run.
         """
-        # Prepare the run arguments
-        new_run_args = RunArguments(
-            run_type=self.run_type,
-            recipes=self.recipes,
-            cookbooks=self.cookbooks,
-            endpoints=self.endpoints,
-            num_of_prompts=self.num_of_prompts,
-            database_instance=self.database_instance,
-            results_file=Storage.get_filepath(
-                EnvVariables.RESULTS.name, self.id, "json", True
-            ),
-            progress=RunProgress(
-                exec_id=str(self.id),
-                exec_name=self.name,
-                exec_type=self.run_type.name,
-                bm_progress_callback_func=self.progress_callback_func,
-            ),
-            start_time=time.time(),
-            end_time=time.time(),
-            duration=0,
-            error_messages=[],
-            results={},
-            status=RunStatus.PENDING,
-        )
+        async with self.current_operation_lock:  # Acquire the lock
+            # Create new benchmark cookbook test run
+            print(f"[Runner] {self.id} - Running benchmark cookbook run...")
+            self.current_operation = Run(
+                self.id,
+                RunnerType.BENCHMARK,
+                {
+                    "cookbooks": cookbooks,
+                    "num_of_prompts": num_of_prompts,
+                    "system_prompt": system_prompt,
+                    "runner_processing_module": runner_processing_module,
+                },
+                self.database_instance,
+                self.endpoints,
+                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+                self.progress_callback_func,
+            )
+            # Note: The lock is held during setup but should be released before long-running operations
 
-        # Execute a new run with the run arguments
-        print(f"[Runner] {self.id} - Running...")
-        current_run = Run(new_run_args)
-        await current_run.run()
-        print(f"[Runner] {self.id} - Run completed.")
+        # Execute the long-running operation outside of the lock
+        # Run new benchmark cookbook test run
+        await self.current_operation.run()
 
-        # Create result from run
-        print(f"[Runner] {self.id} - Writing result...")
-        new_result_args = ResultArguments(
-            id=self.id,
-            name=self.name,
-            start_time=current_run.start_time,
-            end_time=current_run.end_time,
-            duration=current_run.duration,
-            recipes=self.recipes,
-            cookbooks=self.cookbooks,
-            endpoints=self.endpoints,
-            num_of_prompts=self.num_of_prompts,
-            results=current_run.results,
-            status=current_run.status,
-        )
-        Result.create(new_result_args)
-        print(f"[Runner] {self.id} - Run results written to {current_run.results_file}")
+        # After completion, reset current_operation to None within the lock
+        async with self.current_operation_lock:
+            self.current_operation = None
+            print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+
+    async def run(self, runner_type: RunnerType, runner_args: dict) -> None:
+        """
+        Asynchronously runs a test based on the runner type and arguments provided.
+
+        This method determines the type of test to run based on the `runner_type` parameter. It supports running
+        benchmark tests (either recipe or cookbook based) and redteaming sessions (either manual or automated).
+        The method initializes the appropriate test instance with the provided arguments and database instance,
+        then executes the test asynchronously. Upon completion, it logs the completion status.
+
+        Args:
+            runner_type (RunnerType): The type of runner to execute, which determines the test type.
+            runner_args (dict): A dictionary of arguments required for the test run.
+
+        Raises:
+            Exception: If an unknown runner type is provided.
+        """
+        if runner_type is RunnerType.BENCHMARK:
+            async with self.current_operation_lock:  # Acquire the lock
+                # Create new benchmark test run
+                print(f"[Runner] {self.id} - Running benchmark run...")
+                self.current_operation = Run(
+                    self.id,
+                    runner_type,
+                    runner_args,
+                    self.database_instance,
+                    self.endpoints,
+                    Storage.get_filepath(
+                        EnvVariables.RESULTS.name, self.id, "json", True
+                    ),
+                    self.progress_callback_func,
+                )
+                # Note: The lock is held during setup but should be released before long-running operations
+
+            # Execute the long-running operation outside of the lock
+            # Run new benchmark test run
+            await self.current_operation.run()
+
+            # After completion, reset current_operation to None within the lock
+            async with self.current_operation_lock:
+                self.current_operation = None
+                print(f"[Runner] {self.id} - Benchmark run completed and reset.")
+
+        elif runner_type is RunnerType.REDTEAM:
+            async with self.current_operation_lock:  # Acquire the lock
+                # Create new redteaming test session
+                print(f"[Runner] {self.id} - Running redteaming session...")
+                # self.current_operation = Session(runner_type, runner_args)
+                # Note: The lock is held during setup but should be released before long-running operations
+
+            # Execute the long-running operation outside of the lock
+            # Run new redteaming test run
+            # await self.current_operation.run()
+
+            # After completion, reset current_operation to None within the lock
+            async with self.current_operation_lock:
+                self.current_operation = None
+                print(f"[Runner] {self.id} - Redteaming session completed.")
+
+        else:
+            # Unknown runner type.
+            print(f"[Runner] Failed to determine runner type: {runner_type}")
