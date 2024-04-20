@@ -15,13 +15,6 @@ class RelaxStrMatch(MetricInterface):
     target.
     """
 
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {"relax_str_match": {"type": "number"}},
-        "required": ["relax_str_match"],
-    }
-
     def __init__(self):
         self.id = "relaxstrmatch"
         self.name = "RelaxStrMatch"
@@ -91,11 +84,4 @@ class RelaxStrMatch(MetricInterface):
                 if result == target:
                     correct += 1
 
-        response_dict = {"relax_str_match": float(correct / total)}
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, RelaxStrMatch.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[RelaxStrMatch] Failed json schema validation for output response."
-            )
+        return {"relax_str_match": float(correct / total)}

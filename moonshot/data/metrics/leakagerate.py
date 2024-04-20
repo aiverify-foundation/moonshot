@@ -12,48 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class LeakageRate(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "LeakageRateOutput",
-        "description": "Output schema for LeakageRate metrics results",
-        "type": "object",
-        "properties": {
-            "mean_leakage_rate": {
-                "type": "number",
-                "description": "The average leakage rate across all predictions.",
-            },
-            "min_leakage_rate": {
-                "type": "number",
-                "description": "The minimum leakage rate found in the predictions.",
-            },
-            "max_leakage_rate": {
-                "type": "number",
-                "description": "The maximum leakage rate found in the predictions.",
-            },
-            "q1_leakage_rate": {
-                "type": "number",
-                "description": "The first quartile (25th percentile) leakage rate.",
-            },
-            "q2_leakage_rate": {
-                "type": "number",
-                "description": "The median (50th percentile) leakage rate.",
-            },
-            "q3_leakage_rate": {
-                "type": "number",
-                "description": "The third quartile (75th percentile) leakage rate.",
-            },
-        },
-        "required": [
-            "mean_leakage_rate",
-            "min_leakage_rate",
-            "max_leakage_rate",
-            "q1_leakage_rate",
-            "q2_leakage_rate",
-            "q3_leakage_rate",
-        ],
-    }
-
     def __init__(self):
         self.id = "leakagerate"
         self.name = "LeakageRate"
@@ -108,7 +66,7 @@ class LeakageRate(MetricInterface):
         q_min = np.min(total_leakage_rate, axis=0)
         q_mean = np.mean(total_leakage_rate, axis=0)
 
-        response_dict = {
+        return {
             "mean_leakage_rate": q_mean,
             "min_leakage_rate": q_min,
             "max_leakage_rate": q_max,
@@ -116,10 +74,3 @@ class LeakageRate(MetricInterface):
             "q2_leakage_rate": q2,
             "q3_leakage_rate": q3,
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, LeakageRate.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[LeakageRate] Failed json schema validation for output response."
-            )
