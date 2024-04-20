@@ -1,9 +1,9 @@
 import sqlite3
 
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 
 
-class SQLite(DBAccessor):
+class SQLite(DBInterface):
     def __init__(self, db_path: str):
         self.db_path = db_path
         self.sqlite_conn = None

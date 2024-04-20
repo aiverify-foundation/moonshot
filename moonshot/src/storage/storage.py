@@ -8,7 +8,7 @@ from typing import Iterator
 from pyparsing import Generator
 
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.utils.import_modules import get_instance
 
 
@@ -237,7 +237,7 @@ class Storage:
     @staticmethod
     def create_database_connection(
         obj_type: str, obj_id: str, obj_extension: str, db_mod_type: str = "sqlite"
-    ) -> DBAccessor:
+    ) -> DBInterface:
         """
         Establishes a database connection for a specific object.
 
@@ -254,7 +254,7 @@ class Storage:
             Defaults to 'sqlite'.
 
         Returns:
-            DBAccessor: An instance of the database accessor, which can be used to interact with the database.
+            DBInterface: An instance of the database accessor, which can be used to interact with the database.
         """
         database_instance = get_instance(
             db_mod_type,
@@ -276,12 +276,12 @@ class Storage:
             )
 
     @staticmethod
-    def close_database_connection(database_instance: DBAccessor) -> None:
+    def close_database_connection(database_instance: DBInterface) -> None:
         """
         Closes the database connection.
 
         Args:
-            database_instance (DBAccessor): The instance of the database accessor.
+            database_instance (DBInterface): The instance of the database accessor.
 
         Returns:
             None
@@ -293,7 +293,7 @@ class Storage:
 
     @staticmethod
     def create_database_table(
-        database_instance: DBAccessor, sql_create_table: str
+        database_instance: DBInterface, sql_create_table: str
     ) -> None:
         """
         Creates a table in the database.
@@ -302,7 +302,7 @@ class Storage:
         it raises a RuntimeError. Otherwise, it calls the create_table method of the database instance.
 
         Args:
-            database_instance (DBAccessor): The database accessor instance.
+            database_instance (DBInterface): The database accessor instance.
             sql_create_table (str): The SQL query to create a table.
 
         Returns:
@@ -315,7 +315,7 @@ class Storage:
 
     @staticmethod
     def create_database_record(
-        database_instance: DBAccessor, data: tuple, sql_create_record: str
+        database_instance: DBInterface, data: tuple, sql_create_record: str
     ) -> None:
         """
         Creates a record in the database.
@@ -324,7 +324,7 @@ class Storage:
         it raises a RuntimeError. Otherwise, it calls the create_record method of the database instance.
 
         Args:
-            database_instance (DBAccessor): The database accessor instance.
+            database_instance (DBInterface): The database accessor instance.
             data (tuple): The data to be inserted.
             sql_create_record (str): The SQL query to create a record.
 
@@ -338,7 +338,7 @@ class Storage:
 
     @staticmethod
     def read_database_record(
-        database_instance: DBAccessor, data: tuple, sql_read_record: str
+        database_instance: DBInterface, data: tuple, sql_read_record: str
     ) -> tuple | None:
         """
         Reads a record from the database.
@@ -348,7 +348,7 @@ class Storage:
         database instance and returns the record if found.
 
         Args:
-            database_instance (DBAccessor): The database accessor instance.
+            database_instance (DBInterface): The database accessor instance.
             data (tuple): The data to be matched for reading the record.
             sql_read_records (str): The SQL query to read a record.
 
@@ -362,7 +362,7 @@ class Storage:
 
     @staticmethod
     def read_database_records(
-        database_instance: DBAccessor, sql_read_records: str
+        database_instance: DBInterface, sql_read_records: str
     ) -> list[tuple] | None:
         """
         Reads records from the database.
@@ -372,7 +372,7 @@ class Storage:
         database instance and returns the record if found.
 
         Args:
-            database_instance (DBAccessor): The database accessor instance.
+            database_instance (DBInterface): The database accessor instance.
             data (tuple): The data to be matched for reading the record.
             sql_read_records (str): The SQL query to read a record.
 
@@ -386,7 +386,7 @@ class Storage:
 
     @staticmethod
     def update_database_record(
-        database_instance: DBAccessor, data: tuple, sql_update_record: str
+        database_instance: DBInterface, data: tuple, sql_update_record: str
     ) -> None:
         """
         Updates a record in the database.
@@ -395,7 +395,7 @@ class Storage:
         it raises a RuntimeError. Otherwise, it calls the update_record method of the database instance.
 
         Args:
-            database_instance (DBAccessor): The database accessor instance.
+            database_instance (DBInterface): The database accessor instance.
             data (tuple): The data to be updated.
             sql_update_record (str): The SQL query to update a record.
 

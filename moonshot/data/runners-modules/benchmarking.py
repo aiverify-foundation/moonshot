@@ -22,7 +22,7 @@ from moonshot.src.results.result import Result
 from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
 
@@ -42,7 +42,7 @@ class Benchmarking:
         self,
         event_loop: Any,
         runner_args: dict,
-        database_instance: DBAccessor | None,
+        database_instance: DBInterface | None,
         endpoints: list[str],
         run_progress: RunProgress,
         cancel_event: asyncio.Event,

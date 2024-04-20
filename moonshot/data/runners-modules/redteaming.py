@@ -10,7 +10,7 @@ from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.redteaming.attack.stop_strategy import StopStrategy
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
 
@@ -40,7 +40,7 @@ class RedTeaming:
     async def generate(
         self,
         event_loop: Any,
-        database_instance: DBAccessor | None,
+        database_instance: DBInterface | None,
         num_of_prompts: int,
         recipe_inst: Recipe,
         recipe_eps: list[Connector],

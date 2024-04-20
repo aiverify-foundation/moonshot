@@ -9,7 +9,7 @@ from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_arguments import RunArguments
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -80,7 +80,7 @@ class Run:
             Storage.create_database_table(database_instance, Run.sql_create_run_table)
 
     @staticmethod
-    def load(database_instance: DBAccessor | None, run_id: int | None) -> RunArguments:
+    def load(database_instance: DBInterface | None, run_id: int | None) -> RunArguments:
         """
         Loads run data for a given run_id from the database, or the latest run if run_id is None.
 

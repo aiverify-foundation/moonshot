@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Any
 
 
-class ObjectAccessor:
+class IOInterface:
     @abstractmethod
     def create_file(self, data: dict) -> Any | None:
         """
