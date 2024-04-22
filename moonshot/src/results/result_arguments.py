@@ -2,33 +2,38 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel
-
 from moonshot.src.runs.run_status import RunStatus
 
 
-class ResultArguments(BaseModel):
-    id: str  # The ID of the BenchmarkExecutor.
-
-    name: str  # The name of the BenchmarkExecutor.
-
-    start_time: float  # The start time of the BenchmarkExecutor.
-
-    end_time: float  # The end time of the BenchmarkExecutor.
-
-    duration: int  # The duration of the BenchmarkExecutor.
-
-    recipes: list[str]  # List of recipes for the BenchmarkExecutor.
-
-    cookbooks: list[str]  # List of cookbooks for the BenchmarkExecutor.
-
-    endpoints: list[str]  # List of endpoints for the BenchmarkExecutor.
-
-    num_of_prompts: int  # Number of prompts for the BenchmarkExecutor.
-
-    results: dict  # Results of the BenchmarkExecutor.
-
-    status: RunStatus  # Status of the BenchmarkExecutor
+class ResultArguments:
+    def __init__(
+        self,
+        id: str,  # The ID of the Runner.
+        start_time: float,  # The start time of the Run.
+        end_time: float,  # The end time of the Run.
+        duration: int,  # The duration of the Run.
+        results: dict,  # Results of the Run.
+        status: RunStatus,  # Status of the Run.
+        # Additional info
+        recipes: list[str] = [],  # List of recipes for the Run.
+        cookbooks: list[str] = [],  # List of cookbooks for the Run.
+        endpoints: list[str] = [],  # List of endpoints for the Run.
+        num_of_prompts: int = -1,  # Number of prompts for the Run.
+        random_seed: int = 0,  # Random seed value for the Run.
+        system_prompt: str = "",  # System prompt for connectors for the Run.
+    ) -> None:
+        self.id = id
+        self.start_time = start_time
+        self.end_time = end_time
+        self.duration = duration
+        self.results = results
+        self.status = status
+        self.recipes = recipes
+        self.cookbooks = cookbooks
+        self.endpoints = endpoints
+        self.num_of_prompts = num_of_prompts
+        self.random_seed = random_seed
+        self.system_prompt = system_prompt
 
     @classmethod
     def from_file(cls, results: dict) -> ResultArguments:
@@ -54,16 +59,17 @@ class ResultArguments(BaseModel):
 
         return cls(
             id=metadata["id"],
-            name=metadata["name"],
             start_time=start_time,
             end_time=end_time,
             duration=metadata["duration"],
+            results=results["results"],
+            status=status,
             recipes=metadata["recipes"],
             cookbooks=metadata["cookbooks"],
             endpoints=metadata["endpoints"],
             num_of_prompts=metadata["num_of_prompts"],
-            results=results["results"],
-            status=status,
+            random_seed=metadata["random_seed"],
+            system_prompt=metadata["system_prompt"],
         )
 
     def format_results(self) -> dict:
@@ -184,7 +190,6 @@ class ResultArguments(BaseModel):
         results = {
             "metadata": {
                 "id": self.id,
-                "name": self.name,
                 "start_time": datetime.fromtimestamp(self.start_time).strftime(
                     "%Y%m%d-%H%M%S"
                 ),
@@ -192,11 +197,13 @@ class ResultArguments(BaseModel):
                     "%Y%m%d-%H%M%S"
                 ),
                 "duration": self.duration,
+                "status": self.status.name.lower(),
                 "recipes": self.recipes,
                 "cookbooks": self.cookbooks,
                 "endpoints": self.endpoints,
                 "num_of_prompts": self.num_of_prompts,
-                "status": self.status.name.lower(),
+                "random_seed": self.random_seed,
+                "system_prompt": self.system_prompt,
             },
             "results": self.results,
         }

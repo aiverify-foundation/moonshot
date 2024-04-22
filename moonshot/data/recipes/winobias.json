@@ -15,6 +15,5 @@
     "metrics": [
         "reverseexactstrmatch"
     ],
-    "type": "benchmark",
-    "attack_strategies": []
+    "attack_modules": []
 }

@@ -2,11 +2,12 @@ import time
 from ast import literal_eval
 from datetime import datetime
 
+from slugify import slugify
+
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
-from slugify import slugify
 
 
 class SessionMetadata:
@@ -213,7 +214,7 @@ class Session:
             raise
 
     @staticmethod
-    def get_connection_instance_by_session_id(session_id: str) -> DBAccessor:
+    def get_connection_instance_by_session_id(session_id: str) -> DBInterface:
         """
         Creates and returns a database connection instance for a given session ID.
 

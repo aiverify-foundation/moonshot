@@ -1,6 +1,5 @@
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
-from moonshot.src.recipes.recipe_type import RecipeType
 
 
 # ------------------------------------------------------------------------------
@@ -13,29 +12,26 @@ def api_create_recipe(
     datasets: list[str],
     prompt_templates: list[str],
     metrics: list[str],
-    type: str,
-    attack_strategies: list[dict],
+    attack_modules: list[str],
 ) -> None:
     """
-    Creates a new recipe and stores it in json.
+    Creates a new recipe and stores it in a JSON file.
 
-    This function takes a variety of parameters, including the name, description, tags, datasets,
-    prompt templates, metrics, type, attack strategies, and context strategies of the recipe.
-    It then creates a new RecipeArguments object with these parameters, and calls the Recipe.create
-    method to store the new recipe in the json file.
+    This function accepts multiple parameters to define a recipe, including its name, description, tags, datasets,
+    prompt templates, metrics, and attack modules. It constructs a new RecipeArguments object using these parameters
+    and invokes the Recipe.create method to persist the new recipe in a JSON file.
 
-    Note: The id of the recipe is generated from the name of the recipe using the slugify function,
-    so it does not need to be provided.
+    The recipe's ID is automatically generated based on the recipe's name using a slugification process,
+    thus it is not a required input.
 
     Args:
         name (str): The name of the recipe.
         description (str): The description of the recipe.
-        tags (list[str]): The tags associated with the recipe.
-        datasets (list[str]): The datasets used by the recipe.
-        prompt_templates (list[str]): The prompt templates used by the recipe.
-        metrics (list[str]): The metrics used by the recipe.
-        type (str): The type of the recipe.
-        attack_strategies (list[dict]): The attack strategies used by the recipe.
+        tags (list[str]): A list of tags associated with the recipe.
+        datasets (list[str]): A list of datasets the recipe utilizes.
+        prompt_templates (list[str]): A list of prompt templates for the recipe.
+        metrics (list[str]): A list of metrics to evaluate the recipe.
+        attack_modules (list[str]): A list of attack modules the recipe employs.
 
     Returns:
         None
@@ -48,8 +44,7 @@ def api_create_recipe(
         datasets=datasets,
         prompt_templates=prompt_templates,
         metrics=metrics,
-        type=RecipeType(type),
-        attack_strategies=attack_strategies,
+        attack_modules=attack_modules,
     )
     Recipe.create(rec_args)
 
@@ -113,8 +108,6 @@ def api_update_recipe(rec_id: str, **kwargs) -> None:
 
     # Update the fields of the existing recipe with the provided kwargs
     for key, value in kwargs.items():
-        if key == "type":
-            value = RecipeType(value)
         if hasattr(existing_recipe, key):
             setattr(existing_recipe, key, value)
 
