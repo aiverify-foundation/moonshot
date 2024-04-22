@@ -97,6 +97,6 @@ class Container(containers.DeclarativeContainer):
         ".routes.metric",
         ".routes.runner",
         ".routes.dataset",
-        ".routes.attack_strategy",
+        ".routes.attack_modules",
         ".services.benchmarking_service"
     ])
