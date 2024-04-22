@@ -1,7 +1,5 @@
 from dependency_injector import containers, providers
-
 from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
-
 from .status_updater.webhook import Webhook
 from .services.benchmarking_service import BenchmarkingService
 from .services.prompt_template_service import PromptTemplateService
@@ -13,6 +11,7 @@ from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.metric_service import MetricService
 from .services.runner_service import RunnerService
+from .services.report_analysis_service import ReportAnalysisService
 
 import importlib.resources
 
@@ -45,39 +44,26 @@ class Container(containers.DeclarativeContainer):
     })
 
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(BenchmarkTestState)
-    webhook: providers.Singleton[Webhook] = providers.Singleton(
-        Webhook,
-        benchmark_test_state=benchmark_test_state)
+    webhook: providers.Singleton[Webhook] = providers.Singleton(Webhook, benchmark_test_state=benchmark_test_state)
     benchmark_test_manager: providers.Singleton[BenchmarkTestManager] = providers.Singleton(
         BenchmarkTestManager,
         benchmark_test_state=benchmark_test_state,
-        webhook=webhook)
-    session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
-    prompt_template_service: providers.Singleton[PromptTemplateService] = providers.Singleton(
-        PromptTemplateService,
+        webhook=webhook
     )
+    session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
+    prompt_template_service: providers.Singleton[PromptTemplateService] = providers.Singleton(PromptTemplateService)
     benchmarking_service: providers.Singleton[BenchmarkingService] = providers.Singleton(
         BenchmarkingService,
-        benchmark_test_manager=benchmark_test_manager,
+        benchmark_test_manager=benchmark_test_manager
     )
-    endpoint_service: providers.Singleton[EndpointService] = providers.Singleton(
-        EndpointService,
-    )
-    recipe_service: providers.Singleton[RecipeService] = providers.Singleton(
-        RecipeService,
-    )
-    cookbook_service: providers.Singleton[CookbookService] = providers.Singleton(
-        CookbookService,
-    )
-    benchmark_result_service: providers.Singleton[BenchmarkResultService] = providers.Singleton(
-        BenchmarkResultService,
-    )
-    metric_service: providers.Singleton[MetricService] = providers.Singleton(
-        MetricService,
-    )
-    runner_service: providers.Singleton[RunnerService] = providers.Singleton(
-        RunnerService,
-    )
+    endpoint_service: providers.Singleton[EndpointService] = providers.Singleton(EndpointService)
+    recipe_service: providers.Singleton[RecipeService] = providers.Singleton(RecipeService)
+    cookbook_service: providers.Singleton[CookbookService] = providers.Singleton(CookbookService)
+    benchmark_result_service: providers.Singleton[BenchmarkResultService] = providers.Singleton(BenchmarkResultService)
+    metric_service: providers.Singleton[MetricService] = providers.Singleton(MetricService)
+    runner_service: providers.Singleton[RunnerService] = providers.Singleton(RunnerService)
+    report_analysis_service: providers.Singleton[ReportAnalysisService] = providers.Singleton(ReportAnalysisService)
+
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
         ".routes.prompt_template",
@@ -88,5 +74,6 @@ class Container(containers.DeclarativeContainer):
         ".routes.benchmark_result",
         ".routes.metric",
         ".routes.runner",
+        ".routes.report_analysis",
         ".services.benchmarking_service"
     ])
