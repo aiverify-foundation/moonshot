@@ -68,6 +68,7 @@ class Connector:
 
         self.pre_prompt = ""
         self.post_prompt = ""
+        self.system_prompt = ""
 
         # Rate limiting
         self.rate_limiter = ep_args.max_calls_per_second
@@ -80,6 +81,12 @@ class Connector:
         self.timeout = ep_args.params.get("timeout", 600)
         self.allow_retries = ep_args.params.get("allow_retries", True)
         self.retries_times = ep_args.params.get("num_of_retries", 3)
+
+        # Optional params
+        excluded_keys = {"allow_retries", "timeout", "num_of_retries"}
+        self.optional_params = {
+            k: v for k, v in ep_args.params.items() if k not in excluded_keys
+        }
 
     async def _add_tokens(self):
         """
@@ -298,3 +305,15 @@ class Connector:
         except Exception as e:
             print(f"Failed to get prediction: {str(e)}")
             raise e
+
+    def set_system_prompt(self, system_prompt: str) -> None:
+        """
+        Assigns a new system prompt to this connector instance.
+
+        The system prompt serves as a preconfigured command or message that the connector can use to initiate
+        interactions or execute specific operations.
+
+        Parameters:
+            system_prompt (str): The new system prompt to set for this connector.
+        """
+        self.system_prompt = system_prompt
