@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class RunnerType(Enum):
-    RECIPE = "recipe"
-    COOKBOOK = "cookbook"
+    BENCHMARK = "benchmark"
+    REDTEAM = "redteam"

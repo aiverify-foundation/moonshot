@@ -1,10 +1,10 @@
 import json
 from io import TextIOWrapper
 
-from moonshot.src.storage.object_accessor import ObjectAccessor
+from moonshot.src.storage.io_interface import IOInterface
 
 
-class JSONIO(ObjectAccessor):
+class JSONIO(IOInterface):
     def __init__(self, json_path: str):
         self.json_path = json_path
 

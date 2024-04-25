@@ -12,7 +12,7 @@ from moonshot.src.prompt_templates.prompt_template_manager import PromptTemplate
 from moonshot.src.redteaming.context_strategy.context_strategy_manager import (
     ContextStrategyManager,
 )
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
 
@@ -68,7 +68,7 @@ class Chat:
 
     def __init__(
         self,
-        session_db_instance: DBAccessor,
+        session_db_instance: DBInterface,
         endpoint: str = "",
         created_epoch: float = 0.0,
         created_datetime: str = "",
@@ -143,7 +143,7 @@ class Chat:
 
     @classmethod
     def load_chat(
-        cls, session_db_instance: DBAccessor, chat_id: str, endpoint: str = ""
+        cls, session_db_instance: DBInterface, chat_id: str, endpoint: str = ""
     ) -> Chat:
         """
         Class method to load a Chat instance for a given chat ID and optional endpoint.
@@ -166,7 +166,7 @@ class Chat:
         )
 
     def load_chat_history(
-        self, session_db_instance: DBAccessor, chat_id: str
+        self, session_db_instance: DBInterface, chat_id: str
     ) -> list[ChatRecord]:
         """
         Loads the chat history for a specific chat ID.
@@ -197,7 +197,7 @@ class Chat:
 
     @staticmethod
     async def send_prompt(
-        session_db_instance: DBAccessor,
+        session_db_instance: DBInterface,
         chat_id: str,
         endpoint: str,
         user_prompt: str,

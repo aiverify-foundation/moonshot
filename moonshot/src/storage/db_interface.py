@@ -4,7 +4,7 @@ from abc import abstractmethod
 from typing import Any
 
 
-class DBAccessor:
+class DBInterface:
     @abstractmethod
     def create_connection(self) -> Any | None:
         """

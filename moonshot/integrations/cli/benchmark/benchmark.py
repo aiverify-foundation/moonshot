@@ -8,8 +8,6 @@ from moonshot.integrations.cli.benchmark.cookbook import (
     delete_cookbook,
     delete_cookbook_args,
     list_cookbooks,
-    run_cookbook,
-    run_cookbook_args,
     update_cookbook,
     update_cookbook_args,
     view_cookbook,
@@ -21,8 +19,6 @@ from moonshot.integrations.cli.benchmark.recipe import (
     delete_recipe,
     delete_recipe_args,
     list_recipes,
-    run_recipe,
-    run_recipe_args,
     update_recipe,
     update_recipe_args,
     view_recipe,
@@ -129,13 +125,13 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # Run contents
     # ------------------------------------------------------------------------------
 
-    @cmd2.with_argparser(run_cookbook_args)
-    def do_run_cookbook(self, args: argparse.Namespace) -> None:
-        run_cookbook(args)
+    # @cmd2.with_argparser(run_cookbook_args)
+    # def do_run_cookbook(self, args: argparse.Namespace) -> None:
+    #     run_cookbook(args)
 
-    @cmd2.with_argparser(run_recipe_args)
-    def do_run_recipe(self, args: argparse.Namespace) -> None:
-        run_recipe(args)
+    # @cmd2.with_argparser(run_recipe_args)
+    # def do_run_recipe(self, args: argparse.Namespace) -> None:
+    #     run_recipe(args)
 
     @cmd2.with_argparser(run_report_analysis_args)
     def do_run_report_analysis(self, args: argparse.Namespace) -> None:
