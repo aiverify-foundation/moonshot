@@ -97,6 +97,7 @@ def test_run_benchmark_recipe_runner(runner_id: str):
         runner.run_recipes(
             ["bbq", "auto-categorisation"],
             2,
+            2
         )
     )
     runner.close()
@@ -108,6 +109,7 @@ def test_run_benchmark_cookbook_runner(runner_id: str):
         runner.run_cookbooks(
             ["common-risk-easy","leaderboard-cookbook"],
             2,
+            2
         )
     )
     runner.close()

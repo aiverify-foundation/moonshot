@@ -154,6 +154,30 @@ class Storage:
             raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
+    def count_objects(
+        obj_type: str, obj_id: str, obj_extension: str, item_path: str
+    ) -> int:
+        """
+        Counts the number of objects in a dataset without loading them fully into memory.
+
+        Args:
+            obj_type (str): The type of the object (e.g., 'dataset').
+            obj_id (str): The ID of the object.
+            obj_extension (str): The file extension (e.g., 'json').
+            item_path (str): The path to the items in the JSON file.
+
+        Returns:
+            int: The count of the objects.
+        """
+        count = 0
+        generator = Storage.read_object_generator(
+            obj_type, obj_id, obj_extension, item_path
+        )
+        for _ in generator:
+            count += 1
+        return count
+
+    @staticmethod
     def get_objects(obj_type: str, obj_extension: str) -> Iterator[str]:
         """
         Retrieves all the object files with the specified extension from one or more directories.
