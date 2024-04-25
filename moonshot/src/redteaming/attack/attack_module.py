@@ -121,7 +121,7 @@ class AttackModule:
             cs_id=cs_id,
             pt_id=pt_id,
             me_id="",
-            original_prompt="",
+            original_prompt=self.prompt,
             system_prompt="",
             start_time="",
             connector_prompt=ConnectorPromptArguments(
