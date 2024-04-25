@@ -19,19 +19,6 @@ class PromptTemplate:
             list: A list of prompt template names.
         """
 
-        # try:
-        #     prompt_template_file_path = EnvironmentVars.get_file_directory(
-        #         EnvVariables.PROMPT_TEMPLATES.name
-        #     )[0]
-        #     filepaths = [
-        #         Path(fp).stem
-        #         for fp in glob.iglob(f"{prompt_template_file_path}/*.json")
-        #         if "__" not in fp
-        #     ]
-        #     return filepaths
-        # except Exception as e:
-        #     raise e
-
         filepaths = []
         prompt_template_files = Storage.get_objects(
             EnvVariables.PROMPT_TEMPLATES.name, "json"
@@ -50,22 +37,6 @@ class PromptTemplate:
         """
         list_of_pt_names = PromptTemplate.get_all_prompt_template_names()
         list_of_pt_contents = []
-        # for pt_name in list_of_pt_names:
-        #     try:
-        #         pt_file = open(
-        #             f"{EnvironmentVars.get_file_directory(EnvVariables.PROMPT_TEMPLATES.name)[0]}/{pt_name}.json",
-        #             "r",
-        #             encoding="utf-8",
-        #         )
-        #         pt_contents = json.load(pt_file)
-        #         name = pt_contents["name"]
-        #         description = pt_contents["description"]
-        #         template = pt_contents["template"]
-        #         list_of_pt_contents.append(
-        #             {"name": name, "description": description, "template": template}
-        #         )
-        #     except (FileNotFoundError, ValueError) as e:
-        #         raise e
 
         for pt_name in list_of_pt_names:
             pt_contents = Storage.read_object(
