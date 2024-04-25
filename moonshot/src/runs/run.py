@@ -9,7 +9,7 @@ from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_arguments import RunArguments
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -73,12 +73,14 @@ class Run:
             self.run_arguments,
             progress_callback_func,
         )
+        # Create a cancellation asyncio event
+        self.cancel_event = asyncio.Event()
         # Create run table
         if database_instance:
             Storage.create_database_table(database_instance, Run.sql_create_run_table)
 
     @staticmethod
-    def load(database_instance: DBAccessor | None, run_id: int | None) -> RunArguments:
+    def load(database_instance: DBInterface | None, run_id: int | None) -> RunArguments:
         """
         Loads run data for a given run_id from the database, or the latest run if run_id is None.
 
@@ -116,6 +118,19 @@ class Run:
             raise RuntimeError(
                 f"[Run] Failed to get database record for run_id {run_id}: {database_instance}"
             )
+
+    def cancel_run(self):
+        """
+        Sets the cancel event to stop the run process.
+
+        This method is used to signal that the run process should be cancelled. It sets the cancel_event
+        which can be checked in various points of the asynchronous run process to gracefully stop the execution.
+
+        Returns:
+            None
+        """
+        print("[Run] Cancelling run...")
+        self.cancel_event.set()
 
     async def run(self) -> dict:
         """
@@ -224,6 +239,7 @@ class Run:
                     self.run_arguments.database_instance,
                     self.run_arguments.endpoints,
                     self.run_progress,
+                    self.cancel_event,
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import asyncio
 import copy
 import time
 from itertools import groupby
@@ -14,184 +15,191 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
+from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.results.result import Result
 from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
 
 class Benchmarking:
-    sql_create_cache_table = """
-        CREATE TABLE IF NOT EXISTS cache_table (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        conn_id text NOT NULL,
-        rec_id text NOT NULL,
-        ds_id text NOT NULL,
-        pt_id text NOT NULL,
-        random_seed text NOT NULL,
-        system_prompt text NOT NULL,
-        prompt_index INTEGER NOT NULL,
-        prompt text NOT NULL,
-        target text NOT NULL,
-        predicted_results text NOT NULL,
-        duration text NOT NULL
-        );
+    sql_create_runner_cache_record = """
+        INSERT INTO runner_cache_table(connection_id,recipe_id,dataset_id,prompt_template_id,attack_module_id,
+        prompt_index,prompt,target,predicted_results,duration,random_seed,system_prompt)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
-    sql_create_cache_record = """
-        INSERT INTO cache_table(conn_id,rec_id,ds_id,pt_id,random_seed,system_prompt,prompt_index,prompt,target,
-        predicted_results,duration)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
+    sql_read_runner_cache_record = """
+        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? AND prompt_template_id=? AND prompt=?
     """
-    sql_read_cache_record = """
-        SELECT * from cache_table WHERE rec_id=? AND conn_id=? AND pt_id=? AND prompt=?
-    """
+    BATCH_SIZE = 10
+    QUEUE_SIZE = 10
 
     async def generate(
         self,
         event_loop: Any,
         runner_args: dict,
-        database_instance: DBAccessor | None,
+        database_instance: DBInterface | None,
         endpoints: list[str],
         run_progress: RunProgress,
+        cancel_event: asyncio.Event,
     ) -> dict:
         """
-        Asynchronously generates benchmarking results for cookbooks or recipes.
+        Asynchronously generates benchmarking data based on the provided arguments.
 
-        This method manages the benchmarking process, which involves executing cookbooks or recipes,
-        recording outcomes, and updating the status of completion. It coordinates the setup and execution of
-        benchmarking activities based on the input parameters.
+        This method orchestrates the benchmarking process by preparing the environment, loading necessary instances,
+        and executing the benchmarking pipeline. It handles the generation of prompts, prediction of results, and
+        calculation of metrics for the given recipes and cookbooks.
 
         Args:
-            event_loop (Any): The event loop where asynchronous tasks will be executed.
-            runner_args (dict): A dictionary of parameters for the benchmarking run, including
-                                cookbooks, recipes, number of prompts, random seed, and system prompt.
-            database_instance (DBAccessor | None): A DBAccessor instance for database operations,
-                                                    or None if database interaction is not needed.
-            endpoints (str): The endpoints to be utilized in the benchmarking process.
-            run_progress (RunProgress): A RunProgress instance to track progress and log errors
-                                        throughout the benchmarking process.
+            event_loop (Any): The event loop in which asynchronous tasks will be scheduled.
+            runner_args (dict): A dictionary containing arguments for the runner.
+            database_instance (DBAccessor | None): An instance of the database accessor for caching and retrieval.
+            endpoints (list[str]): A list of endpoints to be used for generating predictions.
+            run_progress (RunProgress): An instance to report progress and errors during the run.
+            cancel_event (asyncio.Event): An event to signal cancellation of the generation process.
+
+        Returns:
+            dict: A dictionary containing the benchmarking results, grouped by recipe and cookbook identifiers.
 
         Raises:
-            RuntimeError: If it's unclear whether to use cookbooks or recipes for benchmarking, or if
-                          obtaining the database instance is unsuccessful when it's required.
+            RuntimeError: If the database instance is not provided or any other critical error occurs during the
+            benchmarking process.
         """
-        if not database_instance:
-            error_message = "[Benchmarking] Failed to get database instance"
-            self.run_progress.notify_error(error_message)
-            raise RuntimeError(error_message)
-
-        # Store parsed values
-        self.event_loop = event_loop
-        self.runner_args = runner_args
-        self.database_instance = database_instance
-        self.endpoints = endpoints
-        self.run_progress = run_progress
-
-        # Get required arguments from runner_args
-        self.cookbooks = self.runner_args.get("cookbooks", None)
-        self.recipes = self.runner_args.get("recipes", None)
-        self.num_of_prompts = self.runner_args.get("num_of_prompts", 0)
-        self.random_seed = self.runner_args.get("random_seed", 0)
-        self.system_prompt = self.runner_args.get("system_prompt", "")
-
-        # ------------------------------------------------------------------------------
-        # Part 0: Load common instances
-        # ------------------------------------------------------------------------------
-        # Load endpoints
-        start_time = time.perf_counter()
-        self.recipe_connectors = [
-            Connector.create(ConnectorEndpoint.read(endpoint))
-            for endpoint in self.endpoints
-        ]
-        print(
-            f"[Benchmarking] Load recipe connectors took {(time.perf_counter() - start_time):.4f}s"
-        )
-
-        # ------------------------------------------------------------------------------
-        # Part 1: Create new cache table if needed
-        # ------------------------------------------------------------------------------
-        print("[Benchmarking] Part 1: Create new cache table if needed...")
-        Storage.create_database_table(
-            database_instance, Benchmarking.sql_create_cache_table
-        )
-
-        # ------------------------------------------------------------------------------
-        # Part 2: Run the recipes and cookbooks
-        # ------------------------------------------------------------------------------
-        benchmark_results = {}
-        start_time = time.perf_counter()
         try:
-            if self.cookbooks:
-                # Process as benchmark cookbooks test
-                print(f"[Benchmarking] Part 2: Running cookbooks ({self.cookbooks})...")
+            if not database_instance:
+                error_message = "[Benchmarking] Failed to get database instance"
+                self.run_progress.notify_error(error_message)
+                raise RuntimeError(error_message)
 
-                # Run all cookbooks
-                for cookbook_index, cookbook in enumerate(self.cookbooks, 0):
+            # Store parsed values
+            self.event_loop = event_loop
+            self.runner_args = runner_args
+            self.database_instance = database_instance
+            self.endpoints = endpoints
+            self.run_progress = run_progress
+            self.cancel_event = cancel_event
+
+            # Get required arguments from runner_args
+            self.cookbooks = self.runner_args.get("cookbooks", None)
+            self.recipes = self.runner_args.get("recipes", None)
+            self.num_of_prompts = self.runner_args.get("num_of_prompts", 0)
+            self.random_seed = self.runner_args.get("random_seed", 0)
+            self.system_prompt = self.runner_args.get("system_prompt", "")
+
+            # ------------------------------------------------------------------------------
+            # Part 0: Load common instances
+            # ------------------------------------------------------------------------------
+            # Load endpoints
+            start_time = time.perf_counter()
+            self.recipe_connectors = [
+                Connector.create(ConnectorEndpoint.read(endpoint))
+                for endpoint in self.endpoints
+            ]
+            print(
+                f"[Benchmarking] Load recipe connectors took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            # ------------------------------------------------------------------------------
+            # Part 1: Run the recipes and cookbooks
+            # ------------------------------------------------------------------------------
+            benchmark_results = {}
+            start_time = time.perf_counter()
+            try:
+                if self.cookbooks:
+                    # Process as benchmark cookbooks test
                     print(
-                        f"[Benchmarking] Running cookbook {cookbook}... ({cookbook_index+1}/{len(self.cookbooks)})"
+                        f"[Benchmarking] Part 1: Running cookbooks ({self.cookbooks})..."
                     )
 
+                    # Run all cookbooks
+                    for cookbook_index, cookbook in enumerate(self.cookbooks, 0):
+                        print(
+                            f"[Benchmarking] Running cookbook {cookbook}... ({cookbook_index+1}/{len(self.cookbooks)})"
+                        )
+
+                        self.run_progress.notify_progress(
+                            cookbook_index=cookbook_index,
+                            cookbook_name=cookbook,
+                            cookbook_total=len(self.cookbooks),
+                            recipe_index=-1,
+                            recipe_name="",
+                            recipe_total=-1,
+                        )
+
+                        # Run the cookbook
+                        benchmark_results[cookbook] = await self._run_cookbook(cookbook)
+
+                    # Update progress
                     self.run_progress.notify_progress(
-                        cookbook_index=cookbook_index,
-                        cookbook_name=cookbook,
-                        cookbook_total=len(self.cookbooks),
-                        recipe_index=-1,
-                        recipe_name="",
-                        recipe_total=-1,
+                        cookbook_index=len(self.cookbooks), results=benchmark_results
                     )
 
-                    # Run the cookbook
-                    benchmark_results[cookbook] = await self._run_cookbook(cookbook)
+                elif self.recipes:
+                    # Process as benchmark recipes test
+                    print(f"[Benchmarking] Part 1: Running recipes ({self.recipes})...")
 
-                # Update progress
-                self.run_progress.notify_progress(
-                    cookbook_index=len(self.cookbooks), results=benchmark_results
-                )
+                    # Run all recipes
+                    for recipe_index, recipe in enumerate(self.recipes, 0):
+                        print(
+                            f"[Benchmarking] Running recipe {recipe}... ({recipe_index+1}/{len(self.recipes)})"
+                        )
 
-            elif self.recipes:
-                # Process as benchmark recipes test
-                print(f"[Benchmarking] Part 2: Running recipes ({self.recipes})...")
+                        self.run_progress.notify_progress(
+                            recipe_index=recipe_index,
+                            recipe_name=recipe,
+                            recipe_total=len(self.recipes),
+                        )
 
-                # Run all recipes
-                for recipe_index, recipe in enumerate(self.recipes, 0):
-                    print(
-                        f"[Benchmarking] Running recipe {recipe}... ({recipe_index+1}/{len(self.recipes)})"
-                    )
+                        # Run the recipe
+                        benchmark_results[recipe] = await self._run_recipe(recipe)
 
+                    # Update progress
                     self.run_progress.notify_progress(
-                        recipe_index=recipe_index,
-                        recipe_name=recipe,
-                        recipe_total=len(self.recipes),
+                        recipe_index=len(self.recipes), results=benchmark_results
                     )
 
-                    # Run the recipe
-                    benchmark_results[recipe] = await self._run_recipe(recipe)
+                else:
+                    # Unable to identify type
+                    self.run_progress.notify_error(
+                        "[Benchmarking] Failed to identify if benchmarking with cookbooks or recipes."
+                    )
 
-                # Update progress
-                self.run_progress.notify_progress(
-                    recipe_index=len(self.recipes), results=benchmark_results
-                )
-
-            else:
-                # Unable to identify type
+            except Exception as e:
                 self.run_progress.notify_error(
-                    "[Benchmarking] Failed to identify if benchmarking with cookbooks or recipes."
+                    f"[Benchmarking] Failed to run due to error: {str(e)}"
+                )
+
+            finally:
+                print(
+                    f"[Benchmarking] Run took {(time.perf_counter() - start_time):.4f}s"
                 )
 
         except Exception as e:
             self.run_progress.notify_error(
-                f"[Benchmarking] Failed to run due to error: {str(e)}"
+                f"[Benchmarking] Failed to generate benchmarking due to error: {str(e)}"
             )
 
         finally:
-            print(f"[Benchmarking] Run took {(time.perf_counter() - start_time):.4f}s")
+            print("[Benchmarking] Updating completion status...")
+            if self.cancel_event.is_set():
+                self.run_progress.notify_progress(
+                    status=RunStatus.CANCELLED,
+                )
+            elif self.run_progress.run_arguments.error_messages:
+                self.run_progress.notify_progress(
+                    status=RunStatus.COMPLETED_WITH_ERRORS,
+                )
+            else:
+                self.run_progress.notify_progress(
+                    status=RunStatus.COMPLETED,
+                )
 
         # ------------------------------------------------------------------------------
-        # Part 2: Write results
+        # Write results
         # ------------------------------------------------------------------------------
         print("[Benchmarking] Writing results...")
         start_time = time.perf_counter()
@@ -214,7 +222,7 @@ class Benchmarking:
             )
             Result.create(result_args)
             print(
-                f"[Benchmarking] {id} - Run results written to "
+                f"[Benchmarking] {self.run_progress.run_arguments.runner_id} - Run results written to "
                 f"{self.run_progress.run_arguments.results_file}"
             )
 
@@ -227,37 +235,106 @@ class Benchmarking:
             print(
                 f"[Benchmarking] Writing results took {(time.perf_counter() - start_time):.4f}s"
             )
+            return self.run_progress.run_arguments.results
 
-        # ------------------------------------------------------------------------------
-        # Part 3: Update completion status
-        # ------------------------------------------------------------------------------
-        print("[Benchmarking] Updating completion status...")
-        if self.run_progress.run_arguments.error_messages:
-            self.run_progress.notify_progress(
-                status=RunStatus.COMPLETED_WITH_ERRORS,
-            )
-        else:
-            self.run_progress.notify_progress(
-                status=RunStatus.COMPLETED,
-            )
-        return self.run_progress.run_arguments.results
-
-    async def _run_recipe(self, recipe_name: str):
+    async def _run_cookbook(self, cookbook_name: str) -> dict:
         """
-        Asynchronously runs a single recipe benchmarking process.
+        Asynchronously runs all the recipes within a given cookbook.
 
-        This method is responsible for executing the benchmarking process for a given recipe. It involves
-        loading the recipe instance, executing the generator pipeline to obtain prompts, and performing
-        predictions based on those prompts.
+        This method takes the name of a cookbook, loads the cookbook instance, and then
+        asynchronously runs each recipe contained within it. The results of each recipe run
+        are collected and returned.
 
         Args:
-            recipe_name (str): The name of the recipe to run the benchmarking process on.
-
-        Raises:
-            RuntimeError: If the recipe instance is not initialized before attempting to run the generator pipeline.
+            cookbook_name (str): The name of the cookbook to run.
 
         Returns:
-            None
+            dict: A dictionary containing the results of each recipe run, keyed by recipe name.
+
+        Raises:
+            Exception: If loading the cookbook instance fails or if an error occurs during
+            the running of a recipe.
+        """
+        # ------------------------------------------------------------------------------
+        # Part 1: Load required instances
+        # ------------------------------------------------------------------------------
+        print("[Benchmarking] Load required instances...")
+        start_time = time.perf_counter()
+        try:
+            # Load cookbook
+            start_time = time.perf_counter()
+            self.cookbook_instance = Cookbook.load(cookbook_name)
+            print(
+                f"[Benchmarking] Load cookbook instance took {(time.perf_counter() - start_time):.4f}s"
+            )
+        except Exception as e:
+            self.run_progress.notify_error(
+                f"Failed to load instances in running cookbook due to error: {str(e)}"
+            )
+
+        # ------------------------------------------------------------------------------
+        # Part 2: Run cookbook recipes
+        # ------------------------------------------------------------------------------
+        print("[Benchmarking] Running cookbook recipes...")
+        recipes_results = {}
+        start_time = time.perf_counter()
+        try:
+            if self.cookbook_instance:
+                # Run all recipes
+                for recipe_index, recipe_name in enumerate(
+                    self.cookbook_instance.recipes, 0
+                ):
+                    print(
+                        f"[Benchmarking] Running recipe {recipe_name}... "
+                        f"({recipe_index+1}/{len(self.cookbook_instance.recipes)})"
+                    )
+
+                    # Update progress
+                    self.run_progress.notify_progress(
+                        recipe_index=recipe_index,
+                        recipe_name=recipe_name,
+                        recipe_total=len(self.cookbook_instance.recipes),
+                    )
+
+                    # Run the recipe
+                    recipes_results[recipe_name] = await self._run_recipe(recipe_name)
+
+                # Update progress
+                self.run_progress.notify_progress(
+                    recipe_index=len(self.cookbook_instance.recipes),
+                )
+                print(
+                    "[Benchmarking] Running cookbook "
+                    f"[{self.cookbook_instance.id}] took {(time.perf_counter() - start_time):.4f}s"
+                )
+
+            else:
+                raise RuntimeError("Cookbook instance is not initialised.")
+
+        except Exception as e:
+            self.run_progress.notify_error(
+                f"Failed to load instances in running cookbook due to error: {str(e)}"
+            )
+
+        finally:
+            return recipes_results
+
+    async def _run_recipe(self, recipe_name: str) -> dict:
+        """
+        Asynchronously runs a single recipe benchmarking process and returns the results.
+
+        This method is responsible for orchestrating the benchmarking process for a specified recipe. It includes
+        the steps of loading the recipe instance, executing the generator pipeline to produce prompts, and
+        generating predictions for those prompts. The results of the benchmarking process are then returned.
+
+        Args:
+            recipe_name (str): The name of the recipe for which the benchmarking process is to be executed.
+
+        Raises:
+            RuntimeError: If the recipe instance is not initialized prior to running the generator pipeline.
+
+        Returns:
+            dict: A dictionary containing the benchmarking results for the recipe.
         """
         # ------------------------------------------------------------------------------
         # Part 1: Load required instances
@@ -281,10 +358,9 @@ class Benchmarking:
             )
 
         except Exception as e:
-            error_message = (
+            self.run_progress.notify_error(
                 f"Failed to load instances in running recipe due to error: {str(e)}"
             )
-            self.run_progress.notify_error(error_message)
 
         # ------------------------------------------------------------------------------
         # Part 2: Build and execute generator pipeline to get prompts and perform predictions
@@ -294,7 +370,9 @@ class Benchmarking:
         recipe_predictions = []
         try:
             if self.recipe_instance:
-                task = self.event_loop.create_task(self._run_generator_pipeline())
+                task = self.event_loop.create_task(
+                    self._run_generator_pipeline(self.cancel_event)
+                )
                 await task
                 recipe_predictions = task.result()
                 print(
@@ -413,46 +491,122 @@ class Benchmarking:
         finally:
             return recipe_results
 
-    async def _run_generator_pipeline(self):
+    async def _run_generator_pipeline(self, cancel_event: asyncio.Event) -> list:
         """
-        Executes the benchmark pipeline using the provided recipe instance and connectors.
+        Orchestrates the execution of the benchmark pipeline using the provided recipe instance and connectors.
 
-        This method orchestrates the benchmarking process by generating prompts from the recipe instance's
-        datasets and prompt templates. It then uses the provided connectors to generate predictions from these prompts.
-        The benchmarking results are asynchronously yielded, facilitating concurrent processing.
+        This method manages the benchmarking process by generating prompts from the datasets and prompt templates
+        specified in the recipe instance. It then employs the given connectors to produce predictions based on these
+        prompts. The results of the benchmarking are provided through an asynchronous generator, enabling parallel
+        processing of the pipeline's output.
 
         Args:
-            recipe_inst (Recipe): The recipe instance containing the datasets and prompt templates for
-            generating prompts.
-
-            recipe_connectors (list[Connector]): A list of connector instances that will be used to
-            generate predictions from the prompts.
+            cancel_event (asyncio.Event): An event that, when set, signals the pipeline to gracefully cancel
+            the benchmarking process.
 
         Returns:
-            AsyncGenerator: An asynchronous generator that yields the benchmarking results, allowing for concurrent
+            list: A list of benchmarking results that have been asynchronously generated, allowing for concurrent
             processing of the pipeline's output.
 
         Raises:
-            Exception: An error is raised if there is a failure during the prompt generation or prediction phases
+            Exception: An exception is raised if an error occurs during the prompt generation or prediction phases
             of the benchmarking process.
         """
-        # Generate prompts based on datasets and replacement in prompt templates
-        gen_prompt = self._generate_prompts()
-
-        # Generate predictions based on the gen_prompts on different connectors
-        gen_result = self._generate_predictions(gen_prompt)
-
         try:
-            output = []
-            async for result in gen_result:
-                output.append(copy.deepcopy(result))
+            # Generate prompts based on datasets and replacement in prompt templates
+            gen_prompt = self._generate_prompts()
+
+            # Create an asynchronous queue
+            queue = asyncio.Queue(
+                maxsize=Benchmarking.QUEUE_SIZE
+            )  # Adjust the maxsize to control concurrency
+
+            # Producer coroutine to generate prompts and put them into the queue in batches
+            async def producer():
+                try:
+                    batch = []
+                    async for prompt in gen_prompt:
+                        if cancel_event.is_set():
+                            print(
+                                "[Benchmarking] Cancellation flag is set. Cancelling producer..."
+                            )
+                            break
+                        batch.append(prompt)
+                        if len(batch) == Benchmarking.BATCH_SIZE:
+                            # Put the entire batch into the queue
+                            await queue.put(batch)
+                            batch = []  # Reset the batch
+
+                    # If there are prompts left in the partial batch, put them in the queue
+                    if batch:
+                        await queue.put(batch)
+                finally:
+                    # Signal the consumers that production is done or cancelled
+                    await queue.put(None)
+
+            # Consumer coroutine to process batches of prompts from the queue
+            async def consumer():
+                output = []
+                while True:
+                    batch = await queue.get()  # Retrieve a batch from the queue
+                    if batch is None:  # Check for the end of the queue
+                        queue.task_done()
+                        break
+                    if cancel_event.is_set():  # Check for cancellation
+                        print(
+                            "[Benchmarking] Cancellation flag is set. Cancelling consumer..."
+                        )
+                        queue.task_done()
+                        break
+
+                    # Dispatch the batch to all connectors
+                    batch_tasks = [
+                        self._generate_predictions(batch, connector, cancel_event)
+                        for connector in self.recipe_connectors
+                    ]
+                    results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+
+                    # Process results and handle exceptions
+                    for result in results:
+                        if isinstance(result, Exception):
+                            # Handle exceptions from _generate_predictions
+                            self.run_progress.notify_error(
+                                f"[Benchmarking] Error while generating predictions: {str(result)}"
+                            )
+                        else:
+                            output.append(result)
+
+                    queue.task_done()
+                return output
+
+            # Start the producer and consumer coroutines
+            producer_task = asyncio.create_task(producer())
+            consumer_task = asyncio.create_task(consumer())
+
+            # Wait for the producer to finish generating prompts
+            await producer_task
+
+            # Collect results from all consumers
+            results = await asyncio.gather(consumer_task, return_exceptions=True)
+
+            # Flatten the list of results since each consumer returns a list of results
+            # and flatten another additional layer if any sublist contains further nested lists
+            output = [
+                item
+                for sublist in results
+                if isinstance(sublist, list)
+                for subsublist in sublist
+                if isinstance(subsublist, list)
+                for item in subsublist
+            ]
             return output
 
         except Exception as e:
+            # Handle any exceptions that occur during the setup and execution of the pipeline
             self.run_progress.notify_error(
-                f"[Benchmarking] Failed to consume predictions due to error: {str(e)}"
+                f"[Benchmarking] Error during generator pipeline execution: {str(e)}"
             )
-            return []  # Empty generator
+            return []  # Return an empty list in case of error
 
     async def _generate_prompts(self) -> AsyncGenerator[PromptArguments, None]:
         """
@@ -498,6 +652,7 @@ class Benchmarking:
                                 ds_id=ds_id,
                                 random_seed=self.random_seed,
                                 system_prompt=self.system_prompt,
+                                attack_module_id="",
                                 connector_prompt=ConnectorPromptArguments(
                                     prompt_index=prompt_index,
                                     prompt=rendered_prompt,
@@ -531,6 +686,7 @@ class Benchmarking:
                             ds_id=ds_id,
                             random_seed=self.random_seed,
                             system_prompt=self.system_prompt,
+                            attack_module_id="",
                             connector_prompt=ConnectorPromptArguments(
                                 prompt_index=prompt_index,
                                 prompt=prompt["input"],
@@ -546,90 +702,124 @@ class Benchmarking:
                         continue
 
     async def _generate_predictions(
-        self, gen_prompt: AsyncGenerator[PromptArguments, None]
-    ):
+        self,
+        prompt_batch: list[PromptArguments],
+        connector: Connector,
+        cancel_event: asyncio.Event,
+    ) -> list:
         """
-        Asynchronously generates predictions for a series of prompts using the available recipe connectors and
-        caches the results in a database instance.
+        Asynchronously generates predictions for a batch of prompts using the specified connector.
 
-        This coroutine receives an asynchronous generator that yields prompts, and for each prompt, it interacts
-        with each recipe connector to obtain predictions. It checks the cache for existing records before
-        querying the connector. If a cache hit occurs, the prompt is updated with the cached data; otherwise,
-        the connector is used to generate a prediction which is then cached. The updated prompt information is
-        subsequently yielded.
+        This method takes a batch of PromptArguments, which contain information about the prompts to be processed,
+        and uses the provided connector to generate predictions for each prompt. It handles any exceptions that
+        occur during the generation process and notifies the run progress of any errors.
 
         Args:
-            gen_prompt (AsyncGenerator[PromptArguments, None]): An asynchronous generator that yields prompts
-            to be processed.
+            prompt_batch (list[PromptArguments]): A list of PromptArguments to generate predictions for.
+            connector (Connector): The connector instance to use for generating predictions.
+            cancel_event (asyncio.Event): An event to signal if the operation should be cancelled.
 
-        Yields:
-            PromptArguments: The prompt information with updated predictions, either retrieved from the cache
-            or obtained from a recipe connector.
-
-        Raises:
-            Exception: If an error occurs while reading from the cache or during prediction generation.
+        Returns:
+            list: A list of generated predictions or exceptions if any occurred during prediction generation.
         """
-        async for prompt_info in gen_prompt:
-            for rec_conn in self.recipe_connectors:
-                # Create a new prompt info with connection id
-                new_prompt_info = PromptArguments(
-                    conn_id=rec_conn.id,
-                    rec_id=prompt_info.rec_id,
-                    pt_id=prompt_info.pt_id,
-                    ds_id=prompt_info.ds_id,
-                    random_seed=prompt_info.random_seed,
-                    system_prompt=prompt_info.system_prompt,
-                    connector_prompt=prompt_info.connector_prompt,
+        # Create a coroutine for each prompt in the batch
+        tasks = [
+            self._process_single_prompt(prompt_info, connector, cancel_event)
+            for prompt_info in prompt_batch
+        ]
+
+        # Run all the coroutines concurrently and gather results
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Process results and handle exceptions
+        processed_results = []
+        for result in results:
+            if isinstance(result, Exception):
+                # Handle exceptions from _process_single_prompt
+                self.run_progress.notify_error(
+                    f"[Benchmarking] Error while generating prediction: {str(result)}"
                 )
+            else:
+                processed_results.append(result)
 
-                # Attempt to read from database for cache values
-                try:
-                    cache_record = Storage.read_database_record(
-                        self.database_instance,
-                        (
-                            new_prompt_info.rec_id,
-                            new_prompt_info.conn_id,
-                            new_prompt_info.pt_id,
-                            new_prompt_info.connector_prompt.prompt,
-                        ),
-                        Benchmarking.sql_read_cache_record,
-                    )
-                except Exception as e:
-                    self.run_progress.notify_error(
-                        f"[Benchmarking] Error while reading benchmark cache record for prompt_info "
-                        f"[conn_id: {new_prompt_info.conn_id}, rec_id: {new_prompt_info.rec_id}, "
-                        f"ds_id: {new_prompt_info.ds_id}, pt_id: {new_prompt_info.pt_id}, "
-                        f"prompt_index: {new_prompt_info.connector_prompt.prompt_index}] due to error: {str(e)}"
-                    )
-                    continue
+        return processed_results
 
-                # Check if cache record exists. If it exists, we will load from cache else we will get prediction
-                try:
-                    if cache_record is None:
-                        new_prompt_info.connector_prompt = (
-                            await Connector.get_prediction(
-                                new_prompt_info.connector_prompt, rec_conn
-                            )
-                        )
-                        Storage.create_database_record(
-                            self.database_instance,
-                            new_prompt_info.to_tuple(),
-                            Benchmarking.sql_create_cache_record,
-                        )
-                    else:
-                        new_prompt_info = PromptArguments.from_tuple(cache_record)
+    async def _process_single_prompt(
+        self,
+        prompt_info: PromptArguments,
+        connector: Connector,
+        cancel_event: asyncio.Event,
+    ) -> PromptArguments | None:
+        """
+        Processes a single prompt to generate a prediction or retrieve it from cache.
 
-                    # Return updated prompt info
-                    yield new_prompt_info
+        This method takes a single PromptArguments object, uses the provided connector to generate a prediction,
+        and caches the result in the database. If a cache record already exists for the given prompt, it retrieves
+        the result from the cache instead of generating a new prediction.
 
-                except Exception as e:
-                    self.run_progress.notify_error(
-                        f"[Benchmarking] Failed to generate prediction for prompt_info "
-                        f"[conn_id: {new_prompt_info.conn_id}, rec_id: {new_prompt_info.rec_id}, "
-                        f"ds_id: {new_prompt_info.ds_id}, pt_id: {new_prompt_info.pt_id}, "
-                        f"prompt_index: {new_prompt_info.connector_prompt.prompt_index}] due to error: {str(e)}"
-                    )
-                    continue
+        Args:
+            prompt_info (PromptArguments): The prompt information for which to generate a prediction.
+            connector (Connector): The connector to use for generating the prediction.
+            cancel_event (asyncio.Event): An event that signals if the operation should be cancelled.
+
+        Returns:
+            PromptArguments | None: The updated PromptArguments object with the prediction result, or None if the
+            operation was cancelled or an exception occurred during prediction generation or caching.
+        """
+        if cancel_event.is_set():
+            print("[Benchmarking] Cancellation flag is set. Cancelling predictions...")
+            return None  # Return None for cancelled operations
+
+        # Create a new prompt info with connection id
+        new_prompt_info = copy.deepcopy(prompt_info)
+        new_prompt_info.conn_id = connector.id
+
+        # Attempt to read from database for cache values
+        try:
+            cache_record = Storage.read_database_record(
+                self.database_instance,
+                (
+                    new_prompt_info.conn_id,
+                    new_prompt_info.rec_id,
+                    new_prompt_info.pt_id,
+                    new_prompt_info.connector_prompt.prompt,
+                ),
+                Benchmarking.sql_read_runner_cache_record,
+            )
+        except Exception as e:
+            self.run_progress.notify_error(
+                f"[Benchmarking] Error while reading benchmark cache record for prompt_info "
+                f"[conn_id: {new_prompt_info.conn_id}, rec_id: {new_prompt_info.rec_id}, "
+                f"ds_id: {new_prompt_info.ds_id}, pt_id: {new_prompt_info.pt_id}, "
+                f"prompt_index: {new_prompt_info.connector_prompt.prompt_index}] due to error: {str(e)}"
+            )
+            cache_record = None
+
+        # If cache record does not exist, perform prediction and cache the result
+        if cache_record is None:
+            try:
+                new_prompt_info.connector_prompt = await Connector.get_prediction(
+                    new_prompt_info.connector_prompt, connector
+                )
+                Storage.create_database_record(
+                    self.database_instance,
+                    new_prompt_info.to_tuple(),
+                    Benchmarking.sql_create_runner_cache_record,
+                )
+            except Exception as e:
+                self.run_progress.notify_error(
+                    f"[Benchmarking] Failed to generate prediction for prompt_info "
+                    f"[conn_id: {new_prompt_info.conn_id}, rec_id: {new_prompt_info.rec_id}, "
+                    f"ds_id: {new_prompt_info.ds_id}, pt_id: {new_prompt_info.pt_id}, "
+                    f"prompt_index: {new_prompt_info.connector_prompt.prompt_index}] due to error: {str(e)}"
+                )
+                return None
+        else:
+            # Load result from cache
+            new_prompt_info = PromptArguments.from_tuple(cache_record)
+
+        # Return result
+        return new_prompt_info
 
 
 class PromptArguments(BaseModel):
@@ -645,17 +835,21 @@ class PromptArguments(BaseModel):
 
     system_prompt: str  # The system-generated prompt used for benchmarking
 
+    attack_module_id: str  # The attack module used for generating perturb prompts
+
     connector_prompt: ConnectorPromptArguments  # The prompt information to send
 
     def to_tuple(self) -> tuple:
         """
         Converts the PromptArguments instance into a tuple.
 
-        This method collects all the attributes of the PromptArguments instance and forms a tuple
-        with the attribute values in this specific order: conn_id, rec_id, ds_id, pt_id, prompt,
-        target, predicted_results, duration.
-        This tuple is suitable for serialization tasks, like storing the prompt arguments data
-        in a database or transmitting it over a network.
+        This method aggregates the attributes of the PromptArguments instance into a tuple.
+        The tuple is structured with the following attribute values in order:
+        conn_id, rec_id, ds_id, pt_id, attack_module_id, prompt_index, prompt, target, predicted_results, duration,
+        random_seed, and system_prompt.
+
+        This ordered tuple is particularly useful for serialization purposes, such as storing the PromptArguments data
+        in a database or transmitting it across network boundaries.
 
         Returns:
             tuple: A tuple representation of the PromptArguments instance.
@@ -665,31 +859,33 @@ class PromptArguments(BaseModel):
             self.rec_id,
             self.ds_id,
             self.pt_id,
-            self.random_seed,
-            self.system_prompt,
+            self.attack_module_id,
             self.connector_prompt.prompt_index,
             self.connector_prompt.prompt,
             str(self.connector_prompt.target),
             str(self.connector_prompt.predicted_results),
             str(self.connector_prompt.duration),
+            self.random_seed,
+            self.system_prompt,
         )
 
     @classmethod
     def from_tuple(cls, cache_record: tuple) -> PromptArguments:
         """
-        Converts a tuple into a PromptArguments instance.
+        Reconstitutes a PromptArguments instance from a tuple representation.
 
-        This method accepts a tuple that contains attribute values in the following order:
-        conn_id, rec_id, ds_id, pt_id, prompt_index, prompt, target, predicted_results, duration.
-        It then constructs a PromptArguments instance using these values.
-        This method is primarily used for deserialization tasks, such as retrieving prompt arguments data from a
-        database or receiving it over a network.
+        This method accepts a tuple with values that map to the attributes of a PromptArguments object.
+        The expected order of values in the tuple is:
+        conn_id, rec_id, ds_id, pt_id, random_seed, system_prompt, attack_module_id, prompt_index, prompt, target,
+        predicted_results, and duration. It constructs a new PromptArguments instance using these values.
+        The primary purpose of this method is to recreate PromptArguments instances from their serialized form, such as
+        data retrieved from a database or received over a network.
 
         Args:
-            cache_record (tuple): A tuple containing the attribute values for a PromptArguments instance.
+            cache_record (tuple): A tuple with ordered values that map to the properties of a PromptArguments instance.
 
         Returns:
-            PromptArguments: A PromptArguments instance constructed from the tuple.
+            PromptArguments: An instance of PromptArguments initialized with the data from the tuple.
         """
         # The target and predicted_results fields may be stored as strings in the cache_record.
         # ast.literal_eval is used to attempt to convert these strings back into their original data types.
@@ -710,8 +906,7 @@ class PromptArguments(BaseModel):
             rec_id=cache_record[2],
             ds_id=cache_record[3],
             pt_id=cache_record[4],
-            random_seed=cache_record[5],
-            system_prompt=cache_record[6],
+            attack_module_id=cache_record[6],
             connector_prompt=ConnectorPromptArguments(
                 prompt_index=cache_record[7],
                 prompt=cache_record[8],
@@ -719,4 +914,6 @@ class PromptArguments(BaseModel):
                 predicted_results=predicted_results,
                 duration=float(cache_record[11]),
             ),
+            random_seed=cache_record[12],
+            system_prompt=cache_record[13],
         )

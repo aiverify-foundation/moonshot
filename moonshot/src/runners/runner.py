@@ -16,6 +16,25 @@ from moonshot.src.storage.storage import Storage
 
 
 class Runner:
+    sql_create_runner_cache_table = """
+        CREATE TABLE IF NOT EXISTS runner_cache_table (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        connection_id text NOT NULL,
+        recipe_id text,
+        dataset_id text,
+        prompt_template_id text,
+        context_strategy_id text,
+        attack_module_id text,
+        prompt_index INTEGER,
+        prompt text NOT NULL,
+        target text NOT NULL,
+        predicted_results text NOT NULL,
+        duration text NOT NULL,
+        random_seed INTEGER,
+        system_prompt text
+        );
+    """
+
     def __init__(self, runner_args: RunnerArguments) -> None:
         self.id = runner_args.id
         self.name = runner_args.name
@@ -119,6 +138,12 @@ class Runner:
             Storage.create_object(
                 EnvVariables.RUNNERS.name, runner_id, runner_args.to_dict(), "json"
             )
+
+            # Create runner cache table
+            Storage.create_database_table(
+                runner_args.database_instance, Runner.sql_create_runner_cache_table
+            )
+
             return cls(runner_args)
 
         except Exception as e:
@@ -230,7 +255,7 @@ class Runner:
         if self.database_instance:
             Storage.close_database_connection(self.database_instance)
 
-    def cancel(self) -> None:
+    async def cancel(self) -> None:
         """
         Cancels the runner instance.
 
@@ -240,7 +265,11 @@ class Runner:
         Raises:
             Exception: If any error occurs while cancelling the runner or releasing the resources.
         """
-        pass
+        async with self.current_operation_lock:
+            if self.current_operation:
+                print(f"[Runner] {self.id} - Cancelling current run...")
+                self.current_operation.cancel_run()
+                self.current_operation = None  # Reset the current operation
 
     async def run_recipes(
         self,

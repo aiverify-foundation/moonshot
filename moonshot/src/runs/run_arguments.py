@@ -4,7 +4,7 @@ import ast
 
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_status import RunStatus
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 
 
 class RunArguments:
@@ -13,7 +13,7 @@ class RunArguments:
         runner_id: str,  # Runner id for the runner
         runner_type: RunnerType,  # Run type for the Run.
         runner_args: dict,  # Dictionary containing arguments for the runner.
-        database_instance: DBAccessor | None,  # Database instance for the Run.
+        database_instance: DBInterface | None,  # Database instance for the Run.
         endpoints: list[str],  # List of endpoints for the Run.
         results_file: str,  # The results file associated with the Run.
         start_time: float,  # The start time of the Run.

@@ -41,7 +41,8 @@ def test_load_runner(runner_id: str):
 
 def test_run_runner(runner_id: str):
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
-    asyncio.run(
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
         runner.run(RunnerType.BENCHMARK, {
             "recipes": ["bbq", "autocategorisation"],
             "num_of_prompts": 2,
@@ -49,21 +50,63 @@ def test_run_runner(runner_id: str):
         })
     )
 
+def test_run_benchmark_recipe_runner_and_cancel(runner_id: str):
+    async def run_and_cancel():
+        runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+        
+        # Run the recipes in a background task
+        run_task = asyncio.create_task(runner.run_recipes(["cbbq-lite", "advglue-mnli"], 2))
+
+        # Wait for 1 second before cancelling
+        await asyncio.sleep(1)
+        await runner.cancel()
+
+        # Wait for the run task to complete
+        await run_task
+        runner.close()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        run_and_cancel()
+    )
+
+def test_run_benchmark_cookbook_runner_and_cancel(runner_id: str):
+    async def run_and_cancel():
+        runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+        
+        # Run the cookbooks in a background task
+        run_task = asyncio.create_task(runner.run_cookbooks(["tamil-language-cookbook","cbbq-amb-cookbook"], 2))
+
+        # Wait for 1 second before cancelling
+        await asyncio.sleep(1)
+        await runner.cancel()
+
+        # Wait for the run task to complete
+        await run_task
+        runner.close()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        run_and_cancel()
+    )
+
 def test_run_benchmark_recipe_runner(runner_id: str):
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
-    asyncio.run(
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
         runner.run_recipes(
-            ["bbq", "autocategorisation"],
-            2
+            ["bbq", "auto-categorisation"],
+            2,
         )
     )
     runner.close()
 
 def test_run_benchmark_cookbook_runner(runner_id: str):
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
-    asyncio.run(
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
         runner.run_cookbooks(
-            ["bbq-lite-age-cookbook"],
+            ["common-risk-easy","leaderboard-cookbook"],
             2,
         )
     )
@@ -112,6 +155,11 @@ def test_run_runner_api():
     print("=" * 100, "\nTest running runner")
     test_run_benchmark_recipe_runner(runner_id)
     test_run_benchmark_cookbook_runner(runner_id)
+
+    # Run the benchmark runner job and cancel
+    print("=" * 100, "\nTest running runner and cancelling job")
+    test_run_benchmark_recipe_runner_and_cancel(runner_id)
+    test_run_benchmark_cookbook_runner_and_cancel(runner_id)
 
     # Read runner
     print("=" * 100, "\nTest reading runner")

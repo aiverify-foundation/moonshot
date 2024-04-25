@@ -13,22 +13,22 @@ from moonshot.api import (
 # Results APIs Test
 # ------------------------------------------------------------------------------
 def test_read_result():
-    # Write a new result: "moonshot/data/results/cookbook-my-new-cookbook-executor.json"
-    source_path = "tests/results/cookbook-my-new-cookbook-executor.json"
-    destination_path = "moonshot/data/results/cookbook-my-new-cookbook-executor.json"
+    # Write a new result: "moonshot/data/results/my-new-runner-cookbook.json"
+    source_path = "tests/results/my-new-runner-cookbook.json"
+    destination_path = "moonshot/data/results/my-new-runner-cookbook.json"
     shutil.copy(source_path, destination_path)
-    print(api_read_result("cookbook-my-new-cookbook-executor"))
+    print(api_read_result("my-new-runner-cookbook"))
 
-    # Write a new result: "moonshot/data/results/recipe-my-new-recipe-executor.json"
-    source_path = "tests/results/recipe-my-new-recipe-executor.json"
-    destination_path = "moonshot/data/results/recipe-my-new-recipe-executor.json"
+    # Write a new result: "moonshot/data/results/my-new-runner-recipe.json"
+    source_path = "tests/results/my-new-runner-recipe.json"
+    destination_path = "moonshot/data/results/my-new-runner-recipe.json"
     shutil.copy(source_path, destination_path)
-    print(api_read_result("recipe-my-new-recipe-executor"))
+    print(api_read_result("my-new-runner-recipe"))
 
 
 def test_read_results():
-    cookbook_result_name = "cookbook-my-new-cookbook-executor"
-    recipe_result_name = "recipe-my-new-recipe-executor"
+    cookbook_result_name = "my-new-runner-cookbook"
+    recipe_result_name = "my-new-runner-recipe"
     results = api_read_results([cookbook_result_name, recipe_result_name])
     for result_no, result in enumerate(results, 1):
         print("-" * 100)
@@ -46,14 +46,14 @@ def test_delete_result():
 
     # Delete result if exists
     try:
-        api_delete_result("cookbook-my-new-cookbook-executor")
+        api_delete_result("my-new-runner-cookbook")
         print("Delete results if exist: PASSED")
     except Exception:
         print("Delete results if exist: FAILED")
 
     # Delete result if exists
     try:
-        api_delete_result("recipe-my-new-recipe-executor")
+        api_delete_result("my-new-runner-recipe")
         print("Delete results if exist: PASSED")
     except Exception:
         print("Delete results if exist: FAILED")
