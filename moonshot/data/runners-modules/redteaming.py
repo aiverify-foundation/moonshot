@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Callable
+from typing import Any
 
 from moonshot.src.connectors.connector import Connector
+from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.metrics.metric import Metric
-from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
-from moonshot.src.redteaming.attack.stop_strategy import StopStrategy
+from moonshot.src.redteaming.session.session import SessionMetadata
 from moonshot.src.storage.db_interface import DBInterface
-from moonshot.src.storage.storage import Storage
 
 
 class RedTeaming:
@@ -40,98 +39,91 @@ class RedTeaming:
     async def generate(
         self,
         event_loop: Any,
+        runner_args: dict,
         database_instance: DBInterface | None,
-        num_of_prompts: int,
-        recipe_inst: Recipe,
-        recipe_eps: list[Connector],
-        metrics_insts: list[Metric],
-        handle_error_message_callback: Callable,
+        session_metadata: SessionMetadata,
     ) -> dict:
+        """
+        Asynchronously generates the red teaming session.
+
+        This method is responsible for the orchestration of the red teaming session. It sets up the necessary
+        environment, initializes the attack strategies, and executes the red teaming logic. It handles any errors
+        encountered during the session and returns the results in a dictionary format.
+
+        Args:
+            event_loop (Any): The event loop in which asynchronous tasks will be scheduled.
+            runner_args (dict): A dictionary containing arguments for the red teaming session.
+            database_instance (DBAccessor | None): The database instance to connect to, or None if not available.
+            session_metadata (SessionMetadata): Metadata associated with the red teaming session.
+
+        Returns:
+            dict: A dictionary containing the results of the red teaming session, including any errors encountered.
+        """
         self.event_loop = event_loop
+        self.runner_args = runner_args
         self.database_instance = database_instance
-        self.num_of_prompts = num_of_prompts
-        self.recipe_instance = recipe_inst
-        self.recipe_eps = recipe_eps
-        self.metrics_instances = metrics_insts
-        self.handle_error_message = handle_error_message_callback
+        self.session_metadata = session_metadata
+
+        self.num_of_prompts = self.runner_args.get("num_of_prompts", 0)
+        self.system_prompt = self.runner_args.get("system_prompt", "")
+        self.attack_strategies_args = self.runner_args.get("attack_strategies", None)
 
         # ------------------------------------------------------------------------------
-        # Part 1: Create new chat table(s)
+        # Part 1: Load all required modules
         # ------------------------------------------------------------------------------
-        print("[Red Teaming] Part 1: Creating chat table(s)...")
-
-        # Create chat_tables
-        if database_instance:
-            for endpoint in recipe_eps:
-                endpoint_id = endpoint.id.replace("-", "_")
-                sql_create_chat_history_table = f"""
-                    CREATE TABLE IF NOT EXISTS {endpoint_id} (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    connection_id text NOT NULL,
-                    context_strategy text,
-                    prompt_template text,
-                    prompt text NOT NULL,
-                    prepared_prompt text NOT NULL,
-                    predicted_result text NOT NULL,
-                    duration text NOT NULL,
-                    prompt_time text NOT NULL
-                    );
-                """
-                Storage.create_database_table(
-                    database_instance, sql_create_chat_history_table
-                )
-
-        else:
-            raise RuntimeError("Failed to get database instance.")
-
-        # ------------------------------------------------------------------------------
-        # Part 2: Load Attack Module(s) and Stop Strategy Module(s)
-        # ------------------------------------------------------------------------------
-        print(
-            "[Red teaming] Part 2: Loading Attack Module(s) and Stop Strategy Module(s)..."
-        )
-
+        print("[Red teaming] Part 1: Loading all required modules...")
         loaded_attack_modules = []
-        for attack_strategy in recipe_inst.attack_strategies:
-            try:
-                # get name of attack module
-                attack_module_name = attack_strategy["attack_module"]
+        try:
+            # load connectors
+            self.llm_connectors = [
+                Connector.create(ConnectorEndpoint.read(endpoint))
+                for endpoint in self.session_metadata.endpoints
+            ]
 
-                # iterate through stop_strategies, load the modules and store in list
-                stop_strategy_insts = [
-                    StopStrategy.load(stop_strategy_name)
-                    for stop_strategy_name in attack_strategy["stop_strategies"]
-                ]
+            # load red teaming modules
+            for attack_strategy_args in self.runner_args.get("attack_strategies", None):
+                metric_instances = []
+                context_strategy_instances = []
+                # load other optional modules
+                if "metric_ids" in attack_strategy_args:
+                    metric_instances = [
+                        Metric.load(metric_id)
+                        for metric_id in attack_strategy_args["metric_ids"]
+                    ]
 
-                # load context strategy is specified
-                context_strategy_insts = []
-                if "context_strategies" in attack_strategy.keys():
-                    context_strategy_insts = [
-                        ContextStrategy.load(context_strategy_name)
-                        for context_strategy_name in attack_strategy[
-                            "context_strategies"
+                if "context_strategy_ids" in attack_strategy_args:
+                    context_strategy_instances = [
+                        ContextStrategy.load(context_strategy_id)
+                        for context_strategy_id in attack_strategy_args[
+                            "context_strategy_ids"
                         ]
                     ]
 
-                # prepare attack module arguments
-                am_arguments = AttackModuleArguments(
-                    name=attack_module_name,
-                    connector_instances=recipe_eps,
-                    stop_strategy_instances=stop_strategy_insts,
-                    datasets=self.recipe_instance.datasets,
-                    prompt_templates=self.recipe_instance.prompt_templates,
-                    metric_instances=self.metrics_instances,
-                    context_strategies=context_strategy_insts,
+                # load attack module with arguments
+                loaded_attack_module = AttackModule.load(
+                    AttackModuleArguments(
+                        name=attack_strategy_args.get("attack_module_id", ""),
+                        num_of_prompts=0,
+                        connector_instances=self.llm_connectors,
+                        datasets=attack_strategy_args.get("dataset_ids", []),
+                        prompt_templates=attack_strategy_args.get(
+                            "prompt_template_ids", []
+                        ),
+                        prompt=attack_strategy_args.get("prompt", ""),
+                        metric_instances=metric_instances,
+                        context_strategies=context_strategy_instances,
+                        db_instance=self.database_instance,
+                    )
                 )
-                loaded_attack_modules.append(AttackModule.load(am_arguments))
+                loaded_attack_modules.append(loaded_attack_module)
 
-            except KeyError:
-                print("Attack Module and Stop Strategy are required in red teaming.")
+        except Exception as e:
+            print(f"Unable to load modules in attack strategy: {str(e)}")
 
         # ------------------------------------------------------------------------------
-        # Part 3: Run attack module(s)
+        # Part 2: Run attack module(s)
         # ------------------------------------------------------------------------------
-        print("[Red teaming] Part 3: Running Attack Module(s)...")
+        print("[Red teaming] Part 2: Running Attack Module(s)...")
 
         responses_from_attack_module = []
         for attack_module in loaded_attack_modules:
@@ -144,5 +136,4 @@ class RedTeaming:
                 f"{(time.perf_counter() - start_time):.4f}s"
             )
             responses_from_attack_module.append(attack_module_response)
-
-        return {"responses_from_att_modules": responses_from_attack_module}
+        return {}

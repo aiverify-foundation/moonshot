@@ -8,6 +8,7 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.redteaming.session.session import Session
 from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
@@ -373,6 +374,67 @@ class Runner:
         async with self.current_operation_lock:
             self.current_operation = None
             print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+
+    async def run_red_teaming(
+        self,
+        red_team_args: dict,
+        system_prompt: str = "",
+        runner_processing_module: str = "redteaming",
+    ) -> None:
+        """
+        Asynchronously runs a red teaming session with the provided arguments.
+
+        This method is responsible for initiating a red teaming session with the specified arguments. It creates a new
+        red teaming session instance, configures it with the provided red teaming arguments, system prompt, and
+        runner processing module, and then starts the session asynchronously.
+
+        Args:
+            red_team_args (dict): A dictionary of arguments for the red teaming session.
+
+            system_prompt (str, optional): A system prompt to be used in the red teaming session.
+            Defaults to an empty string.
+
+            runner_processing_module (str, optional): The processing module to be used for the session.
+            Defaults to "redteaming".
+
+        Raises:
+            Exception: If any error occurs during the setup or execution of the red teaming session.
+        """
+        async with self.current_operation_lock:  # Acquire the lock
+            # automated red teaming
+            if (
+                "attack_strategies" in red_team_args
+                and red_team_args.get("attack_strategies") is not None
+            ):
+                print(f"[Runner] {self.id} - Running red teaming session...")
+                self.current_operation = Session(
+                    self.id,
+                    RunnerType.REDTEAM,
+                    {
+                        **red_team_args,
+                        "system_prompt": system_prompt,
+                        "runner_processing_module": runner_processing_module,
+                    },
+                    self.database_instance,
+                    self.endpoints,
+                    Storage.get_filepath(
+                        EnvVariables.RESULTS.name, self.id, "json", True
+                    ),
+                    self.progress_callback_func,
+                )
+                # Note: The lock is held during setup but should be released before long-running operations
+                # Execute the long-running operation outside of the lock
+                await self.current_operation.run()
+
+                # After completion, reset current_operation to None within the lock
+                async with self.current_operation_lock:
+                    self.current_operation = None
+                    print(
+                        f"[Runner] {self.id} - Automated red teaming run completed and reset."
+                    )
+            else:
+                # manual red teaming
+                pass
 
     async def run(self, runner_type: RunnerType, runner_args: dict) -> None:
         """
