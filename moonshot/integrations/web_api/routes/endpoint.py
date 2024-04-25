@@ -11,7 +11,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/llm_endpoints")
+@router.post("/v1/llm-endpoints")
 @inject
 def add_new_endpoint(
     endpoint_data: EndpointCreateDTO,
@@ -32,7 +32,7 @@ def add_new_endpoint(
             raise HTTPException(status_code=500, detail=f"Failed to add endpoint: {e.msg}")    
         
 
-@router.get("/v1/llm_endpoints")
+@router.get("/v1/llm-endpoints")
 @inject
 def get_all_endpoints(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
@@ -51,7 +51,7 @@ def get_all_endpoints(
             raise HTTPException(status_code=500, detail=f"Failed to get endpoint: {e.msg}")    
 
 
-@router.get("/v1/llm_endpoints/name")
+@router.get("/v1/llm-endpoints/name")
 @inject
 def get_all_endpoints_name(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service])
@@ -70,7 +70,7 @@ def get_all_endpoints_name(
         raise HTTPException(status_code=error_status_code, detail=f"Failed to get endpoint: {e.msg}")
 
 
-@router.get("/v1/llm_endpoints/{endpoint_id}")
+@router.get("/v1/llm-endpoints/{endpoint_id}")
 @inject
 def get_endpoint(
     endpoint_id: str,
@@ -90,7 +90,7 @@ def get_endpoint(
             raise HTTPException(status_code=500, detail=f"Failed to get endpoint: {e.msg}")
 
 
-@router.put("/v1/llm_endpoints/{endpoint_id}")
+@router.put("/v1/llm-endpoints/{endpoint_id}")
 @inject
 async def update_endpoint(
     endpoint_id: str,
@@ -112,7 +112,7 @@ async def update_endpoint(
             raise HTTPException(status_code=500, detail=f"Failed to update endpoint: {e.msg}")
 
 
-@router.delete("/v1/llm_endpoints/{endpoint_id}")
+@router.delete("/v1/llm-endpoints/{endpoint_id}")
 @inject
 async def delete_endpoint(
     endpoint_id: str,

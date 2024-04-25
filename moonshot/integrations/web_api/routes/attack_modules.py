@@ -8,7 +8,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.get("/v1/attack_modules")
+@router.get("/v1/attack-modules")
 @inject
 def get_all_attack_module(am_service: AttackModuleService = Depends(Provide[Container.am_service])
     ):
@@ -26,7 +26,7 @@ def get_all_attack_module(am_service: AttackModuleService = Depends(Provide[Cont
             raise HTTPException(status_code=500, detail=f"Failed to retrieve attack modules: {e.msg}")   
 
 
-@router.get("/v1/attack_modules/{am_id}")
+@router.get("/v1/attack-modules/{am_id}")
 @inject 
 def get_attack_module_by_id(
     am_id: str,
