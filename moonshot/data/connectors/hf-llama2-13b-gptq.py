@@ -32,12 +32,13 @@ class HfLlama213BGPTQ(Connector):
             str: retrieved response data
         """
         connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}"
-        payload = {"inputs": connector_prompt}
+        # Merge self.optional_params with additional parameters
+        new_params = {**self.optional_params, "inputs": connector_prompt}
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 self.endpoint,
                 headers=self._prepare_headers(),
-                json=payload,
+                json=new_params,
             ) as response:
                 return await self._process_response(response)
 

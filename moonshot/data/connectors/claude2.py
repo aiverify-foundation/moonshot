@@ -30,11 +30,14 @@ class Claude2(Connector):
         the current instance.
         """
         connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}"
-        response = await self.client.completions.create(
-            model="claude-2",
-            max_tokens_to_sample=300,
-            prompt=f"{HUMAN_PROMPT}{connector_prompt}{AI_PROMPT}",
-        )
+        # Merge self.optional_params with additional parameters
+        new_params = {
+            **self.optional_params,
+            "model": "claude-2",
+            "max_tokens_to_sample": 300,
+            "prompt": f"{HUMAN_PROMPT}{connector_prompt}{AI_PROMPT}",
+        }
+        response = await self.client.completions.create(**new_params)
         return await self._process_response(response)
 
     async def _process_response(self, response: Completion) -> str:

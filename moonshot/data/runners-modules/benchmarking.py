@@ -104,6 +104,14 @@ class Benchmarking:
                 f"[Benchmarking] Load recipe connectors took {(time.perf_counter() - start_time):.4f}s"
             )
 
+            # Set connector system prompt
+            start_time = time.perf_counter()
+            for connector in self.recipe_connectors:
+                connector.set_system_prompt(self.system_prompt)
+            print(
+                f"[Benchmarking] Set connectors system prompt took {(time.perf_counter() - start_time):.4f}s"
+            )
+
             # ------------------------------------------------------------------------------
             # Part 1: Run the recipes and cookbooks
             # ------------------------------------------------------------------------------
