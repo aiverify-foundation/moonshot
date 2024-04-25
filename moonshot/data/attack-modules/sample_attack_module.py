@@ -15,8 +15,8 @@ class SampleAttackModule(AttackModule):
         processes the dataset through a prompt template, retrieves the connector to the first
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
-        # await self.perform_attack_default()
-        await self.perform_attack_manually()
+        # return await self.perform_attack_default()
+        return await self.perform_attack_manually()
 
     async def perform_attack_default(self) -> list:
         """
