@@ -10,7 +10,7 @@ from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.redteaming.session.session import SessionMetadata
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 
 
 class RedTeaming:
@@ -40,7 +40,7 @@ class RedTeaming:
         self,
         event_loop: Any,
         runner_args: dict,
-        database_instance: DBAccessor | None,
+        database_instance: DBInterface | None,
         session_metadata: SessionMetadata,
     ) -> dict:
         """
@@ -84,7 +84,7 @@ class RedTeaming:
             for attack_strategy_args in self.runner_args.get("attack_strategies", None):
                 metric_instances = []
                 context_strategy_instances = []
-
+                print("attack_strategy_args", attack_strategy_args)
                 # load other optional modules
                 if "metric_ids" in attack_strategy_args:
                     metric_instances = [

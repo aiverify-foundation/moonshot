@@ -10,7 +10,7 @@ from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.runners.runner_type import RunnerType
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -177,7 +177,7 @@ class Session:
                 )
 
     @staticmethod
-    def load(database_instance: DBAccessor | None) -> SessionMetadata:
+    def load(database_instance: DBInterface | None) -> SessionMetadata:
         """
         Loads run data for a given session_id from the database, or the latest run if run_id is None.
 
@@ -187,7 +187,7 @@ class Session:
         with the given run_id or the latest run and returns a RunArguments object created from the retrieved record.
 
         Parameters:
-            database_instance (DBAccessor | None): The database accessor instance.
+            database_instance (DBInterface | None): The database accessor instance.
             run_id (int | None): The ID of the run to retrieve, or None to retrieve the latest run.
 
         Returns:
