@@ -9,17 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class ReverseExactStrMatch(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {
-            "reverse_exact_str_match": {"type": "number"},
-            "correct": {"type": "integer"},
-            "total": {"type": "integer"},
-        },
-        "required": ["reverse_exact_str_match", "correct", "total"],
-    }
-
     def __init__(self):
         self.id = "reverseexactstrmatch"
         self.name = "ReverseExactStrMatch"
@@ -84,15 +73,8 @@ class ReverseExactStrMatch(MetricInterface):
                 ):
                     correct += 1
 
-        response_dict = {
+        return {
             "reverse_exact_str_match": float(correct / total),
             "correct": correct,
             "total": total,
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, ReverseExactStrMatch.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[ReverseExactStrMatch] Failed json schema validation for output response."
-            )

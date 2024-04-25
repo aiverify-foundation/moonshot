@@ -10,68 +10,6 @@ from moonshot.src.utils.timeit import timeit
 
 
 class ResultsComparator(ReportAnalysisInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "ResultsComparatorOutput",
-        "description": "Schema for the output of ResultsComparator",
-        "type": "object",
-        "properties": {
-            "id": {
-                "description": "The identifier of the results comparator.",
-                "type": "string",
-            },
-            "results": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "cookbook_id": {
-                            "description": (
-                                "The identifier of the cookbook, if applicable. '-' indicates not applicable."
-                            ),
-                            "type": "string",
-                        },
-                        "recipe_id": {
-                            "description": "The identifier of the recipe.",
-                            "type": "string",
-                        },
-                        "dataset_id": {
-                            "description": "The identifier of the dataset used.",
-                            "type": "string",
-                        },
-                        "prompt_template": {
-                            "description": "The identifier of the prompt template used.",
-                            "type": "string",
-                        },
-                        "result_id": {
-                            "description": "The identifier of the result.",
-                            "type": "string",
-                        },
-                        "endpoint_id": {
-                            "description": "The identifier of the endpoint.",
-                            "type": "string",
-                        },
-                        "metrics": {
-                            "description": "The metrics obtained from the result, in JSON string format.",
-                            "type": "string",
-                        },
-                    },
-                    "required": [
-                        "cookbook_id",
-                        "recipe_id",
-                        "dataset_id",
-                        "prompt_template",
-                        "result_id",
-                        "endpoint_id",
-                        "metrics",
-                    ],
-                },
-            },
-        },
-        "required": ["id", "results"],
-    }
-
     def __init__(self):
         self.id = "results-comparator"
         self.name = "ResultsComparator"
@@ -180,13 +118,7 @@ class ResultsComparator(ReportAnalysisInterface):
             )
 
         # ------------------ PART 5 ------------------
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, ResultsComparator.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[ResultsComparator] Failed json schema validation for output response."
-            )
+        return response_dict
 
     def get_possible_results(self, result_info: dict, endpoint_ids: list) -> dict:
         """

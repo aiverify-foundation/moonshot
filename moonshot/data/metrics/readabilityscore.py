@@ -11,29 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class ReadabilityScore(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "ReadabilityScoreResponse",
-        "type": "object",
-        "properties": {
-            "readabilityscore": {
-                "type": "number",
-                "description": "The average readability score of the valid responses.",
-            },
-            "valid_response": {
-                "type": "integer",
-                "description": "The number of responses considered valid (more than 100 words).",
-            },
-            "invalid_response": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "A list of responses considered invalid (less than 100 words).",
-            },
-        },
-        "required": ["readabilityscore", "valid_response", "invalid_response"],
-    }
-
     def __init__(self):
         self.id = "readabilityscore"
         self.name = "ReadabilityScore"
@@ -96,15 +73,8 @@ class ReadabilityScore(MetricInterface):
         else:
             temp_score = 0
 
-        response_dict = {
+        return {
             "readabilityscore": temp_score,
             "valid_response": len(predicted_results) - len(response_less_than_100),
             "invalid_response": response_less_than_100,
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, ReadabilityScore.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[ReadabilityScore] Failed json schema validation for output response."
-            )

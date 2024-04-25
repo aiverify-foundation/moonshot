@@ -9,17 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class AdvGlueExactMatch(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {
-            "exact_str_match": {"type": "number"},
-            "correct": {"type": "integer"},
-            "total": {"type": "integer"},
-        },
-        "required": ["exact_str_match", "correct", "total"],
-    }
-
     def __init__(self):
         self.id = "advglue"
         self.name = "AdvGlueExactMatch"
@@ -76,15 +65,8 @@ class AdvGlueExactMatch(MetricInterface):
             except Exception:
                 continue
 
-        response_dict = {
+        return {
             "exact_str_match": float(correct / total),
             "correct": correct,
             "total": total,
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, AdvGlueExactMatch.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[AdvGlueExactMatch] Failed json schema validation for output response."
-            )

@@ -11,84 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class RougeScorer(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {
-            "rouge": {
-                "type": "object",
-                "properties": {
-                    "rouge-scores": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "rouge1": {
-                                    "type": "object",
-                                    "properties": {
-                                        "r": {"type": "number"},
-                                        "p": {"type": "number"},
-                                        "f": {"type": "number"},
-                                    },
-                                    "required": ["r", "p", "f"],
-                                },
-                                "rouge2": {
-                                    "type": "object",
-                                    "properties": {
-                                        "r": {"type": "number"},
-                                        "p": {"type": "number"},
-                                        "f": {"type": "number"},
-                                    },
-                                    "required": ["r", "p", "f"],
-                                },
-                                "rougeLsum": {
-                                    "type": "object",
-                                    "properties": {
-                                        "r": {"type": "number"},
-                                        "p": {"type": "number"},
-                                        "f": {"type": "number"},
-                                    },
-                                    "required": ["r", "p", "f"],
-                                },
-                            },
-                            "additionalProperties": False,
-                        },
-                    },
-                    "avg_rouge1": {
-                        "type": "object",
-                        "properties": {
-                            "r": {"type": "number"},
-                            "p": {"type": "number"},
-                            "f": {"type": "number"},
-                        },
-                        "required": ["r", "p", "f"],
-                    },
-                    "avg_rouge2": {
-                        "type": "object",
-                        "properties": {
-                            "r": {"type": "number"},
-                            "p": {"type": "number"},
-                            "f": {"type": "number"},
-                        },
-                        "required": ["r", "p", "f"],
-                    },
-                    "avg_rougeLsum": {
-                        "type": "object",
-                        "properties": {
-                            "r": {"type": "number"},
-                            "p": {"type": "number"},
-                            "f": {"type": "number"},
-                        },
-                        "required": ["r", "p", "f"],
-                    },
-                },
-                "additionalProperties": False,
-            }
-        },
-        "required": ["rouge"],
-        "additionalProperties": False,
-    }
-
     def __init__(self):
         self.id = "rougescorer"
         self.name = "RougeScorer"
@@ -179,14 +101,7 @@ class RougeScorer(MetricInterface):
                 }
 
             # Return the final rouge scores dictionary
-            response_dict = {"rouge": output_dict}
-            # Validate that the output dict passes json schema validation
-            if self.validate_output(response_dict, RougeScorer.output_schema):
-                return response_dict
-            else:
-                raise RuntimeError(
-                    "[RougeScorer] Failed json schema validation for output response."
-                )
+            return {"rouge": output_dict}
 
         except Exception as exception:
             # Raise an error if there is an exception during calculation
