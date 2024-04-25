@@ -24,7 +24,7 @@ class BenchmarkTestState(BaseService):
         self.logger.debug(f"Task {executor_id} has been cancelled")
 
     def update_state(self, updates: CookbookTestRunProgress) -> None:
-        self.state[updates["exec_id"]]["status"] = updates
+        self.state[updates["current_runner_id"]]["status"] = updates
 
     def get_state(self) -> dict[str, BenchmarkTaskInfo]:
         return self.state

@@ -131,9 +131,9 @@ class RunProgress:
         """
         return {
             "current_runner_id": self.run_arguments.runner_id,
-            "current_runner_type": self.run_arguments.runner_type,
+            "current_runner_type": self.run_arguments.runner_type.value,
             "current_duration": self.run_arguments.duration,
-            "current_status": self.run_arguments.status,
+            "current_status": self.run_arguments.status.value,
             "current_cookbook_index": self.cookbook_index,
             "current_cookbook_name": self.cookbook_name,
             "current_cookbook_total": self.cookbook_total,
