@@ -4,6 +4,9 @@ from moonshot.src.storage.db_interface import DBInterface
 
 
 class AttackModuleArguments(BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
     # name of the attack module
     name: str
 

@@ -40,7 +40,7 @@ class RedTeaming:
         self,
         event_loop: Any,
         runner_args: dict,
-        database_instance: DBInterface | None,
+        database_instance: DBInterface,
         session_metadata: SessionMetadata,
     ) -> dict:
         """
