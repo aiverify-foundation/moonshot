@@ -7,9 +7,6 @@ class AttackModuleArguments(BaseModel):
     # name of the attack module
     name: str
 
-    # id of the recipe used
-    recipe_id: str
-
     # num of prompts used
     num_of_prompts: int
 
@@ -21,6 +18,9 @@ class AttackModuleArguments(BaseModel):
 
     # list of prompt template names to be used (if any)
     prompt_templates: list = []
+
+    # user's prompt
+    prompt: str = ""
 
     # list of metric instances to be used (if any)
     metric_instances: list = []

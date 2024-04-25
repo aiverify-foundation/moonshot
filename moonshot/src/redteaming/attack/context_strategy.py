@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -76,7 +78,7 @@ class ContextStrategy:
         """
         try:
             Storage.delete_object(
-                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "json"
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
             )
 
         except Exception as e:
@@ -85,8 +87,12 @@ class ContextStrategy:
 
     @staticmethod
     def process_prompt_cs(
-        user_prompt: str, context_strategy_name: str, list_of_chats: list[dict]
-    ) -> str | None:
+        user_prompt: str,
+        context_strategy_name: str,
+        db_instance: Any,
+        endpoint_id,
+        num_of_previous_chats: int,
+    ) -> str:
         context_strategy_instance = get_instance(
             context_strategy_name,
             Storage.get_filepath(
@@ -95,12 +101,14 @@ class ContextStrategy:
         )
 
         if context_strategy_instance:
+            # get the last n chats
+            list_of_chats = Chat.get_n_chat_history(
+                db_instance, endpoint_id, num_of_previous_chats
+            )
             context_strategy_instance = context_strategy_instance()
-            # TODO make number of previous prompts an input from user.
-            # Currently it is configured in the context strategy module itself
             return context_strategy_instance.add_in_context(user_prompt, list_of_chats)
         else:
             print(
                 "Cannot load context strategy. Make sure the name of the context strategy is correct."
             )
-            return None
+            return ""

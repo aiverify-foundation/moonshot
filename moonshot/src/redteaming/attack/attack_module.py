@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import ast
-from abc import abstractmethod
 from datetime import datetime
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator
 
 from jinja2 import Template
 from pydantic import BaseModel
@@ -12,6 +10,7 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
+from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -21,16 +20,22 @@ MAX_NO_ITERATIONS = 2
 
 
 class AttackModule:
+    sql_create_chat_record = """
+        INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
+        metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
+        """
+
     def __init__(self, am_args: AttackModuleArguments):
         self.name = am_args.name
-        self.recipe_id = am_args.recipe_id
         self.num_of_prompts = am_args.num_of_prompts
         self.connector_instances = am_args.connector_instances
         self.datasets = am_args.datasets
         self.prompt_templates = am_args.prompt_templates
+        self.prompt = am_args.prompt
         self.metric_instances = am_args.metric_instances
         self.context_strategies = am_args.context_strategies
         self.db_instance = am_args.db_instance
+        self.params = am_args.params
 
     @classmethod
     def load(cls, am_arguments: AttackModuleArguments) -> AttackModule:
@@ -62,33 +67,6 @@ class AttackModule:
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
 
-    # TODO to permutate the no. of datasets x prompt templates
-    # currently, we're just taking the first dataset and prompt template defined
-    def prepare_prompt(self) -> str:
-        # if there is at least one dataset defined
-        if self.datasets:
-            ds_name = self.datasets[0]
-            ds_details = Storage.read_object(
-                EnvVariables.DATASETS.name, ds_name, "json"
-            )
-            prompt = ds_details["examples"]
-
-        # TODO: if there is no dataset defined, decide where to get user prompt or a seed
-        # user provide prompt
-        else:
-            prompt = ""
-
-        if self.prompt_templates:
-            pt_name = self.prompt_templates[0]
-            pt_details = Storage.read_object(
-                EnvVariables.PROMPT_TEMPLATES.name, pt_name, "json"
-            )
-            template = pt_details["template"]
-            jinja_template = Template(template)
-            return jinja_template.render({"prompt": prompt})
-
-        return prompt
-
     def get_max_no_iterations(self) -> int:
         """
         Returns the default maximum number of iterations allowed.
@@ -106,252 +84,249 @@ class AttackModule:
         """
         pass
 
-    async def send_prompt(
-        self,
-        connector_instance: Connector,
-        prepared_prompt: str,
-    ) -> str:
+    async def _generate_prompts(
+        self, prompt: str, target_llm_connector_id: str
+    ) -> AsyncGenerator[RedTeamingPromptArguments, None]:
         """
-        Sends a prompt to a LLM endpoint, stores LLM prediction in the LLM chat table,
-        and returns the predicted results.
+        Generates prompts for red teaming.
+
+        This method asynchronously generates prompts for red teaming based on the provided prompt and target LLM
+        connector ID. It processes the prompt using context strategy and prompt template if specified, and
+        yields RedTeamingPromptArguments for each generated prompt.
 
         Args:
-            connector_instance (Connector): The LLM connector instance to send the prompt to.
-            prepared_prompt (str): The prepared prompt to send.
-
-        Returns:
-            str: The predicted results from the LLM endpoint.
-        """
-        prompt_template_name = ""
-        if self.prompt_templates:
-            prompt_template_name = self.prompt_templates[0]
-
-        dataset_name = ""
-        if self.datasets:
-            dataset_name = self.datasets[0]
-
-        new_prompt_info = ConnectorPromptArguments(
-            prompt_index=1, prompt=prepared_prompt, target=""
-        )
-
-        prompt_start_time = datetime.now()
-
-        # sends prompt to endpoint
-        prediction_response = await Connector.get_prediction(
-            new_prompt_info, connector_instance
-        )
-
-        # stores chat prompts, predictions and its config into DB
-        chat_record_tuple = (
-            "",
-            "",
-            prompt_template_name,
-            dataset_name,
-            prepared_prompt,
-            prediction_response.predicted_results,
-            prediction_response.duration,
-            prompt_start_time.strftime("%m/%d/%Y, %H:%M:%S"),
-        )
-
-        self.write_record_to_db(chat_record_tuple, connector_instance.id)
-        return prediction_response.predicted_results
-
-    def write_record_to_db(
-        self,
-        chat_record_tuple: tuple,
-        chat_record_id,
-    ) -> None:
-
-        endpoint_id = chat_record_id.replace("-", "_")
-        sql_create_chat_record = f"""
-            INSERT INTO {endpoint_id} (connection_id,context_strategy,prompt_template,prompt,
-            prepared_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?)
-            """
-
-        Storage.create_database_record(
-            self.db_instance, chat_record_tuple, sql_create_chat_record
-        )
-
-    @abstractmethod
-    async def execute(self):
-        pass
-
-    async def _generate_prompts(self) -> AsyncGenerator[PromptArguments, None]:
-        """
-        Asynchronously generates prompts based on the provided recipe ID, dataset IDs and prompt template IDs.
-
-        This method uses the dataset IDs and prompt template IDs to retrieve the corresponding datasets and
-        prompt templates. It then uses the Jinja2 template engine to render the prompts using the datasets and
-        templates. If no prompt template IDs are provided, the method generates prompts using only the datasets.
-
-        Args:
-            rec_id (str): The recipe ID.
-            ds_ids (list[str]): A list of dataset IDs.
-            pt_ids (list[str], optional): A list of prompt template IDs. Defaults to an empty list.
+            prompt (str): The prompt to be processed and sent to the target LLM.
+            target_llm_connector_id (str): The unique identifier of the target LLM connector.
 
         Yields:
-            AsyncGenerator[PromptArguments, None]: An asynchronous generator that yields PromptArguments objects.
+            RedTeamingPromptArguments: An instance of RedTeamingPromptArguments containing the
+            generated prompt details.
 
-        Raises:
-            Exception: If there is an error during file reading or any other operation within the method.
         """
+        cs_id = ""
+        pt_id = ""
+        if self.context_strategies:
+            context_strategy_instance = self.context_strategies[0]
+            cs_id = context_strategy_instance.id
+            prompt = ContextStrategy.process_prompt_cs(
+                prompt,
+                context_strategy_instance.id,
+                self.db_instance,
+                target_llm_connector_id,
+                3,
+            )
         if self.prompt_templates:
-
             # prepare prompt template generator
-            for pt_id in self.prompt_templates:
-                pt_info = Storage.read_object_generator(
-                    EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json", "template"
+            pt_id = self.prompt_templates[0]
+            pt_info = Storage.read_object_generator(
+                EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json", "template"
+            )
+            pt = next(pt_info)
+            jinja2_template = Template(pt)
+            prompt = jinja2_template.render({"prompt": prompt})
+
+        yield RedTeamingPromptArguments(
+            conn_id=target_llm_connector_id,
+            am_id=self.name,
+            cs_id=cs_id,
+            pt_id=pt_id,
+            me_id="",
+            system_prompt="",
+            connector_prompt=ConnectorPromptArguments(
+                prompt_index=0,
+                prompt=prompt,
+                target="",
+            ),
+        )
+
+    async def _send_prompt_to_all_llm_default(self) -> list:
+        """
+        Asynchronously sends prompts to all Language Learning Models (LLMs) using default settings.
+
+        This method prepares prompts by processing them with prompt templates and/or context strategies if specified,
+        generates predictions for the prompts, and yields the results as a generator list.
+
+        Returns:
+            list: A list of generators containing the results of the generated prompts.
+        """
+        generator_list = []
+        if self.connector_instances:
+            for target_llm_connector in self.connector_instances:
+                gen_prompts_generator = self._generate_prompts(
+                    self.prompt, target_llm_connector.id
                 )
-                pt = next(pt_info)
-                jinja2_template = Template(pt)
-
-                for ds_id in self.datasets:
-                    ds_info = Storage.read_object_generator(
-                        EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
-                    )
-                    x = 0
-                    for prompt_index, prompt in enumerate(ds_info, 1):
-                        x += 1
-                        try:
-                            if (
-                                self.num_of_prompts != 0
-                                and prompt_index > self.num_of_prompts
-                            ):
-                                break
-
-                            rendered_prompt = jinja2_template.render(
-                                {"prompt": prompt["input"]}
-                            )
-                            print(
-                                f"Generating prompt with dataset [{ds_id}] and prompt template [{pt_id}]."
-                            )
-                            yield PromptArguments(
-                                rec_id=self.recipe_id,
-                                pt_id=pt_id,
-                                ds_id=ds_id,
-                                connector_prompt=ConnectorPromptArguments(
-                                    prompt_index=prompt_index,
-                                    prompt=rendered_prompt,
-                                    target=prompt["target"],
-                                ),
-                            )
-                        except Exception as e:
-                            error_message = (
-                                f"[RedTeamingError] Error while generating prompt for prompt_info "
-                                f"[rec_id: {self.recipe_id}, ds_id: {ds_id}, pt_id: {pt_id}, \
-                                    prompt_index: {prompt_index}] "
-                                f"due to error: {str(e)}"
-                            )
-                            # self.handle_error_message(error_message)
-                            print(error_message)
-                            continue
-        else:
-            pt_id = "no-template"
-            for ds_id in self.datasets:
-                ds_info = Storage.read_object_generator(
-                    EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
+                gen_results_generator = self._generate_predictions(
+                    gen_prompts_generator, target_llm_connector
                 )
-                for prompt_index, prompt in enumerate(ds_info, 1):
-                    try:
-                        if (
-                            self.num_of_prompts != 0
-                            and prompt_index > self.num_of_prompts
-                        ):
-                            break
+                generator_list.append(gen_results_generator)
+        return generator_list
 
-                        yield PromptArguments(
-                            rec_id=self.recipe_id,
-                            pt_id=pt_id,
-                            ds_id=ds_id,
-                            connector_prompt=ConnectorPromptArguments(
-                                prompt_index=prompt_index,
-                                prompt=prompt["input"],
-                                target=prompt["target"],
-                            ),
-                        )
-                    except Exception as e:
-                        error_message = (
-                            f"[RedTeamingError] Error while generating prompt for prompt_info "
-                            f"[rec_id: {self.recipe_id}, ds_id: {ds_id}, pt_id: {pt_id}, prompt_index: {prompt_index}] "
-                            f"due to error: {str(e)}"
-                        )
-                        # self.handle_error_message(error_message)
-                        print(error_message)
-                        continue
+    async def _send_prompt_to_all_llm(self, list_of_prompts) -> list:
+        """
+        Asynchronously sends prompts to all Language Learning Models (LLMs).
+
+        This method takes a list of prompts, sends each prompt to all LLM connectors, records the responses,
+        and returns a list of consolidated responses.
+
+        Args:
+            list_of_prompts (list): A list of prompts to be sent to the LLM connectors.
+
+        Returns:
+            list: A list of consolidated responses from all LLM connectors.
+        """
+        consolidated_responses = []
+        for prompt in list_of_prompts:
+            for target_llm_connector in self.connector_instances:
+                new_prompt_info = ConnectorPromptArguments(
+                    prompt_index=1, prompt=prompt, target=""
+                )
+                start_time = datetime.now()
+                response = await Connector.get_prediction(
+                    new_prompt_info, target_llm_connector
+                )
+                consolidated_responses.append(response)
+                chat_tuple = (
+                    target_llm_connector.id,
+                    self.context_strategies[0].id,
+                    self.prompt_templates[0],
+                    self.name,
+                    self.metric_instances[0].id,
+                    self.prompt,  # original prompt
+                    prompt,  # prepared prompt
+                    "",
+                    response.predicted_results,
+                    response.duration,
+                    str(start_time),
+                )
+                self._write_record_to_db(chat_tuple, target_llm_connector.id)
+        return consolidated_responses
+
+    async def _send_prompt_to_single_llm(
+        self, list_of_prompts, target_llm_connector
+    ) -> list:
+        """
+        Asynchronously sends prompts to a single Language Learning Model (LLM) connector.
+
+        This method takes a list of prompts, sends each prompt to the specified LLM connector, records the response,
+        and returns a list of consolidated responses.
+
+        Args:
+            list_of_prompts (list): A list of prompts to be sent to the LLM connector.
+            target_llm_connector: The target LLM connector to send the prompts to.
+
+        Returns:
+            list: A list of consolidated responses from the specified LLM connector.
+        """
+        consolidated_responses = []
+        for prompt in list_of_prompts:
+            new_prompt_info = ConnectorPromptArguments(
+                prompt_index=1, prompt=prompt, target=""
+            )
+            start_time = datetime.now()
+            response = await Connector.get_prediction(
+                new_prompt_info, target_llm_connector
+            )
+            consolidated_responses.append(response)
+            chat_tuple = (
+                target_llm_connector.id,
+                self.context_strategies[0].id,
+                self.prompt_templates[0],
+                self.name,
+                self.metric_instances[0].id,
+                self.prompt,  # original prompt
+                prompt,  # prepared prompt
+                "",
+                response.predicted_results,
+                response.duration,
+                str(start_time),
+            )
+            self._write_record_to_db(chat_tuple, target_llm_connector.id)
+        return consolidated_responses
+
+    def _write_record_to_db(
+        self,
+        chat_record_tuple: tuple,
+        chat_record_id: str,
+    ) -> None:
+        """
+        Writes the chat record to the database.
+
+        Args:
+            chat_record_tuple (tuple): A tuple containing the chat record information.
+            chat_record_id (str): The ID of the chat record.
+        """
+        endpoint_id = chat_record_id.replace("-", "_")
+        Storage.create_database_record(
+            self.db_instance,
+            chat_record_tuple,
+            AttackModule.sql_create_chat_record.format(endpoint_id),
+        )
+
+    async def execute(self) -> Any:
+        """
+        Houses the logic of the attack and is an entry point.
+        * Do not change the name of this function in the attack module
+
+        Returns:
+            Any: the return type from the execution
+        """
+        pass
 
     async def _generate_predictions(
         self,
-        gen_prompt: AsyncGenerator[PromptArguments, None],
+        gen_prompts_generator: AsyncGenerator[RedTeamingPromptArguments, None],
         llm_connector: Connector,
-    ):
+    ) -> AsyncGenerator[RedTeamingPromptArguments, None]:
         """
-        This method generates predictions for the given prompts using the provided recipe connectors and
-        database instance.
-
-        This method is a coroutine that takes an asynchronous generator of prompts, a list of recipe connectors,
-        and a database instance.
-
-        It iterates over the prompts from the generator and for each prompt, it iterates over the recipe connectors.
-        For each connector, it updates the prompt with the connector id and checks if the prompt has saved records
-        in the cache.
-        If there are no saved records, it gets predictions from the connector and creates cache records.
-        If there are saved records, it updates the prompt info from the cache records.
-        Finally, it yields the updated prompt info.
+        Asynchronously generates predictions for the given prompts.
 
         Args:
-            gen_prompt (AsyncGenerator[PromptArguments, None]): An asynchronous generator of prompts.
-            recipe_connectors (list[Connector]): A list of recipe connectors.
-            database_instance (Any): A database instance.
+            gen_prompts_generator (AsyncGenerator[RedTeamingPromptArguments, None]): An asynchronous generator
+            yielding RedTeamingPromptArguments.
+
+            llm_connector (Connector): The connector to the Language Learning Model (LLM).
 
         Yields:
-            PromptArguments: The updated prompt info.
-
-        Raises:
-            Exception: If there is an error during cache reading or any other operation within the method.
+            RedTeamingPromptArguments: An asynchronous generator yielding the new prompt information.
         """
-        async for prompt_info in gen_prompt:
-            # Create a new prompt info with connection id
-            new_prompt_info = PromptArguments(
-                conn_id=llm_connector.id,
-                rec_id=prompt_info.rec_id,
+        async for prompt_info in gen_prompts_generator:
+            new_prompt_info = RedTeamingPromptArguments(
+                conn_id=prompt_info.conn_id,
+                am_id=prompt_info.am_id,
+                cs_id=prompt_info.cs_id,
                 pt_id=prompt_info.pt_id,
-                ds_id=prompt_info.ds_id,
+                original_prompt=self.prompt,
+                system_prompt=prompt_info.system_prompt,
                 connector_prompt=prompt_info.connector_prompt,
+                start_time=str(datetime.now()),
             )
-            prompt_start_time = datetime.now()
+
+            # send processed prompt to llm and write record to db
             new_prompt_info.connector_prompt = await Connector.get_prediction(
                 new_prompt_info.connector_prompt, llm_connector
             )
-
-            # stores chat prompts, predictions and its config into DB
-            chat_record_tuple = (
-                "",
-                "",
-                new_prompt_info.pt_id,
-                new_prompt_info.pt_id,
-                new_prompt_info.connector_prompt.prompt,
-                new_prompt_info.connector_prompt.predicted_results,
-                new_prompt_info.connector_prompt.duration,
-                prompt_start_time.strftime("%m/%d/%Y, %H:%M:%S"),
-            )
-            self.write_record_to_db(chat_record_tuple, llm_connector.id)
-
-            print(
-                "Generated prompt:",
-                new_prompt_info.connector_prompt.predicted_results,
-                "\n",
-            )
+            self._write_record_to_db(new_prompt_info.to_tuple(), llm_connector.id)
             yield new_prompt_info
 
 
-class PromptArguments(BaseModel):
+class RedTeamingPromptArguments(BaseModel):
     conn_id: str = ""  # The ID of the connection, default is an empty string
 
-    rec_id: str  # The ID of the recipe
+    am_id: str = ""  # The ID of the attack module, default is an empty string
 
-    ds_id: str  # The ID of the dataset
+    cs_id: str = ""  # The ID of the context strategy, default is an empty string
 
-    pt_id: str  # The ID of the prompt template
+    me_id: str = (
+        ""  # The ID of the metric used to score the result, default is an empty string
+    )
+
+    pt_id: str = ""  # The ID of the prompt template, default is en empty string
+
+    original_prompt: str = ""  # The original prompt used
+
+    system_prompt: str = ""  # The system-generated prompt used
+
+    start_time: str = ""  # The start time of the prediction
 
     connector_prompt: ConnectorPromptArguments  # The prompt information to send
 
@@ -370,57 +345,14 @@ class PromptArguments(BaseModel):
         """
         return (
             self.conn_id,
-            self.rec_id,
-            self.ds_id,
+            self.cs_id,
             self.pt_id,
-            self.connector_prompt.prompt_index,
+            self.am_id,
+            self.me_id,
+            self.original_prompt,
             self.connector_prompt.prompt,
-            str(self.connector_prompt.target),
+            self.system_prompt,
             str(self.connector_prompt.predicted_results),
             str(self.connector_prompt.duration),
-        )
-
-    @classmethod
-    def from_tuple(cls, cache_record: tuple) -> PromptArguments:
-        """
-        Converts a tuple into a PromptArguments instance.
-
-        This method accepts a tuple that contains attribute values in the following order:
-        conn_id, rec_id, ds_id, pt_id, prompt_index, prompt, target, predicted_results, duration.
-        It then constructs a PromptArguments instance using these values.
-        This method is primarily used for deserialization tasks, such as retrieving prompt arguments data from a
-        database or receiving it over a network.
-
-        Args:
-            cache_record (tuple): A tuple containing the attribute values for a PromptArguments instance.
-
-        Returns:
-            PromptArguments: A PromptArguments instance constructed from the tuple.
-        """
-        # The target and predicted_results fields may be stored as strings in the cache_record.
-        # ast.literal_eval is used to attempt to convert these strings back into their original data types.
-        # If the conversion fails (i.e., the fields are not string representations of Python literals),
-        # the original string values are used.
-        try:
-            target = ast.literal_eval(cache_record[7])
-        except Exception:
-            target = cache_record[7]
-
-        try:
-            predicted_results = ast.literal_eval(cache_record[8])
-        except Exception:
-            predicted_results = cache_record[8]
-
-        return cls(
-            conn_id=cache_record[1],
-            rec_id=cache_record[2],
-            ds_id=cache_record[3],
-            pt_id=cache_record[4],
-            connector_prompt=ConnectorPromptArguments(
-                prompt_index=cache_record[5],
-                prompt=cache_record[6],
-                target=target,
-                predicted_results=predicted_results,
-                duration=float(cache_record[9]),
-            ),
+            self.start_time,
         )

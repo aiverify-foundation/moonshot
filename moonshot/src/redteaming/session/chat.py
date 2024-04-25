@@ -9,7 +9,6 @@ from moonshot.api import api_create_connector_from_endpoint
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.prompt_templates.prompt_template import PromptTemplate
-from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.storage.db_accessor import DBAccessor
 from moonshot.src.storage.storage import Storage
 
@@ -21,8 +20,11 @@ class ChatRecord:
         conn_id: str,
         context_strategy: str,
         prompt_template: str,
+        attack_module: str,
+        metric: str,
         prompt: str,
         prepared_prompt: str,
+        system_prompt: str,
         predicted_result: str,
         duration: str,
         prompt_time: str,
@@ -31,8 +33,11 @@ class ChatRecord:
         self.conn_id = conn_id
         self.context_strategy = context_strategy
         self.prompt_template = prompt_template
+        self.attack_module = attack_module
+        self.metric = metric
         self.prompt = prompt
         self.prepared_prompt = prepared_prompt
+        self.system_prompt = system_prompt
         self.predicted_result = predicted_result
         self.duration = duration
         self.prompt_time = prompt_time
@@ -49,6 +54,8 @@ class ChatRecord:
             "conn_id": self.conn_id,
             "context_strategy": self.context_strategy,
             "prompt_template": self.prompt_template,
+            "attack_module": self.attack_module,
+            "metric": self.metric,
             "prompt": self.prompt,
             "prepared_prompt": self.prepared_prompt,
             "predicted_result": self.predicted_result,
@@ -63,6 +70,10 @@ class Chat:
             chat_id,endpoint,created_epoch,created_datetime)
             VALUES(?,?,?,?)
     """
+
+    sql_select_n_chat_from_chat_table = (
+        """SELECT * FROM {} order by prompt_time desc limit {}"""
+    )
 
     def __init__(
         self,
@@ -194,6 +205,39 @@ class Chat:
         return list_of_chat_records
 
     @staticmethod
+    def get_n_chat_history(
+        session_db_instance: DBAccessor, endpoint_id: str, num_of_previous_chats: int
+    ) -> list[dict]:
+        """
+        Loads the chat history for a specific chat ID.
+
+        This method retrieves the chat history for a given chat ID by calling the StorageManager's method
+        to get the chat history for one endpoint. It then converts the chat record tuples into ChatRecord instances
+        and returns a list of ChatRecord objects.
+
+        Args:
+            db_instance: The database instance associated with the chat session.
+            chat_id (str): The unique identifier for the chat session.
+
+        Returns:
+            list[ChatRecord]: A list of ChatRecord instances representing the chat history.
+        """
+        endpoint_id = endpoint_id.replace("-", "_")
+        list_of_chat_record_tuples = Storage.read_database_records(
+            session_db_instance,
+            Chat.sql_select_n_chat_from_chat_table.format(
+                endpoint_id, num_of_previous_chats
+            ),
+        )
+        list_of_chat_records = []
+        if list_of_chat_record_tuples:
+            list_of_chat_records = [
+                ChatRecord(*chat_record_tuple).to_dict()
+                for chat_record_tuple in list_of_chat_record_tuples
+            ]
+        return list_of_chat_records
+
+    @staticmethod
     async def send_prompt(
         session_db_instance: DBAccessor,
         chat_id: str,
@@ -219,23 +263,6 @@ class Chat:
             Defaults to "".
         """
         prepared_prompt = user_prompt
-
-        # process prompt with context strategy if it is set
-        if context_strategy_name:
-            chat_obj = Chat.load_chat(session_db_instance, chat_id, endpoint)
-            list_of_chat_records = [
-                chat_record.to_dict() for chat_record in chat_obj.chat_history
-            ]
-
-            # sort the chat records by time in descending order if it's not already sorted
-            sorted_list_of_chat_records_time_desc = sorted(
-                list_of_chat_records, key=lambda i: i["prompt_time"], reverse=True
-            )
-            prepared_prompt = ContextStrategy.process_prompt_cs(
-                prepared_prompt,
-                context_strategy_name,
-                sorted_list_of_chat_records_time_desc,
-            )
 
         # process prompt with prompt template if it is set
         if prompt_template_name:
