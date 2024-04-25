@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 from datetime import datetime
 from typing import Any, AsyncGenerator
 
@@ -13,10 +14,6 @@ from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleA
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
-
-# variable to cap the number of prompts sent to the LLMs in case the stop condition
-# of the attack does not get fulfilled
-MAX_NO_ITERATIONS = 2
 
 
 class AttackModule:
@@ -67,15 +64,7 @@ class AttackModule:
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
 
-    def get_max_no_iterations(self) -> int:
-        """
-        Returns the default maximum number of iterations allowed.
-
-        Returns:
-            int: The default maximum number of iterations allowed.
-        """
-        return MAX_NO_ITERATIONS
-
+    @abstractmethod
     def check_stop_condition(self):
         """
         Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
@@ -105,6 +94,7 @@ class AttackModule:
         """
         cs_id = ""
         pt_id = ""
+        num_of_previous_chats = 3
         if self.context_strategies:
             context_strategy_instance = self.context_strategies[0]
             cs_id = context_strategy_instance.id
@@ -113,7 +103,7 @@ class AttackModule:
                 context_strategy_instance.id,
                 self.db_instance,
                 target_llm_connector_id,
-                3,
+                num_of_previous_chats,
             )
         if self.prompt_templates:
             # prepare prompt template generator
@@ -131,7 +121,9 @@ class AttackModule:
             cs_id=cs_id,
             pt_id=pt_id,
             me_id="",
+            original_prompt="",
             system_prompt="",
+            start_time="",
             connector_prompt=ConnectorPromptArguments(
                 prompt_index=0,
                 prompt=prompt,
@@ -161,7 +153,7 @@ class AttackModule:
                 generator_list.append(gen_results_generator)
         return generator_list
 
-    async def _send_prompt_to_all_llm(self, list_of_prompts) -> list:
+    async def _send_prompt_to_all_llm(self, list_of_prompts: list) -> list:
         """
         Asynchronously sends prompts to all Language Learning Models (LLMs).
 
@@ -193,7 +185,7 @@ class AttackModule:
                     self.metric_instances[0].id,
                     self.prompt,  # original prompt
                     prompt,  # prepared prompt
-                    "",
+                    "",  # system prompt
                     response.predicted_results,
                     response.duration,
                     str(start_time),
@@ -202,7 +194,7 @@ class AttackModule:
         return consolidated_responses
 
     async def _send_prompt_to_single_llm(
-        self, list_of_prompts, target_llm_connector
+        self, list_of_prompts: list, target_llm_connector: Connector
     ) -> list:
         """
         Asynchronously sends prompts to a single Language Learning Model (LLM) connector.
@@ -235,7 +227,7 @@ class AttackModule:
                 self.metric_instances[0].id,
                 self.prompt,  # original prompt
                 prompt,  # prepared prompt
-                "",
+                "",  # system prompt
                 response.predicted_results,
                 response.duration,
                 str(start_time),
@@ -262,6 +254,7 @@ class AttackModule:
             AttackModule.sql_create_chat_record.format(endpoint_id),
         )
 
+    @abstractmethod
     async def execute(self) -> Any:
         """
         Houses the logic of the attack and is an entry point.
@@ -310,9 +303,9 @@ class AttackModule:
 
 
 class RedTeamingPromptArguments(BaseModel):
-    conn_id: str = ""  # The ID of the connection, default is an empty string
+    conn_id: str  # The ID of the connection, default is an empty string
 
-    am_id: str = ""  # The ID of the attack module, default is an empty string
+    am_id: str  # The ID of the attack module, default is an empty string
 
     cs_id: str = ""  # The ID of the context strategy, default is an empty string
 
@@ -322,11 +315,11 @@ class RedTeamingPromptArguments(BaseModel):
 
     pt_id: str = ""  # The ID of the prompt template, default is en empty string
 
-    original_prompt: str = ""  # The original prompt used
+    original_prompt: str  # The original prompt used
 
     system_prompt: str = ""  # The system-generated prompt used
 
-    start_time: str = ""  # The start time of the prediction
+    start_time: str  # The start time of the prediction
 
     connector_prompt: ConnectorPromptArguments  # The prompt information to send
 

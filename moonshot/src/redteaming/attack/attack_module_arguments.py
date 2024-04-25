@@ -1,6 +1,6 @@
-from typing import Any
-
 from pydantic import BaseModel
+
+from moonshot.src.storage.db_interface import DBInterface
 
 
 class AttackModuleArguments(BaseModel):
@@ -29,7 +29,7 @@ class AttackModuleArguments(BaseModel):
     context_strategies: list = []
 
     # DBAccessor for the attack module to access DB data
-    db_instance: Any
+    db_instance: DBInterface
 
     # a dict that contains other params that is required by the attack module (if any)
     params: dict = {}

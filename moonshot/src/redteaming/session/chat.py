@@ -58,6 +58,7 @@ class ChatRecord:
             "metric": self.metric,
             "prompt": self.prompt,
             "prepared_prompt": self.prepared_prompt,
+            "system_prompt": self.system_prompt,
             "predicted_result": self.predicted_result,
             "duration": self.duration,
             "prompt_time": self.prompt_time,
