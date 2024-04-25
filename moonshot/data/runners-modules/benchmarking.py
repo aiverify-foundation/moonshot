@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import asyncio
 import copy
+import random
 import time
 from itertools import groupby
 from operator import attrgetter
@@ -101,6 +102,14 @@ class Benchmarking:
             ]
             print(
                 f"[Benchmarking] Load recipe connectors took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+            # Set connector system prompt
+            start_time = time.perf_counter()
+            for connector in self.recipe_connectors:
+                connector.set_system_prompt(self.system_prompt)
+            print(
+                f"[Benchmarking] Set connectors system prompt took {(time.perf_counter() - start_time):.4f}s"
             )
 
             # ------------------------------------------------------------------------------
@@ -391,7 +400,7 @@ class Benchmarking:
         # Part 3: Sort the recipe predictions into groups for recipe
         # ------------------------------------------------------------------------------
         # Sort PromptArguments instances into groups based on the same conn_id, rec_id, ds_id, and pt_id
-        print("[Benchmarking] Sort the recipe predictions into groups")
+        print("[Benchmarking] Sorting the recipe predictions into groups")
         start_time = time.perf_counter()
         grouped_recipe_preds = {}
         try:
@@ -421,7 +430,7 @@ class Benchmarking:
 
             print(
                 (
-                    f"[Benchmarking] Sort the recipe predictions into groups for recipe [{self.recipe_instance.id}] "
+                    f"[Benchmarking] Sorted the recipe predictions into groups for recipe [{self.recipe_instance.id}] "
                     f"took {(time.perf_counter() - start_time):.4f}s"
                 )
             )
@@ -610,96 +619,144 @@ class Benchmarking:
 
     async def _generate_prompts(self) -> AsyncGenerator[PromptArguments, None]:
         """
-        Asynchronously generates prompts by rendering templates with dataset content.
+        Asynchronously generates and yields prompts for benchmarking tasks.
 
-        This coroutine iterates over the datasets and prompt templates associated with the recipe instance,
-        rendering prompts using the Jinja2 template engine. If the recipe instance has no associated prompt templates,
-        the prompts are generated solely from the datasets.
+        This coroutine traverses through the datasets and prompt templates linked to the recipe instance,
+        creating prompts by applying the Jinja2 template engine to the dataset contents.
+        In the absence of prompt templates, the dataset contents are directly used to generate the prompts.
 
         Yields:
-            PromptArguments: An object containing the rendered prompt and associated metadata, such as the recipe ID,
-                             dataset ID, and prompt template ID.
+            PromptArguments: A structured object encapsulating the rendered prompt along with its metadata, including
+                             identifiers for the recipe, dataset, and prompt template.
 
         Raises:
-            Exception: If an error occurs during the rendering of prompts or any related operation.
+            Exception: If any issue arises during the prompt rendering process or
+                       while performing associated operations.
         """
+        pt_id = "no-template"
+        templates = {}
         if self.recipe_instance.prompt_templates:
             for pt_id in self.recipe_instance.prompt_templates:
-                pt_info = Storage.read_object_generator(
+                # Retrieve the prompt template information from storage as a generator
+                pt_info_gen = Storage.read_object_generator(
                     EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json", "template"
                 )
-                pt = next(pt_info)
-                jinja2_template = Template(pt)
+                # Get the first item from the generator, which contains the template data
+                pt_info = next(pt_info_gen)
+                # Create a Jinja2 template from the retrieved template data
+                templates[pt_id] = Template(pt_info)
 
-                for ds_id in self.recipe_instance.datasets:
-                    ds_info = Storage.read_object_generator(
-                        EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
-                    )
-                    for prompt_index, prompt in enumerate(ds_info, 1):
+        # This section of code iterates over datasets and templates to render prompts and yield them.
+        # If no templates are available, it yields the original prompts from the datasets.
+        for ds_id in self.recipe_instance.datasets:
+            async for prompt_index, prompt in self._get_dataset_prompts(ds_id):
+                if templates:
+                    for pt_id, jinja2_template in templates.items():
                         try:
-                            if (
-                                self.num_of_prompts != 0
-                                and prompt_index > self.num_of_prompts
-                            ):
-                                break
-
                             rendered_prompt = jinja2_template.render(
                                 {"prompt": prompt["input"]}
                             )
-                            yield PromptArguments(
-                                rec_id=self.recipe_instance.id,
-                                pt_id=pt_id,
-                                ds_id=ds_id,
-                                random_seed=self.random_seed,
-                                system_prompt=self.system_prompt,
-                                attack_module_id="",
-                                connector_prompt=ConnectorPromptArguments(
-                                    prompt_index=prompt_index,
-                                    prompt=rendered_prompt,
-                                    target=prompt["target"],
-                                ),
+                            prompt_args = await self._yield_prompt_arguments(
+                                pt_id,
+                                ds_id,
+                                prompt_index,
+                                rendered_prompt,
+                                prompt["target"],
                             )
+                            yield prompt_args
                         except Exception as e:
                             self.run_progress.notify_error(
-                                f"[Benchmarking] Error while generating prompt for prompt_info "
+                                f"[Benchmarking] Error while rendering template for prompt_info "
                                 f"[rec_id: {self.recipe_instance.id}, ds_id: {ds_id}, pt_id: {pt_id}, "
                                 f"prompt_index: {prompt_index}] due to error: {str(e)}"
                             )
-                            continue
-        else:
-            pt_id = "no-template"
-            for ds_id in self.recipe_instance.datasets:
-                ds_info = Storage.read_object_generator(
-                    EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
-                )
-                for prompt_index, prompt in enumerate(ds_info, 1):
-                    try:
-                        if (
-                            self.num_of_prompts != 0
-                            and prompt_index > self.num_of_prompts
-                        ):
-                            break
+                else:
+                    prompt_args = await self._yield_prompt_arguments(
+                        pt_id, ds_id, prompt_index, prompt["input"], prompt["target"]
+                    )
+                    yield prompt_args
 
-                        yield PromptArguments(
-                            rec_id=self.recipe_instance.id,
-                            pt_id=pt_id,
-                            ds_id=ds_id,
-                            random_seed=self.random_seed,
-                            system_prompt=self.system_prompt,
-                            attack_module_id="",
-                            connector_prompt=ConnectorPromptArguments(
-                                prompt_index=prompt_index,
-                                prompt=prompt["input"],
-                                target=prompt["target"],
-                            ),
-                        )
-                    except Exception as e:
-                        self.run_progress.notify_error(
-                            f"[Benchmarking] Error while generating prompt for prompt_info "
-                            f"[rec_id: {self.recipe_instance.id}, ds_id: {ds_id}, pt_id: {pt_id}, "
-                            f"prompt_index: {prompt_index}] due to error: {str(e)}"
-                        )
-                        continue
+    async def _get_dataset_prompts(
+        self, ds_id: str
+    ) -> AsyncGenerator[tuple[int, dict], None]:
+        """
+        Asynchronously retrieves prompts from a dataset based on the specified dataset ID.
+
+        This method determines the total number of prompts in the dataset and generates a list of prompt indices.
+        If a specific number of prompts is requested (num_of_prompts), it will randomly select that many prompts
+        using the provided random seed. Otherwise, it will retrieve all prompts. Each prompt is then fetched and
+        yielded along with its index.
+
+        Args:
+            ds_id (str): The ID of the dataset from which to retrieve prompts.
+
+        Yields:
+            tuple[int, dict]: A tuple containing the index of the prompt and the prompt data itself.
+        """
+        # Determine the total number of prompts in the dataset
+        total_prompts = Storage.count_objects(
+            EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
+        )
+
+        # Generate a list of prompt indices based on num_of_prompts and random_seed
+        if self.num_of_prompts == 0 or self.num_of_prompts > total_prompts:
+            prompt_indices = range(1, total_prompts + 1)
+        else:
+            random.seed(self.random_seed)
+            prompt_indices = random.sample(
+                range(1, total_prompts + 1), self.num_of_prompts
+            )
+        print(
+            f"[Benchmarking] Dataset {ds_id}, using {len(prompt_indices)} of {total_prompts} prompts."
+        )
+
+        # Fetch and yield only the selected prompts
+        prompts_gen = Storage.read_object_generator(
+            EnvVariables.DATASETS.name,
+            ds_id,
+            "json",
+            "examples.item",
+        )
+        # Use for loop to iterate over the async generator
+        prompts_gen_index = 0
+        for prompts_data in prompts_gen:
+            if prompts_gen_index in prompt_indices:
+                yield prompts_gen_index, prompts_data
+            prompts_gen_index += 1
+
+    async def _yield_prompt_arguments(
+        self, pt_id: str, ds_id: str, prompt_index: int, prompt_text: str, target: str
+    ) -> PromptArguments:
+        """
+        Assembles the arguments required for a prompt into a PromptArguments object.
+
+        This method takes the provided prompt details and compiles them into a structured
+        PromptArguments object, which includes metadata and the content of the prompt itself.
+
+        Args:
+            pt_id (str): The ID of the prompt template used to generate the prompt.
+            ds_id (str): The ID of the dataset from which the prompt was derived.
+            prompt_index (int): The index of the prompt within the dataset.
+            prompt_text (str): The text of the generated prompt.
+            target (str): The expected target or answer for the prompt.
+
+        Returns:
+            PromptArguments: An object containing all the necessary information for a prompt,
+                             including IDs, indices, and content.
+        """
+        return PromptArguments(
+            rec_id=self.recipe_instance.id,
+            pt_id=pt_id,
+            ds_id=ds_id,
+            random_seed=self.random_seed,
+            system_prompt=self.system_prompt,
+            attack_module_id="",
+            connector_prompt=ConnectorPromptArguments(
+                prompt_index=prompt_index,
+                prompt=prompt_text,
+                target=target,
+            ),
+        )
 
     async def _generate_predictions(
         self,

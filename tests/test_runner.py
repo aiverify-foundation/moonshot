@@ -97,6 +97,7 @@ def test_run_benchmark_recipe_runner(runner_id: str):
         runner.run_recipes(
             ["bbq", "auto-categorisation"],
             2,
+            2
         )
     )
     runner.close()
@@ -108,9 +109,29 @@ def test_run_benchmark_cookbook_runner(runner_id: str):
         runner.run_cookbooks(
             ["common-risk-easy","leaderboard-cookbook"],
             2,
+            2
         )
     )
     runner.close()
+
+def test_run_automated_redteaming_runner(runner_id: str):
+    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        runner.run_red_teaming({
+            "attack_strategies": [
+                {
+                    "attack_module_id": "sample_attack_module",
+                    "metric_ids": ["bleuscore"],
+                    "context_strategy_ids": ["add_previous_prompt"],
+                    "prompt_template_ids": ["mmlu"],
+                    "prompt": "hello world",
+                }
+            ]
+        })
+    )
+    runner.close()
+
 
 def test_read_runner(runner_id: str):
     print(api_read_runner(runner_id))
@@ -155,6 +176,7 @@ def test_run_runner_api():
     print("=" * 100, "\nTest running runner")
     test_run_benchmark_recipe_runner(runner_id)
     test_run_benchmark_cookbook_runner(runner_id)
+    test_run_automated_redteaming_runner(runner_id)
 
     # Run the benchmark runner job and cancel
     print("=" * 100, "\nTest running runner and cancelling job")

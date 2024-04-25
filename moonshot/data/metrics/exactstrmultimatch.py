@@ -9,21 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class ExactStrMultiMatch(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "ExactStrMultiMatchOutput",
-        "description": "Output schema for ExactStrMultiMatch's get_results method.",
-        "type": "object",
-        "properties": {
-            "exact_str_multiple_match": {
-                "type": "number",
-                "description": "The accuracy of the predicted results as a float.",
-            }
-        },
-        "required": ["exact_str_multiple_match"],
-    }
-
     def __init__(self):
         self.id = "exactstrmultimatch"
         self.name = "ExactStrMultiMatch"
@@ -79,11 +64,4 @@ class ExactStrMultiMatch(MetricInterface):
                 if result == target:
                     correct += 1
 
-        response_dict = {"exact_str_multiple_match": float(correct / total)}
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, ExactStrMultiMatch.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[ExactStrMultiMatch] Failed json schema validation for output response."
-            )
+        return {"exact_str_multiple_match": float(correct / total)}

@@ -29,7 +29,9 @@ class HFGpt2(Connector):
             str: retrieved response data
         """
         connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}"
-        payload = {
+        # Merge self.optional_params with additional parameters
+        new_params = {
+            **self.optional_params,
             "inputs": connector_prompt,
             "parameters": {
                 "max_length": 512,
@@ -40,7 +42,7 @@ class HFGpt2(Connector):
             async with session.post(
                 self.endpoint,
                 headers=self._prepare_headers(),
-                json=payload,
+                json=new_params,
             ) as response:
                 return await self._process_response(response)
 

@@ -17,45 +17,6 @@ class SpellingScore(MetricInterface):
     This code uses pyspellchecker (https://pypi.org/project/pyspellchecker/).
     """
 
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-            "spellingscore": {
-                "type": "object",
-                "properties": {
-                    "corrected": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "object",
-                            "properties": {
-                                "corrected": {"type": "string"},
-                                "error": {"type": "string"},
-                                "misspell": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                },
-                                "total_number_of_words": {"type": "integer"},
-                                "total_number_of_misspelled": {"type": "integer"},
-                            },
-                            "required": [
-                                "total_number_of_words",
-                                "total_number_of_misspelled",
-                            ],
-                            "additionalProperties": False,
-                        },
-                    },
-                    "spelling_score": {"type": "number"},
-                },
-                "required": ["corrected", "spelling_score"],
-                "additionalProperties": False,
-            }
-        },
-        "required": ["spellingscore"],
-        "additionalProperties": False,
-    }
-
     def __init__(self):
         self.id = "spelling"
         self.name = "SpellingScore"
@@ -137,11 +98,4 @@ class SpellingScore(MetricInterface):
             "spelling_score": (total_number_of_words - total_number_of_misspelled)
             / total_number_of_words,
         }
-        response_dict = {"spellingscore": scores}
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, SpellingScore.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[SpellingScore] Failed json schema validation for output response."
-            )
+        return {"spellingscore": scores}

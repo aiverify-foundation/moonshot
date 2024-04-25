@@ -8,6 +8,7 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.redteaming.session.session import Session
 from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
@@ -274,25 +275,37 @@ class Runner:
         self,
         recipes: list[str],
         num_of_prompts: int = 0,
+        random_seed: int = 0,
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
     ) -> None:
         """
-        Asynchronously runs a set of recipes for benchmarking.
+        Initiates a benchmark run with a given set of recipes asynchronously.
 
-        This method is responsible for initiating a benchmark run with a specified set of recipes. It creates a new
-        benchmark run instance, configures it with the provided recipes, number of prompts, system prompt, and
-        runner processing module, and then starts the run asynchronously.
+        This method is designed to start a benchmarking process by creating a new benchmark run instance.
+        It takes a list of recipes and optional parameters such as the number of prompts, a system prompt,
+        and a runner processing module to configure the benchmark run.
+
+        Once configured, the benchmark run is executed asynchronously.
 
         Args:
-            recipes (list[str]): A list of recipe names to be run.
-            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run. Defaults to 0.
-            system_prompt (str, optional): A system prompt to be used in the benchmark run. Defaults to an empty string.
-            runner_processing_module (str, optional): The processing module to be used for the run.
-            Defaults to "benchmarking".
+            recipes (list[str]): The recipes to be executed during the benchmark run.
+
+            num_of_prompts (int, optional): Specifies the number of prompts to be used.
+            Defaults to 0 if not provided.
+
+            random_seed (int, optional): The seed for random number generation to ensure reproducibility.
+            Defaults to 0 if not provided.
+
+            system_prompt (str, optional): The system-wide prompt to be used for all recipes in the run.
+            Defaults to an empty string if not provided.
+
+            runner_processing_module (str, optional): Identifies the processing module that will handle the run.
+            Defaults to "benchmarking" if not provided.
 
         Raises:
-            Exception: If any error occurs during the setup or execution of the benchmark run.
+            Exception: An error is raised if there is a failure during the setup or
+            the execution phase of the benchmark run.
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark recipe test run
@@ -303,6 +316,7 @@ class Runner:
                 {
                     "recipes": recipes,
                     "num_of_prompts": num_of_prompts,
+                    "random_seed": random_seed,
                     "system_prompt": system_prompt,
                     "runner_processing_module": runner_processing_module,
                 },
@@ -326,25 +340,32 @@ class Runner:
         self,
         cookbooks: list[str],
         num_of_prompts: int = 0,
+        random_seed: int = 0,
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
     ) -> None:
         """
-        Asynchronously runs a set of cookbooks for benchmarking.
+        Initiates an asynchronous benchmark run using a set of cookbooks.
 
-        This method is responsible for initiating a benchmark run with a specified set of cookbooks. It creates a new
-        benchmark run instance, configures it with the provided cookbooks, number of prompts, system prompt, and
-        runner processing module, and then starts the run asynchronously.
+        This method sets up and starts a benchmark run tailored for cookbooks. It instantiates a benchmark run object,
+        applies the configuration based on the provided cookbooks, number of prompts, random seed, system prompt, and
+        the specified runner processing module, and then commences the run asynchronously.
 
         Args:
-            cookbooks (list[str]): A list of cookbook names to be run.
-            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run. Defaults to 0.
-            system_prompt (str, optional): A system prompt to be used in the benchmark run. Defaults to an empty string.
-            runner_processing_module (str, optional): The processing module to be used for the run.
+            cookbooks (list[str]): The cookbooks to be included in the benchmark run.
+
+            num_of_prompts (int, optional): The count of prompts to utilize during the benchmark. Defaults to 0.
+
+            random_seed (int, optional): The seed for random number generation to ensure reproducibility. Defaults to 0.
+
+            system_prompt (str, optional): The system-level prompt for the benchmark run. Defaults to an empty string.
+
+            runner_processing_module (str, optional): The module responsible for processing the run.
             Defaults to "benchmarking".
 
         Raises:
-            Exception: If any error occurs during the setup or execution of the benchmark run.
+            Exception: An error is raised if there is a failure during the setup or
+            the execution phase of the benchmark run.
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark cookbook test run
@@ -355,6 +376,7 @@ class Runner:
                 {
                     "cookbooks": cookbooks,
                     "num_of_prompts": num_of_prompts,
+                    "random_seed": random_seed,
                     "system_prompt": system_prompt,
                     "runner_processing_module": runner_processing_module,
                 },
@@ -373,6 +395,67 @@ class Runner:
         async with self.current_operation_lock:
             self.current_operation = None
             print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+
+    async def run_red_teaming(
+        self,
+        red_team_args: dict,
+        system_prompt: str = "",
+        runner_processing_module: str = "redteaming",
+    ) -> None:
+        """
+        Asynchronously runs a red teaming session with the provided arguments.
+
+        This method is responsible for initiating a red teaming session with the specified arguments. It creates a new
+        red teaming session instance, configures it with the provided red teaming arguments, system prompt, and
+        runner processing module, and then starts the session asynchronously.
+
+        Args:
+            red_team_args (dict): A dictionary of arguments for the red teaming session.
+
+            system_prompt (str, optional): A system prompt to be used in the red teaming session.
+            Defaults to an empty string.
+
+            runner_processing_module (str, optional): The processing module to be used for the session.
+            Defaults to "redteaming".
+
+        Raises:
+            Exception: If any error occurs during the setup or execution of the red teaming session.
+        """
+        async with self.current_operation_lock:  # Acquire the lock
+            # automated red teaming
+            if (
+                "attack_strategies" in red_team_args
+                and red_team_args.get("attack_strategies") is not None
+            ):
+                print(f"[Runner] {self.id} - Running red teaming session...")
+                self.current_operation = Session(
+                    self.id,
+                    RunnerType.REDTEAM,
+                    {
+                        **red_team_args,
+                        "system_prompt": system_prompt,
+                        "runner_processing_module": runner_processing_module,
+                    },
+                    self.database_instance,
+                    self.endpoints,
+                    Storage.get_filepath(
+                        EnvVariables.RESULTS.name, self.id, "json", True
+                    ),
+                    self.progress_callback_func,
+                )
+                # Note: The lock is held during setup but should be released before long-running operations
+                # Execute the long-running operation outside of the lock
+                await self.current_operation.run()
+
+                # After completion, reset current_operation to None within the lock
+                async with self.current_operation_lock:
+                    self.current_operation = None
+                    print(
+                        f"[Runner] {self.id} - Automated red teaming run completed and reset."
+                    )
+            else:
+                # manual red teaming
+                pass
 
     async def run(self, runner_type: RunnerType, runner_args: dict) -> None:
         """

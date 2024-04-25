@@ -17,25 +17,6 @@ class BertScore(MetricInterface):
     https://github.com/Tiiiger/bert_score/blob/master/bert_score_cli/score.py
     """
 
-    # JSON schema as a class variable
-    output_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "BertScore",
-        "type": "object",
-        "properties": {
-            "bertscore": {
-                "type": "object",
-                "properties": {
-                    "precision": {"type": "number"},
-                    "recall": {"type": "number"},
-                    "f1": {"type": "number"},
-                },
-                "required": ["precision", "recall", "f1"],
-            }
-        },
-        "required": ["bertscore"],
-    }
-
     def __init__(self):
         self.id = "bertscore"
         self.name = "BertScore"
@@ -89,17 +70,10 @@ class BertScore(MetricInterface):
         recall_value = avg_scores[1].cpu().item()
         f1_value = avg_scores[2].cpu().item()
 
-        response_dict = {
+        return {
             "bertscore": {
                 "precision": precision_value,
                 "recall": recall_value,
                 "f1": f1_value,
             }
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, BertScore.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[BertScore] Failed json schema validation for output response."
-            )

@@ -174,3 +174,4 @@ moonshot/data/sessions/*.json
 
 # build files
 dist/
+*.db

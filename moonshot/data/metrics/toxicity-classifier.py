@@ -11,25 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class ToxicityClassifier(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {
-            "toxicity_classifier": {
-                "type": "object",
-                "properties": {
-                    "toxicity": {
-                        "type": "object",
-                        "additionalProperties": {"type": "number"},
-                    },
-                    "toxicity_percentage": {"type": "number"},
-                },
-                "required": ["toxicity", "toxicity_percentage"],
-            }
-        },
-        "required": ["toxicity_classifier"],
-    }
-
     def __init__(self):
         self.id = "toxicityclassifier"
         self.name = "ToxicityClassifier"
@@ -97,16 +78,9 @@ class ToxicityClassifier(MetricInterface):
                 toxicity_count += 1
             scores[result] = score
 
-        response_dict = {
+        return {
             "toxicity_classifier": {
                 "toxicity": scores,
                 "toxicity_percentage": toxicity_count / len(predicted_results),
             }
         }
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, ToxicityClassifier.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[ToxicityClassifier] Failed json schema validation for output response."
-            )
