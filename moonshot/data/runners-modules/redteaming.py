@@ -84,7 +84,6 @@ class RedTeaming:
             for attack_strategy_args in self.runner_args.get("attack_strategies", None):
                 metric_instances = []
                 context_strategy_instances = []
-                print("attack_strategy_args", attack_strategy_args)
                 # load other optional modules
                 if "metric_ids" in attack_strategy_args:
                     metric_instances = [
