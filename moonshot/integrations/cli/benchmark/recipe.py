@@ -1,4 +1,3 @@
-import asyncio
 from ast import literal_eval
 
 import cmd2
@@ -7,14 +6,11 @@ from rich.table import Table
 
 from moonshot.api import (
     api_create_recipe,
-    api_create_recipe_runner,
     api_delete_recipe,
     api_get_all_recipe,
     api_read_recipe,
     api_update_recipe,
 )
-from moonshot.src.api.api_result import api_read_result
-from moonshot.src.api.api_runner import api_get_all_runner_name, api_load_runner
 
 console = Console()
 
@@ -24,23 +20,24 @@ console = Console()
 # ------------------------------------------------------------------------------
 def add_recipe(args) -> None:
     """
-    Add a new recipe.
+    Add a new recipe. This function is responsible for creating a new recipe based on the provided parameters.
 
-    This function creates a new recipe with the specified parameters.
-    It first converts the tags, dataset, prompt_templates, metrics, and attack_strategies arguments from a string
-    to a list using the literal_eval function from the ast module. Then, it calls the api_create_recipe function
-    from the moonshot.api module to create the new recipe.
+    It processes the input parameters by converting the 'tags', 'dataset', 'prompt_templates', 'metrics', and
+    'attack_modules' from string representations of lists into actual lists using the 'literal_eval' function from
+    the 'ast' module.
+
+    After the conversion, it invokes the 'api_create_recipe' function from the 'moonshot.api' module to persist
+    the new recipe.
 
     Args:
-        args: A namespace object from argparse. It should have the following attributes:
+        args: A namespace object from argparse with the following attributes:
             name (str): The name of the new recipe.
-            description (str): The description of the recipe.
-            tags (str): A string representation of a list of tags.
-            dataset (str): A string representation of a list of datasets.
-            prompt_templates (str): A string representation of a list of prompt templates.
-            metrics (str): A string representation of a list of metrics.
-            type (str): The type of the recipe.
-            attack_strategies (str): A string representation of a list of attack strategies.
+            description (str): A detailed description of the recipe.
+            tags (str): A string representation of a list containing tags associated with the recipe.
+            dataset (str): A string representation of a list containing datasets used in the recipe.
+            prompt_templates (str): A string representation of a list containing prompt templates for the recipe.
+            metrics (str): A string representation of a list containing metrics to evaluate the recipe.
+            attack_modules (str): A string representation of a list containing attack modules to be used in the recipe.
 
     Returns:
         None
@@ -50,7 +47,7 @@ def add_recipe(args) -> None:
         datasets = literal_eval(args.dataset)
         prompt_templates = literal_eval(args.prompt_templates)
         metrics = literal_eval(args.metrics)
-        attack_strategies = literal_eval(args.attack_strategies)
+        attack_modules = literal_eval(args.attack_modules)
 
         api_create_recipe(
             args.name,
@@ -59,8 +56,7 @@ def add_recipe(args) -> None:
             datasets,
             prompt_templates,
             metrics,
-            args.type,
-            attack_strategies,
+            attack_modules,
         )
         print("[add_recipe]: Recipe created.")
     except Exception as e:
@@ -107,56 +103,56 @@ def view_recipe(args) -> None:
         print(f"[view_recipe]: {str(e)}")
 
 
-def run_recipe(args) -> None:
-    """
-    Run a specific recipe.
+# def run_recipe(args) -> None:
+#     """
+#     Run a specific recipe.
 
-    This function runs a specific recipe by first checking if a runner with the provided name already exists.
-    If it does, it loads the runner using the api_load_runner function from the moonshot.api module.
-    If it doesn't, it creates a new runner using the api_create_recipe_runner function from the moonshot.api module.
-    The runner is created or loaded using the recipe, endpoints, and number of prompts provided in the args.
+#     This function runs a specific recipe by first checking if a runner with the provided name already exists.
+#     If it does, it loads the runner using the api_load_runner function from the moonshot.api module.
+#     If it doesn't, it creates a new runner using the api_create_recipe_runner function from the moonshot.api module.
+#     The runner is created or loaded using the recipe, endpoints, and number of prompts provided in the args.
 
-    The function then executes the run using the run method of the runner object.
-    After the run is complete, it retrieves the run arguments of the latest run using the get_latest_run_arguments
-    method of the runner object.
+#     The function then executes the run using the run method of the runner object.
+#     After the run is complete, it retrieves the run arguments of the latest run using the get_latest_run_arguments
+#     method of the runner object.
 
-    Finally, it displays the results using the show_recipe_results function and closes the runner.
+#     Finally, it displays the results using the show_recipe_results function and closes the runner.
 
-    Args:
-        args: A namespace object from argparse. It should have the following attributes:
-            name (str): A string representation of the recipe runner. Each run is represented by its ID.
-            recipes (str): A string representation of a list of recipes to run.
-            endpoints (str): A string representation of a list of endpoints to run.
-            num_of_prompts (int): The number of prompts to generate for each recipe.
+#     Args:
+#         args: A namespace object from argparse. It should have the following attributes:
+#             name (str): A string representation of the recipe runner. Each run is represented by its ID.
+#             recipes (str): A string representation of a list of recipes to run.
+#             endpoints (str): A string representation of a list of endpoints to run.
+#             num_of_prompts (int): The number of prompts to generate for each recipe.
 
-    Returns:
-        None
-    """
-    try:
-        name = args.name
-        recipes = literal_eval(args.recipes)
-        endpoints = literal_eval(args.endpoints)
-        num_of_prompts = args.num_of_prompts
+#     Returns:
+#         None
+#     """
+#     try:
+#         name = args.name
+#         recipes = literal_eval(args.recipes)
+#         endpoints = literal_eval(args.endpoints)
+#         num_of_prompts = args.num_of_prompts
 
-        # Run the recipes with the defined endpoints
-        if name in api_get_all_runner_name():
-            rec_runner = api_load_runner(name)
-        else:
-            rec_runner = api_create_recipe_runner(
-                name, recipes, endpoints, num_of_prompts
-            )
+#         # Run the recipes with the defined endpoints
+#         if name in api_get_all_runner_name():
+#             rec_runner = api_load_runner(name)
+#         else:
+#             rec_runner = api_create_recipe_runner(
+#                 name, recipes, endpoints, num_of_prompts
+#             )
 
-        asyncio.run(rec_runner.run())
-        rec_runner.close()
+#         asyncio.run(rec_runner.run())
+#         rec_runner.close()
 
-        # Display results
-        result_info = api_read_result(name)
-        show_recipe_results(
-            recipes, endpoints, result_info, result_info["metadata"]["duration"]
-        )
+#         # Display results
+#         result_info = api_read_result(name)
+#         show_recipe_results(
+#             recipes, endpoints, result_info, result_info["metadata"]["duration"]
+#         )
 
-    except Exception as e:
-        print(f"[run_recipe]: {str(e)}")
+#     except Exception as e:
+#         print(f"[run_recipe]: {str(e)}")
 
 
 def update_recipe(args) -> None:
@@ -210,14 +206,16 @@ def delete_recipe(args) -> None:
 # ------------------------------------------------------------------------------
 def display_recipes(recipes_list):
     """
-    Display a list of recipes.
+    Display a list of recipes in a table format.
 
-    This function takes a list of recipes and displays them in a table format. If the list is empty, it prints a
-    message indicating that no recipes were found.
+    This function renders a list of recipes as a table on the console. If the list is empty, a message is displayed
+    to indicate the absence of recipes. Each recipe is detailed with its ID, name, description, and associated
+    information such as tags, datasets, prompt templates, metrics, and attack modules.
 
     Args:
-        recipes_list (list): A list of recipes. Each recipe is a dictionary with keys 'id', 'name',
-        'description', 'tags', 'datasets', 'prompt_templates', and 'metrics'.
+        recipes_list (list): A list of recipes where each recipe is represented as a dictionary. The dictionary
+        contains the following keys: 'id', 'name', 'description', 'tags', 'datasets', 'prompt_templates', 'metrics',
+        and 'attack_modules'.
 
     Returns:
         None
@@ -233,12 +231,11 @@ def display_recipes(recipes_list):
                 datasets,
                 prompt_templates,
                 metrics,
-                rec_type,
-                attack_strategies,
+                attack_modules,
             ) = recipe.values()
             recipe_info = (
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
-                f"Tags:\n{tags}\n\nType:\n{rec_type}"
+                f"Tags:\n{tags}"
             )
 
             if datasets:
@@ -262,14 +259,14 @@ def display_recipes(recipes_list):
             else:
                 metrics_info = "[blue]Metrics[/blue]: nil"
 
-            if attack_strategies:
-                attack_strategies_info = "[blue]Attack Strategies[/blue]:" + "".join(
-                    f"\n{i + 1}. {item}" for i, item in enumerate(attack_strategies)
+            if attack_modules:
+                attack_modules_info = "[blue]Attack Modules[/blue]:" + "".join(
+                    f"\n{i + 1}. {item}" for i, item in enumerate(attack_modules)
                 )
             else:
-                attack_strategies_info = "[blue]Attack Strategies[/blue]: nil"
+                attack_modules_info = "[blue]Attack Modules[/blue]: nil"
 
-            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_strategies_info}"
+            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_modules_info}"
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)
         console.print(table)
@@ -364,7 +361,6 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     "\"['bbq-lite-age-ambiguous']\" "
     "\"['analogical-similarity','auto-categorisation']\" "
     "\"['bertscore','bleuscore']\" "
-    "benchmark "
     '"[]"',
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")
@@ -384,12 +380,9 @@ add_recipe_args.add_argument(
     "metrics", type=str, help="List of metrics to be included in the new recipe"
 )
 add_recipe_args.add_argument(
-    "type", type=str, help="The type of recipe, benchmark or redteam"
-)
-add_recipe_args.add_argument(
-    "attack_strategies",
+    "attack_modules",
     type=str,
-    help="List of attack strategies to be included in the new recipe",
+    help="List of attack modules to be included in the new recipe",
 )
 
 # Update recipe arguments
@@ -398,7 +391,7 @@ update_recipe_args = cmd2.Cmd2ArgumentParser(
     epilog="available keys: \n  name: Name of recipe \n  description: Description of recipe \n"
     "  tags: List of tags \n  datasets: List of datasets \n  prompt_templates: List of prompt templates \n"
     "  metrics: List of metrics \n  type: Recipe type eg. benchmark or redteam \n"
-    "  attack_strategies: List of attack strategies\n\nExample:\n update_recipe my-new-recipe "
+    "  attack_modules: List of attack modules\n\nExample:\n update_recipe my-new-recipe "
     "\"[('name', 'my-special-bbq-recipe'), ('tags', ['fairness', 'bbq'])]\" ",
 )
 update_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")

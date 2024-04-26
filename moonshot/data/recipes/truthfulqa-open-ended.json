@@ -13,6 +13,5 @@
     "metrics": [
         "rougescore"
     ],
-    "type": "benchmark",
-    "attack_strategies": []
+    "attack_modules": []
 }

@@ -68,45 +68,87 @@ class Connector:
 
         self.pre_prompt = ""
         self.post_prompt = ""
+        self.system_prompt = ""
 
         # Rate limiting
         self.rate_limiter = ep_args.max_calls_per_second
+        # Initialize the token count to the maximum limit
+        self.tokens = ep_args.max_calls_per_second
+        self.updated_at = time.time()
         self.semaphore = asyncio.Semaphore(ep_args.max_concurrency)
-        self.last_call_time = None
 
         # Connection timeout
         self.timeout = ep_args.params.get("timeout", 600)
         self.allow_retries = ep_args.params.get("allow_retries", True)
         self.retries_times = ep_args.params.get("num_of_retries", 3)
 
-    @staticmethod
-    def rate_limited(func):
-        """
-        Decorator function to limit the rate of function calls.
+        # Optional params
+        excluded_keys = {"allow_retries", "timeout", "num_of_retries"}
+        self.optional_params = {
+            k: v for k, v in ep_args.params.items() if k not in excluded_keys
+        }
 
-        This decorator ensures that the decorated function is not called more frequently than the rate limit
-        specified by the `rate_limiter` attribute of the `Connector` instance. If the function is called more
-        frequently, it sleeps for the necessary amount of time to maintain the rate limit.
+    async def _add_tokens(self):
+        """
+        Replenishes the token bucket based on the elapsed time since the last update.
+
+        This method calculates the number of tokens to add to the bucket by considering the time that has elapsed
+        since the tokens were last replenished. The rate at which tokens are added is determined by the `rate_limiter`
+        attribute, which defines the maximum number of tokens that can be added per second. The total number of tokens
+        in the bucket will never exceed the rate limit.
+
+        The method updates the `updated_at` attribute to the current time after tokens are added, ensuring that
+        the next token addition will be calculated based on the correct elapsed time.
+
+        Usage:
+            # Assume `self` is an instance of a class with `rate_limiter`, `tokens`, and `updated_at` attributes.
+            await self.add_tokens()
+        """
+        now = time.time()
+        elapsed = now - self.updated_at
+        # Add tokens based on elapsed time
+        increment = elapsed * self.rate_limiter
+        self.tokens = min(self.rate_limiter, self.tokens + increment)
+        self.updated_at = now
+
+    @staticmethod
+    def rate_limited(func: Callable) -> Callable:
+        """
+        A decorator to enforce rate limiting on an asynchronous function using a token bucket strategy.
+
+        This decorator ensures that the decorated function adheres to a rate limit specified by the `rate_limiter`
+        attribute of the class instance it belongs to. It uses a token bucket mechanism where tokens are added
+        to the bucket over time, and each function call consumes a token. If there are no tokens available,
+        the function's execution is delayed until the next token is added.
+
+        The decorator also uses an `asyncio.Semaphore` to control concurrency, allowing multiple instances of the
+        function to run in parallel up to a limit, without exceeding the rate limit.
 
         Args:
-            func (Callable): The function to be rate-limited.
+            func (Callable): The asynchronous function to be decorated.
 
         Returns:
-            Callable: The wrapped function, which enforces the rate limit.
+            Callable: The decorated function wrapped with rate limiting logic.
+
+        Usage:
+            @rate_limited
+            async def some_async_function(*args, **kwargs):
+                # Function implementation
         """
 
         @wraps(func)
         async def wrapper(self, *args, **kwargs):
             async with self.semaphore:
-                if self.last_call_time is not None:
-                    time_since_last_call = time.time() - self.last_call_time
-                    if time_since_last_call < 1.0 / self.rate_limiter:
-                        sleep_time = 1.0 / self.rate_limiter - time_since_last_call
-                        print(
-                            f"[{self.id}]: Hit rate-limit: Sleeping {round(sleep_time, 2)}s..."
-                        )
-                        await asyncio.sleep(sleep_time)
-                self.last_call_time = time.time()
+                # Wait for token availability
+                await self._add_tokens()
+                if self.tokens < 1:
+                    # Calculate the time to wait until the next token is available
+                    sleep_time = (1 - self.tokens) / self.rate_limiter
+                    await asyncio.sleep(sleep_time)
+                    # Re-check for token availability after sleeping
+                    await self._add_tokens()
+                # Consume a token and proceed with the function call
+                self.tokens -= 1
                 return await func(self, *args, **kwargs)
 
         return wrapper
@@ -263,3 +305,15 @@ class Connector:
         except Exception as e:
             print(f"Failed to get prediction: {str(e)}")
             raise e
+
+    def set_system_prompt(self, system_prompt: str) -> None:
+        """
+        Assigns a new system prompt to this connector instance.
+
+        The system prompt serves as a preconfigured command or message that the connector can use to initiate
+        interactions or execute specific operations.
+
+        Parameters:
+            system_prompt (str): The new system prompt to set for this connector.
+        """
+        self.system_prompt = system_prompt

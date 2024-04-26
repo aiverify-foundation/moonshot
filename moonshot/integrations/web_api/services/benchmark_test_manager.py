@@ -4,8 +4,6 @@ from typing import Any, TypedDict
 from slugify import slugify
 from dependency_injector.wiring import inject
 
-from moonshot.src.runners.runner_type import RunnerType
-
 from .... import api as moonshot_api
 from ..types.types import CookbookTestRunProgress
 from ..services.benchmark_test_state import BenchmarkTestState
@@ -43,55 +41,34 @@ class BenchmarkTestManager(BaseService):
     def on_task_completed(self, task: asyncio.Task[Any]) -> None:
         self.logger.debug(f"Task {task.get_name()} has completed")
 
-    #TODO - get executor id from excutor instance somehow
-    def get_executor_id(self, type: RunnerType, name: str) -> str:
-        # This is a temporary workaround to get exec id without awaiting the long running execution
-        # Unable to run execute separately because instance creation needs to be in the same async task
-        # Use the same slugify pattern that ms lib uses to get the ID upfront
-        # Review and refactor required for this - ID needs to be from MS lib
-        prefix = (
-                "recipe-"
-                if type == RunnerType.RECIPE
-                else "cookbook-"
-            )
-        id = slugify( name, lowercase=True)
-        return id
+    def create_runner(self, runner_name, endpoints, progress_callback_func):
+        return moonshot_api.api_create_runner(name=runner_name, endpoints=endpoints, progress_callback_func=progress_callback_func)
 
-    async def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
+    async def create_executor_and_execute(self, benchmark_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
         try:
-            if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-                executor = moonshot_api.api_create_cookbook_runner(
-                    name=executor_input_data.name,
-                    cookbooks=executor_input_data.cookbooks,
-                    endpoints=executor_input_data.endpoints,
-                    num_of_prompts=executor_input_data.num_of_prompts,
-                    progress_callback_func=self.webhook.on_executor_update
+            runner = self.create_runner(benchmark_input_data.name, benchmark_input_data.endpoints, self.webhook.on_executor_update)
+            if isinstance(benchmark_input_data, CookbookExecutorCreateDTO):
+                executor = runner.run_cookbooks(
+                    cookbooks=benchmark_input_data.cookbooks,
+                    num_of_prompts=benchmark_input_data.num_of_prompts,
                 )
             else:
-                executor = moonshot_api.api_create_recipe_runner(
-                    name=executor_input_data.name,
-                    recipes=executor_input_data.recipes,
-                    endpoints=executor_input_data.endpoints,
-                    num_of_prompts=executor_input_data.num_of_prompts,
-                    progress_callback_func=self.webhook.on_executor_update
+                executor = runner.run_recipes(
+                    recipes=benchmark_input_data.recipes,
+                    num_of_prompts=benchmark_input_data.num_of_prompts,
                 )
         except Exception as e:
             self.logger.error(f"Failed to execute benchmark - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
-        await executor.run()
-        executor.cancel()
+        
+        await executor
+        executor.close()
 
     def schedule_test_task(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> str:
         task_id = self.generate_unique_task_id()
-        if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-            type = RunnerType.COOKBOOK
-            #previously, executor.execute() was synchronous, so we run it on separate thread.
-            #now that it is awaitable, we just run it in the same thread
-            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
-        else:
-            type = RunnerType.RECIPE
-            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
-        
+
+        exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
+
         task = asyncio.create_task(exec_benchmark_coroutine, name=task_id)
         def on_executor_completion(task: asyncio.Task[Any]):
             if task.exception():
@@ -99,7 +76,9 @@ class BenchmarkTestManager(BaseService):
             else:
                 self.logger.debug(f"Executor {task.get_name()} has completed")
         task.add_done_callback(on_executor_completion)
+
         # Id getter needs review. Read comments in function
-        id = self.get_executor_id(type, executor_input_data.name)
+        id = slugify( executor_input_data.name, lowercase=True)
+        
         self.add_task(id, task)
         return id

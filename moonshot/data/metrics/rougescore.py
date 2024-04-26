@@ -11,47 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class RougeScore(MetricInterface):
-    # JSON schema as a class variable
-    output_schema = {
-        "type": "object",
-        "properties": {
-            "rouge": {
-                "type": "object",
-                "properties": {
-                    "rouge-1": {
-                        "type": "object",
-                        "properties": {
-                            "f": {"type": "number"},
-                            "p": {"type": "number"},
-                            "r": {"type": "number"},
-                        },
-                        "required": ["f", "p", "r"],
-                    },
-                    "rouge-2": {
-                        "type": "object",
-                        "properties": {
-                            "f": {"type": "number"},
-                            "p": {"type": "number"},
-                            "r": {"type": "number"},
-                        },
-                        "required": ["f", "p", "r"],
-                    },
-                    "rouge-l": {
-                        "type": "object",
-                        "properties": {
-                            "f": {"type": "number"},
-                            "p": {"type": "number"},
-                            "r": {"type": "number"},
-                        },
-                        "required": ["f", "p", "r"],
-                    },
-                },
-                "required": ["rouge-1", "rouge-2", "rouge-l"],
-            }
-        },
-        "required": ["rouge"],
-    }
-
     def __init__(self):
         self.id = "rougescore"
         self.name = "RougeScore"
@@ -95,11 +54,4 @@ class RougeScore(MetricInterface):
         """
         rouge = Rouge()
         scores = rouge.get_scores(predicted_results, targets, avg=True)
-        response_dict = {"rouge": scores}
-        # Validate that the output dict passes json schema validation
-        if self.validate_output(response_dict, RougeScore.output_schema):
-            return response_dict
-        else:
-            raise RuntimeError(
-                "[RougeScore] Failed json schema validation for output response."
-            )
+        return {"rouge": scores}

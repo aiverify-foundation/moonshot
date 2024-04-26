@@ -9,7 +9,7 @@ from ..services.prompt_template_service import PromptTemplateService
 
 router = APIRouter()
 
-@router.get("/v1/prompt_templates")
+@router.get("/v1/prompt-templates")
 @inject
 def get_all_prompt_templates(
     prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
@@ -28,7 +28,7 @@ def get_all_prompt_templates(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.get("/v1/prompt_templates/name")
+@router.get("/v1/prompt-templates/name")
 @inject
 def get_all_prompt_templates_names(
     prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
@@ -48,7 +48,7 @@ def get_all_prompt_templates_names(
 
 
 
-@router.get("/v1/context_strategies")
+@router.get("/v1/context-strategies")
 @inject
 def get_all_context_strategies(
     prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
@@ -67,7 +67,7 @@ def get_all_context_strategies(
             raise HTTPException(status_code=500, detail=e.msg)
         
 
-@router.delete("/v1/context_strategies/{ctx_strategy_name}")
+@router.delete("/v1/context-strategies/{ctx_strategy_name}")
 @inject
 def delete_context_strategy(
     ctx_strategy_name: str,

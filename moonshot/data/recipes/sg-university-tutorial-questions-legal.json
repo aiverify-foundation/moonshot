@@ -13,6 +13,5 @@
     "metrics": [
         "bertscore"
     ],
-    "type": "benchmark",
-    "attack_strategies": []
+    "attack_modules": []
 }

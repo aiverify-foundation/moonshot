@@ -1,13 +1,12 @@
-import glob
-import json
 from pathlib import Path
 
 from jinja2 import Template
-from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
+
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
 
 
-class PromptTemplateManager:
+class PromptTemplate:
     def __init__(self):
         pass
 
@@ -19,18 +18,14 @@ class PromptTemplateManager:
         Returns:
             list: A list of prompt template names.
         """
-        try:
-            prompt_template_file_path = EnvironmentVars.get_file_directory(
-                EnvVariables.PROMPT_TEMPLATES.name
-            )[0]
-            filepaths = [
-                Path(fp).stem
-                for fp in glob.iglob(f"{prompt_template_file_path}/*.json")
-                if "__" not in fp
-            ]
-            return filepaths
-        except Exception as e:
-            raise e
+
+        filepaths = []
+        prompt_template_files = Storage.get_objects(
+            EnvVariables.PROMPT_TEMPLATES.name, "json"
+        )
+        for prompt_template in prompt_template_files:
+            filepaths.append(Path(prompt_template).stem)
+        return filepaths
 
     @staticmethod
     def get_all_prompt_template_details() -> list[dict]:
@@ -40,24 +35,19 @@ class PromptTemplateManager:
         Returns:
             list[dict]: A list of dictionaries containing the details of each prompt template.
         """
-        list_of_pt_names = PromptTemplateManager.get_all_prompt_template_names()
+        list_of_pt_names = PromptTemplate.get_all_prompt_template_names()
         list_of_pt_contents = []
+
         for pt_name in list_of_pt_names:
-            try:
-                pt_file = open(
-                    f"{EnvironmentVars.get_file_directory(EnvVariables.PROMPT_TEMPLATES.name)[0]}/{pt_name}.json",
-                    "r",
-                    encoding="utf-8",
-                )
-                pt_contents = json.load(pt_file)
-                name = pt_contents["name"]
-                description = pt_contents["description"]
-                template = pt_contents["template"]
-                list_of_pt_contents.append(
-                    {"name": name, "description": description, "template": template}
-                )
-            except (FileNotFoundError, ValueError) as e:
-                raise e
+            pt_contents = Storage.read_object(
+                EnvVariables.PROMPT_TEMPLATES.name, pt_name, "json"
+            )
+            name = pt_contents["name"]
+            description = pt_contents["description"]
+            template = pt_contents["template"]
+            list_of_pt_contents.append(
+                {"name": name, "description": description, "template": template}
+            )
         return list_of_pt_contents
 
     @staticmethod
