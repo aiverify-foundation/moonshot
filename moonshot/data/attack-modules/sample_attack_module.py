@@ -6,6 +6,7 @@ class SampleAttackModule(AttackModule):
     def __init__(self, am_arguments: AttackModuleArguments):
         # Initialize super class
         super().__init__(am_arguments)
+        self.description = "This is a sample attack module."
 
     async def execute(self):
         """
@@ -15,8 +16,8 @@ class SampleAttackModule(AttackModule):
         processes the dataset through a prompt template, retrieves the connector to the first
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
-        # return await self.perform_attack_default()
-        return await self.perform_attack_manually()
+        self.load_modules()
+        return await self.perform_attack_default()
 
     async def perform_attack_default(self) -> list:
         """
