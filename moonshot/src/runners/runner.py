@@ -443,19 +443,20 @@ class Runner:
                     ),
                     self.progress_callback_func,
                 )
-                # Note: The lock is held during setup but should be released before long-running operations
-                # Execute the long-running operation outside of the lock
-                await self.current_operation.run()
-
-                # After completion, reset current_operation to None within the lock
-                async with self.current_operation_lock:
-                    self.current_operation = None
-                    print(
-                        f"[Runner] {self.id} - Automated red teaming run completed and reset."
-                    )
             else:
                 # manual red teaming
-                pass
+                return
+
+        # Note: The lock is held during setup but should be released before long-running operations
+        # Execute the long-running operation outside of the lock
+        await self.current_operation.run()
+
+        # After completion, reset current_operation to None within the lock
+        async with self.current_operation_lock:
+            self.current_operation = None
+            print(
+                f"[Runner] {self.id} - Automated red teaming run completed and reset."
+            )
 
     async def run(self, runner_type: RunnerType, runner_args: dict) -> None:
         """

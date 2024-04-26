@@ -3,12 +3,8 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from moonshot.src.connectors.connector import Connector
-from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
-from moonshot.src.metrics.metric import Metric
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
-from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.redteaming.session.session import SessionMetadata
 from moonshot.src.storage.db_interface import DBInterface
 
@@ -63,62 +59,43 @@ class RedTeaming:
         self.runner_args = runner_args
         self.database_instance = database_instance
         self.session_metadata = session_metadata
-
-        self.num_of_prompts = self.runner_args.get("num_of_prompts", 0)
         self.system_prompt = self.runner_args.get("system_prompt", "")
         self.attack_strategies_args = self.runner_args.get("attack_strategies", None)
 
         # ------------------------------------------------------------------------------
-        # Part 1: Load all required modules
+        # Part 1: Load attack module
         # ------------------------------------------------------------------------------
-        print("[Red teaming] Part 1: Loading all required modules...")
+        print("[Red teaming] Part 1: Loading All Attack Module(s)...")
         loaded_attack_modules = []
         try:
-            # load connectors
-            self.llm_connectors = [
-                Connector.create(ConnectorEndpoint.read(endpoint))
-                for endpoint in self.session_metadata.endpoints
-            ]
-
             # load red teaming modules
             for attack_strategy_args in self.runner_args.get("attack_strategies", None):
-                metric_instances = []
-                context_strategy_instances = []
-                # load other optional modules
-                if "metric_ids" in attack_strategy_args:
-                    metric_instances = [
-                        Metric.load(metric_id)
-                        for metric_id in attack_strategy_args["metric_ids"]
-                    ]
-
-                if "context_strategy_ids" in attack_strategy_args:
-                    context_strategy_instances = [
-                        ContextStrategy.load(context_strategy_id)
-                        for context_strategy_id in attack_strategy_args[
-                            "context_strategy_ids"
-                        ]
-                    ]
-
                 # load attack module with arguments
                 loaded_attack_module = AttackModule.load(
                     AttackModuleArguments(
                         name=attack_strategy_args.get("attack_module_id", ""),
-                        num_of_prompts=0,
-                        connector_instances=self.llm_connectors,
-                        datasets=attack_strategy_args.get("dataset_ids", []),
+                        connector_eps=self.session_metadata.endpoints
+                        if self.session_metadata.endpoints
+                        else [],
                         prompt_templates=attack_strategy_args.get(
                             "prompt_template_ids", []
                         ),
                         prompt=attack_strategy_args.get("prompt", ""),
-                        metric_instances=metric_instances,
-                        context_strategies=context_strategy_instances,
+                        metric_ids=attack_strategy_args["metric_ids"]
+                        if "metric_ids" in attack_strategy_args
+                        else [],
+                        context_strategy_ids=attack_strategy_args[
+                            "context_strategy_ids"
+                        ]
+                        if "context_strategy_ids" in attack_strategy_args
+                        else [],
                         db_instance=self.database_instance,
                     )
                 )
                 loaded_attack_modules.append(loaded_attack_module)
 
         except Exception as e:
-            print(f"Unable to load modules in attack strategy: {str(e)}")
+            print(f"Unable to load attack modules in attack strategy: {str(e)}")
 
         # ------------------------------------------------------------------------------
         # Part 2: Run attack module(s)
