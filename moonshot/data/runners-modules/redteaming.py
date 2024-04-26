@@ -59,8 +59,6 @@ class RedTeaming:
         self.runner_args = runner_args
         self.database_instance = database_instance
         self.session_metadata = session_metadata
-        self.system_prompt = self.runner_args.get("system_prompt", "")
-        self.attack_strategies_args = self.runner_args.get("attack_strategies", None)
 
         # ------------------------------------------------------------------------------
         # Part 1: Load attack module
@@ -81,6 +79,7 @@ class RedTeaming:
                             "prompt_template_ids", []
                         ),
                         prompt=attack_strategy_args.get("prompt", ""),
+                        system_prompt=attack_strategy_args.get("system_prompt", ""),
                         metric_ids=attack_strategy_args["metric_ids"]
                         if "metric_ids" in attack_strategy_args
                         else [],
