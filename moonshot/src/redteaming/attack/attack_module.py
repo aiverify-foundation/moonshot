@@ -31,6 +31,7 @@ class AttackModule:
         self.connector_ids = am_args.connector_eps
         self.prompt_templates = am_args.prompt_templates
         self.prompt = am_args.prompt
+        self.system_prompt = am_args.system_prompt
         self.metric_ids = am_args.metric_ids
         self.context_strategy_ids = am_args.context_strategy_ids
         self.db_instance = am_args.db_instance
@@ -94,12 +95,9 @@ class AttackModule:
             generated prompt details.
 
         """
-        cs_id = ""
-        pt_id = ""
         num_of_previous_chats = 3
         if self.context_strategy_ids:
             context_strategy_instance = self.context_strategy_instances[0]
-            cs_id = context_strategy_instance.id
             prompt = ContextStrategy.process_prompt_cs(
                 prompt,
                 context_strategy_instance.id,
@@ -120,11 +118,11 @@ class AttackModule:
         yield RedTeamingPromptArguments(
             conn_id=target_llm_connector_id,
             am_id=self.name,
-            cs_id=cs_id,
-            pt_id=pt_id,
-            me_id="",
+            cs_id=self.context_strategy_ids[0] if self.context_strategy_ids else "",
+            pt_id=self.prompt_templates[0] if self.prompt_templates else "",
+            me_id=self.metric_ids[0] if self.metric_ids else "",
             original_prompt=self.prompt,
-            system_prompt="",
+            system_prompt=self.system_prompt,
             start_time="",
             connector_prompt=ConnectorPromptArguments(
                 prompt_index=0,
@@ -187,7 +185,7 @@ class AttackModule:
                     self.metric_ids[0] if self.metric_ids else "",
                     self.prompt,  # original prompt
                     prepared_prompt,  # prepared prompt
-                    "",  # system prompt
+                    self.system_prompt,  # system prompt
                     response.predicted_results,
                     response.duration,
                     str(start_time),
@@ -229,7 +227,7 @@ class AttackModule:
                 self.metric_ids[0] if self.metric_ids else "",
                 self.prompt,  # original prompt
                 prepared_prompt,  # prepared prompt
-                "",  # system prompt
+                self.system_prompt,  # system prompt
                 response.predicted_results,
                 response.duration,
                 str(start_time),
@@ -289,6 +287,7 @@ class AttackModule:
                 conn_id=prompt_info.conn_id,
                 am_id=prompt_info.am_id,
                 cs_id=prompt_info.cs_id,
+                me_id=prompt_info.me_id,
                 pt_id=prompt_info.pt_id,
                 original_prompt=self.prompt,
                 system_prompt=prompt_info.system_prompt,

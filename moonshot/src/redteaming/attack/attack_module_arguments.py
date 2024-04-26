@@ -19,6 +19,9 @@ class AttackModuleArguments(BaseModel):
     # user's prompt
     prompt: str = ""
 
+    # system prompt
+    system_prompt: str = ""
+
     # list of metric ids to be used (if any)
     metric_ids: list = []
 
