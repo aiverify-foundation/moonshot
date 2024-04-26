@@ -13,6 +13,8 @@ from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.metric_service import MetricService
 from .services.runner_service import RunnerService
+from .services.dataset_service import DatasetService
+from .services.attack_module_service import AttackModuleService 
 
 import importlib.resources
 
@@ -78,6 +80,12 @@ class Container(containers.DeclarativeContainer):
     runner_service: providers.Singleton[RunnerService] = providers.Singleton(
         RunnerService,
     )
+    dataset_service: providers.Singleton[DatasetService] = providers.Singleton(
+        DatasetService,
+    )
+    am_service: providers.Singleton[AttackModuleService] = providers.Singleton(
+        AttackModuleService,
+    )
     wiring_config = containers.WiringConfiguration(modules=[
         ".routes.redteam",
         ".routes.prompt_template",
@@ -88,5 +96,7 @@ class Container(containers.DeclarativeContainer):
         ".routes.benchmark_result",
         ".routes.metric",
         ".routes.runner",
+        ".routes.dataset",
+        ".routes.attack_modules",
         ".services.benchmarking_service"
     ])
