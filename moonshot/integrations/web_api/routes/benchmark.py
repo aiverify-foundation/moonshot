@@ -11,7 +11,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/benchmarks")
+@router.post("/api/v1/benchmarks")
 @inject
 async def benchmark_executor(
     type: BenchmarkCollectionType,
@@ -30,7 +30,7 @@ async def benchmark_executor(
         raise HTTPException(status_code=500, detail=f"Unable to create and execute benchmark: {e}")
     
 
-@router.get("/v1/benchmarks/status")
+@router.get("/api/v1/benchmarks/status")
 @inject
 def get_benchmark_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
