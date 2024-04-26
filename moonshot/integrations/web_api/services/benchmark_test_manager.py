@@ -7,9 +7,9 @@ from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..types.types import CookbookTestRunProgress
 from ..services.benchmark_test_state import BenchmarkTestState
-from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
+from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
+from ..types.types import BenchmarkCollectionType
 from ..status_updater.webhook import Webhook
-from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
 from ..services.base_service import BaseService
 
 class BenchmarkTaskInfo(TypedDict):
@@ -44,19 +44,24 @@ class BenchmarkTestManager(BaseService):
     def create_runner(self, runner_name, endpoints, progress_callback_func):
         return moonshot_api.api_create_runner(name=runner_name, endpoints=endpoints, progress_callback_func=progress_callback_func)
 
-    async def create_executor_and_execute(self, benchmark_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
+    async def create_executor_and_execute(self, benchmark_input_data: BenchmarkRunnerDTO, benchmark_type : BenchmarkCollectionType) -> None:
         try:
-            runner = self.create_runner(benchmark_input_data.name, benchmark_input_data.endpoints, self.webhook.on_executor_update)
-            if isinstance(benchmark_input_data, CookbookExecutorCreateDTO):
-                executor = runner.run_cookbooks(
-                    cookbooks=benchmark_input_data.cookbooks,
-                    num_of_prompts=benchmark_input_data.num_of_prompts,
-                )
-            else:
-                executor = runner.run_recipes(
-                    recipes=benchmark_input_data.recipes,
-                    num_of_prompts=benchmark_input_data.num_of_prompts,
-                )
+            runner = self.create_runner(benchmark_input_data.run_name, benchmark_input_data.endpoints, self.webhook.on_executor_update)
+            if isinstance(benchmark_input_data, BenchmarkRunnerDTO):
+                if benchmark_type == BenchmarkCollectionType.COOKBOOK:
+                    executor = runner.run_cookbooks(
+                        cookbooks=benchmark_input_data.inputs,
+                        num_of_prompts=benchmark_input_data.num_of_prompts,
+                        random_seed=benchmark_input_data.random_seed,
+                        system_prompt=benchmark_input_data.system_prompt,
+                    )
+                else:
+                    executor = runner.run_recipes(
+                        recipes=benchmark_input_data.inputs,
+                        num_of_prompts=benchmark_input_data.num_of_prompts,
+                        random_seed=benchmark_input_data.random_seed,
+                        system_prompt=benchmark_input_data.system_prompt,
+                    )
         except Exception as e:
             self.logger.error(f"Failed to execute benchmark - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
@@ -64,10 +69,10 @@ class BenchmarkTestManager(BaseService):
         await executor
         executor.close()
 
-    def schedule_test_task(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> str:
+    def schedule_test_task(self, executor_input_data: BenchmarkRunnerDTO, benchmark_type : BenchmarkCollectionType) -> str:
         task_id = self.generate_unique_task_id()
 
-        exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
+        exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data,benchmark_type)
 
         task = asyncio.create_task(exec_benchmark_coroutine, name=task_id)
         def on_executor_completion(task: asyncio.Task[Any]):
@@ -78,7 +83,7 @@ class BenchmarkTestManager(BaseService):
         task.add_done_callback(on_executor_completion)
 
         # Id getter needs review. Read comments in function
-        id = slugify( executor_input_data.name, lowercase=True)
+        id = slugify( executor_input_data.run_name, lowercase=True)
         
         self.add_task(id, task)
         return id

@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
 from ..types.types import BenchmarkCollectionType
-from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
-from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..container import Container
 from ..services.benchmarking_service import BenchmarkingService
+from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
 from ..services.benchmark_test_state import BenchmarkTestState
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
@@ -16,7 +15,7 @@ router = APIRouter()
 @inject
 async def benchmark_executor(
     type: BenchmarkCollectionType,
-    data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO,
+    data: BenchmarkRunnerDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
         if type is BenchmarkCollectionType.COOKBOOK:
