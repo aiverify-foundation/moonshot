@@ -8,7 +8,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.get("/v1/benchmarks/results")
+@router.get("/api/v1/benchmarks/results")
 @inject
 async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])):
@@ -22,7 +22,7 @@ async def get_all_results(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")
 
 
-@router.get("/v1/benchmarks/results/name")
+@router.get("/api/v1/benchmarks/results/name")
 @inject
 async def get_all_results_name(
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])):
@@ -41,7 +41,7 @@ async def get_all_results_name(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve result name: {e.msg}")       
 
 
-@router.get("/v1/benchmarks/results/{result_id}")
+@router.get("/api/v1/benchmarks/results/{result_id}")
 @inject
 async def get_one_results(
     result_id: str,    
@@ -56,7 +56,7 @@ async def get_one_results(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")
         
         
-@router.delete("/v1/benchmarks/results/{result_id}")
+@router.delete("/api/v1/benchmarks/results/{result_id}")
 @inject
 def delete_result(
     result_id: str,

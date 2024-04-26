@@ -22,7 +22,7 @@ async def healthcheck():
     return {"status": "web api is up and running"}
 
 
-@router.get("/v1/sessions")
+@router.get("/api/v1/sessions")
 @inject
 async def get_all_sessions(
     session_service: SessionService = Depends(Provide[Container.session_service])
@@ -38,7 +38,7 @@ async def get_all_sessions(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.get("/v1/sessions/name")
+@router.get("/api/v1/sessions/name")
 @inject
 async def get_all_sessions_name(
     session_service: SessionService = Depends(Provide[Container.session_service])
@@ -54,7 +54,7 @@ async def get_all_sessions_name(
             raise HTTPException(status_code=500, detail=e.msg)
         
 
-@router.get("/v1/sessions/{session_id}")
+@router.get("/api/v1/sessions/{session_id}")
 @inject
 async def get_session_by_session_id(
     session_id: str,
@@ -80,7 +80,7 @@ async def get_session_by_session_id(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.post("/v1/sessions")
+@router.post("/api/v1/sessions")
 @inject
 async def create(
     session_dto: SessionCreateDTO,
@@ -99,7 +99,7 @@ async def create(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.post("/v1/sessions/{session_id}/prompt")
+@router.post("/api/v1/sessions/{session_id}/prompt")
 @inject
 async def prompt(
     session_id: str,
@@ -118,7 +118,7 @@ async def prompt(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.delete("/v1/sessions/{session_id}")
+@router.delete("/api/v1/sessions/{session_id}")
 @inject
 async def delete_session(
     session_id: str,
@@ -136,7 +136,7 @@ async def delete_session(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.put("/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
+@router.put("/api/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
 @inject
 async def set_prompt_template(
     session_id: str,
@@ -159,7 +159,7 @@ async def set_prompt_template(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.delete("/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
+@router.delete("/api/v1/sessions/{session_id}/prompt_templates/{prompt_template_name}")
 @inject
 async def unset_prompt_template(
     session_id: str,
@@ -182,7 +182,7 @@ async def unset_prompt_template(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.put("/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
+@router.put("/api/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
 @inject
 async def set_context_strategy(
     session_id: str,
@@ -203,7 +203,7 @@ async def set_context_strategy(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-@router.delete("/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
+@router.delete("/api/v1/sessions/{session_id}/context_strategies/{ctx_strategy_name}")
 @inject
 async def unset_context_strategy(
     session_id: str,

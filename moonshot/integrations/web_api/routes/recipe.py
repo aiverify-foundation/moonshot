@@ -12,7 +12,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/recipes")
+@router.post("/api/v1/recipes")
 @inject
 def create_recipe(
     recipe_data: RecipeCreateDTO,
@@ -33,7 +33,7 @@ def create_recipe(
             raise HTTPException(status_code=500, detail=f"Failed to create recipe: {e.msg}")    
 
 
-@router.get("/v1/recipes")
+@router.get("/api/v1/recipes")
 @inject
 def get_all_recipes(recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
     ):
@@ -51,7 +51,7 @@ def get_all_recipes(recipe_service: RecipeService = Depends(Provide[Container.re
             raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes: {e.msg}")   
 
 
-@router.get("/v1/recipes/name")
+@router.get("/api/v1/recipes/name")
 @inject
 def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
     ):
@@ -70,7 +70,7 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
             raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}")       
                          
 
-@router.get("/v1/recipes/{recipe_id}")
+@router.get("/api/v1/recipes/{recipe_id}")
 @inject 
 def get_recipe_by_id(
     recipe_id: str,
@@ -91,7 +91,7 @@ def get_recipe_by_id(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve recipe: {e.msg}")
 
 
-@router.put("/v1/recipes/{recipe_id}")
+@router.put("/api/v1/recipes/{recipe_id}")
 @inject
 async def update_recipe(
     recipe_data: RecipeCreateDTO,
@@ -113,7 +113,7 @@ async def update_recipe(
             raise HTTPException(status_code=500, detail=f"Failed to update recipe: {e.msg}")
         
 
-@router.delete("/v1/recipes/{recipe_id}")
+@router.delete("/api/v1/recipes/{recipe_id}")
 @inject
 def delete_recipe(
     recipe_id: str,

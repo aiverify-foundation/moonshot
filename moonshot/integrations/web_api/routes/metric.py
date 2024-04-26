@@ -8,7 +8,7 @@ from ..services.metric_service import MetricService
 
 router = APIRouter()
 
-@router.get("/v1/metrics")
+@router.get("/api/v1/metrics")
 @inject
 def get_all_metrics(
     metric_service: MetricService = Depends(Provide[Container.metric_service])
@@ -26,7 +26,7 @@ def get_all_metrics(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
-@router.delete("/v1/metrics/{metric_id}")
+@router.delete("/api/v1/metrics/{metric_id}")
 @inject
 def delete_metric(
     metric_id: str,
