@@ -19,6 +19,7 @@ from .routes import (
     prompt_template, 
     metric, 
     runner,
+    report_analysis,
     dataset
     )
 
@@ -83,6 +84,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     app.include_router(benchmark_result.router)
     app.include_router(metric.router)
     app.include_router(runner.router)
+    app.include_router(report_analysis.router)
     app.include_router(dataset.router)
     app.include_router(attack_modules.router)
     
