@@ -108,10 +108,13 @@ class AttackModule:
         if self.prompt_templates:
             # prepare prompt template generator
             pt_id = self.prompt_templates[0]
-            pt_info = Storage.read_object_generator(
-                EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json", "template"
+            pt_info = Storage.read_object_with_iterator(
+                EnvVariables.PROMPT_TEMPLATES.name,
+                pt_id,
+                "json",
+                iterator_keys=["template"],
             )
-            pt = next(pt_info)
+            pt = next(pt_info["template"])
             jinja2_template = Template(pt)
             prompt = jinja2_template.render({"prompt": prompt})
 

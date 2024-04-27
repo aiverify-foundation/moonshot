@@ -17,6 +17,7 @@ from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.cookbooks.cookbook import Cookbook
+from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.results.result import Result
@@ -638,11 +639,14 @@ class Benchmarking:
         if self.recipe_instance.prompt_templates:
             for pt_id in self.recipe_instance.prompt_templates:
                 # Retrieve the prompt template information from storage as a generator
-                pt_info_gen = Storage.read_object_generator(
-                    EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json", "template"
+                pt_info_gen = Storage.read_object_with_iterator(
+                    EnvVariables.PROMPT_TEMPLATES.name,
+                    pt_id,
+                    "json",
+                    iterator_keys=["template"],
                 )
                 # Get the first item from the generator, which contains the template data
-                pt_info = next(pt_info_gen)
+                pt_info = next(pt_info_gen["template"])
                 # Create a Jinja2 template from the retrieved template data
                 templates[pt_id] = Template(pt_info)
 
@@ -693,33 +697,27 @@ class Benchmarking:
         Yields:
             tuple[int, dict]: A tuple containing the index of the prompt and the prompt data itself.
         """
-        # Determine the total number of prompts in the dataset
-        total_prompts = Storage.count_objects(
-            EnvVariables.DATASETS.name, ds_id, "json", "examples.item"
-        )
+        # Get dataset arguments
+        ds_args = Dataset.read(ds_id)
 
         # Generate a list of prompt indices based on num_of_prompts and random_seed
-        if self.num_of_prompts == 0 or self.num_of_prompts > total_prompts:
-            prompt_indices = range(1, total_prompts + 1)
+        if (
+            self.num_of_prompts == 0
+            or self.num_of_prompts > ds_args.num_of_dataset_prompts
+        ):
+            prompt_indices = range(1, ds_args.num_of_dataset_prompts + 1)
         else:
             random.seed(self.random_seed)
             prompt_indices = random.sample(
-                range(1, total_prompts + 1), self.num_of_prompts
+                range(1, ds_args.num_of_dataset_prompts + 1), self.num_of_prompts
             )
         print(
-            f"[Benchmarking] Dataset {ds_id}, using {len(prompt_indices)} of {total_prompts} prompts."
+            f"[Benchmarking] Dataset {ds_id}, using {len(prompt_indices)} of {ds_args.num_of_dataset_prompts} prompts."
         )
 
-        # Fetch and yield only the selected prompts
-        prompts_gen = Storage.read_object_generator(
-            EnvVariables.DATASETS.name,
-            ds_id,
-            "json",
-            "examples.item",
-        )
         # Use for loop to iterate over the async generator
         prompts_gen_index = 0
-        for prompts_data in prompts_gen:
+        for prompts_data in ds_args.examples:
             if prompts_gen_index in prompt_indices:
                 yield prompts_gen_index, prompts_data
             prompts_gen_index += 1
