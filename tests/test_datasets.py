@@ -13,7 +13,7 @@ def test_delete_datasets():
 
     # Delete dataset if exists
     try:
-        api_delete_dataset("advglue-all")
+        api_delete_dataset("cvalues")
         print("Delete dataset if exist: PASSED")
     except Exception:
         print("Delete dataset if exist: FAILED")
