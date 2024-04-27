@@ -10,6 +10,8 @@ from pydantic import BaseModel
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
+from moonshot.src.metrics.metric import Metric
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.storage.storage import Storage
@@ -23,14 +25,15 @@ class AttackModule:
         """
 
     def __init__(self, am_args: AttackModuleArguments):
+        self.id = am_args.name
+        self.description = "Overwrite this with your attack module description!"
         self.name = am_args.name
-        self.num_of_prompts = am_args.num_of_prompts
-        self.connector_instances = am_args.connector_instances
-        self.datasets = am_args.datasets
+        self.connector_ids = am_args.connector_eps
         self.prompt_templates = am_args.prompt_templates
         self.prompt = am_args.prompt
-        self.metric_instances = am_args.metric_instances
-        self.context_strategies = am_args.context_strategies
+        self.system_prompt = am_args.system_prompt
+        self.metric_ids = am_args.metric_ids
+        self.context_strategy_ids = am_args.context_strategy_ids
         self.db_instance = am_args.db_instance
         self.params = am_args.params
 
@@ -92,12 +95,9 @@ class AttackModule:
             generated prompt details.
 
         """
-        cs_id = ""
-        pt_id = ""
         num_of_previous_chats = 3
-        if self.context_strategies:
-            context_strategy_instance = self.context_strategies[0]
-            cs_id = context_strategy_instance.id
+        if self.context_strategy_ids:
+            context_strategy_instance = self.context_strategy_instances[0]
             prompt = ContextStrategy.process_prompt_cs(
                 prompt,
                 context_strategy_instance.id,
@@ -118,11 +118,11 @@ class AttackModule:
         yield RedTeamingPromptArguments(
             conn_id=target_llm_connector_id,
             am_id=self.name,
-            cs_id=cs_id,
-            pt_id=pt_id,
-            me_id="",
+            cs_id=self.context_strategy_ids[0] if self.context_strategy_ids else "",
+            pt_id=self.prompt_templates[0] if self.prompt_templates else "",
+            me_id=self.metric_ids[0] if self.metric_ids else "",
             original_prompt=self.prompt,
-            system_prompt="",
+            system_prompt=self.system_prompt,
             start_time="",
             connector_prompt=ConnectorPromptArguments(
                 prompt_index=0,
@@ -142,7 +142,7 @@ class AttackModule:
             list: A list of generators containing the results of the generated prompts.
         """
         generator_list = []
-        if self.connector_instances:
+        if self.connector_ids:
             for target_llm_connector in self.connector_instances:
                 gen_prompts_generator = self._generate_prompts(
                     self.prompt, target_llm_connector.id
@@ -167,10 +167,10 @@ class AttackModule:
             list: A list of consolidated responses from all LLM connectors.
         """
         consolidated_responses = []
-        for prompt in list_of_prompts:
+        for prepared_prompt in list_of_prompts:
             for target_llm_connector in self.connector_instances:
                 new_prompt_info = ConnectorPromptArguments(
-                    prompt_index=1, prompt=prompt, target=""
+                    prompt_index=1, prompt=prepared_prompt, target=""
                 )
                 start_time = datetime.now()
                 response = await Connector.get_prediction(
@@ -179,13 +179,13 @@ class AttackModule:
                 consolidated_responses.append(response)
                 chat_tuple = (
                     target_llm_connector.id,
-                    self.context_strategies[0].id,
-                    self.prompt_templates[0],
+                    self.context_strategy_ids[0] if self.context_strategy_ids else "",
+                    self.prompt_templates[0] if self.prompt_templates else "",
                     self.name,
-                    self.metric_instances[0].id,
+                    self.metric_ids[0] if self.metric_ids else "",
                     self.prompt,  # original prompt
-                    prompt,  # prepared prompt
-                    "",  # system prompt
+                    prepared_prompt,  # prepared prompt
+                    self.system_prompt,  # system prompt
                     response.predicted_results,
                     response.duration,
                     str(start_time),
@@ -210,9 +210,9 @@ class AttackModule:
             list: A list of consolidated responses from the specified LLM connector.
         """
         consolidated_responses = []
-        for prompt in list_of_prompts:
+        for prepared_prompt in list_of_prompts:
             new_prompt_info = ConnectorPromptArguments(
-                prompt_index=1, prompt=prompt, target=""
+                prompt_index=1, prompt=prepared_prompt, target=""
             )
             start_time = datetime.now()
             response = await Connector.get_prediction(
@@ -221,13 +221,13 @@ class AttackModule:
             consolidated_responses.append(response)
             chat_tuple = (
                 target_llm_connector.id,
-                self.context_strategies[0].id,
-                self.prompt_templates[0],
+                self.context_strategy_ids[0] if self.context_strategy_ids else "",
+                self.prompt_templates[0] if self.prompt_templates else "",
                 self.name,
-                self.metric_instances[0].id,
+                self.metric_ids[0] if self.metric_ids else "",
                 self.prompt,  # original prompt
-                prompt,  # prepared prompt
-                "",  # system prompt
+                prepared_prompt,  # prepared prompt
+                self.system_prompt,  # system prompt
                 response.predicted_results,
                 response.duration,
                 str(start_time),
@@ -287,6 +287,7 @@ class AttackModule:
                 conn_id=prompt_info.conn_id,
                 am_id=prompt_info.am_id,
                 cs_id=prompt_info.cs_id,
+                me_id=prompt_info.me_id,
                 pt_id=prompt_info.pt_id,
                 original_prompt=self.prompt,
                 system_prompt=prompt_info.system_prompt,
@@ -300,6 +301,27 @@ class AttackModule:
             )
             self._write_record_to_db(new_prompt_info.to_tuple(), llm_connector.id)
             yield new_prompt_info
+
+    def load_modules(self):
+        """
+        Loads connector, metric, and context strategy instances if available.
+        """
+        if self.connector_ids:
+            self.connector_instances = [
+                Connector.create(ConnectorEndpoint.read(endpoint))
+                for endpoint in self.connector_ids
+            ]
+
+        if self.metric_ids:
+            self.metric_instances = [
+                Metric.load(metric_id) for metric_id in self.metric_ids
+            ]
+
+        if self.context_strategy_ids:
+            self.context_strategy_instances = [
+                ContextStrategy.load(context_strategy_id)
+                for context_strategy_id in self.context_strategy_ids
+            ]
 
 
 class RedTeamingPromptArguments(BaseModel):

@@ -8,7 +8,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.get("/v1/results")
+@router.get("/api/v1/benchmarks/results")
 @inject
 async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])):
@@ -22,7 +22,7 @@ async def get_all_results(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")
 
 
-@router.get("/v1/results/name")
+@router.get("/api/v1/benchmarks/results/name")
 @inject
 async def get_all_results_name(
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])):
@@ -34,20 +34,20 @@ async def get_all_results_name(
         return results
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve results: {e.msg}")
+            raise HTTPException(status_code=404, detail=f"Failed to retrieve result name: {e.msg}")
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve results: {e.msg}")
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve result name: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve results: {e.msg}")       
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve result name: {e.msg}")       
 
 
-@router.get("/v1/results/{executor_id}")
+@router.get("/api/v1/benchmarks/results/{result_id}")
 @inject
 async def get_one_results(
-    executor_id: str,    
+    result_id: str,    
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])):
     try:
-        results = benchmark_result_service.get_result_by_id(executor_id)
+        results = benchmark_result_service.get_result_by_id(result_id)
         return results
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -56,14 +56,14 @@ async def get_one_results(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve progress status: {e.msg}")
         
         
-@router.delete("/v1/results/{executor_id}")
+@router.delete("/api/v1/benchmarks/results/{result_id}")
 @inject
 def delete_result(
-    executor_id: str,
+    result_id: str,
     benchmark_result_service: BenchmarkResultService = Depends(Provide[Container.benchmark_result_service])
     ) -> dict[str, str] | tuple[dict[str, str], int]:
     try:
-        benchmark_result_service.delete_result(executor_id)
+        benchmark_result_service.delete_result(result_id)
         return {"message": "Result deleted successfully"}
     except ServiceException as e:
         if e.error_code == "FileNotFound":

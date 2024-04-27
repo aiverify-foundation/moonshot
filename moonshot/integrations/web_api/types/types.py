@@ -25,19 +25,19 @@ ExecutiResultItem = dict[str, float]
 ExecutionResults = dict[str, list[ExecutiResultItem]]
 
 class CookbookTestRunProgress(TypedDict):
-    exec_id: str
-    exec_name: str
-    exec_type: str
-    curr_duration: int
-    curr_status: str
-    curr_cookbook_index: int
-    curr_cookbook_name: str
-    curr_cookbook_total: int
-    curr_recipe_index: int
-    curr_recipe_name: str
-    curr_recipe_total: int
-    curr_progress: int
-    curr_error_messages: List[str]
+    current_runner_id: str
+    current_runner_name: str
+    current_runner_type: str
+    current_duration: int
+    current_status: str
+    current_cookbook_index: int
+    current_cookbook_name: str
+    current_cookbook_total: int
+    current_recipe_index: int
+    current_recipe_name: str
+    current_recipe_total: int
+    current_progress: int
+    current_error_messages: List[str]
 
 class UvicornLoggingConfig(TypedDict):
     version: int

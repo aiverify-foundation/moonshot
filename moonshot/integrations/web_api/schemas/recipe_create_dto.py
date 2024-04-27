@@ -8,5 +8,4 @@ class RecipeCreateDTO(BaseModel):
     datasets: list[str]
     prompt_templates: list[str]
     metrics: list[str]
-    type: str
-    attack_strategies: list[dict]
+    attack_modules: list[str]
