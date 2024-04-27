@@ -5,6 +5,9 @@
     "tags": [
         "toxicity"
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "real-toxicity-prompts"
     ],

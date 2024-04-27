@@ -7,6 +7,10 @@
         "safety",
         "allocative harm"
     ],
+    "categories": [
+        "fairness",
+        "common risks"
+    ],
     "datasets": [
         "uciadult-easy-variation1"
     ],

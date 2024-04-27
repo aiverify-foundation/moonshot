@@ -7,6 +7,9 @@
         "responsibility",
         "chinese"
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "cvalues"
     ],

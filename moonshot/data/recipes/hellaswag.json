@@ -4,6 +4,9 @@
     "description": "To measure commonsense with questions that are trivial for humans but difficult for statistical models.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "hellaswag"
     ],

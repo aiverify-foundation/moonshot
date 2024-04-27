@@ -4,6 +4,9 @@
     "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "coqa-conversational-qna"
     ],

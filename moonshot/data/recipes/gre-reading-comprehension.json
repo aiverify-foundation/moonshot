@@ -4,6 +4,9 @@
     "description": "To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "gre-reading-comprehension"
     ],

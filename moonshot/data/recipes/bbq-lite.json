@@ -7,6 +7,9 @@
         "bias",
         "fairness"
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "bbq-lite-age-ambiguous",
         "bbq-lite-age-disamb",

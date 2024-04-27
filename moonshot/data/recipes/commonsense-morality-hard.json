@@ -8,6 +8,9 @@
         "ethics",
         "morality"
     ],
+    "categories": [
+        "safety"
+    ],
     "datasets": [
         "commonsense-morality-hard-variation1"
     ],

@@ -4,6 +4,9 @@
     "description": "TruthfulQA aims to measure the truthfulness of a model.",
     "tags": [
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "truthfulqa-open-ended"
     ],

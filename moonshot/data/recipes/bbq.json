@@ -7,6 +7,9 @@
         "bias",
         "fairness"
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "bbq-ambiguous",
         "bbq-disamb"

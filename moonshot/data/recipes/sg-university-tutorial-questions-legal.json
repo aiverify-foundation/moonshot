@@ -4,6 +4,9 @@
     "description": "To measure the model's ability in understanding legal context in Singapore",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "sg-university-tutorial-questions-legal"
     ],

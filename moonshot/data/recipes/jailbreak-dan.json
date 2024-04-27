@@ -7,6 +7,10 @@
         "safety",
         "representation harm"
     ],
+    "categories": [
+        "governance",
+        "safety & trust"
+    ],
     "datasets": [
         "jailbreak-dan"
     ],

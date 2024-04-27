@@ -4,6 +4,9 @@
     "description": "To measure the model's ability in understanding legal term used commonly in Singapore",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "sg-legal-glossary"
     ],

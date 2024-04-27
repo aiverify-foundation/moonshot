@@ -6,6 +6,9 @@
         "tamil",
         "sentiment analysis"
     ],
+    "categories": [
+        "tamil"
+    ],
     "datasets": [
         "tamil-tanglish-tweets"
     ],

@@ -4,6 +4,9 @@
     "description": "To measure the model's ability in categorising elements into groups.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "auto-categorisation"
     ],

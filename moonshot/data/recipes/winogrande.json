@@ -4,6 +4,9 @@
     "description": "To measure model's ability in answering commonsense reasoning, expert-crafted pronoun resolution problems that are designed to be unsolvable for statistical models.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "winogrande"
     ],
