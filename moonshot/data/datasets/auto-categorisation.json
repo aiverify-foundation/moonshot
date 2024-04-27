@@ -1,13 +1,6 @@
 {
     "name": "auto_categorization",
     "description": "To measure the model's ability in categorising elements into groups.",
-    "keywords": [
-        "auto categorisation",
-        "general"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "Cats and dogs are common",

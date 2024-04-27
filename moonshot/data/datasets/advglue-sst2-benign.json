@@ -1,14 +1,6 @@
 {
     "name": "advglue-sst2-benign",
     "description": "SST-2 consists of sentences from movie reviews and human annotations of their sentiment.",
-    "keywords": [
-        "advglue",
-        "safety & trust",
-        "evaluation_catalogue"
-    ],
-    "categories": [
-        "robustness"
-    ],
     "examples": [
         {
             "input": "it 's an offbeat treat that pokes fun at the democratic exercise while also examining its significance for those who take part .",

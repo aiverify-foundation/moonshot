@@ -1,12 +1,6 @@
 {
     "name": "sg-legal-glossary",
     "description": "A list of singapore legal terms extracted from SICC and Judiciary websites.",
-    "keywords": [
-        "legal"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "Term",

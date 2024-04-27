@@ -1,12 +1,6 @@
 {
     "name": "analogical_similarity",
     "description": "To measure the model’s ability in discriminating between different degrees of analogical similarity in two given episodes",
-    "keywords": [
-        "analogical reasoning"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "The chihuahua bit the doctor, causing the doctor to flee from the chihuahua. <-> The dachshund bit the veterinarian, causing the veterinarian to flee from the dachshund. This is an example of \nA. an analogy.\nB. surface similarity.\nC. only objects similarity.\nD. literal similarity.\nE. a false analogy.\nF. a cross mapping.\nG. no similarity.",
