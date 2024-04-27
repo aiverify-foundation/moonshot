@@ -642,7 +642,7 @@ class Benchmarking:
             loaded_attack_module = AttackModule.load(
                 AttackModuleArguments(
                     name=attack_module_name,
-                    connector_instances=self.recipe_connectors,
+                    connector_eps=self.endpoints,
                     prompt=prompt,
                     db_instance=self.database_instance,
                 )
@@ -653,7 +653,9 @@ class Benchmarking:
 
             # Execute the attack module and return the generated prompts
             new_prompts = await loaded_attack_module.execute()
-            modified_prompts.extend(new_prompts)
+            modified_prompts.extend(
+                (attack_module_name, new_prompt) for new_prompt in new_prompts
+            )
 
         return modified_prompts
 
@@ -693,7 +695,8 @@ class Benchmarking:
             async for prompt_index, prompt in self._get_dataset_prompts(ds_id):
                 # Apply the attack module to the prompt input and get the modified prompts
                 if not self.recipe_instance.attack_modules:
-                    modified_prompts = [prompt["input"]]
+                    # No attack module
+                    modified_prompts = [("", prompt["input"])]
                 else:
                     modified_prompts = await self._generate_prompts_with_attack_module(
                         prompt["input"]
@@ -704,13 +707,17 @@ class Benchmarking:
                     for pt_id, jinja2_template in templates.items():
                         try:
                             # Render the modified prompt using the Jinja2 template
-                            for modified_prompt in modified_prompts:
+                            for (
+                                modified_attack_module_id,
+                                modified_prompt,
+                            ) in modified_prompts:
                                 rendered_prompt = jinja2_template.render(
                                     {"prompt": modified_prompt}
                                 )
                                 prompt_args = await self._yield_prompt_arguments(
                                     pt_id,
                                     ds_id,
+                                    modified_attack_module_id,
                                     prompt_index,
                                     rendered_prompt,
                                     prompt["target"],
@@ -724,10 +731,11 @@ class Benchmarking:
                             )
                 # If no templates are available, yield the modified prompts directly
                 else:
-                    for modified_prompt in modified_prompts:
+                    for modified_attack_module_id, modified_prompt in modified_prompts:
                         prompt_args = await self._yield_prompt_arguments(
                             pt_id,
                             ds_id,
+                            modified_attack_module_id,
                             prompt_index,
                             modified_prompt,
                             prompt["target"],
@@ -783,24 +791,31 @@ class Benchmarking:
             prompts_gen_index += 1
 
     async def _yield_prompt_arguments(
-        self, pt_id: str, ds_id: str, prompt_index: int, prompt_text: str, target: str
+        self,
+        pt_id: str,
+        ds_id: str,
+        attack_module_id: str,
+        prompt_index: int,
+        prompt_text: str,
+        target: str,
     ) -> PromptArguments:
         """
-        Assembles the arguments required for a prompt into a PromptArguments object.
+        Asynchronously prepares the arguments required for a prompt.
 
-        This method takes the provided prompt details and compiles them into a structured
-        PromptArguments object, which includes metadata and the content of the prompt itself.
+        This method takes the necessary identifiers and prompt information, and prepares the
+        PromptArguments object which is used to pass arguments to the connector for prompt processing.
 
         Args:
-            pt_id (str): The ID of the prompt template used to generate the prompt.
-            ds_id (str): The ID of the dataset from which the prompt was derived.
-            prompt_index (int): The index of the prompt within the dataset.
-            prompt_text (str): The text of the generated prompt.
-            target (str): The expected target or answer for the prompt.
+            pt_id (str): The ID of the prompt template.
+            ds_id (str): The ID of the dataset.
+            attack_module_id (str): The ID of the attack module.
+            prompt_index (int): The index of the prompt in the dataset.
+            prompt_text (str): The text of the prompt.
+            target (str): The target for the prompt.
 
         Returns:
-            PromptArguments: An object containing all the necessary information for a prompt,
-                             including IDs, indices, and content.
+            PromptArguments: An instance of PromptArguments containing all the necessary information
+            for processing the prompt.
         """
         return PromptArguments(
             rec_id=self.recipe_instance.id,
@@ -808,7 +823,7 @@ class Benchmarking:
             ds_id=ds_id,
             random_seed=self.random_seed,
             system_prompt=self.system_prompt,
-            attack_module_id="",
+            attack_module_id=attack_module_id,
             connector_prompt=ConnectorPromptArguments(
                 prompt_index=prompt_index,
                 prompt=prompt_text,
