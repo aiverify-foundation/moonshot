@@ -79,7 +79,7 @@ class ConnectorEndpoint:
             raise e
 
     @staticmethod
-    def _read_endpoint(ep_id: str):
+    def _read_endpoint(ep_id: str) -> dict:
         """
         Reads the endpoint information from a JSON file and adds the creation datetime.
 

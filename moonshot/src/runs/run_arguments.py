@@ -8,6 +8,9 @@ from moonshot.src.storage.db_interface import DBInterface
 
 
 class RunArguments:
+    class Config:
+        arbitrary_types_allowed = True
+
     def __init__(
         self,
         runner_id: str,  # Runner id for the runner
@@ -35,9 +38,6 @@ class RunArguments:
         self.error_messages = error_messages
         self.results = results
         self.status = status
-
-    class Config:
-        arbitrary_types_allowed = True
 
     def to_dict(self) -> dict:
         """
