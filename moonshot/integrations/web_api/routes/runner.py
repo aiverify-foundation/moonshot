@@ -9,7 +9,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.get("/v1/runs")
+@router.get("/api/v1/runs")
 @inject
 def get_all_runners(runner_service: RunnerService = Depends(Provide[Container.runner_service])
     ):
@@ -27,7 +27,7 @@ def get_all_runners(runner_service: RunnerService = Depends(Provide[Container.ru
             raise HTTPException(status_code=500, detail=f"Failed to retrieve runners: {e.msg}")   
 
 
-@router.get("/v1/runs/name")
+@router.get("/api/v1/runs/name")
 @inject
 def get_all_runner_name(runner_service: RunnerService = Depends(Provide[Container.runner_service])
     ):
@@ -45,7 +45,7 @@ def get_all_runner_name(runner_service: RunnerService = Depends(Provide[Containe
             raise HTTPException(status_code=500, detail=f"Failed to retrieve runners: {e.msg}")       
                          
 
-@router.get("/v1/runs/{runner_id}")
+@router.get("/api/v1/runs/{runner_id}")
 @inject 
 def get_runner_by_id(
     runner_id: str,
@@ -66,7 +66,7 @@ def get_runner_by_id(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve run: {e.msg}")
 
 
-@router.delete("/v1/runs/{runner_id}")
+@router.delete("/api/v1/runs/{runner_id}")
 @inject
 def delete_recipe(
     runner_id: str,

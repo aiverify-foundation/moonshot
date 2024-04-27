@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependency_injector.wiring import inject, Provide
 from ..types.types import BenchmarkCollectionType
-from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
-from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
 from ..container import Container
 from ..services.benchmarking_service import BenchmarkingService
+from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
 from ..services.benchmark_test_state import BenchmarkTestState
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
@@ -12,11 +11,11 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/benchmarks")
+@router.post("/api/v1/benchmarks")
 @inject
 async def benchmark_executor(
     type: BenchmarkCollectionType,
-    data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO,
+    data: BenchmarkRunnerDTO,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
         if type is BenchmarkCollectionType.COOKBOOK:
@@ -31,7 +30,7 @@ async def benchmark_executor(
         raise HTTPException(status_code=500, detail=f"Unable to create and execute benchmark: {e}")
     
 
-@router.get("/v1/benchmarks/status")
+@router.get("/api/v1/benchmarks/status")
 @inject
 def get_benchmark_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):

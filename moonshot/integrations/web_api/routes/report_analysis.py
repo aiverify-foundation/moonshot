@@ -11,7 +11,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/report_analysis")
+@router.post("/api/v1/report-analysis")
 @inject
 def create_report_analysis(
     report_analysis_data: ReportAnalysisCreateDTO,
@@ -32,7 +32,7 @@ def create_report_analysis(
             raise HTTPException(status_code=500, detail=f"Failed to create report analysis: {e.msg}")    
 
 
-@router.get("/v1/report_analysis")
+@router.get("/api/v1/report-analysis")
 @inject
 def get_all_report_analysis(report_service: ReportAnalysisService = Depends(Provide[Container.report_analysis_service])
     ):
@@ -50,7 +50,7 @@ def get_all_report_analysis(report_service: ReportAnalysisService = Depends(Prov
             raise HTTPException(status_code=500, detail=f"Failed to retrieve report analysis: {e.msg}")   
             
 
-@router.get("/v1/report_analysis/{ra_id}")
+@router.get("/api/v1/report-analysis/{ra_id}")
 @inject 
 def read_report_analysis(
     ra_id: str,
@@ -71,7 +71,7 @@ def read_report_analysis(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve report analysis: {e.msg}")
 
 
-@router.delete("/v1/report_analysis/{ra_id}")
+@router.delete("/api/v1/report-analysis/{ra_id}")
 @inject
 def delete_report_analysis(
     ra_id: str,

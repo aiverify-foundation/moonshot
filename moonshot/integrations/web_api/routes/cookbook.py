@@ -10,7 +10,7 @@ from typing import Optional
 
 router = APIRouter()
 
-@router.post("/v1/cookbooks")
+@router.post("/api/v1/cookbooks")
 @inject
 def create_cookbook(
     cookbook_data: CookbookCreateDTO,
@@ -31,7 +31,7 @@ def create_cookbook(
             raise HTTPException(status_code=500, detail=f"Failed to create cookbook: {e.msg}")    
 
 
-@router.get("/v1/cookbooks")
+@router.get("/api/v1/cookbooks")
 @inject
 def get_all_cookbooks(
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
@@ -51,7 +51,7 @@ def get_all_cookbooks(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")    
     
 
-@router.get("/v1/cookbooks/name")
+@router.get("/api/v1/cookbooks/name")
 @inject
 def get_all_cookbooks_name(
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
@@ -71,7 +71,7 @@ def get_all_cookbooks_name(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")       
 
 
-@router.get("/v1/cookbooks/{cookbook_id}")
+@router.get("/api/v1/cookbooks/{cookbook_id}")
 @inject
 def get_cookbook_by_id(
     cookbook_id: str,
@@ -91,7 +91,7 @@ def get_cookbook_by_id(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbook: {e.msg}")    
 
 
-@router.put("/v1/cookbooks/{cookbook_id}")
+@router.put("/api/v1/cookbooks/{cookbook_id}")
 @inject
 def update_cookbook(
     cookbook_id: str,
@@ -112,7 +112,7 @@ def update_cookbook(
             raise HTTPException(status_code=500, detail=f"Failed to update cookbook: {e.msg}")    
         
 
-@router.delete("/v1/cookbooks/{cb_id}")
+@router.delete("/api/v1/cookbooks/{cb_id}")
 @inject
 def delete_cookbook(
     cb_id: str,
