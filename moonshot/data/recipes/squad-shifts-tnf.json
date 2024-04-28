@@ -4,6 +4,9 @@
     "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "squad-shifts-tnf"
     ],

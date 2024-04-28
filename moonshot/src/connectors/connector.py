@@ -88,7 +88,7 @@ class Connector:
             k: v for k, v in ep_args.params.items() if k not in excluded_keys
         }
 
-    async def _add_tokens(self):
+    async def _add_tokens(self) -> None:
         """
         Replenishes the token bucket based on the elapsed time since the last update.
 

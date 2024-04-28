@@ -4,6 +4,9 @@
     "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy and challenge sets.",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "arc-challenge",
         "arc-easy"

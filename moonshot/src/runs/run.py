@@ -119,7 +119,7 @@ class Run:
                 f"[Run] Failed to get database record for run_id {run_id}: {database_instance}"
             )
 
-    def cancel_run(self):
+    def cancel_run(self) -> None:
         """
         Sets the cancel event to stop the run process.
 

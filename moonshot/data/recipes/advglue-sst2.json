@@ -5,6 +5,9 @@
     "tags": [
         "robustness"
     ],
+    "categories": [
+        "robustness"
+    ],
     "datasets": [
         "advglue-sst2-adv",
         "advglue-sst2-benign"

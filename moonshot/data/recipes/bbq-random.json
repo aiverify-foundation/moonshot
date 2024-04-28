@@ -7,6 +7,11 @@
         "bias",
         "fairness"
     ],
+    "categories": [
+        "common risk",
+        "fairness", 
+        "representational harm"
+    ],
     "datasets": [
         "bbq-variation2"
     ],

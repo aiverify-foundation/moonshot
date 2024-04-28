@@ -6,6 +6,10 @@
         "tamil",
         "text classification"
     ],
+    "categories": [
+        "tamil",
+        "text classification"
+    ],
     "datasets": [
         "tamil-kural-classification"
     ],

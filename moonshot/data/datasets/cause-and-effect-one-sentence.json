@@ -1,12 +1,6 @@
 {
     "name": "cause_and_effect_one_sentence",
     "description": "Answer multiple-choice questions distinguishing cause and effect, by choosing which sentence makes more sense",
-    "keywords": [
-        "test"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "A. The child started crying because the child hurt their knee.\nB. The child hurt their knee because the child started crying.",

@@ -5,8 +5,6 @@ from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
-from pyparsing import Generator
-
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.utils.import_modules import get_instance
@@ -47,64 +45,52 @@ class Storage:
             raise RuntimeError("Unable to create object.")
 
     @staticmethod
-    def read_object_generator(
+    def read_object_with_iterator(
         obj_type: str,
         obj_id: str,
         obj_extension: str,
-        item_path: str,
-        obj_mod_type: str = "generatorio",
-    ) -> Generator:
+        obj_mod_type: str = "jsonio",
+        json_keys: list[str] | None = None,
+        iterator_keys: list[str] | None = None,
+    ) -> dict:
         """
-        Returns a generator that yields items from a JSON file.
+        Retrieves object data from a file, with options to filter by specific keys for efficient data handling.
 
-        This method uses the provided object type, object ID, and object extension to construct the file path
-        of the JSON file.
-
-        It then uses the 'jsonio' module to open the JSON file and the 'generatorio' module to create a generator
-        that yields items from the JSON file.
-
-        The item path is used to specify the path to the items in the JSON file.
+        This function reads from a file corresponding to the given object type and ID, deserializing the content
+        using the specified module. It can also selectively extract values or create iterators for specified keys,
+        which is useful for handling large datasets or deeply nested JSON structures.
 
         Args:
-            obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
-            obj_id (str): The ID of the object.
-            obj_extension (str): The file extension (e.g., 'json', 'py').
-            item_path (str): The path to the items in the JSON file.
-            obj_mod_type (str, optional): The module type for object deserialization. Defaults to 'generatorio'.
+            obj_type (str): The category of the object to read (e.g., 'recipe', 'cookbook').
+            obj_id (str): The unique identifier for the object.
+            obj_extension (str): The file extension indicating the file type (e.g., 'json', 'py').
+            obj_mod_type (str, optional): The deserialization module type to use. Defaults to 'jsonio'.
+            json_keys (list[str] | None, optional): Keys for which to directly extract values from the file.
+                If provided, only these keys will be included in the returned dictionary.
+            iterator_keys (list[str] | None, optional): Keys for which to create iterators, allowing for
+                streamed access to large or nested structures within the file.
 
         Returns:
-            Callable: A generator that yields items from the JSON file.
-
-        Raises:
-            RuntimeError: If there is an error getting the object module instance or the object file module instance.
+            dict: A dictionary with the requested object data. If `json_keys` is provided, the dictionary
+            will contain only the specified keys and their values. If `iterator_keys` is provided, the dictionary
+            will include iterators for the specified keys, enabling streamed data access.
         """
-        # Get jsonio object to return raw file instance
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         if obj_filepath:
-            obj_file_instance = get_instance(
+            obj_mod_instance = get_instance(
                 obj_mod_type,
-                Storage.get_filepath(EnvVariables.IO_MODULES.name, "jsonio", "py"),
+                Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
-            if obj_file_instance:
-                obj_file_instance = obj_file_instance(obj_filepath).read_file_raw()
+            if obj_mod_instance:
+                return obj_mod_instance(obj_filepath).read_file_iterator(
+                    json_keys, iterator_keys
+                )
             else:
                 raise RuntimeError(
-                    f"Unable to get defined object file module instance - {obj_file_instance}"
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
             raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
-
-        # Get generator object to return gen object
-        obj_mod_instance = get_instance(
-            obj_mod_type,
-            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
-        )
-        if obj_mod_instance:
-            return obj_mod_instance(obj_file_instance, item_path)
-        else:
-            raise RuntimeError(
-                f"Unable to get defined object module instance - {obj_mod_instance}"
-            )
 
     @staticmethod
     def read_object(
@@ -170,10 +156,10 @@ class Storage:
             int: The count of the objects.
         """
         count = 0
-        generator = Storage.read_object_generator(
-            obj_type, obj_id, obj_extension, item_path
+        generator = Storage.read_object_with_iterator(
+            obj_type, obj_id, obj_extension, iterator_keys=[item_path]
         )
-        for _ in generator:
+        for _ in generator[item_path.split(".")[0]]:
             count += 1
         return count
 
@@ -195,7 +181,9 @@ class Storage:
         )
 
     @staticmethod
-    def get_creation_datetime(obj_type: str, obj_id: str, obj_extension: str):
+    def get_creation_datetime(
+        obj_type: str, obj_id: str, obj_extension: str
+    ) -> datetime.datetime:
         """
         Retrieves the creation datetime of an object.
 

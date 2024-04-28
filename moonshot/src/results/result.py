@@ -12,16 +12,18 @@ from moonshot.src.storage.storage import Storage
 class Result:
     def __init__(self, res_args: ResultArguments) -> None:
         self.id = res_args.id
-        self.name = res_args.name
         self.start_time = res_args.start_time
         self.end_time = res_args.end_time
         self.duration = res_args.duration
+        self.results = res_args.results
+        self.status = res_args.status
+        # Additional info
         self.recipes = res_args.recipes
         self.cookbooks = res_args.cookbooks
         self.endpoints = res_args.endpoints
         self.num_of_prompts = res_args.num_of_prompts
-        self.results = res_args.results
-        self.status = res_args.status
+        self.random_seed = res_args.random_seed
+        self.system_prompt = res_args.system_prompt
 
     @classmethod
     def load(cls, res_id: str) -> Result:

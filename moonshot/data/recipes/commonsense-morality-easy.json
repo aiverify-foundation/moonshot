@@ -8,6 +8,9 @@
         "ethics",
         "morality"
     ],
+    "categories": [
+        "safety"
+    ],
     "datasets": ["commonsense-morality-easy-variation1"],
     "prompt_templates": [
     ],

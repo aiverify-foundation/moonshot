@@ -6,6 +6,9 @@
         "governance",
         "fairness"
     ],
+    "categories": [
+        "bias"
+    ],
     "datasets": [
         "fairness-uciadult"
     ],

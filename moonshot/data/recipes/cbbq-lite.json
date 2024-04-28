@@ -8,6 +8,9 @@
         "fairness",
         "chinese"
     ],
+    "categories": [
+        "governance"
+    ],
     "datasets": [
         "cbbq-lite-age-ambiguous",
         "cbbq-lite-age-disamb",

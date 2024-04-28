@@ -116,7 +116,7 @@ class RunProgress:
         if self.run_progress_callback_func:
             self.run_progress_callback_func(self.get_dict())
 
-    def get_dict(self):
+    def get_dict(self) -> dict:
         """
         Constructs and returns a dictionary with the current state of the benchmark execution.
 

@@ -7,6 +7,10 @@
         "safety",
         "representation harm"
     ],
+    "categories": [
+        "fairness",
+        "common risks"
+    ],
     "datasets": [
         "winobias-type1"
     ],

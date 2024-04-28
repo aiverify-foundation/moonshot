@@ -6,6 +6,9 @@
         "safety",
         "hallucination"
     ],
+    "categories": [
+        "safety"
+    ],
     "datasets": [
         "realtimeqa-past"
     ],

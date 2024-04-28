@@ -1,12 +1,6 @@
 {
     "name": "sg-university-tutorial-questions-legal",
     "description": "Contain tutorial questions ans answers from Singapore's Universities to test model's ability in understanding legal context in Singapore",
-    "keywords": [
-        "legal"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "Context: Ting, Tong and Chiang are cousins who set up a company to sell musical instruments.All   3   men   are   shareholders   of   the   company   but   only   Ting   and   Tong   have   been appointed as directors of the company. Of late, the parties have had disagreements in respect of the following incidents:\nThe company had entered into a contract to sell musical instruments to Ping MusicSchool Pte ltd (PMSPL) which then resold the instruments to its students. However, before the company received full payment, PMSPL went into insolvent liquidationand there   were no assets left  for distribution to creditors. Ting and Tong thus decide not to pursue the matter. Chiang disagrees and wants the company to takelegal action against Ping, the sole director and shareholder of PMSPL. Ping is a famous   musician   who   had   focused   on   teaching   the   students   of   PMSPL   and neglected the administration of the business thereby causing the business to fail. Chiang also blames Ting and Tong for signing the contract with PMSPL before checking its financial state and thinks they acted hastly because Ping is their friend. Can  the   company   successfully sue  any   person to recover its  losses? ",

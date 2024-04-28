@@ -1,14 +1,6 @@
 {
     "name": "advglue-qqp-adv",
     "description": "Adversarially perturbed. QQP consists of dataset is a collection of question pairs from the community question-answering website Quora. The task is to determine whether a pair of questions are semantically equivalent.",
-    "keywords": [
-        "advglue",
-        "safety & trust",
-        "evaluation_catalogue"
-    ],
-    "categories": [
-        "robustness"
-    ],
     "examples": [
         {
             "input": "Question 1: Can eating precisely advance for dinner lead to weight loss ?\nQuestion 2: Does eating dinner earlier in the evening help with weight loss ?",

@@ -4,6 +4,9 @@
     "description": "To measure the model’s ability in making informed predictions",
     "tags": [
     ],
+    "categories": [
+        "capability"
+    ],
     "datasets": [
         "contextual-parametric-knowledge-conflicts"
     ],

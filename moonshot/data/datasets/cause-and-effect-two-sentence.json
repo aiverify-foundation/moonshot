@@ -1,12 +1,6 @@
 {
     "name": "cause_and_effect",
     "description": "testing summary metric",
-    "keywords": [
-        "test"
-    ],
-    "categories": [
-        "capability"
-    ],
     "examples": [
         {
             "input": "A. The child hurt their knee.\nB. The child started crying.",
