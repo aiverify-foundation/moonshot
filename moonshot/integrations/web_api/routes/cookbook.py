@@ -6,6 +6,7 @@ from ..container import Container
 from ..services.cookbook_service import CookbookService
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
+from fastapi import Query
 
 
 router = APIRouter()
@@ -34,13 +35,14 @@ def create_cookbook(
 @router.get("/api/v1/cookbooks")
 @inject
 def get_all_cookbooks(
+    tags: str = Query(None, description="Filter cookbooks by tags"),
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
     ):
     """
     Get all the cookbooks from the database
     """
     try:
-        cookbooks = cookbook_service.get_all_cookbooks()
+        cookbooks = cookbook_service.get_all_cookbooks(tags=tags)
         return cookbooks
     except ServiceException as e:
         if e.error_code == "FileNotFound":

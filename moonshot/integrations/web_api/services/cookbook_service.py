@@ -2,6 +2,7 @@ from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_response_dto import CookbookResponeDTO
+from ..schemas.recipe_response_dto import RecipeResponseDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 from ..services.recipe_service import get_total_prompt_in_recipe
@@ -18,15 +19,15 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_all_cookbooks(self) -> list[CookbookResponeDTO | None]:
+    def get_all_cookbooks(self, tags: str) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
         filtered_cookbooks = []
         for cookbook in cookbooks:
             cookbook = CookbookResponeDTO(**cookbook)
             cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook.id)
-            filtered_cookbooks.append(cookbook)
-
-        return [CookbookResponeDTO.model_validate(cookbook) for cookbook in filtered_cookbooks]
+            if not tags or cookbooks_recipe_has_tags(tags, cookbook.id):
+                filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
+        return filtered_cookbooks
 
 
     @exception_handler
@@ -66,3 +67,15 @@ def get_total_prompt_in_cookbook(cookbook_id: str) -> int:
         total_prompt_count += get_total_prompt_in_recipe(recipe)
 
     return total_prompt_count
+
+@staticmethod
+def cookbooks_recipe_has_tags(tags: str, cookbook_id: str) -> bool:
+    cookbook = moonshot_api.api_read_cookbook(cookbook_id)
+    cookbook = CookbookResponeDTO(**cookbook)
+    recipe_ids = cookbook.recipes
+    recipes = moonshot_api.api_read_recipes(recipe_ids)
+    for recipe in recipes:
+        recipe = RecipeResponseDTO(**recipe)
+        if tags in recipe.tags:
+            return True
+    return False
