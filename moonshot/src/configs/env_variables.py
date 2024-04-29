@@ -75,11 +75,7 @@ class EnvironmentVars:
     ]
     METRICS_CONFIG = [
         env_vars.get(EnvVariables.METRICS_CONFIG.value),
-        str(
-            importlib.resources.files(__app_name__).joinpath(
-                "data/metrics/metrics_config.json"
-            )
-        ),
+        str(importlib.resources.files(__app_name__).joinpath("data/metrics")),
     ]
     PROMPT_TEMPLATES = [
         env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),
