@@ -6,6 +6,7 @@ from pydantic.v1 import validate_arguments
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.storage.storage import Storage
 
@@ -20,24 +21,24 @@ class Recipe:
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
         self.attack_modules = rec_args.attack_modules
+        self.stats = rec_args.stats
 
     @classmethod
     def load(cls, rec_id: str) -> Recipe:
         """
-        Loads a recipe from a JSON file.
+        Loads a recipe from persistent storage.
 
-        This method uses the provided recipe ID to construct the file path to the JSON file in the designated
-        recipe directory.
-        It then reads the JSON file and returns the recipe information as a Recipe instance.
+        This method constructs the file path for the recipe's JSON file using the provided recipe ID and the
+        predefined recipe directory. It reads the JSON file, deserializes the recipe data, and instantiates a Recipe
+        object with the loaded data.
 
         Args:
-            rec_id (str): The unique identifier of the recipe.
+            rec_id (str): The unique identifier for the recipe to be loaded.
 
         Returns:
-            Recipe: An instance of the Recipe class populated with the loaded recipe information.
+            Recipe: A Recipe object populated with the data from the recipe's JSON file.
         """
-        rec_info = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
-        return cls(RecipeArguments(**rec_info))
+        return cls(Recipe.read(rec_id))
 
     @staticmethod
     def create(rec_args: RecipeArguments) -> None:
@@ -80,30 +81,62 @@ class Recipe:
     @validate_arguments
     def read(rec_id: str) -> RecipeArguments:
         """
-        Retrieves a recipe's details.
+        Retrieves the details of a specific recipe.
 
-        This method accepts a recipe ID, reads the corresponding JSON file from the directory defined by
-        `EnvironmentVars.RECIPES`, and returns a RecipeArguments object that encapsulates the recipe's details.
+        This static method takes a recipe ID as input, locates the corresponding JSON file within the directory
+        specified by `EnvironmentVars.RECIPES`, and constructs a RecipeArguments object that contains the details
+        of the recipe.
 
         Args:
-            rec_id (str): The unique identifier of the recipe.
+            rec_id (str): The unique identifier for the recipe to be retrieved.
 
         Returns:
-            RecipeArguments: An object encapsulating the recipe's details.
+            RecipeArguments: A populated object with the recipe's details.
 
         Raises:
-            Exception: If an error occurs during the file reading process or any other operation within the method.
+            Exception: If there is an issue reading the file or during any other part of the process.
         """
         try:
-            obj_results = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
-            if obj_results:
-                return RecipeArguments(**obj_results)
-            else:
-                raise RuntimeError(f"Unable to get results for {rec_id}.")
+            return RecipeArguments(**Recipe._read_recipe(rec_id))
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")
             raise e
+
+    @staticmethod
+    def _read_recipe(rec_id: str) -> dict:
+        """
+        Reads the recipe details from storage and enriches it with statistics.
+
+        This method retrieves the recipe details by its ID and calculates additional statistics such as the number of
+        prompts in each dataset and the total number of prompt templates.
+
+        Args:
+            rec_id (str): The unique identifier of the recipe to read.
+
+        Returns:
+            dict: A dictionary containing the recipe details along with calculated statistics.
+
+        Raises:
+            RuntimeError: If the recipe cannot be found or read from storage.
+        """
+        obj_results = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
+        if obj_results:
+            # Calculate statistics for the recipe and update the results dictionary with them
+            obj_results["stats"] = {
+                "num_of_tags": len(obj_results["tags"]),
+                "num_of_datasets": len(obj_results["datasets"]),
+                "num_of_datasets_prompts": {
+                    dataset_name: Dataset.read(dataset_name).num_of_dataset_prompts
+                    for dataset_name in obj_results["datasets"]
+                },
+                "num_of_prompt_templates": len(obj_results["prompt_templates"]),
+                "num_of_metrics": len(obj_results["metrics"]),
+                "num_of_attack_modules": len(obj_results["attack_modules"]),
+            }
+            return obj_results
+        else:
+            raise RuntimeError(f"Unable to get results for {rec_id}.")
 
     @staticmethod
     def update(rec_args: RecipeArguments) -> None:
@@ -159,20 +192,19 @@ class Recipe:
     @staticmethod
     def get_available_items() -> tuple[list[str], list[RecipeArguments]]:
         """
-        Fetches all available recipes.
+        Retrieves all available recipes.
 
-        This method scans the directory defined by `EnvironmentVars.RECIPES` and collects all stored recipe files.
-        It excludes any files that contain "__" in their names. For each valid recipe file, the method reads the file
-        content and creates a RecipeArguments object encapsulating the recipe's details.
-        Both the RecipeArguments object and the recipe ID are then appended to their respective lists.
+        This method searches the storage location specified by `EnvVariables.RECIPES` for recipe files, omitting any
+        that include "__" in their filenames. It reads the contents of each valid recipe file and constructs a
+        RecipeArguments object with the recipe details. The method accumulates the recipe IDs and the corresponding
+        RecipeArguments objects into separate lists, which are then returned together as a tuple.
 
         Returns:
-            tuple[list[str], list[RecipeArguments]]: A tuple where the first element is a list of recipe IDs and
-            the second element is a list of RecipeArguments objects representing the details of each recipe.
+            tuple[list[str], list[RecipeArguments]]: A tuple containing two elements. The first is a list of recipe
+            IDs, and the second is a list of RecipeArguments objects, each representing the details of a recipe.
 
         Raises:
-            Exception: If an error is encountered during the file reading process or any other operation within
-            the method.
+            Exception: If any issues arise during the retrieval and processing of recipe files.
         """
         try:
             retn_recs = []
@@ -183,11 +215,7 @@ class Recipe:
                 if "__" in rec:
                     continue
 
-                rec_info = RecipeArguments(
-                    **Storage.read_object(
-                        EnvVariables.RECIPES.name, Path(rec).stem, "json"
-                    )
-                )
+                rec_info = RecipeArguments(**Recipe._read_recipe(Path(rec).stem))
                 retn_recs.append(rec_info)
                 retn_recs_ids.append(rec_info.id)
 
