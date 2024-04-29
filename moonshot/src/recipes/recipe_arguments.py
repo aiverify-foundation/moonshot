@@ -22,6 +22,10 @@ class RecipeArguments(BaseModel):
         str
     ]  # attack_modules (list): The list of attack modules in the recipe.
 
+    stats: dict = (
+        {}
+    )  # stats (dict): A dictionary containing statistics about the recipe.
+
     def to_dict(self) -> dict:
         """
         Convert the RecipeArguments object to a dictionary.
@@ -39,4 +43,5 @@ class RecipeArguments(BaseModel):
             "prompt_templates": self.prompt_templates,
             "metrics": self.metrics,
             "attack_modules": self.attack_modules,
+            "stats": self.stats,
         }

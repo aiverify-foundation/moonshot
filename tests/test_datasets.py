@@ -1,3 +1,4 @@
+import shutil
 from moonshot.src.api.api_dataset import api_delete_dataset, api_get_all_datasets, api_get_all_datasets_name
 
 # ------------------------------------------------------------------------------
@@ -13,7 +14,12 @@ def test_delete_datasets():
 
     # Delete dataset if exists
     try:
-        api_delete_dataset("cvalues")
+        # Write a new result: "moonshot/data/results/my-new-runner-cookbook.json"
+        source_path = "moonshot/data/datasets/cvalues.json"
+        destination_path = "moonshot/data/datasets/cvalues1234.json"
+        shutil.copy(source_path, destination_path)
+        
+        api_delete_dataset("cvalues1234")
         print("Delete dataset if exist: PASSED")
     except Exception:
         print("Delete dataset if exist: FAILED")
