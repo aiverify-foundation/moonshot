@@ -8,6 +8,8 @@ from ..schemas.recipe_response_dto import RecipeResponseDTO
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
 from typing import Optional
+from typing import List
+from fastapi import Query
 
 
 router = APIRouter()
@@ -35,20 +37,24 @@ def create_recipe(
 
 @router.get("/api/v1/recipes")
 @inject
-def get_all_recipes(recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
+def get_all_recipes(
+    tags: str = Query(None, description="Filter recipes by tags"),
+    sort_by: str = Query(None, description="Sort recipes by a specific field"),
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
     ):
     """
     Get all the recipes from the database
     """
     try:
-        return recipe_service.get_all_recipes()
+        recipes = recipe_service.get_all_recipes(tags=tags, sort_by=sort_by)
+        return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes: {e.msg}")
         elif e.error_code == "ValidationError":
             raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes: {e.msg}")
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes: {e.msg}")   
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes: {e.msg}")
 
 
 @router.get("/api/v1/recipes/name")

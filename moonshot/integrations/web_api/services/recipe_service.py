@@ -22,10 +22,24 @@ class RecipeService(BaseService):
     
 
     @exception_handler
-    def get_all_recipes(self) -> list[RecipeResponseDTO | None]:
+    def get_all_recipes(self, tags: str, sort_by: str) -> list[RecipeResponseDTO]:
         recipes = moonshot_api.api_get_all_recipe()
-        return [RecipeResponseDTO.model_validate(recipe) for recipe in recipes]
-    
+        filtered_recipes = []
+
+        for recipe_dict in recipes:
+            recipe = RecipeResponseDTO(**recipe_dict)
+            recipe.total_prompt_in_recipe = self.__get_total_prompt_in_recipe(recipe)
+            filtered_recipes.append(recipe)
+
+        if tags:
+            filtered_recipes = [recipe for recipe in filtered_recipes if tags in recipe.tags]
+
+        if sort_by:
+            if sort_by == "id":
+                filtered_recipes.sort(key=lambda x: x.id)
+
+        return [RecipeResponseDTO.model_validate(recipe) for recipe in filtered_recipes]
+
 
     @exception_handler
     def get_all_recipes_name(self) -> list[str]:
@@ -56,3 +70,12 @@ class RecipeService(BaseService):
     @exception_handler
     def delete_recipe(self, recipe_id: str) -> None:
         moonshot_api.api_delete_recipe(recipe_id)
+
+
+    def __get_total_prompt_in_recipe(self,recipe: RecipeResponseDTO) -> int:
+        total_prompt_count = 0
+        if "num_of_datasets_prompts" in recipe.stats:
+            datasets_prompts = recipe.stats["num_of_datasets_prompts"]
+            for dataset, count in datasets_prompts.items():
+                total_prompt_count += count
+        return total_prompt_count
