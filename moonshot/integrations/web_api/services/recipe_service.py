@@ -28,7 +28,7 @@ class RecipeService(BaseService):
 
         for recipe_dict in recipes:
             recipe = RecipeResponseDTO(**recipe_dict)
-            recipe.total_prompt_in_recipe = self.__get_total_prompt_in_recipe(recipe)
+            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
             filtered_recipes.append(recipe)
 
         if tags:
@@ -50,6 +50,8 @@ class RecipeService(BaseService):
     @exception_handler
     def get_recipe_by_id(self, recipe_id: str) -> RecipeResponseDTO | None: 
         recipe = moonshot_api.api_read_recipe(recipe_id)
+        recipe = RecipeResponseDTO(**recipe)
+        recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
         return RecipeResponseDTO.model_validate(recipe)
 
 
@@ -71,11 +73,13 @@ class RecipeService(BaseService):
     def delete_recipe(self, recipe_id: str) -> None:
         moonshot_api.api_delete_recipe(recipe_id)
 
-
-    def __get_total_prompt_in_recipe(self,recipe: RecipeResponseDTO) -> int:
-        total_prompt_count = 0
-        if "num_of_datasets_prompts" in recipe.stats:
-            datasets_prompts = recipe.stats["num_of_datasets_prompts"]
-            for dataset, count in datasets_prompts.items():
-                total_prompt_count += count
-        return total_prompt_count
+@staticmethod
+def get_total_prompt_in_recipe(recipe_id: str) -> int:
+    total_prompt_count = 0
+    recipe = moonshot_api.api_read_recipe(recipe_id)
+    recipe = RecipeResponseDTO(**recipe)
+    if "num_of_datasets_prompts" in recipe.stats:
+        datasets_prompts = recipe.stats["num_of_datasets_prompts"]
+        for dataset, count in datasets_prompts.items():
+            total_prompt_count += count
+    return total_prompt_count

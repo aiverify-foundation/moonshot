@@ -4,7 +4,7 @@ from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_response_dto import CookbookResponeDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
-
+from ..services.recipe_service import get_total_prompt_in_recipe
 
 class CookbookService(BaseService):
 
@@ -20,7 +20,13 @@ class CookbookService(BaseService):
     @exception_handler
     def get_all_cookbooks(self) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
-        return [CookbookResponeDTO.model_validate(cookbook) for cookbook in cookbooks]
+        filtered_cookbooks = []
+        for cookbook in cookbooks:
+            cookbook = CookbookResponeDTO(**cookbook)
+            cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook.id)
+            filtered_cookbooks.append(cookbook)
+
+        return [CookbookResponeDTO.model_validate(cookbook) for cookbook in filtered_cookbooks]
 
 
     @exception_handler
@@ -32,6 +38,8 @@ class CookbookService(BaseService):
     @exception_handler
     def get_cookbook_by_id(self, cookbook_id: str) -> CookbookResponeDTO | None: 
         cookbook = moonshot_api.api_read_cookbook(cookbook_id)
+        cookbook = CookbookResponeDTO(**cookbook)
+        cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook.id)
         return CookbookResponeDTO.model_validate(cookbook)
 
 
@@ -48,3 +56,13 @@ class CookbookService(BaseService):
     @exception_handler
     def delete_cookbook(self, cookbook_id: str) -> None:
         moonshot_api.api_delete_cookbook(cookbook_id)
+
+@staticmethod
+def get_total_prompt_in_cookbook(cookbook_id: str) -> int:
+    total_prompt_count = 0
+    cookbook = moonshot_api.api_read_cookbook(cookbook_id)
+    cookbook = CookbookResponeDTO(**cookbook)
+    for recipe in cookbook.recipes:
+        total_prompt_count += get_total_prompt_in_recipe(recipe)
+
+    return total_prompt_count
