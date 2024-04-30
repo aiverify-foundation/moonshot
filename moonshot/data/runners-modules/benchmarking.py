@@ -373,6 +373,7 @@ class Benchmarking:
             self.run_progress.notify_error(
                 f"Failed to load instances in running recipe due to error: {str(e)}"
             )
+            raise e
 
         # ------------------------------------------------------------------------------
         # Part 2: Build and execute generator pipeline to get prompts and perform predictions

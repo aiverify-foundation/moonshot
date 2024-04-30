@@ -19,7 +19,6 @@ class SampleContextStrategy(ContextStrategyInterface):
         self.id = "add_previous_prompt"
         self.name = "Add Previous Prompt"
         self.description = "This is a sample context strategy that adds in previous prompts to the current prompt."
-        self.version = "0.1.0"
 
     @staticmethod
     def add_in_context(
