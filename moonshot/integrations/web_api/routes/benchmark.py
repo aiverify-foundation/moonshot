@@ -54,10 +54,10 @@ def get_benchmark_progress(
 
 @router.post("/api/v1/benchmarks/cancel/{runner_id}")
 @inject
-def cancel_benchmark_executor(
+async def cancel_benchmark_executor(
     runner_id: str,
     benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
-        benchmarking_service.cancel_executor(runner_id)
+        await benchmarking_service.cancel_executor(runner_id)
     except ServiceException as e:   
         raise HTTPException(status_code=500, detail=f"Unable to cancel benchmark: {e}") 
