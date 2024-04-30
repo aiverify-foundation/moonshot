@@ -67,7 +67,7 @@ class MetricInterface:
         """
         try:
             obj_results = Storage.read_object(
-                EnvVariables.METRICS_CONFIG.name, "metrics_config", "json"
+                EnvVariables.METRICS.name, "metrics_config", "json"
             )
             return obj_results.get(met_id, {})
 
