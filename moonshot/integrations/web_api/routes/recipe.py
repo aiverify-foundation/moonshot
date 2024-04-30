@@ -76,17 +76,17 @@ def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Contain
             raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}")       
                          
 
-@router.get("/api/v1/recipes/{recipe_id}")
+@router.get("/api/v1/recipes/ids/")
 @inject 
-def get_recipe_by_id(
-    recipe_id: str,
+def get_recipe_by_ids(
+    recipe_id: str = Query(None, description="Get recipes to query"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> RecipeResponseDTO | None:
+    ) -> list[RecipeResponseDTO | None]:
     """
     Get a recipe from the database
     """
     try:
-        recipe = recipe_service.get_recipe_by_id(recipe_id)
+        recipe = recipe_service.get_recipe_by_ids(recipe_id)
         return recipe
     except ServiceException as e:
         if e.error_code == "FileNotFound":

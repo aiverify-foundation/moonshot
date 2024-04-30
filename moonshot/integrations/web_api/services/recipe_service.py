@@ -48,11 +48,15 @@ class RecipeService(BaseService):
 
 
     @exception_handler
-    def get_recipe_by_id(self, recipe_id: str) -> RecipeResponseDTO | None: 
-        recipe = moonshot_api.api_read_recipe(recipe_id)
-        recipe = RecipeResponseDTO(**recipe)
-        recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
-        return RecipeResponseDTO.model_validate(recipe)
+    def get_recipe_by_ids(self, recipe_id: str) -> list[RecipeResponseDTO] | None:
+        ret_recipes = []
+        recipe_id_list = recipe_id.split(",")
+        for id in recipe_id_list:
+            recipe = moonshot_api.api_read_recipe(id)
+            recipe = RecipeResponseDTO(**recipe)
+            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
+            ret_recipes.append(recipe)
+        return [RecipeResponseDTO.model_validate(recipe) for recipe in ret_recipes]
 
 
     @exception_handler
