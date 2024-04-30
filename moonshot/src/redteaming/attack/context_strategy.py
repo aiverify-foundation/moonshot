@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from moonshot.src.configs.env_variables import EnvVariables
-from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
@@ -93,6 +92,8 @@ class ContextStrategy:
         endpoint_id,
         num_of_previous_chats: int,
     ) -> str:
+        from moonshot.src.redteaming.session.chat import Chat
+
         context_strategy_instance = get_instance(
             context_strategy_name,
             Storage.get_filepath(

@@ -44,6 +44,10 @@ from moonshot.src.api.api_recipe import (
     api_read_recipes,
     api_update_recipe,
 )
+from moonshot.src.api.api_red_teaming import (
+    api_get_all_attack_modules,
+    api_run_red_teaming,
+)
 from moonshot.src.api.api_report_analysis import (
     api_create_report_analysis,
     api_delete_report_analysis,
@@ -66,13 +70,10 @@ from moonshot.src.api.api_runner import (
     api_read_runner,
 )
 from moonshot.src.api.api_session import (
-    api_create_session,
-    api_delete_session,
-    api_get_all_session_detail,
-    api_get_all_session_name,
-    api_get_session,
-    api_get_session_chats_by_session_id,
-    api_send_prompt,
+    api_get_all_session_metadata,
+    api_get_all_session_names,
+    api_get_available_session_info,
+    api_load_session,
     api_update_context_strategy,
     api_update_prompt_template,
 )
@@ -126,13 +127,12 @@ __all__ = [
     "api_get_all_result_name",
     "api_read_result",
     "api_read_results",
-    "api_create_session",
-    "api_delete_session",
-    "api_get_all_session_detail",
-    "api_get_all_session_name",
-    "api_get_session",
-    "api_get_session_chats_by_session_id",
-    "api_send_prompt",
+    "api_get_all_session_names",
+    "api_get_all_session_metadata",
+    "api_load_session",
+    "api_get_available_session_info",
     "api_update_context_strategy",
     "api_update_prompt_template",
+    "api_run_red_teaming",
+    "api_get_all_attack_modules",
 ]
