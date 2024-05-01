@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
+from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
@@ -365,16 +366,25 @@ class Session:
         return runner_results
 
     def check_redteaming_type(self) -> str:
+        """
+        Checks the type of red teaming strategy based on the runner arguments.
+
+        Returns:
+            str: The type of red teaming strategy, either "auto" or "manual".
+
+        Raises:
+            RuntimeError: If the red teaming arguments are missing.
+        """
         if (
             "attack_strategies" in self.runner_args
             and self.runner_args.get("attack_strategies") is not None
         ):
-            return "auto"
+            return RedTeamingType.AUTOMATED.name
         elif (
             "manual_rt_args" in self.runner_args
             and self.runner_args.get("manual_rt_args") is not None
         ):
-            return "manual"
+            return RedTeamingType.MANUAL.name
         else:
             raise RuntimeError("Missing red teaming arguments.")
 

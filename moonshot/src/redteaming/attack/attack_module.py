@@ -71,17 +71,12 @@ class AttackModule:
             )
 
     @abstractmethod
-    def check_stop_condition(self):
+    def check_stop_condition(self) -> bool:
         """
         Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
         Stop condition can be number of prompts sent to the target LLM(s), the response from the LLM matching
         a certain word, or the response from the LLM having a certain metric score.
         """
-        pass
-
-    def check_stop_condition_iteration(
-        self,
-    ) -> bool:
         pass
 
     async def _generate_prompts(
