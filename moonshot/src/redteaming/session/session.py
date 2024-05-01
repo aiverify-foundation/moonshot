@@ -365,12 +365,12 @@ class Session:
         print("[Session] Part 4: Wrap up run...")
         return runner_results
 
-    def check_redteaming_type(self) -> str:
+    def check_redteaming_type(self) -> RedTeamingType:
         """
         Checks the type of red teaming strategy based on the runner arguments.
 
         Returns:
-            str: The type of red teaming strategy, either "auto" or "manual".
+            RedTeamingType: The type of red teaming strategy.
 
         Raises:
             RuntimeError: If the red teaming arguments are missing.
@@ -379,12 +379,12 @@ class Session:
             "attack_strategies" in self.runner_args
             and self.runner_args.get("attack_strategies") is not None
         ):
-            return RedTeamingType.AUTOMATED.name
+            return RedTeamingType.AUTOMATED
         elif (
             "manual_rt_args" in self.runner_args
             and self.runner_args.get("manual_rt_args") is not None
         ):
-            return RedTeamingType.MANUAL.name
+            return RedTeamingType.MANUAL
         else:
             raise RuntimeError("Missing red teaming arguments.")
 
