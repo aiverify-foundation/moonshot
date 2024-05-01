@@ -17,7 +17,7 @@ from moonshot.api import (
 def test_create_connector_endpoint():
     api_create_endpoint(
         name="My New GPT4",
-        connector_type="openai-gpt4",
+        connector_type="openai-connector",
         uri="1234",
         token="1234",
         max_calls_per_second=256,

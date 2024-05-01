@@ -1,0 +1,16 @@
+{
+  "id": "openai-gpt4",
+  "name": "OpenAI GPT4",
+  "connector_type": "openai-connector",
+  "uri": "",
+  "token": "",
+  "max_calls_per_second": 1,
+  "max_concurrency": 1,
+  "params": {
+    "timeout": 300,
+    "allow_retries": true,
+    "num_of_retries": 3,
+    "temperature": 0.5,
+    "model": "gpt-4"
+  }
+}

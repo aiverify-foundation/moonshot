@@ -1,0 +1,15 @@
+{
+    "id": "together-llama3-8b-chat-hf",
+    "name": "Together Llama3 8B Chat HF",
+    "connector_type": "together-connector",
+    "uri": "",
+    "token": "",
+    "max_calls_per_second": 1,
+    "max_concurrency": 1,
+    "params": {
+        "allow_retries": true,
+        "num_of_retries": 3,
+        "temperature": 0.5,
+        "model": "meta-llama/Llama-3-8b-chat-hf"
+    }
+}
