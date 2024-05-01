@@ -16,24 +16,19 @@ class BleuScore(MetricInterface):
         self.id = "bleuscore"
         self.name = "BleuScore"
         self.description = "Bleuscore uses Bleu to return the various rouge scores."
-        self.version = "0.1.0"
+        self.metric_config = self.get_metrics_configuration(self.id)
 
     @timeit
     def get_metadata(self) -> dict | None:
         """
-        Retrieves and returns the metadata of the BleuScore class,
-        including its identifier, name, description, and version.
+        Retrieves and returns the metadata of the BleuScore class.
+        The metadata includes the unique identifier, the name, and the description of the class.
 
         Returns:
-            dict: A dictionary containing the metadata of the BleuScore class,
-            which includes 'id', 'name', 'description', and 'version'.
+            dict | None: A dictionary containing the 'id', 'name', and 'description' of the BleuScore class,
+            or None if not applicable.
         """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "version": self.version,
-        }
+        return {"id": self.id, "name": self.name, "description": self.description}
 
     @timeit
     def get_results(

@@ -14,7 +14,6 @@ class ResultsComparator(ReportAnalysisInterface):
         self.id = "results-comparator"
         self.name = "ResultsComparator"
         self.description = "Allows for comparison of benchmarking results across runs for specific models"
-        self.version = "0.1.0"
         self.required_arguments = {
             "result_ids": "The result ids to be compared",
             "endpoint_ids": "The endpoint ids to be compared",
@@ -23,18 +22,18 @@ class ResultsComparator(ReportAnalysisInterface):
     @timeit
     def get_metadata(self) -> dict | None:
         """
-        Retrieves and returns the metadata of the ResultsComparator class,
-        including its name, description, version, and required arguments.
+        Retrieves and returns the metadata of the ResultsComparator class.
+        The metadata includes the unique identifier, the name, the description of the class,
+        and the required arguments for its operation.
 
         Returns:
-            dict: A dictionary with the metadata of the ResultsComparator class,
-            encompassing 'name', 'description', 'version', and 'required_arguments'.
+            dict | None: A dictionary containing the 'id', 'name', 'description', and 'required_arguments'
+            of the ResultsComparator class, or None if not applicable.
         """
         return {
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "version": self.version,
             "required_arguments": self.required_arguments,
         }
 

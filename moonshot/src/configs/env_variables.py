@@ -16,7 +16,6 @@ class EnvVariables(Enum):
     DATASETS = "DATASETS"
     IO_MODULES = "IO_MODULES"
     METRICS = "METRICS"
-    METRICS_CONFIG = "METRICS_CONFIG"
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
     REPORTS_ANALYSIS_MODULES = "REPORTS_ANALYSIS_MODULES"
@@ -72,14 +71,6 @@ class EnvironmentVars:
     METRICS = [
         env_vars.get(EnvVariables.METRICS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/metrics")),
-    ]
-    METRICS_CONFIG = [
-        env_vars.get(EnvVariables.METRICS_CONFIG.value),
-        str(
-            importlib.resources.files(__app_name__).joinpath(
-                "data/metrics/metrics_config.json"
-            )
-        ),
     ]
     PROMPT_TEMPLATES = [
         env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),

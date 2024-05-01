@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import Any
 
+from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.timeit import timeit
 
 
@@ -49,3 +51,26 @@ class MetricInterface:
             reported, and the values should be the corresponding metric values.
         """
         pass
+
+    def get_metrics_configuration(self, met_id: str) -> dict:
+        """
+        Retrieves the configuration for a specific metric by its identifier.
+
+        Args:
+            met_id (str): The identifier for the metric configuration to retrieve.
+
+        Returns:
+            dict: The metric configuration as a dictionary. Returns an empty dict if the configuration is not found.
+
+        Raises:
+            Exception: If reading the metrics configuration fails.
+        """
+        try:
+            obj_results = Storage.read_object(
+                EnvVariables.METRICS.name, "metrics_config", "json"
+            )
+            return obj_results.get(met_id, {})
+
+        except Exception as e:
+            print(f"Failed to read metrics configuration: {str(e)}")
+            raise e
