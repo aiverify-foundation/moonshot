@@ -334,9 +334,6 @@ class Session:
         start_time = time.perf_counter()
         runner_results = {}
 
-        # check if manual/auto red teaming argument is present
-        self.check_redteaming_type()
-
         try:
             if runner_module_instance:
                 runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
@@ -344,6 +341,7 @@ class Session:
                     self.runner_args,
                     self.database_instance,
                     self.session_metadata,
+                    self.check_redteaming_type(),
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")
