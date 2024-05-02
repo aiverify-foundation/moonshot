@@ -13,6 +13,7 @@ def api_create_recipe(
     prompt_templates: list[str],
     metrics: list[str],
     attack_modules: list[str],
+    grading_scale: dict[str, list[float]],
 ) -> None:
     """
     Creates a new recipe and stores it in a JSON file.
@@ -26,12 +27,14 @@ def api_create_recipe(
 
     Args:
         name (str): The name of the recipe.
-        description (str): The description of the recipe.
+        description (str): A detailed description of the recipe.
         tags (list[str]): A list of tags associated with the recipe.
-        datasets (list[str]): A list of datasets the recipe utilizes.
-        prompt_templates (list[str]): A list of prompt templates for the recipe.
-        metrics (list[str]): A list of metrics to evaluate the recipe.
-        attack_modules (list[str]): A list of attack modules the recipe employs.
+        datasets (list[str]): A list of datasets used in the recipe.
+        prompt_templates (list[str]): A list of prompt templates for generating prompts.
+        metrics (list[str]): A list of metrics to evaluate the recipe's performance.
+        attack_modules (list[str]): A list of attack modules to test the recipe's robustness.
+        grading_scale (dict[list[float]]): A dictionary defining the grading scale with keys as grade labels and values
+        as score ranges.
 
     Returns:
         None
@@ -45,6 +48,7 @@ def api_create_recipe(
         prompt_templates=prompt_templates,
         metrics=metrics,
         attack_modules=attack_modules,
+        grading_scale=grading_scale,
     )
     Recipe.create(rec_args)
 
