@@ -32,7 +32,7 @@ class RecipeArguments(BaseModel):
     attack_modules: list[str]
 
     # grading_scale (dict): A dictionary where keys are grading categories and values are lists of grading scale.
-    grading_scale: dict[str, list[int]] = {}
+    grading_scale: dict[str, list[int]]
 
     # stats (dict): A dictionary containing statistics about the recipe.
     stats: dict = {}
