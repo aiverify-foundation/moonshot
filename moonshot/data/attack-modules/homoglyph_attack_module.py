@@ -6,6 +6,13 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
+"""
+About this attack module:
+Homoglyphs are alternative words for words comprising of ASCII characters. 
+Example of a homoglyph fool -> fooI
+Configurable Params:
+1. MAX_ITERATIONS - Number of prompts that should be sent to the target.
+"""
 class HomoglyphGenerator(AttackModule):
     def __init__(self, am_arguments: AttackModuleArguments):
         # Initialize super class
@@ -32,7 +39,7 @@ class HomoglyphGenerator(AttackModule):
         and sends them to the respective LLMs.
         """
         result_list = []
-        
+        # Configurble PARAMS - Number of prompts to be sent to target
         MAX_ITERATION = 10
         # converting glyphs to ASCII characters
         homoglyphs = hg.Homoglyphs(languages={'en'}, strategy=hg.STRATEGY_LOAD)

@@ -18,7 +18,13 @@ def get_n_random (low: int , high: int , n: int ) -> list:
     except ValueError:
         print(f'Sample size of {n} exceeds population size of {high - low}')
     return result
-
+"""
+About this attack module:
+This module creates perturbations through swapping characters for words that contains more than 3 characters.
+Configurable Params:
+1. MAX_ITERATIONS - Number of prompts that should be sent to the target.
+2. word_swap_ratio - Percentage of words in a prompt that should be perturbed.
+"""
 class CharSwapGenerator(AttackModule):
     def __init__(self, am_arguments: AttackModuleArguments):
         # Initialize super class
@@ -46,10 +52,9 @@ class CharSwapGenerator(AttackModule):
         """
         result_list = []
 
-
+        # Configurble PARAMS - Number of prompts to be sent to target
         MAX_ITERATION = 10
-        count = 0
-        # percentage of words in a prompt that should be changed
+        # Configurble PARAMS - Percentage of words in a prompt that should be changed
         word_swap_ratio = 0.2
 
         word_list = word_tokenize(self.prompt)
@@ -62,6 +67,7 @@ class CharSwapGenerator(AttackModule):
                 if word_list[idx] not in string.punctuation and len(word_list[idx]) > 3:
                     idx1 = random.randint(1 , len(word_list[idx]) - 2)
                     idx_elements = list(word_list[idx])
+                    #swap characters
                     idx_elements[idx1] , idx_elements[idx1 + 1] = idx_elements[idx1+1] , idx_elements[idx1]
                     word_list[idx] = "".join(idx_elements)
             new_prompt = TreebankWordDetokenizer().detokenize(word_list)
