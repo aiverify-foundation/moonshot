@@ -70,15 +70,6 @@ class AttackModule:
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
 
-    @abstractmethod
-    def check_stop_condition(self) -> bool:
-        """
-        Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
-        Stop condition can be number of prompts sent to the target LLM(s), the response from the LLM matching
-        a certain word, or the response from the LLM having a certain metric score.
-        """
-        pass
-
     async def _generate_prompts(
         self, prompt: str, target_llm_connector_id: str
     ) -> AsyncGenerator[RedTeamingPromptArguments, None]:

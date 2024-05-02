@@ -92,6 +92,19 @@ class ContextStrategy:
         endpoint_id,
         num_of_previous_chats: int,
     ) -> str:
+        """
+        Process the user prompt using the specified context strategy.
+
+        Args:
+            user_prompt (str): The user prompt to process.
+            context_strategy_name (str): The name of the context strategy to use.
+            db_instance (DBInterface): The database interface instance.
+            endpoint_id: The ID of the endpoint.
+            num_of_previous_chats (int): The number of previous chats to add.
+
+        Returns:
+            str: The processed user prompt based on the context strategy.
+        """
         from moonshot.src.redteaming.session.chat import Chat
 
         context_strategy_instance = get_instance(

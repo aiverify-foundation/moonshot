@@ -390,6 +390,17 @@ class Session:
     def update_context_strategy(
         db_instance: DBInterface | None, runner_id: str, context_strategy: str
     ) -> None:
+        """
+        Updates the context strategy for a specific runner in the database.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the context strategy in.
+            runner_id (str): The ID of the runner.
+            context_strategy (str): The name of the context strategy to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the context strategy does not exist.
+        """
         if not db_instance:
             raise RuntimeError("[Session] Database instance not provided.")
         if not Storage.is_object_exists(
@@ -409,6 +420,17 @@ class Session:
     def update_prompt_template(
         db_instance: DBInterface | None, runner_id: str, prompt_template: str
     ) -> None:
+        """
+        Updates the prompt template in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the prompt template in.
+            runner_id (str): The ID of the runner.
+            prompt_template (str): The new prompt template to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the prompt template does not exist.
+        """
         if not db_instance:
             raise RuntimeError("[Session] Database instance not provided.")
         if not Storage.is_object_exists(
@@ -426,6 +448,15 @@ class Session:
 
     @staticmethod
     def delete_session(database_instance: DBInterface | None) -> None:
+        """
+        Deletes the session metadata and associated endpoint tables from the database.
+
+        Args:
+            database_instance (DBInterface | None): The database instance to delete the session from.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if failed to get session metadata.
+        """
         if not database_instance:
             raise RuntimeError("[Session] Database instance not provided.")
 

@@ -1,0 +1,21 @@
+{
+    "id": "huggingface-llama2-13b-gptq",
+    "name": "HuggingFace Llama2 13B GPTQ",
+    "connector_type": "huggingface-connector",
+    "uri": "",
+    "token": "",
+    "max_calls_per_second": 1,
+    "max_concurrency": 1,
+    "params": {
+        "timeout": 300,
+        "allow_retries": true,
+        "num_of_retries": 3,
+        "temperature": 0.5,
+        "pre_prompt": "[INST]<<SYS>> You are a helpful assistant.<</SYS>>",
+        "post_prompt": "[/INST]",
+        "parameters": {
+            "max_length": 512,
+            "min_length": 100
+        }
+    }
+}

@@ -114,7 +114,7 @@ class DBInterface:
         pass
 
     @abstractmethod
-    def delete_database_table(self, delete_database_sql: str) -> None:
+    def delete_database_table(self, delete_table_sql: str) -> None:
         """
         This method is used to delete a table from the database. The details of the operation
         are implementation specific and should be provided by the concrete class that inherits from this abstract class.
