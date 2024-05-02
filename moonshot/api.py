@@ -44,10 +44,7 @@ from moonshot.src.api.api_recipe import (
     api_read_recipes,
     api_update_recipe,
 )
-from moonshot.src.api.api_red_teaming import (
-    api_get_all_attack_modules,
-    api_run_red_teaming,
-)
+from moonshot.src.api.api_red_teaming import api_get_all_attack_modules
 from moonshot.src.api.api_report_analysis import (
     api_create_report_analysis,
     api_delete_report_analysis,
@@ -133,6 +130,5 @@ __all__ = [
     "api_get_available_session_info",
     "api_update_context_strategy",
     "api_update_prompt_template",
-    "api_run_red_teaming",
     "api_get_all_attack_modules",
 ]
