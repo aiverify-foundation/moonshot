@@ -1,172 +1,136 @@
+from moonshot.src.api.api_runner import api_get_all_runner, api_load_runner
 from moonshot.src.redteaming.session.session import Session
-
 
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
-def api_get_all_session_name() -> list[str]:
-    """
-    Retrieves and returns the names (IDs) of all sessions currently managed.
 
-    This API endpoint wraps around the `Session.get_all_session_names` method, providing an interface
-    to fetch a list of all session names (or IDs). It's useful for clients needing to enumerate all sessions
-    without requiring the details of each session.
+
+def api_load_session(runner_id: str) -> dict | None:
+    """
+    Loads the session details for a specific runner.
+
+    This function calls the `Session.load` method to retrieve the session details associated with the
+    specified runner ID.
+
+    Args:
+        runner_id (str): The unique identifier of the runner for which the session details are to be loaded.
 
     Returns:
-        list[str]: A list of strings, each representing the unique name (ID) of a session.
+        dict | None: A dictionary containing the session details if available, otherwise None.
     """
-    return Session.get_all_session_names()
+    return Session.load(api_load_runner(runner_id).database_instance)
 
 
-def api_get_all_session_detail() -> list[dict]:
+def api_get_all_session_names() -> list[str]:
     """
-    Retrieves and returns detailed metadata for all sessions currently managed.
+    Retrieves a list of all session names.
 
-    This API endpoint leverages the `Session.get_all_session_details` method to obtain metadata for all sessions.
-    It then converts each session's metadata into a dictionary format for easy consumption by clients. This method
-    is particularly useful for clients that require comprehensive details about each session, including names,
-    descriptions, endpoints, and other relevant metadata.
+    This function calls the `api_get_available_session_info` method to obtain the available session information
+    and returns a list of session names.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing the detailed metadata of a session.
+        list[str]: A list of strings, each denoting a session name.
     """
+    session_names, _ = api_get_available_session_info()
+    return session_names
 
-    return [
-        session_metadata.to_dict()
-        for session_metadata in Session.get_all_session_details()
+
+def api_get_available_session_info() -> tuple[list, list]:
+    """
+    Retrieves the IDs and database instances of runners with active sessions.
+
+    This function retrieves the IDs and database instances of runners with active sessions by querying all runners
+    and checking if each runner has an active session. It returns a tuple containing a list of runner IDs and a list
+    of corresponding database instances for runners with active sessions.
+
+    Returns:
+        tuple[list[str], list[str]]: A tuple containing a list of runner IDs and a list of corresponding database
+        instances for runners with active sessions.
+    """
+    runners_info = api_get_all_runner()
+    runner_instances = [
+        api_load_runner(str(runner_info.get("id"))) for runner_info in runners_info
     ]
 
+    runner_ids = []
+    runner_with_session_db_list = []
 
-def api_get_session_chats_by_session_id(session_id: str) -> list[dict]:
+    for runner_instance in runner_instances:
+        if Session.load(runner_instance.database_instance) is not None:
+            runner_ids.append(runner_instance.id)
+            runner_with_session_db_list.append(runner_instance.database_instance)
+    return runner_ids, runner_with_session_db_list
+
+
+def api_get_all_session_metadata() -> list:
     """
-    Retrieves and returns the chat sessions associated with a specific session ID as a list of dictionaries.
+    Retrieves metadata for all sessions.
 
-    This API endpoint calls the `Session.get_session_chats_by_session_id` method to fetch all chat sessions
-    related to the specified session ID. Each chat session object is then converted to a dictionary for easy JSON
-    serialization and client consumption. This is particularly useful for clients that need to display or process
-    the details of chat sessions within a specific session.
-
-    Args:
-        session_id (str): The unique identifier for the session whose chat sessions are to be retrieved.
+    This function retrieves the metadata for all active sessions by calling the `api_get_available_session_info` method
+    and then loading the session details for each active session.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing a chat session associated with the specified session ID.
+        list: A list containing the metadata for all active sessions.
     """
-    return [
-        chat_object.to_dict()
-        for chat_object in Session.get_session_chats_by_session_id(session_id)
-    ]
+    _, runner_with_session_db_list = api_get_available_session_info()
+    list_of_session_metadata = []
+    for runner_with_session_db in runner_with_session_db_list:
+        list_of_session_metadata.append(Session.load(runner_with_session_db))
+    return list_of_session_metadata
 
 
-def api_create_session(
-    name: str,
-    description: str,
-    endpoints: list[str],
-    context_strategy: str = "",
-    prompt_template: str = "",
-) -> Session:
+def api_update_context_strategy(runner_id: str, context_strategy: str) -> None:
     """
-    Creates a new session with the specified parameters and returns the session instance.
-    This API endpoint facilitates the creation of a new session by wrapping around the `Session.create_session`
-    method. It allows clients to specify session details such as name, description, associated endpoints,
-    context strategy, and prompt template. This method is particularly useful for initializing sessions with custom
-    configurations for red teaming exercises or other operational scenarios.
+    Updates the context strategy for a specific runner.
+
+    This function updates the context strategy for a specific runner identified by the given runner_id. It calls the
+    `Session.update_context_strategy` method with the runner's database instance,
+    runner_id, and the new context_strategy.
 
     Args:
-        name (str): The name of the new session.
-        description (str): A brief description of the session.
-        endpoints (list): A list of endpoints that the session will interact with.
-        context_strategy (str, optional): The strategy for managing context within the session.
-        prompt_template (str, optional): The template for generating prompts within the session.
+        runner_id (str): The ID of the runner for which the context strategy needs to be updated.
+        context_strategy (str): The new context strategy to be set for the runner.
 
     Returns:
-        Session: The newly created session instance.
+        None
     """
-    return Session(name, description, endpoints, "", context_strategy, prompt_template)
+    Session.update_context_strategy(
+        api_load_runner(runner_id).database_instance, runner_id, context_strategy
+    )
 
 
-def api_get_session(session_id: str) -> Session:
+def api_update_prompt_template(runner_id: str, prompt_template: str) -> None:
     """
-    Retrieves and returns a session object based on the provided session ID.
+    Updates the prompt template for a specific runner.
 
-    This API endpoint fetches a session object identified by the session ID and returns it to the caller.
-    It is useful for obtaining detailed information about a specific session within the system.
+    This function updates the prompt template for a specific runner identified by the given runner_id. It calls the
+    `Session.update_prompt_template` method with the runner's database instance,
+    runner_id, and the new prompt_template.
 
     Args:
-        session_id (str): The unique identifier of the session to retrieve.
+        runner_id (str): The ID of the runner for which the prompt template needs to be updated.
+        prompt_template (str): The new prompt template to be set for the runner.
 
     Returns:
-        Session: The session object associated with the specified session ID.
+        None
     """
-    return Session(session_id=session_id)
+    Session.update_prompt_template(
+        api_load_runner(runner_id).database_instance, runner_id, prompt_template
+    )
 
 
-def api_delete_session(session_id: str) -> None:
+def api_delete_session(runner_id: str) -> None:
     """
-    Deletes a session based on the provided session ID.
+    Deletes the session for a specific runner.
 
-    This API endpoint wraps around the `Session.delete_session` method, offering a straightforward way to remove
-    a session from the system using its unique identifier. It is particularly useful for cleaning up sessions that are
-    no longer needed or for managing session lifecycles in a dynamic environment.
+    This function deletes the session for the runner identified by the given runner_id. It calls the
+    `Session.delete_session` method with the runner's database instance.
 
     Args:
-        session_id (str): The unique identifier of the session to be deleted.
+        runner_id (str): The ID of the runner for which the session needs to be deleted.
 
     Returns:
-        None: This method does not return a value, but it will remove the specified session from the system.
+        None
     """
-    Session.delete_session(session_id)
-
-
-async def api_send_prompt(session_id: str, user_prompt: str) -> None:
-    """
-    Sends a user-defined prompt to a specific session.
-
-    This API endpoint allows for sending a prompt, defined by the user, to a session identified by the session ID.
-    It leverages the `Session.send_prompt` method to facilitate the interaction between the user and the session,
-    enabling dynamic input and further customization of the session's behavior based on user input.
-
-    Args:
-        session_id (str): The unique identifier of the session to which the prompt is to be sent.
-        user_prompt (str): The prompt text defined by the user to be sent to the session.
-
-    Returns:
-        None: This method does not return a value but triggers the sending of the user prompt to the specified session.
-    """
-    await Session.send_prompt(session_id, user_prompt)
-
-
-def api_update_context_strategy(session_id: str, context_strategy_name: str) -> None:
-    """
-    Updates the context strategy for a specific session.
-
-    This API endpoint calls the `Session.update_context_strategy` method to update the context strategy
-    associated with the specified session ID. It allows clients to modify the context strategy for a session,
-    enabling dynamic changes in how context is managed within the session.
-
-    Args:
-        session_id (str): The unique identifier of the session for which the context strategy is to be updated.
-        context_strategy_name (str): The new context strategy name to be assigned to the session.
-
-    Returns:
-        None: This method does not return a value but updates the context strategy for the specified session.
-    """
-    Session.update_context_strategy(session_id, context_strategy_name)
-
-
-def api_update_prompt_template(session_id: str, prompt_template_name: str) -> None:
-    """
-    Updates the prompt template for a specific session.
-
-    This API endpoint calls the `Session.update_prompt_template` method to update the prompt template
-    associated with the specified session ID. It allows clients to modify the prompt template for a session,
-    enabling dynamic changes in the prompts generated within the session.
-
-    Args:
-        session_id (str): The unique identifier of the session for which the prompt template is to be updated.
-        prompt_template_name (str): The new prompt template name to be assigned to the session.
-
-    Returns:
-        None: This method does not return a value but updates the prompt template for the specified session.
-    """
-    Session.update_prompt_template(session_id, prompt_template_name)
+    Session.delete_session(api_load_runner(runner_id).database_instance)

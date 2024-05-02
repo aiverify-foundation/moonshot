@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from datetime import datetime
+from pathlib import Path
 from typing import Any, AsyncGenerator
 
 from jinja2 import Template
@@ -19,6 +20,8 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class AttackModule:
+    DEFAULT_MAX_ATTACK_ITERATION = 5
+
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -66,15 +69,6 @@ class AttackModule:
             raise RuntimeError(
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
-
-    @abstractmethod
-    def check_stop_condition(self):
-        """
-        Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
-        Stop condition can be number of prompts sent to the target LLM(s), the response from the LLM matching
-        a certain word, or the response from the LLM having a certain metric score.
-        """
-        pass
 
     async def _generate_prompts(
         self, prompt: str, target_llm_connector_id: str
@@ -325,6 +319,27 @@ class AttackModule:
                 ContextStrategy.load(context_strategy_id)
                 for context_strategy_id in self.context_strategy_ids
             ]
+
+    @staticmethod
+    def get_available_items() -> list[str]:
+        """
+        Retrieves the available attack module IDs.
+
+        Returns:
+            list[str]: A list of available attack module IDs.
+        """
+        try:
+            retn_am_ids = []
+
+            ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
+            for am in ams:
+                if "__" in am:
+                    continue
+                retn_am_ids.append(Path(am).stem)
+            return retn_am_ids
+        except Exception as e:
+            print(f"Failed to get available attack modules: {str(e)}")
+            raise e
 
 
 class RedTeamingPromptArguments(BaseModel):

@@ -422,30 +422,20 @@ class Runner:
             Exception: If any error occurs during the setup or execution of the red teaming session.
         """
         async with self.current_operation_lock:  # Acquire the lock
-            # automated red teaming
-            if (
-                "attack_strategies" in red_team_args
-                and red_team_args.get("attack_strategies") is not None
-            ):
-                print(f"[Runner] {self.id} - Running red teaming session...")
-                self.current_operation = Session(
-                    self.id,
-                    RunnerType.REDTEAM,
-                    {
-                        **red_team_args,
-                        "system_prompt": system_prompt,
-                        "runner_processing_module": runner_processing_module,
-                    },
-                    self.database_instance,
-                    self.endpoints,
-                    Storage.get_filepath(
-                        EnvVariables.RESULTS.name, self.id, "json", True
-                    ),
-                    self.progress_callback_func,
-                )
-            else:
-                # manual red teaming
-                return
+            print(f"[Runner] {self.id} - Running red teaming session...")
+            self.current_operation = Session(
+                self.id,
+                RunnerType.REDTEAM,
+                {
+                    **red_team_args,
+                    "system_prompt": system_prompt,
+                    "runner_processing_module": runner_processing_module,
+                },
+                self.database_instance,
+                self.endpoints,
+                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+                self.progress_callback_func,
+            )
 
         # Note: The lock is held during setup but should be released before long-running operations
         # Execute the long-running operation outside of the lock
