@@ -2,40 +2,17 @@
     "id": "squad-shifts-tnf",
     "name": "squad-shifts-tnf",
     "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
     "datasets": [
         "squad-shifts-tnf"
     ],
-    "prompt_templates": [
-    ],
+    "prompt_templates": [],
     "metrics": [
         "relaxstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {
-        "A": [
-            0.0,
-            0.199999
-        ],
-        "B": [
-            0.2,
-            0.399999
-        ],
-        "C": [
-            0.4,
-            0.599999
-        ],
-        "D": [
-            0.6,
-            0.799999
-        ],
-        "E": [
-            0.8,
-            1.0
-        ]
-    }
+    "grading_scale": {}
 }
