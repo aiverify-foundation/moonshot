@@ -1,0 +1,16 @@
+{
+  "id": "openai-gpt35-turbo",
+  "name": "OpenAI GPT35 Turbo",
+  "connector_type": "openai-connector",
+  "uri": "",
+  "token": "",
+  "max_calls_per_second": 1,
+  "max_concurrency": 1,
+  "params": {
+    "timeout": 300,
+    "allow_retries": true,
+    "num_of_retries": 3,
+    "temperature": 0.5,
+    "model": "gpt-3.5-turbo"
+  }
+}

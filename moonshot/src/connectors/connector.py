@@ -66,10 +66,6 @@ class Connector:
         self.max_calls_per_second = ep_args.max_calls_per_second
         self.params = ep_args.params
 
-        self.pre_prompt = ""
-        self.post_prompt = ""
-        self.system_prompt = ""
-
         # Rate limiting
         self.rate_limiter = ep_args.max_calls_per_second
         # Initialize the token count to the maximum limit
@@ -77,13 +73,25 @@ class Connector:
         self.updated_at = time.time()
         self.semaphore = asyncio.Semaphore(ep_args.max_concurrency)
 
+        # Set Prompts if they exists
+        self.pre_prompt = ep_args.params.get("pre_prompt", "")
+        self.post_prompt = ep_args.params.get("post_prompt", "")
+        self.system_prompt = ep_args.params.get("system_prompt", "")
+
         # Connection timeout
         self.timeout = ep_args.params.get("timeout", 600)
         self.allow_retries = ep_args.params.get("allow_retries", True)
         self.retries_times = ep_args.params.get("num_of_retries", 3)
 
         # Optional params
-        excluded_keys = {"allow_retries", "timeout", "num_of_retries"}
+        excluded_keys = {
+            "allow_retries",
+            "timeout",
+            "num_of_retries",
+            "pre_prompt",
+            "post_prompt",
+            "system_prompt",
+        }
         self.optional_params = {
             k: v for k, v in ep_args.params.items() if k not in excluded_keys
         }

@@ -13,24 +13,19 @@ class ReverseExactStrMatch(MetricInterface):
         self.id = "reverseexactstrmatch"
         self.name = "ReverseExactStrMatch"
         self.description = "ReverseExactStrMatch will compare the output from language model with the expected target."
-        self.version = "0.1.0"
+        self.metric_config = self.get_metrics_configuration(self.id)
 
     @timeit
     def get_metadata(self) -> dict | None:
         """
-        Fetches and provides the metadata for the ReverseExactStrMatch class, including its unique identifier,
-        the name, a brief description, and the current version of the metric.
+        Retrieves and returns the metadata of the ReverseExactStrMatch class.
+        The metadata includes the unique identifier, the name, and the description of the class.
 
         Returns:
-            dict: A dictionary encapsulating the metadata of the ReverseExactStrMatch class, detailing 'id', 'name',
-            'description', and 'version' keys.
+            dict | None: A dictionary containing the 'id', 'name', and 'description' of the ReverseExactStrMatch class,
+            or None if not applicable.
         """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "version": self.version,
-        }
+        return {"id": self.id, "name": self.name, "description": self.description}
 
     @timeit
     def get_results(

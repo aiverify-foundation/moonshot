@@ -147,7 +147,10 @@ class ResultArguments:
         formatted_results = []
         for recipe in recipes_list:
             recipe_dict = {"id": recipe, "models": []}
-            recipe_results = recipes_results[recipe]
+            if recipes_results:
+                recipe_results = recipes_results[recipe]
+            else:
+                recipe_results = {}
 
             # Getting unique datasets, endpoints, and prompt templates
             unique_endpoints = set()
