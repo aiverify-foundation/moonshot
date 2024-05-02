@@ -19,12 +19,13 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_all_cookbooks(self, tags: str) -> list[CookbookResponeDTO | None]:
+    def get_all_cookbooks(self, tags: str, count: bool) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
         filtered_cookbooks = []
         for cookbook in cookbooks:
             cookbook = CookbookResponeDTO(**cookbook)
-            cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
+            if count:
+                cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
             if not tags or cookbooks_recipe_has_tags(tags, cookbook):
                 filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
         return filtered_cookbooks

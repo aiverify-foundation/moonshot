@@ -40,13 +40,14 @@ def create_recipe(
 def get_all_recipes(
     tags: str = Query(None, description="Filter recipes by tags"),
     sort_by: str = Query(None, description="Sort recipes by a specific field"),
+    count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
     ):
     """
     Get all the recipes from the database
     """
     try:
-        recipes = recipe_service.get_all_recipes(tags=tags, sort_by=sort_by)
+        recipes = recipe_service.get_all_recipes(tags=tags, sort_by=sort_by, count=count)
         return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":

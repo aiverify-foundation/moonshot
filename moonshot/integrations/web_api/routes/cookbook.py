@@ -36,13 +36,14 @@ def create_cookbook(
 @inject
 def get_all_cookbooks(
     tags: str = Query(None, description="Filter cookbooks by tags"),
+    count: bool = Query(False, description="Whether to include the count of recipes"),
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
     ):
     """
     Get all the cookbooks from the database
     """
     try:
-        cookbooks = cookbook_service.get_all_cookbooks(tags=tags)
+        cookbooks = cookbook_service.get_all_cookbooks(tags=tags,count=count)
         return cookbooks
     except ServiceException as e:
         if e.error_code == "FileNotFound":

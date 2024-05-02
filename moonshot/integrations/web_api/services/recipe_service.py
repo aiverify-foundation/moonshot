@@ -23,12 +23,14 @@ class RecipeService(BaseService):
     
 
     @exception_handler
-    def get_all_recipes(self, tags: str, sort_by: str) -> list[RecipeResponseDTO]:
+    def get_all_recipes(self, tags: str, sort_by: str, count: bool) -> list[RecipeResponseDTO]:
         recipes = moonshot_api.api_get_all_recipe()
         filtered_recipes = []
+
         for recipe_dict in recipes:
             recipe = RecipeResponseDTO(**recipe_dict)
-            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
+            if count:
+                recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
             filtered_recipes.append(recipe)
 
         if tags:
