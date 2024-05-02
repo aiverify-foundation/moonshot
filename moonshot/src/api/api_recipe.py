@@ -42,6 +42,7 @@ def api_create_recipe(
         id="",
         name=name,
         description=description,
+        categories=categories,
         tags=tags,
         datasets=datasets,
         prompt_templates=prompt_templates,
