@@ -17,7 +17,7 @@ class AttackModuleArguments(BaseModel):
     prompt_templates: list = []
 
     # user's prompt
-    prompt: str = ""
+    prompt: str
 
     # system prompt
     system_prompt: str = ""

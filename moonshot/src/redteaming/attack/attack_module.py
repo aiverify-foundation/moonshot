@@ -180,7 +180,9 @@ class AttackModule:
                 consolidated_responses.append(response)
                 chat_tuple = (
                     target_llm_connector.id,
-                    self.context_strategy_ids[0] if self.context_strategy_ids else "",
+                    self.context_strategy_instances[0]
+                    if self.context_strategy_info
+                    else "",
                     self.prompt_templates[0] if self.prompt_templates else "",
                     self.name,
                     self.metric_ids[0] if self.metric_ids else "",

@@ -166,20 +166,20 @@ class RedTeaming:
         """
         # assign manual red teaming arguments to self.rt_args
         self.rt_args = self.runner_args.get("manual_rt_args", "")
+        if not self.rt_args:
+            raise RuntimeError("[Session] Unable to get red teaming arguments.")
 
         # assign prompt template and context strategy to self. if not specified, they will be defaulted to empty list
         self.prompt_templates = self.rt_args.get("prompt_template_ids", [])
         self.context_strategy_info = self.rt_args.get("context_strategy_info", [])
 
         self.load_modules()
-        if not self.rt_args:
-            raise RuntimeError("[Session] Unable to get red teaming arguments.")
 
         self.prompt = self.rt_args.get("prompt", "")
-        self.system_prompt = self.rt_args.get("system_prompt", "")
-
         if not self.prompt:
             raise RuntimeError("[Session] Unable to get prompt for manual red teaming.")
+
+        self.system_prompt = self.rt_args.get("system_prompt", "")
 
         consolidated_result_list = []
         generator_list = []
@@ -278,10 +278,6 @@ class RedTeaming:
                 system_prompt=prompt_info.system_prompt,
                 connector_prompt=prompt_info.connector_prompt,
                 start_time=str(datetime.now()),
-            )
-
-            new_prompt_info.connector_prompt = await Connector.get_prediction(
-                new_prompt_info.connector_prompt, llm_connector
             )
 
             # send processed prompt to llm and write record to db
