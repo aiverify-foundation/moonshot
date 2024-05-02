@@ -194,6 +194,18 @@ class RedTeaming:
     async def _generate_prompts(
         self, target_llm_connector_id: str
     ) -> AsyncGenerator[RedTeamingPromptArguments, None]:
+        """
+        Generates prompts for the red teaming process based on the provided arguments.
+
+        Retrieves the prompt from the context strategy instance and processes it using the specified prompt template.
+        Yields a RedTeamingPromptArguments object containing the generated prompt information.
+
+        Args:
+            target_llm_connector_id (str): The ID of the target LLM connector.
+
+        Yields:
+            RedTeamingPromptArguments: An object containing the generated prompt information.
+        """
         prompt = self.prompt
 
         if self.context_strategy_info:
@@ -242,6 +254,18 @@ class RedTeaming:
         gen_prompts_generator: AsyncGenerator[RedTeamingPromptArguments, None],
         llm_connector: Connector,
     ) -> AsyncGenerator[RedTeamingPromptArguments, None]:
+        """
+        Asynchronously generates predictions based on the provided prompts.
+
+        Args:
+            gen_prompts_generator (AsyncGenerator[RedTeamingPromptArguments, None]): An asynchronous generator yielding
+            RedTeamingPromptArguments.
+            llm_connector (Connector): The LLM connector used for generating predictions.
+
+        Yields:
+            AsyncGenerator[RedTeamingPromptArguments, None]: An asynchronous generator yielding
+            RedTeamingPromptArguments with updated predictions.
+        """
         async for prompt_info in gen_prompts_generator:
             new_prompt_info = RedTeamingPromptArguments(
                 conn_id=prompt_info.conn_id,
