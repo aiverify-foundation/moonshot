@@ -164,7 +164,7 @@ class RedTeaming:
         Returns:
         list: A list of consolidated results from the manual red teaming process.
         """
-        # assign manua red teaming arguments to self.rt_args
+        # assign manual red teaming arguments to self.rt_args
         self.rt_args = self.runner_args.get("manual_rt_args", "")
 
         # assign prompt template and context strategy to self. if not specified, they will be defaulted to empty list
