@@ -5,6 +5,7 @@ class RecipeResponseDTO(BaseModel):
     name: str
     description: str
     tags: list[str]
+    categories: list[str]
     datasets: list[str]
     prompt_templates: list[str]
     metrics: list[str]

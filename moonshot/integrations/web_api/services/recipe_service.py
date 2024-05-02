@@ -14,6 +14,7 @@ class RecipeService(BaseService):
             name=recipe_data.name,
             description=recipe_data.description,
             tags=recipe_data.tags,
+            categories=recipe_data.categories,
             datasets=recipe_data.datasets,
             prompt_templates=recipe_data.prompt_templates,
             metrics=recipe_data.metrics,
@@ -25,10 +26,9 @@ class RecipeService(BaseService):
     def get_all_recipes(self, tags: str, sort_by: str) -> list[RecipeResponseDTO]:
         recipes = moonshot_api.api_get_all_recipe()
         filtered_recipes = []
-
         for recipe_dict in recipes:
             recipe = RecipeResponseDTO(**recipe_dict)
-            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
+            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
             filtered_recipes.append(recipe)
 
         if tags:
@@ -54,7 +54,7 @@ class RecipeService(BaseService):
         for id in recipe_id_list:
             recipe = moonshot_api.api_read_recipe(id)
             recipe = RecipeResponseDTO(**recipe)
-            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe.id)
+            recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
             ret_recipes.append(recipe)
         return [RecipeResponseDTO.model_validate(recipe) for recipe in ret_recipes]
 
@@ -78,12 +78,13 @@ class RecipeService(BaseService):
         moonshot_api.api_delete_recipe(recipe_id)
 
 @staticmethod
-def get_total_prompt_in_recipe(recipe_id: str) -> int:
+def get_total_prompt_in_recipe(recipe: RecipeResponseDTO) -> int:
     total_prompt_count = 0
-    recipe = moonshot_api.api_read_recipe(recipe_id)
-    recipe = RecipeResponseDTO(**recipe)
     if "num_of_datasets_prompts" in recipe.stats:
         datasets_prompts = recipe.stats["num_of_datasets_prompts"]
         for dataset, count in datasets_prompts.items():
             total_prompt_count += count
+    if recipe.prompt_templates:
+        total_prompt_count = total_prompt_count * recipe.stats["num_of_prompt_templates"]
+
     return total_prompt_count

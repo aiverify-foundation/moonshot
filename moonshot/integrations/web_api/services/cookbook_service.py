@@ -24,8 +24,8 @@ class CookbookService(BaseService):
         filtered_cookbooks = []
         for cookbook in cookbooks:
             cookbook = CookbookResponeDTO(**cookbook)
-            cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook.id)
-            if not tags or cookbooks_recipe_has_tags(tags, cookbook.id):
+            cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
+            if not tags or cookbooks_recipe_has_tags(tags, cookbook):
                 filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
         return filtered_cookbooks
 
@@ -37,11 +37,16 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_cookbook_by_id(self, cookbook_id: str) -> CookbookResponeDTO | None: 
-        cookbook = moonshot_api.api_read_cookbook(cookbook_id)
-        cookbook = CookbookResponeDTO(**cookbook)
-        cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook.id)
-        return CookbookResponeDTO.model_validate(cookbook)
+    def get_cookbook_by_ids(self, cookbook_id: str) -> list[CookbookResponeDTO] | None: 
+        ret_cookbooks =[]
+        cb_id_list = cookbook_id.split(",")
+        for id in cb_id_list:
+            cookbook = moonshot_api.api_read_cookbook(id)
+            cookbook = CookbookResponeDTO(**cookbook)
+            cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
+            ret_cookbooks.append(cookbook)
+
+        return [CookbookResponeDTO.model_validate(cb) for cb in ret_cookbooks]
 
 
     @exception_handler
@@ -59,19 +64,17 @@ class CookbookService(BaseService):
         moonshot_api.api_delete_cookbook(cookbook_id)
 
 @staticmethod
-def get_total_prompt_in_cookbook(cookbook_id: str) -> int:
+def get_total_prompt_in_cookbook(cookbook: CookbookResponeDTO) -> int:
     total_prompt_count = 0
-    cookbook = moonshot_api.api_read_cookbook(cookbook_id)
-    cookbook = CookbookResponeDTO(**cookbook)
-    for recipe in cookbook.recipes:
+    for recipe_id in cookbook.recipes:
+        recipe = moonshot_api.api_read_recipe(recipe_id)
+        recipe = RecipeResponseDTO(**recipe)
         total_prompt_count += get_total_prompt_in_recipe(recipe)
 
     return total_prompt_count
 
 @staticmethod
-def cookbooks_recipe_has_tags(tags: str, cookbook_id: str) -> bool:
-    cookbook = moonshot_api.api_read_cookbook(cookbook_id)
-    cookbook = CookbookResponeDTO(**cookbook)
+def cookbooks_recipe_has_tags(tags: str, cookbook: CookbookResponeDTO) -> bool:
     recipe_ids = cookbook.recipes
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:

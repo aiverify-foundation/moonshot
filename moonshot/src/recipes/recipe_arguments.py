@@ -10,6 +10,8 @@ class RecipeArguments(BaseModel):
 
     tags: list[str]  # tags (list): The list of tags in the recipe.
 
+    categories: list[str] # categories (list): The list of categories in the recipe.
+    
     datasets: list[str]  # datasets (list): The list of datasets used in the recipe.
 
     prompt_templates: list[
@@ -39,6 +41,7 @@ class RecipeArguments(BaseModel):
             "name": self.name,
             "description": self.description,
             "tags": self.tags,
+            "categories": self.tags,
             "datasets": self.datasets,
             "prompt_templates": self.prompt_templates,
             "metrics": self.metrics,

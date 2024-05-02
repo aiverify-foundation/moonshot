@@ -17,6 +17,7 @@ class Recipe:
         self.name = rec_args.name
         self.description = rec_args.description
         self.tags = rec_args.tags
+        self.categories = rec_args.categories
         self.datasets = rec_args.datasets
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
@@ -64,6 +65,7 @@ class Recipe:
                 "name": rec_args.name,
                 "description": rec_args.description,
                 "tags": rec_args.tags,
+                "categories": rec_args.categories,
                 "datasets": rec_args.datasets,
                 "prompt_templates": rec_args.prompt_templates,
                 "metrics": rec_args.metrics,

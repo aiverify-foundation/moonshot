@@ -73,16 +73,16 @@ def get_all_cookbooks_name(
             raise HTTPException(status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}")       
 
 
-@router.get("/api/v1/cookbooks/{cookbook_id}")
+@router.get("/api/v1/cookbooks/ids/")
 @inject
 def get_cookbook_by_id(
-    cookbook_id: str,
+    cookbook_id: str = Query(None, description="Get cookbooks to query"),
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])): 
     """
     Get a cookbook from the database
     """
     try:
-        cookbook = cookbook_service.get_cookbook_by_id(cookbook_id)
+        cookbook = cookbook_service.get_cookbook_by_ids(cookbook_id)
         return cookbook
     except ServiceException as e:
         if e.error_code == "FileNotFound":
