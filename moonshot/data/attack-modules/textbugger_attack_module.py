@@ -1,5 +1,4 @@
 import time
-import warnings
 
 from textattack.augmentation import Augmenter
 from textattack.transformations import (
@@ -19,9 +18,7 @@ from textattack.constraints.semantics.sentence_encoders import UniversalSentence
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
-# remove this line of code to view warnings.
-with warnings.catch_warnings(action = "ignore"):
-    warnings.warn("deprecated", DeprecationWarning)
+
 
 """
 About this attack module:
@@ -30,7 +27,7 @@ Real-world Applications.
 Configurable Params:
 1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the number of transfprmations that should be generated.
 2. word_swap_ratio - Percentage of words in a prompt that should be perturbed.
-3. tok_k - to select top k number of semantic words from the GLoVe embedding
+3. top_k - to select top k number of semantic words from the GLoVe embedding
 4. threshold - semantic similarity threshold for the universal encoder
 
 Note:
