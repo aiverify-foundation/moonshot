@@ -15,49 +15,134 @@ from moonshot.src.redteaming.attack.attack_module import AttackModule
 # Red Teaming APIs
 # ------------------------------------------------------------------------------
 
-# Run automated red teaming
-print("Running Automated Red Teaming")
+def run_manual_and_automated_rt():
+    runner_name = "test amrt"
+    runner_id = "test-amrt"
+    endpoints = ["openai-gpt35-turbo", "openai-gpt4"]
+    print("1) Creating Runner")
+    runner = api_create_runner(
+        name=runner_name,
+        endpoints=endpoints,
+    )    
+    runner.close()
 
-# Red teaming config
-runner_name = "test rt runner"
-runner_id = "test-rt-runner"
-endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
-rt_arguments = {
-    "attack_strategies": [{
-        "attack_module_id": "sample_attack_module",
-        "prompt": "hello world",
-        "system_prompt": "test system prompt",
-        "context_strategy_ids": ["add_previous_prompt"],
-        "prompt_template_ids": ["auto-categorisation"],
+    mrt_arguments = {
+        "manual_rt_args": {
+            "prompt": "hell0 world",
+            "context_strategy_info": [{
+                "context_strategy_id":"add_previous_prompt",
+                "num_of_prev_prompts": 4
+                }],
+            "prompt_template_ids": ["auto-categorisation"]
         }
-    ]
-}
+    }
+    
+    art_arguments = {
+        "attack_strategies": [{
+            "attack_module_id": "sample_attack_module",
+            "prompt": "hello world",
+            "system_prompt": "test system prompt",
+            "context_strategy_info": [{
+                "context_strategy_id":"add_previous_prompt",
+                "num_of_prev_prompts": 4
+                }],
+            "prompt_template_ids": ["auto-categorisation"],
+            }
+        ]
+    }
 
-print("1) Creating Runner")
-runner = api_create_runner(
-    name=runner_name,
-    endpoints=["my-openai-gpt35", "my-openai-gpt4"],
-)
-runner.close()
+    print("2)Loading and Running runner")
+    loop = asyncio.get_event_loop()
+    
+    # manual red teaming
+    runner = api_load_runner(runner_id)
+    loop.run_until_complete(
+        runner.run_red_teaming(mrt_arguments)
+    )
+    runner.close()
 
-print("2)Loading and Running runner")
-runner = api_load_runner(runner_id)
+    # automated red teaming
+    runner = api_load_runner(runner_id)
+    loop.run_until_complete(
+        runner.run_red_teaming(art_arguments)
+    )
+    runner.close()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(
-    runner.run_red_teaming(rt_arguments)
-)
+def run_manual_rt():
+    print("Running Manual Red Teamming")
+    runner_name = "test mrt"
+    runner_id = "test-mrt"
+    endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
+    rt_arguments = {
+        "manual_rt_args": {
+            "prompt": "hell0 world",
+            "context_strategy_info": [{
+                "context_strategy_id":"add_previous_prompt",
+                "num_of_prev_prompts": 4
+                }],
+            "prompt_template_ids": ["auto-categorisation"]
+        }
+    }
 
-runner.close()
+    print("1) Creating Runner")
+    runner = api_create_runner(
+        name=runner_name,
+        endpoints=endpoints,
+    )
+    runner.close()
+    print("2)Loading and Running runner")
+    runner = api_load_runner(runner_id)
+    
+    loop = asyncio.get_event_loop()
+    runner = api_load_runner(runner_id)
+    loop.run_until_complete(
+        runner.run_red_teaming(rt_arguments)
+    )
+    runner.close()
 
+def run_automated_rt():
+    # Run automated red teaming
+    print("Running Automated Red Teaming")
+    # Red teaming config
+    runner_name = "test art"
+    runner_id = "test-art"
+    endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
+    rt_arguments = {
+        "attack_strategies": [{
+            "attack_module_id": "sample_attack_module",
+            "prompt": "hello world",
+            "system_prompt": "test system prompt",
+            "context_strategy_info": [{
+                "context_strategy_id":"add_previous_prompt",
+                "num_of_prev_prompts": 4
+                }],
+            "prompt_template_ids": ["auto-categorisation"],
+            }
+        ]
+    }
 
-# Get all attack module names
-print("Get All Attack Module Names")
-print(AttackModule.get_available_items(), "\n")
+    print("1) Creating Runner")
+    runner = api_create_runner(
+        name=runner_name,
+        endpoints=endpoints,
+    )
+    runner.close()
+    print("2)Loading and Running runner")
+    runner = api_load_runner(runner_id)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        runner.run_red_teaming(rt_arguments)
+    )
+    runner.close()
+
+run_manual_and_automated_rt()
+
 
 # ------------------------------------------------------------------------------
 # Session APIs
 # ------------------------------------------------------------------------------
+
+runner_id = "test-amrt"
 
 # Replace this ID with something 
 print("Get All Session Names")
@@ -82,3 +167,11 @@ api_update_prompt_template(runner_id, "mmlu")
 
 print("Delete Session")
 # api_delete_session(runner_id)
+
+# ------------------------------------------------------------------------------
+# Attack APIs
+# ------------------------------------------------------------------------------
+
+# Get all attack module names
+print("Get All Attack Module Names")
+print(AttackModule.get_available_items(), "\n")
