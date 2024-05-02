@@ -444,7 +444,7 @@ class Storage:
 
     @staticmethod
     def delete_database_table(
-        database_instance: DBInterface, sql_delete_record: str
+        database_instance: DBInterface, sql_delete_table: str
     ) -> None:
         """
         Deletes a table from the database.
@@ -454,12 +454,12 @@ class Storage:
 
         Args:
             database_instance (DBInterface): The database accessor instance.
-            sql_delete_record (str): The SQL query to delete a table.
+            sql_delete_table (str): The SQL query to delete a table.
 
         Returns:
             None
         """
         if database_instance:
-            database_instance.delete_database_table(sql_delete_record)
+            database_instance.delete_database_table(sql_delete_table)
         else:
             raise RuntimeError("Database instance is not initialised.")

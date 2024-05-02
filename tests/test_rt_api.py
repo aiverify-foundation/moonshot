@@ -1,5 +1,4 @@
-from moonshot.src.api.api_red_teaming import api_run_red_teaming
-from moonshot.src.redteaming.session.session import Session
+import asyncio
 from moonshot.src.api.api_runner import api_create_runner, api_load_runner
 from moonshot.src.api.api_session import (
     api_load_session, 
@@ -43,7 +42,14 @@ runner.close()
 
 print("2)Loading and Running runner")
 runner = api_load_runner(runner_id)
-api_run_red_teaming(runner, rt_arguments)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(
+    runner.run_red_teaming(rt_arguments)
+)
+
+runner.close()
+
 
 # Get all attack module names
 print("Get All Attack Module Names")
