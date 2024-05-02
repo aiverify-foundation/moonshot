@@ -16,9 +16,9 @@ from moonshot.src.redteaming.attack.attack_module import AttackModule
 # ------------------------------------------------------------------------------
 
 def run_manual_and_automated_rt():
-    runner_name = "test amrt 1"
-    runner_id = "test-amrt-1"
-    endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
+    runner_name = "test amrt"
+    runner_id = "test-amrt"
+    endpoints = ["openai-gpt35-turbo", "openai-gpt4"]
     print("1) Creating Runner")
     runner = api_create_runner(
         name=runner_name,
@@ -52,14 +52,21 @@ def run_manual_and_automated_rt():
     }
 
     print("2)Loading and Running runner")
+    loop = asyncio.get_event_loop()
+    
+    # manual red teaming
     runner = api_load_runner(runner_id)
-
-    api_run_red_teaming(runner, mrt_arguments)
+    loop.run_until_complete(
+        runner.run_red_teaming(mrt_arguments)
+    )
     runner.close()
 
+    # automated red teaming
     runner = api_load_runner(runner_id)
-    api_run_red_teaming(runner, art_arguments)
-
+    loop.run_until_complete(
+        runner.run_red_teaming(art_arguments)
+    )
+    runner.close()
 
 def run_manual_rt():
     print("Running Manual Red Teamming")
@@ -85,7 +92,13 @@ def run_manual_rt():
     runner.close()
     print("2)Loading and Running runner")
     runner = api_load_runner(runner_id)
-    api_run_red_teaming(runner, rt_arguments)    
+    
+    loop = asyncio.get_event_loop()
+    runner = api_load_runner(runner_id)
+    loop.run_until_complete(
+        runner.run_red_teaming(rt_arguments)
+    )
+    runner.close()
 
 def run_automated_rt():
     # Run automated red teaming
@@ -116,38 +129,49 @@ def run_automated_rt():
     runner.close()
     print("2)Loading and Running runner")
     runner = api_load_runner(runner_id)
-    api_run_red_teaming(runner, rt_arguments)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        runner.run_red_teaming(rt_arguments)
+    )
+    runner.close()
 
 run_manual_and_automated_rt()
 
-# # Get all attack module names
-# print("Get All Attack Module Names")
-# print(AttackModule.get_available_items(), "\n")
 
-# # ------------------------------------------------------------------------------
-# # Session APIs
-# # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Session APIs
+# ------------------------------------------------------------------------------
 
-# # Replace this ID with something 
-# print("Get All Session Names")
-# session_names = api_get_all_session_names()
-# print(f"{session_names}\n")
+runner_id = "test-amrt"
 
-# print("Get All Session Metadata")
-# session_metadatas = api_get_all_session_metadata()
-# print(f"{session_metadatas}\n")
+# Replace this ID with something 
+print("Get All Session Names")
+session_names = api_get_all_session_names()
+print(f"{session_names}\n")
 
-# print("Get Single Session Metadata")
-# single_session = api_load_session(runner_id)
-# print(f"{single_session}\n")
+print("Get All Session Metadata")
+session_metadatas = api_get_all_session_metadata()
+print(f"{session_metadatas}\n")
 
-# print("Get All Session Info")
-# all_session_info = api_get_available_session_info()
-# print(f"{all_session_info}\n")
+print("Get Single Session Metadata")
+single_session = api_load_session(runner_id)
+print(f"{single_session}\n")
 
-# print("Update CS and PT")
-# api_update_context_strategy(runner_id, "add_previous_prompt")
-# api_update_prompt_template(runner_id, "mmlu")
+print("Get All Session Info")
+all_session_info = api_get_available_session_info()
+print(f"{all_session_info}\n")
 
-# print("Delete Session")
-# # api_delete_session(runner_id)
+print("Update CS and PT")
+api_update_context_strategy(runner_id, "add_previous_prompt")
+api_update_prompt_template(runner_id, "mmlu")
+
+print("Delete Session")
+# api_delete_session(runner_id)
+
+# ------------------------------------------------------------------------------
+# Attack APIs
+# ------------------------------------------------------------------------------
+
+# Get all attack module names
+print("Get All Attack Module Names")
+print(AttackModule.get_available_items(), "\n")
