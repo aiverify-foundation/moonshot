@@ -39,6 +39,7 @@ class CharSwapGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
+        self.description = "This attack creates perturbations through swapping characters for words that contains more than 3 characters."
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:

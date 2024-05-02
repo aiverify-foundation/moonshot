@@ -49,6 +49,7 @@ class BugGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
+        self.description = "This attack implements the perturbations features in the paper 'TEXTBUGGER: Generating Adversarial Text Against Real-world Applications'."
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
