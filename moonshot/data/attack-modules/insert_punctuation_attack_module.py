@@ -7,11 +7,12 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
-"""
-Util function to generate random indices. 
-Words of these indices after word tokenization will be subjected to perturbation.
-"""
+
 def get_n_random (low: int , high: int , n: int ) -> list:
+    """
+    Util function to generate random indices. 
+    Words of these indices after word tokenization will be subjected to perturbation.
+    """
     result = []
     try:
         result = random.sample(range(low , high) , n)
