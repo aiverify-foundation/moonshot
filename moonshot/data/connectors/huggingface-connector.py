@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class HFGpt2(Connector):
+class HuggingFaceConnector(Connector):
     def __init__(self, ep_arguments: ConnectorEndpointArguments):
         # Initialize super class
         super().__init__(ep_arguments)
@@ -30,14 +30,7 @@ class HFGpt2(Connector):
         """
         connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}"
         # Merge self.optional_params with additional parameters
-        new_params = {
-            **self.optional_params,
-            "inputs": connector_prompt,
-            "parameters": {
-                "max_length": 512,
-                "min_length": 100,
-            },
-        }
+        new_params = {**self.optional_params, "inputs": connector_prompt}
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 self.endpoint,

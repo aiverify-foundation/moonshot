@@ -16,7 +16,7 @@ def runner_callback_fn(progress_args: dict):
 def test_create_runner(name: str):
     runner = api_create_runner(
         name=name,
-        endpoints=["openai-gpt35-lionel", "openai-gpt35-turbo-16k-lionel"],
+        endpoints=["openai-gpt35-turbo", "openai-gpt35-turbo-16k"],
         progress_callback_func=runner_callback_fn,
     )
     print("Runner Attributes:")
@@ -38,17 +38,6 @@ def test_load_runner(runner_id: str):
     print("Database File:", runner.database_file)
     print("Progress Callback Function:", runner.progress_callback_func)
     runner.close()
-
-def test_run_runner(runner_id: str):
-    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        runner.run(RunnerType.BENCHMARK, {
-            "recipes": ["bbq", "autocategorisation"],
-            "num_of_prompts": 2,
-            "runner_processing_module": "benchmarking"
-        })
-    )
 
 def test_run_benchmark_recipe_runner_and_cancel(runner_id: str):
     async def run_and_cancel():
