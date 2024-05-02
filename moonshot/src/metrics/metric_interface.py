@@ -20,7 +20,7 @@ class MetricInterface:
         pass
 
     @abstractmethod
-    def get_results(
+    async def get_results(
         self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
