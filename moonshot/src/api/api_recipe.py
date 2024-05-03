@@ -29,6 +29,7 @@ def api_create_recipe(
         name (str): The name of the recipe.
         description (str): The description of the recipe.
         tags (list[str]): A list of tags associated with the recipe.
+        categories (list[str]): A list of categories assoicated with the recipe.
         datasets (list[str]): A list of datasets the recipe utilizes.
         prompt_templates (list[str]): A list of prompt templates for the recipe.
         metrics (list[str]): A list of metrics to evaluate the recipe.
