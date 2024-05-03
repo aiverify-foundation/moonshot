@@ -18,6 +18,7 @@ class EnvVariables(Enum):
     METRICS = "METRICS"
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
+    REPORTS_MODULES = "REPORTS_MODULES"
     REPORTS_ANALYSIS_MODULES = "REPORTS_ANALYSIS_MODULES"
     RESULTS = "RESULTS"
     RUNNERS = "RUNNERS"
@@ -54,7 +55,11 @@ class EnvironmentVars:
     ]
     DATABASES = [
         env_vars.get(EnvVariables.DATABASES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/databases")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/databases"
+            )
+        ),
     ]
     DATABASES_MODULES = [
         env_vars.get(EnvVariables.DATABASES_MODULES.value),
@@ -80,6 +85,10 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RECIPES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
     ]
+    REPORTS_MODULES = [
+        env_vars.get(EnvVariables.REPORTS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/reports-modules")),
+    ]
     REPORTS_ANALYSIS_MODULES = [
         env_vars.get(EnvVariables.REPORTS_ANALYSIS_MODULES.value),
         str(
@@ -90,11 +99,19 @@ class EnvironmentVars:
     ]
     RESULTS = [
         env_vars.get(EnvVariables.RESULTS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/results")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/results"
+            )
+        ),
     ]
     RUNNERS = [
         env_vars.get(EnvVariables.RUNNERS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/runners")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/runners"
+            )
+        ),
     ]
     RUNNERS_MODULES = [
         env_vars.get(EnvVariables.RUNNERS_MODULES.value),

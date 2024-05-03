@@ -3,9 +3,7 @@ from ast import literal_eval
 from moonshot.src.api.api_cookbook import api_read_cookbooks
 from moonshot.src.api.api_recipe import api_read_recipes
 from moonshot.src.api.api_result import api_read_result
-from moonshot.src.report_analysis.report_analysis_interface import (
-    ReportAnalysisInterface,
-)
+from moonshot.src.reports.report_analysis_interface import ReportAnalysisInterface
 from moonshot.src.utils.timeit import timeit
 
 
