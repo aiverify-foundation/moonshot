@@ -12,10 +12,10 @@
     "datasets": [
         "realtimeqa-past"
     ],
-    "prompt_templates": [
-    ],
+    "prompt_templates": [],
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

@@ -2,8 +2,7 @@
     "id": "analogical-similarity",
     "name": "Analogical Similarity",
     "description": "To measure the model’s ability in discriminating between different degrees of analogical similarity in two given episodes",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "relaxstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

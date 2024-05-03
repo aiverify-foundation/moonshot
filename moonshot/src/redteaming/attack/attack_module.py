@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from datetime import datetime
+from pathlib import Path
 from typing import Any, AsyncGenerator
 
 from jinja2 import Template
@@ -19,6 +20,8 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class AttackModule:
+    DEFAULT_MAX_ATTACK_ITERATION = 5
+
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -33,7 +36,7 @@ class AttackModule:
         self.prompt = am_args.prompt
         self.system_prompt = am_args.system_prompt
         self.metric_ids = am_args.metric_ids
-        self.context_strategy_ids = am_args.context_strategy_ids
+        self.context_strategy_info = am_args.context_strategy_info
         self.db_instance = am_args.db_instance
         self.params = am_args.params
 
@@ -67,15 +70,6 @@ class AttackModule:
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
 
-    @abstractmethod
-    def check_stop_condition(self):
-        """
-        Checks if the stop condition has been fulfilled. If it is fulfilled, stop red teaming.
-        Stop condition can be number of prompts sent to the target LLM(s), the response from the LLM matching
-        a certain word, or the response from the LLM having a certain metric score.
-        """
-        pass
-
     async def _generate_prompts(
         self, prompt: str, target_llm_connector_id: str
     ) -> AsyncGenerator[RedTeamingPromptArguments, None]:
@@ -95,15 +89,17 @@ class AttackModule:
             generated prompt details.
 
         """
-        num_of_previous_chats = 3
-        if self.context_strategy_ids:
+        if self.context_strategy_info:
             context_strategy_instance = self.context_strategy_instances[0]
+            num_of_prev_prompts = self.context_strategy_info[0].get(
+                "num_of_prev_prompts"
+            )
             prompt = ContextStrategy.process_prompt_cs(
                 prompt,
                 context_strategy_instance.id,
                 self.db_instance,
                 target_llm_connector_id,
-                num_of_previous_chats,
+                num_of_prev_prompts,
             )
         if self.prompt_templates:
             # prepare prompt template generator
@@ -121,7 +117,9 @@ class AttackModule:
         yield RedTeamingPromptArguments(
             conn_id=target_llm_connector_id,
             am_id=self.name,
-            cs_id=self.context_strategy_ids[0] if self.context_strategy_ids else "",
+            cs_id=self.context_strategy_instances[0].id
+            if self.context_strategy_info
+            else "",
             pt_id=self.prompt_templates[0] if self.prompt_templates else "",
             me_id=self.metric_ids[0] if self.metric_ids else "",
             original_prompt=self.prompt,
@@ -182,7 +180,9 @@ class AttackModule:
                 consolidated_responses.append(response)
                 chat_tuple = (
                     target_llm_connector.id,
-                    self.context_strategy_ids[0] if self.context_strategy_ids else "",
+                    self.context_strategy_instances[0]
+                    if self.context_strategy_info
+                    else "",
                     self.prompt_templates[0] if self.prompt_templates else "",
                     self.name,
                     self.metric_ids[0] if self.metric_ids else "",
@@ -224,7 +224,9 @@ class AttackModule:
             consolidated_responses.append(response)
             chat_tuple = (
                 target_llm_connector.id,
-                self.context_strategy_ids[0] if self.context_strategy_ids else "",
+                self.context_strategy_instances[0]
+                if self.context_strategy_info
+                else "",
                 self.prompt_templates[0] if self.prompt_templates else "",
                 self.name,
                 self.metric_ids[0] if self.metric_ids else "",
@@ -305,7 +307,7 @@ class AttackModule:
             self._write_record_to_db(new_prompt_info.to_tuple(), llm_connector.id)
             yield new_prompt_info
 
-    def load_modules(self):
+    def load_modules(self) -> None:
         """
         Loads connector, metric, and context strategy instances if available.
         """
@@ -314,17 +316,44 @@ class AttackModule:
                 Connector.create(ConnectorEndpoint.read(endpoint))
                 for endpoint in self.connector_ids
             ]
+        else:
+            raise RuntimeError(
+                "[Red Teaming] No endpoint connectors specified for red teaming."
+            )
 
         if self.metric_ids:
             self.metric_instances = [
                 Metric.load(metric_id) for metric_id in self.metric_ids
             ]
 
-        if self.context_strategy_ids:
+        if self.context_strategy_info:
             self.context_strategy_instances = [
-                ContextStrategy.load(context_strategy_id)
-                for context_strategy_id in self.context_strategy_ids
+                ContextStrategy.load(context_strategy_info.get("context_strategy_id"))
+                for context_strategy_info in self.context_strategy_info
             ]
+
+        return None
+
+    @staticmethod
+    def get_available_items() -> list[str]:
+        """
+        Retrieves the available attack module IDs.
+
+        Returns:
+            list[str]: A list of available attack module IDs.
+        """
+        try:
+            retn_am_ids = []
+
+            ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
+            for am in ams:
+                if "__" in am:
+                    continue
+                retn_am_ids.append(Path(am).stem)
+            return retn_am_ids
+        except Exception as e:
+            print(f"Failed to get available attack modules: {str(e)}")
+            raise e
 
 
 class RedTeamingPromptArguments(BaseModel):

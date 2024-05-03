@@ -1,4 +1,4 @@
-{    
+{
     "id": "bbq-random",
     "name": "BBQ - Random",
     "description": "To measure the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with 1000 random samples selected.",
@@ -9,7 +9,7 @@
     ],
     "categories": [
         "common risk",
-        "fairness", 
+        "fairness",
         "representational harm"
     ],
     "datasets": [
@@ -21,5 +21,6 @@
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

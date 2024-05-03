@@ -11,10 +11,10 @@
     "datasets": [
         "advglue-all"
     ],
-    "prompt_templates": [
-    ],
+    "prompt_templates": [],
     "metrics": [
         "advglue"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

@@ -17,7 +17,7 @@ class AttackModuleArguments(BaseModel):
     prompt_templates: list = []
 
     # user's prompt
-    prompt: str = ""
+    prompt: str
 
     # system prompt
     system_prompt: str = ""
@@ -25,8 +25,8 @@ class AttackModuleArguments(BaseModel):
     # list of metric ids to be used (if any)
     metric_ids: list = []
 
-    # list of context strategy ids to be used (if any)
-    context_strategy_ids: list = []
+    # list of context strategy ids and other params to be used (if any)
+    context_strategy_info: list = []
 
     # DBAccessor for the attack module to access DB data
     db_instance: DBInterface

@@ -2,8 +2,7 @@
     "id": "mmlu",
     "name": "MMLU",
     "description": "To measure model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

@@ -418,3 +418,48 @@ class Storage:
             database_instance.update_record(data, sql_update_record)
         else:
             raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
+    def check_database_table_exists(
+        database_instance: DBInterface, table_name: str
+    ) -> bool | None:
+        """
+        Checks if a table exists in the database.
+
+        This method checks if the specified table exists in the database. If the database instance is not initialised,
+        it raises a RuntimeError.
+
+        Args:
+            database_instance (DBInterface): The database accessor instance.
+            table_name (str): The name of the table to check for existence.
+
+        Returns:
+            bool | None: True if the table exists, False if it does not, None if the database
+            instance is not initialised.
+        """
+        if database_instance:
+            return database_instance.check_database_table_exists(table_name)
+        else:
+            raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
+    def delete_database_table(
+        database_instance: DBInterface, sql_delete_table: str
+    ) -> None:
+        """
+        Deletes a table from the database.
+
+        This method is used to delete a table from the database. If the database instance is not initialised,
+        it raises a RuntimeError. Otherwise, it calls the delete_database_table method of the database instance.
+
+        Args:
+            database_instance (DBInterface): The database accessor instance.
+            sql_delete_table (str): The SQL query to delete a table.
+
+        Returns:
+            None
+        """
+        if database_instance:
+            database_instance.delete_database_table(sql_delete_table)
+        else:
+            raise RuntimeError("Database instance is not initialised.")

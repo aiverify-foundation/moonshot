@@ -99,3 +99,30 @@ class DBInterface:
             None
         """
         pass
+
+    @abstractmethod
+    def check_database_table_exists(self, table_name: str) -> bool:
+        """
+        This method is used to check if a table exists in the database.
+
+        Args:
+            table_name (str): The name of the table to check for existence.
+
+        Returns:
+            bool: True if the table exists, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def delete_database_table(self, delete_table_sql: str) -> None:
+        """
+        This method is used to delete a table from the database. The details of the operation
+        are implementation specific and should be provided by the concrete class that inherits from this abstract class.
+
+        Args:
+            table_name (str): The name of the table to be deleted.
+
+        Returns:
+            None
+        """
+        pass

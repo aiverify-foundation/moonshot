@@ -22,6 +22,7 @@ class Recipe:
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
         self.attack_modules = rec_args.attack_modules
+        self.grading_scale = rec_args.grading_scale
         self.stats = rec_args.stats
 
     @classmethod
@@ -70,6 +71,7 @@ class Recipe:
                 "prompt_templates": rec_args.prompt_templates,
                 "metrics": rec_args.metrics,
                 "attack_modules": rec_args.attack_modules,
+                "grading_scale": rec_args.grading_scale,
             }
 
             # Write as json output

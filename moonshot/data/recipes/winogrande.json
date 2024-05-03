@@ -2,8 +2,7 @@
     "id": "winogrande",
     "name": "Winograde",
     "description": "To measure model's ability in answering commonsense reasoning, expert-crafted pronoun resolution problems that are designed to be unsolvable for statistical models.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

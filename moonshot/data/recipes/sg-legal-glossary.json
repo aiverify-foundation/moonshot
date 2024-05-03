@@ -2,8 +2,7 @@
     "id": "sg-legal-glossary",
     "name": "Singapore Legal Glossary",
     "description": "To measure the model's ability in understanding legal term used commonly in Singapore",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "bertscore"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

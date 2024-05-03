@@ -6,9 +6,9 @@ from ast import literal_eval
 from datetime import datetime
 from typing import Any, Callable
 
-from slugify import slugify
-
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.redteaming.session.chat import Chat
+from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
@@ -22,11 +22,15 @@ class SessionMetadata:
         endpoints: list[str],
         created_epoch: float,
         created_datetime: str,
+        prompt_template: str,
+        context_strategy: str,
     ):
         self.session_id = session_id
         self.endpoints = endpoints
         self.created_epoch = created_epoch
         self.created_datetime = created_datetime
+        self.prompt_template = prompt_template
+        self.context_strategy = context_strategy
 
     def to_dict(self) -> dict:
         """
@@ -40,6 +44,8 @@ class SessionMetadata:
             "endpoints": self.endpoints,
             "created_epoch": str(self.created_epoch),
             "created_datetime": self.created_datetime,
+            "prompt_template": self.prompt_template,
+            "context_strategy": self.context_strategy,
         }
 
     def to_tuple(self) -> tuple:
@@ -54,6 +60,8 @@ class SessionMetadata:
             str(self.endpoints),
             self.created_epoch,
             self.created_datetime,
+            self.prompt_template,
+            self.context_strategy,
         )
 
     @classmethod
@@ -67,8 +75,22 @@ class SessionMetadata:
         Returns:
             SessionMetadata: An instance of SessionMetadata.
         """
-        session_id, endpoints, created_epoch, created_datetime = data_tuple
-        return cls(session_id, literal_eval(endpoints), created_epoch, created_datetime)
+        (
+            runner_id,
+            endpoints,
+            created_epoch,
+            created_datetime,
+            prompt_template,
+            context_strategy,
+        ) = data_tuple
+        return cls(
+            runner_id,
+            literal_eval(endpoints),
+            created_epoch,
+            created_datetime,
+            prompt_template,
+            context_strategy,
+        )
 
 
 class Session:
@@ -77,7 +99,9 @@ class Session:
             session_id text PRIMARY KEY NOT NULL,
             endpoints text NOT NULL,
             created_epoch INTEGER NOT NULL,
-            created_datetime text NOT NULL
+            created_datetime text NOT NULL,
+            prompt_template text,
+            context_strategy text
             );
     """
 
@@ -100,12 +124,24 @@ class Session:
 
     sql_create_session_metadata_record = """
         INSERT INTO session_metadata_table (
-        session_id,endpoints,created_epoch,created_datetime)
-        VALUES(?,?,?,?)
+        session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy)
+        VALUES(?,?,?,?,?,?)
     """
 
     sql_read_session_metadata = """
-            SELECT * from session_metadata_table
+        SELECT * from session_metadata_table
+    """
+
+    sql_update_context_strategy = """
+        UPDATE session_metadata_table SET context_strategy=? WHERE session_id=?
+    """
+
+    sql_update_prompt_template = """
+        UPDATE session_metadata_table SET prompt_template=? WHERE session_id=?
+    """
+
+    sql_drop_table = """
+        DROP TABLE IF EXISTS {}
     """
 
     def __init__(
@@ -135,13 +171,15 @@ class Session:
         created_datetime = datetime.fromtimestamp(created_epoch).strftime(
             "%Y%m%d-%H%M%S"
         )
-        session_id = f"{slugify(runner_id)}_{created_datetime}"
 
         self.runner_args = runner_args
         self.runner_type = runner_type
         self.results_file_path = results_file_path
         self.progress_callback_func = progress_callback_func
         self.database_instance = database_instance
+
+        prompt_template = self.runner_args.get("prompt_template", "")
+        context_strategy = self.runner_args.get("context_strategy", "")
 
         if self.database_instance:
             # Create session metadata table and update metadata
@@ -160,7 +198,12 @@ class Session:
             # If the session metadata does not exist, create a new record
             else:
                 self.session_metadata = SessionMetadata(
-                    session_id, endpoints, created_epoch, created_datetime
+                    runner_id,
+                    endpoints,
+                    created_epoch,
+                    created_datetime,
+                    prompt_template,
+                    context_strategy,
                 )
                 Storage.create_database_record(
                     self.database_instance,
@@ -177,7 +220,7 @@ class Session:
                 )
 
     @staticmethod
-    def load(database_instance: DBInterface | None) -> SessionMetadata:
+    def load(database_instance: DBInterface | None) -> dict | None:
         """
         Loads run data for a given session_id from the database, or the latest run if run_id is None.
 
@@ -196,14 +239,33 @@ class Session:
         if not database_instance:
             raise RuntimeError("[Session] Database instance not provided.")
 
+        if not Storage.check_database_table_exists(
+            database_instance, "session_metadata_table"
+        ):
+            # runner file does not have session created
+            return None
+
         session_metadata_info = Storage.read_database_records(
             database_instance,
             Session.sql_read_session_metadata,
         )
+
         if not session_metadata_info:
             raise RuntimeError("[Session] Failed to get Session metadata.")
 
-        return SessionMetadata.from_tuple(session_metadata_info[0])
+        session_metadata = SessionMetadata.from_tuple(session_metadata_info[0])
+        session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
+        session_metadata_dict = session_metadata_obj.to_dict()
+
+        chats = {}
+        for endpoint_id in session_metadata.endpoints:
+            list_of_chats_from_one_ep = Chat.load_chat_history(
+                database_instance, endpoint_id.replace("-", "_")
+            )
+            chats.update({endpoint_id: list_of_chats_from_one_ep})
+
+        session_metadata_dict["chats"] = chats
+        return session_metadata_dict
 
     async def run(self) -> dict:
         """
@@ -271,6 +333,7 @@ class Session:
         print("[Session] Part 3: Running runner processing module...")
         start_time = time.perf_counter()
         runner_results = {}
+
         try:
             if runner_module_instance:
                 runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
@@ -278,6 +341,7 @@ class Session:
                     self.runner_args,
                     self.database_instance,
                     self.session_metadata,
+                    self.check_redteaming_type(),
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")
@@ -298,3 +362,117 @@ class Session:
         # ------------------------------------------------------------------------------
         print("[Session] Part 4: Wrap up run...")
         return runner_results
+
+    def check_redteaming_type(self) -> RedTeamingType:
+        """
+        Checks the type of red teaming strategy based on the runner arguments.
+
+        Returns:
+            RedTeamingType: The type of red teaming strategy.
+
+        Raises:
+            RuntimeError: If the red teaming arguments are missing.
+        """
+        if (
+            "attack_strategies" in self.runner_args
+            and self.runner_args.get("attack_strategies") is not None
+        ):
+            return RedTeamingType.AUTOMATED
+        elif (
+            "manual_rt_args" in self.runner_args
+            and self.runner_args.get("manual_rt_args") is not None
+        ):
+            return RedTeamingType.MANUAL
+        else:
+            raise RuntimeError("Missing red teaming arguments.")
+
+    @staticmethod
+    def update_context_strategy(
+        db_instance: DBInterface | None, runner_id: str, context_strategy: str
+    ) -> None:
+        """
+        Updates the context strategy for a specific runner in the database.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the context strategy in.
+            runner_id (str): The ID of the runner.
+            context_strategy (str): The name of the context strategy to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the context strategy does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if not Storage.is_object_exists(
+            EnvVariables.CONTEXT_STRATEGY.name, context_strategy, "py"
+        ):
+            raise RuntimeError(
+                f"[Session] Context Strategy {context_strategy} does not exist."
+            )
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (context_strategy, runner_id),
+                Session.sql_update_context_strategy,
+            )
+
+    @staticmethod
+    def update_prompt_template(
+        db_instance: DBInterface | None, runner_id: str, prompt_template: str
+    ) -> None:
+        """
+        Updates the prompt template in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the prompt template in.
+            runner_id (str): The ID of the runner.
+            prompt_template (str): The new prompt template to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the prompt template does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if not Storage.is_object_exists(
+            EnvVariables.PROMPT_TEMPLATES.name, prompt_template, "json"
+        ):
+            raise RuntimeError(
+                f"[Session] Prompt Template {prompt_template} does not exist."
+            )
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (prompt_template, runner_id),
+                Session.sql_update_prompt_template,
+            )
+
+    @staticmethod
+    def delete_session(database_instance: DBInterface | None) -> None:
+        """
+        Deletes the session metadata and associated endpoint tables from the database.
+
+        Args:
+            database_instance (DBInterface | None): The database instance to delete the session from.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if failed to get session metadata.
+        """
+        if not database_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+
+        session_metadata_info = Storage.read_database_records(
+            database_instance,
+            Session.sql_read_session_metadata,
+        )
+        if not session_metadata_info:
+            raise RuntimeError("[Session] Failed to get Session metadata.")
+
+        session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
+        Storage.delete_database_table(
+            database_instance, Session.sql_drop_table.format("session_metadata_table")
+        )
+        for endpoint in session_metadata_obj.endpoints:
+            endpoint = endpoint.replace("-", "_")
+            Storage.delete_database_table(
+                database_instance, Session.sql_drop_table.format(endpoint)
+            )

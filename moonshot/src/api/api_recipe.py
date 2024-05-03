@@ -14,26 +14,26 @@ def api_create_recipe(
     prompt_templates: list[str],
     metrics: list[str],
     attack_modules: list[str],
+    grading_scale: dict[str, list[int]],
 ) -> None:
     """
-    Creates a new recipe and stores it in a JSON file.
+    Creates a new recipe with the given parameters.
 
-    This function accepts multiple parameters to define a recipe, including its name, description, tags, datasets,
-    prompt templates, metrics, and attack modules. It constructs a new RecipeArguments object using these parameters
-    and invokes the Recipe.create method to persist the new recipe in a JSON file.
-
-    The recipe's ID is automatically generated based on the recipe's name using a slugification process,
-    thus it is not a required input.
+    This function takes various parameters that define a recipe, creates a RecipeArguments
+    object with these parameters, and then calls the Recipe.create method to create a new
+    recipe in the system.
 
     Args:
         name (str): The name of the recipe.
-        description (str): The description of the recipe.
+        description (str): A description of the recipe.
         tags (list[str]): A list of tags associated with the recipe.
-        categories (list[str]): A list of categories assoicated with the recipe.
-        datasets (list[str]): A list of datasets the recipe utilizes.
+        categories (list[str]): A list of categories the recipe belongs to.
+        datasets (list[str]): A list of datasets used in the recipe.
         prompt_templates (list[str]): A list of prompt templates for the recipe.
         metrics (list[str]): A list of metrics to evaluate the recipe.
-        attack_modules (list[str]): A list of attack modules the recipe employs.
+        attack_modules (list[str]): A list of attack modules used in the recipe.
+        grading_scale (dict[str, list[int]]): A grading scale dictionary where the key is the grade and the
+        value is a list of integers representing the scale.
 
     Returns:
         None
@@ -42,12 +42,14 @@ def api_create_recipe(
         id="",
         name=name,
         description=description,
+        categories=categories,
         tags=tags,
         categories=categories,
         datasets=datasets,
         prompt_templates=prompt_templates,
         metrics=metrics,
         attack_modules=attack_modules,
+        grading_scale=grading_scale,
     )
     Recipe.create(rec_args)
 

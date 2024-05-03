@@ -177,3 +177,56 @@ class SQLite(DBInterface):
 
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")
+
+    def check_database_table_exists(self, table_name: str) -> bool | None:
+        """
+        Checks if a table exists in the SQLite database.
+
+        This method attempts to check if a table with the given name exists in the SQLite database.
+        If the connection to the database is established, it executes the query to check for the table's existence.
+        If the table exists, it returns True; otherwise, it returns False.
+
+        Args:
+            table_name (str): The name of the table to check for existence.
+
+        Returns:
+            bool | None: True if the table exists, False if it does not, or None if an error occurs.
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(
+                        f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
+                    )
+                    result = cursor.fetchone()
+                    if result is not None:
+                        return True
+                    return False
+            except sqlite3.Error as sqlite3_error:
+                print(f"Error checking table existence - {str(sqlite3_error)}")
+        return None
+
+    def delete_database_table(self, delete_table_sql: str) -> None:
+        """
+        Deletes a table from the SQLite database using the provided SQL query.
+
+        This method attempts to delete a table from the SQLite database using the provided SQL query.
+        If the connection to the SQLite database is established, it executes the SQL query to delete the table.
+        If an error occurs during the table deletion process, it prints an error message with the details of the
+        SQLite error.
+
+        Args:
+            delete_table_sql (str): The SQL query to delete a table.
+
+        Returns:
+            None
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(delete_table_sql)
+            except sqlite3.Error as sqlite3_error:
+                print(f"Error deleting table from database - {str(sqlite3_error)}")
+        return None

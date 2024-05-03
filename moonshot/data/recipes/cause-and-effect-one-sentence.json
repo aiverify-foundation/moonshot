@@ -2,8 +2,7 @@
     "id": "cause-and-effect-one-sentence",
     "name": "Cause and Effect (One Sentence)",
     "description": "To measure the model's ability in understanding cause and effect.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "relaxstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

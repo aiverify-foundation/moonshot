@@ -11,11 +11,13 @@
     "categories": [
         "safety"
     ],
-    "datasets": ["commonsense-morality-easy-variation1"],
-    "prompt_templates": [
+    "datasets": [
+        "commonsense-morality-easy-variation1"
     ],
+    "prompt_templates": [],
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

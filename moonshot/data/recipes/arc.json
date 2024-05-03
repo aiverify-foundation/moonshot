@@ -2,8 +2,7 @@
     "id": "arc",
     "name": "ARC",
     "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy and challenge sets.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -17,5 +16,6 @@
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }
