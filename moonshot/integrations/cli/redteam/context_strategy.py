@@ -1,11 +1,14 @@
 import argparse
 
 import cmd2
-from moonshot.api import api_get_all_context_strategy_name, api_update_context_strategy
-from moonshot.integrations.cli.active_session_cfg import active_session
 from rich.console import Console
 
+from moonshot.api import api_get_all_context_strategy_name, api_update_context_strategy
+from moonshot.integrations.cli.active_session_cfg import active_session
+
 console = Console()
+
+DEFAULT_CONTEXT_STRATEGY_PROMPT = 5
 
 
 def use_context_strategy(args: argparse.Namespace) -> None:
@@ -17,9 +20,17 @@ def use_context_strategy(args: argparse.Namespace) -> None:
         args: A namespace with the context strategy parameters. Expected to have 'context_strategy'.
     """
     new_context_strategy_name = args.context_strategy
-    # Check if current session exists
+    num_of_prev_prompts = (
+        args.num_of_prev_prompts
+        if args.num_of_prev_prompts
+        else DEFAULT_CONTEXT_STRATEGY_PROMPT
+    )
+
+    # Check if current session exists. If it does, update context strategy and number of previous prompts
     if active_session:
         active_session["context_strategy"] = new_context_strategy_name
+        active_session["cs_num_of_prev_prompts"] = num_of_prev_prompts
+
         api_update_context_strategy(
             active_session["session_id"], new_context_strategy_name
         )
@@ -65,4 +76,11 @@ use_context_strategy_args.add_argument(
     "context_strategy",
     type=str,
     help="The name of the context strategy to use",
+)
+use_context_strategy_args.add_argument(
+    "-n",
+    "--num_of_prev_prompts",
+    type=int,
+    help="The number of previous prompts to use with the context strategy",
+    nargs="?",
 )
