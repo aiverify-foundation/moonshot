@@ -27,17 +27,16 @@ def get_all_datasets(dataset_service: DatasetService = Depends(Provide[Container
             raise HTTPException(status_code=500, detail=f"Failed to retrieve datasets: {e.msg}")   
 
 
-@router.get("/api/v1/datasets/{dataset_id}")
+@router.get("/api/v1/datasets/name")
 @inject 
-def get_dataset_by_id(
-    dataset_id: str,
+def get_all_datasets_name(
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service])
-    ) -> DatasetResponseDTO | None:
+    ) -> list[str] | None:
     """
     Get a dataset from the database
     """
     try:
-        dataset = dataset_service.get_dataset_by_id(dataset_id)
+        dataset = dataset_service.get_all_datasets_name()
         return dataset
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -46,3 +45,23 @@ def get_dataset_by_id(
             raise HTTPException(status_code=400, detail=f"Failed to retrieve dataset: {e.msg}")
         else:
             raise HTTPException(status_code=500, detail=f"Failed to retrieve dataset: {e.msg}")
+
+
+@router.delete("/api/v1/datasets/{dataset_id}")
+@inject
+def delete_dataset(
+    dataset_id: str,
+    dataset_service: DatasetService = Depends(Provide[Container.dataset_service])
+    ) -> dict[str, str] | tuple[dict[str, str], int]:
+
+    try:
+        dataset_service.delete_dataset(dataset_id)
+        return {"message": "Dataset deleted successfully"}
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=f"Failed to delete dataset: {e.msg}")
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=f"Failed to delete dataset: {e.msg}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to delete dataset: {e.msg}")    
+    
