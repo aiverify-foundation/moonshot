@@ -2,8 +2,7 @@
     "id": "contextual-parametric-knowledge-conflicts",
     "name": "Contextual Parametric Knowledge Conflicts",
     "description": "To measure the model’s ability in making informed predictions",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "relaxstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

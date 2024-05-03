@@ -2,8 +2,7 @@
     "id": "truthfulqa-open-ended",
     "name": "TruthfulQA",
     "description": "TruthfulQA aims to measure the truthfulness of a model.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "governance"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "rougescore"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

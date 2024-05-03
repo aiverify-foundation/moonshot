@@ -17,10 +17,12 @@ class Recipe:
         self.name = rec_args.name
         self.description = rec_args.description
         self.tags = rec_args.tags
+        self.categories = rec_args.categories
         self.datasets = rec_args.datasets
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
         self.attack_modules = rec_args.attack_modules
+        self.grading_scale = rec_args.grading_scale
         self.stats = rec_args.stats
 
     @classmethod
@@ -64,10 +66,12 @@ class Recipe:
                 "name": rec_args.name,
                 "description": rec_args.description,
                 "tags": rec_args.tags,
+                "categories": rec_args.categories,
                 "datasets": rec_args.datasets,
                 "prompt_templates": rec_args.prompt_templates,
                 "metrics": rec_args.metrics,
                 "attack_modules": rec_args.attack_modules,
+                "grading_scale": rec_args.grading_scale,
             }
 
             # Write as json output

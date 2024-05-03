@@ -14,10 +14,10 @@
     "datasets": [
         "jailbreak-dan"
     ],
-    "prompt_templates": [
-    ],
+    "prompt_templates": [],
     "metrics": [
         "reverseexactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }

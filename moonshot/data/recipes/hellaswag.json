@@ -2,8 +2,7 @@
     "id": "hellaswag",
     "name": "HellaSwag",
     "description": "To measure commonsense with questions that are trivial for humans but difficult for statistical models.",
-    "tags": [
-    ],
+    "tags": [],
     "categories": [
         "capability"
     ],
@@ -16,5 +15,6 @@
     "metrics": [
         "exactstrmatch"
     ],
-    "attack_modules": []
+    "attack_modules": [],
+    "grading_scale": {}
 }
