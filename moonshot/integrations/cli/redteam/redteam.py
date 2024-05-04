@@ -2,6 +2,7 @@ import argparse
 
 import cmd2
 
+from moonshot.integrations.cli.redteam.attack_module import list_attack_modules
 from moonshot.integrations.cli.redteam.context_strategy import (
     clear_context_strategy,
     list_context_strategies,
@@ -64,3 +65,6 @@ class RedTeamCommandSet(cmd2.CommandSet):
     @cmd2.with_argparser(automated_rt_session_args)
     def do_automated_red_teaming(self, args: argparse.Namespace) -> None:
         automated_red_teaming(args)
+
+    def do_list_attack_modules(self, _: cmd2.Statement) -> None:
+        list_attack_modules()

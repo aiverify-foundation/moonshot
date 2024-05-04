@@ -77,7 +77,7 @@ class Runner:
                 EnvVariables.RUNNERS.name, runner_id, "json"
             ):
                 raise RuntimeError(
-                    "[Runner] Unable to create runner because the runner file does not exists."
+                    "[Runner] Unable to create runner because the runner file does not exist."
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(

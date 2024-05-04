@@ -147,7 +147,7 @@ def update_chat_display() -> None:
                     chat_with_details["prepared_prompt"],
                     (
                         f"[magenta]{chat_with_details['prompt']}[/magenta] \n"
-                        "|---> [green]{chat_with_details['predicted_result']}[/green]"
+                        f"|---> [green]{chat_with_details['predicted_result']}[/green]"
                     ),
                 )
                 new_table.add_section()
@@ -279,6 +279,7 @@ def automated_red_teaming(args):
     loop.run_until_complete(runner.run_red_teaming(runner_args))
     runner.close()
     _reload_session(active_session["session_id"])
+    update_chat_display()
 
 
 def _reload_session(runner_id: str) -> None:
@@ -311,8 +312,8 @@ use_session_args.add_argument(
 new_session_args = cmd2.Cmd2ArgumentParser(
     description="Creates a new red teaming session.",
     epilog=(
-        "Example(create new runner): new_session my_runner -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu\n"
-        "Example(load existing runner): new_session my_runner -c add_previous_prompt -p auto-categorisation"
+        "Example(create new runner): new_session my-runner -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu\n"
+        "Example(load existing runner): new_session my-runner -c add_previous_prompt -p auto-categorisation"
     ),
 )
 

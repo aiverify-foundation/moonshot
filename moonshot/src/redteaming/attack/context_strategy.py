@@ -41,7 +41,7 @@ class ContextStrategy:
             )
 
     @staticmethod
-    def get_all_context_strategy_names() -> list[str]:
+    def get_all_context_strategies() -> list[str]:
         """
         Retrieves the names of all context strategy files.
 
@@ -54,7 +54,7 @@ class ContextStrategy:
         """
         filepaths = []
         context_strategy_files = Storage.get_objects(
-            EnvVariables.CONTEXT_STRATEGY.name, "json"
+            EnvVariables.CONTEXT_STRATEGY.name, "py"
         )
         for context_strategy in context_strategy_files:
             filepaths.append(Path(context_strategy).stem)

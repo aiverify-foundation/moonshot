@@ -27,18 +27,19 @@ class AttackModule:
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
         """
 
-    def __init__(self, am_args: AttackModuleArguments):
-        self.id = am_args.name
-        self.description = "Overwrite this with your attack module description!"
-        self.name = am_args.name
-        self.connector_ids = am_args.connector_eps
-        self.prompt_templates = am_args.prompt_templates
-        self.prompt = am_args.prompt
-        self.system_prompt = am_args.system_prompt
-        self.metric_ids = am_args.metric_ids
-        self.context_strategy_info = am_args.context_strategy_info
-        self.db_instance = am_args.db_instance
-        self.params = am_args.params
+    def __init__(self, am_args: AttackModuleArguments | None = None):
+        if am_args:
+            self.id = am_args.name
+            self.description = "Overwrite this with your attack module description!"
+            self.name = am_args.name
+            self.connector_ids = am_args.connector_eps
+            self.prompt_templates = am_args.prompt_templates
+            self.prompt = am_args.prompt
+            self.system_prompt = am_args.system_prompt
+            self.metric_ids = am_args.metric_ids
+            self.context_strategy_info = am_args.context_strategy_info
+            self.db_instance = am_args.db_instance
+            self.params = am_args.params
 
     @classmethod
     def load(cls, am_arguments: AttackModuleArguments) -> AttackModule:
@@ -63,12 +64,62 @@ class AttackModule:
                 EnvVariables.ATTACK_MODULES.name, am_arguments.name, "py"
             ),
         )
+
         if attack_module_inst:
             return attack_module_inst(am_arguments)
         else:
             raise RuntimeError(
                 f"Unable to get defined attack module instance - {am_arguments.name}"
             )
+
+    @classmethod
+    def load_without_am_arguments(cls, attack_module_id: str) -> AttackModule:
+        """
+        Load an attack module instance without attack module arguments.
+
+        This method attempts to load an attack module instance using the attack_module_id. If the attack module
+        instance is found, it is returned. If the attack module instance does not exist, a RuntimeError is raised.
+
+        Args:
+            attack_module_id (str): The unique identifier of the attack module to be retrieved.
+
+        Returns:
+            AttackModule: The retrieved attack module instance.
+
+        Raises:
+            RuntimeError: If the attack module instance does not exist.
+        """
+        attack_module_inst = get_instance(
+            attack_module_id,
+            Storage.get_filepath(
+                EnvVariables.ATTACK_MODULES.name, attack_module_id, "py"
+            ),
+        )
+        if attack_module_inst:
+            am_inst = attack_module_inst()
+            am_inst.id = attack_module_id
+            return am_inst
+        else:
+            raise RuntimeError(
+                f"Unable to get defined attack module instance - {attack_module_id}"
+            )
+
+    def get_metadata(self) -> dict | None:
+        """
+        Get metadata for the attack module.
+
+        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
+        is not available, empty strings are returned.
+
+        Returns:
+            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
+            available.
+        """
+        return {
+            "id": self.id,
+            "name": self.name if hasattr(self, "name") else "",
+            "description": self.description if hasattr(self, "description") else "",
+        }
 
     async def _generate_prompts(
         self, prompt: str, target_llm_connector_id: str

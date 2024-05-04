@@ -2,8 +2,13 @@ import argparse
 
 import cmd2
 from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
-from moonshot.api import api_get_all_context_strategy_name, api_update_context_strategy
+from moonshot.api import (
+    api_get_all_context_strategy_metadata,
+    api_update_context_strategy,
+)
 from moonshot.integrations.cli.active_session_cfg import active_session
 
 console = Console()
@@ -37,6 +42,7 @@ def use_context_strategy(args: argparse.Namespace) -> None:
         print(
             f"Updated session: {active_session['session_id']}. "
             f"Context Strategy: {active_session['context_strategy']}."
+            f"No. of previous prompts for Context Strategy: {active_session['cs_num_of_prev_prompts']}."
         )
     else:
         print(
@@ -48,8 +54,21 @@ def list_context_strategies() -> None:
     """
     List all context strategies available.
     """
-    list_of_context_strategies = api_get_all_context_strategy_name()
-    print(*list_of_context_strategies)
+    context_strategy_metadata_list = api_get_all_context_strategy_metadata()
+    if context_strategy_metadata_list:
+        table = Table(title="Context Strategy List", show_lines=True)
+        table.add_column("No.", style="dim", width=6)
+        table.add_column("Context Strategy Information", justify="left")
+        for context_strategy_index, context_strategy_data in enumerate(
+            context_strategy_metadata_list, 1
+        ):
+            context_strategy_data_str = ""
+            for k, v in context_strategy_data.items():
+                context_strategy_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
+            table.add_row(str(context_strategy_index), context_strategy_data_str)
+        console.print(Panel(table))
+    else:
+        console.print("[red]There are no context strategies found.[/red]", style="bold")
 
 
 def clear_context_strategy() -> None:
