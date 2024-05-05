@@ -14,7 +14,7 @@
         "cvalues"
     ],
     "prompt_templates": [
-        "chinese-qa-template"
+        "chinese-mcq-template"
     ],
     "metrics": [
         "exactstrmatch"
