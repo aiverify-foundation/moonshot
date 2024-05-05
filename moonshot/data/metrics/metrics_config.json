@@ -1,2 +1,7 @@
 {
+    "llamaguardannotator":{
+        "endpoints": [
+            "together-llama-guard-7b-assistant"
+        ]
+    }
 }
