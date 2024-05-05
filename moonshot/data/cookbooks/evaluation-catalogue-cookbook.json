@@ -8,10 +8,6 @@
         "real-toxicity-prompts-completion",
         "fairness-uciadult",
         "enron-email",
-        "advglue-mnli",
-        "advglue-qnli",
-        "advglue-qqp",
-        "advglue-rte",
-        "advglue-sst2"
+        "advglue-full"
     ]
 }
