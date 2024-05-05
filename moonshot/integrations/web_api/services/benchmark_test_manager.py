@@ -7,6 +7,7 @@ from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..types.types import CookbookTestRunProgress
 from ..services.benchmark_test_state import BenchmarkTestState
+from ..services.runner_service import RunnerService
 from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
 from ..types.types import BenchmarkCollectionType
 from ..status_updater.webhook import Webhook
@@ -42,12 +43,9 @@ class BenchmarkTestManager(BaseService):
     def on_task_completed(self, task: asyncio.Task[Any]) -> None:
         self.logger.debug(f"Task {task.get_name()} has completed")
 
-    def create_runner(self, runner_name, endpoints, progress_callback_func):
-        return moonshot_api.api_create_runner(name=runner_name, endpoints=endpoints, progress_callback_func=progress_callback_func)
-
     async def create_executor_and_execute(self, benchmark_input_data: BenchmarkRunnerDTO, benchmark_type : BenchmarkCollectionType) -> None:
         try:
-            runner = self.create_runner(benchmark_input_data.run_name, benchmark_input_data.endpoints, self.webhook.on_executor_update)
+            runner = RunnerService.create_runner(benchmark_input_data.run_name, benchmark_input_data.endpoints, self.webhook.on_executor_update)
             if isinstance(benchmark_input_data, BenchmarkRunnerDTO):
                 if benchmark_type == BenchmarkCollectionType.COOKBOOK:
                     executor = runner.run_cookbooks(
