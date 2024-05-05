@@ -32,9 +32,10 @@ class BenchmarkTestManager(BaseService):
     def remove_task(self, executor_id: str) -> BenchmarkTaskInfo:
         return self.benchmark_test_state.remove_task(executor_id)
     
-    def cancel_task(self, executor_id: str) -> None:
-        return self.benchmark_test_state.cancel_task(executor_id)
-    
+    async def cancel_task(self, executor_id: str) -> None:
+        runner = moonshot_api.api_load_runner(executor_id)
+        await runner.cancel()    
+        
     def update_state(self, updates: CookbookTestRunProgress):
         self.benchmark_test_state.update_state(updates)
 
@@ -68,6 +69,7 @@ class BenchmarkTestManager(BaseService):
         
         await executor
         executor.close()
+
 
     def schedule_test_task(self, executor_input_data: BenchmarkRunnerDTO, benchmark_type : BenchmarkCollectionType) -> str:
         task_id = self.generate_unique_task_id()
