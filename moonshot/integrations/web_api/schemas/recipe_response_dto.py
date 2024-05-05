@@ -10,5 +10,6 @@ class RecipeResponseDTO(BaseModel):
     prompt_templates: list[str]
     metrics: list[str]
     attack_modules: list[str]
+    grading_scale: dict[str, list[int]]
     stats: dict
     total_prompt_in_recipe: Optional[int] = None

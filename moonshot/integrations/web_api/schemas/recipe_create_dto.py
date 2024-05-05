@@ -10,3 +10,4 @@ class RecipeCreateDTO(BaseModel):
     prompt_templates: list[str]
     metrics: list[str]
     attack_modules: list[str]
+    grading_scale: dict[str, list[int]]
