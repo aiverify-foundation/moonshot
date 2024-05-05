@@ -28,6 +28,7 @@ class RunnerService(BaseService):
     def delete_run(self, runner_id: str) -> None:
         moonshot_api.api_delete_runner(runner_id)
     
+    
     @staticmethod
     @exception_handler
     def create_runner(runner_name, endpoints, progress_callback_func):
