@@ -1,8 +1,0 @@
-{
-    "id": "cbbq-amb-cookbook",
-    "name": "CBBQ (Ambiguous)",
-    "description": "This is a cookbook that consists all the ambiguous questions from CBBQ.",
-    "recipes": [
-        "cbbq-lite"
-    ]
-}

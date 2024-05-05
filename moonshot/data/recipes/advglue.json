@@ -1,7 +1,7 @@
 {
     "id": "advglue",
     "name": "AdvGLUE",
-    "description": "AdvGLUE is a comprehensive robustness evaluation benchmark that focuses on the adversarial robustness evaluation of language models. It considers textual adversarial attacks from different perspectives and hierarchies, including word-level transformations and sentence-level manipulations. The higher the grade, the more robust the system under test is towards the changes in the sentences.",
+    "description": "AdvGLUE is a comprehensive robustness evaluation benchmark that concentrates on assessing the adversarial robustness of language models. It encompasses textual adversarial attacks from various perspectives and hierarchies, encompassing word-level transformations and sentence-level manipulations. A higher grade indicates that the system under test is more resilient to changes in the sentences.",
     "tags": [
         "Adversarial Robustness",
         "DecodingTrust"
