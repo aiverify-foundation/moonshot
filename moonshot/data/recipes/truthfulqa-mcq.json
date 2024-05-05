@@ -1,20 +1,41 @@
 {
     "id": "truthfulqa-mcq",
     "name": "TruthfulQA (MCQ)",
-    "description": "TruthfulQA aims to measure the truthfulness of a model. This is a MCQ version.",
+    "description": "TruthfulQA aims to measure the truthfulness of a model. The higher the grade, the more truthful the system is.",
     "tags": [],
     "categories": [
-        "governance"
+        "Trust & Safety"
     ],
     "datasets": [
         "truthfulqa-mcq"
     ],
     "prompt_templates": [
-        "truthfulqa-template2"
+        "mcq-template"
     ],
     "metrics": [
         "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }

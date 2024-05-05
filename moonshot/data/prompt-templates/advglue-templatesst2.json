@@ -1,5 +1,0 @@
-{
-    "name": "advglue-templatesst2",
-    "description": "This template is used for Sentiment Analysis in the AdvGLUE dataset.",
-    "template": "\"{{ prompt }}\" For the given sentence, label the sentiment of the sentence as positive or negative. The answer should be exactly 'positive' or 'negative', without capitalization."
-}

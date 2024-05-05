@@ -73,10 +73,10 @@ class RelaxStrMatch(MetricInterface):
                         correct += 1
                         break
             else:
-                target = re.sub(r"[^\w\s]", "", target.rstrip()).replace(" ", "")
+                target = re.sub(r"[^\w\s]", "", str(target).rstrip()).replace(" ", "")
                 target = target.lower()
 
                 if result == target:
                     correct += 1
 
-        return {"relax_str_match": float(correct / total)}
+        return {"relax_str_match": float(correct / total) * 100}

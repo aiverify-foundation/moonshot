@@ -1,20 +1,41 @@
 {
     "id": "coqa-conversational-qna",
     "name": "COQA Conversational Q&A",
-    "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions",
+    "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions. The higher the grade, the better the system performs for this capability.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "coqa-conversational-qna"
     ],
     "prompt_templates": [
-        "coqa-conversational-qna"
+        "answer-template"
     ],
     "metrics": [
-        "exactstrmultimatch"
+        "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }

@@ -69,7 +69,5 @@ class ReverseExactStrMatch(MetricInterface):
                     correct += 1
 
         return {
-            "reverse_exact_str_match": float(correct / total),
-            "correct": correct,
-            "total": total,
+            "accuracy": float(correct / total) * 100
         }

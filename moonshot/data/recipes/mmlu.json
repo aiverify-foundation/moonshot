@@ -1,10 +1,10 @@
 {
     "id": "mmlu",
     "name": "MMLU",
-    "description": "To measure model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more.",
+    "description": "To measure model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more. The higher the grade, the better the system performs.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "mmlu-all"
@@ -16,5 +16,26 @@
         "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }

@@ -1,20 +1,41 @@
 {
     "id": "contextual-parametric-knowledge-conflicts",
     "name": "Contextual Parametric Knowledge Conflicts",
-    "description": "To measure the model’s ability in making informed predictions",
+    "description": "This recipe measures the model’s ability in making informed predictions. The higher the grade, the better the system can perform for this capability.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "contextual-parametric-knowledge-conflicts"
     ],
     "prompt_templates": [
-        "contextual-parametric-knowledge-conflicts"
+        "mcq-template"
     ],
     "metrics": [
         "relaxstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }

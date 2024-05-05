@@ -1,14 +1,13 @@
 {
     "id": "tamil-kural-classification",
     "name": "TAMIL-KURAL-CLASSIFICATION",
-    "description": "This recipe is used to test the comprehension abilities for the Thirukkural. Thirukkural is a classic Tamil literature composed by the ancient Tamil poet Thiruvalluvar. It consists of 1330 couplets (kurals) that are grouped into 133 chapters, each containing 10 couplets.",
+    "description": "This recipe is used to test the comprehension abilities for the Thirukkural. Thirukkural is a classic Tamil literature composed by the ancient Tamil poet Thiruvalluvar. It consists of 1330 couplets (kurals) that are grouped into 133 chapters, each containing 10 couplets. The higher the grade, the better the model performs in this task.",
     "tags": [
-        "tamil",
-        "text classification"
+        "Tamil",
+        "Text classification"
     ],
     "categories": [
-        "tamil",
-        "text classification"
+        "Capability"
     ],
     "datasets": [
         "tamil-kural-classification"
@@ -20,5 +19,26 @@
         "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }

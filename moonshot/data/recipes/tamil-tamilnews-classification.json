@@ -1,14 +1,13 @@
 {
     "id": "tamil-tamilnews-classification",
     "name": "TAMIL-NEWS-CLASSIFICATION",
-    "description": "This recipe is to classify a static set of Tamil News. The task is to classify news to its respective category.",
+    "description": "This recipe is to classify a static set of Tamil News. The task is to classify news to its respective category. The higher the grade, the better the model performs in this task.",
     "tags": [
         "tamil",
         "text classification"
     ],
     "categories": [
-        "tamil",
-        "text classification"
+        "Capability"
     ],
     "datasets": [
         "tamil-tamilnews-classification"
@@ -20,5 +19,26 @@
         "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B":[
+            60,
+            79
+        ],
+        "C":[
+            40,
+            59
+        ],
+        "D":[
+            20,
+            39
+        ],
+        "E":[
+            0,
+            19
+        ]
+    }
 }
