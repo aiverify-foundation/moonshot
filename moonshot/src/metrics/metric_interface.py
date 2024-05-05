@@ -11,10 +11,10 @@ class MetricInterface:
     @timeit
     def get_metadata(self) -> dict | None:
         """
-        Abstract method to retrieve metadata from a report.
+        Abstract method to retrieve metadata from a metric class.
 
         Returns:
-            dict | None: Returns a dictionary containing the metadata of the report, or None if the operation was
+            dict | None: Returns a dictionary containing the metadata of the metric class, or None if the operation was
             unsuccessful.
         """
         pass
