@@ -1,8 +1,16 @@
-from abc import abstractmethod
+from moonshot.src.reports.report_module_interface import ReportModuleInterface
+from moonshot.src.utils.timeit import timeit
 
 
-class ReportModuleInterface:
-    @abstractmethod
+class MoonshotReport(ReportModuleInterface):
+    def __init__(self) -> None:
+        self.id = "moonshot-report"
+        self.name = "Moonshot Report"
+        self.description = (
+            "This report provides an in-depth analysis and summary of the run."
+        )
+
+    @timeit
     def get_metadata(self) -> dict | None:
         """
         Retrieves the metadata for the report module.
@@ -14,9 +22,13 @@ class ReportModuleInterface:
         Returns:
             dict | None: A dictionary containing metadata, or None if not available.
         """
-        pass
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+        }
 
-    @abstractmethod
+    @timeit
     def generate(self, report_args: dict) -> dict | None:
         """
         Generates a report based on the provided arguments.
@@ -31,4 +43,10 @@ class ReportModuleInterface:
         Returns:
             dict | None: A dictionary representing the generated report, or None if it cannot be generated.
         """
-        pass
+        # ------------------ PART 1 ------------------
+        # Get required arguments
+        if report_args.get("run_args"):
+            run_args = report_args["run_args"]
+            print(run_args)
+        else:
+            raise RuntimeError("[MLCReport] Failed to get required arguments.")

@@ -9,6 +9,7 @@ from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.session import Session
+from moonshot.src.reports.report_module import ReportModule
 from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
@@ -241,6 +242,32 @@ class Runner:
             print(f"[Runner] Failed to get available runners: {str(e)}")
             raise e
 
+    def generate_report(self, report_module_id: str) -> dict:
+        """
+        Generates a report using the specified report module and arguments.
+
+        Args:
+            report_module_id (str): The identifier of the report module.
+
+        Returns:
+            dict: The generated report.
+
+        Raises:
+            RuntimeError: If the report module cannot be loaded or the report_module_id is not provided.
+        """
+        if not report_module_id:
+            raise RuntimeError("Report module ID must be provided.")
+
+        report_module_instance = ReportModule.load(report_module_id)
+        if not report_module_instance:
+            raise RuntimeError(
+                f"Failed to load report module instance with ID '{report_module_id}'."
+            )
+
+        # Pass the latest RunArgument to the report module
+        report_args = {"run_args": Run.load(self.database_instance, None)}
+        return report_module_instance.generate(report_args)  # type: ignore ; ducktyping
+
     def close(self) -> None:
         """
         Closes the runner instance.
@@ -267,8 +294,8 @@ class Runner:
         """
         async with self.current_operation_lock:
             if self.current_operation:
-                print(f"[Runner] {self.id} - Cancelling current run...")
-                self.current_operation.cancel_run()
+                print(f"[Runner] {self.id} - Cancelling current operation...")
+                self.current_operation.cancel()
                 self.current_operation = None  # Reset the current operation
 
     async def run_recipes(

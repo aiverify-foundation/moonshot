@@ -69,14 +69,15 @@ class ReportModule:
         """
         Retrieves a list of available report module IDs.
 
-        This method fetches all report module files and filters out any special files (e.g., __init__.py).
+        This method fetches all report module files from the storage and filters out any special files
+        (e.g., files starting with "__" which are typically Python internal or special files).
         It then extracts and returns the stem (filename without extension) of each report module file as a list.
 
         Returns:
-            list[str]: A list of report module IDs.
+            list[str]: A list of report module IDs without the file extension.
 
         Raises:
-            Exception: If there is an error retrieving the report module IDs.
+            Exception: If an error occurs while fetching the report module files.
         """
         try:
             retn_reports_module_ids = []

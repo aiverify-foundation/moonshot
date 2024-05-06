@@ -11,59 +11,58 @@ from moonshot.src.utils.import_modules import get_instance
 
 class ReportAnalysis:
     @classmethod
-    def load(cls, ra_id: str) -> ReportAnalysis:
+    def load(cls, report_analysis_module_id: str) -> ReportAnalysis:
         """
-        Retrieves a report analysis instance by its ID.
+        Loads a report analysis module instance by its ID.
 
-        This method attempts to load a report analysis instance using the provided ID.
-        If the report analysis instance is found, it is returned.
-        If the report analysis instance does not exist, a RuntimeError is raised.
+        This method attempts to load a report analysis module instance using the provided ID.
+        If the report analysis module instance is found, it is instantiated and returned.
+        If the report analysis module instance does not exist, a RuntimeError is raised.
 
         Args:
-            ra_id (str): The unique identifier of the report analysis to be retrieved.
+            report_analysis_module_id (str): The unique identifier of the report analysis module to be retrieved.
 
         Returns:
-            ReportAnalysis: The retrieved report analysis instance.
+            ReportAnalysis: The instantiated report analysis module.
 
         Raises:
-            RuntimeError: If the report analysis instance does not exist.
+            RuntimeError: If the report analysis module instance cannot be found or instantiated.
         """
         ra_instance = get_instance(
-            ra_id,
+            report_analysis_module_id,
             Storage.get_filepath(
-                EnvVariables.REPORTS_ANALYSIS_MODULES.name, ra_id, "py"
+                EnvVariables.REPORTS_ANALYSIS_MODULES.name,
+                report_analysis_module_id,
+                "py",
             ),
         )
         if ra_instance:
             return ra_instance()
         else:
             raise RuntimeError(
-                f"Unable to get defined report analysis instance - {ra_id}"
+                f"Unable to get defined report analysis instance - {report_analysis_module_id}"
             )
 
     @staticmethod
     @validate_arguments
-    def delete(ra_id: str) -> None:
+    def delete(report_analysis_module_id: str) -> None:
         """
-        Removes a report analysis module using its ID.
+        Deletes a report analysis module by its ID.
 
-        This function removes a report analysis module using its ID.
-        It initially verifies if the module instance is present.
-        If present, it removes the instance and returns None.
-        If not present, it throws a RuntimeError.
+        This method attempts to delete the report analysis module file associated with the given ID.
+        If the deletion fails, it prints an error message and raises the exception.
 
         Args:
-            ra_id (str): The ID of the report analysis module to be removed.
-
-        Returns:
-            None
+            report_analysis_module_id (str): The unique identifier of the report analysis module to be deleted.
 
         Raises:
-            RuntimeError: If the report analysis module instance is not found.
+            Exception: If the deletion fails.
         """
         try:
             Storage.delete_object(
-                EnvVariables.REPORTS_ANALYSIS_MODULES.name, ra_id, "py"
+                EnvVariables.REPORTS_ANALYSIS_MODULES.name,
+                report_analysis_module_id,
+                "py",
             )
 
         except Exception as e:
@@ -73,31 +72,31 @@ class ReportAnalysis:
     @staticmethod
     def get_available_items() -> list[str]:
         """
-        Fetches the list of all available report analysis modules.
+        Retrieves a list of available report analysis module IDs.
 
-        This method uses the `get_objects` method from the Storage class to obtain all Python files in the directory
-        defined by the `EnvVariables.REPORTS_ANALYSIS_MODULES.name` environment variable.
-        It then excludes any files that are not intended to be exposed as modules (those containing "__" in their names)
-        The method returns a list of the names of these modules.
+        This method fetches all report analysis module files from the storage and filters out any special files
+        (e.g., files starting with "__" which are typically Python internal or special files).
+        It then extracts and returns the stem (filename without extension) of each report analysis module file
+        as a list.
 
         Returns:
-            list[str]: A list of strings, each denoting the name of a report analysis module.
+            list[str]: A list of report analysis module IDs.
 
         Raises:
-            Exception: If an error occurs during the extraction of report analysis modules.
+            Exception: If there is an error retrieving the report analysis module IDs.
         """
         try:
-            retn_ras_ids = []
-
-            ras = Storage.get_objects(EnvVariables.REPORTS_ANALYSIS_MODULES.name, "py")
-            for ra in ras:
-                if "__" in ra:
+            retn_reports_analysis_module_ids = []
+            reports_analysis_module_ids = Storage.get_objects(
+                EnvVariables.REPORTS_ANALYSIS_MODULES.name, "py"
+            )
+            for report_analysis_module_id in reports_analysis_module_ids:
+                if "__" in report_analysis_module_id:
                     continue
-
-                retn_ras_ids.append(Path(ra).stem)
-
-            return retn_ras_ids
-
+                retn_reports_analysis_module_ids.append(
+                    Path(report_analysis_module_id).stem
+                )
+            return retn_reports_analysis_module_ids
         except Exception as e:
             print(f"Failed to get available report analysis modules: {str(e)}")
             raise e
