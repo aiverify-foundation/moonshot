@@ -39,7 +39,9 @@ dependencies = [
     "scipy==1.12.0",
     "textattack==0.3.10",
     "tensorflow-hub==0.16.1",
-    "homoglyphs==2.0.4"
+    "homoglyphs==2.0.4",
+    "tensorflow==2.16.1",
+    "tf-keras==2.16.0",
 ]
 
 [project.optional-dependencies]
@@ -122,6 +124,8 @@ scipy = "1.12.0"
 textattack = "0.3.10"
 tensorflow-hub = "0.16.1"
 homoglyphs = "2.0.4"
+tensorflow = "2.16.1"
+tf-keras = "2.16.0"
 typing-extensions = "4.11.0"
 fastapi = "0.110.2"
 uvicorn = "0.29.0"
