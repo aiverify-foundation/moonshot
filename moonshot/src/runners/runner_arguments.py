@@ -6,23 +6,25 @@ from pydantic import BaseModel
 
 
 class RunnerArguments(BaseModel):
-    id: str  # The ID of the Run.
+    id: str  # The ID of the Runner.
 
-    name: str  # The name of the Run.
+    name: str  # The name of the Runner.
 
-    database_file: str = ""  # The database file associated with the Run.
+    database_file: str = ""  # The database file associated with the Runner.
 
-    endpoints: list[str] = []  # List of endpoints for the Run.
+    endpoints: list[str] = []  # List of endpoints for the Runner.
+
+    description: str = ""  # A brief description of the Runner.
 
     # ------------------------------------------------------------------------------
     # These attributes are not exported to dict
     # ------------------------------------------------------------------------------
     database_instance: Any | None = (
-        None  # The database instance associated with the Run.
+        None  # The database instance associated with the Runner.
     )
 
     progress_callback_func: Callable | None = (
-        None  # The progress callback function for the Run.
+        None  # The progress callback function for the Runner.
     )
 
     def to_dict(self) -> dict:
@@ -40,4 +42,5 @@ class RunnerArguments(BaseModel):
             "name": self.name,
             "database_file": self.database_file,
             "endpoints": self.endpoints,
+            "description": self.description,
         }

@@ -10,6 +10,7 @@ from moonshot.src.runners.runner_arguments import RunnerArguments
 def api_create_runner(
     name: str,
     endpoints: list[str],
+    description: str = "",
     progress_callback_func: Callable | None = None,
 ) -> Runner:
     """
@@ -21,8 +22,9 @@ def api_create_runner(
 
     Args:
         name (str): The name of the runner.
-        endpoints (list[str]): The endpoints to be used by the runner.
-        progress_callback_func (Callable | None, optional): The progress callback function to be used by the runner.
+        endpoints (list[str]): A list of endpoint identifiers for the runner.
+        description (str, optional): A brief description of the runner. Defaults to an empty string.
+        progress_callback_func (Callable | None, optional): An optional callback function for progress updates.
         Defaults to None.
 
     Returns:
@@ -36,6 +38,7 @@ def api_create_runner(
         id="",
         name=name,
         endpoints=endpoints,
+        description=description,
         progress_callback_func=progress_callback_func,
     )
     return Runner.create(runner_args)

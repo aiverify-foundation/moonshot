@@ -38,6 +38,7 @@ class Runner:
     def __init__(self, runner_args: RunnerArguments) -> None:
         self.id = runner_args.id
         self.name = runner_args.name
+        self.description = runner_args.description
         self.endpoints = runner_args.endpoints
         self.database_instance = runner_args.database_instance
         self.database_file = runner_args.database_file
@@ -128,6 +129,7 @@ class Runner:
                     EnvVariables.DATABASES.name, runner_id, "db", True
                 ),
                 "progress_callback_func": runner_args.progress_callback_func,
+                "description": runner_args.description,
             }
             runner_args = RunnerArguments(**runner_info)
             runner_args.database_instance = Storage.create_database_connection(

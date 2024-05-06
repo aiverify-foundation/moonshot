@@ -17,12 +17,14 @@ def test_create_runner(name: str):
     runner = api_create_runner(
         name=name,
         endpoints=["openai-gpt35-turbo", "openai-gpt35-turbo-16k"],
+        description="My New Runner...",
         progress_callback_func=runner_callback_fn,
     )
     print("Runner Attributes:")
     print("ID:", runner.id)
     print("Name:", runner.name)
     print("Endpoints:", runner.endpoints)
+    print("Description:", runner.description)
     print("Database Instance:", runner.database_instance)
     print("Database File:", runner.database_file)
     print("Progress Callback Function:", runner.progress_callback_func)
@@ -34,6 +36,7 @@ def test_load_runner(runner_id: str):
     print("ID:", runner.id)
     print("Name:", runner.name)
     print("Endpoints:", runner.endpoints)
+    print("Description:", runner.description)
     print("Database Instance:", runner.database_instance)
     print("Database File:", runner.database_file)
     print("Progress Callback Function:", runner.progress_callback_func)
