@@ -2,6 +2,7 @@ from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
+from moonshot.src.runners.runner import Runner
 
 
 class RunnerService(BaseService):
@@ -29,7 +30,12 @@ class RunnerService(BaseService):
         moonshot_api.api_delete_runner(runner_id)
     
     
-    @staticmethod
-    @exception_handler
-    def create_runner(runner_name, endpoints, progress_callback_func):
-        return moonshot_api.api_create_runner(name=runner_name, endpoints=endpoints, progress_callback_func=progress_callback_func)
+@staticmethod
+@exception_handler
+def create_runner(runner_name, endpoints, progress_callback_func) -> Runner:
+    return moonshot_api.api_create_runner(name=runner_name, endpoints=endpoints, progress_callback_func=progress_callback_func)
+
+@staticmethod
+@exception_handler
+def load_runner(runner_id: str) -> Runner :
+    return moonshot_api.api_load_runner(runner_id)
