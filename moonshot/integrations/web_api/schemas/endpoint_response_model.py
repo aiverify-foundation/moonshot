@@ -11,3 +11,4 @@ class EndpointDataModel(BaseModel):
     max_calls_per_second: int
     max_concurrency: int
     params: Optional[dict] = None
+    created_date: str

@@ -22,8 +22,14 @@ class EndpointService(BaseService):
 
     @exception_handler
     def get_all_endpoints(self) -> list[EndpointDataModel | None]:
+        filtered_endpoints = []
         endpoints = moonshot_api.api_get_all_endpoint()
-        return [EndpointDataModel.model_validate(endpoint) for endpoint in endpoints]
+        for endpoint in endpoints:
+            filtered_endpoints.append(EndpointDataModel.model_validate(endpoint))
+        
+        filtered_endpoints.sort(key=lambda endpoint: endpoint.created_date, reverse=True)
+
+        return [EndpointDataModel.model_validate(endpoint) for endpoint in filtered_endpoints]
     
    
     @exception_handler
