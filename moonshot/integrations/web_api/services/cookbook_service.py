@@ -1,4 +1,3 @@
-from dependency_injector.wiring import inject
 from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
 from ..schemas.cookbook_response_dto import CookbookResponeDTO
@@ -19,15 +18,21 @@ class CookbookService(BaseService):
     
 
     @exception_handler
-    def get_all_cookbooks(self, tags: str, count: bool) -> list[CookbookResponeDTO | None]:
+    def get_all_cookbooks(self, tags: str, categories: str, count: bool) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
         filtered_cookbooks = []
         for cookbook in cookbooks:
             cookbook = CookbookResponeDTO(**cookbook)
             if count:
                 cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
-            if not tags or cookbooks_recipe_has_tags(tags, cookbook):
+            if not tags and not categories:
                 filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
+                continue
+            if tags and cookbooks_recipe_has_tags(tags, cookbook):
+                filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
+            if categories and cookbooks_recipe_has_categories(categories, cookbook):
+                if cookbook not in filtered_cookbooks:
+                    filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
         return filtered_cookbooks
 
 
@@ -83,3 +88,14 @@ def cookbooks_recipe_has_tags(tags: str, cookbook: CookbookResponeDTO) -> bool:
         if tags in recipe.tags:
             return True
     return False
+
+@staticmethod
+def cookbooks_recipe_has_categories(categories: str, cookbook: CookbookResponeDTO) -> bool:
+    recipe_ids = cookbook.recipes
+    recipes = moonshot_api.api_read_recipes(recipe_ids)
+    for recipe in recipes:
+        recipe = RecipeResponseDTO(**recipe)
+        if categories in recipe.categories:
+            return True
+    return False
+
