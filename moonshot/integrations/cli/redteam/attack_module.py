@@ -14,22 +14,18 @@ def list_attack_modules() -> None:
     attack_module_metadata_list = api_get_all_attack_module_metadata()
 
     if attack_module_metadata_list:
-        table = Table(title="Attack Module List", show_lines=True)
+        table = Table(title="Attack Module List", show_lines=True, expand=True)
         table.add_column("No.", style="dim", width=6)
-        table.add_column("Attack Module ID", justify="left")
         table.add_column("Details", justify="left")
 
         for attack_module_index, attack_module_data in enumerate(
             attack_module_metadata_list, 1
         ):
-            attack_module_id = attack_module_data.get("id", "")
-            description = attack_module_data.get("description", "")
+            attack_module_data_str = ""
+            for k, v in attack_module_data.items():
+                attack_module_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
+            table.add_row(str(attack_module_index), attack_module_data_str)
 
-            attack_module_id_info = f"[red]id: {attack_module_id}[/red]\n"
-            attack_module_details = f"[blue]Description:[/blue] {description}"
-            table.add_row(
-                str(attack_module_index), attack_module_id_info, attack_module_details
-            )
         console.print(Panel(table))
     else:
         console.print("[red]There are no attack modules found.[/red]", style="bold")

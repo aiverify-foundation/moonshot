@@ -102,7 +102,7 @@ def list_sessions() -> None:
     """
     session_metadata_list = api_get_all_session_metadata()
     if session_metadata_list:
-        table = Table(title="Session List", show_lines=True)
+        table = Table(title="Session List", show_lines=True, expand=True)
         table.add_column("No.", style="dim", width=6)
         table.add_column("Session ID", justify="left")
         table.add_column("Contains", justify="left")

@@ -1,25 +1,52 @@
 import time
+
 from textattack.augmentation import Augmenter
-from textattack.transformations import (
-    WordSwapEmbedding,
-)
+from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
+    InputColumnModification,
     RepeatModification,
     StopwordModification,
-    InputColumnModification
 )
-from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+from textattack.transformations import WordSwapEmbedding
 
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
 
 class FoolerGenerator(AttackModule):
-    def __init__(self, am_arguments: AttackModuleArguments):
+    def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         # Initialize super class
-        super().__init__(am_arguments)
+        super().__init__(am_id, am_arguments)
+        self.name = "TextFooler Attack"
+        self.description = "About this attack module:\nThis module implements the perturbations listed in the paper Is"
+        "BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment."
+        "\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the"
+        "number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in"
+        "a prompt that should be perturbed. [Default: 0.2]\n3. cosine_sim - Minimum word embedding cosine similarity"
+        "[Default: 0.5]\n4. window_size - Window size for the Universal Sentence Encoder (USE). [Default: 15]\n5."
+        "threshold - Semantic similarity threshold for the USE. [Default: 0.840845057]\n6. max_candidates - Number of"
+        "nearest candidates to swap words with. [Default: 50]\nNote:\nUsage of this attack module requires the"
+        "internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding"
+        "is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf"
+
+    def get_metadata(self) -> dict:
+        """
+        Get metadata for the attack module.
+
+        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
+        is not available, empty strings are returned.
+
+        Returns:
+            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
+            available.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description if hasattr(self, "description") else "",
+        }
 
     async def execute(self):
         """
@@ -30,8 +57,6 @@ class FoolerGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-        self.name = "TextFooler Attack"
-        self.description = "About this attack module:\nThis module implements the perturbations listed in the paper Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment.\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n3. cosine_sim - Minimum word embedding cosine similarity. [Default: 0.5]\n4. window_size - Window size for the Universal Sentence Encoder (USE). [Default: 15]\n5. threshold - Semantic similarity threshold for the USE. [Default: 0.840845057]\n6. max_candidates - Number of nearest candidates to swap words with. [Default: 50]\nNote:\nUsage of this attack module requires the internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf"
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
@@ -49,7 +74,7 @@ class FoolerGenerator(AttackModule):
         MAX_ITERATION = 5
         # Configurble PARAMS - Minimum word embedding cosine similarity of 0.5.
         cosine_sim = 0.5
-        # Configurble PARAMS - window size for USE 
+        # Configurble PARAMS - window size for USE
         window_size = 15
         # Configurble PARAMS - threshold for USE
         threshold = 0.840845057
@@ -66,8 +91,275 @@ class FoolerGenerator(AttackModule):
         fmt: off
         """
         stopwords = set(
-            ["a", "about", "above", "across", "after", "afterwards", "again", "against", "ain", "all", "almost", "alone", "along", "already", "also", "although", "am", "among", "amongst", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anyway", "anywhere", "are", "aren", "aren't", "around", "as", "at", "back", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "both", "but", "by", "can", "cannot", "could", "couldn", "couldn't", "d", "didn", "didn't", "doesn", "doesn't", "don", "don't", "down", "due", "during", "either", "else", "elsewhere", "empty", "enough", "even", "ever", "everyone", "everything", "everywhere", "except", "first", "for", "former", "formerly", "from", "hadn", "hadn't", "hasn", "hasn't", "haven", "haven't", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "hundred", "i", "if", "in", "indeed", "into", "is", "isn", "isn't", "it", "it's", "its", "itself", "just", "latter", "latterly", "least", "ll", "may", "me", "meanwhile", "mightn", "mightn't", "mine", "more", "moreover", "most", "mostly", "must", "mustn", "mustn't", "my", "myself", "namely", "needn", "needn't", "neither", "never", "nevertheless", "next", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "o", "of", "off", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "per", "please", "s", "same", "shan", "shan't", "she", "she's", "should've", "shouldn", "shouldn't", "somehow", "something", "sometime", "somewhere", "such", "t", "than", "that", "that'll", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefore", "therein", "thereupon", "these", "they", "this", "those", "through", "throughout", "thru", "thus", "to", "too", "toward", "towards", "under", "unless", "until", "up", "upon", "used", "ve", "was", "wasn", "wasn't", "we", "were", "weren", "weren't", "what", "whatever", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "whoever", "whole", "whom", "whose", "why", "with", "within", "without", "won", "won't", "would", "wouldn", "wouldn't", "y", "yet", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"]
-            )
+            [
+                "a",
+                "about",
+                "above",
+                "across",
+                "after",
+                "afterwards",
+                "again",
+                "against",
+                "ain",
+                "all",
+                "almost",
+                "alone",
+                "along",
+                "already",
+                "also",
+                "although",
+                "am",
+                "among",
+                "amongst",
+                "an",
+                "and",
+                "another",
+                "any",
+                "anyhow",
+                "anyone",
+                "anything",
+                "anyway",
+                "anywhere",
+                "are",
+                "aren",
+                "aren't",
+                "around",
+                "as",
+                "at",
+                "back",
+                "been",
+                "before",
+                "beforehand",
+                "behind",
+                "being",
+                "below",
+                "beside",
+                "besides",
+                "between",
+                "beyond",
+                "both",
+                "but",
+                "by",
+                "can",
+                "cannot",
+                "could",
+                "couldn",
+                "couldn't",
+                "d",
+                "didn",
+                "didn't",
+                "doesn",
+                "doesn't",
+                "don",
+                "don't",
+                "down",
+                "due",
+                "during",
+                "either",
+                "else",
+                "elsewhere",
+                "empty",
+                "enough",
+                "even",
+                "ever",
+                "everyone",
+                "everything",
+                "everywhere",
+                "except",
+                "first",
+                "for",
+                "former",
+                "formerly",
+                "from",
+                "hadn",
+                "hadn't",
+                "hasn",
+                "hasn't",
+                "haven",
+                "haven't",
+                "he",
+                "hence",
+                "her",
+                "here",
+                "hereafter",
+                "hereby",
+                "herein",
+                "hereupon",
+                "hers",
+                "herself",
+                "him",
+                "himself",
+                "his",
+                "how",
+                "however",
+                "hundred",
+                "i",
+                "if",
+                "in",
+                "indeed",
+                "into",
+                "is",
+                "isn",
+                "isn't",
+                "it",
+                "it's",
+                "its",
+                "itself",
+                "just",
+                "latter",
+                "latterly",
+                "least",
+                "ll",
+                "may",
+                "me",
+                "meanwhile",
+                "mightn",
+                "mightn't",
+                "mine",
+                "more",
+                "moreover",
+                "most",
+                "mostly",
+                "must",
+                "mustn",
+                "mustn't",
+                "my",
+                "myself",
+                "namely",
+                "needn",
+                "needn't",
+                "neither",
+                "never",
+                "nevertheless",
+                "next",
+                "no",
+                "nobody",
+                "none",
+                "noone",
+                "nor",
+                "not",
+                "nothing",
+                "now",
+                "nowhere",
+                "o",
+                "of",
+                "off",
+                "on",
+                "once",
+                "one",
+                "only",
+                "onto",
+                "or",
+                "other",
+                "others",
+                "otherwise",
+                "our",
+                "ours",
+                "ourselves",
+                "out",
+                "over",
+                "per",
+                "please",
+                "s",
+                "same",
+                "shan",
+                "shan't",
+                "she",
+                "she's",
+                "should've",
+                "shouldn",
+                "shouldn't",
+                "somehow",
+                "something",
+                "sometime",
+                "somewhere",
+                "such",
+                "t",
+                "than",
+                "that",
+                "that'll",
+                "the",
+                "their",
+                "theirs",
+                "them",
+                "themselves",
+                "then",
+                "thence",
+                "there",
+                "thereafter",
+                "thereby",
+                "therefore",
+                "therein",
+                "thereupon",
+                "these",
+                "they",
+                "this",
+                "those",
+                "through",
+                "throughout",
+                "thru",
+                "thus",
+                "to",
+                "too",
+                "toward",
+                "towards",
+                "under",
+                "unless",
+                "until",
+                "up",
+                "upon",
+                "used",
+                "ve",
+                "was",
+                "wasn",
+                "wasn't",
+                "we",
+                "were",
+                "weren",
+                "weren't",
+                "what",
+                "whatever",
+                "when",
+                "whence",
+                "whenever",
+                "where",
+                "whereafter",
+                "whereas",
+                "whereby",
+                "wherein",
+                "whereupon",
+                "wherever",
+                "whether",
+                "which",
+                "while",
+                "whither",
+                "who",
+                "whoever",
+                "whole",
+                "whom",
+                "whose",
+                "why",
+                "with",
+                "within",
+                "without",
+                "won",
+                "won't",
+                "would",
+                "wouldn",
+                "wouldn't",
+                "y",
+                "yet",
+                "you",
+                "you'd",
+                "you'll",
+                "you're",
+                "you've",
+                "your",
+                "yours",
+                "yourself",
+                "yourselves",
+            ]
+        )
         # fmt: on
         constraints = [RepeatModification(), StopwordModification(stopwords=stopwords)]
         """
@@ -75,8 +367,8 @@ class FoolerGenerator(AttackModule):
         the same.
         """
         input_column_modification = InputColumnModification(
-                ["premise", "hypothesis"], {"premise"}
-                )
+            ["premise", "hypothesis"], {"premise"}
+        )
         constraints.append(input_column_modification)
         """
         Minimum word embedding cosine similarity of 0.5.
@@ -98,14 +390,14 @@ class FoolerGenerator(AttackModule):
             compare_against_original=False,
             window_size=window_size,
             skip_text_shorter_than_window=True,
-            )
+        )
         constraints.append(use_constraint)
 
         augmenter = Augmenter(
-        transformation=transformation,
-        constraints=constraints,
-        pct_words_to_swap=word_swap_ratio,
-        transformations_per_example=MAX_ITERATION,
+            transformation=transformation,
+            constraints=constraints,
+            pct_words_to_swap=word_swap_ratio,
+            transformations_per_example=MAX_ITERATION,
         )
         result_list = []
         print(f'{"*"*10} Augmentation in Progress {"*"*10}')
@@ -114,11 +406,7 @@ class FoolerGenerator(AttackModule):
         print(f'{"*"*10} Time Taken: {time.process_time() - start}s {"*"*10}')
         for i in results:
             print(i)
-            result_list.append(
-                await self._send_prompt_to_all_llm(
-                    [i]
-                    )
-                    )
+            result_list.append(await self._send_prompt_to_all_llm([i]))
         for res in result_list:
             for x in res:
                 print(x.prompt)
