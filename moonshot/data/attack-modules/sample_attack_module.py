@@ -3,9 +3,10 @@ from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleA
 
 
 class SampleAttackModule(AttackModule):
-    def __init__(self, am_arguments: AttackModuleArguments):
+    def __init__(self, am_arguments: AttackModuleArguments | None = None):
         # Initialize super class
         super().__init__(am_arguments)
+        self.name = "Sample Attack Module"
         self.description = "This is a sample attack module."
 
     async def execute(self):
