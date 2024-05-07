@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
+
 class BenchmarkRunnerDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     run_name: str

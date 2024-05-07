@@ -1,7 +1,10 @@
-from pydantic import BaseModel, ConfigDict
 from typing import Optional
+
+from pydantic import BaseModel
+
+
 class RecipeResponseDTO(BaseModel):
-    id : str
+    id: str
     name: str
     description: str
     tags: list[str]

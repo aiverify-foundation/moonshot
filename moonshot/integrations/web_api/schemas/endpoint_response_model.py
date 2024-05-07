@@ -1,10 +1,14 @@
-from typing_extensions import TypedDict
-from pydantic import BaseModel, ConfigDict
 from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
+from typing_extensions import TypedDict
+
 
 class Parameters(TypedDict, total=False):
     max_length: int
     min_length: int
+
+
 class Params(TypedDict, total=False):
     timeout: int
     allow_retries: bool
@@ -13,6 +17,8 @@ class Params(TypedDict, total=False):
     pre_prompt: str
     post_prompt: str
     parameters: Parameters
+
+
 class EndpointDataModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str

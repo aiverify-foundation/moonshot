@@ -1,8 +1,9 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel
+
+
 class DatasetResponseDTO(BaseModel):
-    id : str
+    id: str
     name: str
     description: str
     num_of_dataset_prompts: int
-    created_date:  str
+    created_date: str

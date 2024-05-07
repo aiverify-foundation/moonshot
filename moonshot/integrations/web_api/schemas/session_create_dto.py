@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+
 class SessionCreateDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str = Field(min_length=3)

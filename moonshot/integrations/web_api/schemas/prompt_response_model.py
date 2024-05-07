@@ -1,5 +1,6 @@
 from pydantic import BaseModel, RootModel
 
+
 class PromptInfo(BaseModel):
     chat_record_id: int
     conn_id: str
@@ -11,6 +12,5 @@ class PromptInfo(BaseModel):
     duration: str
     prompt_time: str
 
+
 PromptResponseModel = RootModel[dict[str, list[PromptInfo]]]
-
-

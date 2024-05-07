@@ -1,5 +1,7 @@
-from pydantic import BaseModel, ConfigDict
 from typing import Optional, Union
+
+from pydantic import BaseModel, ConfigDict
+
 
 class EndpointCreateDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
