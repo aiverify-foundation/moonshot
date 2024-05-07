@@ -20,29 +20,27 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class AttackModule:
-    DEFAULT_MAX_ATTACK_ITERATION = 5
-
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
         """
 
-    def __init__(self, am_args: AttackModuleArguments | None = None):
-        if am_args:
-            self.id = am_args.name
-            self.description = "Overwrite this with your attack module description!"
-            self.name = am_args.name
-            self.connector_ids = am_args.connector_eps
-            self.prompt_templates = am_args.prompt_templates
-            self.prompt = am_args.prompt
-            self.system_prompt = am_args.system_prompt
-            self.metric_ids = am_args.metric_ids
-            self.context_strategy_info = am_args.context_strategy_info
-            self.db_instance = am_args.db_instance
-            self.params = am_args.params
+    def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
+        self.id = am_id
+        if am_arguments is not None:
+            self.connector_ids = am_arguments.connector_ids
+            self.prompt_templates = am_arguments.prompt_templates
+            self.prompt = am_arguments.prompt
+            self.system_prompt = am_arguments.system_prompt
+            self.metric_ids = am_arguments.metric_ids
+            self.context_strategy_info = am_arguments.context_strategy_info
+            self.db_instance = am_arguments.db_instance
+            self.params = am_arguments.params
 
     @classmethod
-    def load(cls, am_arguments: AttackModuleArguments) -> AttackModule:
+    def load(
+        cls, am_id: str, am_arguments: AttackModuleArguments | None = None
+    ) -> AttackModule:
         """
         Retrieves an attack module instance by its ID.
 
@@ -59,67 +57,27 @@ class AttackModule:
             RuntimeError: If the attack module instance does not exist.
         """
         attack_module_inst = get_instance(
-            am_arguments.name,
-            Storage.get_filepath(
-                EnvVariables.ATTACK_MODULES.name, am_arguments.name, "py"
-            ),
+            am_id,
+            Storage.get_filepath(EnvVariables.ATTACK_MODULES.name, am_id, "py"),
         )
 
         if attack_module_inst:
-            return attack_module_inst(am_arguments)
+            return attack_module_inst(am_id, am_arguments)
         else:
             raise RuntimeError(
-                f"Unable to get defined attack module instance - {am_arguments.name}"
+                f"Unable to get defined attack module instance - {am_id}"
             )
 
-    @classmethod
-    def load_without_am_arguments(cls, attack_module_id: str) -> AttackModule:
-        """
-        Load an attack module instance without attack module arguments.
-
-        This method attempts to load an attack module instance using the attack_module_id. If the attack module
-        instance is found, it is returned. If the attack module instance does not exist, a RuntimeError is raised.
-
-        Args:
-            attack_module_id (str): The unique identifier of the attack module to be retrieved.
-
-        Returns:
-            AttackModule: The retrieved attack module instance.
-
-        Raises:
-            RuntimeError: If the attack module instance does not exist.
-        """
-        attack_module_inst = get_instance(
-            attack_module_id,
-            Storage.get_filepath(
-                EnvVariables.ATTACK_MODULES.name, attack_module_id, "py"
-            ),
-        )
-        if attack_module_inst:
-            am_inst = attack_module_inst()
-            am_inst.id = attack_module_id
-            return am_inst
-        else:
-            raise RuntimeError(
-                f"Unable to get defined attack module instance - {attack_module_id}"
-            )
-
-    def get_metadata(self) -> dict | None:
+    @abstractmethod
+    def get_metadata(self) -> dict:
         """
         Get metadata for the attack module.
 
-        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
-        is not available, empty strings are returned.
-
+        Returns a dictionary of the attack module metadata.
         Returns:
-            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
-            available.
+            dict: A dictionary containing the metadata of the attack module.
         """
-        return {
-            "id": self.id,
-            "name": self.name if hasattr(self, "name") else "",
-            "description": self.description if hasattr(self, "description") else "",
-        }
+        pass
 
     async def _generate_prompts(
         self, prompt: str, target_llm_connector_id: str
@@ -167,7 +125,7 @@ class AttackModule:
 
         yield RedTeamingPromptArguments(
             conn_id=target_llm_connector_id,
-            am_id=self.name,
+            am_id=self.id,
             cs_id=self.context_strategy_instances[0].id
             if self.context_strategy_info
             else "",
@@ -235,7 +193,7 @@ class AttackModule:
                     if self.context_strategy_info
                     else "",
                     self.prompt_templates[0] if self.prompt_templates else "",
-                    self.name,
+                    self.id,
                     self.metric_ids[0] if self.metric_ids else "",
                     self.prompt,  # original prompt
                     prepared_prompt,  # prepared prompt
@@ -279,7 +237,7 @@ class AttackModule:
                 if self.context_strategy_info
                 else "",
                 self.prompt_templates[0] if self.prompt_templates else "",
-                self.name,
+                self.id,
                 self.metric_ids[0] if self.metric_ids else "",
                 self.prompt,  # original prompt
                 prepared_prompt,  # prepared prompt
@@ -382,7 +340,6 @@ class AttackModule:
                 ContextStrategy.load(context_strategy_info.get("context_strategy_id"))
                 for context_strategy_info in self.context_strategy_info
             ]
-
         return None
 
     @staticmethod

@@ -23,13 +23,10 @@ def list_attack_modules() -> None:
             attack_module_metadata_list, 1
         ):
             attack_module_id = attack_module_data.get("id", "")
-            name = attack_module_data.get("name", "")
             description = attack_module_data.get("description", "")
 
             attack_module_id_info = f"[red]id: {attack_module_id}[/red]\n"
-            attack_module_details = (
-                f"[blue]Name:[/blue] {name}\n\n[blue]Description:[/blue] {description}"
-            )
+            attack_module_details = f"[blue]Description:[/blue] {description}"
             table.add_row(
                 str(attack_module_index), attack_module_id_info, attack_module_details
             )

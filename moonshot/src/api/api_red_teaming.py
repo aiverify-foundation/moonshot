@@ -27,8 +27,8 @@ def api_get_all_attack_module_metadata() -> list:
     Returns:
         list: A list of attack module metadata.
     """
-    attack_module_names = AttackModule.get_available_items()
+    attack_module_ids = AttackModule.get_available_items()
     return [
-        AttackModule.load_without_am_arguments(attack_module_name).get_metadata()
-        for attack_module_name in attack_module_names
+        AttackModule.load(am_id=attack_module_id).get_metadata()
+        for attack_module_id in attack_module_ids
     ]

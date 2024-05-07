@@ -13,8 +13,8 @@ from moonshot.src.api.api_connector_endpoint import (
 )
 from moonshot.src.api.api_context_strategy import (
     api_delete_context_strategy,
+    api_get_all_context_strategies,
     api_get_all_context_strategy_metadata,
-    api_get_all_context_strategy_name,
 )
 from moonshot.src.api.api_cookbook import (
     api_create_cookbook,
@@ -90,7 +90,7 @@ __all__ = [
     "api_read_endpoint",
     "api_update_endpoint",
     "api_delete_context_strategy",
-    "api_get_all_context_strategy_name",
+    "api_get_all_context_strategies",
     "api_get_all_context_strategy_metadata",
     "api_create_cookbook",
     "api_delete_cookbook",
