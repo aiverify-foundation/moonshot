@@ -14,8 +14,10 @@ class ToxicityClassifier(MetricInterface):
     def __init__(self):
         self.id = "toxicityclassifier"
         self.name = "ToxicityClassifier"
-        self.description = ("This classifier measures how toxic a given input is"
-                            "and calculate the number of toxic sentence detected.")
+        self.description = (
+            "This classifier measures how toxic a given input is"
+            "and calculate the number of toxic sentence detected."
+        )
         self.metric_config = self.get_metrics_configuration(self.id)
 
     @timeit
@@ -31,7 +33,7 @@ class ToxicityClassifier(MetricInterface):
         return {"id": self.id, "name": self.name, "description": self.description}
 
     @timeit
-    def get_results(
+    async def get_results(
         self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """

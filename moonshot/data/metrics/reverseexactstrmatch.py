@@ -28,7 +28,7 @@ class ReverseExactStrMatch(MetricInterface):
         return {"id": self.id, "name": self.name, "description": self.description}
 
     @timeit
-    def get_results(
+    async def get_results(
         self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
@@ -68,6 +68,4 @@ class ReverseExactStrMatch(MetricInterface):
                 ):
                     correct += 1
 
-        return {
-            "accuracy": float(correct / total) * 100
-        }
+        return {"accuracy": float(correct / total) * 100}
