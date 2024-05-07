@@ -20,20 +20,7 @@ from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleA
 
 
 
-"""
-About this attack module:
-This module implements the perturbations listed in the paper TEXTBUGGER: Generating Adversarial Text Against
-Real-world Applications.
-Configurable Params:
-1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the number of transfprmations that should be generated.
-2. word_swap_ratio - Percentage of words in a prompt that should be perturbed.
-3. top_k - to select top k number of semantic words from the GLoVe embedding
-4. threshold - semantic similarity threshold for the universal encoder
 
-Note:
-Usage of this attack module requires the internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.
-Embedding is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf 
-"""
 
 class BugGenerator(AttackModule):
     def __init__(self, am_arguments: AttackModuleArguments):
@@ -49,7 +36,8 @@ class BugGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-        self.description = "This attack implements the perturbations features in the paper 'TEXTBUGGER: Generating Adversarial Text Against Real-world Applications'."
+        self.name = "TextBugger Attack"
+        self.description = "About this attack module:\nThis module implements the perturbations listed in the paper TEXTBUGGER: Generating Adversarial Text Against Real-world Applications.\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n3. top_k - To select top k number of semantic words from the GLoVe embedding. [Default: 5]\n4. threshold - semantic similarity threshold for the universal encoder. [Default: 0.8]\nNote:\nUsage of this attack module requires the internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf"
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
