@@ -1,19 +1,21 @@
-import logging
-from typing import Optional
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
-from dependency_injector.wiring import inject, Provide
+
 from ..container import Container
-from ..services.utils.exceptions_handler import ServiceException
 from ..schemas.prompt_template_response_model import PromptTemplatesResponseModel
 from ..services.prompt_template_service import PromptTemplateService
+from ..services.utils.exceptions_handler import ServiceException
 
 router = APIRouter()
+
 
 @router.get("/api/v1/prompt-templates")
 @inject
 def get_all_prompt_templates(
-    prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
-    ) -> PromptTemplatesResponseModel:
+    prompt_template_service: PromptTemplateService = Depends(
+        Provide[Container.prompt_template_service]
+    ),
+) -> PromptTemplatesResponseModel:
     """
     Get all the prompt templates from the database
     """
@@ -31,8 +33,10 @@ def get_all_prompt_templates(
 @router.get("/api/v1/prompt-templates/name")
 @inject
 def get_all_prompt_templates_names(
-    prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
-    ) -> list[str]:
+    prompt_template_service: PromptTemplateService = Depends(
+        Provide[Container.prompt_template_service]
+    ),
+) -> list[str]:
     """
     Get all the prompt templates from the database
     """
@@ -47,12 +51,13 @@ def get_all_prompt_templates_names(
             raise HTTPException(status_code=500, detail=e.msg)
 
 
-
 @router.get("/api/v1/context-strategies")
 @inject
 def get_all_context_strategies(
-    prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
-    ) -> list[str]:
+    prompt_template_service: PromptTemplateService = Depends(
+        Provide[Container.prompt_template_service]
+    ),
+) -> list[str]:
     """
     Get all the context strategies from the database
     """
@@ -65,14 +70,16 @@ def get_all_context_strategies(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
-        
+
 
 @router.delete("/api/v1/context-strategies/{ctx_strategy_name}")
 @inject
 def delete_context_strategy(
     ctx_strategy_name: str,
-    prompt_template_service: PromptTemplateService = Depends(Provide[Container.prompt_template_service])
-    ) -> dict[str, bool]:
+    prompt_template_service: PromptTemplateService = Depends(
+        Provide[Container.prompt_template_service]
+    ),
+) -> dict[str, bool]:
     """
     Delete context strategies from the database
     """
