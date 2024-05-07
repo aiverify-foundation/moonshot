@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
 from ..schemas.recipe_create_dto import RecipeCreateDTO
-from ..schemas.recipe_response_dto import RecipeResponseDTO
+from ..schemas.recipe_response_model import RecipeResponseModel
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
 
@@ -15,21 +15,21 @@ router = APIRouter()
 def create_recipe(
     recipe_data: RecipeCreateDTO,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> dict:
+) -> dict[str, str]:
     """
-    Add a new recipe to the database.
+    Endpoint to add a new recipe to the database.
 
-    Args:
+    Parameters:
         recipe_data (RecipeCreateDTO): The data transfer object containing the recipe details.
-        recipe_service (RecipeService): The service responsible for creating the recipe.
+        recipe_service (RecipeService): The service layer responsible for the creation logic.
 
     Returns:
-        Dict[str, str]: A message indicating the successful creation of the recipe.
+        dict[str, str]: A dictionary with a message indicating the successful creation of the recipe.
 
     Raises:
-        HTTPException: An error with status code 404 if the file is not found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if the recipe cannot be created because the file is not found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe_service.create_recipe(recipe_data)
@@ -53,30 +53,32 @@ def create_recipe(
 @inject
 def get_all_recipes(
     tags: str = Query(None, description="Filter recipes by tags"),
+    categories: str = Query(None, description="Filter recipes by categories"),
     sort_by: str = Query(None, description="Sort recipes by a specific field"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> list:
+) -> list[RecipeResponseModel]:
     """
-    Get all the recipes from the database.
+    Endpoint to retrieve all recipes from the database, with optional filters, sorting, and count inclusion.
 
-    Args:
-        tags (str): Filter parameter to filter recipes by tags.
-        sort_by (str): Filter parameter to sort recipes by a specific field.
-        count (bool): Flag to indicate whether to include the count of recipes.
-        recipe_service (RecipeService): The service responsible for retrieving recipes.
+    Parameters:
+        tags (str, optional): Filter to retrieve recipes by tags.
+        categories (str, optional): Filter to retrieve recipes by categories.
+        sort_by (str, optional): Parameter to sort recipes by a specific field.
+        count (bool, optional): Flag to indicate whether to include the count of recipes in the response.
+        recipe_service (RecipeService): The service layer responsible for the retrieval logic.
 
     Returns:
-        List: A list of recipes.
+        list[RecipeResponseModel]: A list of recipe, filtered, sorted, and with counts.
 
     Raises:
-        HTTPException: An error with status code 404 if no recipes are found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if no recipes are found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipes = recipe_service.get_all_recipes(
-            tags=tags, sort_by=sort_by, count=count
+            tags=tags, categories=categories, sort_by=sort_by, count=count
         )
         return recipes
     except ServiceException as e:
@@ -100,18 +102,18 @@ def get_all_recipes_name(
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> list[str]:
     """
-    Get all the recipe names from the database.
+    Endpoint to retrieve all recipe names from the database.
 
-    Args:
-        recipe_service (RecipeService): The service responsible for retrieving recipe names.
+    Parameters:
+        recipe_service (RecipeService): The service layer responsible for retrieving recipe names.
 
     Returns:
-        List[str]: A list of recipe names.
+        list[str]: A list of recipe names.
 
     Raises:
-        HTTPException: An error with status code 404 if no recipe names are found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if no recipe names are found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipes = recipe_service.get_all_recipes_name()
@@ -136,21 +138,21 @@ def get_all_recipes_name(
 def get_recipe_by_ids(
     recipe_id: str = Query(None, description="Get recipes to query"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> list[RecipeResponseDTO]:
+) -> list[RecipeResponseModel]:
     """
-    Get a recipe from the database by its ID.
+    Endpoint to retrieve a specific recipe by its ID from the database.
 
-    Args:
+    Parameters:
         recipe_id (str): The unique identifier of the recipe to retrieve.
-        recipe_service (RecipeService): The service responsible for retrieving the recipe.
+        recipe_service (RecipeService): The service layer responsible for the retrieval logic.
 
     Returns:
-        List[Union[RecipeResponseDTO, None]]: A list containing the recipe or None if not found.
+        list[RecipeResponseModel]: A list containing the RecipeResponseModel instance corresponding to the provided ID.
 
     Raises:
-        HTTPException: An error with status code 404 if the recipe is not found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if the recipe with the given ID cannot be found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe = recipe_service.get_recipe_by_ids(recipe_id)
@@ -178,21 +180,20 @@ async def update_recipe(
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> dict[str, str]:
     """
-    Update an existing recipe in the database by its ID.
+    Endpoint to update an existing recipe in the database by its ID.
 
-    Args:
+    Parameters:
         recipe_data (RecipeCreateDTO): The data transfer object containing the updated recipe details.
         recipe_id (str): The unique identifier of the recipe to update.
-        recipe_service (RecipeService): The service responsible for updating the recipe.
+        recipe_service (RecipeService): The service layer responsible for the update logic.
 
     Returns:
-        Union[Dict[str, str], Tuple[Dict[str, str], int]]: A message indicating the successful update of the recipe,
-        or an HTTPException with an appropriate status code.
+        dict[str, str]: A dictionary with a message indicating the successful update of the recipe.
 
     Raises:
-        HTTPException: An error with status code 404 if the recipe is not found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if the recipe to be updated cannot be found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe_service.update_recipe(recipe_data, recipe_id)
@@ -219,20 +220,19 @@ def delete_recipe(
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> dict[str, str]:
     """
-    Delete a recipe from the database by its ID.
+    Endpoint to delete a recipe from the database by its ID.
 
-    Args:
+    Parameters:
         recipe_id (str): The unique identifier of the recipe to delete.
-        recipe_service (RecipeService): The service responsible for deleting the recipe.
+        recipe_service (RecipeService): The service layer responsible for the deletion logic.
 
     Returns:
-        Union[Dict[str, str], Tuple[Dict[str, str], int]]: A message indicating the successful deletion of the recipe,
-        or an HTTPException with an appropriate status code.
+        dict[str, str]: A dictionary with a message indicating the successful deletion of the recipe.
 
     Raises:
-        HTTPException: An error with status code 404 if the recipe is not found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
+        HTTPException: 404 if the recipe to be deleted cannot be found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe_service.delete_recipe(recipe_id)
