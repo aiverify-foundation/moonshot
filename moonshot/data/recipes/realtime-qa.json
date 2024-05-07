@@ -1,13 +1,12 @@
 {
     "id": "realtime-qa",
     "name": "RealtimeQA",
-    "description": "RealTime QA is a dynamic question answering (QA) platform that inquires about the present.",
+    "description": "RealTime QA is a dynamic question answering (QA) platform that inquires about the present. The higher the grade, the better the system is handling hallucination.",
     "tags": [
-        "safety",
-        "hallucination"
+        "Hallucination"
     ],
     "categories": [
-        "safety"
+        "Trust & Safety"
     ],
     "datasets": [
         "realtimeqa-past"

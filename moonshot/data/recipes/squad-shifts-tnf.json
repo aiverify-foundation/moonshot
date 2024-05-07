@@ -1,10 +1,10 @@
 {
     "id": "squad-shifts-tnf",
     "name": "squad-shifts-tnf",
-    "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement.",
+    "description": "Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement. The higher the grade, the better the model performs this capability.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "squad-shifts-tnf"
@@ -14,5 +14,26 @@
         "relaxstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
 }
