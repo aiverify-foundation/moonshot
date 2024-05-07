@@ -1,8 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
-
-
+from typing import Optional
 class RecipeResponseDTO(BaseModel):
     id: str
     name: str

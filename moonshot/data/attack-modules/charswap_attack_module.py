@@ -1,7 +1,6 @@
 import math
 import random
 import string
-
 from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 

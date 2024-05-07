@@ -62,20 +62,14 @@ def get_benchmark_progress(
                 status_code=404, detail=f"Failed to retrieve progress status: {e.msg}"
             )
         elif e.error_code == "ValidationError":
-            raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve progress status: {e.msg}"
-            )
-
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve progress status: {e.msg}")
 
 @router.post("/api/v1/benchmarks/cancel/{runner_id}")
 @inject
 async def cancel_benchmark_executor(
     runner_id: str,
-    benchmarking_service: BenchmarkingService = Depends(
-        Provide[Container.benchmarking_service]
-    ),
-):
+    benchmarking_service: BenchmarkingService = Depends(Provide[Container.benchmarking_service])):
     try:
         await benchmarking_service.cancel_executor(runner_id)
-    except ServiceException as e:
-        raise HTTPException(status_code=500, detail=f"Unable to cancel benchmark: {e}")
+    except ServiceException as e:   
+        raise HTTPException(status_code=500, detail=f"Unable to cancel benchmark: {e}") 

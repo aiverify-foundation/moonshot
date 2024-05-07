@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi import Query
 
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -43,13 +44,13 @@ def create_cookbook(
 def get_all_cookbooks(
     tags: str = Query(None, description="Filter cookbooks by tags"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
-    cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service]),
-):
+    cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])
+    ):
     """
     Get all the cookbooks from the database
     """
     try:
-        cookbooks = cookbook_service.get_all_cookbooks(tags=tags, count=count)
+        cookbooks = cookbook_service.get_all_cookbooks(tags=tags,count=count)
         return cookbooks
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -96,8 +97,7 @@ def get_all_cookbooks_name(
 @inject
 def get_cookbook_by_id(
     cookbook_id: str = Query(None, description="Get cookbooks to query"),
-    cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service]),
-):
+    cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service])): 
     """
     Get a cookbook from the database
     """

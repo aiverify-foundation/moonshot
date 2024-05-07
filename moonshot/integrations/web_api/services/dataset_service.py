@@ -13,10 +13,18 @@ class DatasetService(BaseService):
         return [DatasetResponseDTO.model_validate(dataset) for dataset in datasets]
 
     @exception_handler
-    def get_all_datasets_name(self) -> list[str] | None:
+    def get_all_datasets(self) -> list[DatasetResponseDTO]:
+        datasets = moonshot_api.api_get_all_datasets()
+        return [DatasetResponseDTO.model_validate(dataset) for dataset in datasets]    
+
+
+    @exception_handler
+    def get_all_datasets_name(self) -> list[str] | None: 
         datasets = moonshot_api.api_get_all_datasets_name()
         return datasets
 
+
     @exception_handler
-    def delete_dataset(self, dataset_id: str) -> None:
+    def delete_dataset(self,dataset_id: str) -> None:  
         moonshot_api.api_delete_dataset(dataset_id)
+

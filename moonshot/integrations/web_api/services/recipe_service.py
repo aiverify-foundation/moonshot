@@ -22,9 +22,7 @@ class RecipeService(BaseService):
         )
 
     @exception_handler
-    def get_all_recipes(
-        self, tags: str, sort_by: str, count: bool
-    ) -> list[RecipeResponseDTO]:
+    def get_all_recipes(self, tags: str, sort_by: str, count: bool) -> list[RecipeResponseDTO]:
         recipes = moonshot_api.api_get_all_recipe()
         filtered_recipes = []
 
@@ -35,9 +33,7 @@ class RecipeService(BaseService):
             filtered_recipes.append(recipe)
 
         if tags:
-            filtered_recipes = [
-                recipe for recipe in filtered_recipes if tags in recipe.tags
-            ]
+            filtered_recipes = [recipe for recipe in filtered_recipes if tags in recipe.tags]
 
         if sort_by:
             if sort_by == "id":
@@ -78,7 +74,6 @@ class RecipeService(BaseService):
     def delete_recipe(self, recipe_id: str) -> None:
         moonshot_api.api_delete_recipe(recipe_id)
 
-
 @staticmethod
 def get_total_prompt_in_recipe(recipe: RecipeResponseDTO) -> int:
     total_prompt_count = 0
@@ -87,8 +82,6 @@ def get_total_prompt_in_recipe(recipe: RecipeResponseDTO) -> int:
         for dataset, count in datasets_prompts.items():
             total_prompt_count += count
     if recipe.prompt_templates:
-        total_prompt_count = (
-            total_prompt_count * recipe.stats["num_of_prompt_templates"]
-        )
+        total_prompt_count = total_prompt_count * recipe.stats["num_of_prompt_templates"]
 
     return total_prompt_count

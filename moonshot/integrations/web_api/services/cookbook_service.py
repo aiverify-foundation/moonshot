@@ -7,7 +7,7 @@ from ..schemas.recipe_response_dto import RecipeResponseDTO
 from ..services.base_service import BaseService
 from ..services.recipe_service import get_total_prompt_in_recipe
 from ..services.utils.exceptions_handler import exception_handler
-
+from ..services.recipe_service import get_total_prompt_in_recipe
 
 class CookbookService(BaseService):
     @exception_handler
@@ -19,20 +19,17 @@ class CookbookService(BaseService):
         )
 
     @exception_handler
-    def get_all_cookbooks(
-        self, tags: str, count: bool
-    ) -> list[CookbookResponeDTO | None]:
+    def get_all_cookbooks(self, tags: str, count: bool) -> list[CookbookResponeDTO | None]:
         cookbooks = moonshot_api.api_get_all_cookbook()
         filtered_cookbooks = []
         for cookbook in cookbooks:
             cookbook = CookbookResponeDTO(**cookbook)
             if count:
-                cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
-                    cookbook
-                )
+                cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
             if not tags or cookbooks_recipe_has_tags(tags, cookbook):
                 filtered_cookbooks.append(CookbookResponeDTO.model_validate(cookbook))
         return filtered_cookbooks
+
 
     @exception_handler
     def get_all_cookbooks_names(self) -> list[str]:
@@ -40,14 +37,16 @@ class CookbookService(BaseService):
         return cookbooks
 
     @exception_handler
-    def get_cookbook_by_ids(self, cookbook_id: str) -> list[CookbookResponeDTO] | None:
-        ret_cookbooks = []
+    def get_cookbook_by_ids(self, cookbook_id: str) -> list[CookbookResponeDTO] | None: 
+        ret_cookbooks =[]
         cb_id_list = cookbook_id.split(",")
         for id in cb_id_list:
             cookbook = moonshot_api.api_read_cookbook(id)
             cookbook = CookbookResponeDTO(**cookbook)
             cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(cookbook)
             ret_cookbooks.append(cookbook)
+
+        return [CookbookResponeDTO.model_validate(cb) for cb in ret_cookbooks]
 
         return [CookbookResponeDTO.model_validate(cb) for cb in ret_cookbooks]
 
@@ -66,7 +65,6 @@ class CookbookService(BaseService):
     def delete_cookbook(self, cookbook_id: str) -> None:
         moonshot_api.api_delete_cookbook(cookbook_id)
 
-
 @staticmethod
 def get_total_prompt_in_cookbook(cookbook: CookbookResponeDTO) -> int:
     total_prompt_count = 0
@@ -76,7 +74,6 @@ def get_total_prompt_in_cookbook(cookbook: CookbookResponeDTO) -> int:
         total_prompt_count += get_total_prompt_in_recipe(recipe)
 
     return total_prompt_count
-
 
 @staticmethod
 def cookbooks_recipe_has_tags(tags: str, cookbook: CookbookResponeDTO) -> bool:

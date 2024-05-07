@@ -1,7 +1,6 @@
 import math
 import random
 import string
-
 from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
@@ -66,7 +65,6 @@ class InsertPunctGenerator(AttackModule):
         MAX_ITERATION = 10
         # Configurble PARAMS - Percentage of words in a prompt that should be changed
         word_swap_ratio = 0.2
-
         # space of characters that we wish to insert for perturbation
         dec_space = string.punctuation + " "
         word_list = word_tokenize(self.prompt)

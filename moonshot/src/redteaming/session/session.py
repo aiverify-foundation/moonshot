@@ -182,21 +182,36 @@ class Session:
         context_strategy = self.runner_args.get("context_strategy", "")
 
         if self.database_instance:
-            # Create session metadata table and update metadata
-            Storage.create_database_table(
-                self.database_instance, Session.sql_create_session_metadata_table
-            )
-            # Check if the session metadata record already exists
+            # create session metadata table if it does not exist
+            if not Storage.check_database_table_exists(
+                self.database_instance, "session_metadata_table"
+            ):
+                Storage.create_database_table(
+                    self.database_instance, Session.sql_create_session_metadata_table
+                )
+
+            # get session metadata record
             session_metadata_records = Storage.read_database_records(
                 self.database_instance, Session.sql_read_session_metadata
             )
+
+            # check if the session metadata record already exists
             if session_metadata_records:
+                print("[Session] Session already exists.")
                 self.session_metadata = SessionMetadata.from_tuple(
                     session_metadata_records[0]
                 )
-
-            # If the session metadata does not exist, create a new record
+            # create a new record if session metadata does not exist
             else:
+                print("[Session] Creating new session.")
+
+                # create chat history table for each endpoint
+                for endpoint in endpoints:
+                    endpoint_id = endpoint.replace("-", "_")
+                    Storage.create_database_table(
+                        self.database_instance,
+                        Session.sql_create_chat_history_table.format(endpoint_id),
+                    )
                 self.session_metadata = SessionMetadata(
                     runner_id,
                     endpoints,
@@ -211,16 +226,16 @@ class Session:
                     Session.sql_create_session_metadata_record,
                 )
 
-            # Create chat history table for each endpoint
-            for endpoint in endpoints:
-                endpoint_id = endpoint.replace("-", "_")
-                Storage.create_database_table(
-                    self.database_instance,
-                    Session.sql_create_chat_history_table.format(endpoint_id),
-                )
-
     @staticmethod
-    def load(database_instance: DBInterface | None) -> dict | None:
+    def load(
+        database_instance: DBInterface | None,
+        runner_type: RunnerType = RunnerType.REDTEAM,
+        runner_id: str = "",
+        endpoints: list = [],
+        runner_args: dict = {},
+        result_file_path: str = "",
+        progress_callback_func: Callable | None = None,
+    ) -> dict | None:
         """
         Loads run data for a given session_id from the database, or the latest run if run_id is None.
 
@@ -237,14 +252,28 @@ class Session:
             RunArguments: An object containing the details of the run with the given run_id or the latest run.
         """
         if not database_instance:
-            raise RuntimeError("[Session] Database instance not provided.")
+            raise RuntimeError("[Session] Runner instance database not provided.")
 
+        # runner does not have session
         if not Storage.check_database_table_exists(
             database_instance, "session_metadata_table"
         ):
-            # runner file does not have session created
-            return None
-
+            print("[Session] Unable to load session. Runner does not contain session.")
+            # create session in runner
+            try:
+                Session(
+                    runner_id,
+                    runner_type,
+                    runner_args,
+                    database_instance,
+                    endpoints,
+                    result_file_path,
+                    progress_callback_func,
+                )
+            except Exception:
+                print("[Session] Unable to create session.")
+                return None
+        # retrieve session metadata
         session_metadata_info = Storage.read_database_records(
             database_instance,
             Session.sql_read_session_metadata,
@@ -253,12 +282,13 @@ class Session:
         if not session_metadata_info:
             raise RuntimeError("[Session] Failed to get Session metadata.")
 
-        session_metadata = SessionMetadata.from_tuple(session_metadata_info[0])
+        # convert session metadata from tuple to dict
         session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
         session_metadata_dict = session_metadata_obj.to_dict()
 
+        # retrieve all chats
         chats = {}
-        for endpoint_id in session_metadata.endpoints:
+        for endpoint_id in session_metadata_obj.endpoints:
             list_of_chats_from_one_ep = Chat.load_chat_history(
                 database_instance, endpoint_id.replace("-", "_")
             )
@@ -403,7 +433,7 @@ class Session:
         """
         if not db_instance:
             raise RuntimeError("[Session] Database instance not provided.")
-        if not Storage.is_object_exists(
+        if context_strategy and not Storage.is_object_exists(
             EnvVariables.CONTEXT_STRATEGY.name, context_strategy, "py"
         ):
             raise RuntimeError(
@@ -433,7 +463,7 @@ class Session:
         """
         if not db_instance:
             raise RuntimeError("[Session] Database instance not provided.")
-        if not Storage.is_object_exists(
+        if prompt_template and not Storage.is_object_exists(
             EnvVariables.PROMPT_TEMPLATES.name, prompt_template, "json"
         ):
             raise RuntimeError(
