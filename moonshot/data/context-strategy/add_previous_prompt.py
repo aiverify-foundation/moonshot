@@ -3,6 +3,7 @@ import logging
 from moonshot.src.redteaming.context_strategy.context_strategy_interface import (
     ContextStrategyInterface,
 )
+from moonshot.src.utils.timeit import timeit
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -19,6 +20,18 @@ class SampleContextStrategy(ContextStrategyInterface):
         self.id = "add_previous_prompt"
         self.name = "Add Previous Prompt"
         self.description = "This is a sample context strategy that adds in previous prompts to the current prompt."
+
+    @timeit
+    def get_metadata(self) -> dict | None:
+        """
+        Retrieves and returns the metadata of the SampleContextStrategy class.
+        The metadata includes the unique identifier, the name, and the description of the class.
+
+        Returns:
+            dict | None: A dictionary containing the 'id', 'name', and 'description' of the SampleContextStrategy class,
+            or None if not applicable.
+        """
+        return {"id": self.id, "name": self.name, "description": self.description}
 
     @staticmethod
     def add_in_context(

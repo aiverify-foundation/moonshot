@@ -77,7 +77,7 @@ class Runner:
                 EnvVariables.RUNNERS.name, runner_id, "json"
             ):
                 raise RuntimeError(
-                    "[Runner] Unable to create runner because the runner file does not exists."
+                    "[Runner] Unable to create runner because the runner file does not exist."
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
@@ -119,6 +119,14 @@ class Runner:
                 raise RuntimeError(
                     "[Runner] Unable to create runner because the runner file exists."
                 )
+            # Check if all endpoint configuration files exist. If not, raise an error.
+            for endpoint in runner_args.endpoints:
+                if not Storage.is_object_exists(
+                    EnvVariables.CONNECTORS_ENDPOINTS.name, endpoint, "json"
+                ):
+                    raise RuntimeError(
+                        f"[Runner]Connector endpoint {endpoint} does exist."
+                    )
 
             runner_info = {
                 "id": runner_id,

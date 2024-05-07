@@ -9,15 +9,29 @@ from moonshot.src.api.api_session import (
     api_update_prompt_template,
     api_delete_session
     )
-from moonshot.src.redteaming.attack.attack_module import AttackModule
+from moonshot.src.api.api_red_teaming import (
+    api_get_all_attack_modules,
+    api_get_all_attack_module_metadata
+)
+
+from moonshot.src.api.api_context_strategy import(
+    api_get_all_context_strategies,
+    api_get_all_context_strategy_metadata
+)
+
 
 # ------------------------------------------------------------------------------
 # Red Teaming APIs
 # ------------------------------------------------------------------------------
 
-def run_manual_and_automated_rt():
-    runner_name = "test amrt"
-    runner_id = "test-amrt"
+def test_create_runner(name: str):
+    runner = api_create_runner(
+        name=name,
+        endpoints=["openai-gpt35-turbo", "openai-gpt35-turbo-16k"],
+    )
+    runner.close()
+
+def run_manual_and_automated_rt(runner_name: str, runner_id: str):
     endpoints = ["openai-gpt35-turbo", "openai-gpt4"]
     print("1) Creating Runner")
     runner = api_create_runner(
@@ -135,43 +149,57 @@ def run_automated_rt():
     )
     runner.close()
 
-run_manual_and_automated_rt()
+def test_session_apis(runner_id: str):
+    # ------------------------------------------------------------------------------
+    # Session APIs
+    # ------------------------------------------------------------------------------    
+    print("Get All Session Names")
+    session_names = api_get_all_session_names()
+    print(f"{session_names}\n")
 
+    print("Get All Session Metadata")
+    session_metadatas = api_get_all_session_metadata()
+    print(f"{session_metadatas}\n")
 
-# ------------------------------------------------------------------------------
-# Session APIs
-# ------------------------------------------------------------------------------
+    print("Get Single Session Metadata")
+    single_session = api_load_session(runner_id)
+    print(f"{single_session}\n")
 
-runner_id = "test-amrt"
+    print("Get All Session Info")
+    all_session_info = api_get_available_session_info()
+    print(f"{all_session_info}\n")
 
-# Replace this ID with something 
-print("Get All Session Names")
-session_names = api_get_all_session_names()
-print(f"{session_names}\n")
+    print("Update CS and PT")
+    api_update_context_strategy(runner_id, "add_previous_prompt")
+    api_update_prompt_template(runner_id, "mmlu")
 
-print("Get All Session Metadata")
-session_metadatas = api_get_all_session_metadata()
-print(f"{session_metadatas}\n")
+    # print("Delete Session")
+    # api_delete_session(runner_id)
 
-print("Get Single Session Metadata")
-single_session = api_load_session(runner_id)
-print(f"{single_session}\n")
+def test_attack_apis():
+    # ------------------------------------------------------------------------------
+    # Attack APIs
+    # ------------------------------------------------------------------------------    
+    print("Get All Attack Module Names")
+    print(api_get_all_attack_modules(), "\n")
 
-print("Get All Session Info")
-all_session_info = api_get_available_session_info()
-print(f"{all_session_info}\n")
+    print("Get All Attack Module Metadata")
+    print(api_get_all_attack_module_metadata(), "\n")
+    
+    print("Get All Context Strategy Names")
+    print(api_get_all_context_strategies(), "\n")
 
-print("Update CS and PT")
-api_update_context_strategy(runner_id, "add_previous_prompt")
-api_update_prompt_template(runner_id, "mmlu")
+    print("Get All Context Strategy Metadata")
+    print(api_get_all_context_strategy_metadata(), "\n")    
 
-print("Delete Session")
-# api_delete_session(runner_id)
+runner_name = "mytestrunner"
+runner_id = "mytestrunner"
 
-# ------------------------------------------------------------------------------
-# Attack APIs
-# ------------------------------------------------------------------------------
+# tests automated and red teaming. creates a runner, and runss manual and automated red teaming
+run_manual_and_automated_rt(runner_name, runner_id)
 
-# Get all attack module names
-print("Get All Attack Module Names")
-print(AttackModule.get_available_items(), "\n")
+# tests all session apis
+test_session_apis(runner_id)
+
+# tests all attack apis
+test_attack_apis()

@@ -7,11 +7,8 @@ class AttackModuleArguments(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    # name of the attack module
-    name: str
-
     # list of connector endpoints
-    connector_eps: list = []
+    connector_ids: list = []
 
     # list of prompt template ids to be used (if any)
     prompt_templates: list = []
