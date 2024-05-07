@@ -1,8 +1,0 @@
-{
-    "id": "cbbq-disamb-cookbook",
-    "name": "CBBQ (Disambiguated)",
-    "description": "This is a cookbook that consists all the disambiguated questions from CBBQ.",
-    "recipes": [
-        "cbbq-lite"
-    ]
-}

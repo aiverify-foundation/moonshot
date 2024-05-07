@@ -5,8 +5,7 @@
     "recipes": [
         "analogical-similarity",
         "auto-categorisation",
-        "cause-and-effect-one-sentence",
-        "cause-and-effect-two-sentence",
+        "cause-and-effect",
         "contextual-parametric-knowledge-conflicts",
         "gre-reading-comprehension",
         "squad-shifts-tnf"

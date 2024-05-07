@@ -1,5 +1,11 @@
+from operator import itemgetter
+
 from moonshot.src.api.api_runner import api_get_all_runner, api_load_runner
+from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.session import Session
+from moonshot.src.runners.runner_type import RunnerType
+from moonshot.src.storage.db_interface import DBInterface
+from moonshot.src.storage.storage import Storage
 
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
@@ -20,6 +26,31 @@ def api_load_session(runner_id: str) -> dict | None:
         dict | None: A dictionary containing the session details if available, otherwise None.
     """
     return Session.load(api_load_runner(runner_id).database_instance)
+
+
+def api_create_session(
+    runner_id: str, database_instance: DBInterface, endpoints: list, runner_args: dict
+) -> dict | None:
+    """
+    Loads the session details for a specific runner.
+
+    This function calls the `Session.load` method to retrieve the session details associated with the
+    specified runner ID.
+
+    Args:
+        runner_id (str): The unique identifier of the runner for which the session details are to be loaded.
+
+    Returns:
+        dict | None: A dictionary containing the session details if available, otherwise None.
+    """
+    Session(
+        runner_id,
+        RunnerType.REDTEAM,
+        {**runner_args},
+        database_instance,
+        endpoints,
+        Storage.get_filepath(EnvVariables.RESULTS.name, runner_id, "json", True),
+    )
 
 
 def api_get_all_session_names() -> list[str]:
@@ -57,9 +88,10 @@ def api_get_available_session_info() -> tuple[list, list]:
     runner_with_session_db_list = []
 
     for runner_instance in runner_instances:
-        if Session.load(runner_instance.database_instance) is not None:
-            runner_ids.append(runner_instance.id)
-            runner_with_session_db_list.append(runner_instance.database_instance)
+        if runner_instance.database_instance:
+            if Session.load(runner_instance.database_instance) is not None:
+                runner_ids.append(runner_instance.id)
+                runner_with_session_db_list.append(runner_instance.database_instance)
     return runner_ids, runner_with_session_db_list
 
 
@@ -77,7 +109,9 @@ def api_get_all_session_metadata() -> list:
     list_of_session_metadata = []
     for runner_with_session_db in runner_with_session_db_list:
         list_of_session_metadata.append(Session.load(runner_with_session_db))
-    return list_of_session_metadata
+    return sorted(
+        list_of_session_metadata, key=itemgetter("created_datetime"), reverse=True
+    )
 
 
 def api_update_context_strategy(runner_id: str, context_strategy: str) -> None:
