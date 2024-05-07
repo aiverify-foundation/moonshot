@@ -19,7 +19,19 @@ def add_new_endpoint(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """
-    Add a new endpoint to the database
+    Add a new endpoint to the database.
+
+    Args:
+        endpoint_data (EndpointCreateDTO): The data transfer object containing endpoint details.
+        endpoint_service (EndpointService): The service responsible for adding the endpoint.
+
+    Returns:
+        dict[str, str]: A message indicating the successful addition of the endpoint.
+
+    Raises:
+        HTTPException: An error with status code 404 if the file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         endpoint_service.add_endpoint(endpoint_data)
@@ -45,7 +57,19 @@ def get_all_endpoints(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> list[Optional[EndpointDataModel]]:
     """
-    Get all the endpoints from the database
+    Get all the endpoints from the database.
+
+    Args:
+        endpoint_service (EndpointService): The service responsible for retrieving all endpoints.
+
+    Returns:
+        list[Optional[EndpointDataModel]]: A list of endpoint data models,
+        which may contain None if an endpoint is not found.
+
+    Raises:
+        HTTPException: An error with status code 404 if the file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         return endpoint_service.get_all_endpoints()
@@ -70,7 +94,18 @@ def get_all_endpoints_name(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> list[Optional[str]]:
     """
-    Get all the endpoints name from the database
+    Get all the endpoint names from the database.
+
+    Args:
+        endpoint_service (EndpointService): The service responsible for retrieving all endpoint names.
+
+    Returns:
+        list[Optional[str]]: A list of endpoint names, which may contain None if an endpoint name is not found.
+
+    Raises:
+        HTTPException: An error with status code 404 if the file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         return endpoint_service.get_all_endpoints_names()
@@ -81,7 +116,8 @@ def get_all_endpoints_name(
         elif e.error_code == "ValidationError":
             error_status_code = 400
         raise HTTPException(
-            status_code=error_status_code, detail=f"Failed to get endpoint: {e.msg}"
+            status_code=error_status_code,
+            detail=f"Failed to get endpoint names: {e.msg}",
         )
 
 
@@ -92,7 +128,19 @@ def get_endpoint(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> EndpointDataModel | None:
     """
-    Get an endpoint from the database
+    Get an endpoint from the database by its ID.
+
+    Args:
+        endpoint_id (str): The unique identifier of the endpoint to retrieve.
+        endpoint_service (EndpointService): The service responsible for retrieving the endpoint.
+
+    Returns:
+        EndpointDataModel | None: The endpoint data model if found, otherwise None.
+
+    Raises:
+        HTTPException: An error with status code 404 if the endpoint is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         return endpoint_service.get_endpoint(endpoint_id)
@@ -119,7 +167,20 @@ async def update_endpoint(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """
-    Update an existing endpoint in the database
+    Update an existing endpoint in the database by its ID.
+
+    Args:
+        endpoint_id (str): The unique identifier of the endpoint to update.
+        endpoint_data (EndpointCreateDTO): The data transfer object containing the updated endpoint details.
+        endpoint_service (EndpointService): The service responsible for updating the endpoint.
+
+    Returns:
+        dict[str, str]: A message indicating the successful update of the endpoint.
+
+    Raises:
+        HTTPException: An error with status code 404 if the endpoint is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         endpoint_service.update_endpoint(endpoint_id, endpoint_data)
@@ -146,7 +207,19 @@ async def delete_endpoint(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """
-    Delete an existing endpoint in the database
+    Delete an existing endpoint from the database by its ID.
+
+    Args:
+        endpoint_id (str): The unique identifier of the endpoint to delete.
+        endpoint_service (EndpointService): The service responsible for deleting the endpoint.
+
+    Returns:
+        dict[str, str]: A message indicating the successful deletion of the endpoint.
+
+    Raises:
+        HTTPException: An error with status code 404 if the endpoint is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         endpoint_service.delete_endpoint(endpoint_id)
@@ -172,7 +245,18 @@ def get_all_connectors(
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> list[Optional[str]]:
     """
-    Get all the connectors type from the database
+    Get all the connector types from the database.
+
+    Args:
+        endpoint_service (EndpointService): The service responsible for retrieving all connector types.
+
+    Returns:
+        list[Optional[str]]: A list of connector types, which may contain None if a connector type is not found.
+
+    Raises:
+        HTTPException: An error with status code 404 if the file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     # TODO - type check and model validation
     try:
@@ -180,13 +264,13 @@ def get_all_connectors(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=404, detail=f"Failed to get connector types: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=400, detail=f"Failed to get connector types: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=500, detail=f"Failed to get connector types: {e.msg}"
             )

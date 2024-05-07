@@ -15,9 +15,21 @@ router = APIRouter()
 def create_recipe(
     recipe_data: RecipeCreateDTO,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-):
+) -> dict:
     """
-    Add a new recipe to the database
+    Add a new recipe to the database.
+
+    Args:
+        recipe_data (RecipeCreateDTO): The data transfer object containing the recipe details.
+        recipe_service (RecipeService): The service responsible for creating the recipe.
+
+    Returns:
+        Dict[str, str]: A message indicating the successful creation of the recipe.
+
+    Raises:
+        HTTPException: An error with status code 404 if the file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         recipe_service.create_recipe(recipe_data)
@@ -44,9 +56,23 @@ def get_all_recipes(
     sort_by: str = Query(None, description="Sort recipes by a specific field"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-):
+) -> list:
     """
-    Get all the recipes from the database
+    Get all the recipes from the database.
+
+    Args:
+        tags (str): Filter parameter to filter recipes by tags.
+        sort_by (str): Filter parameter to sort recipes by a specific field.
+        count (bool): Flag to indicate whether to include the count of recipes.
+        recipe_service (RecipeService): The service responsible for retrieving recipes.
+
+    Returns:
+        List: A list of recipes.
+
+    Raises:
+        HTTPException: An error with status code 404 if no recipes are found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         recipes = recipe_service.get_all_recipes(
@@ -72,9 +98,20 @@ def get_all_recipes(
 @inject
 def get_all_recipes_name(
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-):
+) -> list[str]:
     """
-    Get all the recipes name from the database
+    Get all the recipe names from the database.
+
+    Args:
+        recipe_service (RecipeService): The service responsible for retrieving recipe names.
+
+    Returns:
+        List[str]: A list of recipe names.
+
+    Raises:
+        HTTPException: An error with status code 404 if no recipe names are found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         recipes = recipe_service.get_all_recipes_name()
@@ -82,15 +119,15 @@ def get_all_recipes_name(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to retrieve recipes name: {e.msg}"
+                status_code=404, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve recipes name: {e.msg}"
+                status_code=400, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}"
+                status_code=500, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
 
 
@@ -99,9 +136,21 @@ def get_all_recipes_name(
 def get_recipe_by_ids(
     recipe_id: str = Query(None, description="Get recipes to query"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> list[RecipeResponseDTO | None]:
+) -> list[RecipeResponseDTO]:
     """
-    Get a recipe from the database
+    Get a recipe from the database by its ID.
+
+    Args:
+        recipe_id (str): The unique identifier of the recipe to retrieve.
+        recipe_service (RecipeService): The service responsible for retrieving the recipe.
+
+    Returns:
+        List[Union[RecipeResponseDTO, None]]: A list containing the recipe or None if not found.
+
+    Raises:
+        HTTPException: An error with status code 404 if the recipe is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         recipe = recipe_service.get_recipe_by_ids(recipe_id)
@@ -127,9 +176,23 @@ async def update_recipe(
     recipe_data: RecipeCreateDTO,
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> dict[str, str] | tuple[dict[str, str], int]:
+) -> dict[str, str]:
     """
-    Update an existing recipe in the database
+    Update an existing recipe in the database by its ID.
+
+    Args:
+        recipe_data (RecipeCreateDTO): The data transfer object containing the updated recipe details.
+        recipe_id (str): The unique identifier of the recipe to update.
+        recipe_service (RecipeService): The service responsible for updating the recipe.
+
+    Returns:
+        Union[Dict[str, str], Tuple[Dict[str, str], int]]: A message indicating the successful update of the recipe,
+        or an HTTPException with an appropriate status code.
+
+    Raises:
+        HTTPException: An error with status code 404 if the recipe is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
         recipe_service.update_recipe(recipe_data, recipe_id)
@@ -154,7 +217,23 @@ async def update_recipe(
 def delete_recipe(
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> dict[str, str] | tuple[dict[str, str], int]:
+) -> dict[str, str]:
+    """
+    Delete a recipe from the database by its ID.
+
+    Args:
+        recipe_id (str): The unique identifier of the recipe to delete.
+        recipe_service (RecipeService): The service responsible for deleting the recipe.
+
+    Returns:
+        Union[Dict[str, str], Tuple[Dict[str, str], int]]: A message indicating the successful deletion of the recipe,
+        or an HTTPException with an appropriate status code.
+
+    Raises:
+        HTTPException: An error with status code 404 if the recipe is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         recipe_service.delete_recipe(recipe_id)
         return {"message": "Recipe deleted successfully"}

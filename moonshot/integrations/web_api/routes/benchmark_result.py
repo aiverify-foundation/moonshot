@@ -14,7 +14,23 @@ async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(
         Provide[Container.benchmark_result_service]
     ),
-):
+) -> list[dict]:
+    """
+    Retrieve all benchmark results.
+
+    This endpoint queries all benchmark results and returns them as a list of dictionaries.
+    Each dictionary contains the details of a single benchmark result.
+
+    Args:
+        benchmark_result_service (BenchmarkResultService): The service responsible for fetching benchmark results.
+
+    Returns:
+        list[dict]: A list of dictionaries, where each dictionary contains the details of a benchmark result.
+
+    Raises:
+        HTTPException: An error occurred while trying to find the results file (404) or
+                       an unspecified error occurred (500).
+    """
     try:
         results = benchmark_result_service.get_all_results()
         return results
@@ -37,7 +53,21 @@ async def get_all_results_name(
     ),
 ):
     """
-    Get all the recipes name from the database
+    Get all benchmark result names from the database.
+
+    This endpoint retrieves the names of all benchmark results stored in the database.
+
+    Args:
+        benchmark_result_service (BenchmarkResultService): The service responsible for fetching
+        the names of the benchmark results.
+
+    Returns:
+        A list of all benchmark result names.
+
+    Raises:
+        HTTPException: An error occurred while trying to find the result names file (404),
+                       a validation error occurred (400), or
+                       an unspecified error occurred (500).
     """
     try:
         results = benchmark_result_service.get_all_result_name()
@@ -65,6 +95,22 @@ async def get_one_results(
         Provide[Container.benchmark_result_service]
     ),
 ):
+    """
+    Retrieve a single benchmark result by its ID.
+
+    This endpoint fetches the details of a specific benchmark result identified by the provided result_id.
+
+    Args:
+        result_id (str): The unique identifier of the benchmark result to retrieve.
+        benchmark_result_service (BenchmarkResultService): The service responsible for fetching the benchmark result.
+
+    Returns:
+        dict: A dictionary containing the details of the benchmark result.
+
+    Raises:
+        HTTPException: An error occurred while trying to find the results file (404) or
+                       an unspecified error occurred (500).
+    """
     try:
         results = benchmark_result_service.get_result_by_id(result_id)
         return results
@@ -87,6 +133,24 @@ def delete_result(
         Provide[Container.benchmark_result_service]
     ),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
+    """
+    Delete a benchmark result by its ID.
+
+    This endpoint deletes a specific benchmark result identified by the provided result_id.
+
+    Args:
+        result_id (str): The unique identifier of the benchmark result to delete.
+        benchmark_result_service (BenchmarkResultService): The service responsible for deleting the benchmark result.
+
+    Returns:
+        dict[str, str] | tuple[dict[str, str], int]: A message indicating successful deletion,
+        or an HTTPException with an appropriate status code.
+
+    Raises:
+        HTTPException: An error occurred while trying to delete the result due to the result not being found (404),
+                       a validation error occurred (400), or
+                       an unspecified error occurred (500).
+    """
     try:
         benchmark_result_service.delete_result(result_id)
         return {"message": "Result deleted successfully"}

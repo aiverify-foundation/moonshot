@@ -12,9 +12,20 @@ router = APIRouter()
 @inject
 def get_all_attack_module(
     am_service: AttackModuleService = Depends(Provide[Container.am_service]),
-):
+) -> list[str]:
     """
-    Get all the attack modules from the database
+    Retrieve all attack modules from the database.
+
+    Args:
+        am_service (AttackModuleService): The service responsible for fetching attack modules.
+
+    Returns:
+        list: A list of attack modules if successful.
+
+    Raises:
+        HTTPException: An error with status code 404 if attack modules file is not found.
+        HTTPException: An error with status code 400 if there is a validation error with the request.
+        HTTPException: An error with status code 500 for any other type of server-side error.
     """
     try:
         return am_service.get_all_attack_module()
