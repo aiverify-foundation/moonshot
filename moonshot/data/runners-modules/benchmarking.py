@@ -467,7 +467,7 @@ class Benchmarking:
                 targets = group_recipe_value["targets"]
                 for metric in self.recipe_metrics:
                     metrics_result.append(
-                        metric.get_results(prompts, predicted_results, targets)  # type: ignore ; ducktyping
+                        await metric.get_results(prompts, predicted_results, targets)  # type: ignore ; ducktyping
                     )
 
                 # Format the results to have data and metrics results.

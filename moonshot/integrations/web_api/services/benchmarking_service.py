@@ -23,4 +23,4 @@ class BenchmarkingService(BaseService):
 
     @exception_handler
     async def cancel_executor(self, executor_id: str) -> None:
-        self.benchmark_test_manager.cancel_task(executor_id);
+        await self.benchmark_test_manager.cancel_task(executor_id);
