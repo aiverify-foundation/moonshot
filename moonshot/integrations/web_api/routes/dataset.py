@@ -2,6 +2,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
 
 from ..container import Container
+from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.dataset_service import DatasetService
 from ..services.utils.exceptions_handler import ServiceException
 
@@ -12,7 +13,7 @@ router = APIRouter()
 @inject
 def get_all_datasets(
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
-) -> list:
+) -> list[DatasetResponseDTO]:
     """
     Retrieve all datasets from the database.
 
