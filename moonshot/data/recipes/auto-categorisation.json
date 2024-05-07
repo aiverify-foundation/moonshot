@@ -1,20 +1,41 @@
 {
     "id": "auto-categorisation",
     "name": "Auto Categorisation",
-    "description": "To measure the model's ability in categorising elements into groups.",
+    "description": "This recipe measures the model's ability in categorising elements into groups. The higher the grade, the system performs better in this capability.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "auto-categorisation"
     ],
     "prompt_templates": [
-        "auto-categorisation"
+        "complete-sentence"
     ],
     "metrics": [
         "relaxstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
 }
