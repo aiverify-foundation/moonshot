@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
-from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
-from .status_updater.webhook import Webhook
+from .status_updater.moonshot_ui_webhook import MoonshotUIWebhook
+from .services.benchmark_test_state import BenchmarkTestState
 from .services.benchmarking_service import BenchmarkingService
 from .services.prompt_template_service import PromptTemplateService
 from .services.endpoint_service import EndpointService
@@ -46,13 +46,15 @@ class Container(containers.DeclarativeContainer):
     })
 
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(BenchmarkTestState)
-    webhook: providers.Singleton[Webhook] = providers.Singleton(Webhook, benchmark_test_state=benchmark_test_state)
+    webhook: providers.Singleton[MoonshotUIWebhook] = providers.Singleton(MoonshotUIWebhook, benchmark_test_state=benchmark_test_state)
+    runner_service: providers.Singleton[RunnerService] = providers.Singleton(RunnerService)
     benchmark_test_manager: providers.Singleton[BenchmarkTestManager] = providers.Singleton(
         BenchmarkTestManager,
         benchmark_test_state=benchmark_test_state,
-        webhook=webhook
+        progress_status_updater=webhook,
+        runner_service=runner_service
     )
-    session_service: providers.Factory[SessionService] = providers.Factory(SessionService)
+    session_service: providers.Singleton[SessionService] = providers.Singleton(SessionService)
     prompt_template_service: providers.Singleton[PromptTemplateService] = providers.Singleton(PromptTemplateService)
     benchmarking_service: providers.Singleton[BenchmarkingService] = providers.Singleton(
         BenchmarkingService,
@@ -63,7 +65,6 @@ class Container(containers.DeclarativeContainer):
     cookbook_service: providers.Singleton[CookbookService] = providers.Singleton(CookbookService)
     benchmark_result_service: providers.Singleton[BenchmarkResultService] = providers.Singleton(BenchmarkResultService)
     metric_service: providers.Singleton[MetricService] = providers.Singleton(MetricService)
-    runner_service: providers.Singleton[RunnerService] = providers.Singleton(RunnerService)
     report_analysis_service: providers.Singleton[ReportAnalysisService] = providers.Singleton(ReportAnalysisService)
 
     dataset_service: providers.Singleton[DatasetService] = providers.Singleton(

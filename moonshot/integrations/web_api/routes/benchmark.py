@@ -6,7 +6,6 @@ from ..services.benchmarking_service import BenchmarkingService
 from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
 from ..services.benchmark_test_state import BenchmarkTestState
 from ..services.utils.exceptions_handler import ServiceException
-from typing import Optional
 
 
 router = APIRouter()
@@ -20,8 +19,10 @@ async def benchmark_executor(
     try:
         if type is BenchmarkCollectionType.COOKBOOK:
             id = await benchmarking_service.execute_cookbook(data)
+            return {"id": id}
         elif type is BenchmarkCollectionType.RECIPE:
             id = await benchmarking_service.execute_recipe(data)
+            return {"id": id}
         else:
             raise HTTPException(status_code=400, detail="Invalid query parameter: type")
         if id:
@@ -35,17 +36,8 @@ async def benchmark_executor(
 def get_benchmark_progress(
     benchmark_state: BenchmarkTestState = Depends(Provide[Container.benchmark_test_state])):
     try:
-        state = benchmark_state.get_state()
-        if not state:
-            return {}
-        for _, item in state.items():
-            item.pop("async_task", None)
-            # Flatten the "status" dictionary into the task dictionary
-            if "status" in item:
-                status = item.pop("status")
-                item.update(status)  
-        
-        return state
+        all_status = benchmark_state.get_all_progress_status()
+        return all_status
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=f"Failed to retrieve progress status: {e.msg}")

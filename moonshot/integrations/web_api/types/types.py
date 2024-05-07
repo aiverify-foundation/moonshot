@@ -24,7 +24,7 @@ SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
 ExecutiResultItem = dict[str, float]
 ExecutionResults = dict[str, list[ExecutiResultItem]]
 
-class CookbookTestRunProgress(TypedDict):
+class TestRunProgress(TypedDict):
     current_runner_id: str
     current_runner_name: str
     current_runner_type: str

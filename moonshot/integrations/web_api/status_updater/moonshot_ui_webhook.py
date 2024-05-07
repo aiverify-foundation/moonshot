@@ -4,22 +4,26 @@ import requests
 from dotenv import dotenv_values
 
 from dependency_injector.wiring import inject
-from ..services.benchmark_test_state import BenchmarkTestState
-from .interface.benchmark_callback_handler import InterfaceBenchmarkCallbackHandler
-from ..types.types import CookbookTestRunProgress
 
-class Webhook(InterfaceBenchmarkCallbackHandler):
-    url = "http://localhost:3000/api/v1/benchmarks/status"
+from ..services.benchmark_test_state import BenchmarkTestState
+from .interface.benchmark_progress_callback import InterfaceBenchmarkProgressCallback
+from ..types.types import TestRunProgress
+
+class MoonshotUIWebhook(InterfaceBenchmarkProgressCallback):
+    """
+    Implementation of the benchmark progress callback.
+    This class is responsible for sending the progress data to the webhook exposed by moonshot-ui server.
+    """
 
     @inject
     def __init__(self, benchmark_test_state: BenchmarkTestState) -> None:
         self.benchmark_test_state = benchmark_test_state
-        self.url = dotenv_values().get("MOONSHOT_UI_CALLBACK_URL", "http://localhost:3000/api/v1/benchmarks/status")
+        self.url = str(dotenv_values().get("MOONSHOT_UI_CALLBACK_URL", "http://localhost:3000/api/v1/benchmarks/status"))
 
-    def on_executor_update(self, progress_data: CookbookTestRunProgress) -> None:
+    def on_progress_update(self, progress_data: TestRunProgress) -> None:
         logger = logging.getLogger();
         logger.debug(json.dumps(progress_data, indent=2))
-        self.benchmark_test_state.update_state(progress_data)
+        self.benchmark_test_state.update_progress_status(progress_data)
 
         try:
             response = requests.post(self.url, json=progress_data)
