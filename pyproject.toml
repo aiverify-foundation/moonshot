@@ -40,9 +40,9 @@ dependencies = [
     "textattack==0.3.10",
     "tensorflow-hub==0.16.1",
     "homoglyphs==2.0.4",
-    "tf-keras==2.16.0",  # Assuming tf-keras is the same as tensorflow
-    # Add tensorflow-io-gcs-filesystem and tensorflow-intel based on the platform markers
+    # Add tensorflow-io-gcs-filesystem and tensorflow and tensorflow-intel based on the platform markers
     "tensorflow-io-gcs-filesystem==0.37.0; sys_platform == 'darwin' or sys_platform == 'linux'",
+    "tensorflow==2.16.1; sys_platform == 'darwin' or sys_platform == 'linux'",
     "tensorflow-io-gcs-filesystem==0.31.0; sys_platform == 'win32'",
     "tensorflow-intel==2.16.1; sys_platform == 'win32'"
 ]
