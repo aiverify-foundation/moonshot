@@ -2,9 +2,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments as Cookbook
 
 
 class CookbookResponseModel(BaseModel):
-    cookbook: CookbookArguments
+    cookbook: Cookbook
     total_prompt_in_cookbook: Optional[int] = None

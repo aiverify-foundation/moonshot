@@ -1,4 +1,4 @@
-from moonshot.src.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
 from ..schemas.recipe_create_dto import RecipeCreateDTO
@@ -48,7 +48,7 @@ class RecipeService(BaseService):
         recipes = moonshot_api.api_get_all_recipe()
 
         for recipe_dict in recipes:
-            recipe = RecipeArguments(**recipe_dict)
+            recipe = Recipe(**recipe_dict)
             retn_recipe = RecipeResponseModel(recipe=recipe)
             if count:
                 retn_recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
@@ -95,7 +95,7 @@ class RecipeService(BaseService):
         recipe_id_list = recipe_id.split(",")
         for id in recipe_id_list:
             recipe_dict = moonshot_api.api_read_recipe(id)
-            recipe = RecipeArguments(**recipe_dict)
+            recipe = Recipe(**recipe_dict)
             retn_recipe = RecipeResponseModel(recipe=recipe)
             retn_recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
             retn_recipes.append(retn_recipe)
@@ -134,7 +134,7 @@ class RecipeService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_recipe(recipe: RecipeArguments) -> int:
+def get_total_prompt_in_recipe(recipe: Recipe) -> int:
     """
     Calculate the total number of prompts in a recipe.
 
@@ -142,7 +142,7 @@ def get_total_prompt_in_recipe(recipe: RecipeArguments) -> int:
     the result by the number of prompt templates if they exist.
 
     Args:
-        recipe (RecipeArguments): The recipe object containing the stats and
+        recipe (Recipe): The recipe object containing the stats and
                                   prompt templates information.
 
     Returns:

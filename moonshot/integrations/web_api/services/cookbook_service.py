@@ -1,5 +1,5 @@
-from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
-from moonshot.src.recipes.recipe_arguments import RecipeArguments
+from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments as Cookbook
+from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO
@@ -42,7 +42,7 @@ class CookbookService(BaseService):
         retn_cookbooks = []
         cookbooks = moonshot_api.api_get_all_cookbook()
         for cookbook_dict in cookbooks:
-            cookbook = CookbookArguments(**cookbook_dict)
+            cookbook = Cookbook(**cookbook_dict)
             retn_cookbook = CookbookResponseModel(cookbook=cookbook)
             if count:
                 retn_cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
@@ -87,7 +87,7 @@ class CookbookService(BaseService):
         cb_id_list = cookbook_id.split(",")
         for id in cb_id_list:
             cookbook_dict = moonshot_api.api_read_cookbook(id)
-            cookbook = CookbookArguments(**cookbook_dict)
+            cookbook = Cookbook(**cookbook_dict)
             retn_cookbook = CookbookResponseModel(cookbook=cookbook)
             retn_cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
                 cookbook
@@ -128,32 +128,30 @@ class CookbookService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_cookbook(cookbook: CookbookArguments) -> int:
+def get_total_prompt_in_cookbook(cookbook: Cookbook) -> int:
     """
     Calculate the total number of prompts in a cookbook.
 
     This function sums up the total prompts for each recipe in the cookbook.
 
     Args:
-        cookbook (CookbookArguments): The cookbook object containing the recipe IDs.
+        cookbook (Cookbook): The cookbook object containing the recipe IDs.
 
     Returns:
         int: The total count of prompts within the cookbook.
     """
     recipes = moonshot_api.api_read_recipes(cookbook.recipes)
-    return sum(
-        get_total_prompt_in_recipe(RecipeArguments(**recipe)) for recipe in recipes
-    )
+    return sum(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes)
 
 
 @staticmethod
-def cookbooks_recipe_has_tags(tags: str, cookbook: CookbookArguments) -> bool:
+def cookbooks_recipe_has_tags(tags: str, cookbook: Cookbook) -> bool:
     """
     Check if any recipe in a cookbook has the specified tags.
 
     Args:
         tags (str): The tags to check for in the cookbook's recipes.
-        cookbook (CookbookArguments): The cookbook object containing the recipe IDs.
+        cookbook (Cookbook): The cookbook object containing the recipe IDs.
 
     Returns:
         bool: True if any recipe in the cookbook has the specified tags, False otherwise.
@@ -161,22 +159,20 @@ def cookbooks_recipe_has_tags(tags: str, cookbook: CookbookArguments) -> bool:
     recipe_ids = cookbook.recipes
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:
-        recipe = RecipeArguments(**recipe)
+        recipe = Recipe(**recipe)
         if tags in recipe.tags:
             return True
     return False
 
 
 @staticmethod
-def cookbooks_recipe_has_categories(
-    categories: str, cookbook: CookbookArguments
-) -> bool:
+def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool:
     """
     Check if any recipe in a cookbook has the specified categories.
 
     Args:
         categories (str): The categories to check for in the cookbook's recipes.
-        cookbook (CookbookArguments): The cookbook object containing the recipe IDs.
+        cookbook (Cookbook): The cookbook object containing the recipe IDs.
 
     Returns:
         bool: True if any recipe in the cookbook has the specified categories, False otherwise.
@@ -184,7 +180,7 @@ def cookbooks_recipe_has_categories(
     recipe_ids = cookbook.recipes
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:
-        recipe = RecipeArguments(**recipe)
+        recipe = Recipe(**recipe)
         if categories in recipe.categories:
             return True
     return False
