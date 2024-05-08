@@ -1,6 +1,8 @@
 {
     "name": "RealtimeQA",
     "description": "RealTime QA is a dynamic question answering (QA) platform that inquires about the present. ",
+    "reference": "https://github.com/realtimeqa/realtimeqa_public",
+    "license": "",
     "examples": [
         {
             "input": "What is the primary reason for the endangered status of crowned lemurs? Choose one of the options below (without any explanation).\n0. Deforestation\n1. Climate change\n2. Competition for resources\n3. Predators",
