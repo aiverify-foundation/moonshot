@@ -42,6 +42,9 @@ class Run:
     sql_read_latest_run_record = """
         SELECT * FROM run_table WHERE run_id=(SELECT MAX(run_id) FROM run_table)
     """
+    sql_read_all_run_records = """
+        SELECT * FROM run_table
+    """
 
     def __init__(
         self,
@@ -117,6 +120,40 @@ class Run:
         else:
             raise RuntimeError(
                 f"[Run] Failed to get database record for run_id {run_id}: {database_instance}"
+            )
+
+    @staticmethod
+    def get_all_runs(database_instance: DBInterface) -> list[RunArguments]:
+        """
+        Retrieves all run records from the database.
+
+        This method fetches all the run records from the database and converts them into a list of RunArguments objects.
+        If the database instance is not provided, it raises a RuntimeError. If no records are found, it also raises
+        a RuntimeError.
+
+        Parameters:
+            database_instance (DBInterface): The database interface to fetch records from.
+
+        Returns:
+            list[RunArguments]: A list of RunArguments objects representing each run record.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or no records are found.
+        """
+        if not database_instance:
+            raise RuntimeError("[Run] Database instance not provided.")
+
+        all_run_arguments_info = Storage.read_database_records(
+            database_instance,
+            Run.sql_read_all_run_records,
+        )
+
+        if all_run_arguments_info:
+            output = [RunArguments.from_tuple(info) for info in all_run_arguments_info]
+            return output
+        else:
+            raise RuntimeError(
+                f"[Run] Failed to get database records: {database_instance}"
             )
 
     def cancel(self) -> None:

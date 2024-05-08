@@ -4,6 +4,7 @@ from tests.test_datasets import test_run_datasets_api
 from tests.test_metrics import test_run_metric_api
 from tests.test_recipes import test_run_recipe_api
 from tests.test_results import test_run_result_api
+from tests.test_run import test_run_api
 from tests.test_runner import test_run_runner_api
 
 
@@ -23,6 +24,9 @@ if __name__ == "__main__":
 
     # Test runner api
     test_run_runner_api()
+
+    # Test run api
+    test_run_api()
 
     # Test metric api
     test_run_metric_api()
