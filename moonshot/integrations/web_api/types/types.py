@@ -1,6 +1,8 @@
-from typing import Any, Dict, NotRequired, List
-from typing_extensions import TypedDict, Annotated
 from enum import Enum
+from typing import Any, List, NotRequired
+
+from typing_extensions import TypedDict
+
 
 class PromptDetails(TypedDict):
     chat_record_id: int
@@ -13,10 +15,12 @@ class PromptDetails(TypedDict):
     duration: str
     prompt_time: str
 
+
 class EndpointChatHistory(TypedDict):
     chat_id: str
     endpoint: str
     chat_history: list[PromptDetails]
+
 
 SessionChats = list[EndpointChatHistory]
 SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
@@ -24,7 +28,8 @@ SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
 ExecutiResultItem = dict[str, float]
 ExecutionResults = dict[str, list[ExecutiResultItem]]
 
-class CookbookTestRunProgress(TypedDict):
+
+class TestRunProgress(TypedDict):
     current_runner_id: str
     current_runner_name: str
     current_runner_type: str
@@ -38,6 +43,7 @@ class CookbookTestRunProgress(TypedDict):
     current_recipe_total: int
     current_progress: int
     current_error_messages: List[str]
+
 
 class UvicornLoggingConfig(TypedDict):
     version: int
@@ -72,8 +78,10 @@ class ResultMetadata(TypedDict):
     num_of_prompts: int
     status: str
 
+
 class RequiredMetadata(TypedDict):
     metadata: ResultMetadata
+
 
 class BenchmarkResult(TypedDict, RequiredMetadata, total=False):
     # This indicates that any other keys should map to dictionaries, but this is not enforced by static type checkers.
