@@ -1,6 +1,8 @@
 {
     "name": "tamil-news-classification",
     "description": "This dataset is used to classify a static set of Tamil News. The task is to classify news to its respective category. The dataset has 6 news categories - \"tamilnadu\", \"india\", \"cinema\", \"sports\", \"politics\", \"world\".",
+    "refernece": "https://github.com/vanangamudi/tamil-news-classification/tree/master/dataset/news",
+    "license": "GNU General Public License v3.0",
     "examples": [
         {
             "input": "தாலி கட்ற நேரத்துலயும் குட்காவா? மணமகனை உதறினார் மணமகள்!",
