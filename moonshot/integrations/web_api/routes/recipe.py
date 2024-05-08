@@ -1,3 +1,4 @@
+from typing import Optional
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -52,8 +53,9 @@ def create_recipe(
 @router.get("/api/v1/recipes")
 @inject
 def get_all_recipes(
-    tags: str = Query(None, description="Filter recipes by tags"),
-    sort_by: str = Query(None, description="Sort recipes by a specific field"),
+    ids: Optional[str] = Query(None, description="Get recipes to query"),
+    tags: Optional[str] = Query(None, description="Filter recipes by tags"),
+    sort_by: Optional[str] = Query(None, description="Sort recipes by a specific field"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> list:
@@ -76,7 +78,7 @@ def get_all_recipes(
     """
     try:
         recipes = recipe_service.get_all_recipes(
-            tags=tags, sort_by=sort_by, count=count
+            tags=tags, sort_by=sort_by, count=count, ids=ids
         )
         return recipes
     except ServiceException as e:
@@ -130,44 +132,6 @@ def get_all_recipes_name(
                 status_code=500, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
 
-
-@router.get("/api/v1/recipes/ids/")
-@inject
-def get_recipe_by_ids(
-    recipe_id: str = Query(None, description="Get recipes to query"),
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> list[RecipeResponseDTO]:
-    """
-    Get a recipe from the database by its ID.
-
-    Args:
-        recipe_id (str): The unique identifier of the recipe to retrieve.
-        recipe_service (RecipeService): The service responsible for retrieving the recipe.
-
-    Returns:
-        List[Union[RecipeResponseDTO, None]]: A list containing the recipe or None if not found.
-
-    Raises:
-        HTTPException: An error with status code 404 if the recipe is not found.
-                       An error with status code 400 if there is a validation error.
-                       An error with status code 500 for any other server-side error.
-    """
-    try:
-        recipe = recipe_service.get_recipe_by_ids(recipe_id)
-        return recipe
-    except ServiceException as e:
-        if e.error_code == "FileNotFound":
-            raise HTTPException(
-                status_code=404, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
-        elif e.error_code == "ValidationError":
-            raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
-        else:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
 
 
 @router.put("/api/v1/recipes/{recipe_id}")
