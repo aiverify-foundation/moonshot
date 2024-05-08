@@ -1,6 +1,8 @@
 {
     "name": "sg-legal-glossary",
     "description": "A list of singapore legal terms extracted from SICC and Judiciary websites.",
+    "reference": "https://www.sicc.gov.sg/glossary-of-legal-terms",
+    "license": "",
     "examples": [
         {
             "input": "Term",

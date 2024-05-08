@@ -1,6 +1,8 @@
 {
     "name": "advglue",
     "description": "Adversarial GLUE Benchmark (AdvGLUE) is a comprehensive robustness evaluation benchmark that focuses on the adversarial robustness evaluation of language models. ",
+    "license": "",
+    "reference": "https://github.com/AI-secure/adversarial-glue",
     "examples": [
         {
             "input": "For each sentence, assign the sentiment of each sentence as positive or negative. The label should be exactly 'positive' or 'negative', without capitalization. If the label differs, print out both sentences and their sentiments.\nIf it changes, reply \"yes\". or else, reply \"no\"\nHere are the two sentences:\nit 's an offbeat treat that pokes fun at the democratic exercise while also examining its significance for those who take part .\nit 's an uneven treat that bores fun at the democratic exercise while also examining its significance for those who take part .\nReply in this format: sentence1=label,sentence2=label,change=yes|no",
