@@ -1,5 +1,7 @@
 import time
-
+import os
+import tensorflow as tf
+import logging
 from textattack.augmentation import Augmenter
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
@@ -14,6 +16,9 @@ from textattack.transformations import WordSwapEmbedding
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.get_logger().setLevel(logging.ERROR)
 
 class FoolerGenerator(AttackModule):
     def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
