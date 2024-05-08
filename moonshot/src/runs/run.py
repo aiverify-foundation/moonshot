@@ -5,6 +5,7 @@ import time
 from typing import Any, Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_arguments import RunArguments
 from moonshot.src.runs.run_progress import RunProgress
@@ -169,16 +170,19 @@ class Run:
         print("[Run] Cancelling run...")
         self.cancel_event.set()
 
-    async def run(self) -> dict:
+    async def run(self) -> ResultArguments | None:
         """
-        Asynchronously executes the run process.
+        Executes the run process asynchronously.
 
-        This method orchestrates the entire run process asynchronously. It initializes the run, sets up the necessary
-        environment, executes the runner's main logic, handles any errors, and finally, compiles and returns the results
-        in a dictionary format. Throughout the process, it updates the run's status and logs progress.
+        This method is the main entry point for running the process. It performs the run operation
+        asynchronously and returns a ResultArguments object if the run completes successfully, or None
+        if the run is cancelled or fails to complete.
 
         Returns:
-            dict: A dictionary containing the results of the run, including any errors encountered.
+            ResultArguments | None: The result of the run operation if successful, otherwise None.
+
+        Raises:
+            RuntimeError: If any error occurs during the run process.
         """
         # ------------------------------------------------------------------------------
         # Part 0: Initialise
@@ -223,43 +227,24 @@ class Run:
         loop = asyncio.get_running_loop()
 
         # ------------------------------------------------------------------------------
-        # Part 2: Load runner processing module
+        # Part 2: Load runner and result processing module
         # ------------------------------------------------------------------------------
-        print("[Run] Part 2: Loading runner processing module...")
+        print("[Run] Part 2: Loading modules...")
         start_time = time.perf_counter()
         runner_module_instance = None
+        result_module_instance = None
         try:
-            runner_processing_module_name = self.run_arguments.runner_args.get(
-                "runner_processing_module", None
+            runner_module_instance = self._load_module(
+                "runner_processing_module", EnvVariables.RUNNERS_MODULES.name
             )
-            if runner_processing_module_name:
-                # Intialize the runner instance
-                runner_module_instance = get_instance(
-                    runner_processing_module_name,
-                    Storage.get_filepath(
-                        EnvVariables.RUNNERS_MODULES.name,
-                        runner_processing_module_name,
-                        "py",
-                    ),
-                )
-                if runner_module_instance:
-                    runner_module_instance = runner_module_instance()
-                else:
-                    raise RuntimeError(
-                        f"Unable to get defined runner module instance - {runner_module_instance}"
-                    )
-            else:
-                raise RuntimeError(
-                    f"Failed to get runner processing module name: {runner_processing_module_name}"
-                )
-
+            result_module_instance = self._load_module(
+                "result_processing_module", EnvVariables.RESULTS_MODULES.name
+            )
         except Exception as e:
-            error_message = f"[Run] Failed to load runner processing module in Part 2 due to error: {str(e)}"
-            self.run_progress.notify_error(error_message)
-
+            self.run_progress.notify_error(f"[Run] Module loading error: {e}")
         finally:
             print(
-                f"[Run] Loading runner processing module took {(time.perf_counter() - start_time):.4f}s"
+                f"[Run] Module loading took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
@@ -267,7 +252,7 @@ class Run:
         # ------------------------------------------------------------------------------
         print("[Run] Part 3: Running runner processing module...")
         start_time = time.perf_counter()
-        runner_results = {}
+        runner_results = None
         try:
             if runner_module_instance:
                 runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
@@ -291,7 +276,62 @@ class Run:
             )
 
         # ------------------------------------------------------------------------------
-        # Part 4: Wrap up run
+        # Part 4: Run result processing module
         # ------------------------------------------------------------------------------
-        print("[Run] Part 4: Wrap up run...")
-        return runner_results
+        print("[Run] Part 4: Running result processing module...")
+        start_time = time.perf_counter()
+        updated_runner_results = None
+        try:
+            if result_module_instance:
+                updated_runner_results = result_module_instance.generate(  # type: ignore ; ducktyping
+                    runner_results
+                )
+            else:
+                raise RuntimeError("Failed to initialise result module instance.")
+
+        except Exception as e:
+            error_message = f"[Run] Failed to run result processing module in Part 4 due to error: {str(e)}"
+            self.run_progress.notify_error(error_message)
+
+        finally:
+            print(
+                f"[Run] Running result processing module took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+        # ------------------------------------------------------------------------------
+        # Part 5: Wrap up run
+        # ------------------------------------------------------------------------------
+        print("[Run] Part 5: Wrap up run...")
+        return updated_runner_results
+
+    def _load_module(self, arg_key: str, env_var: str):
+        """
+        Load a module based on the argument key and environment variable.
+
+        This method retrieves the module name from the runner arguments using the provided
+        argument key. It then attempts to load the module using the name and the file path
+        obtained from the environment variable. If the module name is not provided or the
+        module instance cannot be created, a RuntimeError is raised.
+
+        Args:
+            arg_key (str): The key to look up the module name in the runner arguments.
+            env_var (str): The environment variable used to obtain the file path of the module.
+
+        Returns:
+            An instance of the loaded module.
+
+        Raises:
+            RuntimeError: If the module name is not provided or the module instance cannot be created.
+        """
+        module_name = self.run_arguments.runner_args.get(arg_key)
+        if not module_name:
+            raise RuntimeError(f"[Run] Module name for '{arg_key}' not provided.")
+        module_instance = get_instance(
+            module_name,
+            Storage.get_filepath(env_var, module_name, "py"),
+        )
+        if not module_instance:
+            raise RuntimeError(
+                f"[Run] Unable to get instance for module '{module_name}'."
+            )
+        return module_instance()

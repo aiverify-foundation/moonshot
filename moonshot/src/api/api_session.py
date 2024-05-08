@@ -7,11 +7,10 @@ from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
+
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
-
-
 def api_load_session(runner_id: str) -> dict | None:
     """
     Loads the session details for a specific runner.

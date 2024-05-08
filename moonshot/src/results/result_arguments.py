@@ -1,213 +1,44 @@
 from __future__ import annotations
 
-from datetime import datetime
+from pydantic import BaseModel
 
 from moonshot.src.runs.run_status import RunStatus
 
 
-class ResultArguments:
-    def __init__(
-        self,
-        id: str,  # The ID of the Runner.
-        start_time: float,  # The start time of the Run.
-        end_time: float,  # The end time of the Run.
-        duration: int,  # The duration of the Run.
-        results: dict,  # Results of the Run.
-        status: RunStatus,  # Status of the Run.
-        # Additional info
-        recipes: list[str] = [],  # List of recipes for the Run.
-        cookbooks: list[str] = [],  # List of cookbooks for the Run.
-        endpoints: list[str] = [],  # List of endpoints for the Run.
-        num_of_prompts: int = -1,  # Number of prompts for the Run.
-        random_seed: int = 0,  # Random seed value for the Run.
-        system_prompt: str = "",  # System prompt for connectors for the Run.
-    ) -> None:
-        self.id = id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.duration = duration
-        self.results = results
-        self.status = status
-        self.recipes = recipes
-        self.cookbooks = cookbooks
-        self.endpoints = endpoints
-        self.num_of_prompts = num_of_prompts
-        self.random_seed = random_seed
-        self.system_prompt = system_prompt
+class ResultArguments(BaseModel):
+    id: str  # The ID of the Runner.
 
-    @classmethod
-    def from_file(cls, results: dict) -> ResultArguments:
-        """
-        Creates a ResultArguments instance from a dictionary.
+    start_time: float  # The start time of the Run.
 
-        This method extracts metadata from the input dictionary, converts the start and end times from string format
-        to timestamp, and converts the status to a BenchmarkExecutorStatus enum. It also converts any stringified
-        tuples in the results back to tuples.
+    end_time: float  # The end time of the Run.
 
-        Args:
-            results (dict): The input dictionary containing the results and metadata.
+    duration: int  # The duration of the Run.
 
-        Returns:
-            ResultArguments: An instance of ResultArguments initialized with the data from the input dictionary.
-        """
-        metadata = results["metadata"]
-        start_time = datetime.strptime(
-            metadata["start_time"], "%Y%m%d-%H%M%S"
-        ).timestamp()
-        end_time = datetime.strptime(metadata["end_time"], "%Y%m%d-%H%M%S").timestamp()
-        status = RunStatus[metadata["status"].upper()]
+    status: RunStatus  # Status of the Run.
 
-        return cls(
-            id=metadata["id"],
-            start_time=start_time,
-            end_time=end_time,
-            duration=metadata["duration"],
-            results=results["results"],
-            status=status,
-            recipes=metadata["recipes"],
-            cookbooks=metadata["cookbooks"],
-            endpoints=metadata["endpoints"],
-            num_of_prompts=metadata["num_of_prompts"],
-            random_seed=metadata["random_seed"],
-            system_prompt=metadata["system_prompt"],
-        )
+    raw_results: dict = {}  # Raw Results of the Run from runners-modules.
 
-    def format_results(self) -> dict:
-        """
-        This method formats the results of the BenchmarkExecutor.
+    results: dict = {}  # Results of the Run from results-modules.
 
-        The formatting is based on whether the BenchmarkExecutor was executed with cookbooks or recipes.
-        If cookbooks were utilized, the '_format_results_cookbooks' method is invoked to format the results.
-        If recipes were utilized, the '_format_results_recipes' method is invoked to format the results.
-
-        Returns:
-            dict: A dictionary that contains the formatted results.
-
-        Raises:
-            RuntimeError: If the BenchmarkExecutor was not executed with either cookbooks or recipes.
-        """
-        if self.cookbooks:
-            formatted_results = {
-                "cookbooks": self._format_results_cookbooks(
-                    self.cookbooks, self.results
-                )
-            }
-        elif self.recipes:
-            formatted_results = {
-                "recipes": self._format_results_recipes(self.recipes, self.results)
-            }
-        else:
-            raise RuntimeError(
-                "Unable to determine cookbooks or recipes for formatting results."
-            )
-
-        return formatted_results
-
-    def _format_results_cookbooks(
-        self, cookbook_list: list[str], cookbook_results: dict
-    ) -> list:
-        """
-        This method formats the results for a given list of cookbooks.
-
-        The method loops through each cookbook in the list. For every cookbook, it creates a dictionary that contains
-        the cookbook id and a list of formatted recipes. Each formatted recipe is a dictionary that includes the
-        recipe id and a list of models. The list of models is generated by invoking the
-        '_format_results_recipes' method.
-        """
-        formatted_results = []
-        for cookbook in cookbook_list:
-            cookbook_dict = {
-                "id": cookbook,
-                "recipes": self._format_results_recipes(
-                    list(cookbook_results[cookbook].keys()), cookbook_results[cookbook]
-                ),
-            }
-            formatted_results.append(cookbook_dict)
-        return formatted_results
-
-    def _format_results_recipes(
-        self, recipes_list: list[str], recipes_results: dict
-    ) -> list:
-        """
-        This method formats the results for a list of recipes.
-
-        It iterates over the list of recipes. For each recipe, it creates a dictionary that includes the recipe
-        id and a list of models. Each model is a dictionary that includes the model id and a list of
-        datasets.
-
-        Each dataset is a dictionary that includes the dataset id and a list of prompt templates.
-        Each prompt template is a dictionary that includes the prompt template id, data, and metrics.
-
-        Args:
-            recipes_list (list): A list of recipe ids.
-
-        Returns:
-            list: A list of dictionaries. Each dictionary represents a formatted result for a recipe.
-        """
-        formatted_results = []
-        for recipe in recipes_list:
-            recipe_dict = {"id": recipe, "models": []}
-            if recipes_results:
-                recipe_results = recipes_results[recipe]
-            else:
-                recipe_results = {}
-
-            # Getting unique datasets, endpoints, and prompt templates
-            unique_endpoints = set()
-            unique_datasets = set()
-            unique_prompt_templates = set()
-            for key_ep, _, key_ds, key_pt in recipe_results.keys():
-                unique_endpoints.add(key_ep)
-                unique_datasets.add(key_ds)
-                unique_prompt_templates.add(key_pt)
-
-            for ep in unique_endpoints:
-                ep_dict = {"id": ep, "datasets": []}
-                for ds in unique_datasets:
-                    ds_dict = {"id": ds, "prompt_templates": []}
-                    for pt in unique_prompt_templates:
-                        pt_dict = {
-                            "id": pt,
-                            "data": recipe_results[(ep, recipe, ds, pt)]["data"],
-                            "metrics": recipe_results[(ep, recipe, ds, pt)]["results"],
-                        }
-                        ds_dict["prompt_templates"].append(pt_dict)
-                    ep_dict["datasets"].append(ds_dict)
-                recipe_dict["models"].append(ep_dict)
-            formatted_results.append(recipe_dict)
-
-        return formatted_results
+    params: dict = {}  # Other information required for results module
 
     def to_dict(self) -> dict:
         """
-        Converts the instance variables of the class to a dictionary.
+        Transforms the ResultArguments instance into a dictionary format.
 
-        This method takes the instance variables of the class and converts them into a dictionary.
-        The keys of the dictionary are the names of the instance variables and the values are the values of the
-        instance variables.
-        The dictionary is then returned.
+        This method serializes the ResultArguments instance into a dictionary where attribute names become keys
+        and their corresponding values are the dictionary values.
 
         Returns:
-            dict: A dictionary representation of the instance variables of the class.
+            A dictionary representation of the ResultArguments instance.
         """
-        results = {
-            "metadata": {
-                "id": self.id,
-                "start_time": datetime.fromtimestamp(self.start_time).strftime(
-                    "%Y%m%d-%H%M%S"
-                ),
-                "end_time": datetime.fromtimestamp(self.end_time).strftime(
-                    "%Y%m%d-%H%M%S"
-                ),
-                "duration": self.duration,
-                "status": self.status.name.lower(),
-                "recipes": self.recipes,
-                "cookbooks": self.cookbooks,
-                "endpoints": self.endpoints,
-                "num_of_prompts": self.num_of_prompts,
-                "random_seed": self.random_seed,
-                "system_prompt": self.system_prompt,
-            },
+        return {
+            "id": self.id,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "duration": self.duration,
+            "status": self.status.name,
+            "raw_results": self.raw_results,
             "results": self.results,
+            "params": self.params,
         }
-        return results

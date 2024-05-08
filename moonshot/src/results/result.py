@@ -10,120 +10,98 @@ from moonshot.src.storage.storage import Storage
 
 
 class Result:
-    def __init__(self, res_args: ResultArguments) -> None:
-        self.id = res_args.id
-        self.start_time = res_args.start_time
-        self.end_time = res_args.end_time
-        self.duration = res_args.duration
-        self.results = res_args.results
-        self.status = res_args.status
-        # Additional info
-        self.recipes = res_args.recipes
-        self.cookbooks = res_args.cookbooks
-        self.endpoints = res_args.endpoints
-        self.num_of_prompts = res_args.num_of_prompts
-        self.random_seed = res_args.random_seed
-        self.system_prompt = res_args.system_prompt
+    def __init__(self, result_args: ResultArguments) -> None:
+        self.id = result_args.id
+        self.start_time = result_args.start_time
+        self.end_time = result_args.end_time
+        self.duration = result_args.duration
+        self.raw_results = result_args.raw_results
+        self.results = result_args.results
+        self.status = result_args.status
+        self.params = result_args.params
 
     @classmethod
-    def load(cls, res_id: str) -> Result:
+    def load(cls, result_id: str) -> Result:
         """
-        Loads an existing result.
+        Loads a result instance by its ID.
 
-        This method accepts a result ID as an argument. It uses the 'id' to locate the result file in the storage.
-        If the file does not exist, it raises a RuntimeError. If the file exists, it reads the file and converts the
-        data into a ResultArguments object. It then returns a new Result instance created from the
-        ResultArguments object.
+        This method attempts to load a result instance using the provided ID by reading the corresponding data from
+        storage. It then instantiates a Result object with the loaded data.
 
         Args:
-            res_id (str): The unique identifier for the result.
+            result_id (str): The unique identifier of the result to be retrieved.
 
-        Raises:
-            RuntimeError: If the result file does not exist.
+        Returns:
+            Result: The instantiated result object with the loaded data.
         """
-        if not Path(
-            Storage.get_filepath(EnvVariables.RUNNERS.name, res_id, "json")
-        ).exists():
-            raise RuntimeError(
-                "Unable to load result because the result file does not exists."
-            )
-
-        res_info = ResultArguments.from_file(
-            Storage.read_object(EnvVariables.RESULTS.name, res_id, "json")
-        )
-        return cls(res_info)
-
-    @staticmethod
-    def create(res_args: ResultArguments) -> None:
-        """
-        Creates a new result.
-
-        This method accepts a ResultArguments object as an argument. It uses the 'id' attribute from the ResultArguments
-        object as a unique identifier for the result. The method then converts the ResultArguments object into a
-        dictionary and writes it to a file using the StorageManager.
-
-        Args:
-            res_args (ResultArguments): The arguments for the result.
-
-        Raises:
-            Exception: If there is an error during result creation.
-        """
-        try:
-            # Format results
-            res_args.results = res_args.format_results()
-
-            # Write as json output
-            Storage.create_object(
-                EnvVariables.RESULTS.name, res_args.id, res_args.to_dict(), "json"
-            )
-
-        except Exception as e:
-            print(f"Failed to create result: {str(e)}")
-            raise e
+        return cls(Result.read(result_id))
 
     @staticmethod
     @validate_arguments
-    def read(res_id: str) -> ResultArguments:
+    def read(result_id: str) -> ResultArguments:
         """
-        Retrieves the arguments of a specific result from the storage.
+        Reads the result data for a given result ID and returns a ResultArguments instance.
 
-        This function accepts a Result ID as an argument. It reads the corresponding result's storage,
-        and then converts the retrieved data into a ResultArguments object. If an error occurs during the reading
-        process, the error message is printed and the error is re-thrown.
+        This method attempts to read the result data associated with the provided result ID. If successful, it
+        returns a ResultArguments instance created from the retrieved data. If an error occurs, it prints an error
+        message and re-raises the exception.
 
         Args:
-            res_id (str): The unique identifier of the result whose arguments are to be retrieved.
+            result_id (str): The unique identifier of the result to be read.
 
         Returns:
-            ResultArguments: An object encapsulating the arguments of the specified result.
+            ResultArguments: An instance of ResultArguments containing the result data.
+
+        Raises:
+            Exception: If any error occurs during the reading process.
         """
         try:
-            return ResultArguments.from_file(
-                Storage.read_object(EnvVariables.RESULTS.name, res_id, "json")
-            )
+            return ResultArguments(**Result._read_result(result_id))
 
         except Exception as e:
             print(f"Failed to read result: {str(e)}")
             raise e
 
     @staticmethod
-    @validate_arguments
-    def delete(res_id: str) -> None:
+    def _read_result(result_id: str) -> dict:
         """
-        Deletes a specified result.
+        Reads the result data from storage for a given result ID.
 
-        This function requires a Result ID as an argument. It then proceeds to delete the corresponding
-        result's storage.
-        If an error occurs during the deletion process, the error message is printed and the error is re-thrown.
+        This method attempts to retrieve the result data associated with the specified result ID from storage.
+        If the data is found, it is returned as a dictionary. If no data is found, a RuntimeError is raised.
 
         Args:
-            res_id (str): The unique identifier of the result that is to be deleted.
+            result_id (str): The unique identifier of the result to be read.
+
+        Returns:
+            dict: A dictionary containing the result data.
 
         Raises:
-            Exception: If an error is encountered during the deletion of the result.
+            RuntimeError: If no result data is found for the given result ID.
+        """
+        obj_results = Storage.read_object(EnvVariables.RESULTS.name, result_id, "json")
+        if obj_results:
+            return obj_results
+        else:
+            raise RuntimeError(f"Unable to get results for {result_id}.")
+
+    @staticmethod
+    @validate_arguments
+    def delete(result_id: str) -> None:
+        """
+        Deletes the result data for a given result ID.
+
+        This method attempts to delete the result data associated with the provided result ID from storage.
+        If an error occurs during the deletion process, it prints an error message and re-raises the exception.
+
+        Args:
+            result_id (str): The unique identifier of the result to be deleted.
+
+        Raises:
+            Exception: If any error occurs during the deletion process.
         """
         try:
-            Storage.delete_object(EnvVariables.RESULTS.name, res_id, "json")
+            Storage.delete_object(EnvVariables.RESULTS.name, result_id, "json")
 
         except Exception as e:
             print(f"Failed to delete result: {str(e)}")
@@ -132,38 +110,30 @@ class Result:
     @staticmethod
     def get_available_items() -> tuple[list[str], list[ResultArguments]]:
         """
-        Fetches all available results.
+        Retrieves all available result items.
 
-        This method scans the storage and collects all stored result files.
-        It excludes any files that contain "__" in their names. For each valid result file, the method reads the file
-        content and creates a ResultArguments object encapsulating the result's details.
-        Both the ResultArguments object and the result ID are then appended to their respective lists.
+        This method searches the storage for result objects, excluding any filenames that contain "__".
+        It reads the contents of each valid result file and constructs a ResultArguments object with the result details.
+        The method accumulates the result IDs and the corresponding ResultArguments objects into separate lists,
+        which are then returned together as a tuple.
 
         Returns:
-            tuple[list[str], list[ResultArguments]]: A tuple where the first element is a list of result IDs and
-            the second element is a list of ResultArguments objects representing the details of each result.
+            tuple[list[str], list[ResultArguments]]: A tuple containing two elements. The first is a list of result
+            IDs, and the second is a list of ResultArguments objects, each representing the details of a result.
 
         Raises:
-            Exception: If an error is encountered during the file reading process or any other operation within
-            the method.
+            Exception: If any issues arise during the retrieval and processing of result files.
         """
         try:
             retn_results = []
             retn_results_ids = []
 
-            results = Storage.get_objects(EnvVariables.RESULTS.name, "json")
-            for res in results:
-                if "__" in res:
+            for result in Storage.get_objects(EnvVariables.RESULTS.name, "json"):
+                if "__" in result:
                     continue
-
-                res_info = ResultArguments.from_file(
-                    Storage.read_object(
-                        EnvVariables.RESULTS.name, Path(res).stem, "json"
-                    )
-                )
-                retn_results.append(res_info)
-                retn_results_ids.append(res_info.id)
-
+                result_info = ResultArguments(**Result._read_result(Path(result).stem))
+                retn_results.append(result_info)
+                retn_results_ids.append(result_info.id)
             return retn_results_ids, retn_results
 
         except Exception as e:
