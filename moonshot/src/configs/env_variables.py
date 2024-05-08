@@ -103,14 +103,6 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RUNNERS_MODULES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/runners-modules")),
     ]
-    SESSIONS = [
-        env_vars.get(EnvVariables.SESSIONS.value),
-        str(
-            importlib.resources.files(__app_name__).joinpath(
-                "data/generated-outputs/sessions"
-            )
-        ),
-    ]
 
     @staticmethod
     def load_env(env_dict: dict | None = None) -> None:
