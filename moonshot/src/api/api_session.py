@@ -30,18 +30,20 @@ def api_load_session(runner_id: str) -> dict | None:
 
 def api_create_session(
     runner_id: str, database_instance: DBInterface, endpoints: list, runner_args: dict
-) -> dict | None:
+) -> None:
     """
-    Loads the session details for a specific runner.
+    Creates a new session for a specific runner.
 
-    This function calls the `Session.load` method to retrieve the session details associated with the
-    specified runner ID.
+    This function creates a new session by calling the `Session` constructor with the provided arguments.
 
     Args:
-        runner_id (str): The unique identifier of the runner for which the session details are to be loaded.
+        runner_id (str): The unique identifier of the runner for which the session is to be created.
+        database_instance (DBInterface): The database instance to be used for the session.
+        endpoints (list): A list of endpoints for the session.
+        runner_args (dict): A dictionary of arguments for the runner.
 
     Returns:
-        dict | None: A dictionary containing the session details if available, otherwise None.
+        None
     """
     Session(
         runner_id,
@@ -73,11 +75,11 @@ def api_get_available_session_info() -> tuple[list, list]:
 
     This function retrieves the IDs and database instances of runners with active sessions by querying all runners
     and checking if each runner has an active session. It returns a tuple containing a list of runner IDs and a list
-    of corresponding database instances for runners with active sessions.
+    of corresponding session metadata for runners with active sessions.
 
     Returns:
-        tuple[list[str], list[str]]: A tuple containing a list of runner IDs and a list of corresponding database
-        instances for runners with active sessions.
+        tuple[list[str], list[str]]: A tuple containing a list of runner IDs and a list of corresponding session
+        metadata for runners with active sessions.
     """
     runners_info = api_get_all_runner()
     runner_instances = [
@@ -85,32 +87,29 @@ def api_get_available_session_info() -> tuple[list, list]:
     ]
 
     runner_ids = []
-    runner_with_session_db_list = []
+    session_metadata_list = []
 
     for runner_instance in runner_instances:
         if runner_instance.database_instance:
-            if Session.load(runner_instance.database_instance) is not None:
+            session_metadata = Session.load(runner_instance.database_instance)
+            if session_metadata is not None:
                 runner_ids.append(runner_instance.id)
-                runner_with_session_db_list.append(runner_instance.database_instance)
-    return runner_ids, runner_with_session_db_list
+                session_metadata_list.append(session_metadata)
+    return runner_ids, session_metadata_list
 
 
 def api_get_all_session_metadata() -> list:
     """
     Retrieves metadata for all sessions.
 
-    This function retrieves the metadata for all active sessions by calling the `api_get_available_session_info` method
-    and then loading the session details for each active session.
+    This function retrieves the metadata for all active sessions by calling the `api_get_available_session_info` method.
 
     Returns:
-        list: A list containing the metadata for all active sessions.
+        list: A list containing the metadata for all active sessions, sorted by created datetime in descending order.
     """
-    _, runner_with_session_db_list = api_get_available_session_info()
-    list_of_session_metadata = []
-    for runner_with_session_db in runner_with_session_db_list:
-        list_of_session_metadata.append(Session.load(runner_with_session_db))
+    _, session_metadata_list = api_get_available_session_info()
     return sorted(
-        list_of_session_metadata, key=itemgetter("created_datetime"), reverse=True
+        session_metadata_list, key=itemgetter("created_datetime"), reverse=True
     )
 
 
@@ -168,3 +167,19 @@ def api_delete_session(runner_id: str) -> None:
         None
     """
     Session.delete_session(api_load_runner(runner_id).database_instance)
+
+
+def api_get_all_chats_from_session(runner_id: str) -> dict | None:
+    """
+    Retrieves all chat messages from a specific session.
+
+    This function retrieves all chat messages from the session associated with the specified runner ID.
+    It calls the `Session.get_session_chats` method with the runner's database instance.
+
+    Args:
+        runner_id (str): The unique identifier of the runner for which the chat messages are to be retrieved.
+
+    Returns:
+        dict | None: A dictionary containing all chat messages if available, otherwise None.
+    """
+    return Session.get_session_chats(api_load_runner(runner_id).database_instance)

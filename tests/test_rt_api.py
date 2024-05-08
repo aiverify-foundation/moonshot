@@ -7,7 +7,9 @@ from moonshot.src.api.api_session import (
     api_get_all_session_metadata,
     api_update_context_strategy,
     api_update_prompt_template,
-    api_delete_session
+    api_delete_session,
+    api_create_session,
+    api_get_all_chats_from_session
     )
 from moonshot.src.api.api_red_teaming import (
     api_get_all_attack_modules,
@@ -40,6 +42,9 @@ def run_manual_and_automated_rt(runner_name: str, runner_id: str):
     )    
     runner.close()
 
+    print("2) Creating Session in Runner")
+    api_create_session(runner.id, runner.database_instance, runner.endpoints, {})
+
     mrt_arguments = {
         "manual_rt_args": {
             "prompt": "hell0 world",
@@ -47,7 +52,7 @@ def run_manual_and_automated_rt(runner_name: str, runner_id: str):
                 "context_strategy_id":"add_previous_prompt",
                 "num_of_prev_prompts": 4
                 }],
-            "prompt_template_ids": ["auto-categorisation"]
+            "prompt_template_ids": ["mmlu"]
         }
     }
     
@@ -60,12 +65,12 @@ def run_manual_and_automated_rt(runner_name: str, runner_id: str):
                 "context_strategy_id":"add_previous_prompt",
                 "num_of_prev_prompts": 4
                 }],
-            "prompt_template_ids": ["auto-categorisation"],
+            "prompt_template_ids": ["mmlu"],
             }
         ]
     }
 
-    print("2)Loading and Running runner")
+    print("3)Loading and Running runner")
     loop = asyncio.get_event_loop()
     
     # manual red teaming
@@ -94,7 +99,7 @@ def run_manual_rt():
                 "context_strategy_id":"add_previous_prompt",
                 "num_of_prev_prompts": 4
                 }],
-            "prompt_template_ids": ["auto-categorisation"]
+            "prompt_template_ids": ["mmlu"]
         }
     }
 
@@ -162,8 +167,12 @@ def test_session_apis(runner_id: str):
     print(f"{session_metadatas}\n")
 
     print("Get Single Session Metadata")
-    single_session = api_load_session(runner_id)
-    print(f"{single_session}\n")
+    single_session_metadata = api_load_session(runner_id)
+    print(f"{single_session_metadata}\n")
+
+    print("Get Single Session Chats")
+    single_session_chats = api_get_all_chats_from_session(runner_id)
+    print(f"{single_session_chats}\n")
 
     print("Get All Session Info")
     all_session_info = api_get_available_session_info()
@@ -195,7 +204,7 @@ def test_attack_apis():
 runner_name = "mytestrunner"
 runner_id = "mytestrunner"
 
-# tests automated and red teaming. creates a runner, and runss manual and automated red teaming
+# # tests automated and red teaming. creates a runner, and runss manual and automated red teaming
 run_manual_and_automated_rt(runner_name, runner_id)
 
 # tests all session apis

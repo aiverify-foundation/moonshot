@@ -7,13 +7,18 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from moonshot.api import api_get_all_session_metadata, api_load_session
+from moonshot.api import (
+    api_create_runner,
+    api_create_session,
+    api_get_all_chats_from_session,
+    api_get_all_session_metadata,
+    api_load_runner,
+    api_load_session,
+)
 from moonshot.integrations.cli.active_session_cfg import active_session
 from moonshot.integrations.cli.redteam.context_strategy import (
     DEFAULT_CONTEXT_STRATEGY_PROMPT,
 )
-from moonshot.src.api.api_runner import api_create_runner, api_load_runner
-from moonshot.src.api.api_session import api_create_session
 
 console = Console()
 
@@ -131,7 +136,9 @@ def update_chat_display() -> None:
     global active_session
 
     if active_session:
-        list_of_endpoint_chats = active_session["chats"]
+        list_of_endpoint_chats = api_get_all_chats_from_session(
+            active_session["session_id"]
+        )
 
         # Prepare for table display
         table = Table(expand=True)

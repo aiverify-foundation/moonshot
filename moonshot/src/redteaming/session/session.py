@@ -227,15 +227,7 @@ class Session:
                 )
 
     @staticmethod
-    def load(
-        database_instance: DBInterface | None,
-        runner_type: RunnerType = RunnerType.REDTEAM,
-        runner_id: str = "",
-        endpoints: list = [],
-        runner_args: dict = {},
-        result_file_path: str = "",
-        progress_callback_func: Callable | None = None,
-    ) -> dict | None:
+    def load(database_instance: DBInterface | None) -> dict | None:
         """
         Loads run data for a given session_id from the database, or the latest run if run_id is None.
 
@@ -254,25 +246,12 @@ class Session:
         if not database_instance:
             raise RuntimeError("[Session] Runner instance database not provided.")
 
-        # runner does not have session
+        # runner does not have session, return None
         if not Storage.check_database_table_exists(
             database_instance, "session_metadata_table"
         ):
-            print("[Session] Unable to load session. Runner does not contain session.")
-            # create session in runner
-            try:
-                Session(
-                    runner_id,
-                    runner_type,
-                    runner_args,
-                    database_instance,
-                    endpoints,
-                    result_file_path,
-                    progress_callback_func,
-                )
-            except Exception:
-                print("[Session] Unable to create session.")
-                return None
+            return None
+
         # retrieve session metadata
         session_metadata_info = Storage.read_database_records(
             database_instance,
@@ -286,15 +265,6 @@ class Session:
         session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
         session_metadata_dict = session_metadata_obj.to_dict()
 
-        # retrieve all chats
-        chats = {}
-        for endpoint_id in session_metadata_obj.endpoints:
-            list_of_chats_from_one_ep = Chat.load_chat_history(
-                database_instance, endpoint_id.replace("-", "_")
-            )
-            chats.update({endpoint_id: list_of_chats_from_one_ep})
-
-        session_metadata_dict["chats"] = chats
         return session_metadata_dict
 
     async def run(self) -> dict:
@@ -506,3 +476,32 @@ class Session:
             Storage.delete_database_table(
                 database_instance, Session.sql_drop_table.format(endpoint)
             )
+
+    @staticmethod
+    def get_session_chats(database_instance: DBInterface | None) -> dict:
+        """
+        Retrieves the chat history for all endpoints in a session.
+
+        Args:
+            database_instance (DBInterface | None): The database instance to retrieve the chat history from.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
+
+        Returns:
+            dict: A dictionary where the keys are endpoint IDs and the values are lists of chat history
+            for each endpoint.
+        """
+        if not database_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+
+        session_metadata = Session.load(database_instance)
+        chats = {}
+        if session_metadata is not None and "endpoints" in session_metadata:
+            endpoint_list = session_metadata.get("endpoints", [])
+            for endpoint_id in endpoint_list:
+                list_of_chats_from_one_ep = Chat.load_chat_history(
+                    database_instance, endpoint_id.replace("-", "_")
+                )
+                chats.update({endpoint_id: list_of_chats_from_one_ep})
+        return chats

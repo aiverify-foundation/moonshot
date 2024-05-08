@@ -65,6 +65,9 @@ from moonshot.src.api.api_runner import (
     api_read_runner,
 )
 from moonshot.src.api.api_session import (
+    api_create_session,
+    api_delete_session,
+    api_get_all_chats_from_session,
     api_get_all_session_metadata,
     api_get_all_session_names,
     api_get_available_session_info,
@@ -123,6 +126,9 @@ __all__ = [
     "api_get_all_session_metadata",
     "api_load_session",
     "api_get_available_session_info",
+    "api_delete_session",
+    "api_create_session",
+    "api_get_all_chats_from_session",
     "api_update_context_strategy",
     "api_update_prompt_template",
     "api_get_all_attack_modules",
