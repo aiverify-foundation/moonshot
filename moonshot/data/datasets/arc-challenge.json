@@ -1,6 +1,8 @@
 {
     "name": "ARC-Easy",
     "description": "A dataset of genuine grade-school level, multiple-choice science questions in advanced Q&A. This is the challenge set.",
+    "license": "CC BY-SA",
+    "reference": "https://allenai.org/data/arc",
     "examples": [
         {
             "input": "George wants to warm his hands quickly by rubbing them. Which skin surface will produce the most heat?\nA. dry palms\nB. wet palms\nC. palms covered with oil\nD. palms covered with lotion\n",

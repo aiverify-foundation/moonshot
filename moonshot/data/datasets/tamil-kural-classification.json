@@ -1,6 +1,8 @@
 {
     "name": "tamil-thirukural",
     "description": "This dataset is used to test the comprehension abilities for the Thirukkural. Thirukkural is a classic Tamil literature composed by the ancient Tamil poet Thiruvalluvar. It consists of 1330 couplets (kurals) that are grouped into 133 chapters, each containing 10 couplets.",
+    "reference": "https://github.com/vijayanandrp/Thirukkural-Tamil-Dataset",
+    "license": "Creative Commons Attribution 4.0 International",
     "examples": [
         {
             "input": "தம்பொருள் என்பதம் மக்கள் அவர்பொருள் தம்தம் வினையான் வரும்.",

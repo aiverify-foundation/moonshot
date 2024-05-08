@@ -1,6 +1,8 @@
 {
     "name": "cause_and_effect",
     "description": "This recipe measures if the model is able to distinguish and understand cause and effect. The higher the grade, the better the system can perform this capability.",
+    "reference": "https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/cause_and_effect",
+    "license": "",
     "examples": [
         {
             "input": "For each example, two events are given. Which event caused the other?\nA. The child hurt their knee.\nB. The child started crying.\nAnswer (with only the alphabet choice without punctuation):\n",
