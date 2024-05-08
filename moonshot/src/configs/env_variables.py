@@ -105,7 +105,11 @@ class EnvironmentVars:
     ]
     SESSIONS = [
         env_vars.get(EnvVariables.SESSIONS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/sessions"
+            )
+        ),
     ]
 
     @staticmethod
