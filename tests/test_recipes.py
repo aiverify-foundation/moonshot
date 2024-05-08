@@ -18,7 +18,7 @@ def test_create_recipe():
         description="Consists of adversarially perturned and benign MNLI and MNLIMM datasets. MNLI consists is a crowd-sourced collection of sentence pairs with textual entailment annotations. Given a premise sentence and a hypothesis sentence, the task is to predict whether the premise entails the hypothesis.",
         tags=["robustness"],
         categories=["new"],
-        datasets=["arc-easy", "bbq-full"],
+        datasets=["arc-easy", "bbq-lite-age-ambiguous"],
         prompt_templates=["prompt-template1"],
         metrics=["metrics1", "metrics2"],
         attack_modules=[],
@@ -49,7 +49,7 @@ def test_update_recipe():
         "my-new-recipe",
         description="my new description.",
         tags=["fairness"],
-        datasets=["analogical-similarity", "bbq-ambiguous"],
+        datasets=["analogical-similarity", "bbq-lite-age-disamb"],
         prompt_templates=["prompt-template2"],
         metrics=["metrics3"],
     )

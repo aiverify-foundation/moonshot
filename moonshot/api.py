@@ -49,12 +49,6 @@ from moonshot.src.api.api_red_teaming import (
     api_get_all_attack_module_metadata,
     api_get_all_attack_modules,
 )
-from moonshot.src.api.api_report_analysis import (
-    api_create_report_analysis,
-    api_delete_report_analysis,
-    api_get_all_report_analysis,
-    api_read_report_analysis,
-)
 from moonshot.src.api.api_result import (
     api_delete_result,
     api_get_all_result,
@@ -120,10 +114,6 @@ __all__ = [
     "api_read_recipe",
     "api_read_recipes",
     "api_update_recipe",
-    "api_create_report_analysis",
-    "api_delete_report_analysis",
-    "api_get_all_report_analysis",
-    "api_read_report_analysis",
     "api_delete_result",
     "api_get_all_result",
     "api_get_all_result_name",
