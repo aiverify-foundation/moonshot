@@ -1,4 +1,3 @@
-
 import homoglyphs as hg
 from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
@@ -6,17 +5,35 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
-"""
-About this attack module:
-Homoglyphs are alternative words for words comprising of ASCII characters. 
-Example of a homoglyph fool -> fooI
-Configurable Params:
-1. MAX_ITERATIONS - Number of prompts that should be sent to the target.
-"""
+
 class HomoglyphGenerator(AttackModule):
-    def __init__(self, am_arguments: AttackModuleArguments):
+    def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         # Initialize super class
-        super().__init__(am_arguments)
+        super().__init__(am_id, am_arguments)
+        self.name = "Homoglyph Attack"
+        self.description = (
+            "About this attack module:\nHomoglyphs are alternative words for words comprising of ASCII"
+            "characters.\nExample of a homoglyph fool -> fooI\nThis module purturbs the prompt with all"
+            "available homoglyphs for each word present.\nParameters:\n1. MAX_ITERATIONS - Maximum"
+            "number of prompts that should be sent to the target. [Default: 20]"
+        )
+
+    def get_metadata(self) -> dict:
+        """
+        Get metadata for the attack module.
+
+        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
+        is not available, empty strings are returned.
+
+        Returns:
+            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
+            available.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description if hasattr(self, "description") else "",
+        }
 
     async def execute(self):
         """
@@ -27,7 +44,6 @@ class HomoglyphGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-        self.description = "This attack creates homoglyphs for words in a prompt. Homoglyphs are alternative words for words comprising of ASCII characters. Example of a homoglyph fool -> fooI"
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
@@ -41,14 +57,14 @@ class HomoglyphGenerator(AttackModule):
         """
         result_list = []
         # Configurble PARAMS - Number of prompts to be sent to target
-        MAX_ITERATION = 10
+        MAX_ITERATION = 20
         # converting glyphs to ASCII characters
-        homoglyphs = hg.Homoglyphs(languages={'en'}, strategy=hg.STRATEGY_LOAD)
+        homoglyphs = hg.Homoglyphs(
+            strategy=hg.STRATEGY_LOAD, ascii_strategy=hg.STRATEGY_REMOVE
+        )
         count = 0
-
         word_list = word_tokenize(self.prompt)
         word_list_len = len(word_list)
-
         for idx in range(word_list_len):
             if count == MAX_ITERATION:
                 break
@@ -56,19 +72,18 @@ class HomoglyphGenerator(AttackModule):
             try:
                 hglyphs = homoglyphs.to_ascii(word_list[idx])
             except UnicodeDecodeError:
-                print(f'The word {word_list[idx]} does not contain ASCII characters. Skipping...')
-            for i in hglyphs:
-                word_list[idx] = i
-                new_prompt = TreebankWordDetokenizer().detokenize(word_list)
-                count+=1
-                result_list.append(
-                await self._send_prompt_to_all_llm(
-                    [new_prompt]
+                print(
+                    f"The word {word_list[idx]} does not contain ASCII characters. Skipping..."
                 )
-                )
-                word_list = word_tokenize(self.prompt)
-                if count == MAX_ITERATION:
-                    break
+            if len(hglyphs) > 1:
+                for i in hglyphs:
+                    word_list[idx] = i
+                    new_prompt = TreebankWordDetokenizer().detokenize(word_list)
+                    count += 1
+                    result_list.append(await self._send_prompt_to_all_llm([new_prompt]))
+                    word_list = word_tokenize(self.prompt)
+                    if count == MAX_ITERATION:
+                        break
         for res in result_list:
             for x in res:
                 print(x.prompt)

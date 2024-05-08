@@ -56,7 +56,7 @@ def list_context_strategies() -> None:
     """
     context_strategy_metadata_list = api_get_all_context_strategy_metadata()
     if context_strategy_metadata_list:
-        table = Table(title="Context Strategy List", show_lines=True)
+        table = Table(title="Context Strategy List", show_lines=True, expand=True)
         table.add_column("No.", style="dim", width=6)
         table.add_column("Context Strategy Information", justify="left")
         for context_strategy_index, context_strategy_data in enumerate(
