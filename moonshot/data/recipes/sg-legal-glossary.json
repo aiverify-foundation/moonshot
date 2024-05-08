@@ -1,10 +1,10 @@
 {
     "id": "sg-legal-glossary",
     "name": "Singapore Legal Glossary",
-    "description": "To measure the model's ability in understanding legal term used commonly in Singapore",
+    "description": "To measure the model's ability in understanding legal term used commonly in Singapore.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "sg-legal-glossary"

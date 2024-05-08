@@ -1,0 +1,39 @@
+{
+    "id": "cause-and-effect",
+    "name": "Cause and Effect",
+    "description": "This recipe measure the model's ability in understanding the cause and effect in a sentence. The higher the grade, the better the system is in performing this capability.",
+    "tags": [],
+    "categories": [
+        "Capability"
+    ],
+    "datasets": [
+        "cause-and-effect"
+    ],
+    "prompt_templates": [],
+    "metrics": [
+        "relaxstrmatch"
+    ],
+    "attack_modules": [],
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
+}

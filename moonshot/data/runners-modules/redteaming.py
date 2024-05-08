@@ -107,27 +107,26 @@ class RedTeaming:
             # load red teaming modules
             for attack_strategy_args in self.runner_args.get("attack_strategies", None):
                 # load attack module with arguments
+                attack_module_attack_arguments = AttackModuleArguments(
+                    connector_ids=self.session_metadata.endpoints
+                    if self.session_metadata.endpoints
+                    else [],
+                    prompt_templates=attack_strategy_args.get(
+                        "prompt_template_ids", []
+                    ),
+                    prompt=attack_strategy_args.get("prompt", ""),
+                    system_prompt=attack_strategy_args.get("system_prompt", ""),
+                    metric_ids=attack_strategy_args["metric_ids"]
+                    if "metric_ids" in attack_strategy_args
+                    else [],
+                    context_strategy_info=attack_strategy_args["context_strategy_info"]
+                    if "context_strategy_info" in attack_strategy_args
+                    else [],
+                    db_instance=self.database_instance,
+                )
                 loaded_attack_module = AttackModule.load(
-                    AttackModuleArguments(
-                        name=attack_strategy_args.get("attack_module_id", ""),
-                        connector_eps=self.session_metadata.endpoints
-                        if self.session_metadata.endpoints
-                        else [],
-                        prompt_templates=attack_strategy_args.get(
-                            "prompt_template_ids", []
-                        ),
-                        prompt=attack_strategy_args.get("prompt", ""),
-                        system_prompt=attack_strategy_args.get("system_prompt", ""),
-                        metric_ids=attack_strategy_args["metric_ids"]
-                        if "metric_ids" in attack_strategy_args
-                        else [],
-                        context_strategy_info=attack_strategy_args[
-                            "context_strategy_info"
-                        ]
-                        if "context_strategy_info" in attack_strategy_args
-                        else [],
-                        db_instance=self.database_instance,
-                    )
+                    am_id=attack_strategy_args.get("attack_module_id"),
+                    am_arguments=attack_module_attack_arguments,
                 )
                 loaded_attack_modules.append(loaded_attack_module)
 

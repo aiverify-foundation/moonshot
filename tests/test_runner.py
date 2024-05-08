@@ -1,4 +1,5 @@
 import asyncio
+from moonshot.src.api.api_run import api_get_all_run
 from moonshot.src.api.api_runner import (
     api_create_runner, api_delete_runner, api_get_all_runner, 
     api_get_all_runner_name, api_load_runner, api_read_runner
@@ -17,12 +18,14 @@ def test_create_runner(name: str):
     runner = api_create_runner(
         name=name,
         endpoints=["openai-gpt35-turbo", "openai-gpt35-turbo-16k"],
+        description="My New Runner...",
         progress_callback_func=runner_callback_fn,
     )
     print("Runner Attributes:")
     print("ID:", runner.id)
     print("Name:", runner.name)
     print("Endpoints:", runner.endpoints)
+    print("Description:", runner.description)
     print("Database Instance:", runner.database_instance)
     print("Database File:", runner.database_file)
     print("Progress Callback Function:", runner.progress_callback_func)
@@ -34,6 +37,7 @@ def test_load_runner(runner_id: str):
     print("ID:", runner.id)
     print("Name:", runner.name)
     print("Endpoints:", runner.endpoints)
+    print("Description:", runner.description)
     print("Database Instance:", runner.database_instance)
     print("Database File:", runner.database_file)
     print("Progress Callback Function:", runner.progress_callback_func)
@@ -184,6 +188,28 @@ def test_run_runner_api():
     print("=" * 100, "\nTest listing all runner name")
     test_get_all_runner_name()
 
+    # Test Run API
+    test_run_api()
+
     # Delete runner
     print("=" * 100, "\nTest deleting runners")
     test_delete_runner(runner_id)
+
+# ------------------------------------------------------------------------------
+# Run APIs Test
+# ------------------------------------------------------------------------------
+def test_get_all_run(runner_id: str):
+    print(api_get_all_run(runner_id))
+
+def test_run_api():
+    # Get run info
+    print("=" * 100, "\nGetting run information for my-new-runner")
+    test_get_all_run("my-new-runner")
+
+    # Get run info
+    print("=" * 100, "\nGetting run information for no-runner")
+    test_get_all_run("no-runner")
+
+    # Get run info
+    print("=" * 100, "\nGetting run information for empty string")
+    test_get_all_run("")

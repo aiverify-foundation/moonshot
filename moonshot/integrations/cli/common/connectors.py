@@ -175,7 +175,7 @@ def display_connector_types(connector_types):
         None
     """
     if connector_types:
-        table = Table("No.", "Connector Type")
+        table = Table("No.", "Connector Type", expand=True)
         for connector_id, connector_type in enumerate(connector_types, 1):
             table.add_section()
             table.add_row(str(connector_id), connector_type)

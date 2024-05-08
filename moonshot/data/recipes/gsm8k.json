@@ -1,20 +1,41 @@
 {
     "id": "gsm8k",
     "name": "GSM8K",
-    "description": "To measure model's ability in solvinggrade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations.",
+    "description": "To measure model's ability in solvinggrade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations. The higher the grade, the better the system can perform this capability.",
     "tags": [],
     "categories": [
-        "capability"
+        "Capability"
     ],
     "datasets": [
         "gsm8k"
     ],
     "prompt_templates": [
-        "gsm8k-template1"
+        "mcq-template"
     ],
     "metrics": [
         "exactstrmatch"
     ],
     "attack_modules": [],
-    "grading_scale": {}
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
 }

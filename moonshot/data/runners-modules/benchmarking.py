@@ -642,12 +642,12 @@ class Benchmarking:
         modified_prompts = []
         for attack_module_name in self.recipe_instance.attack_modules:
             loaded_attack_module = AttackModule.load(
+                attack_module_name,
                 AttackModuleArguments(
-                    name=attack_module_name,
-                    connector_eps=self.endpoints,
+                    connector_ids=self.endpoints,
                     prompt=prompt,
                     db_instance=self.database_instance,
-                )
+                ),
             )
 
             # Log the loaded attack module

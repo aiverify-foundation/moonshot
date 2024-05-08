@@ -18,7 +18,7 @@ class PromptTemplateService(BaseService):
 
     @exception_handler
     def get_ctx_strategies(self) -> list[str]:
-        strategies = moonshot_api.api_get_all_context_strategy_name()
+        strategies = moonshot_api.api_get_all_context_strategies()
         return strategies
 
     @exception_handler

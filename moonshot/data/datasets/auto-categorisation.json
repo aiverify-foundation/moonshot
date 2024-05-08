@@ -1,6 +1,8 @@
 {
     "name": "auto_categorization",
     "description": "To measure the model's ability in categorising elements into groups.",
+    "license": "",
+    "reference": "https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/auto_categorization",
     "examples": [
         {
             "input": "Cats and dogs are common",

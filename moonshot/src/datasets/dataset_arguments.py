@@ -24,13 +24,19 @@ class DatasetArguments(BaseModel):
     # created_date (str): The creation date and time of the dataset in ISO format without 'T'. Automatically generated.
     created_date: str = ""
 
+    # reference (str): An optional string to store a reference link or identifier for the dataset
+    reference: str = ""
+
+    # license (str): License information for the dataset. Defaults to an empty string if not provided.
+    license: str = ""
+
     def to_dict(self) -> dict:
         """
         Converts the DatasetArguments object to a dictionary.
 
         Returns:
             dict: A dictionary representation of the DatasetArguments object, including the id, name, description,
-                  examples, number of dataset prompts, and created date.
+                  examples, number of dataset prompts, created date, reference, and license.
         """
         return {
             "id": self.id,
@@ -39,4 +45,6 @@ class DatasetArguments(BaseModel):
             "examples": self.examples,
             "num_of_dataset_prompts": self.num_of_dataset_prompts,
             "created_date": self.created_date,
+            "reference": self.reference,
+            "license": self.license,
         }

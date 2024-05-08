@@ -13,7 +13,8 @@ from moonshot.src.api.api_connector_endpoint import (
 )
 from moonshot.src.api.api_context_strategy import (
     api_delete_context_strategy,
-    api_get_all_context_strategy_name,
+    api_get_all_context_strategies,
+    api_get_all_context_strategy_metadata,
 )
 from moonshot.src.api.api_cookbook import (
     api_create_cookbook,
@@ -44,12 +45,9 @@ from moonshot.src.api.api_recipe import (
     api_read_recipes,
     api_update_recipe,
 )
-from moonshot.src.api.api_red_teaming import api_get_all_attack_modules
-from moonshot.src.api.api_report_analysis import (
-    api_create_report_analysis,
-    api_delete_report_analysis,
-    api_get_all_report_analysis,
-    api_read_report_analysis,
+from moonshot.src.api.api_red_teaming import (
+    api_get_all_attack_module_metadata,
+    api_get_all_attack_modules,
 )
 from moonshot.src.api.api_result import (
     api_delete_result,
@@ -86,7 +84,8 @@ __all__ = [
     "api_read_endpoint",
     "api_update_endpoint",
     "api_delete_context_strategy",
-    "api_get_all_context_strategy_name",
+    "api_get_all_context_strategies",
+    "api_get_all_context_strategy_metadata",
     "api_create_cookbook",
     "api_delete_cookbook",
     "api_get_all_cookbook",
@@ -115,10 +114,6 @@ __all__ = [
     "api_read_recipe",
     "api_read_recipes",
     "api_update_recipe",
-    "api_create_report_analysis",
-    "api_delete_report_analysis",
-    "api_get_all_report_analysis",
-    "api_read_report_analysis",
     "api_delete_result",
     "api_get_all_result",
     "api_get_all_result_name",
@@ -131,4 +126,5 @@ __all__ = [
     "api_update_context_strategy",
     "api_update_prompt_template",
     "api_get_all_attack_modules",
+    "api_get_all_attack_module_metadata",
 ]

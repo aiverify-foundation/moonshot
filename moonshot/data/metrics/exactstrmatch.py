@@ -12,7 +12,10 @@ class ExactStrMatch(MetricInterface):
     def __init__(self):
         self.id = "exactstrmatch"
         self.name = "ExactStrMatch"
-        self.description = "ExactStrMatch will compare the output from language model with the expected target."
+        self.description = (
+            "ExactStrMatch will compare the output from language model with a single target"
+            " or multiple expected target."
+        )
         self.metric_config = self.get_metrics_configuration(self.id)
 
     @timeit
@@ -45,10 +48,20 @@ class ExactStrMatch(MetricInterface):
             dict: A dictionary containing the accuracy of the predicted results.
         """
         correct = 0
+        wrong = 0
         total = len(predicted_results)
 
         for idx, (result, target) in enumerate(zip(predicted_results, targets)):
-            if result == target:
-                correct += 1
+            # Check if the target is a single or multiple targets
+            if isinstance(target, list):
+                if result in target:
+                    correct += 1
+                else:
+                    wrong += 1
+            else:
+                if result == target:
+                    correct += 1
+                else:
+                    wrong += 1
 
-        return {"exact_str_match": float(correct / total)}
+        return {"accuracy": float(correct / total) * 100}

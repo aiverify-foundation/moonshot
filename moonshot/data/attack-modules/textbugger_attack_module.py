@@ -1,6 +1,13 @@
 import time
-
+import os
+import tensorflow as tf
+import logging
 from textattack.augmentation import Augmenter
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapEmbedding,
@@ -9,36 +16,49 @@ from textattack.transformations import (
     WordSwapRandomCharacterDeletion,
     WordSwapRandomCharacterInsertion,
 )
-from textattack.constraints.pre_transformation import (
-    RepeatModification,
-    StopwordModification
-)
-from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 
 
-
-"""
-About this attack module:
-This module implements the perturbations listed in the paper TEXTBUGGER: Generating Adversarial Text Against
-Real-world Applications.
-Configurable Params:
-1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the number of transfprmations that should be generated.
-2. word_swap_ratio - Percentage of words in a prompt that should be perturbed.
-3. top_k - to select top k number of semantic words from the GLoVe embedding
-4. threshold - semantic similarity threshold for the universal encoder
-
-Note:
-Usage of this attack module requires the internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.
-Embedding is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf 
-"""
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.get_logger().setLevel(logging.ERROR)
 
 class BugGenerator(AttackModule):
-    def __init__(self, am_arguments: AttackModuleArguments):
+    def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         # Initialize super class
-        super().__init__(am_arguments)
+        super().__init__(am_id, am_arguments)
+        self.name = "TextBugger Attack"
+        self.description = (
+            "About this attack module:\nThis module implements the perturbations listed in the paper"
+            "TEXTBUGGER: Generating Adversarial Text Against Real-world Applications.\nParameters:\n1."
+            "MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the"
+            "number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio -"
+            "Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n3. top_k -"
+            "To select top k number of semantic words from the GLoVe embedding. [Default: 5]\n4."
+            "threshold - semantic similarity threshold for the universal encoder. [Default: 0.8]\n"
+            "Note:\nUsage of this attack module requires the internet. Initial downloading of the"
+            "GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding is retrieved from"
+            "the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf"
+        )
+
+    def get_metadata(self) -> dict:
+        """
+        Get metadata for the attack module.
+
+        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
+        is not available, empty strings are returned.
+
+        Returns:
+            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
+            available.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description if hasattr(self, "description") else "",
+        }
 
     async def execute(self):
         """
@@ -49,7 +69,7 @@ class BugGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-        self.description = "This attack implements the perturbations features in the paper 'TEXTBUGGER: Generating Adversarial Text Against Real-world Applications'."
+
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
@@ -102,8 +122,8 @@ class BugGenerator(AttackModule):
                 # GloVe model [30] provided by Stanford for word embedding and set
                 # topk = 5 in the experiment.
                 WordSwapEmbedding(max_candidates=top_k),
-                ]
-            )
+            ]
+        )
         constraints = [RepeatModification(), StopwordModification()]
         """
         In our experiment, we first use the Universal Sentence
@@ -112,7 +132,7 @@ class BugGenerator(AttackModule):
         sequences, to encode sentences into high dimensional vectors.
         Then, we use the cosine similarity to measure the semantic
         similarity between original texts and adversarial texts.
-        ... 'Furthermore, the semantic similarity threshold \eps is set
+        ... 'Furthermore, the semantic similarity threshold \\eps is set
         as 0.8 to guarantee a good trade-off between quality and
         strength of the generated adversarial text.'
         """
@@ -121,19 +141,15 @@ class BugGenerator(AttackModule):
             transformation=transformation,
             constraints=constraints,
             pct_words_to_swap=word_swap_ratio,
-            transformations_per_example=MAX_ITERATION
-            )
+            transformations_per_example=MAX_ITERATION,
+        )
         print(f'{"*"*10} Augmentation in Progress {"*"*10}')
         start = time.process_time()
         results = augmenter.augment(self.prompt)
         print(f'{"*"*10} Time Taken: {time.process_time() - start}s {"*"*10}')
         for i in results:
             print(i)
-            result_list.append(
-                await self._send_prompt_to_all_llm(
-                    [i]
-                    )
-                    )
+            result_list.append(await self._send_prompt_to_all_llm([i]))
         for res in result_list:
             for x in res:
                 print(x.prompt)

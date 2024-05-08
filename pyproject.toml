@@ -39,7 +39,12 @@ dependencies = [
     "scipy==1.12.0",
     "textattack==0.3.10",
     "tensorflow-hub==0.16.1",
-    "homoglyphs==2.0.4"
+    "homoglyphs==2.0.4",
+    # Add tensorflow-io-gcs-filesystem and tensorflow and tensorflow-intel based on the platform markers
+    "tensorflow-io-gcs-filesystem==0.37.0; sys_platform == 'darwin' or sys_platform == 'linux'",
+    "tensorflow==2.16.1; sys_platform == 'darwin' or sys_platform == 'linux'",
+    "tensorflow-io-gcs-filesystem==0.31.0; sys_platform == 'win32'",
+    "tensorflow-intel==2.16.1; sys_platform == 'win32'"
 ]
 
 [project.optional-dependencies]
@@ -100,7 +105,7 @@ authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.12"
 openai = "1.23.6"
 python-slugify = "8.0.4"
 bert-score = "0.3.13"
@@ -122,6 +127,12 @@ scipy = "1.12.0"
 textattack = "0.3.10"
 tensorflow-hub = "0.16.1"
 homoglyphs = "2.0.4"
+tensorflow = { version = "2.16.1", markers = "sys_platform == 'darwin' or sys_platform == 'linux'" }
+tensorflow-io-gcs-filesystem = [
+    { version = "0.37.0", markers = "sys_platform == 'darwin' or sys_platform == 'linux'" },
+    { version = ">=0.23.1", markers = "sys_platform == 'win32'" }
+]
+tensorflow-intel = { version = "2.16.1", markers = "sys_platform == 'win32'" }
 typing-extensions = "4.11.0"
 fastapi = "0.110.2"
 uvicorn = "0.29.0"
@@ -137,3 +148,4 @@ pytest = "^8.2.0"
 coverage = "^7.5.0"
 pytest-mock = "^3.14.0"
 flake8 = "^7.0.0"
+poetry-plugin-export = "^1.7.1"

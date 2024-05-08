@@ -1,6 +1,8 @@
 {
     "name": "GSM8K",
     "description": "This dataset consists of high quality grade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations.",
+    "reference": "https://github.com/openai/grade-school-math",
+    "license": "MIT License",
     "examples": [
         {
             "input": "Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?",
