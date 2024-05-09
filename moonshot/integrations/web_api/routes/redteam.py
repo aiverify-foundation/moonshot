@@ -1,32 +1,52 @@
 import logging
-from typing import Optional
+from typing import Dict, List, Optional
+
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
-from dependency_injector.wiring import inject, Provide
 
-
-from ..schemas.prompt_response_model import PromptResponseModel
 from ..container import Container
-from ..services.utils.exceptions_handler import ServiceException
-from ..schemas.prompt_template_response_model import PromptTemplatesResponseModel
-from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
+from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..services.session_service import SessionService
+from ..services.utils.exceptions_handler import ServiceException
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+
 @router.get("/")
 @inject
-async def healthcheck():
+async def healthcheck() -> Dict[str, str]:
+    """
+    Check the health of the web API.
+
+    Returns:
+        Dict[str, str]: The status message indicating the API is running.
+    """
     return {"status": "web api is up and running"}
 
 
 @router.get("/api/v1/sessions")
 @inject
 async def get_all_sessions(
-    session_service: SessionService = Depends(Provide[Container.session_service])
-) -> list[Optional[SessionMetadataModel]]:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> List[Optional[SessionMetadataModel]]:
+    """
+    Retrieve metadata for all sessions.
+
+    Args:
+        session_service (SessionService): The service responsible for session operations.
+
+    Returns:
+        List[Optional[SessionMetadataModel]]: A list of session metadata.
+
+    Raises:
+        HTTPException: An error with status code 404 if no sessions are found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         return session_service.get_all_session()
     except ServiceException as e:
@@ -41,8 +61,22 @@ async def get_all_sessions(
 @router.get("/api/v1/sessions/name")
 @inject
 async def get_all_sessions_name(
-    session_service: SessionService = Depends(Provide[Container.session_service])
-) -> list[str]:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> List[str]:
+    """
+    Retrieve the names of all sessions.
+
+    Args:
+        session_service (SessionService): The service responsible for session operations.
+
+    Returns:
+        List[str]: A list of session names.
+
+    Raises:
+        HTTPException: An error with status code 404 if no session names are found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         return session_service.get_all_sessions_names()
     except ServiceException as e:
@@ -52,15 +86,31 @@ async def get_all_sessions_name(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
-        
+
 
 @router.get("/api/v1/sessions/{session_id}")
 @inject
 async def get_session_by_session_id(
     session_id: str,
     include_history: bool = False,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> SessionResponseModel:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> SessionResponseModel:
+    """
+    Retrieve a session by its ID, optionally including chat history.
+
+    Args:
+        session_id (str): The unique identifier of the session.
+        include_history (bool): Flag to include chat history in the response.
+        session_service (SessionService): The service responsible for session operations.
+
+    Returns:
+        SessionResponseModel: The session data including metadata and optionally chat history.
+
+    Raises:
+        HTTPException: An error with status code 404 if the session is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         session_data = session_service.get_session(session_id)
         if include_history:
@@ -84,9 +134,24 @@ async def get_session_by_session_id(
 @inject
 async def create(
     session_dto: SessionCreateDTO,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> SessionResponseModel:
-    try: 
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> SessionResponseModel:
+    """
+    Create a new session based on the provided session data transfer object (DTO).
+
+    Args:
+        session_dto (SessionCreateDTO): The DTO containing the data needed to create a session.
+        session_service (SessionService): The service responsible for session operations.
+
+    Returns:
+        SessionResponseModel: The newly created session's data.
+
+    Raises:
+        HTTPException: An error with status code 404 if the session cannot be created due to a file not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
+    try:
         new_session = session_service.create_session(session_dto)
         updated_with_chat_ids = session_service.get_session(new_session.session_id)
         return SessionResponseModel(session=updated_with_chat_ids)
@@ -104,8 +169,24 @@ async def create(
 async def prompt(
     session_id: str,
     user_prompt: SessionPromptDTO,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> PromptResponseModel:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> PromptResponseModel:
+    """
+    Send a user prompt to the specified session.
+
+    Args:
+        session_id (str): The unique identifier of the session.
+        user_prompt (SessionPromptDTO): The DTO containing the user's prompt.
+        session_service (SessionService): The service responsible for handling session prompts.
+
+    Returns:
+        PromptResponseModel: The response to the user's prompt.
+
+    Raises:
+        HTTPException: An error with status code 404 if the session is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         result = await session_service.send_prompt(session_id, user_prompt.prompt)
         return result
@@ -122,8 +203,23 @@ async def prompt(
 @inject
 async def delete_session(
     session_id: str,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, bool]:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> Dict[str, bool]:
+    """
+    Delete a session by its ID.
+
+    Args:
+        session_id (str): The unique identifier of the session to delete.
+        session_service (SessionService): The service responsible for deleting sessions.
+
+    Returns:
+        Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.
+
+    Raises:
+        HTTPException: An error with status code 404 if the session is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
         session_service.delete_session(session_id)
         return {"success": True}
@@ -141,15 +237,27 @@ async def delete_session(
 async def set_prompt_template(
     session_id: str,
     prompt_template_name: str,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, bool]:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> Dict[str, bool]:
     """
-    Select a prompt template for the current session
+    Select a prompt template for the current session.
+
+    Args:
+        session_id (str): The unique identifier of the session.
+        prompt_template_name (str): The name of the prompt template to select.
+        session_service (SessionService): The service responsible for managing session prompt templates.
+
+    Returns:
+        Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.
+
+    Raises:
+        HTTPException: An error with status code 404 if the prompt template is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
-        # rely on exception for now. TODO - ms lib to return or raise feedback
-        session_service.select_prompt_template(session_id,prompt_template_name)
-        return {"success": True }
+        session_service.select_prompt_template(session_id, prompt_template_name)
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -163,16 +271,28 @@ async def set_prompt_template(
 @inject
 async def unset_prompt_template(
     session_id: str,
-    prompt_template_name: str = '',
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, bool]:
+    prompt_template_name: str = "",
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> Dict[str, bool]:
     """
-    Remove prompt template from the current session
+    Remove prompt template from the current session.
+
+    Args:
+        session_id (str): The unique identifier of the session.
+        prompt_template_name (str): The name of the prompt template to remove.
+        session_service (SessionService): The service responsible for managing session prompt templates.
+
+    Returns:
+        Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.
+
+    Raises:
+        HTTPException: An error with status code 404 if the prompt template is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
     """
     try:
-        # rely on exception for now. TODO - ms lib to return or raise feedback
-        session_service.select_prompt_template(session_id,"")
-        return {"success": True }
+        session_service.select_prompt_template(session_id, "")
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -187,13 +307,27 @@ async def unset_prompt_template(
 async def set_context_strategy(
     session_id: str,
     ctx_strategy_name: str,
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, bool]:
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> Dict[str, bool]:
+    """
+    Set a context strategy for the current session.
 
+    Args:
+        session_id (str): The unique identifier of the session.
+        ctx_strategy_name (str): The name of the context strategy to set.
+        session_service (SessionService): The service responsible for managing session context strategies.
+
+    Returns:
+        Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.
+
+    Raises:
+        HTTPException: An error with status code 404 if the context strategy is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
-        # rely on exception for now. TODO - ms lib to return or raise feedback
         session_service.select_ctx_strategy(session_id, ctx_strategy_name)
-        return {"success": True }
+        return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -207,12 +341,26 @@ async def set_context_strategy(
 @inject
 async def unset_context_strategy(
     session_id: str,
-    ctx_strategy_name: str = '',
-    session_service: SessionService = Depends(Provide[Container.session_service])
-    ) -> dict[str, bool]:
+    ctx_strategy_name: str = "",
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+) -> Dict[str, bool]:
+    """
+    Remove a context strategy from the current session.
 
+    Args:
+        session_id (str): The unique identifier of the session.
+        ctx_strategy_name (str): The name of the context strategy to remove.
+        session_service (SessionService): The service responsible for managing session context strategies.
+
+    Returns:
+        Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.
+
+    Raises:
+        HTTPException: An error with status code 404 if the context strategy is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
     try:
-        # rely on exception for now. TODO - ms lib to return or raise feedback
         session_service.select_ctx_strategy(session_id, "")
         return {"success": True}
     except ServiceException as e:

@@ -1,5 +1,23 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, Union
+from typing_extensions import TypedDict
+
+
+class Parameters(TypedDict, total=False):
+    max_length: int
+    min_length: int
+
+
+class Params(TypedDict, total=False):
+    timeout: int
+    allow_retries: bool
+    num_of_retries: int
+    temperature: float
+    pre_prompt: str
+    post_prompt: str
+    parameters: Parameters
+
 
 class EndpointDataModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -10,4 +28,5 @@ class EndpointDataModel(BaseModel):
     token: str
     max_calls_per_second: int
     max_concurrency: int
-    params: Optional[dict[str, Union[str, int]]] = None
+    created_date: str
+    params: Optional[Params] = None

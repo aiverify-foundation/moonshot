@@ -3,11 +3,28 @@ from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleA
 
 
 class SampleAttackModule(AttackModule):
-    def __init__(self, am_arguments: AttackModuleArguments | None = None):
+    def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         # Initialize super class
-        super().__init__(am_arguments)
+        super().__init__(am_id, am_arguments)
         self.name = "Sample Attack Module"
         self.description = "This is a sample attack module."
+
+    def get_metadata(self) -> dict:
+        """
+        Get metadata for the attack module.
+
+        Returns a dictionary containing the id, name, and description of the attack module. If the name or description
+        is not available, empty strings are returned.
+
+        Returns:
+            dict | None: A dictionary containing the metadata of the attack module, or None if the metadata is not
+            available.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description if hasattr(self, "description") else "",
+        }
 
     async def execute(self):
         """

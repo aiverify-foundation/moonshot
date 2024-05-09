@@ -1,101 +1,140 @@
-from fastapi import APIRouter, Depends, HTTPException
-from dependency_injector.wiring import inject, Provide
+from typing import Optional
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
 from ..schemas.recipe_create_dto import RecipeCreateDTO
-from ..schemas.recipe_response_dto import RecipeResponseDTO
-
+from ..schemas.recipe_response_model import RecipeResponseModel
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
-from typing import Optional
-from typing import List
-from fastapi import Query
-
 
 router = APIRouter()
+
 
 @router.post("/api/v1/recipes")
 @inject
 def create_recipe(
     recipe_data: RecipeCreateDTO,
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ):
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
+) -> dict[str, str]:
     """
-    Add a new recipe to the database
+    Endpoint to add a new recipe to the database.
+
+    Parameters:
+        recipe_data (RecipeCreateDTO): The data transfer object containing the recipe details.
+        recipe_service (RecipeService): The service layer responsible for the creation logic.
+
+    Returns:
+        dict[str, str]: A dictionary with a message indicating the successful creation of the recipe.
+
+    Raises:
+        HTTPException: 404 if the recipe cannot be created because the file is not found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe_service.create_recipe(recipe_data)
         return {"message": "Recipe created successfully"}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to create recipe: {e.msg}")
+            raise HTTPException(
+                status_code=404, detail=f"Failed to create recipe: {e.msg}"
+            )
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to create recipe: {e.msg}")
+            raise HTTPException(
+                status_code=400, detail=f"Failed to create recipe: {e.msg}"
+            )
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to create recipe: {e.msg}")    
+            raise HTTPException(
+                status_code=500, detail=f"Failed to create recipe: {e.msg}"
+            )
 
 
 @router.get("/api/v1/recipes")
 @inject
 def get_all_recipes(
-    tags: str = Query(None, description="Filter recipes by tags"),
-    sort_by: str = Query(None, description="Sort recipes by a specific field"),
+    ids: Optional[str] = Query(None, description="Get recipes to query"),
+    tags: Optional[str] = Query(None, description="Filter recipes by tags"),
+    categories: str = Query(None, description="Filter recipes by categories"),
+    sort_by: Optional[str] = Query(None, description="Sort recipes by a specific field"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ):
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
+) -> list[RecipeResponseModel]:
     """
-    Get all the recipes from the database
+    Endpoint to retrieve all recipes from the database, with optional filters, sorting, and count inclusion.
+
+    Parameters:
+        ids (str, optional): Filter to retrieve recipes by list of comma separated recipe ids.
+        tags (str, optional): Filter to retrieve recipes by tags.
+        categories (str, optional): Filter to retrieve recipes by categories.
+        sort_by (str, optional): Parameter to sort recipes by a specific field.
+        count (bool, optional): Flag to indicate whether to include the count of recipes in the response.
+        recipe_service (RecipeService): The service layer responsible for the retrieval logic.
+
+    Returns:
+        list[RecipeResponseModel]: A list of recipe, filtered, sorted, and with counts.
+
+    Raises:
+        HTTPException: 404 if no recipes are found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
-        recipes = recipe_service.get_all_recipes(tags=tags, sort_by=sort_by, count=count)
+        recipes = recipe_service.get_all_recipes(
+            tags=tags, categories=categories, sort_by=sort_by, count=count, ids=ids
+        )
         return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes: {e.msg}")
+            raise HTTPException(
+                status_code=404, detail=f"Failed to retrieve recipes: {e.msg}"
+            )
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes: {e.msg}")
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve recipes: {e.msg}"
+            )
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes: {e.msg}")
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve recipes: {e.msg}"
+            )
 
 
 @router.get("/api/v1/recipes/name")
 @inject
-def get_all_recipes_name(recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ):
+def get_all_recipes_name(
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
+) -> list[str]:
     """
-    Get all the recipes name from the database
+    Endpoint to retrieve all recipe names from the database.
+
+    Parameters:
+        recipe_service (RecipeService): The service layer responsible for retrieving recipe names.
+
+    Returns:
+        list[str]: A list of recipe names.
+
+    Raises:
+        HTTPException: 404 if no recipe names are found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipes = recipe_service.get_all_recipes_name()
         return recipes
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipes name: {e.msg}")
+            raise HTTPException(
+                status_code=404, detail=f"Failed to retrieve recipe names: {e.msg}"
+            )
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipes name: {e.msg}")
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve recipe names: {e.msg}"
+            )
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipes name: {e.msg}")       
-                         
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve recipe names: {e.msg}"
+            )
 
-@router.get("/api/v1/recipes/ids/")
-@inject 
-def get_recipe_by_ids(
-    recipe_id: str = Query(None, description="Get recipes to query"),
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> list[RecipeResponseDTO | None]:
-    """
-    Get a recipe from the database
-    """
-    try:
-        recipe = recipe_service.get_recipe_by_ids(recipe_id)
-        return recipe
-    except ServiceException as e:
-        if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to retrieve recipe: {e.msg}")
-        elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to retrieve recipe: {e.msg}")
-        else:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve recipe: {e.msg}")
 
 
 @router.put("/api/v1/recipes/{recipe_id}")
@@ -103,38 +142,76 @@ def get_recipe_by_ids(
 async def update_recipe(
     recipe_data: RecipeCreateDTO,
     recipe_id: str,
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> dict[str, str] | tuple[dict[str, str], int]:
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
+) -> dict[str, str]:
     """
-    Update an existing recipe in the database
+    Endpoint to update an existing recipe in the database by its ID.
+
+    Parameters:
+        recipe_data (RecipeCreateDTO): The data transfer object containing the updated recipe details.
+        recipe_id (str): The unique identifier of the recipe to update.
+        recipe_service (RecipeService): The service layer responsible for the update logic.
+
+    Returns:
+        dict[str, str]: A dictionary with a message indicating the successful update of the recipe.
+
+    Raises:
+        HTTPException: 404 if the recipe to be updated cannot be found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
     """
     try:
         recipe_service.update_recipe(recipe_data, recipe_id)
         return {"message": "Recipe updated successfully"}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to update recipe: {e.msg}")
+            raise HTTPException(
+                status_code=404, detail=f"Failed to update recipe: {e.msg}"
+            )
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to update recipe: {e.msg}")
+            raise HTTPException(
+                status_code=400, detail=f"Failed to update recipe: {e.msg}"
+            )
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to update recipe: {e.msg}")
-        
+            raise HTTPException(
+                status_code=500, detail=f"Failed to update recipe: {e.msg}"
+            )
+
 
 @router.delete("/api/v1/recipes/{recipe_id}")
 @inject
 def delete_recipe(
     recipe_id: str,
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service])
-    ) -> dict[str, str] | tuple[dict[str, str], int]:
+    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
+) -> dict[str, str]:
+    """
+    Endpoint to delete a recipe from the database by its ID.
 
+    Parameters:
+        recipe_id (str): The unique identifier of the recipe to delete.
+        recipe_service (RecipeService): The service layer responsible for the deletion logic.
+
+    Returns:
+        dict[str, str]: A dictionary with a message indicating the successful deletion of the recipe.
+
+    Raises:
+        HTTPException: 404 if the recipe to be deleted cannot be found.
+                       400 if there is a validation error with the provided data.
+                       500 for any other internal server error.
+    """
     try:
         recipe_service.delete_recipe(recipe_id)
         return {"message": "Recipe deleted successfully"}
     except ServiceException as e:
         if e.error_code == "FileNotFound":
-            raise HTTPException(status_code=404, detail=f"Failed to delete recipe: {e.msg}")
+            raise HTTPException(
+                status_code=404, detail=f"Failed to delete recipe: {e.msg}"
+            )
         elif e.error_code == "ValidationError":
-            raise HTTPException(status_code=400, detail=f"Failed to delete recipe: {e.msg}")
+            raise HTTPException(
+                status_code=400, detail=f"Failed to delete recipe: {e.msg}"
+            )
         else:
-            raise HTTPException(status_code=500, detail=f"Failed to delete recipe: {e.msg}")    
-    
+            raise HTTPException(
+                status_code=500, detail=f"Failed to delete recipe: {e.msg}"
+            )

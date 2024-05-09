@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, Callable
 from pydantic import ValidationError
 
@@ -12,15 +13,29 @@ class ServiceException(Exception):
         super().__init__(message)
 
 def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        try:
-            return func(*args, **kwargs)
-        except FileNotFoundError as e:
-            raise ServiceException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
-        except ValidationError as e:
-            raise ServiceException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
-        except ValueError as e:
-            raise ServiceException(f"An value error occurred: {e}", func.__name__, "ValueError")
-        except Exception as e:
-            raise ServiceException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
-    return wrapper
+    if asyncio.iscoroutinefunction(func):
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return await func(*args, **kwargs)
+            except FileNotFoundError as e:
+                raise ServiceException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
+            except ValidationError as e:
+                raise ServiceException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
+            except ValueError as e:
+                raise ServiceException(f"An value error occurred: {e}", func.__name__, "ValueError")
+            except Exception as e:
+                raise ServiceException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
+        return async_wrapper
+    else:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except FileNotFoundError as e:
+                raise ServiceException(f"A file not found error occurred: {e}", func.__name__, "FileNotFound")
+            except ValidationError as e:
+                raise ServiceException(f"A validation error occurred: {e}", func.__name__, "ValidationError")
+            except ValueError as e:
+                raise ServiceException(f"An value error occurred: {e}", func.__name__, "ValueError")
+            except Exception as e:
+                raise ServiceException(f"An unexpected error occurred: {e}", func.__name__, "UnexpectedError")
+        return wrapper
