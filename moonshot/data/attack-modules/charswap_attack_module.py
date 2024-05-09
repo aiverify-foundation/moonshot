@@ -28,7 +28,7 @@ class CharSwapGenerator(AttackModule):
         super().__init__(am_id, am_arguments)
         self.name = "Character Swap Attack"
         self.description = (
-            "About this attack module:\nThis module creates perturbations through swapping characters"
+            "About this attack module:\nThis module creates perturbations through swapping characters "
             "for words that contains more than 3 characters.\nParameters:\n1. MAX_ITERATIONS - Number "
             "of prompts that should be sent to the target. [Default: 10]\n2. word_swap_ratio -"
             "Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n"
