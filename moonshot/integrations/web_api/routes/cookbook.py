@@ -59,6 +59,9 @@ def get_all_cookbooks(
     categories: Optional[str] = Query(
         None, description="Filter cookbooks by categories"
     ),
+    categories_excluded: Optional[str] = Query(
+        None, description="Filter out (exlude) cookbooks by categories"
+    ),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service]),
 ) -> list[CookbookResponseModel]:
@@ -69,6 +72,7 @@ def get_all_cookbooks(
         ids (Optional[str]): A string to filter cookbooks by ids.
         tags (Optional[str]): A string to filter cookbooks by tags.
         categories (Optional[str]): A string to filter cookbooks by categories.
+        categories_excluded (Optional[str]): A string to filter out (exclude) cookbooks by categories.
         count (bool): A flag to decide if the count of recipes should be included.
         cookbook_service (CookbookService): The service layer responsible for retrieval logic.
 
@@ -82,7 +86,7 @@ def get_all_cookbooks(
     """
     try:
         cookbooks = cookbook_service.get_all_cookbooks(
-            tags=tags, categories=categories, count=count, ids=ids
+            tags=tags, categories=categories, count=count, ids=ids, categories_excluded=categories_excluded
         )
         return cookbooks
     except ServiceException as e:
