@@ -1,3 +1,4 @@
+from typing import Optional
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -52,9 +53,10 @@ def create_recipe(
 @router.get("/api/v1/recipes")
 @inject
 def get_all_recipes(
-    tags: str = Query(None, description="Filter recipes by tags"),
+    ids: Optional[str] = Query(None, description="Get recipes to query"),
+    tags: Optional[str] = Query(None, description="Filter recipes by tags"),
     categories: str = Query(None, description="Filter recipes by categories"),
-    sort_by: str = Query(None, description="Sort recipes by a specific field"),
+    sort_by: Optional[str] = Query(None, description="Sort recipes by a specific field"),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> list[RecipeResponseModel]:
@@ -62,6 +64,7 @@ def get_all_recipes(
     Endpoint to retrieve all recipes from the database, with optional filters, sorting, and count inclusion.
 
     Parameters:
+        ids (str, optional): Filter to retrieve recipes by list of comma separated recipe ids.
         tags (str, optional): Filter to retrieve recipes by tags.
         categories (str, optional): Filter to retrieve recipes by categories.
         sort_by (str, optional): Parameter to sort recipes by a specific field.
@@ -78,7 +81,7 @@ def get_all_recipes(
     """
     try:
         recipes = recipe_service.get_all_recipes(
-            tags=tags, categories=categories, sort_by=sort_by, count=count
+            tags=tags, categories=categories, sort_by=sort_by, count=count, ids=ids
         )
         return recipes
     except ServiceException as e:
@@ -132,44 +135,6 @@ def get_all_recipes_name(
                 status_code=500, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
 
-
-@router.get("/api/v1/recipes/ids/")
-@inject
-def get_recipe_by_ids(
-    recipe_id: str = Query(None, description="Get recipes to query"),
-    recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
-) -> list[RecipeResponseModel]:
-    """
-    Endpoint to retrieve a specific recipe by its ID from the database.
-
-    Parameters:
-        recipe_id (str): The unique identifier of the recipe to retrieve.
-        recipe_service (RecipeService): The service layer responsible for the retrieval logic.
-
-    Returns:
-        list[RecipeResponseModel]: A list containing the RecipeResponseModel instance corresponding to the provided ID.
-
-    Raises:
-        HTTPException: 404 if the recipe with the given ID cannot be found.
-                       400 if there is a validation error with the provided data.
-                       500 for any other internal server error.
-    """
-    try:
-        recipe = recipe_service.get_recipe_by_ids(recipe_id)
-        return recipe
-    except ServiceException as e:
-        if e.error_code == "FileNotFound":
-            raise HTTPException(
-                status_code=404, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
-        elif e.error_code == "ValidationError":
-            raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
-        else:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve recipe: {e.msg}"
-            )
 
 
 @router.put("/api/v1/recipes/{recipe_id}")

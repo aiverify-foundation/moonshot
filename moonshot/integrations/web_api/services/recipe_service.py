@@ -1,3 +1,4 @@
+from typing import Optional
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
@@ -30,12 +31,13 @@ class RecipeService(BaseService):
 
     @exception_handler
     def get_all_recipes(
-        self, tags: str, categories: str, sort_by: str, count: bool
+        self, tags: str, categories: str, sort_by: str, count: bool, ids: str | None = None
     ) -> list[RecipeResponseModel]:
         """
         Retrieve all recipes, with optional filters for tags, categories, sorting, and including prompt counts.
 
         Args:
+            ids (str, optional): Filter recipes by IDs. If None, no ID-based filtering is applied.
             tags (str, optional): Filter recipes by tags. If None, no tag-based filtering is applied.
             categories (str, optional): Filter recipes by categories. If None, no category-based filtering is applied.
             sort_by (str, optional): Sort recipes by a specified field. If None, no sorting is applied.
@@ -44,30 +46,41 @@ class RecipeService(BaseService):
         Returns:
             list[RecipeResponseModel]: A list of recipe, filtered and sorted, with optional prompt counts.
         """
-        retn_recipes = []
-        recipes = moonshot_api.api_get_all_recipe()
+        filtered_recipes: list[RecipeResponseModel] = []
+        
+        if ids:
+            recipe_ids = ids.split(',')
+            recipes = [moonshot_api.api_read_recipe(id) for id in recipe_ids]
+        else:
+            recipes = moonshot_api.api_get_all_recipe()
+
 
         for recipe_dict in recipes:
-            recipe = Recipe(**recipe_dict)
-            retn_recipe = RecipeResponseModel(recipe=recipe)
+            recipe = RecipeResponseModel(**recipe_dict)
             if count:
-                retn_recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
-            retn_recipes.append(retn_recipe)
+                recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
+            filtered_recipes.append(recipe)
+
+        # TODO - do all filtering in 1 pass
         if tags:
-            retn_recipes = [
-                recipe for recipe in retn_recipes if tags in recipe.recipe.tags
+            filtered_recipes = [
+                recipe for recipe in filtered_recipes if tags in recipe.tags
             ]
+
         if categories:
-            retn_recipes = [
-                recipe
-                for recipe in retn_recipes
-                if categories in recipe.recipe.categories
-            ]
+            categories_list = categories.split(',') if categories else []
+            if categories_list:
+                filtered_recipes = [
+                    recipe
+                    for recipe in filtered_recipes
+                    if any(category.lower() in (cat.lower() for cat in recipe.categories) 
+                            for category in categories_list)
+                ]
         if sort_by:
             if sort_by == "id":
-                retn_recipes.sort(key=lambda x: x.recipe.id)
+                filtered_recipes.sort(key=lambda x: x.id)
 
-        return [RecipeResponseModel.model_validate(recipe) for recipe in retn_recipes]
+        return filtered_recipes
 
     @exception_handler
     def get_all_recipes_name(self) -> list[str]:
@@ -80,26 +93,6 @@ class RecipeService(BaseService):
         recipes = moonshot_api.api_get_all_recipe_name()
         return recipes
 
-    @exception_handler
-    def get_recipe_by_ids(self, recipe_id: str) -> list[RecipeResponseModel] | None:
-        """
-        Retrieve recipes by their IDs.
-
-        Args:
-            recipe_id (str): A comma-separated string of recipe IDs.
-
-        Returns:
-            list[RecipeResponseModel] | None: A list of recipe response models or None if no recipes found.
-        """
-        retn_recipes = []
-        recipe_id_list = recipe_id.split(",")
-        for id in recipe_id_list:
-            recipe_dict = moonshot_api.api_read_recipe(id)
-            recipe = Recipe(**recipe_dict)
-            retn_recipe = RecipeResponseModel(recipe=recipe)
-            retn_recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
-            retn_recipes.append(retn_recipe)
-        return [RecipeResponseModel.model_validate(recipe) for recipe in retn_recipes]
 
     @exception_handler
     def update_recipe(self, recipe_data: RecipeCreateDTO, recipe_id: str) -> None:
