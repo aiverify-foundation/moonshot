@@ -72,8 +72,12 @@ from moonshot.src.api.api_session import (
     api_get_all_session_names,
     api_get_available_session_info,
     api_load_session,
+    api_update_attack_module,
     api_update_context_strategy,
+    api_update_cs_num_of_prev_prompts,
+    api_update_metric,
     api_update_prompt_template,
+    api_update_system_prompt,
 )
 
 __all__ = [
@@ -130,7 +134,11 @@ __all__ = [
     "api_create_session",
     "api_get_all_chats_from_session",
     "api_update_context_strategy",
+    "api_update_cs_num_of_prev_prompts",
     "api_update_prompt_template",
+    "api_update_metric",
+    "api_update_system_prompt",
+    "api_update_attack_module",
     "api_get_all_attack_modules",
     "api_get_all_attack_module_metadata",
 ]
