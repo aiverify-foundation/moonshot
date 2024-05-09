@@ -17,7 +17,7 @@ class AttackModuleService(BaseService):
         """
         attack_modules = moonshot_api.api_get_all_attack_modules()
         return attack_modules
-    
+
     @exception_handler
     def get_all_attack_module_metadata(self) -> list[dict]:
         """

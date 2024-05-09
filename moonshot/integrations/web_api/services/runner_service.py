@@ -45,7 +45,9 @@ class RunnerService(BaseService):
 
     @exception_handler
     def load_runner(
-        self, runner_id: str, progress_callback_func: Callable[[TestRunProgress], None] = None,
+        self,
+        runner_id: str,
+        progress_callback_func: Callable[[TestRunProgress], None] = None,
     ) -> Runner:
         return moonshot_api.api_load_runner(
             runner_id, progress_callback_func=progress_callback_func
