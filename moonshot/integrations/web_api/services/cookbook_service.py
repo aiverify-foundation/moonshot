@@ -26,12 +26,13 @@ class CookbookService(BaseService):
 
     @exception_handler
     def get_all_cookbooks(
-        self, tags: str, categories: str, count: bool
+        self, tags: str, categories: str, count: bool, ids: str | None = None
     ) -> list[CookbookResponseModel]:
         """
         Retrieve all cookbooks, optionally filtered by tags and categories, and with prompt counts.
 
         Args:
+            ids (str): Filter cookbooks by IDs.
             tags (str): Filter cookbooks by tags.
             categories (str): Filter cookbooks by categories.
             count (bool): Include the total prompt count in each cookbook.
@@ -39,27 +40,30 @@ class CookbookService(BaseService):
         Returns:
             list[CookbookResponseModel]: A list of cookbook response models.
         """
-        retn_cookbooks = []
-        cookbooks = moonshot_api.api_get_all_cookbook()
+        cookbooks_list = []
+
+        if ids:
+            cookbook_ids = ids.split(',')
+            cookbooks = [moonshot_api.api_read_cookbook(cookbook_id) for cookbook_id in cookbook_ids]
+        else:
+            cookbooks = moonshot_api.api_get_all_cookbook()
+
+
         for cookbook_dict in cookbooks:
-            cookbook = Cookbook(**cookbook_dict)
-            retn_cookbook = CookbookResponseModel(cookbook=cookbook)
+            cookbook = CookbookResponseModel(**cookbook_dict)
             if count:
-                retn_cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
+                cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
                     cookbook
                 )
             if not tags and not categories:
-                retn_cookbooks.append(retn_cookbook)
+                cookbooks_list.append(cookbook)
             if tags and cookbooks_recipe_has_tags(tags, cookbook):
-                retn_cookbooks.append(retn_cookbook)
+                cookbooks_list.append(cookbook)
             if categories and cookbooks_recipe_has_categories(categories, cookbook):
-                if cookbook not in retn_cookbooks:
-                    retn_cookbooks.append(retn_cookbook)
+                if cookbook not in cookbooks_list:
+                    cookbooks_list.append(cookbook)
 
-        return [
-            CookbookResponseModel.model_validate(cookbook)
-            for cookbook in retn_cookbooks
-        ]
+        return cookbooks_list
 
     @exception_handler
     def get_all_cookbooks_names(self) -> list[str]:
@@ -72,31 +76,6 @@ class CookbookService(BaseService):
         cookbooks = moonshot_api.api_get_all_cookbook_name()
         return cookbooks
 
-    @exception_handler
-    def get_cookbook_by_ids(self, cookbook_id: str) -> list[CookbookResponseModel]:
-        """
-        Retrieve cookbooks by their IDs.
-
-        Args:
-            cookbook_id (str): A comma-separated string of cookbook IDs.
-
-        Returns:
-            list[CookbookResponseModel]: A list of cookbook response models.
-        """
-        retn_cookbooks = []
-        cb_id_list = cookbook_id.split(",")
-        for id in cb_id_list:
-            cookbook_dict = moonshot_api.api_read_cookbook(id)
-            cookbook = Cookbook(**cookbook_dict)
-            retn_cookbook = CookbookResponseModel(cookbook=cookbook)
-            retn_cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
-                cookbook
-            )
-            retn_cookbooks.append(retn_cookbook)
-        return [
-            CookbookResponseModel.model_validate(cookbook)
-            for cookbook in retn_cookbooks
-        ]
 
     @exception_handler
     def update_cookbook(
@@ -181,6 +160,7 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:
         recipe = Recipe(**recipe)
-        if categories in recipe.categories:
+        if categories.lower() in (
+            cat.lower() for cat in recipe.categories):
             return True
     return False

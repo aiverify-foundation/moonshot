@@ -1,10 +1,7 @@
 from typing import Optional
 
-from pydantic import BaseModel
-
-from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
+from moonshot.src.recipes.recipe_arguments import RecipeArguments as RecipePydanticModel
 
 
-class RecipeResponseModel(BaseModel):
-    recipe: Recipe
+class RecipeResponseModel(RecipePydanticModel):
     total_prompt_in_recipe: Optional[int] = None

@@ -54,6 +54,7 @@ def create_cookbook(
 @router.get("/api/v1/cookbooks")
 @inject
 def get_all_cookbooks(
+    ids: Optional[str] = Query(None, description="Get recipes to query"),
     tags: Optional[str] = Query(None, description="Filter cookbooks by tags"),
     categories: Optional[str] = Query(
         None, description="Filter cookbooks by categories"
@@ -65,6 +66,7 @@ def get_all_cookbooks(
     Endpoint to retrieve a list of all cookbooks, with optional filtering.
 
     Parameters:
+        ids (Optional[str]): A string to filter cookbooks by ids.
         tags (Optional[str]): A string to filter cookbooks by tags.
         categories (Optional[str]): A string to filter cookbooks by categories.
         count (bool): A flag to decide if the count of recipes should be included.
@@ -80,7 +82,7 @@ def get_all_cookbooks(
     """
     try:
         cookbooks = cookbook_service.get_all_cookbooks(
-            tags=tags, categories=categories, count=count
+            tags=tags, categories=categories, count=count, ids=ids
         )
         return cookbooks
     except ServiceException as e:
@@ -134,44 +136,6 @@ def get_all_cookbooks_name(
                 status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}"
             )
 
-
-@router.get("/api/v1/cookbooks/ids/")
-@inject
-def get_cookbook_by_id(
-    cookbook_id: Optional[str] = Query(None, description="Get cookbooks to query"),
-    cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service]),
-) -> list[CookbookResponseModel]:
-    """
-    Endpoint to retrieve a specific cookbook by its ID from the database.
-
-    Parameters:
-        cookbook_id (Optional[str]): The unique identifier of the cookbook to retrieve.
-        cookbook_service (CookbookService): The service layer responsible for the retrieval logic.
-
-    Returns:
-        CookbookResponseModel: The CookbookResponseModel instance corresponding to the provided ID.
-
-    Raises:
-        HTTPException: 404 if the cookbook with the given ID cannot be found.
-                       400 if there is a validation error with the provided ID.
-                       500 for any other internal server error.
-    """
-    try:
-        cookbook = cookbook_service.get_cookbook_by_ids(cookbook_id)
-        return cookbook
-    except ServiceException as e:
-        if e.error_code == "FileNotFound":
-            raise HTTPException(
-                status_code=404, detail=f"Failed to retrieve cookbook: {e.msg}"
-            )
-        elif e.error_code == "ValidationError":
-            raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve cookbook: {e.msg}"
-            )
-        else:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve cookbook: {e.msg}"
-            )
 
 
 @router.put("/api/v1/cookbooks/{cookbook_id}")

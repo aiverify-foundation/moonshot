@@ -64,6 +64,7 @@ def get_all_recipes(
     Endpoint to retrieve all recipes from the database, with optional filters, sorting, and count inclusion.
 
     Parameters:
+        ids (str, optional): Filter to retrieve recipes by list of comma separated recipe ids.
         tags (str, optional): Filter to retrieve recipes by tags.
         categories (str, optional): Filter to retrieve recipes by categories.
         sort_by (str, optional): Parameter to sort recipes by a specific field.
