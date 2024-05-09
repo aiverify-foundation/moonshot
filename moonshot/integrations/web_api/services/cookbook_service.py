@@ -157,10 +157,11 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
         bool: True if any recipe in the cookbook has the specified categories, False otherwise.
     """
     recipe_ids = cookbook.recipes
+    categories_list = [category.lower() for category in categories.split(',')]
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:
         recipe = Recipe(**recipe)
-        if categories.lower() in (
-            cat.lower() for cat in recipe.categories):
+        if any(category.lower() in recipe.categories for category in categories_list):
+            # TODO - handle spaces in categories like 'Trust & Safety'
             return True
     return False
