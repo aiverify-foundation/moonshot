@@ -25,7 +25,7 @@ class FoolerGenerator(AttackModule):
         # Initialize super class
         super().__init__(am_id, am_arguments)
         self.name = "TextFooler Attack"
-        self.description = ("About this attack module:\nThis module implements the perturbations listed in the paper Is"
+        self.description = ("About this attack module:\nThis module implements the perturbations listed in the paper Is "
         "BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment."
         "\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the "
         "number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in "
