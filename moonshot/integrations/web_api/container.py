@@ -73,7 +73,9 @@ class Container(containers.DeclarativeContainer):
         runner_service=runner_service,
     )
     session_service: providers.Singleton[SessionService] = providers.Singleton(
-        SessionService
+        SessionService,
+        progress_status_updater=webhook,
+        runner_service=runner_service,
     )
     prompt_template_service: providers.Singleton[
         PromptTemplateService
