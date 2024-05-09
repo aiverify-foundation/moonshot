@@ -72,4 +72,5 @@ class ReadabilityScore(MetricInterface):
             "readabilityscore": temp_score,
             "valid_response": len(predicted_results) - len(response_less_than_100),
             "invalid_response": response_less_than_100,
+            "grading_criteria": {},
         }

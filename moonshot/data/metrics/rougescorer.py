@@ -96,7 +96,7 @@ class RougeScorer(MetricInterface):
                 }
 
             # Return the final rouge scores dictionary
-            return {"rouge": output_dict}
+            return {"rouge": output_dict, "grading_criteria": {}}
 
         except Exception as exception:
             # Raise an error if there is an exception during calculation

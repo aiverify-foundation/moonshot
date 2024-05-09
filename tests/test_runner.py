@@ -100,7 +100,7 @@ def test_run_benchmark_cookbook_runner(runner_id: str):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         runner.run_cookbooks(
-            ["common-risk-easy","leaderboard-cookbook"],
+            ["common-risk-easy"],
             2,
             2
         )

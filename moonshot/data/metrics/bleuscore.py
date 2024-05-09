@@ -58,4 +58,7 @@ class BleuScore(MetricInterface):
             score = sentence_bleu(output_split, target_split)
             bleu_scores.append(score)
 
-        return {"bleu_score": statistics.mean(bleu_scores)}
+        return {
+            "bleu_score": statistics.mean(bleu_scores),
+            "grading_criteria": {"bleu_score": statistics.mean(bleu_scores)},
+        }

@@ -68,4 +68,5 @@ class LeakageRate(MetricInterface):
             "q1_leakage_rate": q1,
             "q2_leakage_rate": q2,
             "q3_leakage_rate": q3,
+            "grading_criteria": {},
         }
