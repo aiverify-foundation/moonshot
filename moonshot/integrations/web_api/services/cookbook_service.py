@@ -162,7 +162,7 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
     for recipe in recipes:
         recipe = Recipe(**recipe)
         if any(
-            category.lower() in [rcat.lower() for rcat in recipe.categories]
+            category in [rcat.lower() for rcat in recipe.categories]
             for category in categories_list):
             # TODO - handle spaces in categories like 'Trust & Safety'
             return True
