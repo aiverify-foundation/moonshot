@@ -79,27 +79,41 @@ class SQLite(DBInterface):
 
     def create_record(self, record: tuple, create_record_sql: str) -> tuple | None:
         """
-        Inserts a new record into the SQLite database using the provided SQL query and record.
+        Inserts a new record into the SQLite database using the provided SQL query and record data.
 
-        This method attempts to insert a new record into the SQLite database using the provided SQL query and record.
-        If the connection to the SQLite database is established, it executes the SQL query with the record.
+        This method attempts to insert a new record into the SQLite database using the provided SQL query
+        and record data.
+
+        If the connection to the SQLite database is established, it executes the SQL query with the record data.
+
+        If the operation is successful, it commits the transaction and returns the ID of the inserted record along
+        with the record data.
+
         If an error occurs during the record insertion process, it prints an error message with the details of the
         SQLite error and returns None.
 
         Args:
-            record (tuple): The record to be inserted into the database.
-            create_record_sql (str): The SQL query to insert a record.
+            record (tuple): The data of the record to be inserted.
+            create_record_sql (str): The SQL query to insert a new record.
 
         Returns:
-            tuple: The inserted record if the operation is successful, None otherwise.
+            tuple | None: A tuple containing the ID of the inserted record and the record data if the operation
+            is successful, None otherwise.
         """
         if self.sqlite_conn:
             try:
                 with self.sqlite_conn:
-                    self.sqlite_conn.execute(create_record_sql, record)
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(create_record_sql, record)
+                    self.sqlite_conn.commit()
+                    # Fetch the lastrowid (auto-incremented ID)
+                    inserted_id = cursor.lastrowid
+                    # Return the complete record including the inserted_id
+                    return (inserted_id,) + record
 
             except sqlite3.Error as sqlite3_error:
                 print(f"Error inserting record into database - {str(sqlite3_error)}")
+        return None
 
     def read_record(self, record: tuple, read_record_sql: str) -> tuple | None:
         """

@@ -9,8 +9,8 @@ from moonshot.src.storage.storage import Storage
 class RunProgress:
     sql_update_run_record = """
         UPDATE run_table SET runner_id=?,runner_type=?,runner_args=?,endpoints=?,results_file=?,start_time=?,end_time=?,
-        duration=?,error_messages=?,results=?,status=?
-        WHERE run_id=(SELECT MAX(run_id) FROM run_table)
+        duration=?,error_messages=?,raw_results=?,results=?,status=?
+        WHERE run_id=?
     """
 
     def __init__(

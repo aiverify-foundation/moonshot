@@ -28,14 +28,15 @@ class Run:
         end_time INTEGER NOT NULL,
         duration INTEGER NOT NULL,
         error_messages text NOT NULL,
+        raw_results text NOT NULL,
         results text NOT NULL,
         status text NOT NULL
         );
     """
     sql_create_run_record = """
         INSERT INTO run_table (
-        runner_id,runner_type,runner_args,endpoints,results_file,start_time,end_time,duration,error_messages,results,status)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
+        runner_id,runner_type,runner_args,endpoints,results_file,start_time,end_time,duration,error_messages,raw_results,results,status)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
     sql_read_run_record = """
         SELECT * from run_table WHERE run_id=?
@@ -69,6 +70,7 @@ class Run:
             end_time=0.0,
             duration=0,
             error_messages=[],
+            raw_results={},
             results={},
             status=RunStatus.PENDING,
         )
@@ -196,11 +198,17 @@ class Run:
 
             # Create a new run record in database
             if self.run_arguments.database_instance:
-                Storage.create_database_record(
+                inserted_record = Storage.create_database_record(
                     self.run_arguments.database_instance,
-                    self.run_arguments.to_tuple(),
+                    self.run_arguments.to_create_tuple(),
                     Run.sql_create_run_record,
                 )
+                if inserted_record:
+                    self.run_arguments.run_id = inserted_record[0]
+                else:
+                    raise RuntimeError(
+                        "[Run] Failed to create record: record not inserted."
+                    )
             else:
                 raise RuntimeError(
                     "[Run] Failed to create record: db_instance is not initialised."
@@ -286,6 +294,10 @@ class Run:
                 updated_runner_results = result_module_instance.generate(  # type: ignore ; ducktyping
                     runner_results
                 )
+                if updated_runner_results:
+                    self.run_progress.notify_progress(
+                        results=updated_runner_results.results
+                    )
             else:
                 raise RuntimeError("Failed to initialise result module instance.")
 

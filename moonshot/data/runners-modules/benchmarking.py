@@ -144,7 +144,8 @@ class Benchmarking:
 
                     # Update progress
                     self.run_progress.notify_progress(
-                        cookbook_index=len(self.cookbooks), results=benchmark_results
+                        cookbook_index=len(self.cookbooks),
+                        raw_results=benchmark_results,
                     )
 
                 elif self.recipes:
@@ -168,7 +169,7 @@ class Benchmarking:
 
                     # Update progress
                     self.run_progress.notify_progress(
-                        recipe_index=len(self.recipes), results=benchmark_results
+                        recipe_index=len(self.recipes), raw_results=benchmark_results
                     )
 
                 else:
@@ -221,7 +222,7 @@ class Benchmarking:
                 end_time=self.run_progress.run_arguments.end_time,
                 duration=self.run_progress.run_arguments.duration,
                 status=self.run_progress.run_arguments.status,
-                raw_results=self.run_progress.run_arguments.results,
+                raw_results=self.run_progress.run_arguments.raw_results,
                 params={
                     "recipes": self.recipes,
                     "cookbooks": self.cookbooks,

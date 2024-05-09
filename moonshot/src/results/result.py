@@ -5,58 +5,31 @@ from pathlib import Path
 from pydantic.v1 import validate_arguments
 
 from moonshot.src.configs.env_variables import EnvVariables
-from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.storage.storage import Storage
 
 
 class Result:
-    def __init__(self, result_args: ResultArguments) -> None:
-        self.id = result_args.id
-        self.start_time = result_args.start_time
-        self.end_time = result_args.end_time
-        self.duration = result_args.duration
-        self.raw_results = result_args.raw_results
-        self.results = result_args.results
-        self.status = result_args.status
-        self.params = result_args.params
-
-    @classmethod
-    def load(cls, result_id: str) -> Result:
-        """
-        Loads a result instance by its ID.
-
-        This method attempts to load a result instance using the provided ID by reading the corresponding data from
-        storage. It then instantiates a Result object with the loaded data.
-
-        Args:
-            result_id (str): The unique identifier of the result to be retrieved.
-
-        Returns:
-            Result: The instantiated result object with the loaded data.
-        """
-        return cls(Result.read(result_id))
-
     @staticmethod
     @validate_arguments
-    def read(result_id: str) -> ResultArguments:
+    def read(result_id: str) -> dict:
         """
-        Reads the result data for a given result ID and returns a ResultArguments instance.
+        Reads the result data from storage for a given result ID.
 
-        This method attempts to read the result data associated with the provided result ID. If successful, it
-        returns a ResultArguments instance created from the retrieved data. If an error occurs, it prints an error
-        message and re-raises the exception.
+        This method attempts to retrieve the result data associated with the specified result ID from storage.
+        If the data is found, it is returned as a dictionary. If no data is found, an exception is raised and
+        an error message is printed.
 
         Args:
             result_id (str): The unique identifier of the result to be read.
 
         Returns:
-            ResultArguments: An instance of ResultArguments containing the result data.
+            dict: A dictionary containing the result data if found.
 
         Raises:
-            Exception: If any error occurs during the reading process.
+            Exception: If no result data is found or if an error occurs during the read operation.
         """
         try:
-            return ResultArguments(**Result._read_result(result_id))
+            return Result._read_result(result_id)
 
         except Exception as e:
             print(f"Failed to read result: {str(e)}")
@@ -108,21 +81,18 @@ class Result:
             raise e
 
     @staticmethod
-    def get_available_items() -> tuple[list[str], list[ResultArguments]]:
+    def get_available_items() -> tuple[list[str], list[dict]]:
         """
-        Retrieves all available result items.
+        Retrieves the list of available result IDs and their corresponding result data.
 
-        This method searches the storage for result objects, excluding any filenames that contain "__".
-        It reads the contents of each valid result file and constructs a ResultArguments object with the result details.
-        The method accumulates the result IDs and the corresponding ResultArguments objects into separate lists,
-        which are then returned together as a tuple.
+        This method queries the storage to obtain all the result objects, filters out any that are not relevant
+        (e.g., internal use objects with "__" in their name), and then reads the result data for each remaining
+        result ID. It returns a tuple containing a list of result IDs and a list of dictionaries with the result
+        data.
 
         Returns:
-            tuple[list[str], list[ResultArguments]]: A tuple containing two elements. The first is a list of result
-            IDs, and the second is a list of ResultArguments objects, each representing the details of a result.
-
-        Raises:
-            Exception: If any issues arise during the retrieval and processing of result files.
+            tuple[list[str], list[dict]]: A tuple with the first element being a list of result IDs and the
+            second element being a list of dictionaries containing the result data for each ID.
         """
         try:
             retn_results = []
@@ -131,9 +101,9 @@ class Result:
             for result in Storage.get_objects(EnvVariables.RESULTS.name, "json"):
                 if "__" in result:
                     continue
-                result_info = ResultArguments(**Result._read_result(Path(result).stem))
+                result_info = Result._read_result(Path(result).stem)
                 retn_results.append(result_info)
-                retn_results_ids.append(result_info.id)
+                retn_results_ids.append(Path(result).stem)
             return retn_results_ids, retn_results
 
         except Exception as e:
