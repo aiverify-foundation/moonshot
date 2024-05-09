@@ -79,4 +79,7 @@ class RelaxStrMatch(MetricInterface):
                 if result == target:
                     correct += 1
 
-        return {"relax_str_match": float(correct / total) * 100}
+        return {
+            "relax_str_match": float(correct / total) * 100,
+            "grading_criteria": {"relax_str_match": float(correct / total) * 100},
+        }

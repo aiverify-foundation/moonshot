@@ -22,7 +22,6 @@ from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
-from moonshot.src.results.result import Result
 from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
@@ -50,28 +49,26 @@ class Benchmarking:
         endpoints: list[str],
         run_progress: RunProgress,
         cancel_event: asyncio.Event,
-    ) -> dict:
+    ) -> ResultArguments | None:
         """
-        Asynchronously generates benchmarking data based on the provided arguments.
+        Asynchronously generates results based on the provided runner arguments and stores them in the database.
 
-        This method orchestrates the benchmarking process by preparing the environment, loading necessary instances,
-        and executing the benchmarking pipeline. It handles the generation of prompts, prediction of results, and
-        calculation of metrics for the given recipes and cookbooks.
+        This method orchestrates the benchmarking process by preparing the environment, running the recipes and
+        cookbooks and collecting the results
+
+        It leverages the provided database instance to cache and retrieve runner data.
 
         Args:
             event_loop (Any): The event loop in which asynchronous tasks will be scheduled.
             runner_args (dict): A dictionary containing arguments for the runner.
-            database_instance (DBAccessor | None): An instance of the database accessor for caching and retrieval.
-            endpoints (list[str]): A list of endpoints to be used for generating predictions.
-            run_progress (RunProgress): An instance to report progress and errors during the run.
-            cancel_event (asyncio.Event): An event to signal cancellation of the generation process.
+            database_instance (DBInterface | None): The database interface for storing and retrieving runner data.
+            endpoints (list[str]): A list of endpoint identifiers to be used in the benchmarking process.
+            run_progress (RunProgress): An object to report the progress of the run.
+            cancel_event (asyncio.Event): An event to signal cancellation of the process.
 
         Returns:
-            dict: A dictionary containing the benchmarking results, grouped by recipe and cookbook identifiers.
-
-        Raises:
-            RuntimeError: If the database instance is not provided or any other critical error occurs during the
-            benchmarking process.
+            ResultArguments | None: The result arguments object containing the results of the benchmarking process,
+            or None if the process is cancelled or fails to generate results.
         """
         try:
             if not database_instance:
@@ -147,7 +144,8 @@ class Benchmarking:
 
                     # Update progress
                     self.run_progress.notify_progress(
-                        cookbook_index=len(self.cookbooks), results=benchmark_results
+                        cookbook_index=len(self.cookbooks),
+                        raw_results=benchmark_results,
                     )
 
                 elif self.recipes:
@@ -171,7 +169,7 @@ class Benchmarking:
 
                     # Update progress
                     self.run_progress.notify_progress(
-                        recipe_index=len(self.recipes), results=benchmark_results
+                        recipe_index=len(self.recipes), raw_results=benchmark_results
                     )
 
                 else:
@@ -211,10 +209,11 @@ class Benchmarking:
                 )
 
         # ------------------------------------------------------------------------------
-        # Write results
+        # Prepare ResultArguments
         # ------------------------------------------------------------------------------
-        print("[Benchmarking] Writing results...")
+        print("[Benchmarking] Preparing results...")
         start_time = time.perf_counter()
+        result_args = None
         try:
             result_args = ResultArguments(
                 # Mandatory values
@@ -222,32 +221,28 @@ class Benchmarking:
                 start_time=self.run_progress.run_arguments.start_time,
                 end_time=self.run_progress.run_arguments.end_time,
                 duration=self.run_progress.run_arguments.duration,
-                results=self.run_progress.run_arguments.results,
                 status=self.run_progress.run_arguments.status,
-                # Additional info
-                recipes=self.recipes,
-                cookbooks=self.cookbooks,
-                endpoints=self.endpoints,
-                num_of_prompts=self.num_of_prompts,
-                random_seed=self.random_seed,
-                system_prompt=self.system_prompt,
-            )
-            Result.create(result_args)
-            print(
-                f"[Benchmarking] {self.run_progress.run_arguments.runner_id} - Run results written to "
-                f"{self.run_progress.run_arguments.results_file}"
+                raw_results=self.run_progress.run_arguments.raw_results,
+                params={
+                    "recipes": self.recipes,
+                    "cookbooks": self.cookbooks,
+                    "endpoints": self.endpoints,
+                    "num_of_prompts": self.num_of_prompts,
+                    "random_seed": self.random_seed,
+                    "system_prompt": self.system_prompt,
+                },
             )
 
         except Exception as e:
             self.run_progress.notify_error(
-                f"[Benchmarking] Failed to write results due to error: {str(e)}"
+                f"[Benchmarking] Failed to prepare results due to error: {str(e)}"
             )
 
         finally:
             print(
-                f"[Benchmarking] Writing results took {(time.perf_counter() - start_time):.4f}s"
+                f"[Benchmarking] Preparing results took {(time.perf_counter() - start_time):.4f}s"
             )
-            return self.run_progress.run_arguments.results
+            return result_args
 
     async def _run_cookbook(self, cookbook_name: str) -> dict:
         """

@@ -70,5 +70,6 @@ class BertScore(MetricInterface):
                 "precision": precision_value,
                 "recall": recall_value,
                 "f1": f1_value,
-            }
+            },
+            "grading_criteria": {},
         }

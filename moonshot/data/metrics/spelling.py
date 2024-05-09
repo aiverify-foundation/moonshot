@@ -93,4 +93,7 @@ class SpellingScore(MetricInterface):
             "spelling_score": (total_number_of_words - total_number_of_misspelled)
             / total_number_of_words,
         }
-        return {"spellingscore": scores}
+        return {
+            "spellingscore": scores,
+            "grading_criteria": {},
+        }

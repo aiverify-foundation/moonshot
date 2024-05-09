@@ -171,10 +171,14 @@ class SampleMetric(MetricInterface):
                 count += 1
 
         # Form the result
-        result = {"samplemetric": {"num_above_threshold": count}}
+        # Grade value will be used for aggregration and calculating the grade
+        result = {
+            "samplemetric": {"num_above_threshold": count},
+            "grading_criteria": {"num_above_threshold": count},
+        }
         print("*" * 100)
         print("Result: ", result)
         # ****************************************************************************************************
-        # Result:  {'samplemetric': {'num_above_threshold': 2}}
+        # Result:  {'samplemetric': {'num_above_threshold': 2}, 'grading_criteria': {'num_above_threshold': 2}}
 
         return result

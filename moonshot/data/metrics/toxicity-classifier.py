@@ -80,5 +80,6 @@ class ToxicityClassifier(MetricInterface):
         return {
             "toxicity_classifier": {
                 "toxicity_rate": float(toxicity_count / total) * 100,
-            }
+            },
+            "grading_criteria": {"toxicity_rate": float(toxicity_count / total) * 100},
         }

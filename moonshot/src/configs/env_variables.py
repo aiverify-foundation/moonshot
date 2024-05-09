@@ -19,9 +19,9 @@ class EnvVariables(Enum):
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
     RESULTS = "RESULTS"
+    RESULTS_MODULES = "RESULTS_MODULES"
     RUNNERS = "RUNNERS"
     RUNNERS_MODULES = "RUNNERS_MODULES"
-    SESSIONS = "SESSIONS"
 
 
 class EnvironmentVars:
@@ -90,6 +90,10 @@ class EnvironmentVars:
                 "data/generated-outputs/results"
             )
         ),
+    ]
+    RESULTS_MODULES = [
+        env_vars.get(EnvVariables.RESULTS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/results-modules")),
     ]
     RUNNERS = [
         env_vars.get(EnvVariables.RUNNERS.value),

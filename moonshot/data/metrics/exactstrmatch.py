@@ -64,4 +64,7 @@ class ExactStrMatch(MetricInterface):
                 else:
                     wrong += 1
 
-        return {"accuracy": float(correct / total) * 100}
+        return {
+            "accuracy": float(correct / total) * 100,
+            "grading_criteria": {"accuracy": float(correct / total) * 100},
+        }
