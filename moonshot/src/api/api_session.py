@@ -7,11 +7,10 @@ from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
+
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
-
-
 def api_load_session(runner_id: str) -> dict | None:
     """
     Loads the session details for a specific runner.
@@ -133,6 +132,26 @@ def api_update_context_strategy(runner_id: str, context_strategy: str) -> None:
     )
 
 
+def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) -> None:
+    """
+    Updates the number of previous prompts used in a context strategy for a specific runner.
+
+    This function updates the number of previous prompts used in a context strategy for a specific runner identified by
+    the given runner_id. It calls the `Session.update_cs_num_of_prev_prompts` method with the runner's database
+    instance, runner_id, and the new num_of_prev_prompts.
+
+    Args:
+        runner_id (str): The ID of the runner for which the number of previous prompts needs to be updated.
+        num_of_prev_prompts (int): The new number of previous prompts to be set for the runner.
+
+    Returns:
+        None
+    """
+    Session.update_cs_num_of_prev_prompts(
+        api_load_runner(runner_id).database_instance, runner_id, num_of_prev_prompts
+    )
+
+
 def api_update_prompt_template(runner_id: str, prompt_template: str) -> None:
     """
     Updates the prompt template for a specific runner.
@@ -150,6 +169,66 @@ def api_update_prompt_template(runner_id: str, prompt_template: str) -> None:
     """
     Session.update_prompt_template(
         api_load_runner(runner_id).database_instance, runner_id, prompt_template
+    )
+
+
+def api_update_metric(runner_id: str, metric_id: str) -> None:
+    """
+    Updates the metric for a specific runner.
+
+    This function updates the metric for a specific runner identified by the given runner_id. It calls the
+    `Session.update_metric` method with the runner's database instance,
+    runner_id, and the new metric_id.
+
+    Args:
+        runner_id (str): The ID of the runner for which the metric needs to be updated.
+        metric_id (str): The new metric to be set for the runner.
+
+    Returns:
+        None
+    """
+    Session.update_metric(
+        api_load_runner(runner_id).database_instance, runner_id, metric_id
+    )
+
+
+def api_update_system_prompt(runner_id: str, system_prompt: str) -> None:
+    """
+    Updates the system prompt for a specific runner.
+
+    This function updates the system prompt for a specific runner identified by the given runner_id. It calls the
+    `Session.update_system_prompt` method with the runner's database instance,
+    runner_id, and the new system_prompt.
+
+    Args:
+        runner_id (str): The ID of the runner for which the system prompt needs to be updated.
+        system_prompt (str): The new system prompt to be set for the runner.
+
+    Returns:
+        None
+    """
+    Session.update_system_prompt(
+        api_load_runner(runner_id).database_instance, runner_id, system_prompt
+    )
+
+
+def api_update_attack_module(runner_id: str, attack_module_id: str) -> None:
+    """
+    Updates the attack module for a specific runner.
+
+    This function updates the attack module for a specific runner identified by the given runner_id. It calls the
+    `Session.update_attack_module` method with the runner's database instance,
+    runner_id, and the new attack_module_id.
+
+    Args:
+        runner_id (str): The ID of the runner for which the attack module needs to be updated.
+        attack_module_id (str): The new attack module to be set for the runner.
+
+    Returns:
+        None
+    """
+    Session.update_attack_module(
+        api_load_runner(runner_id).database_instance, runner_id, attack_module_id
     )
 
 

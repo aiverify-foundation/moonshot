@@ -97,4 +97,5 @@ class LlamaGuardAnnotator(MetricInterface):
             "safe": number_of_safe,
             "unsafe": number_of_unsafe,
             "unknown": number_of_unknown,
+            "grading_criteria": {"refusal_rate": refusal_rate},
         }

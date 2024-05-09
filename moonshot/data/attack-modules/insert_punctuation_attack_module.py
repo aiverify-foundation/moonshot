@@ -28,8 +28,8 @@ class InsertPunctGenerator(AttackModule):
         super().__init__(am_id, am_arguments)
         self.name = "Insert Punctuation Attack"
         self.description = (
-            "About this attack module:\nThis module creates perturbations through adding punctuation to"
-            "the start of words in a prompt.\nParameters:\n1. MAX_ITERATIONS - Number of prompts that"
+            "About this attack module:\nThis module creates perturbations through adding punctuation to "
+            "the start of words in a prompt.\nParameters:\n1. MAX_ITERATIONS - Number of prompts that "
             "should be sent to the target. [Default: 10]\n2. word_swap_ratio - Percentage of words in"
             "a prompt that should be perturbed. [Default: 0.2]"
         )

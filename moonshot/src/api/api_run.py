@@ -2,11 +2,10 @@ from moonshot.src.api.api_runner import api_get_all_runner, api_load_runner
 from moonshot.src.runs.run import Run
 from moonshot.src.runs.run_arguments import RunArguments
 
+
 # ------------------------------------------------------------------------------
 # Run APIs
 # ------------------------------------------------------------------------------
-
-
 def api_get_all_run(runner_id: str = "") -> list[dict]:
     """
     Retrieves all runs for a given runner ID or for all runners if no ID is provided.

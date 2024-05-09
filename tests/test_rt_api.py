@@ -1,26 +1,27 @@
 import asyncio
-from moonshot.src.api.api_runner import api_create_runner, api_load_runner
-from moonshot.src.api.api_session import (
+
+from moonshot.api import (
+    api_create_runner,
+    api_load_runner, 
     api_load_session, 
     api_get_available_session_info, 
     api_get_all_session_names,
     api_get_all_session_metadata,
     api_update_context_strategy,
+    api_update_cs_num_of_prev_prompts,
     api_update_prompt_template,
+    api_update_metric,
+    api_update_system_prompt,
+    api_update_attack_module,
     api_delete_session,
     api_create_session,
-    api_get_all_chats_from_session
-    )
-from moonshot.src.api.api_red_teaming import (
+    api_get_all_chats_from_session,
     api_get_all_attack_modules,
-    api_get_all_attack_module_metadata
-)
-
-from moonshot.src.api.api_context_strategy import(
+    api_get_all_attack_module_metadata,
     api_get_all_context_strategies,
-    api_get_all_context_strategy_metadata
-)
+    api_get_all_context_strategy_metadata,
 
+    )
 
 # ------------------------------------------------------------------------------
 # Red Teaming APIs
@@ -32,6 +33,7 @@ def test_create_runner(name: str):
         endpoints=["openai-gpt35-turbo", "openai-gpt35-turbo-16k"],
     )
     runner.close()
+    return runner.id
 
 def run_manual_and_automated_rt(runner_name: str, runner_id: str):
     endpoints = ["openai-gpt35-turbo", "openai-gpt4"]
@@ -178,9 +180,17 @@ def test_session_apis(runner_id: str):
     all_session_info = api_get_available_session_info()
     print(f"{all_session_info}\n")
 
-    print("Update CS and PT")
+    print("Update Metadata")
     api_update_context_strategy(runner_id, "add_previous_prompt")
-    api_update_prompt_template(runner_id, "mmlu")
+    api_update_prompt_template(runner_id, "analogical-similarity")
+    api_update_metric(runner_id, "advglue")
+    api_update_system_prompt(runner_id, "this is a test system prompt")
+    api_update_attack_module(runner_id, "sample_attack_module")
+    api_update_cs_num_of_prev_prompts(runner_id, 2)
+
+    print("Get Updated Metadata")
+    single_session_metadata = api_load_session(runner_id)
+    print(f"{single_session_metadata}\n")
 
     # print("Delete Session")
     # api_delete_session(runner_id)
@@ -201,14 +211,14 @@ def test_attack_apis():
     print("Get All Context Strategy Metadata")
     print(api_get_all_context_strategy_metadata(), "\n")    
 
-runner_name = "mytestrunner"
-runner_id = "mytestrunner"
+runner_name = "test-runner"
+runner_id = "test-runner"
 
-# # tests automated and red teaming. creates a runner, and runss manual and automated red teaming
+# tests automated and red teaming. creates a runner, and runss manual and automated red teaming
 run_manual_and_automated_rt(runner_name, runner_id)
 
 # tests all session apis
 test_session_apis(runner_id)
 
-# tests all attack apis
+# # tests all attack apis
 test_attack_apis()

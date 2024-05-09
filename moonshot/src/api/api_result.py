@@ -17,7 +17,7 @@ def api_read_result(res_id: str) -> dict:
     Returns:
         dict: A dictionary containing the result's information.
     """
-    return Result.read(res_id).to_dict()
+    return Result.read(res_id)
 
 
 def api_read_results(res_ids: list[str]) -> list[dict]:
@@ -30,7 +30,7 @@ def api_read_results(res_ids: list[str]) -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing a result.
     """
-    return [Result.read(res_id).to_dict() for res_id in res_ids]
+    return [Result.read(res_id) for res_id in res_ids]
 
 
 def api_delete_result(res_id: str) -> None:
@@ -52,7 +52,7 @@ def api_get_all_result() -> list[dict]:
         list[dict]: A list of dictionaries, each representing a result.
     """
     _, results = Result.get_available_items()
-    return [result.to_dict() for result in results]
+    return [result for result in results]
 
 
 def api_get_all_result_name() -> list[str]:

@@ -25,16 +25,16 @@ class FoolerGenerator(AttackModule):
         # Initialize super class
         super().__init__(am_id, am_arguments)
         self.name = "TextFooler Attack"
-        self.description = "About this attack module:\nThis module implements the perturbations listed in the paper Is"
+        self.description = ("About this attack module:\nThis module implements the perturbations listed in the paper Is "
         "BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment."
-        "\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the"
-        "number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in"
-        "a prompt that should be perturbed. [Default: 0.2]\n3. cosine_sim - Minimum word embedding cosine similarity"
-        "[Default: 0.5]\n4. window_size - Window size for the Universal Sentence Encoder (USE). [Default: 15]\n5."
-        "threshold - Semantic similarity threshold for the USE. [Default: 0.840845057]\n6. max_candidates - Number of"
-        "nearest candidates to swap words with. [Default: 50]\nNote:\nUsage of this attack module requires the"
-        "internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding"
-        "is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf"
+        "\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. This is also the "
+        "number of transformations that should be generated. [Default: 5]\n2. word_swap_ratio - Percentage of words in "
+        "a prompt that should be perturbed. [Default: 0.2]\n3. cosine_sim - Minimum word embedding cosine similarity "
+        "[Default: 0.5]\n4. window_size - Window size for the Universal Sentence Encoder (USE). [Default: 15]\n5. "
+        "threshold - Semantic similarity threshold for the USE. [Default: 0.840845057]\n6. max_candidates - Number of "
+        "nearest candidates to swap words with. [Default: 50]\nNote:\nUsage of this attack module requires the "
+        "internet. Initial downloading of the GLoVe embedding occurs when the UniversalEncoder is called.\nEmbedding "
+        "is retrieved from the following URL: https://textattack.s3.amazonaws.com/word_embeddings/paragramcf")
 
     def get_metadata(self) -> dict:
         """

@@ -328,23 +328,24 @@ class Storage:
     @staticmethod
     def create_database_record(
         database_instance: DBInterface, data: tuple, sql_create_record: str
-    ) -> None:
+    ) -> tuple | None:
         """
-        Creates a record in the database.
+        Inserts a record into the database.
 
-        This method is used to create a record in the database. If the database instance is not initialised,
-        it raises a RuntimeError. Otherwise, it calls the create_record method of the database instance.
+        This method is used to insert a record into the database. If the database instance is not initialised,
+        it raises a RuntimeError. If the database instance is initialised, it calls the create_record method of the
+        database instance with the provided data and SQL query.
 
         Args:
             database_instance (DBInterface): The database accessor instance.
-            data (tuple): The data to be inserted.
-            sql_create_record (str): The SQL query to create a record.
+            data (tuple): The data to be inserted into the database.
+            sql_create_record (str): The SQL query to insert a record.
 
         Returns:
-            None
+            tuple | None: The inserted record if successful, None otherwise.
         """
         if database_instance:
-            database_instance.create_record(data, sql_create_record)
+            return database_instance.create_record(data, sql_create_record)
         else:
             raise RuntimeError("Database instance is not initialised.")
 
