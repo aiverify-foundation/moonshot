@@ -24,6 +24,10 @@ class SessionMetadata:
         created_datetime: str,
         prompt_template: str,
         context_strategy: str,
+        cs_num_of_prev_prompts: int,
+        attack_module: str,
+        metric: str,
+        system_prompt: str,
     ):
         self.session_id = session_id
         self.endpoints = endpoints
@@ -31,6 +35,10 @@ class SessionMetadata:
         self.created_datetime = created_datetime
         self.prompt_template = prompt_template
         self.context_strategy = context_strategy
+        self.cs_num_of_prev_prompts = cs_num_of_prev_prompts
+        self.attack_module = attack_module
+        self.metric = metric
+        self.system_prompt = system_prompt
 
     def to_dict(self) -> dict:
         """
@@ -46,6 +54,10 @@ class SessionMetadata:
             "created_datetime": self.created_datetime,
             "prompt_template": self.prompt_template,
             "context_strategy": self.context_strategy,
+            "cs_num_of_prev_prompts": self.cs_num_of_prev_prompts,
+            "attack_module": self.attack_module,
+            "metric": self.metric,
+            "system_prompt": self.system_prompt,
         }
 
     def to_tuple(self) -> tuple:
@@ -62,6 +74,10 @@ class SessionMetadata:
             self.created_datetime,
             self.prompt_template,
             self.context_strategy,
+            self.cs_num_of_prev_prompts,
+            self.attack_module,
+            self.metric,
+            self.system_prompt,
         )
 
     @classmethod
@@ -82,7 +98,12 @@ class SessionMetadata:
             created_datetime,
             prompt_template,
             context_strategy,
+            cs_num_of_prev_prompts,
+            attack_module,
+            metric,
+            system_prompt,
         ) = data_tuple
+
         return cls(
             runner_id,
             literal_eval(endpoints),
@@ -90,10 +111,15 @@ class SessionMetadata:
             created_datetime,
             prompt_template,
             context_strategy,
+            cs_num_of_prev_prompts,
+            attack_module,
+            metric,
+            system_prompt,
         )
 
 
 class Session:
+    DEFAULT_CONTEXT_STRATEGY_PROMPT = 5
     sql_create_session_metadata_table = """
             CREATE TABLE IF NOT EXISTS session_metadata_table (
             session_id text PRIMARY KEY NOT NULL,
@@ -101,7 +127,11 @@ class Session:
             created_epoch INTEGER NOT NULL,
             created_datetime text NOT NULL,
             prompt_template text,
-            context_strategy text
+            context_strategy text,
+            cs_num_of_prev_prompts int,
+            attack_module text,
+            metric text,
+            system_prompt text
             );
     """
 
@@ -124,20 +154,17 @@ class Session:
 
     sql_create_session_metadata_record = """
         INSERT INTO session_metadata_table (
-        session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy)
-        VALUES(?,?,?,?,?,?)
+        session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy,cs_num_of_prev_prompts,
+        attack_module, metric, system_prompt)
+        VALUES(?,?,?,?,?,?,?,?,?,?)
     """
 
     sql_read_session_metadata = """
         SELECT * from session_metadata_table
     """
 
-    sql_update_context_strategy = """
-        UPDATE session_metadata_table SET context_strategy=? WHERE session_id=?
-    """
-
-    sql_update_prompt_template = """
-        UPDATE session_metadata_table SET prompt_template=? WHERE session_id=?
+    sql_update_session_metadata_field = """
+        UPDATE session_metadata_table SET {}=? WHERE session_id=?
     """
 
     sql_drop_table = """
@@ -180,6 +207,12 @@ class Session:
 
         prompt_template = self.runner_args.get("prompt_template", "")
         context_strategy = self.runner_args.get("context_strategy", "")
+        cs_num_of_prev_prompts = self.runner_args.get(
+            "cs_num_of_prev_prompts", Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        )
+        attack_module = self.runner_args.get("attack_module", "")
+        system_prompt = self.runner_args.get("system_prompt", "")
+        metric_id = self.runner_args.get("metric_id", "")
 
         if self.database_instance:
             # create session metadata table if it does not exist
@@ -219,7 +252,12 @@ class Session:
                     created_datetime,
                     prompt_template,
                     context_strategy,
+                    cs_num_of_prev_prompts,
+                    attack_module,
+                    system_prompt,
+                    metric_id,
                 )
+
                 Storage.create_database_record(
                     self.database_instance,
                     self.session_metadata.to_tuple(),
@@ -413,8 +451,31 @@ class Session:
             Storage.update_database_record(
                 db_instance,
                 (context_strategy, runner_id),
-                Session.sql_update_context_strategy,
+                Session.sql_update_session_metadata_field.format("context_strategy"),
             )
+
+    @staticmethod
+    def update_cs_num_of_prev_prompts(
+        db_instance: DBInterface | None, runner_id: str, cs_num_of_prev_prompts: int
+    ) -> None:
+        """
+        Updates the number of previous prompts for a specific runner in the database.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the number of previous prompts in.
+            runner_id (str): The ID of the runner.
+            cs_num_of_prev_prompts (int): The new number of previous prompts to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        Storage.update_database_record(
+            db_instance,
+            (cs_num_of_prev_prompts, runner_id),
+            Session.sql_update_session_metadata_field.format("cs_num_of_prev_prompts"),
+        )
 
     @staticmethod
     def update_prompt_template(
@@ -443,7 +504,88 @@ class Session:
             Storage.update_database_record(
                 db_instance,
                 (prompt_template, runner_id),
-                Session.sql_update_prompt_template,
+                Session.sql_update_session_metadata_field.format("prompt_template"),
+            )
+
+    @staticmethod
+    def update_metric(
+        db_instance: DBInterface | None, runner_id: str, metric_id: str
+    ) -> None:
+        """
+        Updates the metric in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the metric in.
+            runner_id (str): The ID of the runner.
+            metric_id (str): The new metric to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the metric does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if metric_id and not Storage.is_object_exists(
+            EnvVariables.METRICS.name, metric_id, "py"
+        ):
+            raise RuntimeError(f"[Session] Metric {metric_id} does not exist.")
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (metric_id, runner_id),
+                Session.sql_update_session_metadata_field.format("metric"),
+            )
+
+    @staticmethod
+    def update_system_prompt(
+        db_instance: DBInterface | None, runner_id: str, system_prompt: str
+    ) -> None:
+        """
+        Updates the system prompt in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the system prompt in.
+            runner_id (str): The ID of the runner.
+            system_prompt (str): The new system prompt to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        Storage.update_database_record(
+            db_instance,
+            (system_prompt, runner_id),
+            Session.sql_update_session_metadata_field.format("system_prompt"),
+        )
+
+    @staticmethod
+    def update_attack_module(
+        db_instance: DBInterface | None, runner_id: str, attack_module_id: str
+    ) -> None:
+        """
+        Updates the attack module in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the attack module in.
+            runner_id (str): The ID of the runner.
+            attack_module_id (str): The new attack module to be used.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the attack module does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if attack_module_id and not Storage.is_object_exists(
+            EnvVariables.ATTACK_MODULES.name, attack_module_id, "py"
+        ):
+            raise RuntimeError(
+                f"[Session] Attack Module {attack_module_id} does not exist."
+            )
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (attack_module_id, runner_id),
+                Session.sql_update_session_metadata_field.format("attack_module"),
             )
 
     @staticmethod
