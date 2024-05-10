@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..container import Container
 from ..services.benchmark_result_service import BenchmarkResultService
 from ..services.utils.exceptions_handler import ServiceException
+from ..types.types import BenchmarkResult
 
 router = APIRouter()
 
@@ -14,18 +15,17 @@ async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(
         Provide[Container.benchmark_result_service]
     ),
-) -> list[dict]:
+)  -> list[BenchmarkResult]:
     """
     Retrieve all benchmark results.
 
-    This endpoint queries all benchmark results and returns them as a list of dictionaries.
-    Each dictionary contains the details of a single benchmark result.
+    This endpoint retrieves a list of all benchmark results from the database. Each item in the list is an instance of BenchmarkResult, representing a single benchmark result with its associated data.
 
     Args:
         benchmark_result_service (BenchmarkResultService): The service responsible for fetching benchmark results.
 
     Returns:
-        list[dict]: A list of dictionaries, where each dictionary contains the details of a benchmark result.
+        list[BenchmarkResult]: A list of BenchmarkResult instances, each representing a single benchmark result.
 
     Raises:
         HTTPException: An error occurred while trying to find the results file (404) or
