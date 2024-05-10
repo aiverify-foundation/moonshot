@@ -42,11 +42,17 @@ class PromptTemplate:
             pt_contents = Storage.read_object(
                 EnvVariables.PROMPT_TEMPLATES.name, pt_name, "json"
             )
+            id = pt_name
             name = pt_contents["name"]
             description = pt_contents["description"]
             template = pt_contents["template"]
             list_of_pt_contents.append(
-                {"name": name, "description": description, "template": template}
+                {
+                    "id": id,
+                    "name": name,
+                    "description": description,
+                    "template": template,
+                }
             )
         return list_of_pt_contents
 

@@ -24,33 +24,27 @@ def list_prompt_templates() -> None:
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
 def display_prompt_templates(prompt_templates):
-    """
-    Display the details of the prompt templates on the console.
-
-    Args:
-        prompt_templates (list): A list of dictionaries, each containing the details of a prompt template.
-    """
     table = Table(
-        "No.",
-        "Prompt Name",
-        "Prompt Description",
-        "Prompt Template",
+        title="List of Prompt Templates",
+        show_lines=True,
+        expand=True,
+        header_style="bold",
     )
+    table.add_column("No.", width=2)
+    table.add_column("Prompt Template", justify="left", width=50)
+    table.add_column("Contains", justify="left", width=48)
     if prompt_templates:
         for prompt_index, prompt_template in enumerate(prompt_templates, 1):
             (
-                prompt_name,
-                prompt_description,
-                prompt_template_contents,
+                id,
+                name,
+                description,
+                contents,
             ) = prompt_template.values()
 
+            prompt_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
             table.add_section()
-            table.add_row(
-                str(prompt_index),
-                prompt_name,
-                prompt_description,
-                prompt_template_contents,
-            )
+            table.add_row(str(prompt_index), prompt_info, contents)
         console.print(table)
     else:
         console.print("[red]There are no prompt templates found.[/red]")
