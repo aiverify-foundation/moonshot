@@ -8,10 +8,26 @@ from moonshot.integrations.cli.benchmark.cookbook import (
     delete_cookbook,
     delete_cookbook_args,
     list_cookbooks,
+    run_cookbook,
+    run_cookbook_args,
     update_cookbook,
     update_cookbook_args,
     view_cookbook,
     view_cookbook_args,
+)
+from moonshot.integrations.cli.benchmark.datasets import (
+    delete_dataset,
+    delete_dataset_args,
+    list_datasets,
+    view_dataset,
+    view_dataset_args,
+)
+from moonshot.integrations.cli.benchmark.metrics import (
+    delete_metric,
+    delete_metric_args,
+    list_metrics,
+    view_metric,
+    view_metric_args,
 )
 from moonshot.integrations.cli.benchmark.recipe import (
     add_recipe,
@@ -19,33 +35,27 @@ from moonshot.integrations.cli.benchmark.recipe import (
     delete_recipe,
     delete_recipe_args,
     list_recipes,
+    run_recipe,
+    run_recipe_args,
     update_recipe,
     update_recipe_args,
     view_recipe,
     view_recipe_args,
 )
-from moonshot.integrations.cli.benchmark.report_analysis import (
-    delete_report_analysis,
-    delete_report_analysis_args,
-    list_report_analyses,
-    run_report_analysis,
-    run_report_analysis_args,
-    view_report_analysis,
-    view_report_analysis_args,
-)
-from moonshot.integrations.cli.benchmark.results import (
+from moonshot.integrations.cli.benchmark.result import (
     delete_result,
     delete_result_args,
     list_results,
     view_result,
     view_result_args,
 )
-from moonshot.integrations.cli.benchmark.run import (
-    delete_run,
-    delete_run_args,
-    list_runs,
-    view_run,
-    view_run_args,
+from moonshot.integrations.cli.benchmark.run import list_runs, view_run, view_run_args
+from moonshot.integrations.cli.benchmark.runner import (
+    delete_runner,
+    delete_runner_args,
+    list_runners,
+    view_runner,
+    view_runner_args,
 )
 
 
@@ -64,14 +74,20 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_list_recipes(self, _: cmd2.Statement) -> None:
         list_recipes()
 
-    def do_list_report_analyses(self, _: cmd2.Statement) -> None:
-        list_report_analyses()
-
     def do_list_results(self, _: cmd2.Statement) -> None:
         list_results()
 
+    def do_list_runners(self, _: cmd2.Statement) -> None:
+        list_runners()
+
     def do_list_runs(self, _: cmd2.Statement) -> None:
         list_runs()
+
+    def do_list_metrics(self, _: cmd2.Statement) -> None:
+        list_metrics()
+
+    def do_list_datasets(self, _: cmd2.Statement) -> None:
+        list_datasets()
 
     # ------------------------------------------------------------------------------
     # Add contents
@@ -97,17 +113,21 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_delete_recipe(self, args: argparse.Namespace) -> None:
         delete_recipe(args)
 
-    @cmd2.with_argparser(delete_report_analysis_args)
-    def do_delete_report_analysis(self, args: argparse.Namespace) -> None:
-        delete_report_analysis(args)
-
     @cmd2.with_argparser(delete_result_args)
     def do_delete_result(self, args: argparse.Namespace) -> None:
         delete_result(args)
 
-    @cmd2.with_argparser(delete_run_args)
-    def do_delete_run(self, args: argparse.Namespace) -> None:
-        delete_run(args)
+    @cmd2.with_argparser(delete_runner_args)
+    def do_delete_runner(self, args: argparse.Namespace) -> None:
+        delete_runner(args)
+
+    @cmd2.with_argparser(delete_metric_args)
+    def do_delete_metric(self, args: argparse.Namespace) -> None:
+        delete_metric(args)
+
+    @cmd2.with_argparser(delete_dataset_args)
+    def do_delete_dataset(self, args: argparse.Namespace) -> None:
+        delete_dataset(args)
 
     # ------------------------------------------------------------------------------
     # Update contents
@@ -125,17 +145,13 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # Run contents
     # ------------------------------------------------------------------------------
 
-    # @cmd2.with_argparser(run_cookbook_args)
-    # def do_run_cookbook(self, args: argparse.Namespace) -> None:
-    #     run_cookbook(args)
+    @cmd2.with_argparser(run_cookbook_args)
+    def do_run_cookbook(self, args: argparse.Namespace) -> None:
+        run_cookbook(args)
 
-    # @cmd2.with_argparser(run_recipe_args)
-    # def do_run_recipe(self, args: argparse.Namespace) -> None:
-    #     run_recipe(args)
-
-    @cmd2.with_argparser(run_report_analysis_args)
-    def do_run_report_analysis(self, args: argparse.Namespace) -> None:
-        run_report_analysis(args)
+    @cmd2.with_argparser(run_recipe_args)
+    def do_run_recipe(self, args: argparse.Namespace) -> None:
+        run_recipe(args)
 
     # ------------------------------------------------------------------------------
     # View contents
@@ -149,14 +165,22 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_view_recipe(self, args: argparse.Namespace) -> None:
         view_recipe(args)
 
-    @cmd2.with_argparser(view_report_analysis_args)
-    def do_view_report_analysis(self, args: argparse.Namespace) -> None:
-        view_report_analysis(args)
-
     @cmd2.with_argparser(view_result_args)
     def do_view_result(self, args: argparse.Namespace) -> None:
         view_result(args)
 
+    @cmd2.with_argparser(view_runner_args)
+    def do_view_runner(self, args: argparse.Namespace) -> None:
+        view_runner(args)
+
     @cmd2.with_argparser(view_run_args)
     def do_view_run(self, args: argparse.Namespace) -> None:
         view_run(args)
+
+    @cmd2.with_argparser(view_metric_args)
+    def do_view_metric(self, args: argparse.Namespace) -> None:
+        view_metric(args)
+
+    @cmd2.with_argparser(view_dataset_args)
+    def do_view_dataset(self, args: argparse.Namespace) -> None:
+        view_dataset(args)

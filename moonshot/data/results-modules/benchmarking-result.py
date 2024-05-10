@@ -81,10 +81,10 @@ class BenchmarkingResult:
         return {
             "id": results_args.id,
             "start_time": datetime.fromtimestamp(results_args.start_time).strftime(
-                "%Y%m%d-%H%M%S"
+                "%Y-%m-%d %H:%M:%S"
             ),
             "end_time": datetime.fromtimestamp(results_args.end_time).strftime(
-                "%Y%m%d-%H%M%S"
+                "%Y-%m-%d %H:%M:%S"
             ),
             "duration": results_args.duration,
             "status": results_args.status.name.lower(),
@@ -524,8 +524,9 @@ class BenchmarkingResult:
             return None
 
         # Iterate through the grading scale to find where the average grade fits
+        average_grade_int = int(average_grade)
         for grade, (lower_bound, upper_bound) in grading_scale.items():
-            if lower_bound <= average_grade <= upper_bound:
+            if lower_bound <= average_grade_int <= upper_bound:
                 return grade
 
         # If the average grade does not fit any range in the grading scale, return None

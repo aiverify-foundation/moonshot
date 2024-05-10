@@ -363,6 +363,24 @@ class AttackModule:
             print(f"Failed to get available attack modules: {str(e)}")
             raise e
 
+    @staticmethod
+    def delete(am_id: str) -> None:
+        """
+        Deletes the specified attack module.
+
+        Args:
+            am_id (str): The ID of the attack module to delete.
+
+        Raises:
+            Exception: If an error occurs during deletion.
+        """
+        try:
+            Storage.delete_object(EnvVariables.ATTACK_MODULES.name, am_id, "py")
+
+        except Exception as e:
+            print(f"Failed to delete attack module: {str(e)}")
+            raise e
+
 
 class RedTeamingPromptArguments(BaseModel):
     conn_id: str  # The ID of the connection, default is an empty string

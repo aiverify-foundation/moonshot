@@ -31,8 +31,13 @@ from moonshot.src.api.api_dataset import (
     api_get_all_datasets_name,
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
-from moonshot.src.api.api_metrics import api_delete_metric, api_get_all_metric
+from moonshot.src.api.api_metrics import (
+    api_delete_metric,
+    api_get_all_metric,
+    api_get_all_metric_name,
+)
 from moonshot.src.api.api_prompt_template import (
+    api_delete_prompt_template,
     api_get_all_prompt_template_detail,
     api_get_all_prompt_template_name,
 )
@@ -46,6 +51,7 @@ from moonshot.src.api.api_recipe import (
     api_update_recipe,
 )
 from moonshot.src.api.api_red_teaming import (
+    api_delete_attack_module,
     api_get_all_attack_module_metadata,
     api_get_all_attack_modules,
 )
@@ -56,6 +62,7 @@ from moonshot.src.api.api_result import (
     api_read_result,
     api_read_results,
 )
+from moonshot.src.api.api_run import api_get_all_run
 from moonshot.src.api.api_runner import (
     api_create_runner,
     api_delete_runner,
@@ -104,16 +111,12 @@ __all__ = [
     "api_get_all_datasets",
     "api_get_all_datasets_name",
     "api_set_environment_variables",
-    "api_create_runner",
-    "api_delete_runner",
-    "api_get_all_runner",
-    "api_get_all_runner_name",
-    "api_load_runner",
-    "api_read_runner",
     "api_delete_metric",
     "api_get_all_metric",
+    "api_get_all_metric_name",
     "api_get_all_prompt_template_detail",
     "api_get_all_prompt_template_name",
+    "api_delete_prompt_template",
     "api_create_recipe",
     "api_delete_recipe",
     "api_get_all_recipe",
@@ -121,24 +124,32 @@ __all__ = [
     "api_read_recipe",
     "api_read_recipes",
     "api_update_recipe",
+    "api_get_all_attack_module_metadata",
+    "api_get_all_attack_modules",
+    "api_delete_attack_module",
     "api_delete_result",
     "api_get_all_result",
     "api_get_all_result_name",
     "api_read_result",
     "api_read_results",
-    "api_get_all_session_names",
-    "api_get_all_session_metadata",
-    "api_load_session",
-    "api_get_available_session_info",
-    "api_delete_session",
+    "api_get_all_run",
+    "api_create_runner",
+    "api_delete_runner",
+    "api_get_all_runner",
+    "api_get_all_runner_name",
+    "api_load_runner",
+    "api_read_runner",
     "api_create_session",
+    "api_delete_session",
     "api_get_all_chats_from_session",
+    "api_get_all_session_metadata",
+    "api_get_all_session_names",
+    "api_get_available_session_info",
+    "api_load_session",
+    "api_update_attack_module",
     "api_update_context_strategy",
     "api_update_cs_num_of_prev_prompts",
-    "api_update_prompt_template",
     "api_update_metric",
+    "api_update_prompt_template",
     "api_update_system_prompt",
-    "api_update_attack_module",
-    "api_get_all_attack_modules",
-    "api_get_all_attack_module_metadata",
 ]

@@ -10,6 +10,7 @@ from rich.table import Table
 from moonshot.api import (
     api_create_runner,
     api_create_session,
+    api_delete_session,
     api_get_all_chats_from_session,
     api_get_all_session_metadata,
     api_load_runner,
@@ -107,10 +108,12 @@ def list_sessions() -> None:
     """
     session_metadata_list = api_get_all_session_metadata()
     if session_metadata_list:
-        table = Table(title="Session List", show_lines=True, expand=True)
-        table.add_column("No.", style="dim", width=6)
-        table.add_column("Session ID", justify="left")
-        table.add_column("Contains", justify="left")
+        table = Table(
+            title="Session List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("No.", justify="left", style="dim", width=2)
+        table.add_column("Session ID", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=78)
 
         for session_index, session_data in enumerate(session_metadata_list, 1):
             session_id = session_data.get("session_id", "")
@@ -141,13 +144,15 @@ def update_chat_display() -> None:
         )
 
         # Prepare for table display
-        table = Table(expand=True)
+        table = Table(expand=True, show_lines=True, header_style="bold")
         table_list = []
         for endpoint, endpoint_chats in list_of_endpoint_chats.items():
             table.add_column(endpoint, justify="center")
             new_table = Table(expand=True)
-            new_table.add_column("Prepared Prompts", justify="left", style="cyan")
-            new_table.add_column("Prompt/Response", justify="left")
+            new_table.add_column(
+                "Prepared Prompts", justify="left", style="cyan", width=50
+            )
+            new_table.add_column("Prompt/Response", justify="left", width=50)
 
             for chat_with_details in endpoint_chats:
                 new_table.add_row(
@@ -304,6 +309,28 @@ def _reload_session(runner_id: str) -> None:
     active_session.update(session_metadata)
 
 
+def delete_session(args) -> None:
+    """
+    Deletes a session after confirming with the user.
+
+    Args:
+        args (object): The arguments object. It should have a 'session' attribute
+                       which is the ID of the session to delete.
+    """
+    # Confirm with the user before deleting a session
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the session (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
+        console.print("[bold yellow]Session deletion cancelled.[/]")
+        return
+    try:
+        api_delete_session(args.session)
+        print("[delete_session]: Session deleted.")
+    except Exception as e:
+        print(f"[delete_session]: {str(e)}")
+
+
 # use session arguments
 use_session_args = cmd2.Cmd2ArgumentParser(
     description="Use an existing red teaming session by specifying the runner ID.",
@@ -320,7 +347,7 @@ new_session_args = cmd2.Cmd2ArgumentParser(
     description="Creates a new red teaming session.",
     epilog=(
         "Example(create new runner): new_session my-runner -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu\n"
-        "Example(load existing runner): new_session my-runner -c add_previous_prompt -p auto-categorisation"
+        "Example(load existing runner): new_session my-runner -c add_previous_prompt -p mmlu"
     ),
 )
 
@@ -358,7 +385,7 @@ automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
         'Example:\n automated_red_teaming sample_attack_module "this is my prompt" -s "test system prompt" '
-        '-c "add_previous_prompt" -p "auto-categorisation" -m "bleuscore"'
+        '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
     ),
 )
 
@@ -404,4 +431,15 @@ automated_rt_session_args.add_argument(
 
 automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
+)
+
+
+# Delete session arguments
+delete_session_args = cmd2.Cmd2ArgumentParser(
+    description="Delete a session",
+    epilog="Example:\n delete_session my-test-runner",
+)
+
+delete_session_args.add_argument(
+    "session", type=str, help="The runner ID of the session to delete"
 )

@@ -22,3 +22,16 @@ def api_get_all_prompt_template_name() -> list[str]:
         list[str]: A list of prompt template names.
     """
     return PromptTemplate.get_all_prompt_template_names()
+
+
+def api_delete_prompt_template(pt_id: str) -> None:
+    """
+    Deletes a prompt template based on the provided template id.
+
+    Args:
+        pt_id (str): The id of the prompt template to be deleted.
+
+    Returns:
+        None
+    """
+    PromptTemplate.delete(pt_id)

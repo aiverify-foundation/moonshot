@@ -58,7 +58,7 @@ class Dataset:
             obj_type=EnvVariables.DATASETS.name,
             obj_id=ds_id,
             obj_extension="json",
-            json_keys=["name", "description"],
+            json_keys=["name", "description", "license", "reference"],
             iterator_keys=["examples.item"],
         )
 
