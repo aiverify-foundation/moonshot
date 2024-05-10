@@ -186,18 +186,26 @@ def update_cookbook(args) -> None:
 
 def delete_cookbook(args) -> None:
     """
-    Delete a specific cookbook.
+    Delete a cookbook.
 
-    This function deletes a specific cookbook by calling the api_delete_cookbook function from the
-    moonshot.api module using the cookbook name provided in the args.
+    This function deletes a cookbook with the specified identifier. It prompts the user for confirmation before
+    proceeding with the deletion. If the user confirms, it calls the api_delete_cookbook function from the moonshot.api
+    module to delete the cookbook. If the deletion is successful, it prints a confirmation message.
+    
+    If an exception occurs, it prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            cookbook (str): The name of the cookbook to delete.
+            cookbook (str): The identifier of the cookbook to delete.
 
     Returns:
         None
     """
+    # Confirm with the user before deleting a cookbook
+    confirmation = console.input("[bold red]Are you sure you want to delete the cookbook (y/N)? [/]")
+    if confirmation.lower() != 'y':
+        console.print("[bold yellow]Cookbook deletion cancelled.[/]")
+        return
     try:
         api_delete_cookbook(args.cookbook)
         print("[delete_cookbook]: Cookbook deleted.")
@@ -225,7 +233,7 @@ def display_cookbooks(cookbooks_list):
         )
         table.add_column("No.", width=2)
         table.add_column("Cookbook", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=20, overflow="fold")
         for cookbook_id, cookbook in enumerate(cookbooks_list, 1):
             id, name, description, recipes = cookbook.values()
             cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
@@ -259,7 +267,7 @@ def display_view_cookbook(cookbook_info):
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=20, overflow="fold")
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
@@ -499,7 +507,7 @@ run_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Run a cookbook.",
     epilog="Example:\n run_cookbook "
     '-n 1 -s 1 -p "You are an intelligent AI" '
-    "my-new-cookbook-runner "
+    "\"my new cookbook runner\" "
     "\"['common-risk-easy']\" "
     "\"['openai-gpt35-turbo']\"",
 )

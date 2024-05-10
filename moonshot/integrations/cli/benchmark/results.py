@@ -64,18 +64,25 @@ def view_result(args) -> None:
 
 def delete_result(args) -> None:
     """
-    Delete a specific result.
+    Delete a result.
 
-    This function deletes a specific result by calling the api_delete_result function from the
-    moonshot.api module using the result name provided in the args.
+    This function deletes a result with the specified identifier. It prompts the user for confirmation before proceeding
+    with the deletion. If the user confirms, it calls the api_delete_result function from the moonshot.api module to
+    delete the result. If the deletion is successful, it prints a confirmation message. If an exception occurs, it
+    prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            result (str): The name of the result to delete.
+            result (str): The identifier of the result to delete.
 
     Returns:
         None
     """
+    # Confirm with the user before deleting a result
+    confirmation = console.input("[bold red]Are you sure you want to delete the result (y/N)? [/]")
+    if confirmation.lower() != 'y':
+        console.print("[bold yellow]Result deletion cancelled.[/]")
+        return
     try:
         api_delete_result(args.result)
         print("[delete_result]: Result deleted.")
@@ -105,7 +112,7 @@ def display_results(results_list):
         )
         table.add_column("No.", width=2)
         table.add_column("Result", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=20, overflow="fold")
         for result_id, result in enumerate(results_list, 1):
             metadata, results = result.values()
 

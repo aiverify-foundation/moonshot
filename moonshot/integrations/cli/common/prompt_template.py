@@ -32,7 +32,7 @@ def display_prompt_templates(prompt_templates):
     )
     table.add_column("No.", width=2)
     table.add_column("Prompt Template", justify="left", width=50)
-    table.add_column("Contains", justify="left", width=48)
+    table.add_column("Contains", justify="left", width=48, overflow="fold")
     if prompt_templates:
         for prompt_index, prompt_template in enumerate(prompt_templates, 1):
             (

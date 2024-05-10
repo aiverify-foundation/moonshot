@@ -200,18 +200,25 @@ def update_recipe(args) -> None:
 
 def delete_recipe(args) -> None:
     """
-    Delete a specific recipe.
+    Delete a recipe.
 
-    This function deletes a specific recipe by calling the api_delete_recipe function from the
-    moonshot.api module using the recipe name provided in the args.
+    This function deletes a recipe with the specified identifier. It prompts the user for confirmation before proceeding
+    with the deletion. If the user confirms, it calls the api_delete_recipe function from the moonshot.api module to
+    delete the recipe. If the deletion is successful, it prints a confirmation message. If an exception occurs, it
+    prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            recipe (str): The name of the recipe to delete.
+            recipe (str): The identifier of the recipe to delete.
 
     Returns:
         None
     """
+    # Confirm with the user before deleting a recipe
+    confirmation = console.input("[bold red]Are you sure you want to delete the recipe (y/N)? [/]")
+    if confirmation.lower() != 'y':
+        console.print("[bold yellow]Recipe deletion cancelled.[/]")
+        return
     try:
         api_delete_recipe(args.recipe)
         print("[delete_recipe]: Recipe deleted.")
@@ -298,7 +305,7 @@ def display_recipes(recipes_list: list) -> None:
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=20, overflow="fold")
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
@@ -539,7 +546,7 @@ run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
     '-n 1 -s 1 -p "You are an intelligent AI" '
-    "my-new-recipe-runner "
+    "\"my new recipe runner\" "
     "\"['bbq','auto-categorisation']\" "
     "\"['openai-gpt35-turbo']\"",
 )
