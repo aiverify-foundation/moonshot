@@ -4,6 +4,7 @@ from ast import literal_eval
 import cmd2
 from rich.console import Console
 from rich.table import Table
+from slugify import slugify
 
 from moonshot.api import (
     api_create_cookbook,
@@ -127,8 +128,9 @@ def run_cookbook(args) -> None:
         result_proc_module = args.result_proc_module
 
         # Run the cookbooks with the defined endpoints
-        if name in api_get_all_runner_name():
-            cb_runner = api_load_runner(name)
+        slugify_id = slugify(name, lowercase=True)
+        if slugify_id in api_get_all_runner_name():
+            cb_runner = api_load_runner(slugify_id)
         else:
             cb_runner = api_create_runner(name, endpoints)
 
@@ -191,7 +193,7 @@ def delete_cookbook(args) -> None:
     This function deletes a cookbook with the specified identifier. It prompts the user for confirmation before
     proceeding with the deletion. If the user confirms, it calls the api_delete_cookbook function from the moonshot.api
     module to delete the cookbook. If the deletion is successful, it prints a confirmation message.
-    
+
     If an exception occurs, it prints an error message.
 
     Args:
@@ -202,8 +204,10 @@ def delete_cookbook(args) -> None:
         None
     """
     # Confirm with the user before deleting a cookbook
-    confirmation = console.input("[bold red]Are you sure you want to delete the cookbook (y/N)? [/]")
-    if confirmation.lower() != 'y':
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the cookbook (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
         console.print("[bold yellow]Cookbook deletion cancelled.[/]")
         return
     try:
@@ -507,7 +511,7 @@ run_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Run a cookbook.",
     epilog="Example:\n run_cookbook "
     '-n 1 -s 1 -p "You are an intelligent AI" '
-    "\"my new cookbook runner\" "
+    '"my new cookbook runner" '
     "\"['common-risk-easy']\" "
     "\"['openai-gpt35-turbo']\"",
 )

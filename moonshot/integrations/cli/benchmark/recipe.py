@@ -4,6 +4,7 @@ from ast import literal_eval
 import cmd2
 from rich.console import Console
 from rich.table import Table
+from slugify import slugify
 
 from moonshot.api import (
     api_create_recipe,
@@ -142,8 +143,9 @@ def run_recipe(args) -> None:
         result_proc_module = args.result_proc_module
 
         # Run the recipes with the defined endpoints
-        if name in api_get_all_runner_name():
-            rec_runner = api_load_runner(name)
+        slugify_id = slugify(name, lowercase=True)
+        if slugify_id in api_get_all_runner_name():
+            rec_runner = api_load_runner(slugify_id)
         else:
             rec_runner = api_create_runner(name, endpoints)
 
@@ -215,8 +217,10 @@ def delete_recipe(args) -> None:
         None
     """
     # Confirm with the user before deleting a recipe
-    confirmation = console.input("[bold red]Are you sure you want to delete the recipe (y/N)? [/]")
-    if confirmation.lower() != 'y':
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the recipe (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
         console.print("[bold yellow]Recipe deletion cancelled.[/]")
         return
     try:
@@ -546,7 +550,7 @@ run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
     '-n 1 -s 1 -p "You are an intelligent AI" '
-    "\"my new recipe runner\" "
+    '"my new recipe runner" '
     "\"['bbq','auto-categorisation']\" "
     "\"['openai-gpt35-turbo']\"",
 )
