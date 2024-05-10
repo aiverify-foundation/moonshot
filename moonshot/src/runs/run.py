@@ -139,9 +139,6 @@ class Run:
 
         Returns:
             list[RunArguments]: A list of RunArguments objects representing each run record.
-
-        Raises:
-            RuntimeError: If the database instance is not provided or no records are found.
         """
         if not database_instance:
             raise RuntimeError("[Run] Database instance not provided.")
@@ -155,9 +152,7 @@ class Run:
             output = [RunArguments.from_tuple(info) for info in all_run_arguments_info]
             return output
         else:
-            raise RuntimeError(
-                f"[Run] Failed to get database records: {database_instance}"
-            )
+            return []
 
     def cancel(self) -> None:
         """
