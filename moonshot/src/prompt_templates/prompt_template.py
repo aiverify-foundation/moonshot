@@ -57,6 +57,24 @@ class PromptTemplate:
         return list_of_pt_contents
 
     @staticmethod
+    def delete(pt_id: str) -> None:
+        """
+        Delete a specific prompt template based on its id.
+
+        Args:
+            pt_id (str): The id of the prompt template to delete.
+
+        Raises:
+            Exception: If the deletion process fails.
+        """
+        try:
+            Storage.delete_object(EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json")
+
+        except Exception as e:
+            print(f"Failed to delete prompt template: {str(e)}")
+            raise e
+
+    @staticmethod
     def process_prompt_pt(user_prompt: str, prompt_template_name: str) -> str:
         """
         Process a user prompt using a specified prompt template.

@@ -14,7 +14,11 @@ from moonshot.integrations.cli.common.connectors import (
     view_endpoint,
     view_endpoint_args,
 )
-from moonshot.integrations.cli.common.prompt_template import list_prompt_templates
+from moonshot.integrations.cli.common.prompt_template import (
+    delete_prompt_template,
+    delete_prompt_template_args,
+    list_prompt_templates,
+)
 
 
 @cmd2.with_default_category("Moonshot Common")
@@ -34,6 +38,10 @@ class CommonCommandSet(cmd2.CommandSet):
 
     def do_list_prompt_templates(self, _: cmd2.Statement) -> None:
         list_prompt_templates()
+
+    @cmd2.with_argparser(delete_prompt_template_args)
+    def do_delete_prompt_template(self, args: argparse.Namespace) -> None:
+        delete_prompt_template(args)
 
     # ------------------------------------------------------------------------------
     # Add contents

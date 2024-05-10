@@ -6,6 +6,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from moonshot.api import (
+    api_delete_context_strategy,
     api_get_all_context_strategy_metadata,
     api_update_context_strategy,
 )
@@ -91,6 +92,28 @@ def clear_context_strategy() -> None:
         )
 
 
+def delete_context_strategy(args) -> None:
+    """
+    Deletes a context strategy after confirming with the user.
+
+    Args:
+        args (object): The arguments object. It should have a 'context_strategy' attribute
+                       which is the ID of the context strategy to delete.
+    """
+    # Confirm with the user before deleting a context strategy
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the context strategy (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
+        console.print("[bold yellow]Context strategy deletion cancelled.[/]")
+        return
+    try:
+        api_delete_context_strategy(args.context_strategy)
+        print("[delete_context_strategy]: Context strategy deleted.")
+    except Exception as e:
+        print(f"[delete_context_strategy]: {str(e)}")
+
+
 # Use context strategy arguments
 use_context_strategy_args = cmd2.Cmd2ArgumentParser(
     description="Use a context strategy.",
@@ -99,7 +122,7 @@ use_context_strategy_args = cmd2.Cmd2ArgumentParser(
 use_context_strategy_args.add_argument(
     "context_strategy",
     type=str,
-    help="The name of the context strategy to use",
+    help="The ID of the context strategy to use",
 )
 use_context_strategy_args.add_argument(
     "-n",
@@ -107,4 +130,14 @@ use_context_strategy_args.add_argument(
     type=int,
     help="The number of previous prompts to use with the context strategy",
     nargs="?",
+)
+
+# Delete context strategy arguments
+delete_context_strategy_args = cmd2.Cmd2ArgumentParser(
+    description="Delete a context strategy.",
+    epilog="Example:\n delete_context_strategy add_previous_prompt",
+)
+
+delete_context_strategy_args.add_argument(
+    "context_strategy", type=str, help="The ID of the context strategy to delete"
 )

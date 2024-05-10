@@ -37,6 +37,7 @@ from moonshot.src.api.api_metrics import (
     api_get_all_metric_name,
 )
 from moonshot.src.api.api_prompt_template import (
+    api_delete_prompt_template,
     api_get_all_prompt_template_detail,
     api_get_all_prompt_template_name,
 )
@@ -50,6 +51,7 @@ from moonshot.src.api.api_recipe import (
     api_update_recipe,
 )
 from moonshot.src.api.api_red_teaming import (
+    api_delete_attack_module,
     api_get_all_attack_module_metadata,
     api_get_all_attack_modules,
 )
@@ -114,6 +116,7 @@ __all__ = [
     "api_get_all_metric_name",
     "api_get_all_prompt_template_detail",
     "api_get_all_prompt_template_name",
+    "api_delete_prompt_template",
     "api_create_recipe",
     "api_delete_recipe",
     "api_get_all_recipe",
@@ -123,6 +126,7 @@ __all__ = [
     "api_update_recipe",
     "api_get_all_attack_module_metadata",
     "api_get_all_attack_modules",
+    "api_delete_attack_module",
     "api_delete_result",
     "api_get_all_result",
     "api_get_all_result_name",

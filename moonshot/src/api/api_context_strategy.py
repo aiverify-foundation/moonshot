@@ -18,21 +18,21 @@ def api_get_all_context_strategies() -> list[str]:
     return ContextStrategy.get_all_context_strategies()
 
 
-def api_delete_context_strategy(context_strategy_name: str) -> None:
+def api_delete_context_strategy(cs_id: str) -> None:
     """
-    Deletes a context strategy based on the provided name.
+    Deletes a context strategy based on the provided ID.
 
-    This API endpoint interfaces with the `ContextStrategy.delete_context_strategy` method, facilitating the
+    This API endpoint interfaces with the `ContextStrategy.delete` method, facilitating the
     removal of a specified context strategy from the system. It is particularly useful for managing the lifecycle of
     context strategies, allowing for the deletion of strategies that are no longer needed or relevant.
 
     Args:
-        context_strategy_name (str): The name of the context strategy to be deleted
+        cs_id (str): The ID of the context strategy to be deleted
 
     Returns:
         None: This method does not return a value, but it will remove the specified context strategy from the system.
     """
-    ContextStrategy.delete_context_strategy(context_strategy_name)
+    ContextStrategy.delete(cs_id)
 
 
 def api_get_all_context_strategy_metadata() -> list:
