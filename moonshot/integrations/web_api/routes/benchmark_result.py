@@ -15,7 +15,7 @@ async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(
         Provide[Container.benchmark_result_service]
     ),
-)  -> list[BenchmarkResult]:
+ ) -> list[dict]:
     """
     Retrieve all benchmark results.
 
