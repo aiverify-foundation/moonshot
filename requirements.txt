@@ -113,3 +113,4 @@ wasabi==1.1.2 ; python_version >= "3.11" and python_version < "4.0"
 wcwidth==0.2.13 ; python_version >= "3.11" and python_version < "4.0"
 weasel==0.3.4 ; python_version >= "3.11" and python_version < "4.0"
 yarl==1.9.4 ; python_version >= "3.11" and python_version < "4.0"
+ibm-watsonx-ai

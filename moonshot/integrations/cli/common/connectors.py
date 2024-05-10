@@ -49,6 +49,7 @@ def add_endpoint(args) -> None:
         args.max_calls_per_second,
         args.max_concurrency,
         params_dict,
+        args.project_id,
     )
 
 
@@ -189,6 +190,7 @@ def display_endpoints(endpoints_list):
             "Max concurrency",
             "Params",
             "Created Date",
+            "Project ID",
         )
         for endpoint_id, endpoint in enumerate(endpoints_list, 1):
             (
@@ -201,6 +203,7 @@ def display_endpoints(endpoints_list):
                 max_concurrency,
                 params,
                 created_date,
+                project_id,
             ) = endpoint.values()
             table.add_section()
             table.add_row(
@@ -214,6 +217,7 @@ def display_endpoints(endpoints_list):
                 str(max_concurrency),
                 str(params),
                 created_date,
+                str(project_id)
             )
         console.print(table)
     else:
@@ -246,6 +250,7 @@ add_endpoint_args.add_argument(
     "max_concurrency", type=int, help="Max concurrency of the new endpoint"
 )
 add_endpoint_args.add_argument("params", type=str, help="Params of the new endpoint")
+add_endpoint_args.add_argument("project_id", type=str, help="Project ID of the new endpoint (only for IBM watsonx)")
 
 # Update endpoint arguments
 update_endpoint_args = cmd2.Cmd2ArgumentParser(

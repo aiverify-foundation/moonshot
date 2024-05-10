@@ -54,6 +54,7 @@ def api_create_endpoint(
     max_calls_per_second: int,
     max_concurrency: int,
     params: dict,
+    project_id: str,
 ) -> None:
     """
     Creates a new endpoint to the connector manager.
@@ -89,6 +90,7 @@ def api_create_endpoint(
         max_concurrency=max_concurrency,
         params=params,
         created_date="",
+        project_id=project_id,
     )
     ConnectorManager.create_endpoint(connector_endpoint_args)
 

@@ -79,6 +79,9 @@ class Connector:
         self.timeout = ep_args.params.get("timeout", 600)
         self.allow_retries = ep_args.params.get("allow_retries", True)
         self.retries_times = ep_args.params.get("num_of_retries", 3)
+        
+        # ID of the Watson Studio project
+        self.project_id = ep_args.project_id
 
     @staticmethod
     def rate_limited(func):

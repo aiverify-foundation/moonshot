@@ -24,6 +24,8 @@ class ConnectorEndpointArguments(BaseModel):
     # During creation, created_date is not required. The created_date is automatically generated and returned
     created_date: str = ""
 
+    project_id: str = "" # project_id (str): ID of the Watson Studio project
+
     def to_dict(self) -> dict:
         """
         Converts the ConnectorEndpointArguments instance into a dictionary.
@@ -47,4 +49,5 @@ class ConnectorEndpointArguments(BaseModel):
             "max_concurrency": self.max_concurrency,
             "params": self.params,
             "created_date": self.created_date,
+            "project_id": self.project_id,
         }
