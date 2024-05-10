@@ -63,22 +63,24 @@ class Metric:
             raise e
 
     @staticmethod
-    def get_available_items() -> list[str]:
+    def get_available_items() -> tuple[list[str], list[Metric]]:
         """
-        Fetches the list of all available metrics.
+        Retrieves all available metric IDs and their corresponding instances.
 
-        This method uses the `get_objects` method from the StorageManager to obtain all Python files in the directory
-        defined by the `EnvVariables.METRICS.name` environment variable. It then excludes any files that are
-        not intended to be exposed as metrics (those containing "__" in their names). The method returns a list of the
-        names of these metrics.
+        This method searches the storage location specified by `EnvVariables.METRICS` for metric files, omitting any
+        that include "__" in their filenames. It loads each valid metric file to create a metric instance and
+        accumulates the metric IDs and the corresponding metric instances into separate lists, which are then returned
+        together as a tuple.
 
         Returns:
-            list[str]: A list of strings, each denoting the name of a metric.
+            tuple[list[str], list[Metric]]: A tuple containing two elements. The first is a list of metric IDs, and the
+            second is a list of Metric instances, each representing a loaded metric.
 
         Raises:
-            Exception: If an error occurs during the extraction of metrics.
+            Exception: If any issues arise during the retrieval and processing of metric files.
         """
         try:
+            retn_mets = []
             retn_mets_ids = []
 
             mets = Storage.get_objects(EnvVariables.METRICS.name, "py")
@@ -86,9 +88,10 @@ class Metric:
                 if "__" in met:
                     continue
 
+                retn_mets.append(Metric.load(Path(met).stem))
                 retn_mets_ids.append(Path(met).stem)
 
-            return retn_mets_ids
+            return retn_mets_ids, retn_mets
 
         except Exception as e:
             print(f"Failed to get available metrics: {str(e)}")

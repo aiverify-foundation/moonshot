@@ -79,8 +79,10 @@ def delete_result(args) -> None:
         None
     """
     # Confirm with the user before deleting a result
-    confirmation = console.input("[bold red]Are you sure you want to delete the result (y/N)? [/]")
-    if confirmation.lower() != 'y':
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the result (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
         console.print("[bold yellow]Result deletion cancelled.[/]")
         return
     try:

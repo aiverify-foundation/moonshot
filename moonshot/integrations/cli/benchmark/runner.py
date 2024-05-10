@@ -2,8 +2,18 @@ import cmd2
 from rich.console import Console
 from rich.table import Table
 
-from moonshot.api import api_get_all_runner, api_delete_runner, api_read_runner
-from moonshot.integrations.cli.common.display_helper import display_view_list_format, display_view_str_format
+from moonshot.api import (
+    api_delete_runner,
+    api_get_all_run,
+    api_get_all_runner,
+    api_get_available_session_info,
+    api_load_session,
+    api_read_runner,
+)
+from moonshot.integrations.cli.common.display_helper import (
+    display_view_list_format,
+    display_view_str_format,
+)
 
 console = Console()
 
@@ -13,28 +23,31 @@ console = Console()
 # ------------------------------------------------------------------------------
 def list_runners() -> None:
     """
-    List all available runners.
+    List all runners.
 
-    This function retrieves all available runners by calling the api_get_all_runner function from the
-    moonshot.api module. It then displays the runners' information using the display_runners function.
-    If an exception occurs, it prints an error message.
+    This function retrieves and displays information about all runners, including their associated runs and session
+    information. It fetches the data using the api_get_all_runner, api_get_all_run, and api_get_available_session_info
+    functions, then calls the display_runners function to present it in a user-friendly format.
 
     Returns:
         None
     """
     try:
         runner_info = api_get_all_runner()
-        display_runners(runner_info)
+        runner_run_info = api_get_all_run()
+        _, runner_session_info = api_get_available_session_info()
+        display_runners(runner_info, runner_run_info, runner_session_info)
     except Exception as e:
         print(f"[list_runners]: {str(e)}")
+
 
 def view_runner(args) -> None:
     """
     View a specific runner.
 
-    This function retrieves a specific runner by calling the api_read_runner function from the
-    moonshot.api module using the runner identifier provided in the args.
-    It then displays the runner's information using the display_runners function.
+    This function retrieves and displays information about a specific runner, including its associated runs and session
+    information. It uses the runner identifier provided in the arguments to fetch the data and then calls the
+    display_runners function to present it in a user-friendly format.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -45,9 +58,12 @@ def view_runner(args) -> None:
     """
     try:
         runner_info = api_read_runner(args.runner)
-        display_runners([runner_info])
+        runner_run_info = api_get_all_run(args.runner)
+        runner_session_info = api_load_session(args.runner)
+        display_runners([runner_info], runner_run_info, [runner_session_info])
     except Exception as e:
         print(f"[view_runner]: {str(e)}")
+
 
 def delete_runner(args) -> None:
     """
@@ -66,8 +82,10 @@ def delete_runner(args) -> None:
         None
     """
     # Confirm with the user before deleting a runner
-    confirmation = console.input("[bold red]Are you sure you want to delete the runner (y/N)? [/]")
-    if confirmation.lower() != 'y':
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the runner (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
         console.print("[bold yellow]Runner deletion cancelled.[/]")
         return
     try:
@@ -80,16 +98,27 @@ def delete_runner(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_runners(runner_list: list) -> None:
+def display_runners(
+    runner_list: list, runner_run_info_list: list, runner_session_info_list: list
+) -> None:
     """
-    Display the list of runners in a tabular format.
+    Display runners in a table format.
 
-    This function takes a list of runner dictionaries and displays each runner's details in a table.
-    The table includes the runner's ID, name, database file, endpoints, and description. If the list is empty,
-    it prints a message indicating that no runners are found.
+    This function takes lists of runner information, run information, and session information, then displays them in a
+    table format on the command line interface. Each runner is listed with details such as the runner's ID, name,
+    description, number of runs, number of sessions, database file, and endpoints.
 
     Args:
-        runner_list (list): A list of dictionaries, where each dictionary contains the details of a runner.
+        runner_list: A list of dictionaries, where each dictionary contains information about a runner.
+
+        runner_run_info_list: A list of dictionaries, where each dictionary contains information about a run
+        associated with a runner.
+
+        runner_session_info_list: A list of dictionaries, where each dictionary contains information about a session
+        associated with a runner.
+
+    Returns:
+        None
     """
     if runner_list:
         table = Table(
@@ -99,19 +128,24 @@ def display_runners(runner_list: list) -> None:
         table.add_column("Runner", justify="left", width=78)
         table.add_column("Contains", justify="left", width=20, overflow="fold")
         for runner_id, runner in enumerate(runner_list, 1):
-            (
-                id,
-                name,
-                db_file,
-                endpoints,
-                description
-            ) = runner.values()
+            (id, name, db_file, endpoints, description) = runner.values()
 
             db_info = display_view_str_format("Database", db_file)
             endpoints_info = display_view_list_format("Endpoints", endpoints)
 
+            runs_count = sum(
+                run_info["runner_id"] == id for run_info in runner_run_info_list
+            )
+            # Handle the case where session_info can be None
+            sessions_count = sum(
+                session_info is not None and session_info["session_id"] == id
+                for session_info in runner_session_info_list
+            )
+
             runner_info = (
-                f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+                f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n"
+                f"[blue]Number of Runs:[/blue] {runs_count}\n"
+                f"[blue]Number of Sessions:[/blue] {sessions_count}"
             )
             contains_info = f"{db_info}\n\n{endpoints_info}"
 
