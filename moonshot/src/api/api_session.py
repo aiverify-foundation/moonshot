@@ -237,7 +237,7 @@ def api_delete_session(runner_id: str) -> None:
     Deletes the session for a specific runner.
 
     This function deletes the session for the runner identified by the given runner_id. It calls the
-    `Session.delete_session` method with the runner's database instance.
+    `Session.delete` method with the runner's database instance.
 
     Args:
         runner_id (str): The ID of the runner for which the session needs to be deleted.
@@ -245,7 +245,7 @@ def api_delete_session(runner_id: str) -> None:
     Returns:
         None
     """
-    Session.delete_session(api_load_runner(runner_id).database_instance)
+    Session.delete(api_load_runner(runner_id).database_instance)
 
 
 def api_get_all_chats_from_session(runner_id: str) -> dict | None:

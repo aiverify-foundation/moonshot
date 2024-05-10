@@ -589,7 +589,7 @@ class Session:
             )
 
     @staticmethod
-    def delete_session(database_instance: DBInterface | None) -> None:
+    def delete(database_instance: DBInterface | None) -> None:
         """
         Deletes the session metadata and associated endpoint tables from the database.
 

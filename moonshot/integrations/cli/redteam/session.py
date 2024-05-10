@@ -10,6 +10,7 @@ from rich.table import Table
 from moonshot.api import (
     api_create_runner,
     api_create_session,
+    api_delete_session,
     api_get_all_chats_from_session,
     api_get_all_session_metadata,
     api_load_runner,
@@ -308,6 +309,28 @@ def _reload_session(runner_id: str) -> None:
     active_session.update(session_metadata)
 
 
+def delete_session(args) -> None:
+    """
+    Deletes a session after confirming with the user.
+
+    Args:
+        args (object): The arguments object. It should have a 'session' attribute
+                       which is the ID of the session to delete.
+    """
+    # Confirm with the user before deleting a session
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the session (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
+        console.print("[bold yellow]Session deletion cancelled.[/]")
+        return
+    try:
+        api_delete_session(args.session)
+        print("[delete_session]: Session deleted.")
+    except Exception as e:
+        print(f"[delete_session]: {str(e)}")
+
+
 # use session arguments
 use_session_args = cmd2.Cmd2ArgumentParser(
     description="Use an existing red teaming session by specifying the runner ID.",
@@ -408,4 +431,15 @@ automated_rt_session_args.add_argument(
 
 automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
+)
+
+
+# Delete session arguments
+delete_session_args = cmd2.Cmd2ArgumentParser(
+    description="Delete a session",
+    epilog="Example:\n delete_session my-test-runner",
+)
+
+delete_session_args.add_argument(
+    "session", type=str, help="The runner ID of the session to delete"
 )
