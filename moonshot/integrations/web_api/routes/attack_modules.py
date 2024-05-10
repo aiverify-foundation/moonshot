@@ -42,3 +42,25 @@ def get_all_attack_module(
             raise HTTPException(
                 status_code=500, detail=f"Failed to retrieve attack modules: {e.msg}"
             )
+
+@router.get("/api/v1/attack-modules/metadata")
+@inject
+def get_all_attack_module_metadata(
+    am_service: AttackModuleService = Depends(Provide[Container.am_service]),
+) -> list:
+
+    try:
+        return am_service.get_all_attack_module_metadata()
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to retrieve attack modules: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve attack modules: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve attack modules: {e.msg}"
+            )

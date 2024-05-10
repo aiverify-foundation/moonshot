@@ -33,17 +33,21 @@ class RunnerService(BaseService):
         self,
         runner_name: str,
         endpoints: list[str],
-        progress_callback_func: Callable[[TestRunProgress], None],
+        description: str,
+        progress_callback_func: Callable[[TestRunProgress], None] = None,
     ) -> Runner:
         return moonshot_api.api_create_runner(
             name=runner_name,
             endpoints=endpoints,
+            description=description,
             progress_callback_func=progress_callback_func,
         )
 
     @exception_handler
     def load_runner(
-        self, runner_id: str, progress_callback_func: Callable[[TestRunProgress], None]
+        self,
+        runner_id: str,
+        progress_callback_func: Callable[[TestRunProgress], None] = None,
     ) -> Runner:
         return moonshot_api.api_load_runner(
             runner_id, progress_callback_func=progress_callback_func

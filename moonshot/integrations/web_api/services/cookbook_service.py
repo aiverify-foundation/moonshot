@@ -43,11 +43,13 @@ class CookbookService(BaseService):
         cookbooks_list: list[CookbookResponseModel] = []
 
         if ids:
-            cookbook_ids = ids.split(',')
-            cookbooks = [moonshot_api.api_read_cookbook(cookbook_id) for cookbook_id in cookbook_ids]
+            cookbook_ids = ids.split(",")
+            cookbooks = [
+                moonshot_api.api_read_cookbook(cookbook_id)
+                for cookbook_id in cookbook_ids
+            ]
         else:
             cookbooks = moonshot_api.api_get_all_cookbook()
-
 
         for cookbook_dict in cookbooks:
             cookbook = CookbookResponseModel(**cookbook_dict)
@@ -91,7 +93,6 @@ class CookbookService(BaseService):
         """
         cookbooks = moonshot_api.api_get_all_cookbook_name()
         return cookbooks
-
 
     @exception_handler
     def update_cookbook(
@@ -174,12 +175,13 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
         bool: True if any recipe in the cookbook has the specified categories, False otherwise.
     """
     recipe_ids = cookbook.recipes
-    categories_list = [category.lower() for category in categories.split(',')]
+    categories_list = [category.lower() for category in categories.split(",")]
     recipes = moonshot_api.api_read_recipes(recipe_ids)
     for recipe in recipes:
         recipe = Recipe(**recipe)
         if any(
             category in [rcat.lower() for rcat in recipe.categories]
-            for category in categories_list):
+            for category in categories_list
+        ):
             return True
     return False

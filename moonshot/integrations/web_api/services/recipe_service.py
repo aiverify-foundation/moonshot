@@ -1,4 +1,4 @@
-from typing import Optional
+
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
@@ -31,7 +31,12 @@ class RecipeService(BaseService):
 
     @exception_handler
     def get_all_recipes(
-        self, tags: str, categories: str, sort_by: str, count: bool, ids: str | None = None
+        self,
+        tags: str,
+        categories: str,
+        sort_by: str,
+        count: bool,
+        ids: str | None = None,
     ) -> list[RecipeResponseModel]:
         """
         Retrieve all recipes, with optional filters for tags, categories, sorting, and including prompt counts.
@@ -47,13 +52,12 @@ class RecipeService(BaseService):
             list[RecipeResponseModel]: A list of recipe, filtered and sorted, with optional prompt counts.
         """
         filtered_recipes: list[RecipeResponseModel] = []
-        
+
         if ids:
-            recipe_ids = ids.split(',')
+            recipe_ids = ids.split(",")
             recipes = [moonshot_api.api_read_recipe(id) for id in recipe_ids]
         else:
             recipes = moonshot_api.api_get_all_recipe()
-
 
         for recipe_dict in recipes:
             recipe = RecipeResponseModel(**recipe_dict)
@@ -68,13 +72,15 @@ class RecipeService(BaseService):
             ]
 
         if categories:
-            categories_list = categories.split(',') if categories else []
+            categories_list = categories.split(",") if categories else []
             if categories_list:
                 filtered_recipes = [
                     recipe
                     for recipe in filtered_recipes
-                    if any(category.lower() in (cat.lower() for cat in recipe.categories) 
-                            for category in categories_list)
+                    if any(
+                        category.lower() in (cat.lower() for cat in recipe.categories)
+                        for category in categories_list
+                    )
                 ]
         if sort_by:
             if sort_by == "id":
@@ -92,7 +98,6 @@ class RecipeService(BaseService):
         """
         recipes = moonshot_api.api_get_all_recipe_name()
         return recipes
-
 
     @exception_handler
     def update_recipe(self, recipe_data: RecipeCreateDTO, recipe_id: str) -> None:
