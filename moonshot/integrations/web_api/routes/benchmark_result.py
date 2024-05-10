@@ -19,17 +19,16 @@ async def get_all_results(
     """
     Retrieve all benchmark results.
 
-    This endpoint retrieves a list of all benchmark results from the database. Each item in the list is an instance of BenchmarkResult, representing a single benchmark result with its associated data.
+    This endpoint retrieves a list of all benchmark results from the database. Each benchmark result is represented as a dictionary containing its associated data.
 
     Args:
         benchmark_result_service (BenchmarkResultService): The service responsible for fetching benchmark results.
 
     Returns:
-        list[BenchmarkResult]: A list of BenchmarkResult instances, each representing a single benchmark result.
+        list[dict]: A list of dictionaries, each representing a single benchmark result.
 
     Raises:
-        HTTPException: An error occurred while trying to find the results file (404) or
-                       an unspecified error occurred (500).
+        HTTPException: Raised if the results file cannot be found (404) or if an unspecified error occurs (500).
     """
     try:
         results = benchmark_result_service.get_all_results()
