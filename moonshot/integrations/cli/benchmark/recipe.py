@@ -7,17 +7,16 @@ from rich.table import Table
 
 from moonshot.api import (
     api_create_recipe,
+    api_create_runner,
     api_delete_recipe,
     api_get_all_recipe,
+    api_get_all_run,
+    api_get_all_runner_name,
+    api_load_runner,
     api_read_recipe,
     api_update_recipe,
 )
-from moonshot.src.api.api_run import api_get_all_run
-from moonshot.src.api.api_runner import (
-    api_create_runner,
-    api_get_all_runner_name,
-    api_load_runner,
-)
+from moonshot.integrations.cli.common.display_helper import display_view_list_format
 
 console = Console()
 
@@ -201,18 +200,25 @@ def update_recipe(args) -> None:
 
 def delete_recipe(args) -> None:
     """
-    Delete a specific recipe.
+    Delete a recipe.
 
-    This function deletes a specific recipe by calling the api_delete_recipe function from the
-    moonshot.api module using the recipe name provided in the args.
+    This function deletes a recipe with the specified identifier. It prompts the user for confirmation before proceeding
+    with the deletion. If the user confirms, it calls the api_delete_recipe function from the moonshot.api module to
+    delete the recipe. If the deletion is successful, it prints a confirmation message. If an exception occurs, it
+    prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            recipe (str): The name of the recipe to delete.
+            recipe (str): The identifier of the recipe to delete.
 
     Returns:
         None
     """
+    # Confirm with the user before deleting a recipe
+    confirmation = console.input("[bold red]Are you sure you want to delete the recipe (y/N)? [/]")
+    if confirmation.lower() != 'y':
+        console.print("[bold yellow]Recipe deletion cancelled.[/]")
+        return
     try:
         api_delete_recipe(args.recipe)
         print("[delete_recipe]: Recipe deleted.")
@@ -223,29 +229,6 @@ def delete_recipe(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_view_recipe_format(title: str, items: list) -> str:
-    """
-    Format the recipe items for display.
-
-    This function takes a title and a list of recipe items and formats them into a string suitable for display.
-    Each item in the list is displayed on a new line with an index number. If the list is empty, it returns the
-    title with 'nil'.
-
-    Args:
-        title (str): The title to display above the recipe items.
-        items (list): A list of recipe items to format.
-
-    Returns:
-        str: The formatted recipe items as a string.
-    """
-    if items:
-        return f"[blue]{title}[/blue]:" + "".join(
-            f"\n{i + 1}. {item}" for i, item in enumerate(items)
-        )
-    else:
-        return f"[blue]{title}[/blue]: nil"
-
-
 def display_view_grading_scale_format(title: str, grading_scale: dict) -> str:
     """
     Format the grading scale for display.
@@ -322,7 +305,7 @@ def display_recipes(recipes_list: list) -> None:
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=20, overflow="fold")
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
@@ -338,14 +321,14 @@ def display_recipes(recipes_list: list) -> None:
                 stats,
             ) = recipe.values()
 
-            tags_info = display_view_recipe_format("Tags", tags)
-            categories_info = display_view_recipe_format("Categories", categories)
-            datasets_info = display_view_recipe_format("Datasets", datasets)
-            prompt_templates_info = display_view_recipe_format(
+            tags_info = display_view_list_format("Tags", tags)
+            categories_info = display_view_list_format("Categories", categories)
+            datasets_info = display_view_list_format("Datasets", datasets)
+            prompt_templates_info = display_view_list_format(
                 "Prompt Templates", prompt_templates
             )
-            metrics_info = display_view_recipe_format("Metrics", metrics)
-            attack_strategies_info = display_view_recipe_format(
+            metrics_info = display_view_list_format("Metrics", metrics)
+            attack_strategies_info = display_view_list_format(
                 "Attack Strategies", attack_strategies
             )
             grading_scale_info = display_view_grading_scale_format(
@@ -563,7 +546,7 @@ run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
     '-n 1 -s 1 -p "You are an intelligent AI" '
-    "my-new-recipe-runner "
+    "\"my new recipe runner\" "
     "\"['bbq','auto-categorisation']\" "
     "\"['openai-gpt35-turbo']\"",
 )
