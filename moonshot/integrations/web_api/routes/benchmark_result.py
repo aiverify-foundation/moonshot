@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..container import Container
 from ..services.benchmark_result_service import BenchmarkResultService
 from ..services.utils.exceptions_handler import ServiceException
-from ..types.types import BenchmarkResult
 
 router = APIRouter()
 
