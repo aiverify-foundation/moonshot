@@ -81,10 +81,10 @@ class BenchmarkingResult:
         return {
             "id": results_args.id,
             "start_time": datetime.fromtimestamp(results_args.start_time).strftime(
-                "%Y%m%d-%H%M%S"
+                "%Y-%m-%d %H:%M:%S"
             ),
             "end_time": datetime.fromtimestamp(results_args.end_time).strftime(
-                "%Y%m%d-%H%M%S"
+                "%Y-%m-%d %H:%M:%S"
             ),
             "duration": results_args.duration,
             "status": results_args.status.name.lower(),

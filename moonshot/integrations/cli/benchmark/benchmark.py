@@ -59,8 +59,8 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_list_recipes(self, _: cmd2.Statement) -> None:
         list_recipes()
 
-    # def do_list_results(self, _: cmd2.Statement) -> None:
-    #     list_results()
+    def do_list_results(self, _: cmd2.Statement) -> None:
+        list_results()
 
     # def do_list_runs(self, _: cmd2.Statement) -> None:
     #     list_runs()
@@ -89,9 +89,9 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_delete_recipe(self, args: argparse.Namespace) -> None:
         delete_recipe(args)
 
-    # @cmd2.with_argparser(delete_result_args)
-    # def do_delete_result(self, args: argparse.Namespace) -> None:
-    #     delete_result(args)
+    @cmd2.with_argparser(delete_result_args)
+    def do_delete_result(self, args: argparse.Namespace) -> None:
+        delete_result(args)
 
     # @cmd2.with_argparser(delete_run_args)
     # def do_delete_run(self, args: argparse.Namespace) -> None:
@@ -133,9 +133,9 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_view_recipe(self, args: argparse.Namespace) -> None:
         view_recipe(args)
 
-    # @cmd2.with_argparser(view_result_args)
-    # def do_view_result(self, args: argparse.Namespace) -> None:
-    #     view_result(args)
+    @cmd2.with_argparser(view_result_args)
+    def do_view_result(self, args: argparse.Namespace) -> None:
+        view_result(args)
 
     # @cmd2.with_argparser(view_run_args)
     # def do_view_run(self, args: argparse.Namespace) -> None:
