@@ -293,7 +293,7 @@ class SessionService(BaseService):
         if attack_module:
             rt_args["attack_module_id"] = attack_module
             rt_args["metric_ids"] = [metric] if metric else []
-            await self.active_runner.run_red_teaming({"attack_strategies": rt_args})
+            await self.active_runner.run_red_teaming({"attack_strategies": [rt_args]})
         else:
             await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
 
