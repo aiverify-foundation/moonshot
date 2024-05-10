@@ -385,7 +385,7 @@ automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
         'Example:\n automated_red_teaming sample_attack_module "this is my prompt" -s "test system prompt" '
-        '-c "add_previous_prompt" -p "auto-categorisation" -m "bleuscore"'
+        '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
     ),
 )
 
