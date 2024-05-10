@@ -2,6 +2,7 @@ from ast import literal_eval
 
 import cmd2
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from moonshot.api import (
@@ -207,17 +208,22 @@ def display_endpoints(endpoints_list):
     """
     if endpoints_list:
         table = Table(
-            "No.",
-            "Id",
-            "Name",
-            "Connector Type",
-            "Uri",
-            "Token",
-            "Max calls per second",
-            "Max concurrency",
-            "Params",
-            "Created Date",
+            title="List of Connector Endpoints",
+            show_lines=True,
+            expand=True,
+            header_style="bold",
         )
+        table.add_column("No.", justify="left", width=2)
+        table.add_column("Id", justify="left", width=10)
+        table.add_column("Name", justify="left", width=10)
+        table.add_column("Connector Type", justify="left", width=10)
+        table.add_column("Uri", justify="left", width=10)
+        table.add_column("Token", justify="left", width=10)
+        table.add_column("Max Calls Per Second", justify="left", width=5)
+        table.add_column("Max concurrency", justify="left", width=5)
+        table.add_column("Params", justify="left", width=30)
+        table.add_column("Created Date", justify="left", width=8)
+
         for endpoint_id, endpoint in enumerate(endpoints_list, 1):
             (
                 id,
@@ -240,7 +246,7 @@ def display_endpoints(endpoints_list):
                 token,
                 str(max_calls_per_second),
                 str(max_concurrency),
-                str(params),
+                escape(str(params)),
                 created_date,
             )
         console.print(table)

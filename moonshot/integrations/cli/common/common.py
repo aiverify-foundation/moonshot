@@ -29,8 +29,8 @@ class CommonCommandSet(cmd2.CommandSet):
     def do_list_connector_types(self, _: cmd2.Statement) -> None:
         list_connector_types()
 
-    # def do_list_endpoints(self, _: cmd2.Statement) -> None:
-    #     list_endpoints()
+    def do_list_endpoints(self, _: cmd2.Statement) -> None:
+        list_endpoints()
 
     def do_list_prompt_templates(self, _: cmd2.Statement) -> None:
         list_prompt_templates()
@@ -38,27 +38,27 @@ class CommonCommandSet(cmd2.CommandSet):
     # ------------------------------------------------------------------------------
     # Add contents
     # ------------------------------------------------------------------------------
-    # @cmd2.with_argparser(add_endpoint_args)
-    # def do_add_endpoint(self, args: argparse.Namespace) -> None:
-    #     add_endpoint(args)
+    @cmd2.with_argparser(add_endpoint_args)
+    def do_add_endpoint(self, args: argparse.Namespace) -> None:
+        add_endpoint(args)
 
     # ------------------------------------------------------------------------------
     # Delete contents
     # ------------------------------------------------------------------------------
-    # @cmd2.with_argparser(delete_endpoint_args)
-    # def do_delete_endpoint(self, args: argparse.Namespace) -> None:
-    #     delete_endpoint(args)
+    @cmd2.with_argparser(delete_endpoint_args)
+    def do_delete_endpoint(self, args: argparse.Namespace) -> None:
+        delete_endpoint(args)
 
     # ------------------------------------------------------------------------------
     # Update contents
     # ------------------------------------------------------------------------------
-    # @cmd2.with_argparser(update_endpoint_args)
-    # def do_update_endpoint(self, args: argparse.Namespace) -> None:
-    #     update_endpoint(args)
+    @cmd2.with_argparser(update_endpoint_args)
+    def do_update_endpoint(self, args: argparse.Namespace) -> None:
+        update_endpoint(args)
 
     # ------------------------------------------------------------------------------
     # View contents
     # ------------------------------------------------------------------------------
-    # @cmd2.with_argparser(view_endpoint_args)
-    # def do_view_endpoint(self, args: argparse.Namespace) -> None:
-    #     view_endpoint(args)
+    @cmd2.with_argparser(view_endpoint_args)
+    def do_view_endpoint(self, args: argparse.Namespace) -> None:
+        view_endpoint(args)

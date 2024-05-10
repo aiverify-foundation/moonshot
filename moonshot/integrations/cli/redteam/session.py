@@ -107,10 +107,12 @@ def list_sessions() -> None:
     """
     session_metadata_list = api_get_all_session_metadata()
     if session_metadata_list:
-        table = Table(title="Session List", show_lines=True, expand=True)
-        table.add_column("No.", style="dim", width=6)
-        table.add_column("Session ID", justify="left")
-        table.add_column("Contains", justify="left")
+        table = Table(
+            title="Session List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("No.", justify="left", style="dim", width=2)
+        table.add_column("Session ID", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=78)
 
         for session_index, session_data in enumerate(session_metadata_list, 1):
             session_id = session_data.get("session_id", "")
@@ -141,13 +143,15 @@ def update_chat_display() -> None:
         )
 
         # Prepare for table display
-        table = Table(expand=True)
+        table = Table(expand=True, show_lines=True, header_style="bold")
         table_list = []
         for endpoint, endpoint_chats in list_of_endpoint_chats.items():
             table.add_column(endpoint, justify="center")
             new_table = Table(expand=True)
-            new_table.add_column("Prepared Prompts", justify="left", style="cyan")
-            new_table.add_column("Prompt/Response", justify="left")
+            new_table.add_column(
+                "Prepared Prompts", justify="left", style="cyan", width=50
+            )
+            new_table.add_column("Prompt/Response", justify="left", width=50)
 
             for chat_with_details in endpoint_chats:
                 new_table.add_row(
@@ -320,7 +324,7 @@ new_session_args = cmd2.Cmd2ArgumentParser(
     description="Creates a new red teaming session.",
     epilog=(
         "Example(create new runner): new_session my-runner -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu\n"
-        "Example(load existing runner): new_session my-runner -c add_previous_prompt -p auto-categorisation"
+        "Example(load existing runner): new_session my-runner -c add_previous_prompt -p mmlu"
     ),
 )
 
