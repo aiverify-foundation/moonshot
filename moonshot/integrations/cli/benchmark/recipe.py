@@ -1,3 +1,4 @@
+import asyncio
 from ast import literal_eval
 
 import cmd2
@@ -11,6 +12,12 @@ from moonshot.api import (
     api_read_recipe,
     api_update_recipe,
 )
+from moonshot.src.api.api_run import api_get_all_run
+from moonshot.src.api.api_runner import (
+    api_create_runner,
+    api_get_all_runner_name,
+    api_load_runner,
+)
 
 console = Console()
 
@@ -20,43 +27,43 @@ console = Console()
 # ------------------------------------------------------------------------------
 def add_recipe(args) -> None:
     """
-    Add a new recipe. This function is responsible for creating a new recipe based on the provided parameters.
+    Add a new recipe.
 
-    It processes the input parameters by converting the 'tags', 'dataset', 'prompt_templates', 'metrics', and
-    'attack_modules' from string representations of lists into actual lists using the 'literal_eval' function from
-    the 'ast' module.
+    This function creates a new recipe by parsing the arguments provided and then calling the api_create_recipe
+    function from the moonshot.api module.
 
-    After the conversion, it invokes the 'api_create_recipe' function from the 'moonshot.api' module to persist
-    the new recipe.
+    It expects the arguments to be strings that can be evaluated into Python data structures using literal_eval.
 
     Args:
-        args: A namespace object from argparse with the following attributes:
-            name (str): The name of the new recipe.
-            description (str): A detailed description of the recipe.
-            tags (str): A string representation of a list containing tags associated with the recipe.
-            dataset (str): A string representation of a list containing datasets used in the recipe.
-            prompt_templates (str): A string representation of a list containing prompt templates for the recipe.
-            metrics (str): A string representation of a list containing metrics to evaluate the recipe.
-            attack_modules (str): A string representation of a list containing attack modules to be used in the recipe.
+        args (argparse.Namespace): The arguments provided to the command line interface.
+        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics, attack_modules,
+        and grading_scale.
 
     Returns:
         None
+
+    Raises:
+        Exception: If there is an error during the creation of the recipe or the arguments cannot be evaluated.
     """
     try:
         tags = literal_eval(args.tags)
-        datasets = literal_eval(args.dataset)
+        categories = literal_eval(args.categories)
+        datasets = literal_eval(args.datasets)
         prompt_templates = literal_eval(args.prompt_templates)
         metrics = literal_eval(args.metrics)
         attack_modules = literal_eval(args.attack_modules)
+        grading_scale = literal_eval(args.grading_scale)
 
         api_create_recipe(
             args.name,
             args.description,
             tags,
+            categories,
             datasets,
             prompt_templates,
             metrics,
             attack_modules,
+            grading_scale,
         )
         print("[add_recipe]: Recipe created.")
     except Exception as e:
@@ -103,56 +110,68 @@ def view_recipe(args) -> None:
         print(f"[view_recipe]: {str(e)}")
 
 
-# def run_recipe(args) -> None:
-#     """
-#     Run a specific recipe.
+def run_recipe(args) -> None:
+    """
+    Execute a recipe with the specified parameters.
 
-#     This function runs a specific recipe by first checking if a runner with the provided name already exists.
-#     If it does, it loads the runner using the api_load_runner function from the moonshot.api module.
-#     If it doesn't, it creates a new runner using the api_create_recipe_runner function from the moonshot.api module.
-#     The runner is created or loaded using the recipe, endpoints, and number of prompts provided in the args.
+    This function runs a recipe runner with the given name, recipes, endpoints, and other parameters.
+    It checks if the runner with the specified name already exists, and if not, it creates a new one.
+    The recipes are run against the specified endpoints, and the results are processed and displayed.
 
-#     The function then executes the run using the run method of the runner object.
-#     After the run is complete, it retrieves the run arguments of the latest run using the get_latest_run_arguments
-#     method of the runner object.
+    Args:
+        args: A namespace object from argparse. It should have the following attributes:
+            name (str): The name of the recipe runner.
+            recipes (str): A string representation of a list of recipes to run.
+            endpoints (str): A string representation of a list of endpoints to run.
+            num_of_prompts (int): The number of prompts to run.
+            random_seed (int): The random seed number for reproducibility.
+            system_prompt (str): The system prompt to use.
+            runner_proc_module (str): The runner processing module to use.
+            result_proc_module (str): The result processing module to use.
 
-#     Finally, it displays the results using the show_recipe_results function and closes the runner.
+    Returns:
+        None
+    """
+    try:
+        name = args.name
+        recipes = literal_eval(args.recipes)
+        endpoints = literal_eval(args.endpoints)
+        num_of_prompts = args.num_of_prompts
+        random_seed = args.random_seed
+        system_prompt = args.system_prompt
+        runner_proc_module = args.runner_proc_module
+        result_proc_module = args.result_proc_module
 
-#     Args:
-#         args: A namespace object from argparse. It should have the following attributes:
-#             name (str): A string representation of the recipe runner. Each run is represented by its ID.
-#             recipes (str): A string representation of a list of recipes to run.
-#             endpoints (str): A string representation of a list of endpoints to run.
-#             num_of_prompts (int): The number of prompts to generate for each recipe.
+        # Run the recipes with the defined endpoints
+        if name in api_get_all_runner_name():
+            rec_runner = api_load_runner(name)
+        else:
+            rec_runner = api_create_runner(name, endpoints)
 
-#     Returns:
-#         None
-#     """
-#     try:
-#         name = args.name
-#         recipes = literal_eval(args.recipes)
-#         endpoints = literal_eval(args.endpoints)
-#         num_of_prompts = args.num_of_prompts
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(
+            rec_runner.run_recipes(
+                recipes,
+                num_of_prompts,
+                random_seed,
+                system_prompt,
+                runner_proc_module,
+                result_proc_module,
+            )
+        )
+        rec_runner.close()
 
-#         # Run the recipes with the defined endpoints
-#         if name in api_get_all_runner_name():
-#             rec_runner = api_load_runner(name)
-#         else:
-#             rec_runner = api_create_recipe_runner(
-#                 name, recipes, endpoints, num_of_prompts
-#             )
-
-#         asyncio.run(rec_runner.run())
-#         rec_runner.close()
-
-#         # Display results
-#         result_info = api_read_result(name)
-#         show_recipe_results(
-#             recipes, endpoints, result_info, result_info["metadata"]["duration"]
-#         )
-
-#     except Exception as e:
-#         print(f"[run_recipe]: {str(e)}")
+        # Display results
+        runner_runs = api_get_all_run(rec_runner.id)
+        result_info = runner_runs[-1].get("results")
+        if result_info:
+            show_recipe_results(
+                recipes, endpoints, result_info, result_info["metadata"]["duration"]
+            )
+        else:
+            raise RuntimeError("no run result generated")
+    except Exception as e:
+        print(f"[run_recipe]: {str(e)}")
 
 
 def update_recipe(args) -> None:
@@ -204,69 +223,142 @@ def delete_recipe(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_recipes(recipes_list):
+def display_view_recipe_format(title: str, items: list) -> str:
     """
-    Display a list of recipes in a table format.
+    Format the recipe items for display.
 
-    This function renders a list of recipes as a table on the console. If the list is empty, a message is displayed
-    to indicate the absence of recipes. Each recipe is detailed with its ID, name, description, and associated
-    information such as tags, datasets, prompt templates, metrics, and attack modules.
+    This function takes a title and a list of recipe items and formats them into a string suitable for display.
+    Each item in the list is displayed on a new line with an index number. If the list is empty, it returns the
+    title with 'nil'.
 
     Args:
-        recipes_list (list): A list of recipes where each recipe is represented as a dictionary. The dictionary
-        contains the following keys: 'id', 'name', 'description', 'tags', 'datasets', 'prompt_templates', 'metrics',
-        and 'attack_modules'.
+        title (str): The title to display above the recipe items.
+        items (list): A list of recipe items to format.
 
     Returns:
-        None
+        str: The formatted recipe items as a string.
+    """
+    if items:
+        return f"[blue]{title}[/blue]:" + "".join(
+            f"\n{i + 1}. {item}" for i, item in enumerate(items)
+        )
+    else:
+        return f"[blue]{title}[/blue]: nil"
+
+
+def display_view_grading_scale_format(title: str, grading_scale: dict) -> str:
+    """
+    Format the grading scale for display.
+
+    This function takes a title and a grading scale dictionary and formats them into a string suitable for display.
+    The grading scale dictionary is expected to have grade levels as keys and tuples representing the range as values.
+    If the grading scale is empty, it returns the title with 'nil'.
+
+    Args:
+        title (str): The title to display above the grading scale.
+        grading_scale (dict): A dictionary with grade levels as keys and range tuples as values.
+
+    Returns:
+        str: The formatted grading scale as a string.
+    """
+    if grading_scale:
+        formatted_grades = "\n".join(
+            f"{i + 1}. {grade} [{range_[0]} - {range_[1]}]"
+            for i, (grade, range_) in enumerate(grading_scale.items())
+        )
+        return f"[blue]{title}[/blue]:\n{formatted_grades}"
+    else:
+        return f"[blue]{title}[/blue]: nil"
+
+
+def display_view_statistics_format(title: str, stats: dict) -> str:
+    """
+    Format the statistics for display.
+
+    This function takes a title and a statistics dictionary and formats them into a string suitable for display.
+    The statistics dictionary is expected to have various statistics as keys and their counts or sub-statistics
+    as values.
+
+    If the statistics dictionary is empty, it returns the title with 'nil'.
+
+    Args:
+        title (str): The title to display above the statistics.
+        stats (dict): A dictionary with various statistics as keys and their counts or sub-statistics as values.
+
+    Returns:
+        str: The formatted statistics as a string.
+    """
+    if stats:
+        formatted_stats = []
+        for i, (stat, value) in enumerate(stats.items(), start=1):
+            if isinstance(value, dict):
+                sub_stats = "\n".join(
+                    f"    {sub_key}: {sub_value}"
+                    for sub_key, sub_value in value.items()
+                )
+                formatted_stats.append(f"{i}. {stat}:\n{sub_stats}")
+            else:
+                formatted_stats.append(f"{i}. {stat}: {value}")
+        return f"[blue]{title}[/blue]:\n" + "\n".join(formatted_stats)
+    else:
+        return f"[blue]{title}[/blue]: nil"
+
+
+def display_recipes(recipes_list: list) -> None:
+    """
+    Display the list of recipes in a tabular format.
+
+    This function takes a list of recipe dictionaries and displays each recipe's details in a table.
+    The table includes the recipe's ID, name, description, and associated details such as tags, categories,
+    datasets, prompt templates, metrics, attack strategies, grading scale, and statistics. If the list is empty,
+    it prints a message indicating that no recipes are found.
+
+    Args:
+        recipes_list (list): A list of dictionaries, where each dictionary contains the details of a recipe.
     """
     if recipes_list:
-        table = Table("No.", "Recipe", "Contains")
+        table = Table(
+            title="List of Recipes", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("No.", width=2)
+        table.add_column("Recipe", justify="left", width=78)
+        table.add_column("Contains", justify="left", width=20)
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
                 name,
                 description,
                 tags,
+                categories,
                 datasets,
                 prompt_templates,
                 metrics,
-                attack_modules,
+                attack_strategies,
+                grading_scale,
+                stats,
             ) = recipe.values()
+
+            tags_info = display_view_recipe_format("Tags", tags)
+            categories_info = display_view_recipe_format("Categories", categories)
+            datasets_info = display_view_recipe_format("Datasets", datasets)
+            prompt_templates_info = display_view_recipe_format(
+                "Prompt Templates", prompt_templates
+            )
+            metrics_info = display_view_recipe_format("Metrics", metrics)
+            attack_strategies_info = display_view_recipe_format(
+                "Attack Strategies", attack_strategies
+            )
+            grading_scale_info = display_view_grading_scale_format(
+                "Grading Scale", grading_scale
+            )
+            stats_info = display_view_statistics_format("Statistics", stats)
+
             recipe_info = (
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
-                f"Tags:\n{tags}"
+                f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
             )
+            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
 
-            if datasets:
-                datasets_info = "[blue]Datasets[/blue]:" + "".join(
-                    f"\n{i + 1}. {item}" for i, item in enumerate(datasets)
-                )
-            else:
-                datasets_info = "[blue]Datasets[/blue]: nil"
-
-            if prompt_templates:
-                prompt_templates_info = "[blue]Prompt Templates[/blue]:" + "".join(
-                    f"\n{i + 1}. {item}" for i, item in enumerate(prompt_templates)
-                )
-            else:
-                prompt_templates_info = "[blue]Prompt Templates[/blue]: nil"
-
-            if metrics:
-                metrics_info = "[blue]Metrics[/blue]:" + "".join(
-                    f"\n{i + 1}. {item}" for i, item in enumerate(metrics)
-                )
-            else:
-                metrics_info = "[blue]Metrics[/blue]: nil"
-
-            if attack_modules:
-                attack_modules_info = "[blue]Attack Modules[/blue]:" + "".join(
-                    f"\n{i + 1}. {item}" for i, item in enumerate(attack_modules)
-                )
-            else:
-                attack_modules_info = "[blue]Attack Modules[/blue]: nil"
-
-            contains_info = f"{datasets_info}\n{prompt_templates_info}\n{metrics_info}\n{attack_modules_info}"
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)
         console.print(table)
@@ -304,48 +396,84 @@ def show_recipe_results(recipes, endpoints, recipe_results, duration):
 
 def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None:
     """
-    Generate a table to display the results of the recipe benchmarking.
+    Generate and display a table of recipe results.
 
-    This function takes the recipes, endpoints, and results as arguments. It creates a table with the recipe names and
-    their corresponding results for each endpoint. The results are displayed in a dictionary format with the dataset
-    and prompt template as the key and the result as the value. If there are no results for a particular recipe and
-    endpoint, it displays an empty dictionary.
+    This function creates a table that lists the results of running recipes against various endpoints.
+    Each row in the table corresponds to a recipe, and each column corresponds to an endpoint.
+    The results include the grade and average grade value for each recipe-endpoint pair.
 
     Args:
-        recipes (list): A list of recipes that were benchmarked.
-        endpoints (list): A list of endpoints that were used in the benchmarking.
-        results (dict): A dictionary with the results of the recipe benchmarking. The keys are tuples containing the
-        endpoint, recipe, dataset, and prompt template. The values are dictionaries with the 'results' key and the
-        result as the value.
+        recipes (list): A list of recipe IDs that were benchmarked.
+        endpoints (list): A list of endpoint IDs against which the recipes were run.
+        results (dict): A dictionary containing the results of the benchmarking.
 
     Returns:
-        None
+        None: This function does not return anything. It prints the table to the console.
     """
-    table = Table("", "Recipe", *endpoints)
-    for recipe_index, recipe in enumerate(recipes, 1):
-        # Get recipe result
-        recipe_result = {}
-        for tmp_result in results["results"]["recipes"]:
-            if tmp_result["id"] == recipe:
-                recipe_result = tmp_result
-                break
+    # Create a table with a title and headers
+    table = Table(
+        title="Recipes Result", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Recipe", justify="left", width=78)
+    # Add a column for each endpoint
+    for endpoint in endpoints:
+        table.add_column(endpoint, justify="center")
 
+    # Iterate over each recipe and populate the table with results
+    for index, recipe_id in enumerate(recipes, start=1):
+        # Attempt to find the result for the current recipe
+        recipe_result = next(
+            (
+                result
+                for result in results["results"]["recipes"]
+                if result["id"] == recipe_id
+            ),
+            None,
+        )
+
+        # If the result exists, extract and format the results for each endpoint
         if recipe_result:
-            endpoint_results = list()
+            endpoint_results = []
             for endpoint in endpoints:
-                output_results = {}
+                # Find the evaluation summary for the endpoint
+                evaluation_summary = next(
+                    (
+                        eval_summary
+                        for eval_summary in recipe_result["evaluation_summary"]
+                        if eval_summary["model_id"] == endpoint
+                    ),
+                    None,
+                )
 
-                # Get endpoint result
-                for tmp_result in recipe_result["models"]:
-                    if tmp_result["id"] == endpoint:
-                        for ds in tmp_result["datasets"]:
-                            for pt in ds["prompt_templates"]:
-                                output_results[(ds["id"], pt["id"])] = pt["metrics"]
+                # Format the grade and average grade value, or use "-" if not found
+                grade = "-"
+                if (
+                    evaluation_summary
+                    and "grade" in evaluation_summary
+                    and "avg_grade_value" in evaluation_summary
+                    and evaluation_summary["grade"]
+                ):
+                    grade = f"{evaluation_summary['grade']} [{evaluation_summary['avg_grade_value']}]"
+                endpoint_results.append(grade)
 
-                endpoint_results.append(str(output_results))
-            table.add_section()
-            table.add_row(str(recipe_index), recipe, *endpoint_results)
-    # Display table
+            # Add a row for the recipe with its results
+            table.add_row(
+                str(index),
+                f"Recipe: [blue]{recipe_result['id']}[/blue]",
+                *endpoint_results,
+                end_section=True,
+            )
+        else:
+            # If no result is found, add a row with placeholders
+            table.add_row(
+                str(index),
+                f"Recipe: [blue]{recipe_id}[/blue]",
+                *(["-"] * len(endpoints)),
+                end_section=True,
+            )
+
+    # Print the table to the console
     console.print(table)
 
 
@@ -358,10 +486,12 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n add_recipe 'My new recipe' "
     "'I am recipe description' "
     "\"['tag1','tag2']\" "
+    "\"['category1','category2']\" "
     "\"['bbq-lite-age-ambiguous']\" "
     "\"['analogical-similarity','auto-categorisation']\" "
     "\"['bertscore','bleuscore']\" "
-    '"[]"',
+    '"[]" '
+    "\"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")
 add_recipe_args.add_argument(
@@ -370,7 +500,10 @@ add_recipe_args.add_argument(
 add_recipe_args.add_argument(
     "tags", type=str, help="List of tags to be included in the new recipe"
 )
-add_recipe_args.add_argument("dataset", type=str, help="The dataset to be used")
+add_recipe_args.add_argument(
+    "categories", type=str, help="List of tags to be included in the new recipe"
+)
+add_recipe_args.add_argument("datasets", type=str, help="The dataset to be used")
 add_recipe_args.add_argument(
     "prompt_templates",
     type=str,
@@ -384,15 +517,27 @@ add_recipe_args.add_argument(
     type=str,
     help="List of attack modules to be included in the new recipe",
 )
+add_recipe_args.add_argument(
+    "grading_scale",
+    type=str,
+    help="List of attack modules to be included in the new recipe",
+)
 
 # Update recipe arguments
 update_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Update a recipe.",
-    epilog="available keys: \n  name: Name of recipe \n  description: Description of recipe \n"
-    "  tags: List of tags \n  datasets: List of datasets \n  prompt_templates: List of prompt templates \n"
-    "  metrics: List of metrics \n  type: Recipe type eg. benchmark or redteam \n"
-    "  attack_modules: List of attack modules\n\nExample:\n update_recipe my-new-recipe "
-    "\"[('name', 'my-special-bbq-recipe'), ('tags', ['fairness', 'bbq'])]\" ",
+    epilog="Available keys for updating a recipe: \n"
+    "  name: The name of the recipe. \n"
+    "  description: The description of the recipe. \n"
+    "  tags: A list of tags associated with the recipe. \n"
+    "  categories: A list of categories used in the recipe. \n"
+    "  datasets: A list of datasets used in the recipe. \n"
+    "  prompt_templates: A list of prompt templates for the recipe. \n"
+    "  metrics: A list of metrics to evaluate the recipe. \n"
+    "  attack_modules: A list of attack modules used in the recipe.\n"
+    "  grading_scale: A list of grading scale used in the recipe. \n\n"
+    "Example command:\n"
+    "  update_recipe my-new-recipe \"[('name', 'My Updated Recipe'), ('tags', ['fairness', 'bbq'])]\" ",
 )
 update_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
 update_recipe_args.add_argument(
@@ -417,14 +562,34 @@ delete_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
 run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
-    "-n 1 "
-    "my-new-recipe-executor "
+    '-n 1 -s 1 -p "You are an intelligent AI" '
+    "my-new-recipe-runner "
     "\"['bbq','auto-categorisation']\" "
-    "\"['test-openai-endpoint']\"",
+    "\"['openai-gpt35-turbo']\"",
 )
-run_recipe_args.add_argument("name", type=str, help="Name of recipe executor")
+run_recipe_args.add_argument("name", type=str, help="Name of recipe runner")
 run_recipe_args.add_argument("recipes", type=str, help="List of recipes to run")
 run_recipe_args.add_argument("endpoints", type=str, help="List of endpoints to run")
 run_recipe_args.add_argument(
     "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
+)
+run_recipe_args.add_argument(
+    "-s", "--random_seed", type=int, default=0, help="Random seed number"
+)
+run_recipe_args.add_argument(
+    "-p", "--system_prompt", type=str, default="", help="System Prompt to use"
+)
+run_recipe_args.add_argument(
+    "-l",
+    "--runner_proc_module",
+    type=str,
+    default="benchmarking",
+    help="Runner processing module to use",
+)
+run_recipe_args.add_argument(
+    "-o",
+    "--result_proc_module",
+    type=str,
+    default="benchmarking-result",
+    help="Result processing module to use",
 )

@@ -8,6 +8,8 @@ from moonshot.integrations.cli.benchmark.cookbook import (
     delete_cookbook,
     delete_cookbook_args,
     list_cookbooks,
+    run_cookbook,
+    run_cookbook_args,
     update_cookbook,
     update_cookbook_args,
     view_cookbook,
@@ -19,19 +21,12 @@ from moonshot.integrations.cli.benchmark.recipe import (
     delete_recipe,
     delete_recipe_args,
     list_recipes,
+    run_recipe,
+    run_recipe_args,
     update_recipe,
     update_recipe_args,
     view_recipe,
     view_recipe_args,
-)
-from moonshot.integrations.cli.benchmark.report_analysis import (
-    delete_report_analysis,
-    delete_report_analysis_args,
-    list_report_analyses,
-    run_report_analysis,
-    run_report_analysis_args,
-    view_report_analysis,
-    view_report_analysis_args,
 )
 from moonshot.integrations.cli.benchmark.results import (
     delete_result,
@@ -64,14 +59,11 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_list_recipes(self, _: cmd2.Statement) -> None:
         list_recipes()
 
-    def do_list_report_analyses(self, _: cmd2.Statement) -> None:
-        list_report_analyses()
+    # def do_list_results(self, _: cmd2.Statement) -> None:
+    #     list_results()
 
-    def do_list_results(self, _: cmd2.Statement) -> None:
-        list_results()
-
-    def do_list_runs(self, _: cmd2.Statement) -> None:
-        list_runs()
+    # def do_list_runs(self, _: cmd2.Statement) -> None:
+    #     list_runs()
 
     # ------------------------------------------------------------------------------
     # Add contents
@@ -97,17 +89,13 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_delete_recipe(self, args: argparse.Namespace) -> None:
         delete_recipe(args)
 
-    @cmd2.with_argparser(delete_report_analysis_args)
-    def do_delete_report_analysis(self, args: argparse.Namespace) -> None:
-        delete_report_analysis(args)
+    # @cmd2.with_argparser(delete_result_args)
+    # def do_delete_result(self, args: argparse.Namespace) -> None:
+    #     delete_result(args)
 
-    @cmd2.with_argparser(delete_result_args)
-    def do_delete_result(self, args: argparse.Namespace) -> None:
-        delete_result(args)
-
-    @cmd2.with_argparser(delete_run_args)
-    def do_delete_run(self, args: argparse.Namespace) -> None:
-        delete_run(args)
+    # @cmd2.with_argparser(delete_run_args)
+    # def do_delete_run(self, args: argparse.Namespace) -> None:
+    #     delete_run(args)
 
     # ------------------------------------------------------------------------------
     # Update contents
@@ -125,17 +113,13 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # Run contents
     # ------------------------------------------------------------------------------
 
-    # @cmd2.with_argparser(run_cookbook_args)
-    # def do_run_cookbook(self, args: argparse.Namespace) -> None:
-    #     run_cookbook(args)
+    @cmd2.with_argparser(run_cookbook_args)
+    def do_run_cookbook(self, args: argparse.Namespace) -> None:
+        run_cookbook(args)
 
-    # @cmd2.with_argparser(run_recipe_args)
-    # def do_run_recipe(self, args: argparse.Namespace) -> None:
-    #     run_recipe(args)
-
-    @cmd2.with_argparser(run_report_analysis_args)
-    def do_run_report_analysis(self, args: argparse.Namespace) -> None:
-        run_report_analysis(args)
+    @cmd2.with_argparser(run_recipe_args)
+    def do_run_recipe(self, args: argparse.Namespace) -> None:
+        run_recipe(args)
 
     # ------------------------------------------------------------------------------
     # View contents
@@ -149,14 +133,10 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_view_recipe(self, args: argparse.Namespace) -> None:
         view_recipe(args)
 
-    @cmd2.with_argparser(view_report_analysis_args)
-    def do_view_report_analysis(self, args: argparse.Namespace) -> None:
-        view_report_analysis(args)
+    # @cmd2.with_argparser(view_result_args)
+    # def do_view_result(self, args: argparse.Namespace) -> None:
+    #     view_result(args)
 
-    @cmd2.with_argparser(view_result_args)
-    def do_view_result(self, args: argparse.Namespace) -> None:
-        view_result(args)
-
-    @cmd2.with_argparser(view_run_args)
-    def do_view_run(self, args: argparse.Namespace) -> None:
-        view_run(args)
+    # @cmd2.with_argparser(view_run_args)
+    # def do_view_run(self, args: argparse.Namespace) -> None:
+    #     view_run(args)
