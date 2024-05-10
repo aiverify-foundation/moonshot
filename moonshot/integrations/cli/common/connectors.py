@@ -143,7 +143,8 @@ def delete_endpoint(args) -> None:
     Delete a specific endpoint.
 
     This function deletes a specific endpoint by calling the api_delete_endpoint function from the
-    moonshot.api module using the endpoint name provided in the args.
+    moonshot.api module using the endpoint name provided in the args. Before deletion, it asks for
+    user confirmation. If the user confirms, the endpoint is deleted; otherwise, the deletion is cancelled.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -152,6 +153,11 @@ def delete_endpoint(args) -> None:
     Returns:
         None
     """
+    # Confirm with the user before deleting an endpoint
+    confirmation = console.input("[bold red]Are you sure you want to delete the endpoint (y/N)? [/]")
+    if confirmation.lower() != 'y':
+        console.print("[bold yellow]Endpoint deletion cancelled.[/]")
+        return
     try:
         api_delete_endpoint(args.endpoint)
         print("[delete_endpoint]: Endpoint deleted.")
@@ -260,8 +266,8 @@ def display_endpoints(endpoints_list):
 # Add endpoint arguments
 add_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Add a new endpoint.",
-    epilog="Example:\n add_endpoint openai-gpt35 my-openai-endpoint "
-    "MY_URI ADD_YOUR_TOKEN_HERE 10 2 \"{'temperature': 0}\"",
+    epilog="Example:\n add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' "
+    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 \"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}\"",
 )
 add_endpoint_args.add_argument(
     "connector_type",
@@ -284,10 +290,18 @@ add_endpoint_args.add_argument("params", type=str, help="Params of the new endpo
 # Update endpoint arguments
 update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
-    epilog="available keys: \n  name: Name of endpoint \n  uri: URI of endpoint \n  token: token of endpoint "
-    "\n  max_calls_per_second: Rate limit max calls per second \n  max_concurrency: Rate limit max concurrency "
-    "\n  params: Extra arguments for the endpoint \n\nExample:\n update_endpoint my-openai-endpoint "
-    "\"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]\" ",
+    epilog=(
+        "Available keys:\n"
+        "  name: Name of the endpoint\n"
+        "  uri: URI of the endpoint\n"
+        "  token: Token of the endpoint\n"
+        "  max_calls_per_second: Rate limit for max calls per second\n"
+        "  max_concurrency: Rate limit for max concurrency\n"
+        "  params: Extra arguments for the endpoint\n\n"
+        "Example:\n"
+        "  update_endpoint openai-gpt4 \"[('name', 'my-special-openai-endpoint'), "
+        "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
+    ),
 )
 update_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
 update_endpoint_args.add_argument(
@@ -297,13 +311,13 @@ update_endpoint_args.add_argument(
 # View endpoint arguments
 view_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="View an endpoint.",
-    epilog="Example:\n view_endpoint test-openai-endpoint",
+    epilog="Example:\n view_endpoint openai-gpt4",
 )
 view_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
 
 # Delete endpoint arguments
 delete_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Delete an endpoint.",
-    epilog="Example:\n delete_endpoint my-openai-endpoint",
+    epilog="Example:\n delete_endpoint openai-gpt4",
 )
 delete_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
