@@ -85,6 +85,7 @@ class BenchmarkTestManager(BaseService):
         runner = self.runner_service.create_runner(
             input_data.run_name,
             input_data.endpoints,
+            input_data.description,
             self.progress_status_updater.on_progress_update,
         )
         benchmark_coroutine = self.run_test(input_data, benchmark_type, runner)
