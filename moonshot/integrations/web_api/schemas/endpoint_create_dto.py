@@ -1,7 +1,7 @@
 from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict
-from ..schemas.endpoint_response_model import Params
+from ..schemas.endpoint_response_model import EndpointParams
 
 class EndpointCreateDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -11,4 +11,4 @@ class EndpointCreateDTO(BaseModel):
     token: str
     max_calls_per_second: int
     max_concurrency: int
-    params: Params
+    params: EndpointParams

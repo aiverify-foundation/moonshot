@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 from typing_extensions import TypedDict
 
 
-class Parameters(TypedDict, total=False):
+class AdditionalParams(TypedDict, total=False):
     max_length: int
     min_length: int
 
@@ -19,9 +19,9 @@ class OptionalParams(TypedDict, total=False):
     temperature: Optional[float]
     pre_prompt: Optional[str]
     post_prompt: Optional[str]
-    parameters: Optional[Parameters]
+    parameters: Optional[AdditionalParams]
 
-class Params(RequiredParams, OptionalParams):
+class EndpointParams(RequiredParams, OptionalParams):
     pass
 
 
@@ -35,4 +35,4 @@ class EndpointDataModel(BaseModel):
     max_calls_per_second: int
     max_concurrency: int
     created_date: str
-    params: Params
+    params: EndpointParams
