@@ -64,6 +64,10 @@ class SessionService(BaseService):
         runner_args = {
             "context_strategy": session_create_dto.context_strategy,
             "prompt_template": session_create_dto.prompt_template,
+            "cs_num_of_prev_prompts": session_create_dto.cs_num_of_prev_prompts,
+            "attack_module": session_create_dto.attack_module,
+            "metric": session_create_dto.metric,
+            "system_prompt": session_create_dto.system_prompt,
         }
 
         # Create a new session if the runner has a database instance
@@ -296,7 +300,7 @@ class SessionService(BaseService):
             await self.active_runner.run_red_teaming({"attack_strategies": [rt_args]})
         else:
             await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
-
+        
         retn_val = self.update_session_chat(self.active_runner.id)
         return retn_val
 

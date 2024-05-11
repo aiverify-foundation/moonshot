@@ -8,3 +8,7 @@ class SessionCreateDTO(BaseModel):
     endpoints: list[str] = Field(min_length=1)
     context_strategy: str = ""
     prompt_template: str = ""
+    attack_module: str = ""
+    metric: str = ""
+    system_prompt: str = ""
+    cs_num_of_prev_prompts: int = 5
