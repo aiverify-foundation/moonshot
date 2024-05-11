@@ -189,7 +189,7 @@ class AttackModule:
                 consolidated_responses.append(response)
                 chat_tuple = (
                     target_llm_connector.id,
-                    self.context_strategy_instances[0]
+                    self.context_strategy_instances[0].id
                     if self.context_strategy_info
                     else "",
                     self.prompt_templates[0] if self.prompt_templates else "",
@@ -233,7 +233,7 @@ class AttackModule:
             consolidated_responses.append(response)
             chat_tuple = (
                 target_llm_connector.id,
-                self.context_strategy_instances[0]
+                self.context_strategy_instances[0].id
                 if self.context_strategy_info
                 else "",
                 self.prompt_templates[0] if self.prompt_templates else "",
