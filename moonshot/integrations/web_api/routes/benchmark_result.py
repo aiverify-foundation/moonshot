@@ -14,11 +14,12 @@ async def get_all_results(
     benchmark_result_service: BenchmarkResultService = Depends(
         Provide[Container.benchmark_result_service]
     ),
- ) -> list[dict]:
+) -> list[dict]:
     """
     Retrieve all benchmark results.
 
-    This endpoint retrieves a list of all benchmark results from the database. Each benchmark result is represented as a dictionary containing its associated data.
+    This endpoint retrieves a list of all benchmark results from the database. Each benchmark result is
+    represented as a dictionary containing its associated data.
 
     Args:
         benchmark_result_service (BenchmarkResultService): The service responsible for fetching benchmark results.

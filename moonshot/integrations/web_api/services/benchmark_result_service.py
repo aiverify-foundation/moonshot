@@ -8,9 +8,7 @@ class BenchmarkResultService(BaseService):
     @exception_handler
     def get_all_results(self) -> list[BenchmarkResult]:
         results = moonshot_api.api_get_all_result()
-        return [
-            BenchmarkResult(**result) for result in results
-        ] 
+        return [BenchmarkResult(**result) for result in results]
 
     @exception_handler
     def get_all_result_name(self) -> list[str] | None:

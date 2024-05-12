@@ -43,12 +43,12 @@ def get_all_attack_module(
                 status_code=500, detail=f"Failed to retrieve attack modules: {e.msg}"
             )
 
+
 @router.get("/api/v1/attack-modules/metadata")
 @inject
 def get_all_attack_module_metadata(
     am_service: AttackModuleService = Depends(Provide[Container.am_service]),
 ) -> list:
-
     try:
         return am_service.get_all_attack_module_metadata()
     except ServiceException as e:
