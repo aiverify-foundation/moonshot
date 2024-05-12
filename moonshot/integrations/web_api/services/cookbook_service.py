@@ -26,7 +26,12 @@ class CookbookService(BaseService):
 
     @exception_handler
     def get_all_cookbooks(
-        self, tags: str, categories: str, count: bool, ids: str | None = None, categories_excluded: str | None = None
+        self,
+        tags: str,
+        categories: str,
+        count: bool,
+        ids: str | None = None,
+        categories_excluded: str | None = None,
     ) -> list[CookbookResponseModel]:
         """
         Retrieve all cookbooks, optionally filtered by tags and categories, and with prompt counts.
@@ -53,32 +58,34 @@ class CookbookService(BaseService):
 
         for cookbook_dict in cookbooks:
             cookbook = CookbookResponseModel(**cookbook_dict)
-            
+
             if not tags and not categories:
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
-                            cookbook
+                        cookbook.total_prompt_in_cookbook = (
+                            get_total_prompt_in_cookbook(cookbook)
                         )
 
             if tags and cookbooks_recipe_has_tags(tags, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
-                            cookbook
+                        cookbook.total_prompt_in_cookbook = (
+                            get_total_prompt_in_cookbook(cookbook)
                         )
 
             if categories and cookbooks_recipe_has_categories(categories, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = get_total_prompt_in_cookbook(
-                            cookbook
+                        cookbook.total_prompt_in_cookbook = (
+                            get_total_prompt_in_cookbook(cookbook)
                         )
 
-            if categories_excluded and cookbooks_recipe_has_categories(categories_excluded, cookbook):
+            if categories_excluded and cookbooks_recipe_has_categories(
+                categories_excluded, cookbook
+            ):
                 cookbooks_list.remove(cookbook)
 
         return cookbooks_list

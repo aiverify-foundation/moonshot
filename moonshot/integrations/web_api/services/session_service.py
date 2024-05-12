@@ -300,7 +300,7 @@ class SessionService(BaseService):
             await self.active_runner.run_red_teaming({"attack_strategies": [rt_args]})
         else:
             await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
-        
+
         retn_val = self.update_session_chat(self.active_runner.id)
         return retn_val
 

@@ -1,4 +1,5 @@
 from typing import Optional
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -56,7 +57,9 @@ def get_all_recipes(
     ids: Optional[str] = Query(None, description="Get recipes to query"),
     tags: Optional[str] = Query(None, description="Filter recipes by tags"),
     categories: str = Query(None, description="Filter recipes by categories"),
-    sort_by: Optional[str] = Query(None, description="Sort recipes by a specific field"),
+    sort_by: Optional[str] = Query(
+        None, description="Sort recipes by a specific field"
+    ),
     count: bool = Query(False, description="Whether to include the count of recipes"),
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> list[RecipeResponseModel]:
@@ -134,7 +137,6 @@ def get_all_recipes_name(
             raise HTTPException(
                 status_code=500, detail=f"Failed to retrieve recipe names: {e.msg}"
             )
-
 
 
 @router.put("/api/v1/recipes/{recipe_id}")

@@ -8,7 +8,7 @@ from ..services.utils.exceptions_handler import ServiceException
 router = APIRouter()
 
 
-@router.get("/api/v1/runs")
+@router.get("/api/v1/runners")
 @inject
 def get_all_runners(
     runner_service: RunnerService = Depends(Provide[Container.runner_service]),
@@ -44,7 +44,7 @@ def get_all_runners(
             )
 
 
-@router.get("/api/v1/runs/name")
+@router.get("/api/v1/runners/name")
 @inject
 def get_all_runner_name(
     runner_service: RunnerService = Depends(Provide[Container.runner_service]),
@@ -80,7 +80,7 @@ def get_all_runner_name(
             )
 
 
-@router.get("/api/v1/runs/{runner_id}")
+@router.get("/api/v1/runners/{runner_id}")
 @inject
 def get_runner_by_id(
     runner_id: str,
@@ -119,7 +119,7 @@ def get_runner_by_id(
             )
 
 
-@router.delete("/api/v1/runs/{runner_id}")
+@router.delete("/api/v1/runners/{runner_id}")
 @inject
 def delete_runner(
     runner_id: str,
@@ -155,4 +155,85 @@ def delete_runner(
         else:
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete runner: {e.msg}"
+            )
+
+
+@router.get("/api/v1/runners/{runner_id}/runs/{run_id}")
+@inject
+def get_run_details_by_runner(
+    runner_id: str,
+    run_id: str,
+    runner_service: RunnerService = Depends(Provide[Container.runner_service]),
+) -> dict:
+    """
+    Retrieve the details of a specific run by a runner.
+
+    Args:
+        runner_id (str): The unique identifier of the runner.
+        run_id (str): The unique identifier of the run.
+        runner_service (RunnerService): The service responsible for retrieving run details.
+
+    Returns:
+        dict: The details of the run.
+
+    Raises:
+        HTTPException: An error with status code 404 if the run details are not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
+    try:
+        return runner_service.get_run_details_by_runner(runner_id, run_id)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404,
+                detail=f"Failed to get run details from runner: {e.msg}",
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to get run details from runner: {e.msg}",
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to get run details from runner: {e.msg}",
+            )
+
+
+@router.get("/api/v1/runners/{runner_id}/runs")
+@inject
+def get_runs_id_in_runner(
+    runner_id: str,
+    runner_service: RunnerService = Depends(Provide[Container.runner_service]),
+) -> list[str]:
+    """
+    Retrieve a list of run identifiers associated with a specific runner.
+
+    Args:
+        runner_id (str): The unique identifier of the runner.
+        runner_service (RunnerService): The service responsible for retrieving the list of runs.
+
+    Returns:
+        List[str]: A list of run identifiers.
+
+    Raises:
+        HTTPException: An error with status code 404 if no runs are found for the runner.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
+    try:
+        return runner_service.get_runs_id_in_runner(runner_id)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to get runs from runner: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to get runs from runner: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to get runs from runner: {e.msg}"
             )

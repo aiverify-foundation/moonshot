@@ -86,7 +86,11 @@ def get_all_cookbooks(
     """
     try:
         cookbooks = cookbook_service.get_all_cookbooks(
-            tags=tags, categories=categories, count=count, ids=ids, categories_excluded=categories_excluded
+            tags=tags,
+            categories=categories,
+            count=count,
+            ids=ids,
+            categories_excluded=categories_excluded,
         )
         return cookbooks
     except ServiceException as e:
@@ -139,7 +143,6 @@ def get_all_cookbooks_name(
             raise HTTPException(
                 status_code=500, detail=f"Failed to retrieve cookbooks: {e.msg}"
             )
-
 
 
 @router.put("/api/v1/cookbooks/{cookbook_id}")
