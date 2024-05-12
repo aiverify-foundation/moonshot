@@ -1,0 +1,94 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:45  Samples:  673
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 1.673     CPU time: 0.712
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+1.673 _UnixSelectorEventLoop._run_once  asyncio/base_events.py:1845
+├─ 1.429 Handle._run  asyncio/events.py:78
+│  ├─ 0.693 Benchmarking._process_single_prompt  moonshot/data/runners-modules/benchmarking.py:871
+│  │  └─ 0.681 get_prediction  moonshot/src/connectors/connector.py:261
+│  │     └─ 0.681 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:147
+│  │        └─ 0.681 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:36
+│  │           └─ 0.680 OpenAIConnector.get_response  moonshot/data/connectors/openai-connector.py:26
+│  │              └─ 0.680 AsyncCompletions.create  openai/resources/chat/completions.py:1128
+│  │                    [27 frames hidden]  openai, httpx, httpcore, anyio, asyncio
+│  │                       0.627 Event.wait  asyncio/locks.py:200
+│  │                       └─ 0.627 [await]  asyncio/locks.py
+│  ├─ 0.568 Runner.run_cookbooks  moonshot/src/runners/runner.py:351
+│  │  └─ 0.568 Run.run  moonshot/src/runs/run.py:170
+│  │     ├─ 0.312 Benchmarking.generate  moonshot/data/runners-modules/benchmarking.py:44
+│  │     │  ├─ 0.279 Benchmarking._run_cookbook  moonshot/data/runners-modules/benchmarking.py:247
+│  │     │  │  └─ 0.273 Benchmarking._run_recipe  moonshot/data/runners-modules/benchmarking.py:329
+│  │     │  │     └─ 0.266 Recipe.load  moonshot/src/recipes/recipe.py:28
+│  │     │  │        └─ 0.266 wrapper_function  pydantic/v1/decorator.py:38
+│  │     │  │              [3 frames hidden]  pydantic
+│  │     │  │                 0.266 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+│  │     │  │                 └─ 0.266 read  moonshot/src/recipes/recipe.py:84
+│  │     │  │                    └─ 0.266 _read_recipe  moonshot/src/recipes/recipe.py:110
+│  │     │  │                       └─ 0.261 <dictcomp>  moonshot/src/recipes/recipe.py:133
+│  │     │  │                          └─ 0.261 wrapper_function  pydantic/v1/decorator.py:38
+│  │     │  │                                [3 frames hidden]  pydantic
+│  │     │  │                                   0.261 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+│  │     │  │                                   └─ 0.261 read  moonshot/src/datasets/dataset.py:13
+│  │     │  │                                      └─ 0.261 _read_dataset  moonshot/src/datasets/dataset.py:40
+│  │     │  │                                         ├─ 0.140 read_object_with_iterator  moonshot/src/storage/storage.py:47
+│  │     │  │                                         │  └─ 0.129 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+│  │     │  │                                         │     └─ 0.118 [self]  moonshot/data/io-modules/jsonio.py
+│  │     │  │                                         └─ 0.120 count_objects  moonshot/src/storage/storage.py:142
+│  │     │  │                                            └─ 0.100 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+│  │     │  │                                               └─ 0.077 next  <built-in>
+│  │     │  └─ 0.032 <listcomp>  moonshot/data/runners-modules/benchmarking.py:99
+│  │     │     └─ 0.032 create  moonshot/src/connectors/connector.py:211
+│  │     │        └─ 0.032 Connector.load  moonshot/src/connectors/connector.py:179
+│  │     │           └─ 0.029 OpenAIConnector.__init__  moonshot/data/connectors/openai-connector.py:16
+│  │     │              └─ 0.029 AsyncOpenAI.__init__  openai/_client.py:281
+│  │     │                    [11 frames hidden]  openai, httpx, <built-in>
+│  │     └─ 0.249 BenchmarkingResult.generate  moonshot/data/results-modules/benchmarking-result.py:11
+│  │        └─ 0.239 BenchmarkingResult._generate_result  moonshot/data/results-modules/benchmarking-result.py:99
+│  │           └─ 0.239 BenchmarkingResult._generate_cookbooks_result  moonshot/data/results-modules/benchmarking-result.py:137
+│  │              └─ 0.239 BenchmarkingResult._generate_recipes_result  moonshot/data/results-modules/benchmarking-result.py:276
+│  │                 └─ 0.239 Recipe.load  moonshot/src/recipes/recipe.py:28
+│  │                    └─ 0.239 wrapper_function  pydantic/v1/decorator.py:38
+│  │                          [3 frames hidden]  pydantic
+│  │                             0.239 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+│  │                             └─ 0.239 read  moonshot/src/recipes/recipe.py:84
+│  │                                └─ 0.238 _read_recipe  moonshot/src/recipes/recipe.py:110
+│  │                                   └─ 0.236 <dictcomp>  moonshot/src/recipes/recipe.py:133
+│  │                                      └─ 0.234 wrapper_function  pydantic/v1/decorator.py:38
+│  │                                            [3 frames hidden]  pydantic
+│  │                                               0.234 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+│  │                                               └─ 0.234 read  moonshot/src/datasets/dataset.py:13
+│  │                                                  └─ 0.234 _read_dataset  moonshot/src/datasets/dataset.py:40
+│  │                                                     ├─ 0.126 read_object_with_iterator  moonshot/src/storage/storage.py:47
+│  │                                                     │  └─ 0.122 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+│  │                                                     │     └─ 0.110 [self]  moonshot/data/io-modules/jsonio.py
+│  │                                                     └─ 0.107 count_objects  moonshot/src/storage/storage.py:142
+│  │                                                        └─ 0.100 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+│  │                                                           └─ 0.082 next  <built-in>
+│  ├─ 0.121 producer  moonshot/data/runners-modules/benchmarking.py:533
+│  │  └─ 0.121 Benchmarking._generate_prompts  moonshot/data/runners-modules/benchmarking.py:659
+│  │     └─ 0.117 Benchmarking._get_dataset_prompts  moonshot/data/runners-modules/benchmarking.py:745
+│  │        ├─ 0.085 wrapper_function  pydantic/v1/decorator.py:38
+│  │        │     [3 frames hidden]  pydantic
+│  │        │        0.085 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+│  │        │        └─ 0.085 read  moonshot/src/datasets/dataset.py:13
+│  │        │           └─ 0.085 _read_dataset  moonshot/src/datasets/dataset.py:40
+│  │        │              ├─ 0.044 read_object_with_iterator  moonshot/src/storage/storage.py:47
+│  │        │              │  └─ 0.043 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+│  │        │              │     └─ 0.039 [self]  moonshot/data/io-modules/jsonio.py
+│  │        │              └─ 0.040 count_objects  moonshot/src/storage/storage.py:142
+│  │        │                 └─ 0.030 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+│  │        │                    └─ 0.024 next  <built-in>
+│  │        └─ 0.031 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+│  │           └─ 0.027 next  <built-in>
+│  └─ 0.027 profile_run_cookbook_and_cancel  tests/test_api_perf.py:603
+│     └─ 0.027 profile_async_function  tests/test_api_perf.py:81
+│        └─ 0.027 run_cookbook_and_cancel  tests/test_api_perf.py:609
+│           └─ 0.026 Runner.cancel  moonshot/src/runners/runner.py:268
+│              └─ 0.026 Lock.__aexit__  asyncio/locks.py:20
+│                    [2 frames hidden]  asyncio
+└─ 0.244 KqueueSelector.select  selectors.py:558
+      [2 frames hidden]  selectors, <built-in>
+

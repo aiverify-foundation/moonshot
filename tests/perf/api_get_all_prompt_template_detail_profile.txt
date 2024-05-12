@@ -1,0 +1,22 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  26
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.048     CPU time: 0.013
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.047 profile_function  tests/test_api_perf.py:97
+└─ 0.047 api_get_all_prompt_template_detail  moonshot/src/api/api_prompt_template.py:7
+   └─ 0.047 get_all_prompt_template_details  moonshot/src/prompt_templates/prompt_template.py:30
+      └─ 0.047 read_object  moonshot/src/storage/storage.py:95
+         ├─ 0.043 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+         │  ├─ 0.042 [self]  moonshot/data/io-modules/jsonio.py
+         │  └─ 0.001 load  json/__init__.py:274
+         └─ 0.004 get_instance  moonshot/src/utils/import_modules.py:59
+            └─ 0.004 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+               ├─ 0.002 <module>  moonshot/data/io-modules/jsonio.py:1
+               │  ├─ 0.001 JsonIO  moonshot/data/io-modules/jsonio.py:9
+               │  └─ 0.001 __build_class__  <built-in>
+               ├─ 0.001 loads  <built-in>
+               └─ 0.001 [self]  moonshot/src/utils/import_modules.py
+

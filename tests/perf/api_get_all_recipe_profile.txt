@@ -1,0 +1,32 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  3746
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 4.512     CPU time: 4.157
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+4.512 profile_function  tests/test_api_perf.py:97
+└─ 4.512 api_get_all_recipe  moonshot/src/api/api_recipe.py:139
+   └─ 4.512 get_available_items  moonshot/src/recipes/recipe.py:196
+      └─ 4.509 _read_recipe  moonshot/src/recipes/recipe.py:110
+         ├─ 4.286 <dictcomp>  moonshot/src/recipes/recipe.py:133
+         │  └─ 4.286 wrapper_function  pydantic/v1/decorator.py:38
+         │        [3 frames hidden]  pydantic
+         │           4.284 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+         │           └─ 4.284 read  moonshot/src/datasets/dataset.py:13
+         │              └─ 4.282 _read_dataset  moonshot/src/datasets/dataset.py:40
+         │                 ├─ 2.379 read_object_with_iterator  moonshot/src/storage/storage.py:47
+         │                 │  └─ 2.360 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+         │                 │     ├─ 2.119 [self]  moonshot/data/io-modules/jsonio.py
+         │                 │     └─ 0.233 utf8reader.read  ijson/compat.py:31
+         │                 │           [4 frames hidden]  ijson, <frozen codecs>, <built-in>
+         │                 └─ 1.898 count_objects  moonshot/src/storage/storage.py:142
+         │                    ├─ 1.753 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+         │                    │  ├─ 1.556 next  <built-in>
+         │                    │  ├─ 0.109 utf8reader.read  ijson/compat.py:31
+         │                    │  │     [2 frames hidden]  ijson
+         │                    │  └─ 0.086 [self]  moonshot/data/io-modules/jsonio.py
+         │                    └─ 0.103 [self]  moonshot/src/storage/storage.py
+         └─ 0.222 read_object  moonshot/src/storage/storage.py:95
+            └─ 0.215 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

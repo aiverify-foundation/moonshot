@@ -1,0 +1,23 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:26  Samples:  6
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.006     CPU time: 0.006
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.006 profile_function  tests/test_api_perf.py:97
+└─ 0.006 api_get_all_result_name  moonshot/src/api/api_result.py:58
+   └─ 0.006 get_available_items  moonshot/src/results/result.py:83
+      ├─ 0.005 _read_result  moonshot/src/results/result.py:38
+      │  └─ 0.005 read_object  moonshot/src/storage/storage.py:95
+      │     ├─ 0.003 get_instance  moonshot/src/utils/import_modules.py:59
+      │     │  └─ 0.003 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+      │     │     ├─ 0.001 BufferedReader.__exit__  <built-in>
+      │     │     ├─ 0.001 loads  <built-in>
+      │     │     └─ 0.001 <module>  moonshot/data/io-modules/jsonio.py:1
+      │     └─ 0.002 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+      │        └─ 0.002 load  json/__init__.py:274
+      │              [6 frames hidden]  json, <frozen codecs>, <built-in>
+      └─ 0.001 _iglob  glob.py:60
+            [4 frames hidden]  glob
+

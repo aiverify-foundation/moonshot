@@ -1,0 +1,23 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:18  Samples:  2139
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 3.216     CPU time: 2.583
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+3.216 profile_function  tests/test_api_perf.py:97
+└─ 3.214 api_get_all_datasets  moonshot/src/api/api_dataset.py:24
+   └─ 3.214 get_available_items  moonshot/src/datasets/dataset.py:106
+      └─ 3.208 _read_dataset  moonshot/src/datasets/dataset.py:40
+         ├─ 2.158 read_object_with_iterator  moonshot/src/storage/storage.py:47
+         │  └─ 2.140 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+         │     ├─ 2.037 [self]  moonshot/data/io-modules/jsonio.py
+         │     └─ 0.097 utf8reader.read  ijson/compat.py:31
+         │           [2 frames hidden]  ijson
+         └─ 1.047 count_objects  moonshot/src/storage/storage.py:142
+            ├─ 0.969 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+            │  ├─ 0.831 next  <built-in>
+            │  ├─ 0.077 utf8reader.read  ijson/compat.py:31
+            │  └─ 0.060 [self]  moonshot/data/io-modules/jsonio.py
+            └─ 0.064 [self]  moonshot/src/storage/storage.py
+

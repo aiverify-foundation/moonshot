@@ -1,0 +1,42 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  26
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.031     CPU time: 0.026
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.030 profile_function  tests/test_api_perf.py:97
+└─ 0.030 api_read_recipes  moonshot/src/api/api_recipe.py:72
+   └─ 0.030 <listcomp>  moonshot/src/api/api_recipe.py:88
+      └─ 0.030 wrapper_function  pydantic/v1/decorator.py:38
+            [3 frames hidden]  pydantic
+               0.030 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+               └─ 0.030 read  moonshot/src/recipes/recipe.py:84
+                  └─ 0.030 _read_recipe  moonshot/src/recipes/recipe.py:110
+                     ├─ 0.025 <dictcomp>  moonshot/src/recipes/recipe.py:133
+                     │  └─ 0.025 wrapper_function  pydantic/v1/decorator.py:38
+                     │        [3 frames hidden]  pydantic
+                     │           0.025 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+                     │           └─ 0.025 read  moonshot/src/datasets/dataset.py:13
+                     │              └─ 0.025 _read_dataset  moonshot/src/datasets/dataset.py:40
+                     │                 ├─ 0.014 count_objects  moonshot/src/storage/storage.py:142
+                     │                 │  ├─ 0.010 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+                     │                 │  │  ├─ 0.009 next  <built-in>
+                     │                 │  │  └─ 0.001 [self]  moonshot/data/io-modules/jsonio.py
+                     │                 │  ├─ 0.002 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                     │                 │  │  ├─ 0.001 get_filepath  moonshot/src/storage/storage.py:206
+                     │                 │  │  │  └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
+                     │                 │  │  │     └─ 0.001 PosixPath.__new__  pathlib.py:868
+                     │                 │  │  │           [5 frames hidden]  pathlib, <built-in>
+                     │                 │  │  └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
+                     │                 │  │     └─ 0.001 create_module_spec  moonshot/src/utils/import_modules.py:7
+                     │                 │  │        └─ 0.001 find_spec  <frozen importlib.util>:73
+                     │                 │  └─ 0.002 [self]  moonshot/src/storage/storage.py
+                     │                 └─ 0.012 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                     │                    └─ 0.012 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+                     │                       ├─ 0.009 [self]  moonshot/data/io-modules/jsonio.py
+                     │                       └─ 0.003 utf8reader.read  ijson/compat.py:31
+                     │                             [4 frames hidden]  ijson, <frozen codecs>, <built-in>
+                     └─ 0.005 read_object  moonshot/src/storage/storage.py:95
+                        └─ 0.005 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

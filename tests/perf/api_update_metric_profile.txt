@@ -1,0 +1,13 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:53  Samples:  1
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.002     CPU time: 0.001
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.001 profile_function  tests/test_api_perf.py:97
+└─ 0.001 api_update_metric  moonshot/src/api/api_session.py:175
+   └─ 0.001 api_load_runner  moonshot/src/api/api_runner.py:47
+      └─ 0.001 Runner.load  moonshot/src/runners/runner.py:51
+         └─ 0.001 RunnerArguments.__setattr__  pydantic/main.py:813
+

@@ -1,0 +1,23 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:24  Samples:  12134
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 43.063    CPU time: 16.249
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+43.063 profile_function  tests/test_api_perf.py:97
+└─ 43.063 api_get_all_metric_name  moonshot/src/api/api_metrics.py:38
+   └─ 43.063 get_available_items  moonshot/src/metrics/metric.py:65
+      └─ 43.062 Metric.load  moonshot/src/metrics/metric.py:13
+         └─ 43.030 get_instance  moonshot/src/utils/import_modules.py:59
+            └─ 43.021 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+               ├─ 30.379 <module>  moonshot/data/metrics/spelling.py:1
+               │  └─ 30.379 _LazyModule.__getattr__  transformers/utils/import_utils.py:1494
+               │        [166 frames hidden]  transformers, importlib, tensorflow, ...
+               ├─ 9.867 <module>  moonshot/data/metrics/bertscore.py:1
+               │  └─ 9.858 <module>  bert_score/__init__.py:1
+               │        [25 frames hidden]  bert_score, torch, transformers, impo...
+               └─ 2.539 <module>  moonshot/data/metrics/bleuscore.py:1
+                  └─ 2.510 <module>  nltk/__init__.py:1
+                        [6 frames hidden]  nltk
+

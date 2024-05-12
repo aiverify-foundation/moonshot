@@ -1,0 +1,24 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:26  Samples:  10
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.023     CPU time: 0.008
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.023 profile_function  tests/test_api_perf.py:97
+└─ 0.023 api_get_all_result  moonshot/src/api/api_result.py:46
+   └─ 0.023 get_available_items  moonshot/src/results/result.py:83
+      ├─ 0.022 _read_result  moonshot/src/results/result.py:38
+      │  └─ 0.022 read_object  moonshot/src/storage/storage.py:95
+      │     ├─ 0.020 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+      │     │  ├─ 0.017 [self]  moonshot/data/io-modules/jsonio.py
+      │     │  └─ 0.002 load  json/__init__.py:274
+      │     │        [4 frames hidden]  json
+      │     └─ 0.002 get_instance  moonshot/src/utils/import_modules.py:59
+      │        ├─ 0.001 create_module_spec  moonshot/src/utils/import_modules.py:7
+      │        │  └─ 0.001 find_spec  <frozen importlib.util>:73
+      │        └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+      │           └─ 0.001 BufferedReader.read  <built-in>
+      └─ 0.001 PosixPath.__new__  pathlib.py:868
+            [4 frames hidden]  pathlib
+
