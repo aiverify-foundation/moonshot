@@ -1,0 +1,18 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:26  Samples:  1
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.004     CPU time: 0.001
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.004 profile_function  tests/test_api_perf.py:97
+└─ 0.004 api_read_results  moonshot/src/api/api_result.py:23
+   └─ 0.004 <listcomp>  moonshot/src/api/api_result.py:33
+      └─ 0.004 wrapper_function  pydantic/v1/decorator.py:38
+            [3 frames hidden]  pydantic
+               0.004 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+               └─ 0.004 read  moonshot/src/results/result.py:12
+                  └─ 0.004 _read_result  moonshot/src/results/result.py:38
+                     └─ 0.004 read_object  moonshot/src/storage/storage.py:95
+                        └─ 0.004 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

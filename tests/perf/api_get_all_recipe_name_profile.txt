@@ -1,0 +1,29 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:13  Samples:  3563
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 4.051     CPU time: 4.019
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+4.051 profile_function  tests/test_api_perf.py:97
+└─ 4.051 api_get_all_recipe_name  moonshot/src/api/api_recipe.py:153
+   └─ 4.051 get_available_items  moonshot/src/recipes/recipe.py:196
+      └─ 4.049 _read_recipe  moonshot/src/recipes/recipe.py:110
+         └─ 4.042 <dictcomp>  moonshot/src/recipes/recipe.py:133
+            └─ 4.041 wrapper_function  pydantic/v1/decorator.py:38
+                  [3 frames hidden]  pydantic
+                     4.040 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+                     └─ 4.039 read  moonshot/src/datasets/dataset.py:13
+                        └─ 4.039 _read_dataset  moonshot/src/datasets/dataset.py:40
+                           ├─ 2.193 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                           │  └─ 2.169 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+                           │     ├─ 1.997 [self]  moonshot/data/io-modules/jsonio.py
+                           │     └─ 0.164 utf8reader.read  ijson/compat.py:31
+                           │           [4 frames hidden]  ijson, <frozen codecs>, <built-in>
+                           └─ 1.844 count_objects  moonshot/src/storage/storage.py:142
+                              ├─ 1.753 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+                              │  ├─ 1.631 next  <built-in>
+                              │  ├─ 0.072 utf8reader.read  ijson/compat.py:31
+                              │  └─ 0.049 [self]  moonshot/data/io-modules/jsonio.py
+                              └─ 0.059 [self]  moonshot/src/storage/storage.py
+

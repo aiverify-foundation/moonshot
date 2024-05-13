@@ -1,0 +1,82 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:49  Samples:  1512
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 3.732     CPU time: 1.802
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+3.732 _UnixSelectorEventLoop.run_forever  asyncio/base_events.py:593
+└─ 3.731 _UnixSelectorEventLoop._run_once  asyncio/base_events.py:1845
+      [4 frames hidden]  asyncio, selectors, <built-in>
+         2.340 Handle._run  asyncio/events.py:78
+         ├─ 0.969 Runner.run_recipes  moonshot/src/runners/runner.py:284
+         │  └─ 0.969 Run.run  moonshot/src/runs/run.py:170
+         │     ├─ 0.513 Benchmarking.generate  moonshot/data/runners-modules/benchmarking.py:44
+         │     │  └─ 0.476 Benchmarking._run_recipe  moonshot/data/runners-modules/benchmarking.py:329
+         │     │     └─ 0.473 Recipe.load  moonshot/src/recipes/recipe.py:28
+         │     │        └─ 0.473 wrapper_function  pydantic/v1/decorator.py:38
+         │     │              [3 frames hidden]  pydantic
+         │     │                 0.473 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+         │     │                 └─ 0.473 read  moonshot/src/recipes/recipe.py:84
+         │     │                    └─ 0.473 _read_recipe  moonshot/src/recipes/recipe.py:110
+         │     │                       └─ 0.473 <dictcomp>  moonshot/src/recipes/recipe.py:133
+         │     │                          └─ 0.473 wrapper_function  pydantic/v1/decorator.py:38
+         │     │                                [3 frames hidden]  pydantic
+         │     │                                   0.473 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+         │     │                                   └─ 0.473 read  moonshot/src/datasets/dataset.py:13
+         │     │                                      └─ 0.473 _read_dataset  moonshot/src/datasets/dataset.py:40
+         │     │                                         ├─ 0.264 read_object_with_iterator  moonshot/src/storage/storage.py:47
+         │     │                                         │  └─ 0.256 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+         │     │                                         │     ├─ 0.209 [self]  moonshot/data/io-modules/jsonio.py
+         │     │                                         │     └─ 0.045 utf8reader.read  ijson/compat.py:31
+         │     │                                         └─ 0.207 count_objects  moonshot/src/storage/storage.py:142
+         │     │                                            └─ 0.202 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+         │     │                                               └─ 0.182 next  <built-in>
+         │     └─ 0.452 BenchmarkingResult.generate  moonshot/data/results-modules/benchmarking-result.py:11
+         │        └─ 0.452 BenchmarkingResult._generate_result  moonshot/data/results-modules/benchmarking-result.py:99
+         │           └─ 0.452 BenchmarkingResult._generate_recipes_result  moonshot/data/results-modules/benchmarking-result.py:276
+         │              └─ 0.452 Recipe.load  moonshot/src/recipes/recipe.py:28
+         │                 └─ 0.452 wrapper_function  pydantic/v1/decorator.py:38
+         │                       [3 frames hidden]  pydantic
+         │                          0.452 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+         │                          └─ 0.452 read  moonshot/src/recipes/recipe.py:84
+         │                             └─ 0.452 _read_recipe  moonshot/src/recipes/recipe.py:110
+         │                                └─ 0.451 <dictcomp>  moonshot/src/recipes/recipe.py:133
+         │                                   └─ 0.451 wrapper_function  pydantic/v1/decorator.py:38
+         │                                         [3 frames hidden]  pydantic
+         │                                            0.451 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+         │                                            └─ 0.451 read  moonshot/src/datasets/dataset.py:13
+         │                                               └─ 0.451 _read_dataset  moonshot/src/datasets/dataset.py:40
+         │                                                  ├─ 0.244 read_object_with_iterator  moonshot/src/storage/storage.py:47
+         │                                                  │  └─ 0.233 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+         │                                                  │     └─ 0.216 [self]  moonshot/data/io-modules/jsonio.py
+         │                                                  └─ 0.207 count_objects  moonshot/src/storage/storage.py:142
+         │                                                     └─ 0.193 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+         │                                                        └─ 0.177 next  <built-in>
+         ├─ 0.697 Benchmarking._process_single_prompt  moonshot/data/runners-modules/benchmarking.py:871
+         │  ├─ 0.656 get_prediction  moonshot/src/connectors/connector.py:261
+         │  │  └─ 0.654 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:147
+         │  │     └─ 0.653 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:36
+         │  │        └─ 0.653 OpenAIConnector.get_response  moonshot/data/connectors/openai-connector.py:26
+         │  │           └─ 0.653 AsyncCompletions.create  openai/resources/chat/completions.py:1128
+         │  │                 [27 frames hidden]  openai, httpx, httpcore, anyio, asyncio
+         │  └─ 0.039 create_database_record  moonshot/src/storage/storage.py:328
+         │     └─ 0.039 SQLite.create_record  moonshot/data/databases-modules/sqlite.py:80
+         └─ 0.656 producer  moonshot/data/runners-modules/benchmarking.py:533
+            └─ 0.656 Benchmarking._generate_prompts  moonshot/data/runners-modules/benchmarking.py:659
+               └─ 0.655 Benchmarking._get_dataset_prompts  moonshot/data/runners-modules/benchmarking.py:745
+                  ├─ 0.440 wrapper_function  pydantic/v1/decorator.py:38
+                  │     [3 frames hidden]  pydantic
+                  │        0.440 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+                  │        └─ 0.439 read  moonshot/src/datasets/dataset.py:13
+                  │           └─ 0.439 _read_dataset  moonshot/src/datasets/dataset.py:40
+                  │              ├─ 0.229 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                  │              │  └─ 0.226 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+                  │              │     └─ 0.218 [self]  moonshot/data/io-modules/jsonio.py
+                  │              └─ 0.209 count_objects  moonshot/src/storage/storage.py:142
+                  │                 └─ 0.202 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+                  │                    └─ 0.179 next  <built-in>
+                  └─ 0.209 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+                     └─ 0.179 next  <built-in>
+         1.390 kqueue.control  <built-in>
+

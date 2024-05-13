@@ -1,0 +1,19 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:26  Samples:  3
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.003     CPU time: 0.003
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.003 profile_function  tests/test_api_perf.py:97
+├─ 0.002 api_get_all_runner_name  moonshot/src/api/api_runner.py:111
+│  └─ 0.002 get_available_items  moonshot/src/runners/runner.py:213
+│     └─ 0.002 read_object  moonshot/src/storage/storage.py:95
+│        └─ 0.002 get_instance  moonshot/src/utils/import_modules.py:59
+│           ├─ 0.001 create_module_spec  moonshot/src/utils/import_modules.py:7
+│           │  └─ 0.001 getcwd  <built-in>
+│           └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+└─ 0.001 Profiler.stop  pyinstrument/profiler.py:138
+      [2 frames hidden]  pyinstrument
+         0.001 StackSampler.unsubscribe  pyinstrument/stack_sampler.py:77
+

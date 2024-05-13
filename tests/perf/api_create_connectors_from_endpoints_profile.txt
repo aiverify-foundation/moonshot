@@ -1,0 +1,37 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:16  Samples:  607
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 2.189     CPU time: 3.577
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+2.189 profile_function  tests/test_api_perf.py:97
+└─ 2.189 api_create_connectors_from_endpoints  moonshot/src/api/api_connector.py:25
+   └─ 2.189 <listcomp>  moonshot/src/api/api_connector.py:39
+      ├─ 2.144 create  moonshot/src/connectors/connector.py:211
+      │  └─ 2.144 Connector.load  moonshot/src/connectors/connector.py:179
+      │     ├─ 2.060 get_instance  moonshot/src/utils/import_modules.py:59
+      │     │  └─ 2.060 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+      │     │     ├─ 1.419 <module>  moonshot/data/connectors/together-connector.py:1
+      │     │     │  └─ 1.413 <module>  together/__init__.py:1
+      │     │     │        [63 frames hidden]  together, pyarrow, numpy, <built-in>,...
+      │     │     ├─ 0.312 <module>  moonshot/data/connectors/huggingface-connector.py:1
+      │     │     │  └─ 0.305 <module>  aiohttp/__init__.py:1
+      │     │     │        [12 frames hidden]  aiohttp, <built-in>, multidict
+      │     │     └─ 0.307 <module>  moonshot/data/connectors/claude2-connector.py:1
+      │     │        └─ 0.301 <module>  anthropic/__init__.py:1
+      │     │              [15 frames hidden]  anthropic, <built-in>
+      │     ├─ 0.059 OpenAIConnector.__init__  moonshot/data/connectors/openai-connector.py:16
+      │     │  └─ 0.059 AsyncOpenAI.__init__  openai/_client.py:281
+      │     │        [11 frames hidden]  openai, httpx, <built-in>
+      │     └─ 0.024 Claude2Connector.__init__  moonshot/data/connectors/claude2-connector.py:17
+      │        └─ 0.024 AsyncAnthropic.__init__  anthropic/_client.py:337
+      │              [11 frames hidden]  anthropic, httpx, <built-in>
+      └─ 0.045 wrapper_function  pydantic/v1/decorator.py:38
+            [3 frames hidden]  pydantic
+               0.045 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+               └─ 0.045 read  moonshot/src/connectors_endpoints/connector_endpoint.py:54
+                  └─ 0.045 _read_endpoint  moonshot/src/connectors_endpoints/connector_endpoint.py:81
+                     └─ 0.045 read_object  moonshot/src/storage/storage.py:95
+                        └─ 0.044 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

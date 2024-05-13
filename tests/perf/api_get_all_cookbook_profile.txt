@@ -1,0 +1,13 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:18  Samples:  3
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.005     CPU time: 0.007
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.005 profile_function  tests/test_api_perf.py:97
+└─ 0.005 api_get_all_cookbook  moonshot/src/api/api_cookbook.py:117
+   └─ 0.005 get_available_items  moonshot/src/cookbooks/cookbook.py:154
+      └─ 0.005 read_object  moonshot/src/storage/storage.py:95
+         └─ 0.005 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

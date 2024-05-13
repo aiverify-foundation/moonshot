@@ -1,0 +1,34 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  21
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.023     CPU time: 0.020
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.023 profile_function  tests/test_api_perf.py:97
+└─ 0.023 api_read_recipe  moonshot/src/api/api_recipe.py:56
+   └─ 0.023 wrapper_function  pydantic/v1/decorator.py:38
+         [3 frames hidden]  pydantic
+            0.023 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+            └─ 0.023 read  moonshot/src/recipes/recipe.py:84
+               └─ 0.023 _read_recipe  moonshot/src/recipes/recipe.py:110
+                  ├─ 0.021 <dictcomp>  moonshot/src/recipes/recipe.py:133
+                  │  ├─ 0.020 wrapper_function  pydantic/v1/decorator.py:38
+                  │  │     [3 frames hidden]  pydantic
+                  │  │        0.020 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+                  │  │        └─ 0.020 read  moonshot/src/datasets/dataset.py:13
+                  │  │           ├─ 0.019 _read_dataset  moonshot/src/datasets/dataset.py:40
+                  │  │           │  ├─ 0.011 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                  │  │           │  │  └─ 0.011 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
+                  │  │           │  └─ 0.008 count_objects  moonshot/src/storage/storage.py:142
+                  │  │           │     ├─ 0.005 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
+                  │  │           │     │  ├─ 0.003 next  <built-in>
+                  │  │           │     │  ├─ 0.001 utf8reader.read  ijson/compat.py:31
+                  │  │           │     │  └─ 0.001 [self]  moonshot/data/io-modules/jsonio.py
+                  │  │           │     ├─ 0.002 [self]  moonshot/src/storage/storage.py
+                  │  │           │     └─ 0.001 read_object_with_iterator  moonshot/src/storage/storage.py:47
+                  │  │           └─ 0.001 [self]  moonshot/src/datasets/dataset.py
+                  │  └─ 0.001 [self]  moonshot/src/recipes/recipe.py
+                  └─ 0.001 read_object  moonshot/src/storage/storage.py:95
+                     └─ 0.001 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+
