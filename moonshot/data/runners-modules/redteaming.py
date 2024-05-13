@@ -14,8 +14,10 @@ from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoi
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.redteaming.session.session import SessionMetadata
+from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
@@ -42,7 +44,6 @@ class RedTeaming:
         created_datetime text NOT NULL
         );
     """
-
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -55,6 +56,7 @@ class RedTeaming:
         database_instance: DBInterface,
         session_metadata: SessionMetadata,
         red_teaming_type: RedTeamingType,
+        red_teaming_progress: RedTeamingProgress,
     ) -> dict:
         """
         Asynchronously generates the red teaming session.
@@ -77,6 +79,7 @@ class RedTeaming:
         self.database_instance = database_instance
         self.session_metadata = session_metadata
         self.red_teaming_type = red_teaming_type
+        self.red_teaming_progress = red_teaming_progress
 
         if self.red_teaming_type == RedTeamingType.AUTOMATED:
             print("[Red Teaming] Starting automated red teaming...")
@@ -123,6 +126,10 @@ class RedTeaming:
                     if "context_strategy_info" in attack_strategy_args
                     else [],
                     db_instance=self.database_instance,
+                    chat_batch_size=self.runner_args.get(
+                        "chat_batch_size", RedTeamingProgress.DEFAULT_CHAT_BATCH_SIZE
+                    ),
+                    red_teaming_progress=self.red_teaming_progress,
                 )
                 loaded_attack_module = AttackModule.load(
                     am_id=attack_strategy_args.get("attack_module_id"),
@@ -149,6 +156,7 @@ class RedTeaming:
                 f"{(time.perf_counter() - start_time):.4f}s"
             )
             responses_from_attack_module.append(attack_module_response)
+        self.red_teaming_progress.status = RunStatus.COMPLETED
         return {}
 
     async def run_manual_red_teaming(self) -> list:
@@ -173,12 +181,11 @@ class RedTeaming:
         self.context_strategy_info = self.rt_args.get("context_strategy_info", [])
 
         self.load_modules()
-
         self.prompt = self.rt_args.get("prompt", "")
+        self.system_prompt = self.rt_args.get("system_prompt", "")
+
         if not self.prompt:
             raise RuntimeError("[Session] Unable to get prompt for manual red teaming.")
-
-        self.system_prompt = self.rt_args.get("system_prompt", "")
 
         consolidated_result_list = []
         generator_list = []

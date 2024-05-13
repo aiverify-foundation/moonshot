@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.storage.db_interface import DBInterface
@@ -155,8 +156,7 @@ class Session:
     sql_create_session_metadata_record = """
         INSERT INTO session_metadata_table (
         session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy,cs_num_of_prev_prompts,
-        attack_module, metric, system_prompt)
-        VALUES(?,?,?,?,?,?,?,?,?,?)
+        attack_module, metric, system_prompt) VALUES(?,?,?,?,?,?,?,?,?,?)
     """
 
     sql_read_session_metadata = """
@@ -199,11 +199,16 @@ class Session:
             "%Y%m%d-%H%M%S"
         )
 
+        self.runner_id = runner_id
         self.runner_args = runner_args
         self.runner_type = runner_type
         self.results_file_path = results_file_path
         self.progress_callback_func = progress_callback_func
         self.database_instance = database_instance
+
+        self.red_teaming_progress = RedTeamingProgress(
+            self.runner_id, self.runner_args, self.progress_callback_func
+        )
 
         prompt_template = self.runner_args.get("prompt_template", "")
         context_strategy = self.runner_args.get("context_strategy", "")
@@ -380,6 +385,7 @@ class Session:
                     self.database_instance,
                     self.session_metadata,
                     self.check_redteaming_type(),
+                    self.red_teaming_progress,
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")
