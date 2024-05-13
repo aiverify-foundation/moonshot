@@ -70,9 +70,9 @@ class RedTeamingProgress:
         if red_teaming_prompt_arguments["conn_id"] not in self.chats:
             self.chats[red_teaming_prompt_arguments["conn_id"]] = []
         self.chats[red_teaming_prompt_arguments["conn_id"]].append(prompt_response_dict)
-        self.am_id = red_teaming_prompt_arguments["am_id"]
-        self.pt_id = red_teaming_prompt_arguments["pt_id"]
-        self.cs_id = red_teaming_prompt_arguments["cs_id"]
+        self.am_id = red_teaming_prompt_arguments.get("am_id", "")
+        self.pt_id = red_teaming_prompt_arguments.get("pt_id", "")
+        self.cs_id = red_teaming_prompt_arguments.get("cs_id", "")
         self.status = run_status
 
     def reset_chats(self) -> None:

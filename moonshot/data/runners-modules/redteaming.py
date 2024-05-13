@@ -86,7 +86,7 @@ class RedTeaming:
             await self.run_automated_red_teaming()
         elif self.red_teaming_type == RedTeamingType.MANUAL:
             print("[Red Teaming] Starting manual red teaming...")
-            await self.run_manual_red_teaming()
+            return await self.run_manual_red_teaming()
         else:
             raise RuntimeError("[Session] Unable to determine red teaming type.")
 
@@ -197,8 +197,27 @@ class RedTeaming:
             generator_list.append(gen_results_generator)
         for generator in generator_list:
             async for result in generator:
-                consolidated_result_list.append(result)
+                formatted_result = self.format_result(result)
+                consolidated_result_list.append(formatted_result)
         return consolidated_result_list
+
+    def format_result(self, red_teaming_result: RedTeamingPromptArguments) -> dict:
+        """
+        Formats the red teaming result and updates the red teaming progress.
+
+        This method takes a RedTeamingPromptArguments object, converts it to a dictionary, and updates the red teaming
+        chats with the result. It then retrieves the current state of the red teaming progress as a dictionary.
+
+        Args:
+            red_teaming_result (RedTeamingPromptArguments): The red teaming result to format.
+
+        Returns:
+            dict: The current state of the red teaming progress.
+        """
+        self.red_teaming_progress.update_red_teaming_chats(
+            red_teaming_result.to_dict(), RunStatus.COMPLETED
+        )
+        return self.red_teaming_progress.get_dict()
 
     async def _generate_prompts(
         self, target_llm_connector_id: str
@@ -375,3 +394,26 @@ class RedTeamingPromptArguments(BaseModel):
             str(self.connector_prompt.duration),
             self.start_time,
         )
+
+    def to_dict(self) -> dict:
+        """
+        Converts the RedTeamingPromptArguments instance into a dict.
+
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
+        with the keys: conn_id, cs_id, pt_id, original_prompt, prepared_prompt, system_prompt ,response,
+        duration, start_time.
+
+        Returns:
+            dict: A dict representation of the RedTeamingPromptArguments instance.
+        """
+        return {
+            "conn_id": self.conn_id,
+            "cs_id": self.cs_id,
+            "pt_id": self.pt_id,
+            "original_prompt": self.original_prompt,
+            "prepared_prompt": self.connector_prompt.prompt,
+            "system_prompt": self.system_prompt,
+            "response": str(self.connector_prompt.predicted_results),
+            "duration": str(self.connector_prompt.duration),
+            "start_time": self.start_time,
+        }
