@@ -232,7 +232,7 @@ def manual_red_teaming(user_prompt: str) -> None:
     _reload_session(active_session["session_id"])
 
 
-def automated_red_teaming(args):
+def run_attack_module(args):
     """
     Initiates automated red teaming with the provided arguments.
 
@@ -384,7 +384,7 @@ new_session_args.add_argument(
 automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
-        'Example:\n automated_red_teaming sample_attack_module "this is my prompt" -s "test system prompt" '
+        'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
         '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
     ),
 )
