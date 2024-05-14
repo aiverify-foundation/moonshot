@@ -412,15 +412,16 @@ class Session:
 
     def cancel(self) -> None:
         """
-        Sets the cancel event to stop the run process.
+        Sets the cancel event to stop the automated red teaming process.
 
-        This method is used to signal that the run process should be cancelled. It sets the cancel_event
-        which can be checked in various points of the asynchronous run process to gracefully stop the execution.
+        This method is used to signal that the automated red teaming process should be cancelled. It sets the
+        cancel_event which can be checked in various points of the asynchronous red teaming process to gracefully stop
+        the execution.
 
         Returns:
             None
         """
-        print("[Run] Cancelling run...")
+        print("[Session] Cancelling automated red teaming...")
         self.cancel_event.set()
 
     def check_redteaming_type(self) -> RedTeamingType:
