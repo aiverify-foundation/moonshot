@@ -93,7 +93,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run the Moonshot application")
     parser.add_argument('mode', nargs='?', choices=['web-api', 'cli', 'web'], help='Mode to run Moonshot in', default=None)
     parser.add_argument('cli_command', nargs='?', help='The CLI command to run (e.g., "interactive")')
-    parser.add_argument('-i', '--include', action='append', help='Modules to include', default=[])
+    parser.add_argument('-i', '--install', action='append', choices=['moonshot-data', 'moonshot-ui'], help='Modules to install', default=[])
     parser.add_argument('-e', '--env', type=str, help='Path to the .env file', default='.env')
     
     args = parser.parse_args()
@@ -101,10 +101,10 @@ def main():
     api_set_environment_variables(dotenv_values(args.env))
 
     # Handle installations based on the -i include arguments
-    if 'moonshot-data' in args.include:
+    if 'moonshot-data' in args.install:
         moonshot_data_installation()
 
-    if 'moonshot-ui' in args.include:
+    if 'moonshot-ui' in args.install:
         moonshot_ui_installation()
 
     # If mode is not specified, skip running any modes
