@@ -75,7 +75,6 @@ def moonshot_ui_installation():
         os.chdir("..")
     else:
         print(f"Directory {folder_name} already exists, skipping installation.")
-
 def run_moonshot_ui_dev():
     """
     To start a thread to run the Moonshot UI
@@ -84,7 +83,8 @@ def run_moonshot_ui_dev():
     ui_dev_dir = os.path.join(base_directory, "moonshot-ui")
 
     if not os.path.exists(ui_dev_dir):
-        raise FileNotFoundError("moonshot-ui does not exist. Please run with '-i moonshot-ui' to install moonshot-ui first.")
+        print("moonshot-ui does not exist. Please run with '-i moonshot-ui' to install moonshot-ui first.")
+        sys.exit(1)
     # ms_ui_env_file(ui_dev_dir)
     run_subprocess(['npm', 'start'], cwd=ui_dev_dir)
 
@@ -112,7 +112,10 @@ def main():
     elif args.mode == "web":
     # Create and start the UI de}v server thread
         ui_thread = threading.Thread(target=run_moonshot_ui_dev)
-        ui_thread.start()        
+        ui_thread.start()
+        ui_thread.join(timeout=0.1)  # Wait briefly for the thread to become alive
+        if not ui_thread.is_alive():
+            sys.exit(1)
         from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()
     elif args.mode == "cli":
