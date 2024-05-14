@@ -310,7 +310,7 @@ class Session:
 
         return session_metadata_dict
 
-    async def run(self) -> dict:
+    async def run(self) -> list | None:
         """
         Asynchronously executes the session run process.
 
