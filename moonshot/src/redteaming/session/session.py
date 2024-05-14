@@ -210,6 +210,8 @@ class Session:
             self.runner_id, self.runner_args, self.progress_callback_func
         )
 
+        self.cancel_event = asyncio.Event()
+
         prompt_template = self.runner_args.get("prompt_template", "")
         context_strategy = self.runner_args.get("context_strategy", "")
         cs_num_of_prev_prompts = self.runner_args.get(
@@ -386,6 +388,7 @@ class Session:
                     self.session_metadata,
                     self.check_redteaming_type(),
                     self.red_teaming_progress,
+                    self.cancel_event,
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")
@@ -406,6 +409,19 @@ class Session:
         # ------------------------------------------------------------------------------
         print("[Session] Part 4: Wrap up run...")
         return runner_results
+
+    def cancel(self) -> None:
+        """
+        Sets the cancel event to stop the run process.
+
+        This method is used to signal that the run process should be cancelled. It sets the cancel_event
+        which can be checked in various points of the asynchronous run process to gracefully stop the execution.
+
+        Returns:
+            None
+        """
+        print("[Run] Cancelling run...")
+        self.cancel_event.set()
 
     def check_redteaming_type(self) -> RedTeamingType:
         """

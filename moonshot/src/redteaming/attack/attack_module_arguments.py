@@ -1,3 +1,5 @@
+import asyncio
+
 from pydantic import BaseModel
 
 from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
@@ -30,10 +32,12 @@ class AttackModuleArguments(BaseModel):
     db_instance: DBInterface
 
     # chat batch size for returning chat information by callback
-    chat_batch_size: int
+    chat_batch_size: int = 0
 
     # callback function to return chat information
     red_teaming_progress: RedTeamingProgress
+
+    cancel_event: asyncio.Event
 
     # a dict that contains other params that is required by the attack module (if any)
     params: dict = {}
