@@ -6,6 +6,7 @@ from .services.attack_module_service import AttackModuleService
 from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.benchmark_test_state import BenchmarkTestState
+from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmarking_service import BenchmarkingService
 from .services.cookbook_service import CookbookService
 from .services.dataset_service import DatasetService
@@ -58,8 +59,13 @@ class Container(containers.DeclarativeContainer):
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(
         BenchmarkTestState
     )
+    auto_red_team_test_state: providers.Singleton[AutoRedTeamTestState] = providers.Singleton(
+        AutoRedTeamTestState
+    )
     webhook: providers.Singleton[MoonshotUIWebhook] = providers.Singleton(
-        MoonshotUIWebhook, benchmark_test_state=benchmark_test_state
+        MoonshotUIWebhook,
+        benchmark_test_state=benchmark_test_state,
+        auto_red_team_test_state=auto_red_team_test_state,
     )
     runner_service: providers.Singleton[RunnerService] = providers.Singleton(
         RunnerService
@@ -74,6 +80,7 @@ class Container(containers.DeclarativeContainer):
     )
     session_service: providers.Singleton[SessionService] = providers.Singleton(
         SessionService,
+        auto_red_team_test_state=auto_red_team_test_state,
         progress_status_updater=webhook,
         runner_service=runner_service,
     )
