@@ -73,7 +73,7 @@ from moonshot.api import (
 from moonshot.src.utils.timeit import timeit
 
 # Ensure the 'perf' directory exists
-perf_dir = "tests/perf"
+perf_dir = "tests/perf-tests/perf"
 os.makedirs(perf_dir, exist_ok=True)
 
 
