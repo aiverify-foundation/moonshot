@@ -4,7 +4,7 @@ import warnings
 from moonshot.integrations.cli.cli import CommandLineInterface
 
 
-def start_app():
+def start_app(cli_command = None):
     """
     Run the Moonshot application
     """
@@ -12,19 +12,14 @@ def start_app():
     warnings.filterwarnings("ignore")
 
     cli_instance = CommandLineInterface()
-    if "interactive" in sys.argv:
+    if cli_command == "interactive":
         # Run in interactive mode
         cli_instance.debug = False
         cli_instance.cmdloop("Starting moonshot interactive prompt...")
+    elif cli_command:
+        # Run a specific command
+        cli_instance.onecmd(cli_command)
     else:
-        # Run in non-interactive mode
-        arguments = sys.argv[2:]
-        if arguments:
-            arguments = " ".join(arguments)
-            cli_instance.onecmd(arguments)
-        else:
-            cli_instance.onecmd("help")
-
-
-if __name__ == "__main__":
-    start_app()
+        # Show help if no command is provided
+        cli_instance.onecmd("help")
+              
