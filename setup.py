@@ -11,7 +11,7 @@ repos = [
 ]
 
 base_directory = "moonshot"  # Directory where the repositories will be cloned
-version = "0.3.5"  # Version number of the moonshot library to install
+version = "0.3.6"  # Version number of the moonshot library to install
 
 
 def run_subprocess(*args, **kwargs):
@@ -140,21 +140,21 @@ def clone_and_install_repos(repositories, base_dir):
         else:
             print(f"Cloning {repo}")
             # Clone the repository
-            subprocess.run(["git", "clone", repo], check=True)
+            run_subprocess(["git", "clone", repo], check=True)
 
             # Change directory to the folder
             os.chdir(folder_name)
 
             # Checkout the branch
-            subprocess.run(["git", "checkout", branch_name], check=True)
+            run_subprocess(["git", "checkout", branch_name], check=True)
 
             print(f"Installing requirements for {folder_name}")
             # Install the requirements if they exist
             if os.path.exists("requirements.txt"):
-                subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
+                run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
             elif os.path.exists("package.json"):
-                subprocess.run(["npm", "install"], check=True)
-                subprocess.run(["npm", "run", "build"], check=True)
+                run_subprocess(["npm", "install"], check=True)
+                run_subprocess(["npm", "run", "build"], check=True)
 
             # Change back to the base directory
             os.chdir("..")
@@ -168,7 +168,7 @@ def run_moonshot_ui_dev():
     ui_dev_dir = os.path.join(base_directory, "moonshot-ui")
 
     ms_ui_env_file(ui_dev_dir)
-    subprocess.run(["npm", "start"], cwd=ui_dev_dir)
+    run_subprocess(['npm', 'run','dev'], cwd=ui_dev_dir)
 
 
 def run_moonshot_lib(action):
@@ -177,9 +177,9 @@ def run_moonshot_lib(action):
     ms_lib_env_file(base_directory)
 
     if action == "cli":
-        subprocess.run(["python3", "-m", "moonshot", "cli", "interactive"])
+        run_subprocess(["python3", "-m", "moonshot", "cli", "interactive"])
     elif action == "web-api":
-        subprocess.run(["python3", "-m", "moonshot", "web-api"])
+        run_subprocess(["python3", "-m", "moonshot", "web-api"])
 
 
 if __name__ == "__main__":
