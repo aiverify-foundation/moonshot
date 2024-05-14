@@ -3,10 +3,10 @@ import importlib.resources
 from dependency_injector import containers, providers
 
 from .services.attack_module_service import AttackModuleService
+from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.benchmark_test_state import BenchmarkTestState
-from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmarking_service import BenchmarkingService
 from .services.cookbook_service import CookbookService
 from .services.dataset_service import DatasetService
@@ -59,9 +59,9 @@ class Container(containers.DeclarativeContainer):
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(
         BenchmarkTestState
     )
-    auto_red_team_test_state: providers.Singleton[AutoRedTeamTestState] = providers.Singleton(
+    auto_red_team_test_state: providers.Singleton[
         AutoRedTeamTestState
-    )
+    ] = providers.Singleton(AutoRedTeamTestState)
     webhook: providers.Singleton[MoonshotUIWebhook] = providers.Singleton(
         MoonshotUIWebhook,
         benchmark_test_state=benchmark_test_state,
