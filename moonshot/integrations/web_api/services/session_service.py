@@ -252,7 +252,7 @@ class SessionService(BaseService):
 
     @exception_handler
     async def send_prompt(
-        self, runner_id: str, prompt: SessionPromptDTO, batch_size: int = 3
+        self, runner_id: str, prompt: SessionPromptDTO, batch_size: int = 5
     ) -> PromptResponseModel | str:
         """
         Send a prompt to the runner for processing.
