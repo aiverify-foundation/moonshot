@@ -209,7 +209,7 @@ async def cancel_auto_redteam(
     """
     Cancel the automated red team operation for a given session.
 
-    This endpoint is used to stop any ongoing automated red team operations for the session
+    This endpoint is used to stop any ongoing automated red team operations for the session 
     associated with the provided runner_id.
 
     Args:
