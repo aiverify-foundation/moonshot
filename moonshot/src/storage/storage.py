@@ -5,6 +5,8 @@ from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
+import xxhash
+
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.utils.import_modules import get_instance
@@ -200,6 +202,29 @@ class Storage:
             creation_timestamp = os.path.getctime(obj_filepath)
             creation_datetime = datetime.datetime.fromtimestamp(creation_timestamp)
             return creation_datetime
+        else:
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
+
+    @staticmethod
+    def get_file_hash(obj_type: str, obj_id: str, obj_extension: str) -> str:
+        """
+        Retrieves the hash of the file content for an object using the 'xxhash' library, which provides
+        an extremely fast non-cryptographic hash algorithm.
+
+        Args:
+            obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
+            obj_id (str): The ID of the object.
+            obj_extension (str): The file extension (e.g., 'json', 'py').
+
+        Returns:
+            str: The hex digest of the xxHash of the file content.
+        """
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
+        if obj_filepath and Path(obj_filepath).exists():
+            with open(obj_filepath, "rb") as file:
+                file_content = file.read()
+            file_hash = xxhash.xxh64(file_content).hexdigest()
+            return file_hash
         else:
             raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 

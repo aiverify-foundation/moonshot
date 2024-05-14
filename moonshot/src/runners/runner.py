@@ -448,7 +448,6 @@ class Runner:
                 RunnerType.REDTEAM,
                 {
                     **red_team_args,
-                    "system_prompt": system_prompt,
                     "runner_processing_module": runner_processing_module,
                 },
                 self.database_instance,
@@ -464,6 +463,4 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(
-                f"[Runner] {self.id} - Automated red teaming run completed and reset."
-            )
+            print(f"[Runner] {self.id} - Red teaming run completed.")
