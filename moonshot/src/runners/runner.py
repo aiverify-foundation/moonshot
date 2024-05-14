@@ -421,7 +421,7 @@ class Runner:
         red_team_args: dict,
         system_prompt: str = "",
         runner_processing_module: str = "redteaming",
-    ) -> None:
+    ) -> list | None:
         """
         Asynchronously runs a red teaming session with the provided arguments.
 
@@ -458,9 +458,11 @@ class Runner:
 
         # Note: The lock is held during setup but should be released before long-running operations
         # Execute the long-running operation outside of the lock
-        await self.current_operation.run()
+        red_teaming_results = await self.current_operation.run()
 
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
             print(f"[Runner] {self.id} - Red teaming run completed.")
+
+        return red_teaming_results
