@@ -39,6 +39,7 @@ class AttackModule:
             self.context_strategy_info = am_arguments.context_strategy_info
             self.db_instance = am_arguments.db_instance
             self.red_teaming_progress = am_arguments.red_teaming_progress
+            self.cancel_event = am_arguments.cancel_event
             self.params = am_arguments.params
 
     @classmethod
@@ -171,6 +172,11 @@ class AttackModule:
 
             for generator in generator_list:
                 async for result in generator:
+                    if self.cancel_event.is_set():
+                        print(
+                            "[Red Teaming] Cancellation flag is set. Cancelling task..."
+                        )
+                        break
                     consolidated_result_list.append(result)
         return consolidated_result_list
 
@@ -190,6 +196,9 @@ class AttackModule:
         consolidated_responses = []
         for prepared_prompt in list_of_prompts:
             for target_llm_connector in self.connector_instances:
+                if self.cancel_event.is_set():
+                    print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                    break
                 if (
                     self.red_teaming_progress.current_count
                     >= self.red_teaming_progress.chat_batch_size
@@ -250,6 +259,9 @@ class AttackModule:
         """
         consolidated_responses = []
         for prepared_prompt in list_of_prompts:
+            if self.cancel_event.is_set():
+                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                break
             if (
                 self.red_teaming_progress.current_count
                 >= self.red_teaming_progress.chat_batch_size
@@ -341,6 +353,9 @@ class AttackModule:
             RedTeamingPromptArguments: An asynchronous generator yielding the new prompt information.
         """
         async for prompt_info in gen_prompts_generator:
+            if self.cancel_event.is_set():
+                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                break
             new_prompt_info = RedTeamingPromptArguments(
                 conn_id=prompt_info.conn_id,
                 am_id=prompt_info.am_id,
