@@ -178,6 +178,7 @@ class Metric:
 
         if met_name in met_cache_info and file_hash == met_cache_info[met_name]["hash"]:
             met_metadata = met_cache_info[met_name]
+            met_metadata.pop("hash", None)
         else:
             met_metadata = Metric.load(met_name).get_metadata()  # type: ignore ; ducktyping
             met_cache_info[met_name] = met_metadata

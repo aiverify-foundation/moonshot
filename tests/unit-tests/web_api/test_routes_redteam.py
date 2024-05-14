@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 from unittest.mock import patch
-from web_api.schemas.session_create_dto import SessionCreateDTO
-from web_api.app import init_api
-from web_api.schemas.session_response_model import SessionMetadataModel
+from moonshot.integrations.web_api.schemas.session_create_dto import SessionCreateDTO
+from moonshot.integrations.web_api.app import init_api
+from moonshot.integrations.web_api.schemas.session_response_model import SessionMetadataModel
 
 app = init_api()
 

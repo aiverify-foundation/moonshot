@@ -505,6 +505,7 @@ class AttackModule:
 
         if am_name in am_cache_info and file_hash == am_cache_info[am_name]["hash"]:
             am_metadata = am_cache_info[am_name]
+            am_metadata.pop("hash", None)
         else:
             am_metadata = AttackModule.load(am_name).get_metadata()  # type: ignore ; ducktyping
             am_cache_info[am_name] = am_metadata
