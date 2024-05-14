@@ -14,8 +14,10 @@ from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoi
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.redteaming.session.session import SessionMetadata
+from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 
@@ -42,7 +44,6 @@ class RedTeaming:
         created_datetime text NOT NULL
         );
     """
-
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -55,6 +56,7 @@ class RedTeaming:
         database_instance: DBInterface,
         session_metadata: SessionMetadata,
         red_teaming_type: RedTeamingType,
+        red_teaming_progress: RedTeamingProgress,
     ) -> dict:
         """
         Asynchronously generates the red teaming session.
@@ -77,13 +79,14 @@ class RedTeaming:
         self.database_instance = database_instance
         self.session_metadata = session_metadata
         self.red_teaming_type = red_teaming_type
+        self.red_teaming_progress = red_teaming_progress
 
         if self.red_teaming_type == RedTeamingType.AUTOMATED:
             print("[Red Teaming] Starting automated red teaming...")
             await self.run_automated_red_teaming()
         elif self.red_teaming_type == RedTeamingType.MANUAL:
             print("[Red Teaming] Starting manual red teaming...")
-            await self.run_manual_red_teaming()
+            return await self.run_manual_red_teaming()
         else:
             raise RuntimeError("[Session] Unable to determine red teaming type.")
 
@@ -123,6 +126,10 @@ class RedTeaming:
                     if "context_strategy_info" in attack_strategy_args
                     else [],
                     db_instance=self.database_instance,
+                    chat_batch_size=self.runner_args.get(
+                        "chat_batch_size", RedTeamingProgress.DEFAULT_CHAT_BATCH_SIZE
+                    ),
+                    red_teaming_progress=self.red_teaming_progress,
                 )
                 loaded_attack_module = AttackModule.load(
                     am_id=attack_strategy_args.get("attack_module_id"),
@@ -149,6 +156,7 @@ class RedTeaming:
                 f"{(time.perf_counter() - start_time):.4f}s"
             )
             responses_from_attack_module.append(attack_module_response)
+        self.red_teaming_progress.status = RunStatus.COMPLETED
         return {}
 
     async def run_manual_red_teaming(self) -> list:
@@ -173,12 +181,11 @@ class RedTeaming:
         self.context_strategy_info = self.rt_args.get("context_strategy_info", [])
 
         self.load_modules()
-
         self.prompt = self.rt_args.get("prompt", "")
+        self.system_prompt = self.rt_args.get("system_prompt", "")
+
         if not self.prompt:
             raise RuntimeError("[Session] Unable to get prompt for manual red teaming.")
-
-        self.system_prompt = self.rt_args.get("system_prompt", "")
 
         consolidated_result_list = []
         generator_list = []
@@ -190,8 +197,27 @@ class RedTeaming:
             generator_list.append(gen_results_generator)
         for generator in generator_list:
             async for result in generator:
-                consolidated_result_list.append(result)
+                formatted_result = self.format_result(result)
+                consolidated_result_list.append(formatted_result)
         return consolidated_result_list
+
+    def format_result(self, red_teaming_result: RedTeamingPromptArguments) -> dict:
+        """
+        Formats the red teaming result and updates the red teaming progress.
+
+        This method takes a RedTeamingPromptArguments object, converts it to a dictionary, and updates the red teaming
+        chats with the result. It then retrieves the current state of the red teaming progress as a dictionary.
+
+        Args:
+            red_teaming_result (RedTeamingPromptArguments): The red teaming result to format.
+
+        Returns:
+            dict: The current state of the red teaming progress.
+        """
+        self.red_teaming_progress.update_red_teaming_chats(
+            red_teaming_result.to_dict(), RunStatus.COMPLETED
+        )
+        return self.red_teaming_progress.get_dict()
 
     async def _generate_prompts(
         self, target_llm_connector_id: str
@@ -368,3 +394,26 @@ class RedTeamingPromptArguments(BaseModel):
             str(self.connector_prompt.duration),
             self.start_time,
         )
+
+    def to_dict(self) -> dict:
+        """
+        Converts the RedTeamingPromptArguments instance into a dict.
+
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
+        with the keys: conn_id, cs_id, pt_id, original_prompt, prepared_prompt, system_prompt ,response,
+        duration, start_time.
+
+        Returns:
+            dict: A dict representation of the RedTeamingPromptArguments instance.
+        """
+        return {
+            "conn_id": self.conn_id,
+            "cs_id": self.cs_id,
+            "pt_id": self.pt_id,
+            "original_prompt": self.original_prompt,
+            "prepared_prompt": self.connector_prompt.prompt,
+            "system_prompt": self.system_prompt,
+            "response": str(self.connector_prompt.predicted_results),
+            "duration": str(self.connector_prompt.duration),
+            "start_time": self.start_time,
+        }

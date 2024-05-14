@@ -35,22 +35,7 @@ class SampleAttackModule(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-        return await self.perform_attack_default()
-
-    async def perform_attack_default(self) -> list:
-        """
-        Asynchronously performs the default attack.
-        This function will take the defined context strategy and prompt template and append contents
-        to the given prompt. It will then send the modified prompt to all the LLM endpoints.
-
-        This method retrieves the results from all Language Learning Models (LLMs) using the default prompt.
-        """
-        consolidated_result_list = []
-        generator_list = await self._send_prompt_to_all_llm_default()
-        for generator in generator_list:
-            async for result in generator:
-                consolidated_result_list.append(result)
-        return consolidated_result_list
+        return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
         """

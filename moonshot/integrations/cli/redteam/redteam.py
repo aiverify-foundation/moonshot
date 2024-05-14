@@ -21,7 +21,6 @@ from moonshot.integrations.cli.redteam.prompt_template import (
     use_prompt_template_args,
 )
 from moonshot.integrations.cli.redteam.session import (
-    automated_red_teaming,
     automated_rt_session_args,
     delete_session,
     delete_session_args,
@@ -29,6 +28,7 @@ from moonshot.integrations.cli.redteam.session import (
     list_sessions,
     new_session,
     new_session_args,
+    run_attack_module,
     use_session,
     use_session_args,
 )
@@ -71,8 +71,8 @@ class RedTeamCommandSet(cmd2.CommandSet):
         clear_context_strategy()
 
     @cmd2.with_argparser(automated_rt_session_args)
-    def do_automated_red_teaming(self, args: argparse.Namespace) -> None:
-        automated_red_teaming(args)
+    def do_run_attack_module(self, args: argparse.Namespace) -> None:
+        run_attack_module(args)
 
     def do_list_attack_modules(self, _: cmd2.Statement) -> None:
         list_attack_modules()
