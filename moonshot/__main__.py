@@ -85,7 +85,6 @@ def run_moonshot_ui_dev():
 
     if not os.path.exists(ui_dev_dir):
         raise FileNotFoundError("moonshot-ui does not exist. Please run with '-i moonshot-ui' to install moonshot-ui first.")
-    
     # ms_ui_env_file(ui_dev_dir)
     run_subprocess(['npm', 'start'], cwd=ui_dev_dir)
 
