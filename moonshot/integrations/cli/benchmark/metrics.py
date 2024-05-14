@@ -111,7 +111,7 @@ def display_metrics(metrics_list: list):
         table.add_column("No.", width=2)
         table.add_column("Metric", justify="left", width=78)
         for metric_no, metric in enumerate(metrics_list, 1):
-            id, name, description = metric.values()
+            id, name, description, _ = metric.values()
             result_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
 
             table.add_section()
