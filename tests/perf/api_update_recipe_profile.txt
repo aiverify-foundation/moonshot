@@ -1,35 +1,17 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  17
- /_//_/// /_\ / //_// / //_'/ //     Duration: 0.019     CPU time: 0.019
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  1
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.002     CPU time: 0.002
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 
-0.019 profile_function  tests/test_api_perf.py:97
-└─ 0.019 api_update_recipe  moonshot/src/api/api_recipe.py:91
-   ├─ 0.018 wrapper_function  pydantic/v1/decorator.py:38
-   │     [3 frames hidden]  pydantic
-   │        0.018 ValidatedFunction.execute  pydantic/v1/decorator.py:179
-   │        └─ 0.018 read  moonshot/src/recipes/recipe.py:84
-   │           └─ 0.018 _read_recipe  moonshot/src/recipes/recipe.py:110
-   │              └─ 0.018 <dictcomp>  moonshot/src/recipes/recipe.py:133
-   │                 └─ 0.018 wrapper_function  pydantic/v1/decorator.py:38
-   │                       [3 frames hidden]  pydantic
-   │                          0.018 ValidatedFunction.execute  pydantic/v1/decorator.py:179
-   │                          └─ 0.018 read  moonshot/src/datasets/dataset.py:13
-   │                             └─ 0.018 _read_dataset  moonshot/src/datasets/dataset.py:40
-   │                                ├─ 0.009 count_objects  moonshot/src/storage/storage.py:142
-   │                                │  └─ 0.009 GeneratorIO.__next__  moonshot/data/io-modules/jsonio.py:137
-   │                                │     ├─ 0.008 next  <built-in>
-   │                                │     └─ 0.001 utf8reader.read  ijson/compat.py:31
-   │                                └─ 0.009 read_object_with_iterator  moonshot/src/storage/storage.py:47
-   │                                   └─ 0.009 JsonIO.read_file_iterator  moonshot/data/io-modules/jsonio.py:53
-   │                                      ├─ 0.008 [self]  moonshot/data/io-modules/jsonio.py
-   │                                      └─ 0.001 utf8reader.read  ijson/compat.py:31
-   │                                            [2 frames hidden]  ijson, <built-in>
-   └─ 0.001 update  moonshot/src/recipes/recipe.py:145
-      └─ 0.001 create_object  moonshot/src/storage/storage.py:14
-         └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
-            └─ 0.001 create_module_spec  moonshot/src/utils/import_modules.py:7
-               └─ 0.001 find_spec  <frozen importlib.util>:73
+0.001 profile_function  tests/test_api_perf.py:97
+└─ 0.001 api_update_recipe  moonshot/src/api/api_recipe.py:91
+   └─ 0.001 wrapper_function  pydantic/v1/decorator.py:38
+         [3 frames hidden]  pydantic
+            0.001 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+            └─ 0.001 read  moonshot/src/recipes/recipe.py:84
+               └─ 0.001 _read_recipe  moonshot/src/recipes/recipe.py:129
+                  └─ 0.001 get_available_items  moonshot/src/datasets/dataset.py:154
+                     └─ 0.001 _get_or_update_dataset_info  moonshot/src/datasets/dataset.py:206
 

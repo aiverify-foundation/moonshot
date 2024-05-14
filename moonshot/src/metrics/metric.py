@@ -10,6 +10,9 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class Metric:
+    cache_name = "cache"
+    cache_extension = "json"
+
     @classmethod
     def load(cls, met_id: str) -> Metric:
         """
@@ -63,36 +66,122 @@ class Metric:
             raise e
 
     @staticmethod
-    def get_available_items() -> tuple[list[str], list[Metric]]:
+    def get_cache_information() -> dict:
         """
-        Retrieves all available metric IDs and their corresponding instances.
+        Retrieves cache information from the storage.
 
-        This method searches the storage location specified by `EnvVariables.METRICS` for metric files, omitting any
-        that include "__" in their filenames. It loads each valid metric file to create a metric instance and
-        accumulates the metric IDs and the corresponding metric instances into separate lists, which are then returned
-        together as a tuple.
+        This method attempts to read the cache information from the storage and return it as a dictionary.
+        If the cache information does not exist or an error occurs, it returns an empty dictionary.
 
         Returns:
-            tuple[list[str], list[Metric]]: A tuple containing two elements. The first is a list of metric IDs, and the
-            second is a list of Metric instances, each representing a loaded metric.
+            dict: A dictionary containing the cache information or an empty dictionary if an error occurs
+            or if the cache information does not exist.
 
         Raises:
-            Exception: If any issues arise during the retrieval and processing of metric files.
+            Exception: If there's an error during the retrieval process, it is logged and an
+            empty dictionary is returned.
+        """
+        try:
+            # Retrieve cache information from the storage and return it as a dictionary
+            cache_info = Storage.read_object(
+                EnvVariables.METRICS.name, Metric.cache_name, Metric.cache_extension
+            )
+            return cache_info if cache_info else {}
+        except Exception as e:
+            print(f"No previous cache information: {str(e)}")
+            return {}
+
+    @staticmethod
+    def write_cache_information(cache_info: dict) -> None:
+        """
+        Writes the updated cache information to the storage.
+
+        Args:
+            cache_info (dict): The cache information to be written.
+        """
+        try:
+            Storage.create_object(
+                obj_type=EnvVariables.METRICS.name,
+                obj_id=Metric.cache_name,
+                obj_info=cache_info,
+                obj_extension=Metric.cache_extension,
+            )
+        except Exception as e:
+            print(f"Failed to write cache information: {str(e)}")
+            raise e
+
+    @staticmethod
+    def get_available_items() -> tuple[list[str], list[dict]]:
+        """
+        Retrieves a list of available metric names and their corresponding information.
+
+        This method scans the storage for metric objects, filters out any system or cache-related entries,
+        and compiles a list of metric names and their detailed information. It also checks the cache for
+        any updates and writes back to the cache if necessary.
+
+        Returns:
+            tuple[list[str], list[dict]]: A tuple containing two lists, one with the names of the metrics
+                                           and the other with the corresponding metric information dictionaries.
         """
         try:
             retn_mets = []
             retn_mets_ids = []
-
+            met_cache_info = Metric.get_cache_information()
+            cache_needs_update = False  # Initialize a flag to track cache updates
             mets = Storage.get_objects(EnvVariables.METRICS.name, "py")
+
             for met in mets:
-                if "__" in met:
+                if "__" in met or Metric.cache_name in met:
                     continue
 
-                retn_mets.append(Metric.load(Path(met).stem))
-                retn_mets_ids.append(Path(met).stem)
+                met_name = Path(met).stem
+                met_info, cache_updated = Metric._get_or_update_metrics_info(
+                    met_name, met_cache_info
+                )
+                if cache_updated:
+                    cache_needs_update = True  # Set the flag if any cache was updated
+
+                retn_mets.append(met_info)
+                retn_mets_ids.append(met_name)
+
+            if cache_needs_update:  # Check the flag after the loop
+                Metric.write_cache_information(met_cache_info)
 
             return retn_mets_ids, retn_mets
 
         except Exception as e:
             print(f"Failed to get available metrics: {str(e)}")
             raise e
+
+    @staticmethod
+    def _get_or_update_metrics_info(
+        met_name: str, met_cache_info: dict
+    ) -> tuple[dict, bool]:
+        """
+        Retrieves or updates the metric information from the cache.
+
+        This method checks if the metric information is already available in the cache and if the file hash matches
+        the one stored in the cache. If it does, the information is retrieved from the cache. If not, the metric
+        information is read from the storage, the cache is updated with the new information and the new file hash,
+        and a flag is set to indicate that the cache has been updated.
+
+        Args:
+            met_name (str): The name of the metric.
+            met_cache_info (dict): A dictionary containing the cached metric information.
+
+        Returns:
+            tuple[dict, bool]: A tuple containing the dictionary with the metric information
+                               and a boolean indicating whether the cache was updated or not.
+        """
+        file_hash = Storage.get_file_hash(EnvVariables.METRICS.name, met_name, "py")
+        cache_updated = False
+
+        if met_name in met_cache_info and file_hash == met_cache_info[met_name]["hash"]:
+            met_metadata = met_cache_info[met_name]
+        else:
+            met_metadata = Metric.load(met_name).get_metadata()  # type: ignore ; ducktyping
+            met_cache_info[met_name] = met_metadata
+            met_cache_info[met_name]["hash"] = file_hash
+            cache_updated = True
+
+        return met_metadata, cache_updated
