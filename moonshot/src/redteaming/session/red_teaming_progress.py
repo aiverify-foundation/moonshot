@@ -113,5 +113,4 @@ class RedTeamingProgress:
             "current_chats": self.chats,
             "current_batch_size": self.chat_batch_size,
             "current_status": self.status.name,
-            "current_count": self.current_count,
         }
