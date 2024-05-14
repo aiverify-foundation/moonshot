@@ -1,47 +1,18 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:08  Samples:  12
- /_//_/// /_\ / //_// / //_'/ //     Duration: 0.013     CPU time: 0.013
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  1
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.002     CPU time: 0.002
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 
-0.012 profile_function  tests/test_api_perf.py:97
-└─ 0.012 api_get_all_metric  moonshot/src/api/api_metrics.py:24
-   └─ 0.012 get_available_items  moonshot/src/metrics/metric.py:65
-      └─ 0.012 Metric.load  moonshot/src/metrics/metric.py:13
-         ├─ 0.007 get_instance  moonshot/src/utils/import_modules.py:59
-         │  ├─ 0.003 import_module_from_spec  moonshot/src/utils/import_modules.py:41
-         │  │  ├─ 0.001 loads  <built-in>
-         │  │  ├─ 0.001 BufferedReader.__exit__  <built-in>
-         │  │  └─ 0.001 [self]  moonshot/src/utils/import_modules.py
-         │  ├─ 0.003 create_module_spec  moonshot/src/utils/import_modules.py:7
-         │  │  └─ 0.003 find_spec  <frozen importlib.util>:73
-         │  └─ 0.001 [self]  moonshot/src/utils/import_modules.py
-         ├─ 0.001 SpellingScore.__init__  moonshot/data/metrics/spelling.py:20
-         │  └─ 0.001 SpellingScore.get_metrics_configuration  moonshot/src/metrics/metric_interface.py:55
-         │     └─ 0.001 read_object  moonshot/src/storage/storage.py:95
-         │        └─ 0.001 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
-         │           └─ 0.001 load  json/__init__.py:274
-         │                 [2 frames hidden]  json, <frozen codecs>
-         ├─ 0.001 SampleMetric.__init__  moonshot/data/metrics/samplemetric.py:19
-         │  └─ 0.001 SampleMetric.get_metrics_configuration  moonshot/src/metrics/metric_interface.py:55
-         │     └─ 0.001 read_object  moonshot/src/storage/storage.py:95
-         │        └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
-         │           └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
-         │              └─ 0.001 BufferedReader.read  <built-in>
-         ├─ 0.001 get_filepath  moonshot/src/storage/storage.py:206
-         │  └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
-         │     └─ 0.001 PosixPath.__new__  pathlib.py:868
-         │           [4 frames hidden]  pathlib
-         ├─ 0.001 ReverseExactStrMatch.__init__  moonshot/data/metrics/reverseexactstrmatch.py:12
-         │  └─ 0.001 ReverseExactStrMatch.get_metrics_configuration  moonshot/src/metrics/metric_interface.py:55
-         │     └─ 0.001 read_object  moonshot/src/storage/storage.py:95
-         │        └─ 0.001 get_filepath  moonshot/src/storage/storage.py:206
-         │           └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
-         │              └─ 0.001 PosixPath.exists  pathlib.py:1230
-         └─ 0.001 RougeScorer.__init__  moonshot/data/metrics/rougescorer.py:14
-            └─ 0.001 RougeScorer.get_metrics_configuration  moonshot/src/metrics/metric_interface.py:55
-               └─ 0.001 read_object  moonshot/src/storage/storage.py:95
-                  └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
-                     └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+0.001 profile_function  tests/test_api_perf.py:97
+└─ 0.001 api_get_all_metric  moonshot/src/api/api_metrics.py:24
+   └─ 0.001 get_available_items  moonshot/src/metrics/metric.py:113
+      └─ 0.001 _get_or_update_metrics_info  moonshot/src/metrics/metric.py:156
+         └─ 0.001 get_file_hash  moonshot/src/storage/storage.py:207
+            └─ 0.001 get_filepath  moonshot/src/storage/storage.py:232
+               └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
+                  └─ 0.001 PosixPath.__new__  pathlib.py:868
+                        [3 frames hidden]  pathlib
+                           0.001 PosixPath._parse_args  pathlib.py:484
 

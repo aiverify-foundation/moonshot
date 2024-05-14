@@ -1,5 +1,5 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:26  Samples:  6
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:39  Samples:  6
  /_//_/// /_\ / //_// / //_'/ //     Duration: 0.009     CPU time: 0.004
 /   _/                      v4.6.2
 
@@ -8,13 +8,10 @@ Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 0.009 profile_function  tests/test_api_perf.py:97
 └─ 0.009 api_get_all_runner  moonshot/src/api/api_runner.py:97
    └─ 0.009 get_available_items  moonshot/src/runners/runner.py:213
-      └─ 0.009 read_object  moonshot/src/storage/storage.py:95
-         ├─ 0.007 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
-         ├─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
-         │  └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
-         │     └─ 0.001 open_code  <built-in>
-         └─ 0.001 get_filepath  moonshot/src/storage/storage.py:206
+      └─ 0.009 read_object  moonshot/src/storage/storage.py:96
+         ├─ 0.008 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+         └─ 0.001 get_filepath  moonshot/src/storage/storage.py:232
             └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
                └─ 0.001 PosixPath.__new__  pathlib.py:868
-                     [5 frames hidden]  pathlib, <built-in>
+                     [3 frames hidden]  pathlib
 

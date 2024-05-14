@@ -1,39 +1,34 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:53  Samples:  94
- /_//_/// /_\ / //_// / //_'/ //     Duration: 0.126     CPU time: 0.112
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:20:20  Samples:  96
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.141     CPU time: 0.114
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 
-0.126 profile_function  tests/test_api_perf.py:97
-├─ 0.124 api_get_all_run  moonshot/src/api/api_run.py:9
-│  └─ 0.124 _api_get_available_runs  moonshot/src/api/api_run.py:26
-│     ├─ 0.110 get_all_runs  moonshot/src/runs/run.py:128
-│     │  ├─ 0.100 <listcomp>  moonshot/src/runs/run.py:152
-│     │  │  └─ 0.100 RunArguments.from_tuple  moonshot/src/runs/run_arguments.py:131
-│     │  │     ├─ 0.095 literal_eval  ast.py:54
-│     │  │     │     [18 frames hidden]  ast, <built-in>
-│     │  │     │        0.058 compile  <built-in>
-│     │  │     └─ 0.005 [self]  moonshot/src/runs/run_arguments.py
-│     │  └─ 0.009 read_database_records  moonshot/src/storage/storage.py:376
+0.141 profile_function  tests/test_api_perf.py:97
+├─ 0.139 api_get_all_run  moonshot/src/api/api_run.py:9
+│  └─ 0.139 _api_get_available_runs  moonshot/src/api/api_run.py:26
+│     ├─ 0.111 get_all_runs  moonshot/src/runs/run.py:128
+│     │  ├─ 0.102 <listcomp>  moonshot/src/runs/run.py:152
+│     │  │  └─ 0.102 RunArguments.from_tuple  moonshot/src/runs/run_arguments.py:131
+│     │  │     ├─ 0.096 literal_eval  ast.py:54
+│     │  │     │     [17 frames hidden]  ast, <built-in>
+│     │  │     │        0.060 compile  <built-in>
+│     │  │     └─ 0.006 [self]  moonshot/src/runs/run_arguments.py
+│     │  └─ 0.009 read_database_records  moonshot/src/storage/storage.py:402
 │     │     └─ 0.009 SQLite.read_records  moonshot/data/databases-modules/sqlite.py:146
-│     │        ├─ 0.006 Cursor.fetchall  <built-in>
-│     │        └─ 0.004 Cursor.execute  <built-in>
-│     ├─ 0.012 <listcomp>  moonshot/src/api/api_run.py:59
-│     │  └─ 0.012 api_load_runner  moonshot/src/api/api_runner.py:47
-│     │     └─ 0.012 Runner.load  moonshot/src/runners/runner.py:51
-│     │        ├─ 0.009 create_database_connection  moonshot/src/storage/storage.py:249
-│     │        │  └─ 0.008 SQLite.create_connection  moonshot/data/databases-modules/sqlite.py:11
-│     │        └─ 0.002 wrapper_function  pydantic/v1/decorator.py:38
-│     │              [3 frames hidden]  pydantic
-│     │                 0.002 ValidatedFunction.execute  pydantic/v1/decorator.py:179
-│     │                 └─ 0.002 read  moonshot/src/runners/runner.py:163
-│     │                    └─ 0.002 read_object  moonshot/src/storage/storage.py:95
-│     └─ 0.003 api_get_all_runner  moonshot/src/api/api_runner.py:97
-│        └─ 0.003 get_available_items  moonshot/src/runners/runner.py:213
-│           └─ 0.003 read_object  moonshot/src/storage/storage.py:95
-│              └─ 0.002 get_instance  moonshot/src/utils/import_modules.py:59
-│                 └─ 0.002 create_module_spec  moonshot/src/utils/import_modules.py:7
-│                    └─ 0.002 find_spec  <frozen importlib.util>:73
+│     │        ├─ 0.005 Cursor.fetchall  <built-in>
+│     │        └─ 0.005 Cursor.execute  <built-in>
+│     ├─ 0.023 <listcomp>  moonshot/src/api/api_run.py:59
+│     │  └─ 0.023 api_load_runner  moonshot/src/api/api_runner.py:47
+│     │     └─ 0.023 Runner.load  moonshot/src/runners/runner.py:51
+│     │        └─ 0.022 create_database_connection  moonshot/src/storage/storage.py:275
+│     │           ├─ 0.019 SQLite.create_connection  moonshot/data/databases-modules/sqlite.py:11
+│     │           └─ 0.002 get_instance  moonshot/src/utils/import_modules.py:59
+│     └─ 0.005 api_get_all_runner  moonshot/src/api/api_runner.py:97
+│        └─ 0.005 get_available_items  moonshot/src/runners/runner.py:213
+│           └─ 0.005 read_object  moonshot/src/storage/storage.py:96
+│              └─ 0.004 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+│                 └─ 0.003 [self]  moonshot/data/io-modules/jsonio.py
 └─ 0.001 [self]  tests/test_api_perf.py
 

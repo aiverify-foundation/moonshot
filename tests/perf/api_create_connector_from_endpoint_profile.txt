@@ -1,20 +1,20 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:13  Samples:  934
- /_//_/// /_\ / //_// / //_'/ //     Duration: 3.002     CPU time: 0.821
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:37  Samples:  263
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.297     CPU time: 0.211
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 
-3.002 profile_function  tests/test_api_perf.py:97
-└─ 3.002 api_create_connector_from_endpoint  moonshot/src/api/api_connector.py:8
-   └─ 2.994 create  moonshot/src/connectors/connector.py:211
-      └─ 2.994 Connector.load  moonshot/src/connectors/connector.py:179
-         ├─ 2.945 get_instance  moonshot/src/utils/import_modules.py:59
-         │  └─ 2.945 import_module_from_spec  moonshot/src/utils/import_modules.py:41
-         │     └─ 2.941 <module>  moonshot/data/connectors/openai-connector.py:1
-         │        └─ 2.937 <module>  openai/__init__.py:1
-         │              [101 frames hidden]  openai, httpx, rich, <built-in>, attr...
-         └─ 0.049 OpenAIConnector.__init__  moonshot/data/connectors/openai-connector.py:16
-            └─ 0.049 AsyncOpenAI.__init__  openai/_client.py:281
-                  [11 frames hidden]  openai, httpx, <built-in>
+0.296 profile_function  tests/test_api_perf.py:97
+└─ 0.296 api_create_connector_from_endpoint  moonshot/src/api/api_connector.py:8
+   └─ 0.296 create  moonshot/src/connectors/connector.py:211
+      └─ 0.296 Connector.load  moonshot/src/connectors/connector.py:179
+         ├─ 0.278 get_instance  moonshot/src/utils/import_modules.py:59
+         │  └─ 0.278 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+         │     └─ 0.278 <module>  moonshot/data/connectors/openai-connector.py:1
+         │        └─ 0.277 <module>  openai/__init__.py:1
+         │              [119 frames hidden]  openai, httpx, httpcore, anyio, typin...
+         └─ 0.019 OpenAIConnector.__init__  moonshot/data/connectors/openai-connector.py:16
+            └─ 0.019 AsyncOpenAI.__init__  openai/_client.py:281
+                  [16 frames hidden]  openai, httpx, <built-in>, urllib
 

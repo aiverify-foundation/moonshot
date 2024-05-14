@@ -1,17 +1,17 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:15:17  Samples:  2591
- /_//_/// /_\ / //_// / //_'/ //     Duration: 8.640     CPU time: 2.482
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:39  Samples:  7
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.038     CPU time: 0.002
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
 
-8.639 profile_function  tests/test_api_perf.py:97
-└─ 8.639 api_get_all_attack_module_metadata  moonshot/src/api/api_red_teaming.py:20
-   └─ 8.639 <listcomp>  moonshot/src/api/api_red_teaming.py:31
-      └─ 8.639 AttackModule.load  moonshot/src/redteaming/attack/attack_module.py:40
-         └─ 8.638 get_instance  moonshot/src/utils/import_modules.py:59
-            └─ 8.632 import_module_from_spec  moonshot/src/utils/import_modules.py:41
-               └─ 8.578 <module>  moonshot/data/attack-modules/textbugger_attack_module.py:1
-                  └─ 8.574 <module>  textattack/__init__.py:1
-                        [129 frames hidden]  textattack, lemminflect, spacy, thinc...
+0.037 profile_function  tests/test_api_perf.py:97
+└─ 0.037 api_get_all_attack_module_metadata  moonshot/src/api/api_red_teaming.py:23
+   └─ 0.037 get_available_items  moonshot/src/redteaming/attack/attack_module.py:392
+      ├─ 0.033 _get_or_update_attack_module_info  moonshot/src/redteaming/attack/attack_module.py:437
+      │  └─ 0.033 get_file_hash  moonshot/src/storage/storage.py:207
+      │     └─ 0.033 open  <built-in>
+      └─ 0.004 get_cache_information  moonshot/src/redteaming/attack/attack_module.py:347
+         └─ 0.004 read_object  moonshot/src/storage/storage.py:96
+            └─ 0.004 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
 

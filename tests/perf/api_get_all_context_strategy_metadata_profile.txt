@@ -1,6 +1,6 @@
 
-  _     ._   __/__   _ _  _  _ _/_   Recorded: 22:14:18  Samples:  4
- /_//_/// /_\ / //_// / //_'/ //     Duration: 0.007     CPU time: 0.016
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  3
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.006     CPU time: 0.009
 /   _/                      v4.6.2
 
 Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
@@ -12,7 +12,7 @@ Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
          └─ 0.006 get_instance  moonshot/src/utils/import_modules.py:59
             └─ 0.006 import_module_from_spec  moonshot/src/utils/import_modules.py:41
                ├─ 0.003 open_code  <built-in>
-               ├─ 0.002 <module>  moonshot/data/context-strategy/add_previous_prompt.py:1
-               │  └─ 0.002 open_code  <built-in>
-               └─ 0.001 FileIO.__exit__  <built-in>
+               ├─ 0.001 <module>  moonshot/data/context-strategy/add_previous_prompt.py:1
+               │  └─ 0.001 BufferedReader.read  <built-in>
+               └─ 0.001 replace  <built-in>
 
