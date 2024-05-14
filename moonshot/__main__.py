@@ -75,6 +75,7 @@ def moonshot_ui_installation():
         os.chdir("..")
     else:
         print(f"Directory {folder_name} already exists, skipping installation.")
+
 def run_moonshot_ui_dev():
     """
     To start a thread to run the Moonshot UI
@@ -90,7 +91,7 @@ def run_moonshot_ui_dev():
 
 def main():
     parser = argparse.ArgumentParser(description="Run the Moonshot application")
-    parser.add_argument('mode', choices=['web-api', 'cli', 'web'], help='Mode to run Moonshot in')
+    parser.add_argument('mode', nargs='?', choices=['web-api', 'cli', 'web'], help='Mode to run Moonshot in', default=None)
     parser.add_argument('cli_command', nargs='?', help='The CLI command to run (e.g., "interactive")')
     parser.add_argument('-i', '--include', action='append', help='Modules to include', default=[])
     parser.add_argument('-e', '--env', type=str, help='Path to the .env file', default='.env')
@@ -106,6 +107,10 @@ def main():
     if 'moonshot-ui' in args.include:
         moonshot_ui_installation()
 
+    # If mode is not specified, skip running any modes
+    if args.mode is None:
+        return
+    
     if args.mode == "web-api":
         from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()
