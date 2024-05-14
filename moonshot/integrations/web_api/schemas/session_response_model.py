@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, Field
 
 class ChatRecord(BaseModel):
     chat_record_id: int
@@ -30,5 +30,3 @@ class SessionMetadataModel(BaseModel):
 class SessionResponseModel(BaseModel):
     session: SessionMetadataModel
     chat_records: Optional[Dict[str, List[ChatRecord]]]
-
-PromptResponseModel = RootModel[dict[str, list[ChatRecord]]]

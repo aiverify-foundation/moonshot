@@ -11,10 +11,10 @@ from .... import api as moonshot_api
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
 from ..schemas.session_response_model import (
-    PromptResponseModel,
     SessionMetadataModel,
     SessionResponseModel,
 )
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..services.auto_red_team_test_state import AutoRedTeamTestState
 from ..services.runner_service import RunnerService
 from ..services.utils.exceptions_handler import exception_handler
@@ -282,7 +282,7 @@ class SessionService(BaseService):
     @exception_handler
     async def send_prompt(
         self, runner_id: str, prompt: SessionPromptDTO
-    ) -> PromptResponseModel:
+    ) -> PromptResponseModel | None:
         """
         Send a prompt to the runner for processing.
 
@@ -331,9 +331,8 @@ class SessionService(BaseService):
             rt_args["metric_ids"] = [metric] if metric else []
             await self.schedule_art_task(rt_args)
         else:
-            await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
-        retn_val = self.update_session_chat(self.active_runner.id)
-        return retn_val
+            response = await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
+            return PromptResponseModel.model_validate(response)
 
     @exception_handler
     async def end_session(self, runner_id: str):

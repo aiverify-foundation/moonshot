@@ -7,10 +7,10 @@ from ..container import Container
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
 from ..schemas.session_response_model import (
-    PromptResponseModel,
     SessionMetadataModel,
     SessionResponseModel,
 )
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
@@ -170,7 +170,7 @@ async def prompt(
     runner_id: str,
     user_prompt: SessionPromptDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> PromptResponseModel:
+) -> PromptResponseModel | None:
     """
     Process a user prompt for a given session and return the session's response.
 
