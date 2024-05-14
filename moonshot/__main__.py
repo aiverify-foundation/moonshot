@@ -48,7 +48,6 @@ def moonshot_data_installation():
     else:
         print(f"Directory {folder_name} already exists, skipping clone.")
 
-
 def moonshot_ui_installation():
     # Code for moonshot-ui installation
     repo = "https://github.com/moonshot-admin/moonshot-ui"
@@ -77,7 +76,6 @@ def moonshot_ui_installation():
     else:
         print(f"Directory {folder_name} already exists, skipping installation.")
 
-
 def run_moonshot_ui_dev():
     """
     To start a thread to run the Moonshot UI
@@ -85,6 +83,9 @@ def run_moonshot_ui_dev():
     base_directory = os.getcwd()
     ui_dev_dir = os.path.join(base_directory, "moonshot-ui")
 
+    if not os.path.exists(ui_dev_dir):
+        raise FileNotFoundError("moonshot-ui does not exist. Please run with '-i moonshot-ui' to install moonshot-ui first.")
+    
     # ms_ui_env_file(ui_dev_dir)
     run_subprocess(['npm', 'start'], cwd=ui_dev_dir)
 
