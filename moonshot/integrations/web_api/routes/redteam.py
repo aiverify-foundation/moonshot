@@ -4,13 +4,10 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 from ..container import Container
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
-from ..schemas.session_response_model import (
-    SessionMetadataModel,
-    SessionResponseModel,
-)
-from ..schemas.prompt_response_model import PromptResponseModel
+from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
@@ -170,7 +167,7 @@ async def prompt(
     runner_id: str,
     user_prompt: SessionPromptDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> PromptResponseModel | None:
+) -> PromptResponseModel | str:
     """
     Process a user prompt for a given session and return the session's response.
 
@@ -194,6 +191,38 @@ async def prompt(
     try:
         result = await session_service.send_prompt(runner_id, user_prompt)
         return result
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.post("/api/v1/sessions/{runner_id}/cancel")
+@inject
+async def cancel_auto_redteam(
+    runner_id: str,
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+):
+    """
+    Cancel the automated red team operation for a given session.
+
+    This endpoint is used to stop any ongoing automated red team operations for the session 
+    associated with the provided runner_id.
+
+    Args:
+        runner_id (str): The unique identifier for the session whose automated red team operation is to be canceled.
+        session_service (SessionService): The service responsible for managing red team sessions.
+
+    Raises:
+        HTTPException: Raised with status code 404 if the session associated with the runner_id is not found.
+                       Raised with status code 400 if there is a validation error with the runner_id.
+                       Raised with status code 500 for any other server-side errors encountered while processing.
+    """
+    try:
+        await session_service.cancel_auto_redteam(runner_id)
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
