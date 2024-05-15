@@ -29,3 +29,6 @@ class EndpointDataModel(BaseModel):
     max_concurrency: int
     created_date: str
     params: EndpointParams
+
+    def mask_token(self):
+        self.token = "*" * 20
