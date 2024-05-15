@@ -23,16 +23,16 @@ def api_delete_metric(met_id: str) -> None:
 
 def api_get_all_metric() -> list[dict]:
     """
-    Retrieves all available metric metadata.
+    Retrieves all available metrics.
 
     This function calls the get_available_items method from the Metric class to retrieve all available metrics.
-    It then extracts the metadata of each metric and returns a list of these metadata dictionaries.
+    It then returns a list of dictionaries, each containing the details of a metric.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing the metadata of a metric.
+        list[dict]: A list of dictionaries, each representing a metric's details.
     """
-    _, metrics = Metric.get_available_items()
-    return [metric.get_metadata() for metric in metrics]  # type: ignore ; ducktyping
+    _, metrics_info = Metric.get_available_items()
+    return metrics_info
 
 
 def api_get_all_metric_name() -> list[str]:

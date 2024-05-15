@@ -101,46 +101,74 @@ class Recipe:
             Exception: If there is an issue reading the file or during any other part of the process.
         """
         try:
-            return RecipeArguments(**Recipe._read_recipe(rec_id))
+            return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")
             raise e
 
     @staticmethod
-    def _read_recipe(rec_id: str) -> dict:
+    def _get_datasets_prompt_counts():
         """
-        Reads the recipe details from storage and enriches it with statistics.
+        Generates a mapping of dataset IDs to their number of prompts.
 
-        This method retrieves the recipe details by its ID and calculates additional statistics such as the number of
-        prompts in each dataset and the total number of prompt templates.
-
-        Args:
-            rec_id (str): The unique identifier of the recipe to read.
+        This method reads the cache information from the storage, which contains the number of prompts for each dataset.
+        It then creates a dictionary mapping each dataset ID to the corresponding number of prompts.
 
         Returns:
-            dict: A dictionary containing the recipe details along with calculated statistics.
+            dict: A dictionary where keys are dataset IDs and values are the number of prompts for that dataset.
+        """
+        # Calculate statistics for the recipe and update the results dictionary with them
+        _, dataset_results = Dataset.get_available_items()
+        # Create a mapping of dataset IDs to their number of prompts
+        return {
+            dataset.id: dataset.num_of_dataset_prompts for dataset in dataset_results
+        }
+
+    @staticmethod
+    def _read_recipe(rec_id: str, dataset_prompts_count: dict) -> dict:
+        """
+        Reads the recipe JSON file based on the provided recipe ID and dataset prompts count
+        and returns the recipe information as a dictionary.
+
+        Args:
+            rec_id (str): The unique identifier for the recipe.
+            dataset_prompts_count (dict): A dictionary mapping dataset IDs to their number of prompts.
+
+        Returns:
+            dict: A dictionary containing the recipe information.
 
         Raises:
-            RuntimeError: If the recipe cannot be found or read from storage.
+            RuntimeError: If the recipe file cannot be read or does not exist.
         """
         obj_results = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
-        if obj_results:
-            # Calculate statistics for the recipe and update the results dictionary with them
-            obj_results["stats"] = {
-                "num_of_tags": len(obj_results["tags"]),
-                "num_of_datasets": len(obj_results["datasets"]),
-                "num_of_datasets_prompts": {
-                    dataset_name: Dataset.read(dataset_name).num_of_dataset_prompts
-                    for dataset_name in obj_results["datasets"]
-                },
-                "num_of_prompt_templates": len(obj_results["prompt_templates"]),
-                "num_of_metrics": len(obj_results["metrics"]),
-                "num_of_attack_modules": len(obj_results["attack_modules"]),
-            }
-            return obj_results
-        else:
+        if not obj_results:
             raise RuntimeError(f"Unable to get results for {rec_id}.")
+
+        # Calculate statistics for the recipe and update the results dictionary with them
+        stats = {
+            "num_of_tags": len(obj_results["tags"]),
+            "num_of_datasets": len(obj_results["datasets"]),
+            "num_of_prompt_templates": len(obj_results["prompt_templates"]),
+            "num_of_metrics": len(obj_results["metrics"]),
+            "num_of_attack_modules": len(obj_results["attack_modules"]),
+            "num_of_datasets_prompts": {},
+        }
+
+        if dataset_prompts_count:
+            stats["num_of_datasets_prompts"] = {
+                dataset_name: dataset_prompts_count.get(dataset_name, 0)
+                for dataset_name in obj_results["datasets"]
+            }
+        else:
+            _, datasets_metadata = Dataset.get_available_items(obj_results["datasets"])
+            stats["num_of_datasets_prompts"] = {
+                dataset.id: dataset.num_of_dataset_prompts
+                for dataset in datasets_metadata
+            }
+
+        obj_results["stats"] = stats
+        return obj_results
 
     @staticmethod
     def update(rec_args: RecipeArguments) -> None:
@@ -196,30 +224,33 @@ class Recipe:
     @staticmethod
     def get_available_items() -> tuple[list[str], list[RecipeArguments]]:
         """
-        Retrieves all available recipes.
+        Retrieves a list of available recipe IDs and their corresponding recipe information.
 
-        This method searches the storage location specified by `EnvVariables.RECIPES` for recipe files, omitting any
-        that include "__" in their filenames. It reads the contents of each valid recipe file and constructs a
-        RecipeArguments object with the recipe details. The method accumulates the recipe IDs and the corresponding
-        RecipeArguments objects into separate lists, which are then returned together as a tuple.
+        This method queries the storage for all available recipes and filters out any system files or directories.
+        It then creates a list of RecipeArguments objects with detailed information about each recipe and a list of
+        their IDs. Finally, it returns a tuple containing the list of recipe IDs and the list of RecipeArguments
+        objects.
 
         Returns:
-            tuple[list[str], list[RecipeArguments]]: A tuple containing two elements. The first is a list of recipe
-            IDs, and the second is a list of RecipeArguments objects, each representing the details of a recipe.
+            tuple[list[str], list[RecipeArguments]]: A tuple containing a list of recipe IDs and a list of
+                                                      RecipeArguments objects for each available recipe.
 
         Raises:
-            Exception: If any issues arise during the retrieval and processing of recipe files.
+            Exception: If there's an error during the retrieval process.
         """
         try:
             retn_recs = []
             retn_recs_ids = []
 
+            datasets_prompt_counts = Recipe._get_datasets_prompt_counts()
             recs = Storage.get_objects(EnvVariables.RECIPES.name, "json")
             for rec in recs:
                 if "__" in rec:
                     continue
 
-                rec_info = RecipeArguments(**Recipe._read_recipe(Path(rec).stem))
+                rec_info = RecipeArguments(
+                    **Recipe._read_recipe(Path(rec).stem, datasets_prompt_counts)
+                )
                 retn_recs.append(rec_info)
                 retn_recs_ids.append(rec_info.id)
 

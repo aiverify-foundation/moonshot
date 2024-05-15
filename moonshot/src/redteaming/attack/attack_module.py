@@ -21,6 +21,8 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class AttackModule:
+    cache_name = "cache"
+    cache_extension = "json"
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -391,25 +393,130 @@ class AttackModule:
         return None
 
     @staticmethod
-    def get_available_items() -> list[str]:
+    def get_cache_information() -> dict:
         """
-        Retrieves the available attack module IDs.
+        Retrieves cache information from the storage.
+
+        This method attempts to read the cache information from the storage and return it as a dictionary.
+        If the cache information does not exist or an error occurs, it returns an empty dictionary.
 
         Returns:
-            list[str]: A list of available attack module IDs.
+            dict: A dictionary containing the cache information or an empty dictionary if an error occurs
+            or if the cache information does not exist.
+
+        Raises:
+            Exception: If there's an error during the retrieval process, it is logged and an
+            empty dictionary is returned.
         """
         try:
-            retn_am_ids = []
+            # Retrieve cache information from the storage and return it as a dictionary
+            cache_info = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, AttackModule.cache_name, "json"
+            )
+            return cache_info if cache_info else {}
+        except Exception as e:
+            print(f"No previous cache information: {str(e)}")
+            return {}
 
+    @staticmethod
+    def write_cache_information(cache_info: dict) -> None:
+        """
+        Writes the updated cache information to the storage.
+
+        Args:
+            cache_info (dict): The cache information to be written.
+        """
+        try:
+            Storage.create_object(
+                obj_type=EnvVariables.ATTACK_MODULES.name,
+                obj_id=AttackModule.cache_name,
+                obj_info=cache_info,
+                obj_extension=AttackModule.cache_extension,
+            )
+        except Exception as e:
+            print(f"Failed to write cache information: {str(e)}")
+            raise e
+
+    @staticmethod
+    def get_available_items() -> tuple[list[str], list[dict]]:
+        """
+        Retrieves the list of available attack modules and their information.
+
+        This method scans the storage for attack modules, filters out any non-relevant files,
+        and updates the cache information if necessary. It returns a tuple containing a list of
+        attack module IDs and a list of dictionaries with detailed information about each module.
+
+        Returns:
+            tuple[list[str], list[dict]]: A tuple with two elements. The first element is a list
+                                           of attack module IDs. The second element is a list of
+                                           dictionaries, each containing information about an
+                                           attack module.
+        """
+        try:
+            retn_ams = []
+            retn_am_ids = []
+            am_cache_info = AttackModule.get_cache_information()
+            cache_needs_update = False  # Initialize a flag to track cache updates
             ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
+
             for am in ams:
-                if "__" in am:
+                if "__" in am or AttackModule.cache_name in am:
                     continue
-                retn_am_ids.append(Path(am).stem)
-            return retn_am_ids
+
+                am_name = Path(am).stem
+                am_info, cache_updated = AttackModule._get_or_update_attack_module_info(
+                    am_name, am_cache_info
+                )
+                if cache_updated:
+                    cache_needs_update = True  # Set the flag if any cache was updated
+
+                retn_ams.append(am_info)
+                retn_am_ids.append(am_name)
+
+            if cache_needs_update:  # Check the flag after the loop
+                AttackModule.write_cache_information(am_cache_info)
+
+            return retn_am_ids, retn_ams
+
         except Exception as e:
             print(f"Failed to get available attack modules: {str(e)}")
             raise e
+
+    @staticmethod
+    def _get_or_update_attack_module_info(
+        am_name: str, am_cache_info: dict
+    ) -> tuple[dict, bool]:
+        """
+        Retrieves or updates the attack module information from the cache.
+
+        This method checks if the attack module information is already available in the cache and if the file hash
+        matches the one stored in the cache. If it does, the information is retrieved from the cache.
+
+        If not, the attack module information is read from the storage, the cache is updated with the new information
+        and the new file hash, and a flag is set to indicate that the cache has been updated.
+
+        Args:
+            am_name (str): The name of the attack module.
+            am_cache_info (dict): A dictionary containing the cached attack module information.
+
+        Returns:
+            tuple[dict, bool]: A tuple containing the dictionary with the attack module information
+                               and a boolean indicating whether the cache was updated or not.
+        """
+        file_hash = Storage.get_file_hash(
+            EnvVariables.ATTACK_MODULES.name, am_name, "py"
+        )
+        cache_updated = False
+
+        if am_name in am_cache_info and file_hash == am_cache_info[am_name]["hash"]:
+            am_metadata = am_cache_info[am_name]
+        else:
+            am_metadata = AttackModule.load(am_name).get_metadata()  # type: ignore ; ducktyping
+            am_cache_info[am_name] = am_metadata
+            am_cache_info[am_name]["hash"] = file_hash
+            cache_updated = True
+
+        return am_metadata, cache_updated
 
     @staticmethod
     def delete(am_id: str) -> None:

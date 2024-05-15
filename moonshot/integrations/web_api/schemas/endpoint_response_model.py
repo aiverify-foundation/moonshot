@@ -8,11 +8,8 @@ class AdditionalParams(TypedDict, total=False):
     max_length: int
     min_length: int
 
-
-class RequiredParams(TypedDict, total=True):
-    model: str
-
-class OptionalParams(TypedDict, total=False):
+class EndpointParams(TypedDict, total=False):
+    model: Optional[str]
     timeout: Optional[int]
     allow_retries: Optional[bool]
     num_of_retries: Optional[int]
@@ -20,10 +17,6 @@ class OptionalParams(TypedDict, total=False):
     pre_prompt: Optional[str]
     post_prompt: Optional[str]
     parameters: Optional[AdditionalParams]
-
-class EndpointParams(RequiredParams, OptionalParams):
-    pass
-
 
 class EndpointDataModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)

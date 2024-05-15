@@ -1,0 +1,17 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  66
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.120     CPU time: 0.312
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.119 profile_function  tests/test_api_perf.py:97
+└─ 0.119 api_get_all_datasets  moonshot/src/api/api_dataset.py:24
+   └─ 0.119 get_available_items  moonshot/src/datasets/dataset.py:154
+      └─ 0.117 _get_or_update_dataset_info  moonshot/src/datasets/dataset.py:206
+         ├─ 0.114 get_file_hash  moonshot/src/storage/storage.py:207
+         │  ├─ 0.062 BufferedReader.read  <built-in>
+         │  ├─ 0.030 open  <built-in>
+         │  └─ 0.019 [self]  moonshot/src/storage/storage.py
+         └─ 0.003 [self]  moonshot/src/datasets/dataset.py
+

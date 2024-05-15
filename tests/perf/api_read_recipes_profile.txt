@@ -1,0 +1,28 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  3
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.004     CPU time: 0.003
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.003 profile_function  tests/test_api_perf.py:97
+└─ 0.003 api_read_recipes  moonshot/src/api/api_recipe.py:72
+   └─ 0.003 <listcomp>  moonshot/src/api/api_recipe.py:88
+      └─ 0.003 wrapper_function  pydantic/v1/decorator.py:38
+            [3 frames hidden]  pydantic
+               0.003 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+               └─ 0.003 read  moonshot/src/recipes/recipe.py:84
+                  └─ 0.003 _read_recipe  moonshot/src/recipes/recipe.py:129
+                     └─ 0.003 get_available_items  moonshot/src/datasets/dataset.py:154
+                        ├─ 0.002 get_cache_information  moonshot/src/datasets/dataset.py:109
+                        │  └─ 0.002 read_object  moonshot/src/storage/storage.py:96
+                        │     ├─ 0.001 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+                        │     │  └─ 0.001 load  json/__init__.py:274
+                        │     │        [4 frames hidden]  json
+                        │     │           0.001 JSONDecoder.raw_decode  json/decoder.py:343
+                        │     └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
+                        │        └─ 0.001 create_module_spec  moonshot/src/utils/import_modules.py:7
+                        │           └─ 0.001 getcwd  <built-in>
+                        └─ 0.001 _get_or_update_dataset_info  moonshot/src/datasets/dataset.py:206
+                           └─ 0.001 get_file_hash  moonshot/src/storage/storage.py:207
+
