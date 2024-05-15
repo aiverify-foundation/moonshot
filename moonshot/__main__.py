@@ -157,8 +157,6 @@ def main():
     
     args = parser.parse_args()
     
-    api_set_environment_variables(dotenv_values(args.env))
-
     # Handle installations based on the -i include arguments
     if 'moonshot-data' in args.install:
         moonshot_data_installation()
@@ -170,6 +168,8 @@ def main():
     if args.mode is None:
         return
     
+    api_set_environment_variables(dotenv_values(args.env))
+
     if args.mode == "web-api":
         from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()
