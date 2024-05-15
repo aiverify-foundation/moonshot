@@ -3,6 +3,7 @@ import importlib.resources
 from dependency_injector import containers, providers
 
 from .services.attack_module_service import AttackModuleService
+from .services.auto_red_team_test_manager import AutoRedTeamTestManager
 from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
@@ -70,6 +71,14 @@ class Container(containers.DeclarativeContainer):
     runner_service: providers.Singleton[RunnerService] = providers.Singleton(
         RunnerService
     )
+    auto_red_team_test_manager: providers.Singleton[
+        AutoRedTeamTestManager
+    ] = providers.Singleton(
+        AutoRedTeamTestManager,
+        auto_red_team_test_state=auto_red_team_test_state,
+        progress_status_updater=webhook,
+        runner_service=runner_service,
+    )
     benchmark_test_manager: providers.Singleton[
         BenchmarkTestManager
     ] = providers.Singleton(
@@ -80,7 +89,7 @@ class Container(containers.DeclarativeContainer):
     )
     session_service: providers.Singleton[SessionService] = providers.Singleton(
         SessionService,
-        auto_red_team_test_state=auto_red_team_test_state,
+        auto_red_team_test_manager=auto_red_team_test_manager,
         progress_status_updater=webhook,
         runner_service=runner_service,
     )
