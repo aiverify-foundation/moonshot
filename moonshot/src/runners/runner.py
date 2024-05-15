@@ -126,7 +126,7 @@ class Runner:
                     EnvVariables.CONNECTORS_ENDPOINTS.name, endpoint, "json"
                 ):
                     raise RuntimeError(
-                        f"[Runner]Connector endpoint {endpoint} does exist."
+                        f"[Runner]Connector endpoint {endpoint} does not exist."
                     )
 
             runner_info = {
@@ -237,7 +237,6 @@ class Runner:
         try:
             retn_runners = []
             retn_runners_ids = []
-
             runners = Storage.get_objects(EnvVariables.RUNNERS.name, "json")
             for runner in runners:
                 if "__" in runner:

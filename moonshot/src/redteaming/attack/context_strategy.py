@@ -9,8 +9,8 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class ContextStrategy:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, cs_id: str) -> None:
+        self.id = cs_id
 
     @classmethod
     def load(cls, cs_id: str) -> ContextStrategy:
@@ -34,7 +34,7 @@ class ContextStrategy:
             Storage.get_filepath(EnvVariables.CONTEXT_STRATEGY.name, cs_id, "py"),
         )
         if context_strategy_inst:
-            return context_strategy_inst()
+            return context_strategy_inst(cs_id)
         else:
             raise RuntimeError(
                 f"Unable to get defined context strategy instance - {cs_id}"
@@ -122,7 +122,7 @@ class ContextStrategy:
             list_of_chats = Chat.get_n_chat_history(
                 db_instance, endpoint_id, num_of_previous_chats
             )
-            context_strategy_instance = context_strategy_instance()
+            context_strategy_instance = context_strategy_instance(context_strategy_name)
             return context_strategy_instance.add_in_context(user_prompt, list_of_chats)
         else:
             print(
