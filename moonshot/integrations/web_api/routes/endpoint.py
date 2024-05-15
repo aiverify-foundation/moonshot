@@ -4,7 +4,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
 
 from ..container import Container
-from ..schemas.endpoint_create_dto import EndpointCreateDTO
+from ..schemas.endpoint_create_dto import EndpointCreateDTO, EndpointUpdateDTO
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.endpoint_service import EndpointService
 from ..services.utils.exceptions_handler import ServiceException
@@ -163,7 +163,7 @@ def get_endpoint(
 @inject
 async def update_endpoint(
     endpoint_id: str,
-    endpoint_data: EndpointCreateDTO,
+    endpoint_data: EndpointUpdateDTO,
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """
