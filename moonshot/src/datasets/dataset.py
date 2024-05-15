@@ -231,7 +231,9 @@ class Dataset:
         cache_updated = False
 
         if ds_name in ds_cache_info and file_hash == ds_cache_info[ds_name]["hash"]:
-            ds_info = DatasetArguments(**ds_cache_info[ds_name])
+            ds_metadata = ds_cache_info[ds_name]
+            ds_metadata.pop("hash", None)
+            ds_info = DatasetArguments(**ds_metadata)
         else:
             ds_info = DatasetArguments(**Dataset._read_dataset(ds_name))
             ds_info.examples = None

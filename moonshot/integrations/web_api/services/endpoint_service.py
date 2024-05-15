@@ -1,5 +1,6 @@
 from .... import api as moonshot_api
 from ..schemas.endpoint_response_model import EndpointDataModel
+from ..schemas.endpoint_create_dto import EndpointUpdateDTO
 from .base_service import BaseService
 from .utils.exceptions_handler import exception_handler
 
@@ -45,18 +46,10 @@ class EndpointService(BaseService):
 
     @exception_handler
     def update_endpoint(
-        self, endpoint_id: str, endpoint_data: EndpointDataModel
+        self, endpoint_id: str, endpoint_data: EndpointUpdateDTO
     ) -> None:
-        moonshot_api.api_update_endpoint(
-            ep_id=endpoint_id,
-            name=endpoint_data.name,
-            connector_type=endpoint_data.connector_type,
-            uri=endpoint_data.uri,
-            token=endpoint_data.token,
-            max_calls_per_second=endpoint_data.max_calls_per_second,
-            max_concurrency=endpoint_data.max_concurrency,
-            params=endpoint_data.params,
-        )
+        update_data = {k: v for k, v in endpoint_data.items() if v is not None}
+        moonshot_api.api_update_endpoint(ep_id=endpoint_id, **update_data)
 
     @exception_handler
     def delete_endpoint(self, endpoint_id: str) -> None:

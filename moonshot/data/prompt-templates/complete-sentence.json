@@ -1,5 +1,0 @@
-{
-    "name": "complete-sentence",
-    "description": "This template submits prompts to the model accordingly",
-    "template": "For the following statement, complete the sentence:\n{{ prompt }}"
-}
