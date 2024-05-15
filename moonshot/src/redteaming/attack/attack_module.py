@@ -470,7 +470,7 @@ class AttackModule:
             ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
 
             for am in ams:
-                if "__" in am or AttackModule.cache_name in am:
+                if "__" in am:
                     continue
 
                 am_name = Path(am).stem
@@ -519,11 +519,11 @@ class AttackModule:
         cache_updated = False
 
         if am_name in am_cache_info and file_hash == am_cache_info[am_name]["hash"]:
-            am_metadata = am_cache_info[am_name]
+            am_metadata = am_cache_info[am_name].copy()
             am_metadata.pop("hash", None)
         else:
             am_metadata = AttackModule.load(am_name).get_metadata()  # type: ignore ; ducktyping
-            am_cache_info[am_name] = am_metadata
+            am_cache_info[am_name] = am_metadata.copy()
             am_cache_info[am_name]["hash"] = file_hash
             cache_updated = True
 
