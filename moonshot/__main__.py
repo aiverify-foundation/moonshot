@@ -127,11 +127,11 @@ def moonshot_ui_installation():
             run_subprocess(["npm", "install"], check=True)
             run_subprocess(["npm", "run", "build"], check=True)
         
-        # Create .env for ui
-        ms_ui_env_file(folder_name)
-        
         # Change back to the base directory
         os.chdir("..")
+
+        # Create .env for ui
+        ms_ui_env_file(folder_name)
     else:
         print(f"Directory {folder_name} already exists, skipping installation.")
 
