@@ -19,6 +19,58 @@ def run_subprocess(*args, **kwargs):
         kwargs["shell"] = True
     return subprocess.run(*args, **kwargs)
 
+def ms_lib_env_file(data_repo_name):
+    """
+    Writes the env file to be used for moonshot library
+    """
+    env_content_data = f"""
+    # For Data
+    ATTACK_MODULES="./{data_repo_name}/attack-modules"
+    CONNECTORS="./{data_repo_name}/connectors"
+    CONNECTORS_ENDPOINTS="./{data_repo_name}/connectors-endpoints"
+    CONTEXT_STRATEGY="./{data_repo_name}/context-strategy"
+    COOKBOOKS="./{data_repo_name}/cookbooks"
+    DATABASES="./{data_repo_name}/generated-outputs/databases"
+    DATABASES_MODULES="./{data_repo_name}/databases-modules"
+    DATASETS="./{data_repo_name}/datasets"
+    IO_MODULES="./{data_repo_name}/io-modules"
+    METRICS="./{data_repo_name}/metrics"
+    PROMPT_TEMPLATES="./{data_repo_name}/prompt-templates"
+    RECIPES="./{data_repo_name}/recipes"
+    RESULTS="./{data_repo_name}/generated-outputs/results"
+    RESULTS_MODULES="./{data_repo_name}/results-modules"
+    RUNNERS="./{data_repo_name}/generated-outputs/runners"
+    RUNNERS_MODULES="./{data_repo_name}/runners-modules"
+    """
+
+    env_content_web_api = """
+    # For Web API
+    HOST_ADDRESS=127.0.0.1 # The interface the server will bind to
+    HOST_PORT=5000
+
+    # Below is the uri of the Web UI webhook.
+    # In the next section, if Web UI listens on a different port,
+    # update this uri accordingly and restart.
+
+    MOONSHOT_UI_CALLBACK_URL=http://localhost:3000/api/v1/benchmarks/status
+    """
+    with open(".env", "w") as env_file:
+        combined_content = env_content_data + env_content_web_api
+        env_file.write(combined_content.strip())
+
+def ms_ui_env_file(ui_repo):
+    """
+    Write the env file to be used with moonshot ui
+    """
+    env_content = """
+    # This should be the URL of the Moonshot Web Api module which was started in the previous section.
+    # Check the startup logs to determine the hostname and port number.
+    MOONSHOT_API_URL=http://127.0.0.1:5000
+    """
+    # Write the .env content to a file
+    with open(os.path.join(ui_repo, ".env"), "w") as env_file:
+        env_file.write(env_content.strip())
+
 def moonshot_data_installation():
     # Code for moonshot-data installation
     print("Installing Moonshot Data from GitHub")
@@ -45,6 +97,9 @@ def moonshot_data_installation():
         
         # Change back to the base directory
         os.chdir("..")
+
+        # Create .env to point to installed folder
+        ms_lib_env_file(folder_name)
     else:
         print(f"Directory {folder_name} already exists, skipping clone.")
 
@@ -71,6 +126,10 @@ def moonshot_ui_installation():
         if os.path.exists("package.json"):
             run_subprocess(["npm", "install"], check=True)
             run_subprocess(["npm", "run", "build"], check=True)
+        
+        # Create .env for ui
+        ms_ui_env_file(folder_name)
+        
         # Change back to the base directory
         os.chdir("..")
     else:
