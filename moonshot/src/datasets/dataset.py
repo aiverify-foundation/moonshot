@@ -185,7 +185,10 @@ class Dataset:
                 )
 
             for ds in datasets_objects:
-                if "__" in ds or Dataset.cache_name in ds:
+                if (
+                    "__" in ds
+                    or f"{Dataset.cache_name}.{Dataset.cache_extension}" in ds
+                ):
                     continue
 
                 ds_name = Path(ds).stem
@@ -231,13 +234,13 @@ class Dataset:
         cache_updated = False
 
         if ds_name in ds_cache_info and file_hash == ds_cache_info[ds_name]["hash"]:
-            ds_metadata = ds_cache_info[ds_name]
+            ds_metadata = ds_cache_info[ds_name].copy()
             ds_metadata.pop("hash", None)
             ds_info = DatasetArguments(**ds_metadata)
         else:
             ds_info = DatasetArguments(**Dataset._read_dataset(ds_name))
             ds_info.examples = None
-            ds_cache_info[ds_name] = ds_info.to_dict()
+            ds_cache_info[ds_name] = ds_info.copy().to_dict()
             ds_cache_info[ds_name]["hash"] = file_hash
             cache_updated = True
 

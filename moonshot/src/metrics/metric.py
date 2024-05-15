@@ -131,7 +131,7 @@ class Metric:
             mets = Storage.get_objects(EnvVariables.METRICS.name, "py")
 
             for met in mets:
-                if "__" in met or Metric.cache_name in met:
+                if "__" in met:
                     continue
 
                 met_name = Path(met).stem
@@ -177,11 +177,11 @@ class Metric:
         cache_updated = False
 
         if met_name in met_cache_info and file_hash == met_cache_info[met_name]["hash"]:
-            met_metadata = met_cache_info[met_name]
+            met_metadata = met_cache_info[met_name].copy()
             met_metadata.pop("hash", None)
         else:
             met_metadata = Metric.load(met_name).get_metadata()  # type: ignore ; ducktyping
-            met_cache_info[met_name] = met_metadata
+            met_cache_info[met_name] = met_metadata.copy()
             met_cache_info[met_name]["hash"] = file_hash
             cache_updated = True
 

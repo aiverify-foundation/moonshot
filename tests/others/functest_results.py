@@ -14,13 +14,13 @@ from moonshot.api import (
 # ------------------------------------------------------------------------------
 def test_read_result():
     # Write a new result: "moonshot/data/results/my-new-runner-cookbook.json"
-    source_path = "tests/results/my-new-runner-cookbook.json"
+    source_path = "tests/others/results/my-new-runner-cookbook.json"
     destination_path = "moonshot/data/generated-outputs/results/my-new-runner-cookbook.json"
     shutil.copy(source_path, destination_path)
     print(api_read_result("my-new-runner-cookbook"))
 
     # Write a new result: "moonshot/data/results/my-new-runner-recipe.json"
-    source_path = "tests/results/my-new-runner-recipe.json"
+    source_path = "tests/others/results/my-new-runner-recipe.json"
     destination_path = "moonshot/data/generated-outputs/results/my-new-runner-recipe.json"
     shutil.copy(source_path, destination_path)
     print(api_read_result("my-new-runner-recipe"))
