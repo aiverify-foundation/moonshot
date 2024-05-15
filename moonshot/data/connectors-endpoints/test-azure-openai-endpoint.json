@@ -1,0 +1,15 @@
+{
+  "id": "test-azure-openai-endpoint",
+  "name": "test-azure-openai-endpoint",
+  "connector_type": "openai-azure",
+  "uri": "https://ADD_ENDPOINT_HERE.openai.azure.com",
+  "token": "ADD_NEW_TOKEN_HERE",
+  "max_calls_per_second": 10,
+  "max_concurrency": 2,
+  "params": {
+    "temperature": 0,
+    "deployment_id": "gpt-4-1106-preview",
+    "model": "gpt-4-1106-preview",
+    "api_version": "2024-03-01-preview"
+  }
+}
