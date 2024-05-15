@@ -197,17 +197,10 @@ class AttackModule:
                 if self.cancel_event.is_set():
                     print("[Red Teaming] Cancellation flag is set. Cancelling task...")
                     break
-                if (
-                    self.red_teaming_progress.current_count
-                    >= self.red_teaming_progress.chat_batch_size
-                ):
-                    # chat size = iteration count. callback to notify
-                    self.red_teaming_progress.notify_progress()
-                    # clear the chats for the next batch of chats
-                    self.red_teaming_progress.reset_chats()
-                    self.red_teaming_progress.current_count = 0
 
-                self.red_teaming_progress.current_count += 1
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_progress()
+
                 new_prompt_info = ConnectorPromptArguments(
                     prompt_index=1, prompt=prepared_prompt, target=""
                 )
@@ -230,13 +223,16 @@ class AttackModule:
                     start_time=str(start_time),
                     connector_prompt=response,
                 )
-                self.red_teaming_progress.update_red_teaming_chats(
-                    red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
-                )
+
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_chats(
+                        red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                    )
+
                 self._write_record_to_db(
                     red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
                 )
-        self.red_teaming_progress.notify_progress()
+
         return consolidated_responses
 
     async def _send_prompt_to_single_llm(
@@ -260,17 +256,10 @@ class AttackModule:
             if self.cancel_event.is_set():
                 print("[Red Teaming] Cancellation flag is set. Cancelling task...")
                 break
-            if (
-                self.red_teaming_progress.current_count
-                >= self.red_teaming_progress.chat_batch_size
-            ):
-                # chat size = iteration count. callback to notify
-                self.red_teaming_progress.notify_progress()
-                # clear the chats for the next batch of chats
-                self.red_teaming_progress.reset_chats()
-                self.red_teaming_progress.current_count = 0
 
-            self.red_teaming_progress.current_count += 1
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_progress()
+
             new_prompt_info = ConnectorPromptArguments(
                 prompt_index=1, prompt=prepared_prompt, target=""
             )
@@ -294,13 +283,14 @@ class AttackModule:
             )
 
             # update callback arguments
-            self.red_teaming_progress.update_red_teaming_chats(
-                red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
-            )
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_chats(
+                    red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                )
             self._write_record_to_db(
                 red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
             )
-        self.red_teaming_progress.notify_progress()
+
         return consolidated_responses
 
     def _write_record_to_db(
