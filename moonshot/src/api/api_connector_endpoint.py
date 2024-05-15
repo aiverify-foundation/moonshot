@@ -69,26 +69,24 @@ def api_read_endpoint(ep_id: str) -> dict:
     return ConnectorEndpoint.read(ep_id).to_dict()
 
 
-def api_update_endpoint(ep_id: str, **kwargs) -> None:
+def api_update_endpoint(ep_id: str, **kwargs) -> bool:
     """
-    Updates an existing endpoint in the connector manager.
+    Updates an existing endpoint with new values.
 
-    This function updates an existing endpoint in the connector manager using the provided endpoint details.
-    It first creates a ConnectorEndpointArguments instance with the provided details, then calls the
-    ConnectorManager's update_endpoint method to update the endpoint.
+    This function updates an existing endpoint in the connector manager using the provided endpoint ID and
+    keyword arguments.
+
+    Each keyword argument corresponds to an attribute of the endpoint that should be updated.
 
     Args:
-        kwargs: A dictionary of arguments for the endpoint. Possible keys are:
-            name (str): The name of the endpoint.
-            connector_type (str): The type of the connector.
-            uri (str): The URI for the connector.
-            token (str): The token for the connector.
-            max_calls_per_second (int): The maximum number of API calls allowed per second.
-            max_concurrency (int): The maximum number of concurrent API calls.
-            params (dict): Additional parameters for the connector.
+        ep_id (str): The ID of the endpoint to update.
+        **kwargs: Arbitrary keyword arguments representing the attributes to update.
 
     Returns:
-        None
+        bool: True if the update was successful.
+
+    Raises:
+        RuntimeError: If the endpoint with the given ID does not exist or the update failed.
     """
     # Check if the endpoint exists
     try:
@@ -102,23 +100,25 @@ def api_update_endpoint(ep_id: str, **kwargs) -> None:
             setattr(existing_endpoint, key, value)
 
     # Update the endpoint
-    ConnectorEndpoint.update(existing_endpoint)
+    return ConnectorEndpoint.update(existing_endpoint)
 
 
-def api_delete_endpoint(ep_id: str) -> None:
+def api_delete_endpoint(ep_id: str) -> bool:
     """
-    Deletes an existing endpoint in the connector manager.
+    Deletes an endpoint from the connector manager.
 
-    This function deletes an existing endpoint in the connector manager using the provided endpoint ID.
-    It calls the ConnectorManager's delete_endpoint method to delete the endpoint.
+    This function deletes an endpoint from the connector manager using the provided endpoint ID.
 
     Args:
-        ep_id (str): The ID of the endpoint to be deleted.
+        ep_id (str): The ID of the endpoint to delete.
 
     Returns:
-        None
+        bool: True if the deletion was successful.
+
+    Raises:
+        RuntimeError: If the endpoint with the given ID does not exist or the deletion failed.
     """
-    ConnectorEndpoint.delete(ep_id)
+    return ConnectorEndpoint.delete(ep_id)
 
 
 def api_get_all_endpoint() -> list[dict]:

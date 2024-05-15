@@ -60,21 +60,26 @@ class Result:
 
     @staticmethod
     @validate_arguments
-    def delete(result_id: str) -> None:
+    def delete(result_id: str) -> bool:
         """
-        Deletes the result data for a given result ID.
+        Deletes the result data associated with the given result ID from storage.
 
-        This method attempts to delete the result data associated with the provided result ID from storage.
-        If an error occurs during the deletion process, it prints an error message and re-raises the exception.
+        This method attempts to delete the result data identified by the specified result ID from storage.
+        If the deletion is successful, it returns True. If an exception occurs during the deletion process,
+        an error message is printed and the exception is re-raised.
 
         Args:
             result_id (str): The unique identifier of the result to be deleted.
 
+        Returns:
+            bool: True if the result data was successfully deleted.
+
         Raises:
-            Exception: If any error occurs during the deletion process.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.RESULTS.name, result_id, "json")
+            return True
 
         except Exception as e:
             print(f"Failed to delete result: {str(e)}")

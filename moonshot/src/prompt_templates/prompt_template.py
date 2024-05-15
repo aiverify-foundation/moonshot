@@ -57,18 +57,26 @@ class PromptTemplate:
         return list_of_pt_contents
 
     @staticmethod
-    def delete(pt_id: str) -> None:
+    def delete(pt_id: str) -> bool:
         """
-        Delete a specific prompt template based on its id.
+        Deletes a prompt template identified by its unique ID.
+
+        This method attempts to delete the prompt template with the given ID from the storage.
+        If the deletion is successful, it returns True. If an exception occurs during the deletion
+        process, it prints an error message and re-raises the exception.
 
         Args:
-            pt_id (str): The id of the prompt template to delete.
+            pt_id (str): The unique identifier of the prompt template to be deleted.
+
+        Returns:
+            bool: True if the prompt template was successfully deleted.
 
         Raises:
-            Exception: If the deletion process fails.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.PROMPT_TEMPLATES.name, pt_id, "json")
+            return True
 
         except Exception as e:
             print(f"Failed to delete prompt template: {str(e)}")

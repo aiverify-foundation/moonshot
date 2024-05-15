@@ -520,18 +520,26 @@ class AttackModule:
         return am_metadata, cache_updated
 
     @staticmethod
-    def delete(am_id: str) -> None:
+    def delete(am_id: str) -> bool:
         """
-        Deletes the specified attack module.
+        Deletes the specified attack module from storage.
+
+        This method attempts to delete the attack module identified by the given ID from the storage.
+        If the deletion is successful, it returns True. If an exception occurs during the deletion process,
+        it prints an error message and re-raises the exception.
 
         Args:
-            am_id (str): The ID of the attack module to delete.
+            am_id (str): The ID of the attack module to be deleted.
+
+        Returns:
+            bool: True if the attack module was successfully deleted.
 
         Raises:
-            Exception: If an error occurs during deletion.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.ATTACK_MODULES.name, am_id, "py")
+            return True
 
         except Exception as e:
             print(f"Failed to delete attack module: {str(e)}")

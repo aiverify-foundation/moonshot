@@ -88,18 +88,20 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
     return [Recipe.read(rec_id).to_dict() for rec_id in rec_ids]
 
 
-def api_update_recipe(rec_id: str, **kwargs) -> None:
+def api_update_recipe(rec_id: str, **kwargs) -> bool:
     """
-    Updates a recipe with the provided fields.
+    Updates a recipe with the given keyword arguments.
 
-    This function takes a recipe ID and a variable number of keyword arguments as input.
-    It first checks if the recipe with the given ID exists. If it does, it updates the fields
-    of the existing recipe with the provided keyword arguments. If the recipe does not exist,
-    it raises a RuntimeError.
+    This function takes a recipe ID and arbitrary keyword arguments, checks if the recipe exists,
+    and updates the fields of the recipe with the provided values. If the recipe does not exist,
+    a RuntimeError is raised. If the update is successful, it returns True.
 
     Args:
         rec_id (str): The ID of the recipe to update.
-        **kwargs: Variable number of keyword arguments representing the fields to update.
+        **kwargs: Arbitrary keyword arguments representing the fields to update.
+
+    Returns:
+        bool: True if the recipe was successfully updated.
 
     Raises:
         RuntimeError: If the recipe with the given ID does not exist.
@@ -116,24 +118,30 @@ def api_update_recipe(rec_id: str, **kwargs) -> None:
             setattr(existing_recipe, key, value)
 
     # Update the endpoint
-    Recipe.update(existing_recipe)
+    return Recipe.update(existing_recipe)
 
 
-def api_delete_recipe(rec_id: str) -> None:
+def api_delete_recipe(rec_id: str) -> bool:
     """
-    Deletes a recipe.
+    Deletes a recipe identified by its unique recipe ID.
 
-    This method takes a recipe ID as input, deletes the corresponding JSON file from the directory specified by
-    `EnvironmentVars.RECIPES`. If the operation fails for any reason, an exception is raised and the
-    error is printed.
+    This function takes a recipe ID, verifies the existence of the recipe, and if found, calls the delete method from
+    the Recipe class to remove the recipe from storage.
+
+    If the deletion is successful, it returns True.
+    If the recipe does not exist or an exception occurs during deletion, a RuntimeError is raised with an
+    appropriate error message.
 
     Args:
-        rec_id (str): The ID of the recipe to delete.
+        rec_id (str): The unique identifier for the recipe to be deleted.
+
+    Returns:
+        bool: True if the recipe was successfully deleted.
 
     Raises:
-        Exception: If there is an error during file deletion or any other operation within the method.
+        RuntimeError: If the deletion process encounters an error.
     """
-    Recipe.delete(rec_id)
+    return Recipe.delete(rec_id)
 
 
 def api_get_all_recipe() -> list[dict]:

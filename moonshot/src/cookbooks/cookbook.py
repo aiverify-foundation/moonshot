@@ -105,19 +105,21 @@ class Cookbook:
             raise e
 
     @staticmethod
-    def update(cb_args: CookbookArguments) -> None:
+    def update(cb_args: CookbookArguments) -> bool:
         """
-        Modifies an existing cookbook with provided details.
+        Updates the details of an existing cookbook.
 
-        This method accepts a CookbookArguments object, which holds the updated information for the
-        cookbook. It directly modifies the existing cookbook file with the new details. If any error arises during the
-        operation, an exception is thrown and the error is logged.
+        This method accepts a CookbookArguments object, converts it to a dictionary, and writes the updated
+        information to the corresponding JSON file in the directory defined by `EnvVariables.COOKBOOKS`.
 
         Args:
-            cb_args (CookbookArguments): An instance encapsulating the updated details for the cookbook.
+            cb_args (CookbookArguments): An object containing the updated details of the cookbook.
+
+        Returns:
+            bool: True if the update was successful.
 
         Raises:
-            Exception: If an error is encountered during the update process.
+            Exception: If there's an error during the update process.
         """
         try:
             # Convert the cookbook arguments to a dictionary
@@ -127,6 +129,7 @@ class Cookbook:
             Storage.create_object(
                 EnvVariables.COOKBOOKS.name, cb_args.id, cb_info, "json"
             )
+            return True
 
         except Exception as e:
             print(f"Failed to update cookbook: {str(e)}")
@@ -134,22 +137,25 @@ class Cookbook:
 
     @staticmethod
     @validate_arguments
-    def delete(cb_id: str) -> None:
+    def delete(cb_id: str) -> bool:
         """
-        Deletes a cookbook.
+        Deletes a cookbook identified by its ID.
 
-        This method accepts a cookbook ID (cb_id) as an argument and attempts to delete the corresponding JSON file
-        from the directory specified by `EnvironmentVars.COOKBOOKS`. If the operation encounters any issues, an
-        exception is raised and the error message is logged.
+        This method removes the cookbook's JSON file from the storage, using the `Storage.delete_object` method.
+        The `EnvVariables.COOKBOOKS` environment variable specifies the directory where the cookbook files are stored.
 
         Args:
             cb_id (str): The unique identifier of the cookbook to be deleted.
 
+        Returns:
+            bool: True if the deletion was successful.
+
         Raises:
-            Exception: If an error occurs during the file deletion process or any other operation within the method.
+            Exception: If there's an error during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
+            return True
 
         except Exception as e:
             print(f"Failed to delete cookbook: {str(e)}")

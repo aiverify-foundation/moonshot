@@ -61,25 +61,30 @@ class ContextStrategy:
         return filepaths
 
     @staticmethod
-    def delete(cs_id: str) -> None:
+    def delete(cs_id: str) -> bool:
         """
-        Deletes a context strategy file.
+        Deletes a context strategy module instance by its ID.
 
-        This method attempts to delete the specified context strategy file.
-        It constructs the file path using the EnvironmentVars and the context strategy name.
-        If the deletion is successful, it prints a success message; otherwise, it prints an error message.
+        This method attempts to delete a context strategy instance using the provided ID.
+        If the deletion is successful, it returns True.
+
+        If an error occurs during the deletion process, it prints an error message and re-raises the exception.
 
         Args:
-            cs_id (str): The ID of the context strategy file to delete.
+            cs_id (str): The unique identifier of the context strategy to be deleted.
 
         Returns:
-            None
+            bool: True if the deletion was successful.
+
+        Raises:
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.CONTEXT_STRATEGY.name, cs_id, "py")
+            return True
 
         except Exception as e:
-            print(f"Failed to context strategy: {str(e)}")
+            print(f"Failed to delete context strategy: {str(e)}")
             raise e
 
     @staticmethod

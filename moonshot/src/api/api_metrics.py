@@ -4,21 +4,20 @@ from moonshot.src.metrics.metric import Metric
 # ------------------------------------------------------------------------------
 # Metrics APIs
 # ------------------------------------------------------------------------------
-def api_delete_metric(met_id: str) -> None:
+def api_delete_metric(met_id: str) -> bool:
     """
-    Deletes a metric.
-
-    This method takes a metric ID as input, deletes the corresponding JSON file from the directory specified by
-    `EnvironmentVars.METRICS`. If the operation fails for any reason, an exception is raised and the
-    error is printed.
+    Deletes a metric identified by its unique metric ID.
 
     Args:
-        met_id (str): The ID of the metric to delete.
+        met_id (str): The unique identifier for the metric to be deleted.
+
+    Returns:
+        bool: True if the metric was successfully deleted.
 
     Raises:
-        Exception: If there is an error during file deletion or any other operation within the method.
+        Exception: If the deletion process encounters an error.
     """
-    Metric.delete(met_id)
+    return Metric.delete(met_id)
 
 
 def api_get_all_metric() -> list[dict]:

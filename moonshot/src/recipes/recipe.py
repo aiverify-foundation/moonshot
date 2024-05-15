@@ -112,7 +112,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    def _get_datasets_prompt_counts():
+    def _get_datasets_prompt_counts() -> dict:
         """
         Generates a mapping of dataset IDs to their number of prompts.
 
@@ -175,16 +175,19 @@ class Recipe:
         return obj_results
 
     @staticmethod
-    def update(rec_args: RecipeArguments) -> None:
+    def update(rec_args: RecipeArguments) -> bool:
         """
-        Updates an existing recipe with new details.
+        Updates the recipe information based on the provided RecipeArguments.
 
-        This method accepts a RecipeArguments object, which encapsulates the updated details for the
-        recipe. It then overwrites the existing recipe file with these new details. If the operation encounters
-        any issues, an exception is thrown and the error message is logged.
+        This method takes RecipeArguments, converts it to a dictionary, and writes the updated
+        recipe information to the storage. If the operation is successful, it returns True.
+        If an exception occurs, it prints an error message and re-raises the exception.
 
         Args:
-            rec_args (RecipeArguments): An instance containing the updated details for the recipe.
+            rec_args (RecipeArguments): The recipe arguments containing updated values.
+
+        Returns:
+            bool: True if the recipe was successfully updated.
 
         Raises:
             Exception: If an error occurs during the update process.
@@ -197,6 +200,7 @@ class Recipe:
             Storage.create_object(
                 EnvVariables.RECIPES.name, rec_args.id, rec_info, "json"
             )
+            return True
 
         except Exception as e:
             print(f"Failed to update recipe: {str(e)}")
@@ -204,22 +208,26 @@ class Recipe:
 
     @staticmethod
     @validate_arguments
-    def delete(rec_id: str) -> None:
+    def delete(rec_id: str) -> bool:
         """
-        Deletes a recipe.
+        Deletes a recipe identified by its unique ID.
 
-        This method accepts a recipe ID as an argument and attempts to delete the corresponding JSON file from the
-        directory defined by `EnvironmentVars.RECIPES`. If the operation encounters any issues, an exception is raised
-        and the error message is logged.
+        This method attempts to delete the recipe with the given ID from the storage.
+        If the deletion is successful, it returns True. If an exception occurs during the deletion
+        process, it prints an error message and re-raises the exception.
 
         Args:
             rec_id (str): The unique identifier of the recipe to be deleted.
 
+        Returns:
+            bool: True if the recipe was successfully deleted.
+
         Raises:
-            Exception: If an error occurs during the file deletion process or any other operation within the method.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.RECIPES.name, rec_id, "json")
+            return True
 
         except Exception as e:
             print(f"Failed to delete recipe: {str(e)}")
