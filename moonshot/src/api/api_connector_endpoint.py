@@ -15,25 +15,25 @@ def api_create_endpoint(
     max_calls_per_second: int,
     max_concurrency: int,
     params: dict,
-) -> None:
+) -> str:
     """
-    Creates a new endpoint to the connector manager.
+    Creates a new connector endpoint.
 
-    This function creates a new connector endpoint with the specified parameters. It constructs a
-    ConnectorEndpointArguments object with the provided details and then calls the ConnectorManager's create_endpoint
-    method to add the new endpoint.
+    This function creates a new connector endpoint with the specified parameters. It initializes
+    a ConnectorEndpointArguments instance and then uses the ConnectorEndpoint class to create
+    the endpoint.
 
     Args:
-        name (str): The name of the new endpoint.
-        connector_type (str): The type of the connector (e.g., 'GPT-3', 'Bert', etc.).
-        uri (str): The URI for the connector's API.
-        token (str): The access token for the API.
-        max_calls_per_second (int): The maximum number of API calls allowed per second.
-        max_concurrency (int): The maximum number of concurrent API calls.
+        name (str): The name of the endpoint.
+        connector_type (str): The type of the connector.
+        uri (str): The URI for the connector.
+        token (str): The token for authentication with the connector.
+        max_calls_per_second (int): The maximum number of calls allowed per second.
+        max_concurrency (int): The maximum number of concurrent calls allowed.
         params (dict): Additional parameters for the connector.
 
     Returns:
-        None
+        str: The ID of the newly created connector endpoint.
     """
     # Create a new connector endpoint arguments instance.
     # We do not need to provide id and created_date.
@@ -51,7 +51,7 @@ def api_create_endpoint(
         params=params,
         created_date="",
     )
-    ConnectorEndpoint.create(connector_endpoint_args)
+    return ConnectorEndpoint.create(connector_endpoint_args)
 
 
 def api_read_endpoint(ep_id: str) -> dict:

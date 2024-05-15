@@ -43,7 +43,7 @@ class Recipe:
         return cls(Recipe.read(rec_id))
 
     @staticmethod
-    def create(rec_args: RecipeArguments) -> None:
+    def create(rec_args: RecipeArguments) -> str:
         """
         Creates a new recipe and saves its details in a JSON file.
 
@@ -55,6 +55,9 @@ class Recipe:
 
         Args:
             rec_args (RecipeArguments): An object that holds the necessary details to create a new recipe.
+
+        Returns:
+            str: The unique ID of the newly created recipe.
 
         Raises:
             Exception: If an error occurs during the file writing process or any other operation within the method.
@@ -76,6 +79,7 @@ class Recipe:
 
             # Write as json output
             Storage.create_object(EnvVariables.RECIPES.name, rec_id, rec_info, "json")
+            return rec_id
 
         except Exception as e:
             print(f"Failed to create recipe: {str(e)}")

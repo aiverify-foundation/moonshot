@@ -15,7 +15,7 @@ def api_create_recipe(
     metrics: list[str],
     attack_modules: list[str],
     grading_scale: dict[str, list[int]],
-) -> None:
+) -> str:
     """
     Creates a new recipe with the given parameters.
 
@@ -36,7 +36,7 @@ def api_create_recipe(
         value is a list of integers representing the scale.
 
     Returns:
-        None
+        str: The ID of the newly created recipe.
     """
     rec_args = RecipeArguments(
         id="",
@@ -50,7 +50,7 @@ def api_create_recipe(
         attack_modules=attack_modules,
         grading_scale=grading_scale,
     )
-    Recipe.create(rec_args)
+    return Recipe.create(rec_args)
 
 
 def api_read_recipe(rec_id: str) -> dict:

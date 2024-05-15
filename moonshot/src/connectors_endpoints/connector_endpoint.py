@@ -12,22 +12,24 @@ from moonshot.src.storage.storage import Storage
 
 class ConnectorEndpoint:
     @staticmethod
-    def create(ep_args: ConnectorEndpointArguments) -> None:
+    def create(ep_args: ConnectorEndpointArguments) -> str:
         """
-        Generates a new endpoint and saves its details in a JSON file.
+        Creates a new connector endpoint.
 
-        This function accepts the arguments in the `ep_args` parameter, creates a unique endpoint ID by
-        slugifying the endpoint name, and then builds a dictionary with the endpoint's details. It then
-        saves this information to a JSON file named after the endpoint ID in the directory specified by
-        `EnvironmentVars.CONNECTORS_ENDPOINTS`. If the operation fails for any reason, an exception is thrown
-        and the error is logged.
+        This method takes a ConnectorEndpointArguments object as input, generates a unique slugified ID based on the
+        endpoint's name, and then creates a new endpoint with the provided details. The endpoint information is stored
+        as a JSON object in the directory specified by `EnvVariables.CONNECTORS_ENDPOINTS`. If the operation is
+        successful, the unique ID of the new endpoint is returned. If any error arises during the process, an exception
+        is raised and the error message is logged.
 
         Args:
-            ep_args (ConnectorEndpointArguments): An object that holds the necessary details to generate a
-            new endpoint.
+            ep_args (ConnectorEndpointArguments): An object containing the details of the endpoint to be created.
+
+        Returns:
+            str: The unique ID of the newly created endpoint.
 
         Raises:
-            Exception: If there is an error during the file writing process or any other operation within the function.
+            Exception: If there's an error during the endpoint creation process.
         """
         try:
             ep_id = slugify(ep_args.name, lowercase=True)
@@ -46,6 +48,7 @@ class ConnectorEndpoint:
             Storage.create_object(
                 EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, ep_info, "json"
             )
+            return ep_id
 
         except Exception as e:
             print(f"Failed to create endpoint: {str(e)}")

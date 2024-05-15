@@ -35,7 +35,7 @@ class Cookbook:
         return cls(CookbookArguments(**cb_info))
 
     @staticmethod
-    def create(cb_args: CookbookArguments) -> None:
+    def create(cb_args: CookbookArguments) -> str:
         """
         This method is responsible for creating a new cookbook and storing its details in a JSON file.
 
@@ -48,6 +48,9 @@ class Cookbook:
 
         Args:
             cb_args (CookbookArguments): An object that holds the necessary details for creating a new cookbook.
+
+        Returns:
+            str: The unique ID of the newly created cookbook.
 
         Raises:
             Exception: If there is an error during the file writing process or any other operation within the method.
@@ -63,6 +66,7 @@ class Cookbook:
 
             # Write as json output
             Storage.create_object(EnvVariables.COOKBOOKS.name, cb_id, cb_info, "json")
+            return cb_id
 
         except Exception as e:
             print(f"Failed to create cookbook: {str(e)}")

@@ -5,7 +5,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 # ------------------------------------------------------------------------------
 # Cookbook APIs
 # ------------------------------------------------------------------------------
-def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None:
+def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     """
     Creates a new cookbook.
 
@@ -18,6 +18,9 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None
         name (str): The name of the new cookbook.
         description (str): A brief description of the new cookbook.
         recipes (list[str]): A list of recipes to be included in the new cookbook.
+
+    Returns:
+        str: The ID of the newly created cookbook.
     """
     # Create a new cookbook
     # We do not need to provide the id.
@@ -29,7 +32,7 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None
         description=description,
         recipes=recipes,
     )
-    Cookbook.create(cb_args)
+    return Cookbook.create(cb_args)
 
 
 def api_read_cookbook(cb_id: str) -> dict:

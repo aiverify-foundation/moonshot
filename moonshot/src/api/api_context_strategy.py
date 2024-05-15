@@ -47,6 +47,6 @@ def api_get_all_context_strategy_metadata() -> list:
     """
 
     return [
-        ContextStrategy.load(context_strategy_name).get_metadata()
+        ContextStrategy.load(context_strategy_name).get_metadata()  # type: ignore ; ducktyping
         for context_strategy_name in ContextStrategy.get_all_context_strategies()
     ]
