@@ -111,7 +111,7 @@ def list_sessions() -> None:
         table = Table(
             title="Session List", show_lines=True, expand=True, header_style="bold"
         )
-        table.add_column("No.", justify="left", style="dim", width=2)
+        table.add_column("No.", justify="left", width=2)
         table.add_column("Session ID", justify="left", width=20)
         table.add_column("Contains", justify="left", width=78)
 
@@ -123,7 +123,7 @@ def list_sessions() -> None:
             session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
             contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
             table.add_row(str(session_index), session_info, contains_info)
-        console.print(Panel(table))
+        console.print(table)
     else:
         console.print("[red]There are no sessions found.[/red]", style="bold")
 

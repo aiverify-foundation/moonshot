@@ -199,17 +199,10 @@ class AttackModule:
                 if self.cancel_event.is_set():
                     print("[Red Teaming] Cancellation flag is set. Cancelling task...")
                     break
-                if (
-                    self.red_teaming_progress.current_count
-                    >= self.red_teaming_progress.chat_batch_size
-                ):
-                    # chat size = iteration count. callback to notify
-                    self.red_teaming_progress.notify_progress()
-                    # clear the chats for the next batch of chats
-                    self.red_teaming_progress.reset_chats()
-                    self.red_teaming_progress.current_count = 0
 
-                self.red_teaming_progress.current_count += 1
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_progress()
+
                 new_prompt_info = ConnectorPromptArguments(
                     prompt_index=1, prompt=prepared_prompt, target=""
                 )
@@ -232,13 +225,16 @@ class AttackModule:
                     start_time=str(start_time),
                     connector_prompt=response,
                 )
-                self.red_teaming_progress.update_red_teaming_chats(
-                    red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
-                )
+
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_chats(
+                        red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                    )
+
                 self._write_record_to_db(
                     red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
                 )
-        self.red_teaming_progress.notify_progress()
+
         return consolidated_responses
 
     async def _send_prompt_to_single_llm(
@@ -262,17 +258,10 @@ class AttackModule:
             if self.cancel_event.is_set():
                 print("[Red Teaming] Cancellation flag is set. Cancelling task...")
                 break
-            if (
-                self.red_teaming_progress.current_count
-                >= self.red_teaming_progress.chat_batch_size
-            ):
-                # chat size = iteration count. callback to notify
-                self.red_teaming_progress.notify_progress()
-                # clear the chats for the next batch of chats
-                self.red_teaming_progress.reset_chats()
-                self.red_teaming_progress.current_count = 0
 
-            self.red_teaming_progress.current_count += 1
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_progress()
+
             new_prompt_info = ConnectorPromptArguments(
                 prompt_index=1, prompt=prepared_prompt, target=""
             )
@@ -296,13 +285,14 @@ class AttackModule:
             )
 
             # update callback arguments
-            self.red_teaming_progress.update_red_teaming_chats(
-                red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
-            )
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_chats(
+                    red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                )
             self._write_record_to_db(
                 red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
             )
-        self.red_teaming_progress.notify_progress()
+
         return consolidated_responses
 
     def _write_record_to_db(
@@ -470,7 +460,7 @@ class AttackModule:
             ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
 
             for am in ams:
-                if "__" in am or AttackModule.cache_name in am:
+                if "__" in am:
                     continue
 
                 am_name = Path(am).stem
@@ -519,11 +509,11 @@ class AttackModule:
         cache_updated = False
 
         if am_name in am_cache_info and file_hash == am_cache_info[am_name]["hash"]:
-            am_metadata = am_cache_info[am_name]
+            am_metadata = am_cache_info[am_name].copy()
             am_metadata.pop("hash", None)
         else:
             am_metadata = AttackModule.load(am_name).get_metadata()  # type: ignore ; ducktyping
-            am_cache_info[am_name] = am_metadata
+            am_cache_info[am_name] = am_metadata.copy()
             am_cache_info[am_name]["hash"] = file_hash
             cache_updated = True
 
