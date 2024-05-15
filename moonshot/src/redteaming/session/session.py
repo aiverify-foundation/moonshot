@@ -11,6 +11,7 @@ from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.runners.runner_type import RunnerType
+from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
@@ -400,6 +401,8 @@ class Session:
             raise e
 
         finally:
+            self.red_teaming_progress.status = RunStatus.COMPLETED
+            self.red_teaming_progress.notify_progress()
             print(
                 f"[Session] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )

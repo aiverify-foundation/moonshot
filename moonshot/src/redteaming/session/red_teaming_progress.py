@@ -81,6 +81,28 @@ class RedTeamingProgress:
         """
         self.chats.clear()
 
+    def update_red_teaming_progress(self) -> None:
+        """
+        This method updates the progress of the red teaming session.
+
+        It checks if the current count of chats is equal to or greater than the batch size. If it is, it triggers
+        a callback to notify the progress, resets the chats for the next batch, and resets the current count to zero.
+
+        Regardless of the condition, it increments the current count by one.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.current_count >= self.chat_batch_size:
+            self.notify_progress()
+            self.reset_chats()
+            self.current_count = 0
+
+        self.current_count += 1
+
     def notify_progress(self) -> None:
         """
         This method checks if a callback function for run progress exists and if so,

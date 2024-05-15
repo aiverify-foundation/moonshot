@@ -35,12 +35,21 @@ def test_create_runner(name: str):
     runner.close()
     return runner.id
 
-def run_manual_and_automated_rt(runner_name: str, runner_id: str):
-    endpoints = ["openai-gpt35-turbo", "openai-gpt4"]
+def runner_callback_fn(progress_args: dict):
+    print("=" * 100)
+    print("PROGRESS CALLBACK FN: ", progress_args)
+    print("=" * 100)
+
+def run_manual_and_automated_rt():
+    runner_name = "test mrt art"
+    runner_id = "test-mrt-art"
+
+    endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo"]
     print("1) Creating Runner")
     runner = api_create_runner(
         name=runner_name,
         endpoints=endpoints,
+        progress_callback_func=runner_callback_fn
     )    
     runner.close()
 
@@ -52,7 +61,7 @@ def run_manual_and_automated_rt(runner_name: str, runner_id: str):
             "prompt": "hell0 world",
             "context_strategy_info": [{
                 "context_strategy_id":"add_previous_prompt",
-                "num_of_prev_prompts": 4
+                "num_of_prev_prompts": 1
                 }],
             "prompt_template_ids": ["mmlu"]
         }
@@ -60,16 +69,18 @@ def run_manual_and_automated_rt(runner_name: str, runner_id: str):
     
     art_arguments = {
         "attack_strategies": [{
-            "attack_module_id": "sample_attack_module",
+            "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
             "prompt": "hello world",
             "system_prompt": "test system prompt",
             "context_strategy_info": [{
                 "context_strategy_id":"add_previous_prompt",
-                "num_of_prev_prompts": 4
+                "num_of_prev_prompts": 1
                 }],
             "prompt_template_ids": ["mmlu"],
-            }
-        ]
+            "metric_ids": ["bleuscore"] 
+            },
+        ],
+        "chat_batch_size": 5
     }
 
     print("3)Loading and Running runner")
@@ -93,13 +104,14 @@ def run_manual_rt():
     print("Running Manual Red Teamming")
     runner_name = "test mrt"
     runner_id = "test-mrt"
-    endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
-    rt_arguments = {
+    endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo"]
+
+    mrt_arguments = {
         "manual_rt_args": {
             "prompt": "hell0 world",
             "context_strategy_info": [{
                 "context_strategy_id":"add_previous_prompt",
-                "num_of_prev_prompts": 4
+                "num_of_prev_prompts": 1
                 }],
             "prompt_template_ids": ["mmlu"]
         }
@@ -111,15 +123,17 @@ def run_manual_rt():
         endpoints=endpoints,
     )
     runner.close()
+
     print("2)Loading and Running runner")
     runner = api_load_runner(runner_id)
     
     loop = asyncio.get_event_loop()
     runner = api_load_runner(runner_id)
-    loop.run_until_complete(
-        runner.run_red_teaming(rt_arguments)
+    manual_rt_results = loop.run_until_complete(
+        runner.run_red_teaming(mrt_arguments)
     )
     runner.close()
+    print("Manual Red Teaming Results:", manual_rt_results)
 
 def run_automated_rt():
     # Run automated red teaming
@@ -127,34 +141,75 @@ def run_automated_rt():
     # Red teaming config
     runner_name = "test art"
     runner_id = "test-art"
-    endpoints = ["my-openai-gpt35", "my-openai-gpt4"]
-    rt_arguments = {
+    endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo"]
+    art_arguments = {
         "attack_strategies": [{
-            "attack_module_id": "sample_attack_module",
+            "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
             "prompt": "hello world",
             "system_prompt": "test system prompt",
             "context_strategy_info": [{
                 "context_strategy_id":"add_previous_prompt",
-                "num_of_prev_prompts": 4
+                "num_of_prev_prompts": 1
                 }],
-            "prompt_template_ids": ["auto-categorisation"],
-            }
-        ]
+            "prompt_template_ids": ["mmlu"],
+            "metric_ids": ["bleuscore"] 
+            },
+        ],
+        "chat_batch_size": 5
     }
 
-    print("1) Creating Runner")
+
+    # print("1) Creating Runner")
     runner = api_create_runner(
         name=runner_name,
         endpoints=endpoints,
+        progress_callback_func=runner_callback_fn,
     )
     runner.close()
+
     print("2)Loading and Running runner")
-    runner = api_load_runner(runner_id)
+    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        runner.run_red_teaming(rt_arguments)
+        runner.run_red_teaming(art_arguments)
+
     )
     runner.close()
+
+def test_art_and_cancel():
+    async def run_and_cancel():
+        runner_id = "test-art"
+        runner = api_load_runner(runner_id)
+        art_arguments = {
+            "attack_strategies": [{
+                "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
+                "prompt": "hello world",
+                "system_prompt": "test system prompt",
+                "context_strategy_info": [{
+                    "context_strategy_id":"add_previous_prompt",
+                    "num_of_prev_prompts": 1
+                    }],
+                "prompt_template_ids": ["mmlu"],
+                "metric_ids": ["bleuscore"] 
+                },
+            ],
+            "chat_batch_size": 5
+        }
+        # Run the recipes in a background task
+        run_task = asyncio.create_task(runner.run_red_teaming(art_arguments))
+
+        # Wait for 1 second before cancelling
+        await asyncio.sleep(1)
+        await runner.cancel()
+
+        # Wait for the run task to complete
+        await run_task
+        runner.close()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        run_and_cancel()
+    )
 
 def test_session_apis(runner_id: str):
     # ------------------------------------------------------------------------------
@@ -211,11 +266,17 @@ def test_attack_apis():
     print("Get All Context Strategy Metadata")
     print(api_get_all_context_strategy_metadata(), "\n")    
 
-runner_name = "test-runner"
-runner_id = "test-runner"
+runner_name = "test-runner-art"
+runner_id = "test-runner-art"
 
 # tests automated and red teaming. creates a runner, and runss manual and automated red teaming
-run_manual_and_automated_rt(runner_name, runner_id)
+run_manual_rt()
+run_automated_rt()
+run_manual_and_automated_rt()
+
+# test cancellation of automated red teaming
+runner_id = "test-art"
+test_art_and_cancel()
 
 # tests all session apis
 test_session_apis(runner_id)
