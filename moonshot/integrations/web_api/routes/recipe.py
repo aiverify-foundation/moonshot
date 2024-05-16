@@ -4,7 +4,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
-from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_create_dto import RecipeCreateDTO, RecipeUpdateDTO
 from ..schemas.recipe_response_model import RecipeResponseModel
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
@@ -142,7 +142,7 @@ def get_all_recipes_name(
 @router.put("/api/v1/recipes/{recipe_id}")
 @inject
 async def update_recipe(
-    recipe_data: RecipeCreateDTO,
+    recipe_data: RecipeUpdateDTO,
     recipe_id: str,
     recipe_service: RecipeService = Depends(Provide[Container.recipe_service]),
 ) -> dict[str, str]:
