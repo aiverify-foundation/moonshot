@@ -520,12 +520,12 @@ class Session:
         db_instance: DBInterface | None, runner_id: str, prompt_template: str
     ) -> bool:
         """
-            Updates the prompt template in the database for the specified runner.
+        Updates the prompt template in the database for the specified runner.
 
-            Args:
-                db_instance (DBInterface | None): The database instance to update the prompt template in.
-                runner_id (str): The ID of the runner.
-                prompt_template (str): The new prompt template to be used.
+        Args:
+            db_instance (DBInterface | None): The database instance to update the prompt template in.
+            runner_id (str): The ID of the runner.
+            prompt_template (str): The new prompt template to be used.
 
         Returns:
             bool: The status on whether the prompt template is updated successfully.
