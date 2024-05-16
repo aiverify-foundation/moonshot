@@ -23,6 +23,7 @@ class Run:
         runner_type text NOT NULL,
         runner_args text NOT NULL,
         endpoints text NOT NULL,
+        results_id text NOT NULL,
         results_file text NOT NULL,
         start_time INTEGER NOT NULL,
         end_time INTEGER NOT NULL,
@@ -35,8 +36,8 @@ class Run:
     """
     sql_create_run_record = """
         INSERT INTO run_table (
-        runner_id,runner_type,runner_args,endpoints,results_file,start_time,end_time,duration,error_messages,raw_results,results,status)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+        runner_id,runner_type,runner_args,endpoints,results_id,results_file,start_time,end_time,duration,error_messages,raw_results,results,status)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
     """
     sql_read_run_record = """
         SELECT * from run_table WHERE run_id=?
@@ -55,7 +56,6 @@ class Run:
         runner_args: dict,
         database_instance: Any | None,
         endpoints: list[str],
-        results_file: str,
         progress_callback_func: Callable | None = None,
     ) -> None:
         # Create run arguments
@@ -65,7 +65,8 @@ class Run:
             runner_args=runner_args,
             database_instance=database_instance,
             endpoints=endpoints,
-            results_file=results_file,
+            results_id="",
+            results_file="",
             start_time=0.0,
             end_time=0.0,
             duration=0,
@@ -200,6 +201,15 @@ class Run:
                 )
                 if inserted_record:
                     self.run_arguments.run_id = inserted_record[0]
+                    self.run_arguments.results_id = (
+                        f"{self.run_arguments.runner_id}-{self.run_arguments.run_id}"
+                    )
+                    self.run_arguments.results_file = Storage.get_filepath(
+                        EnvVariables.RESULTS.name,
+                        self.run_arguments.results_id,
+                        "json",
+                        True,
+                    )
                 else:
                     raise RuntimeError(
                         "[Run] Failed to create record: record not inserted."

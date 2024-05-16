@@ -25,6 +25,8 @@ class RunArguments(BaseModel):
 
     endpoints: list[str]  # List of endpoints for the Run.
 
+    results_id: str  # The unique identifier for the results of the Run.
+
     results_file: str  # The results file associated with the Run.
 
     start_time: float  # The start time of the Run.
@@ -47,9 +49,9 @@ class RunArguments(BaseModel):
 
         This method transforms the RunArguments instance into a dictionary, encapsulating all the critical attributes
         associated with the run. The resulting dictionary includes keys for runner_id, runner_type, runner_args,
-        database_instance, endpoints, results_file, start_time, end_time, duration, error_messages, raw_results,
-        results, and status offering a comprehensive snapshot of the run's parameters for straightforward access
-        and further processing.
+        database_instance, endpoints, results_id, results_file, start_time, end_time, duration, error_messages,
+        raw_results, results, and status offering a comprehensive snapshot of the run's parameters for
+        straightforward access and further processing.
 
         Returns:
             dict: A dictionary containing all the significant attributes of the RunArguments instance.
@@ -60,6 +62,7 @@ class RunArguments(BaseModel):
             "runner_type": self.runner_type,
             "runner_args": self.runner_args,
             "endpoints": self.endpoints,
+            "results_id": self.results_id,
             "results_file": self.results_file,
             "start_time": self.start_time,
             "end_time": self.end_time,
@@ -76,7 +79,7 @@ class RunArguments(BaseModel):
 
         This method prepares a tuple of run arguments that can be used to insert a new record into the run_table
         in the database. The tuple includes the runner_id, runner_type in lowercase, string representation of
-        runner_args, string representation of endpoints, results_file, start_time, end_time, duration,
+        runner_args, string representation of endpoints, results_id, results_file, start_time, end_time, duration,
         string representation of error_messages, string representation of raw_results, string representation of results,
         and the run status in lowercase.
 
@@ -88,6 +91,7 @@ class RunArguments(BaseModel):
             self.runner_type.name.lower(),
             str(self.runner_args),
             str(self.endpoints),
+            self.results_id,
             self.results_file,
             self.start_time,
             self.end_time,
@@ -104,8 +108,8 @@ class RunArguments(BaseModel):
 
         This method serializes the RunArguments instance to a tuple, encapsulating the primary attributes of the run.
         The resulting tuple contains the runner ID, runner type in lowercase, string representation of runner arguments,
-        string representation of endpoints, results file path, start time, end time, run duration, string representation
-        of error messages, string representation of raw results, string representation of results,
+        string representation of endpoints, results_id, results file path, start time, end time, run duration, string
+        representation of error messages, string representation of raw results, string representation of results,
         and the run status in lowercase. This provides a complete summary of the run's parameters for easy storage
         or transmission.
 
@@ -117,6 +121,7 @@ class RunArguments(BaseModel):
             self.runner_type.name.lower(),
             str(self.runner_args),
             str(self.endpoints),
+            self.results_id,
             self.results_file,
             self.start_time,
             self.end_time,
@@ -151,12 +156,13 @@ class RunArguments(BaseModel):
             runner_args=ast.literal_eval(run_record[3]),
             database_instance=None,
             endpoints=ast.literal_eval(run_record[4]),
-            results_file=run_record[5],
-            start_time=float(run_record[6]),
-            end_time=float(run_record[7]),
-            duration=run_record[8],
-            error_messages=ast.literal_eval(run_record[9]),
-            raw_results=ast.literal_eval(run_record[10]),
-            results=ast.literal_eval(run_record[11]),
-            status=RunStatus(run_record[12]),
+            results_id=run_record[5],
+            results_file=run_record[6],
+            start_time=float(run_record[7]),
+            end_time=float(run_record[8]),
+            duration=run_record[9],
+            error_messages=ast.literal_eval(run_record[10]),
+            raw_results=ast.literal_eval(run_record[11]),
+            results=ast.literal_eval(run_record[12]),
+            status=RunStatus(run_record[13]),
         )

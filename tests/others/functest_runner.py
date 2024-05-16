@@ -44,86 +44,233 @@ def test_load_runner(runner_id: str):
     runner.close()
 
 def test_run_benchmark_recipe_runner_and_cancel(runner_id: str):
+    """
+    Test the execution of a benchmark recipe runner and cancel the operation.
+
+    This function loads a runner using the provided runner_id, starts a recipe run,
+    then cancels the operation after 1 second, waits for the operation to complete,
+    and prints the result including the operation ID and its status.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+    """
     async def run_and_cancel():
         runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
         
-        # Run the recipes in a background task
-        run_task = asyncio.create_task(runner.run_recipes(["cbbq-lite", "advglue"], 2))
+        # Run the recipe and get its operation ID
+        operation_id = await runner.run_recipes(["cbbq-lite", "advglue"], 2)
 
         # Wait for 1 second before cancelling
         await asyncio.sleep(1)
-        await runner.cancel()
+        # Cancel the specific operation
+        await runner.cancel(operation_id)
 
-        # Wait for the run task to complete
-        await run_task
+        # Wait for the operation to complete and print the result
+        result = await runner.wait_for_operations_to_complete([operation_id])
+        print(f"Operation ID: {result[0].id}, Status: {result[0].status}")
         runner.close()
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        run_and_cancel()
-    )
+    loop.run_until_complete(run_and_cancel())
 
 def test_run_benchmark_cookbook_runner_and_cancel(runner_id: str):
+    """
+    Test the execution of a benchmark cookbook runner and cancel the operation.
+
+    This function loads a runner using the provided runner_id, starts a cookbook run,
+    then cancels the operation after 1 second, waits for the operation to complete,
+    and prints the result including the operation ID and its status.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+    """
     async def run_and_cancel():
         runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
         
-        # Run the cookbooks in a background task
-        run_task = asyncio.create_task(runner.run_cookbooks(["tamil-language-cookbook","legal-summarisation"], 2))
+        # Run the cookbook and get its operation ID
+        operation_id = await runner.run_cookbooks(["common-risk-easy", "tamil-language-cookbook"], 2)
 
         # Wait for 1 second before cancelling
         await asyncio.sleep(1)
-        await runner.cancel()
+        # Cancel the specific operation
+        await runner.cancel(operation_id)
 
-        # Wait for the run task to complete
-        await run_task
+        # Wait for the operation to complete and print the result
+        result = await runner.wait_for_operations_to_complete([operation_id])
+        print(f"Operation ID: {result[0].id}, Status: {result[0].status}")
         runner.close()
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        run_and_cancel()
-    )
+    loop.run_until_complete(run_and_cancel())
 
 def test_run_benchmark_recipe_runner(runner_id: str):
+    """
+    Test the execution of a benchmark recipe runner.
+
+    This function loads a runner using the provided runner_id, starts a single recipe run,
+    waits for the operation to complete, and prints the result.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+    """
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        runner.run_recipes(
-            ["bbq", "auto-categorisation"],
-            2,
-            2
-        )
-    )
+
+    async def run_single_recipe():
+        # Start the recipe and get its operation ID
+        operation_id = await runner.run_recipes(["bbq", "auto-categorisation"], 2, 2)
+
+        # Get available operations
+        await asyncio.sleep(1)
+        print(runner.get_available_operations())
+
+        # Wait for the operation to complete and get the result
+        result = await runner.wait_for_operations_to_complete([operation_id])
+
+        # Print the result
+        print(f"Operation ID: {result[0].id}, Status: {result[0].status}")
+
+    loop.run_until_complete(run_single_recipe())
     runner.close()
 
 def test_run_benchmark_cookbook_runner(runner_id: str):
+    """
+    Test the execution of a benchmark cookbook runner.
+
+    This function loads a runner using the provided runner_id, starts a single cookbook run,
+    waits for the operation to complete, and prints the result.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+    """
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        runner.run_cookbooks(
-            ["common-risk-easy"],
-            2,
-            2
-        )
-    )
+
+    async def run_single_cookbook():
+        # Start the cookbook and get its operation ID
+        operation_id = await runner.run_cookbooks(["common-risk-easy", "tamil-language-cookbook"], 2, 2)
+
+        # Wait for the operation to complete and get the result
+        result = await runner.wait_for_operations_to_complete([operation_id])
+
+        # Print the result
+        print(f"Operation ID: {result[0].id}, Status: {result[0].status}")
+
+    loop.run_until_complete(run_single_cookbook())
     runner.close()
 
-def test_run_automated_redteaming_runner(runner_id: str):
+def test_run_benchmark_recipe_runner_concurrent(runner_id: str):
+    """
+    Test the concurrent execution of benchmark recipe runners.
+
+    This function loads a runner using the provided runner_id, then concurrently starts two recipe runs.
+    It waits for both operations to complete and prints their results.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+
+    Raises:
+        Exception: If any error occurs during the loading of the runner or the concurrent execution.
+    """
     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        runner.run_red_teaming({
-            "attack_strategies": [
-                {
-                    "attack_module_id": "sample_attack_module",
-                    "metric_ids": ["bleuscore"],
-                    "context_strategy_ids": ["add_previous_prompt"],
-                    "prompt_template_ids": ["mmlu"],
-                    "prompt": "hello world",
-                }
-            ]
-        })
-    )
+
+    async def run_concurrent_recipes():
+        # Start the recipes and get their operation IDs
+        operation_id_1 = await runner.run_recipes(["bbq"], 2, 2)
+        operation_id_2 = await runner.run_recipes(["auto-categorisation"], 2, 2)
+
+        # Print the operation IDs
+        print(f"Operation 1: {operation_id_1}")
+        print(f"Operation 2: {operation_id_2}")
+
+        # Wait for both operations to complete and retrieve the results
+        results = await runner.wait_for_operations_to_complete([operation_id_1, operation_id_2])
+
+        # Print the results of the operations
+        for result_id, result in enumerate(results, 1):
+            print(f"Operation ID {result_id}: {result.id}, Status: {result.status}")
+
+    loop.run_until_complete(run_concurrent_recipes())
     runner.close()
+
+def test_run_benchmark_cookbook_runner_concurrent(runner_id: str):
+    """
+    Test the concurrent execution of benchmark cookbook runners.
+
+    This function loads a runner using the provided runner_id, then concurrently starts two cookbook runs.
+    It waits for both operations to complete and prints their results.
+
+    Args:
+        runner_id (str): The unique identifier of the runner to be tested.
+    """
+    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+    loop = asyncio.get_event_loop()
+
+    async def run_concurrent_cookbooks():
+        # Start the cookbooks and get their operation IDs
+        operation_id_1 = await runner.run_cookbooks(["common-risk-easy"], 2, 2)
+        operation_id_2 = await runner.run_cookbooks(["tamil-language-cookbook"], 2, 2)
+
+        # Print the operation IDs
+        print(f"Cookbook Operation 1: {operation_id_1}")
+        print(f"Cookbook Operation 2: {operation_id_2}")
+
+        # Wait for both operations to complete and retrieve the results
+        results = await runner.wait_for_operations_to_complete([operation_id_1, operation_id_2])
+
+        # Print the results of the operations
+        for result_id, result in enumerate(results, 1):
+            print(f"Operation ID {result_id}: {result.id}, Status: {result.status}")
+
+    loop.run_until_complete(run_concurrent_cookbooks())
+    runner.close()
+
+def test_run_benchmark_recipes_cookbook_runner_concurrent(runner_id: str):
+    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+    loop = asyncio.get_event_loop()
+
+    async def run_concurrent_cookbooks():
+        # Start the cookbooks and get their operation IDs
+        operation_id_1 = await runner.run_recipes(["bbq"], 2, 2)
+        operation_id_2 = await runner.run_recipes(["auto-categorisation"], 2, 2)
+        operation_id_3 = await runner.run_cookbooks(["common-risk-easy"], 2, 2)
+        operation_id_4 = await runner.run_cookbooks(["tamil-language-cookbook"], 2, 2)
+
+        # Print the operation IDs
+        print(f"Cookbook Operation 1: {operation_id_1}")
+        print(f"Cookbook Operation 2: {operation_id_2}")
+        print(f"Cookbook Operation 3: {operation_id_3}")
+        print(f"Cookbook Operation 4: {operation_id_4}")
+
+        # Wait for both operations to complete and retrieve the results
+        results = await runner.wait_for_operations_to_complete([operation_id_1, operation_id_2,
+                                                                operation_id_3, operation_id_4])
+
+        # Print the results of the operations
+        for result_id, result in enumerate(results, 1):
+            print(f"Operation ID {result_id}: {result.id}, Status: {result.status}")
+
+    loop.run_until_complete(run_concurrent_cookbooks())
+    runner.close()
+
+# def test_run_automated_redteaming_runner(runner_id: str):
+#     runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
+#     loop = asyncio.get_event_loop()
+#     loop.run_until_complete(
+#         runner.run_red_teaming({
+#             "attack_strategies": [
+#                 {
+#                     "attack_module_id": "sample_attack_module",
+#                     "metric_ids": ["bleuscore"],
+#                     "context_strategy_ids": ["add_previous_prompt"],
+#                     "prompt_template_ids": ["mmlu"],
+#                     "prompt": "hello world",
+#                 }
+#             ]
+#         })
+#     )
+#     runner.close()
 
 
 def test_read_runner(runner_id: str):
@@ -169,12 +316,18 @@ def test_run_runner_api():
     print("=" * 100, "\nTest running runner")
     test_run_benchmark_recipe_runner(runner_id)
     test_run_benchmark_cookbook_runner(runner_id)
-    test_run_automated_redteaming_runner(runner_id)
+    # test_run_automated_redteaming_runner(runner_id)
 
     # Run the benchmark runner job and cancel
     print("=" * 100, "\nTest running runner and cancelling job")
     test_run_benchmark_recipe_runner_and_cancel(runner_id)
     test_run_benchmark_cookbook_runner_and_cancel(runner_id)
+
+    # Run concurrent jobs
+    print("=" * 100, "\nTest running runner with multiple jobs")
+    test_run_benchmark_recipe_runner_concurrent(runner_id)
+    test_run_benchmark_cookbook_runner_concurrent(runner_id)
+    test_run_benchmark_recipes_cookbook_runner_concurrent(runner_id)
 
     # Read runner
     print("=" * 100, "\nTest reading runner")

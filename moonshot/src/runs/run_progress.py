@@ -8,8 +8,8 @@ from moonshot.src.storage.storage import Storage
 
 class RunProgress:
     sql_update_run_record = """
-        UPDATE run_table SET runner_id=?,runner_type=?,runner_args=?,endpoints=?,results_file=?,start_time=?,end_time=?,
-        duration=?,error_messages=?,raw_results=?,results=?,status=?
+        UPDATE run_table SET runner_id=?,runner_type=?,runner_args=?,endpoints=?,results_id=?,results_file=?,
+        start_time=?,end_time=?,duration=?,error_messages=?,raw_results=?,results=?,status=?
         WHERE run_id=?
     """
 
@@ -118,22 +118,36 @@ class RunProgress:
 
     def get_dict(self) -> dict:
         """
-        Constructs and returns a dictionary with the current state of the benchmark execution.
+        Returns a dictionary representing the current state of the run progress.
 
-        This method assembles a dictionary encapsulating the current progress of the benchmark execution.
-        The resulting dictionary is composed of the following keys: execution identifier, name, type, current duration,
-        status, cookbook index, cookbook name, cookbook total, recipe index, recipe name, recipe total,
-        progress percentage, and a list of error messages.
+        This method creates a dictionary that reflects the current state of the run progress, including various
+        execution details and metrics. The keys in the dictionary include identifiers, status, indices, names,
+        totals, progress percentage, and error messages related to the execution.
 
         Returns:
-            dict: A dictionary representing the current benchmark execution state, with keys for various progress
-            metrics and details.
+            dict: A dictionary with the following structure:
+                - current_runner_id: Identifier of the current runner.
+                - current_runner_type: Type of the current runner.
+                - current_run_id: Identifier of the current run.
+                - current_duration: Elapsed duration of the current run.
+                - current_status: Status of the current run.
+                - current_result_file: File path for the results of the current run.
+                - current_cookbook_index: Index of the current cookbook.
+                - current_cookbook_name: Name of the current cookbook.
+                - current_cookbook_total: Total number of cookbooks.
+                - current_recipe_index: Index of the current recipe.
+                - current_recipe_name: Name of the current recipe.
+                - current_recipe_total: Total number of recipes.
+                - current_progress: Percentage of progress made in the current run.
+                - current_error_messages: List of error messages encountered during the run.
         """
         return {
             "current_runner_id": self.run_arguments.runner_id,
             "current_runner_type": self.run_arguments.runner_type.value,
+            "current_run_id": self.run_arguments.run_id,
             "current_duration": self.run_arguments.duration,
             "current_status": self.run_arguments.status.value,
+            "current_result_file": self.run_arguments.results_file,
             "current_cookbook_index": self.cookbook_index,
             "current_cookbook_name": self.cookbook_name,
             "current_cookbook_total": self.cookbook_total,

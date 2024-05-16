@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import uuid
 from pathlib import Path
 from typing import Callable
 
@@ -44,9 +45,11 @@ class Runner:
         self.database_file = runner_args.database_file
         self.progress_callback_func = runner_args.progress_callback_func
 
-        # Set current run
-        self.current_operation = None
-        self.current_operation_lock = asyncio.Lock()  # Mutex lock for current operation
+        # Store multiple operations
+        # Dictionary to track multiple operations
+        self.operations = {}
+        # Dictionary to track asyncio tasks of operations
+        self.operation_tasks = {}
 
     @classmethod
     def load(
@@ -256,6 +259,24 @@ class Runner:
             print(f"[Runner] Failed to get available runners: {str(e)}")
             raise e
 
+    def get_available_operations(self) -> dict:
+        """
+        Retrieves and returns a dictionary of available operations.
+
+        This method creates a dictionary with operation IDs as keys and the corresponding
+        operation objects as values, representing all the operations currently available
+        in the runner instance.
+
+        Returns:
+            dict: A dictionary of available operations with operation IDs as keys and
+            operation objects as values.
+        """
+        available_operations = {
+            operation_id: operation
+            for operation_id, operation in self.operations.items()
+        }
+        return available_operations
+
     def close(self) -> None:
         """
         Closes the runner instance.
@@ -270,21 +291,57 @@ class Runner:
         if self.database_instance:
             Storage.close_database_connection(self.database_instance)
 
-    async def cancel(self) -> None:
+    async def cancel(self, operation_id: str) -> None:
         """
-        Cancels the runner instance.
+        Cancels a specific operation for the runner instance.
 
-        This method is responsible for cancelling the runner instance. If a run is currently in progress,
-        it stops the run and releases any resources associated with it.
+        This method is responsible for cancelling the operation with the given operation_id.
+        It stops the run and releases any resources associated with it.
+
+        Args:
+            operation_id (str): The unique identifier of the operation to be cancelled.
 
         Raises:
-            Exception: If any error occurs while cancelling the runner or releasing the resources.
+            KeyError: If the operation_id does not exist.
+            Exception: If any error occurs while cancelling the operation or releasing the resources.
         """
-        async with self.current_operation_lock:
-            if self.current_operation:
-                print(f"[Runner] {self.id} - Cancelling current operation...")
-                self.current_operation.cancel()
-                self.current_operation = None  # Reset the current operation
+        # Check if the operation exists and cancel it
+        operation = self.operations.get(operation_id)
+        if operation is None:
+            print(
+                f"[Runner] No operation found with ID {operation_id}, or it may have already completed."
+            )
+            return
+
+        print(f"[Runner] {self.id} - Cancelling operation with ID {operation_id}...")
+        operation.cancel()
+
+        # Remove the operation from the dictionary
+        self.operations.pop(operation_id, None)
+
+    async def wait_for_operations_to_complete(self, operation_ids: list[str]) -> list:
+        """
+        Waits for the completion of a list of operations.
+
+        This method takes a list of operation IDs, retrieves the corresponding asyncio tasks,
+        and waits for all of them to complete. It returns a list of results from the completed tasks.
+
+        Args:
+            operation_ids (list[str]): A list of operation IDs to wait for.
+
+        Returns:
+            list: A list of results from the completed asyncio tasks.
+        """
+        # Gather the tasks for the provided operation IDs
+        tasks = [
+            self.operation_tasks[op_id]
+            for op_id in operation_ids
+            if op_id in self.operation_tasks
+        ]
+        # Wait for all tasks to complete
+        results_metadata = await asyncio.gather(*tasks)
+        # Return the results
+        return results_metadata
 
     async def run_recipes(
         self,
@@ -294,64 +351,71 @@ class Runner:
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
         result_processing_module: str = "benchmarking-result",
-    ) -> None:
+    ) -> str:
         """
-        Initiates an asynchronous benchmark run using a set of recipes.
+        Asynchronously runs a set of recipes with the provided parameters.
 
-        This method sets up and starts a benchmark run tailored for recipes. It instantiates a benchmark run object,
-        applies the configuration based on the provided recipes, number of prompts, random seed, system prompt, and
-        the specified runner and result processing modules, and then commences the run asynchronously.
+        This method is responsible for initiating a benchmark recipe run with the specified recipes and parameters.
+        It creates a new operation, stores it, and sets up a callback for cleanup after completion. The operation ID
+        is returned to the caller, which can be used to track the operation's progress.
 
         Args:
-            recipes (list[str]): The recipes to be included in the benchmark run.
+            recipes (list[str]): A list of recipe names to be run.
 
-            num_of_prompts (int, optional): The count of prompts to utilize during the benchmark.
-            Defaults to 0.
+            num_of_prompts (int, optional): The number of prompts to use. Defaults to 0.
 
-            random_seed (int, optional): The seed for random number generation to ensure reproducibility.
-            Defaults to 0.
+            random_seed (int, optional): The seed for random number generation. Defaults to 0.
 
-            system_prompt (str, optional): The system prompt to be used during the benchmark.
-            Defaults to an empty string.
+            system_prompt (str, optional): A system prompt to be used. Defaults to an empty string.
 
-            runner_processing_module (str, optional): The module responsible for processing the runner.
+            runner_processing_module (str, optional): The processing module for the runner.
             Defaults to "benchmarking".
 
-            result_processing_module (str, optional): The module responsible for processing the results.
+            result_processing_module (str, optional): The processing module for the results.
             Defaults to "benchmarking-result".
 
-        Raises:
-            Exception: If any error occurs during the setup or execution of the benchmark run.
+        Returns:
+            str: The operation ID of the initiated recipe run.
         """
-        async with self.current_operation_lock:  # Acquire the lock
-            # Create new benchmark recipe test run
-            print(f"[Runner] {self.id} - Running benchmark recipe run...")
-            self.current_operation = Run(
-                self.id,
-                RunnerType.BENCHMARK,
-                {
-                    "recipes": recipes,
-                    "num_of_prompts": num_of_prompts,
-                    "random_seed": random_seed,
-                    "system_prompt": system_prompt,
-                    "runner_processing_module": runner_processing_module,
-                    "result_processing_module": result_processing_module,
-                },
-                self.database_instance,
-                self.endpoints,
-                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-                self.progress_callback_func,
+        operation_id = str(uuid.uuid4())
+        print(
+            f"[Runner] {self.id} - Running benchmark recipe run with operation ID {operation_id}..."
+        )
+        operation = Run(
+            self.id,
+            RunnerType.BENCHMARK,
+            {
+                "recipes": recipes,
+                "num_of_prompts": num_of_prompts,
+                "random_seed": random_seed,
+                "system_prompt": system_prompt,
+                "runner_processing_module": runner_processing_module,
+                "result_processing_module": result_processing_module,
+            },
+            self.database_instance,
+            self.endpoints,
+            self.progress_callback_func,
+        )
+
+        # Store the operation in the dictionary
+        self.operations[operation_id] = operation
+
+        # Define a callback function to clean up after the operation completes
+        def on_operation_complete(task):
+            # Remove the operation from the dictionary
+            self.operations.pop(operation_id, None)
+            print(
+                f"[Runner] {self.id} - Benchmark recipe run with operation ID {operation_id} completed and removed."
             )
-            # Note: The lock is held during setup but should be released before long-running operations
 
-        # Execute the long-running operation outside of the lock
-        # Run new benchmark recipe test run
-        await self.current_operation.run()
+        # Get the current event loop and create a task
+        loop = asyncio.get_event_loop()
+        task = loop.create_task(operation.run())
+        task.add_done_callback(on_operation_complete)
+        self.operation_tasks[operation_id] = task
 
-        # After completion, reset current_operation to None within the lock
-        async with self.current_operation_lock:
-            self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark recipe run completed and reset.")
+        # Return the operation ID to the caller
+        return operation_id
 
     async def run_cookbooks(
         self,
@@ -361,113 +425,125 @@ class Runner:
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
         result_processing_module: str = "benchmarking-result",
-    ) -> None:
+    ) -> str:
         """
         Asynchronously runs a set of cookbooks with the provided parameters.
 
         This method is responsible for initiating a benchmark cookbook run with the specified cookbooks and parameters.
-        It creates a new benchmark cookbook run instance, configures it with the provided cookbook names,
-        number of prompts, random seed, system prompt, runner processing module, and result processing module,
-        and then starts the run asynchronously.
+        It creates a new operation, stores it, and sets up a callback for cleanup after completion. The operation ID
+        is returned to the caller, which can be used to track the operation's progress.
 
         Args:
-            cookbooks (list[str]): A list of cookbook names to be run in the benchmark.
+            cookbooks (list[str]): A list of cookbook names to be run.
 
-            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run.
-            Defaults to 0.
+            num_of_prompts (int, optional): The number of prompts to use. Defaults to 0.
 
-            random_seed (int, optional): The seed for random number generation to ensure reproducibility.
-            Defaults to 0.
+            random_seed (int, optional): The seed for random number generation. Defaults to 0.
 
-            system_prompt (str, optional): A system prompt to be used in the benchmark run.
-            Defaults to an empty string.
+            system_prompt (str, optional): A system prompt to be used. Defaults to an empty string.
 
-            runner_processing_module (str, optional): The module responsible for processing the runner.
+            runner_processing_module (str, optional): The processing module for the runner.
             Defaults to "benchmarking".
 
-            result_processing_module (str, optional): The module responsible for processing the results.
+            result_processing_module (str, optional): The processing module for the results.
             Defaults to "benchmarking-result".
 
-        Raises:
-            Exception: If any error occurs during the setup or execution of the benchmark run.
+        Returns:
+            str: The operation ID of the initiated cookbook run.
         """
-        async with self.current_operation_lock:  # Acquire the lock
-            # Create new benchmark cookbook test run
-            print(f"[Runner] {self.id} - Running benchmark cookbook run...")
-            self.current_operation = Run(
-                self.id,
-                RunnerType.BENCHMARK,
-                {
-                    "cookbooks": cookbooks,
-                    "num_of_prompts": num_of_prompts,
-                    "random_seed": random_seed,
-                    "system_prompt": system_prompt,
-                    "runner_processing_module": runner_processing_module,
-                    "result_processing_module": result_processing_module,
-                },
-                self.database_instance,
-                self.endpoints,
-                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-                self.progress_callback_func,
+        operation_id = str(uuid.uuid4())
+        print(
+            f"[Runner] {self.id} - Running benchmark cookbook run with operation ID {operation_id}..."
+        )
+        operation = Run(
+            self.id,
+            RunnerType.BENCHMARK,
+            {
+                "cookbooks": cookbooks,
+                "num_of_prompts": num_of_prompts,
+                "random_seed": random_seed,
+                "system_prompt": system_prompt,
+                "runner_processing_module": runner_processing_module,
+                "result_processing_module": result_processing_module,
+            },
+            self.database_instance,
+            self.endpoints,
+            self.progress_callback_func,
+        )
+
+        # Store the operation in the dictionary
+        self.operations[operation_id] = operation
+
+        # Define a callback function to clean up after the operation completes
+        def on_operation_complete(task):
+            # Remove the operation from the dictionary
+            self.operations.pop(operation_id, None)
+            print(
+                f"[Runner] {self.id} - Benchmark cookbook run with operation ID {operation_id} completed and removed."
             )
-            # Note: The lock is held during setup but should be released before long-running operations
 
-        # Execute the long-running operation outside of the lock
-        # Run new benchmark cookbook test run
-        await self.current_operation.run()
+        # Get the current event loop and create a task
+        loop = asyncio.get_event_loop()
+        task = loop.create_task(operation.run())
+        task.add_done_callback(on_operation_complete)
+        self.operation_tasks[operation_id] = task
 
-        # After completion, reset current_operation to None within the lock
-        async with self.current_operation_lock:
-            self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+        # Return the operation ID to the caller
+        return operation_id
 
     async def run_red_teaming(
         self,
         red_team_args: dict,
         system_prompt: str = "",
         runner_processing_module: str = "redteaming",
-    ) -> list | None:
+    ) -> str:
         """
-        Asynchronously runs a red teaming session with the provided arguments.
-
-        This method is responsible for initiating a red teaming session with the specified arguments. It creates a new
-        red teaming session instance, configures it with the provided red teaming arguments, system prompt, and
-        runner processing module, and then starts the session asynchronously.
+        Initiates a red teaming session with the provided arguments.
 
         Args:
-            red_team_args (dict): A dictionary of arguments for the red teaming session.
+            red_team_args (dict): Arguments specific to the red teaming session.
+            system_prompt (str, optional): A system prompt to be used. Defaults to an empty string.
+            runner_processing_module (str, optional): The processing module for the runner. Defaults to "redteaming".
 
-            system_prompt (str, optional): A system prompt to be used in the red teaming session.
-            Defaults to an empty string.
-
-            runner_processing_module (str, optional): The processing module to be used for the session.
-            Defaults to "redteaming".
-
-        Raises:
-            Exception: If any error occurs during the setup or execution of the red teaming session.
+        Returns:
+            str: The operation ID of the initiated red teaming session.
         """
-        async with self.current_operation_lock:  # Acquire the lock
-            print(f"[Runner] {self.id} - Running red teaming session...")
-            self.current_operation = Session(
-                self.id,
-                RunnerType.REDTEAM,
-                {
-                    **red_team_args,
-                    "runner_processing_module": runner_processing_module,
-                },
-                self.database_instance,
-                self.endpoints,
-                Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
-                self.progress_callback_func,
+        operation_id = str(uuid.uuid4())
+        print(
+            f"[Runner] {self.id} - Running red teaming session with operation ID {operation_id}..."
+        )
+
+        # Create a new red teaming session instance
+        red_team_session = Session(
+            self.id,
+            RunnerType.REDTEAM,
+            {
+                **red_team_args,
+                "system_prompt": system_prompt,
+                "runner_processing_module": runner_processing_module,
+            },
+            self.database_instance,
+            self.endpoints,
+            Storage.get_filepath(EnvVariables.RESULTS.name, self.id, "json", True),
+            self.progress_callback_func,
+        )
+
+        # Store the session in the operations dictionary
+        self.operations[operation_id] = red_team_session
+
+        # Define a callback function to clean up after the session completes
+        def on_session_complete(task):
+            # Remove the session from the dictionary
+            self.operations.pop(operation_id, None)
+            print(
+                f"[Runner] {self.id} - Red teaming session with operation ID {operation_id} completed and removed."
             )
 
-        # Note: The lock is held during setup but should be released before long-running operations
-        # Execute the long-running operation outside of the lock
-        red_teaming_results = await self.current_operation.run()
+        # Get the current event loop and create a task for the session
+        loop = asyncio.get_event_loop()
+        task = loop.create_task(red_team_session.run())
+        task.add_done_callback(on_session_complete)
+        self.operation_tasks[operation_id] = task
 
-        # After completion, reset current_operation to None within the lock
-        async with self.current_operation_lock:
-            self.current_operation = None
-            print(f"[Runner] {self.id} - Red teaming run completed.")
-
-        return red_teaming_results
+        # Return the operation ID to the caller
+        return operation_id
