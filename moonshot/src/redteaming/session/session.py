@@ -406,7 +406,8 @@ class Session:
 
         finally:
             self.red_teaming_progress.status = RunStatus.COMPLETED
-            self.red_teaming_progress.notify_progress()
+            if self.check_redteaming_type() == RedTeamingType.AUTOMATED:
+                self.red_teaming_progress.notify_progress()
             print(
                 f"[Session] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )
