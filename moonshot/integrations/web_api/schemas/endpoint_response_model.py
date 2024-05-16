@@ -1,6 +1,8 @@
-
 from pydantic import ConfigDict
-from moonshot.src.connectors_endpoints.connector_endpoint_arguments import ConnectorEndpointArguments as ConnectorEndpointPydanticModel
+
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
+    ConnectorEndpointArguments as ConnectorEndpointPydanticModel,
+)
 
 
 class EndpointDataModel(ConnectorEndpointPydanticModel):

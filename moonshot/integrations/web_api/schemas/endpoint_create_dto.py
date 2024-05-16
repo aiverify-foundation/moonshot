@@ -1,8 +1,11 @@
-from typing import Optional
 from typing import Annotated, Optional
+
 from pydantic import Field
 
-from moonshot.src.connectors_endpoints.connector_endpoint_arguments import ConnectorEndpointArguments as ConnectorEndpointPydanticModel
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
+    ConnectorEndpointArguments as ConnectorEndpointPydanticModel,
+)
+
 
 class EndpointCreateDTO(ConnectorEndpointPydanticModel):
     id: Optional[str] = None
