@@ -1,24 +1,20 @@
-from typing import Optional, Union
-from typing_extensions import TypedDict
+from typing import Optional
+from typing import Annotated, Optional
+from pydantic import Field
 
-from pydantic import BaseModel, ConfigDict
-from ..schemas.endpoint_response_model import EndpointParams
+from moonshot.src.connectors_endpoints.connector_endpoint_arguments import ConnectorEndpointArguments as ConnectorEndpointPydanticModel
 
-class EndpointCreateDTO(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    connector_type: str
-    name: str
-    uri: str
-    token: str
-    max_calls_per_second: int
-    max_concurrency: int
-    params: EndpointParams
+class EndpointCreateDTO(ConnectorEndpointPydanticModel):
+    id: Optional[str] = None
 
-class EndpointUpdateDTO(TypedDict, total = False):
-    connector_type: str
-    name: str
-    uri: str
-    token: str
-    max_calls_per_second: int
-    max_concurrency: int
-    params: EndpointParams
+
+class EndpointUpdateDTO(ConnectorEndpointPydanticModel):
+    id: Optional[str] = None
+    name: Optional[str] = None
+    connector_type: Optional[str] = None
+    uri: Optional[str] = None
+    token: Optional[str] = None
+    max_calls_per_second: Optional[int] = None
+    max_concurrency: Optional[int] = None
+    params: Optional[dict] = None
+    created_date: Optional[str] = None
