@@ -37,16 +37,20 @@ def api_get_all_attack_module_metadata() -> list[dict]:
     return attack_modules_metadata
 
 
-def api_delete_attack_module(am_id: str) -> None:
+def api_delete_attack_module(am_id: str) -> bool:
     """
-    Deletes a specified attack module.
+    Deletes an attack module by its identifier.
 
-    This function deletes the attack module with the given ID by calling the `AttackModule.delete` method.
+    This function takes an attack module ID as input and calls the delete method from the AttackModule class
+    to remove the specified attack module from storage.
 
     Args:
-        am_id (str): The ID of the attack module to delete.
+        am_id (str): The unique identifier of the attack module to be deleted.
 
     Returns:
-        None
+        bool: True if the attack module was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
     """
-    AttackModule.delete(am_id)
+    return AttackModule.delete(am_id)

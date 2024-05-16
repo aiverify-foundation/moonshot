@@ -49,8 +49,8 @@ def add_cookbook(args) -> None:
     """
     try:
         recipes = literal_eval(args.recipes)
-        api_create_cookbook(args.name, args.description, recipes)
-        print("[add_cookbook]: Cookbook created.")
+        new_cookbook_id = api_create_cookbook(args.name, args.description, recipes)
+        print(f"[add_cookbook]: Cookbook ({new_cookbook_id}) created.")
     except Exception as e:
         print(f"[add_cookbook]: {str(e)}")
 
@@ -462,7 +462,7 @@ def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> 
 # ------------------------------------------------------------------------------
 # Add cookbook arguments
 add_cookbook_args = cmd2.Cmd2ArgumentParser(
-    description="Add a new cookbook.",
+    description="Add a new cookbook. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_cookbook 'My new cookbook' "
     "'I am cookbook description' "
     "\"['analogical-similarity','auto-categorisation']\"",

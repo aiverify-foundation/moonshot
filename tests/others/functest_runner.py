@@ -48,7 +48,7 @@ def test_run_benchmark_recipe_runner_and_cancel(runner_id: str):
         runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
         
         # Run the recipes in a background task
-        run_task = asyncio.create_task(runner.run_recipes(["cbbq-lite", "advglue-mnli"], 2))
+        run_task = asyncio.create_task(runner.run_recipes(["cbbq-lite", "advglue"], 2))
 
         # Wait for 1 second before cancelling
         await asyncio.sleep(1)
@@ -68,7 +68,7 @@ def test_run_benchmark_cookbook_runner_and_cancel(runner_id: str):
         runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
         
         # Run the cookbooks in a background task
-        run_task = asyncio.create_task(runner.run_cookbooks(["tamil-language-cookbook","cbbq-amb-cookbook"], 2))
+        run_task = asyncio.create_task(runner.run_cookbooks(["tamil-language-cookbook","legal-summarisation"], 2))
 
         # Wait for 1 second before cancelling
         await asyncio.sleep(1)

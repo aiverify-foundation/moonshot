@@ -126,7 +126,7 @@ class Runner:
                     EnvVariables.CONNECTORS_ENDPOINTS.name, endpoint, "json"
                 ):
                     raise RuntimeError(
-                        f"[Runner]Connector endpoint {endpoint} does exist."
+                        f"[Runner]Connector endpoint {endpoint} does not exist."
                     )
 
             runner_info = {
@@ -189,22 +189,28 @@ class Runner:
 
     @staticmethod
     @validate_arguments
-    def delete(runner_id: str) -> None:
+    def delete(runner_id: str) -> bool:
         """
-        Removes the runner file and its corresponding database.
+        Deletes the runner and its associated database instance.
 
-        This method requires a runner_id as a parameter and employs the StorageManager to eliminate the runner file
-        along with its linked database.
+        This method attempts to delete the runner identified by the provided runner_id from storage.
+        It also attempts to delete the associated database instance. If both deletions are successful,
+        it returns True. If an exception occurs during the deletion process, an error message is printed
+        and the exception is re-raised.
 
         Args:
-            runner_id (str): The unique identifier of the runner.
+            runner_id (str): The unique identifier of the runner to be deleted.
+
+        Returns:
+            bool: True if the runner and its associated database instance were successfully deleted.
 
         Raises:
-            Exception: If an issue arises during the file removal process or any other operation within the method.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.RUNNERS.name, runner_id, "json")
             Storage.delete_object(EnvVariables.DATABASES.name, runner_id, "db")
+            return True
 
         except Exception as e:
             print(f"[Runner] Failed to delete runner: {str(e)}")
@@ -231,7 +237,6 @@ class Runner:
         try:
             retn_runners = []
             retn_runners_ids = []
-
             runners = Storage.get_objects(EnvVariables.RUNNERS.name, "json")
             for runner in runners:
                 if "__" in runner:

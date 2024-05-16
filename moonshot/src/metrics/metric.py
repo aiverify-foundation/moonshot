@@ -41,25 +41,26 @@ class Metric:
 
     @staticmethod
     @validate_arguments
-    def delete(met_id: str) -> None:
+    def delete(met_id: str) -> bool:
         """
-        Removes a metric using its ID.
+        Deletes a metric identified by its unique metric ID.
 
-        This function removes a metric using its ID. It initially verifies if the metric instance is present.
-        If present, it removes the instance and returns None.
-        If not present, it throws a RuntimeError.
+        This method attempts to delete the metric with the given ID from the storage. If the deletion is successful,
+        it returns True. If an exception occurs during the deletion process, it prints an error message and re-raises
+        the exception.
 
         Args:
-            met_id (str): The ID of the metric to be removed.
+            met_id (str): The unique identifier of the metric to be deleted.
 
         Returns:
-            None
+            bool: True if the metric was successfully deleted.
 
         Raises:
-            RuntimeError: If the metric instance is not found.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.METRICS.name, met_id, "py")
+            return True
 
         except Exception as e:
             print(f"Failed to delete metric: {str(e)}")
