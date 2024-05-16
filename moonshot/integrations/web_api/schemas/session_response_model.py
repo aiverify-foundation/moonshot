@@ -28,5 +28,7 @@ class SessionMetadataModel(BaseModel):
     system_prompt: Optional[str]
 
 class SessionResponseModel(BaseModel):
+    session_name: str
+    session_description: str
     session: SessionMetadataModel
     chat_records: Optional[Dict[str, List[ChatRecord]]]

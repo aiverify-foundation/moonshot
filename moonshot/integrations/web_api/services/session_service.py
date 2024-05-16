@@ -42,7 +42,7 @@ class SessionService(BaseService):
     @exception_handler
     def create_new_session(
         self, session_create_dto: SessionCreateDTO
-    ) -> SessionMetadataModel:
+    ) -> SessionResponseModel:
         """
         Create a new session with a new runner and return the session metadata.
 
@@ -82,7 +82,12 @@ class SessionService(BaseService):
         if session_metadata_dict is None:
             raise ValueError(f"No session metadata found for runner ID {runner.id}")
 
-        return SessionMetadataModel(**session_metadata_dict)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=None,
+        )
 
     @exception_handler
     def get_all_session(self) -> list[SessionMetadataModel]:
@@ -135,15 +140,18 @@ class SessionService(BaseService):
                 f"Session metadata for runner ID {runner.id} must be a dictionary."
             )
 
-        session_metadata = SessionMetadataModel(**session_metadata_dict)
-
         session_chat = (
             moonshot_api.api_get_all_chats_from_session(runner.id)
             if include_history
             else None
         )
 
-        return SessionResponseModel(session=session_metadata, chat_records=session_chat)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=session_chat,
+        )
 
     @exception_handler
     def update_session_chat(self, runner_id: str):
