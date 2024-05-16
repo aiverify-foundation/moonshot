@@ -1,5 +1,7 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel, Field
+
 
 class ChatRecord(BaseModel):
     chat_record_id: int
@@ -15,6 +17,7 @@ class ChatRecord(BaseModel):
     duration: float
     prompt_time: str
 
+
 class SessionMetadataModel(BaseModel):
     session_id: str = Field(min_length=1)
     endpoints: List[str] = Field(min_length=1)
@@ -26,6 +29,7 @@ class SessionMetadataModel(BaseModel):
     attack_module: Optional[str]
     metric: Optional[str]
     system_prompt: Optional[str]
+
 
 class SessionResponseModel(BaseModel):
     session: SessionMetadataModel
