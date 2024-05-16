@@ -150,7 +150,7 @@ def run_moonshot_ui_dev():
 
 def main():
     parser = argparse.ArgumentParser(description="Run the Moonshot application")
-    parser.add_argument('mode', nargs='?', choices=['web-api', 'cli', 'web'], help='Mode to run Moonshot in', default=None)
+    parser.add_argument('mode', nargs='?', choices=['web-api', 'cli', 'web', 'help'], help='Mode to run Moonshot in', default=help)
     parser.add_argument('cli_command', nargs='?', help='The CLI command to run (e.g., "interactive")')
     parser.add_argument('-i', '--install', action='append', choices=['moonshot-data', 'moonshot-ui'], help='Modules to install', default=[])
     parser.add_argument('-e', '--env', type=str, help='Path to the .env file', default='.env')
@@ -168,13 +168,17 @@ def main():
     if args.mode is None:
         return
     
+    if args.mode == "help":
+        parser.print_help()
+        sys.exit(1)
+
     api_set_environment_variables(dotenv_values(args.env))
 
     if args.mode == "web-api":
         from moonshot.integrations.web_api import __main__ as web_api
         web_api.start_app()
     elif args.mode == "web":
-    # Create and start the UI de}v server thread
+    # Create and start the UI dev server thread
         ui_thread = threading.Thread(target=run_moonshot_ui_dev)
         ui_thread.start()
         ui_thread.join(timeout=0.1)  # Wait briefly for the thread to become alive
