@@ -112,7 +112,11 @@ class CookbookService(BaseService):
             cookbook_data (CookbookCreateDTO): Data transfer object containing new cookbook details.
             cookbook_id (str): The ID of the cookbook to update.
         """
-        update_data = {k: v for k, v in cookbook_data.to_dict().items() if v is not None and k != 'id'}
+        update_data = {
+            k: v
+            for k, v in cookbook_data.to_dict().items()
+            if v is not None and k != "id"
+        }
         moonshot_api.api_update_cookbook(cb_id=cookbook_id, **update_data)
 
     @exception_handler

@@ -1,6 +1,4 @@
-from typing import Annotated, Optional
-
-from pydantic import Field
+from typing import Optional
 
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments as ConnectorEndpointPydanticModel,
