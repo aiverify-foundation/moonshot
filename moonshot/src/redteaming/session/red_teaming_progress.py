@@ -1,5 +1,3 @@
-import datetime as dt
-from datetime import datetime
 from typing import Callable
 
 from moonshot.src.runs.run_status import RunStatus
@@ -16,9 +14,6 @@ class RedTeamingProgress:
     ):
         # Information on the run and callback for progress updating
         self.runner_id = runner_id
-        self.am_id = red_teaming_arguments.get("am_id", "")
-        self.cs_id = red_teaming_arguments.get("cs_id", "")
-        self.pt_id = red_teaming_arguments.get("pt_id", "")
         self.chat_batch_size = red_teaming_arguments.get(
             "chat_batch_size", RedTeamingProgress.DEFAULT_CHAT_BATCH_SIZE
         )
@@ -57,14 +52,21 @@ class RedTeamingProgress:
         Returns:
             None
         """
-        prompt_time = datetime.fromisoformat(red_teaming_prompt_arguments["start_time"])
-        delta = dt.timedelta(seconds=float(red_teaming_prompt_arguments["duration"]))
-        response_time = prompt_time + delta
+        # prompt_time = datetime.fromisoformat(red_teaming_prompt_arguments["start_time"])
+        # delta = dt.timedelta(seconds=float(red_teaming_prompt_arguments["duration"]))
+        # response_time = prompt_time + delta
         prompt_response_dict = {
-            "prompt": red_teaming_prompt_arguments["prepared_prompt"],
-            "response": red_teaming_prompt_arguments["response"],
+            "conn_id": red_teaming_prompt_arguments["conn_id"],
+            "context_strategy": red_teaming_prompt_arguments["cs_id"],
+            "prompt_template": red_teaming_prompt_arguments["pt_id"],
+            "attack_module": red_teaming_prompt_arguments["am_id"],
+            "metric": red_teaming_prompt_arguments["me_id"],
+            "prompt": red_teaming_prompt_arguments["original_prompt"],
+            "prepared_prompt": red_teaming_prompt_arguments["prepared_prompt"],
+            "system_prompt": red_teaming_prompt_arguments["system_prompt"],
+            "predicted_result": red_teaming_prompt_arguments["response"],
+            "duration": red_teaming_prompt_arguments["duration"],
             "prompt_time": red_teaming_prompt_arguments["start_time"],
-            "response_time": str(response_time),
         }
 
         if red_teaming_prompt_arguments["conn_id"] not in self.chats:
@@ -129,9 +131,6 @@ class RedTeamingProgress:
         """
         return {
             "current_runner_id": self.runner_id,
-            "current_am_id": self.am_id,
-            "current_pt_id": self.pt_id,
-            "current_cs_id": self.cs_id,
             "current_chats": self.chats,
             "current_batch_size": self.chat_batch_size,
             "current_status": self.status.name,
