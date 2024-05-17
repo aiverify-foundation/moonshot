@@ -3,7 +3,6 @@ from time import sleep
 from moonshot.src.utils.timeit import timeit
 
 
-
 class TestCollectionTimeitMethod:
     @staticmethod
     def time_me():
@@ -38,9 +37,7 @@ class TestCollectionTimeitMethod:
         test_func()
         captured_sys_output = capsys.readouterr()
         # Compare the output. Omitted the decimal seconds
-        assert (
-            captured_sys_output.out[:42] == ("[src.test_timeit] Running [time_me] took 1")
+        assert captured_sys_output.out[:42] == (
+            "[src.test_timeit] Running [time_me] took 1"
         )
-        assert (
-            captured_sys_output.out[47:] == "s\n"
-        )
+        assert captured_sys_output.out[47:] == "s\n"

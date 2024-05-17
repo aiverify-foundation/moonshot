@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
@@ -14,11 +15,13 @@ class ObjectInstance:
         TestCollectionStorage.obj_info = obj_info
         return True
 
-    def read_file_iterator(self, json_keys: list[str], iterator_keys: list[str]) -> bool:
+    def read_file_iterator(
+        self, json_keys: list[str], iterator_keys: list[str]
+    ) -> bool:
         TestCollectionStorage.json_keys = json_keys
         TestCollectionStorage.iterator_keys = iterator_keys
         return True
-    
+
     def read_file(self) -> bool:
         return True
 
@@ -57,8 +60,8 @@ class TestCollectionStorage:
                 {
                     "expected_output": True,
                     "expected_error_message": "",
-                    "expected_exception": ""
-                }
+                    "expected_exception": "",
+                },
             ),
             # Parameter 1
             (
@@ -70,9 +73,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 ObjectInstance,
@@ -85,7 +88,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "[Storage]: 'None' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -98,7 +101,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "[Storage]: '' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -109,9 +112,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -122,9 +125,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -135,9 +138,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -150,7 +153,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "[Storage]: 'modulename' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -163,7 +166,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "[Storage]: 'datasets' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Parameter 2
             (
@@ -175,9 +178,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 ObjectInstance,
@@ -190,7 +193,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -203,7 +206,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -214,9 +217,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -227,9 +230,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -240,9 +243,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -255,7 +258,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             # Parameter 3
             (
@@ -267,9 +270,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -280,9 +283,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -293,9 +296,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -308,7 +311,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -319,9 +322,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -332,9 +335,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -345,9 +348,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid dictionary",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             # Parameter 4
             (
@@ -359,9 +362,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -374,7 +377,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -387,7 +390,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -398,9 +401,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -411,9 +414,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -424,9 +427,9 @@ class TestCollectionStorage:
                 "jsonio",
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -439,7 +442,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             # Parameter 5
             (
@@ -451,9 +454,9 @@ class TestCollectionStorage:
                 None,
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -466,7 +469,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -479,7 +482,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -490,9 +493,9 @@ class TestCollectionStorage:
                 {},
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -503,9 +506,9 @@ class TestCollectionStorage:
                 [],
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -516,9 +519,9 @@ class TestCollectionStorage:
                 123,
                 {
                     "expected_output": False,
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 ObjectInstance,
@@ -531,7 +534,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
         ],
     )
@@ -603,7 +606,10 @@ class TestCollectionStorage:
                         obj_type, obj_id, obj_info, obj_extension, obj_mod_type
                     )
                 assert len(e.value.errors()) == 1
-                assert e.value.errors()[0]["msg"].find(expected_dict["expected_error_message"])
+                assert (
+                    expected_dict["expected_error_message"]
+                    in e.value.errors()[0]["msg"]
+                )
 
     @pytest.mark.parametrize(
         "mock_result,obj_type,obj_id,obj_info,obj_extension,obj_mod_type,expected_dict",
@@ -620,7 +626,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to create object.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ObjectInstance],
@@ -633,7 +639,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ["", ObjectInstance],
@@ -646,7 +652,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to create object.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [{}, ObjectInstance],
@@ -659,7 +665,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to create object.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [[], ObjectInstance],
@@ -672,7 +678,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to create object.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [123, ObjectInstance],
@@ -685,7 +691,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to create object.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Get instance invalid response
             (
@@ -699,7 +705,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", "None"],
@@ -712,7 +718,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ""],
@@ -725,7 +731,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - ",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", {}],
@@ -738,7 +744,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - {}",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", []],
@@ -751,7 +757,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - []",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", 123],
@@ -764,7 +770,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - 123",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
         ],
     )
@@ -832,10 +838,7 @@ class TestCollectionStorage:
         [
             # Valid case
             (
-                [
-                    f"{EnvironmentVars.DATASETS[1]}/my_dataset.json",
-                    ObjectInstance
-                ],
+                [f"{EnvironmentVars.DATASETS[1]}/my_dataset.json", ObjectInstance],
                 "DATASETS",
                 "my_dataset",
                 "json",
@@ -845,15 +848,12 @@ class TestCollectionStorage:
                 {
                     "expected_output": True,
                     "expected_error_message": "",
-                    "expected_exception": ""
-                }
+                    "expected_exception": "",
+                },
             ),
             # Valid case with None keys
             (
-                [
-                    f"{EnvironmentVars.DATASETS[1]}/my_dataset.json",
-                    ObjectInstance
-                ],
+                [f"{EnvironmentVars.DATASETS[1]}/my_dataset.json", ObjectInstance],
                 "DATASETS",
                 "my_dataset",
                 "json",
@@ -863,8 +863,8 @@ class TestCollectionStorage:
                 {
                     "expected_output": True,
                     "expected_error_message": "",
-                    "expected_exception": ""
-                }
+                    "expected_exception": "",
+                },
             ),
         ],
     )
@@ -930,7 +930,6 @@ class TestCollectionStorage:
             # - obj_id: The ID of the object, which may be invalid.
             # - obj_extension: The file extension for the object, which may be invalid.
             # - expected_dict: A dictionary containing the expected error message and exception type.
-            
             # Parameter 1
             # Test case with obj_type as None
             (
@@ -939,9 +938,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as string 'None'
             (
@@ -952,7 +951,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: 'None' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Test case with obj_type as an empty string
             (
@@ -963,7 +962,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: '' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Test case with obj_type as an empty dictionary
             (
@@ -972,9 +971,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as an empty list
             (
@@ -983,9 +982,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as a number
             (
@@ -994,9 +993,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as an unrecognized string
             (
@@ -1007,7 +1006,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: 'newmodule' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Parameter 2
             # Test case with obj_id as None
@@ -1017,9 +1016,9 @@ class TestCollectionStorage:
                 None,
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as string 'None'
             (
@@ -1029,8 +1028,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: None",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_id as an empty string
             (
@@ -1040,8 +1039,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: ",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_id as an empty dictionary
             (
@@ -1050,9 +1049,9 @@ class TestCollectionStorage:
                 {},
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as an empty list
             (
@@ -1061,9 +1060,9 @@ class TestCollectionStorage:
                 [],
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as a number
             (
@@ -1072,9 +1071,9 @@ class TestCollectionStorage:
                 123,
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as an unrecognized string
             (
@@ -1084,8 +1083,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: newmodule",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Parameter 3
             # Test case with obj_extension as None
@@ -1095,9 +1094,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 None,
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as string 'None'
             (
@@ -1107,8 +1106,8 @@ class TestCollectionStorage:
                 "None",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_extension as an empty string
             (
@@ -1118,8 +1117,8 @@ class TestCollectionStorage:
                 "",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_extension as an empty dictionary
             (
@@ -1128,9 +1127,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 {},
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as an empty list
             (
@@ -1139,9 +1138,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 [],
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as a number
             (
@@ -1150,9 +1149,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 123,
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as an unrecognized string
             (
@@ -1162,8 +1161,8 @@ class TestCollectionStorage:
                 "newmodule",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
         ],
     )
@@ -1200,22 +1199,18 @@ class TestCollectionStorage:
         )
         if expected_dict["expected_exception"] == "RuntimeError":
             with pytest.raises(RuntimeError) as e:
-                Storage.read_object_with_iterator(
-                    obj_type, obj_id, obj_extension
-                )
+                Storage.read_object_with_iterator(obj_type, obj_id, obj_extension)
             assert e.value.args[0] == expected_dict["expected_error_message"]
 
         elif expected_dict["expected_exception"] == "ValidationError":
             with pytest.raises(ValidationError) as e:
-                Storage.read_object_with_iterator(
-                    obj_type, obj_id, obj_extension
-                )
+                Storage.read_object_with_iterator(obj_type, obj_id, obj_extension)
             assert len(e.value.errors()) == 1
-            assert e.value.errors()[0]["msg"].find(expected_dict["expected_error_message"])
-        
+            assert expected_dict["expected_error_message"] in e.value.errors()[0]["msg"]
+
         else:
             assert False
-    
+
     @pytest.mark.parametrize(
         "mock_result,obj_type,obj_id,obj_extension,obj_mod_type,json_keys,iterator_keys,expected_dict",
         [
@@ -1232,7 +1227,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ObjectInstance],
@@ -1246,7 +1241,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ["", ObjectInstance],
@@ -1260,7 +1255,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [{}, ObjectInstance],
@@ -1274,7 +1269,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [[], ObjectInstance],
@@ -1288,7 +1283,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [123, ObjectInstance],
@@ -1302,7 +1297,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Get instance invalid response
             (
@@ -1317,7 +1312,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", "None"],
@@ -1331,7 +1326,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ""],
@@ -1345,7 +1340,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - ",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", {}],
@@ -1359,7 +1354,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - {}",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", []],
@@ -1373,7 +1368,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - []",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", 123],
@@ -1387,7 +1382,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - 123",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
         ],
     )
@@ -1435,7 +1430,12 @@ class TestCollectionStorage:
         if expected_dict["expected_output"]:
             assert (
                 Storage.read_object_with_iterator(
-                    obj_type, obj_id, obj_extension, obj_mod_type, json_keys, iterator_keys
+                    obj_type,
+                    obj_id,
+                    obj_extension,
+                    obj_mod_type,
+                    json_keys,
+                    iterator_keys,
                 )
                 is expected_dict["expected_output"]
             )
@@ -1445,7 +1445,12 @@ class TestCollectionStorage:
             if expected_dict["expected_exception"] == "RuntimeError":
                 with pytest.raises(RuntimeError) as e:
                     Storage.read_object_with_iterator(
-                        obj_type, obj_id, obj_extension, obj_mod_type, json_keys, iterator_keys
+                        obj_type,
+                        obj_id,
+                        obj_extension,
+                        obj_mod_type,
+                        json_keys,
+                        iterator_keys,
                     )
                 assert e.value.args[0] == expected_dict["expected_error_message"]
 
@@ -1457,10 +1462,7 @@ class TestCollectionStorage:
         [
             # Valid case
             (
-                [
-                    f"{EnvironmentVars.DATASETS[1]}/my_dataset.json",
-                    ObjectInstance
-                ],
+                [f"{EnvironmentVars.DATASETS[1]}/my_dataset.json", ObjectInstance],
                 "DATASETS",
                 "my_dataset",
                 "json",
@@ -1468,15 +1470,12 @@ class TestCollectionStorage:
                 {
                     "expected_output": True,
                     "expected_error_message": "",
-                    "expected_exception": ""
-                }
+                    "expected_exception": "",
+                },
             ),
             # Valid case with None keys
             (
-                [
-                    f"{EnvironmentVars.DATASETS[1]}/my_dataset.json",
-                    ObjectInstance
-                ],
+                [f"{EnvironmentVars.DATASETS[1]}/my_dataset.json", ObjectInstance],
                 "DATASETS",
                 "my_dataset",
                 "json",
@@ -1484,8 +1483,8 @@ class TestCollectionStorage:
                 {
                     "expected_output": True,
                     "expected_error_message": "",
-                    "expected_exception": ""
-                }
+                    "expected_exception": "",
+                },
             ),
         ],
     )
@@ -1527,16 +1526,14 @@ class TestCollectionStorage:
         )
         # Passed validation and expected outcome
         assert (
-            Storage.read_object(
-                obj_type, obj_id, obj_extension, obj_mod_type
-            )
+            Storage.read_object(obj_type, obj_id, obj_extension, obj_mod_type)
             is expected_dict["expected_output"]
         )
         assert (
             TestCollectionStorage.filepath
             == f"{EnvironmentVars.DATASETS[1]}/{obj_id}.{obj_extension}"
         )
-    
+
     @pytest.mark.parametrize(
         "mock_result,obj_type,obj_id,obj_extension,expected_dict",
         [
@@ -1548,7 +1545,6 @@ class TestCollectionStorage:
             # - obj_id: The ID of the object, which may be invalid.
             # - obj_extension: The file extension for the object, which may be invalid.
             # - expected_dict: A dictionary containing the expected error message and exception type.
-            
             # Parameter 1
             # Test case with obj_type as None
             (
@@ -1557,9 +1553,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as string 'None'
             (
@@ -1570,7 +1566,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: 'None' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Test case with obj_type as an empty string
             (
@@ -1581,7 +1577,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: '' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Test case with obj_type as an empty dictionary
             (
@@ -1590,9 +1586,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as an empty list
             (
@@ -1601,9 +1597,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as a number
             (
@@ -1612,9 +1608,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_type as an unrecognized string
             (
@@ -1625,7 +1621,7 @@ class TestCollectionStorage:
                 {
                     "expected_error_message": "[Storage]: 'newmodule' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Parameter 2
             # Test case with obj_id as None
@@ -1635,9 +1631,9 @@ class TestCollectionStorage:
                 None,
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as string 'None'
             (
@@ -1647,8 +1643,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: None",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_id as an empty string
             (
@@ -1658,8 +1654,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: ",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_id as an empty dictionary
             (
@@ -1668,9 +1664,9 @@ class TestCollectionStorage:
                 {},
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as an empty list
             (
@@ -1679,9 +1675,9 @@ class TestCollectionStorage:
                 [],
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as a number
             (
@@ -1690,9 +1686,9 @@ class TestCollectionStorage:
                 123,
                 "json",
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_id as an unrecognized string
             (
@@ -1702,8 +1698,8 @@ class TestCollectionStorage:
                 "json",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: newmodule",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Parameter 3
             # Test case with obj_extension as None
@@ -1713,9 +1709,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 None,
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as string 'None'
             (
@@ -1725,8 +1721,8 @@ class TestCollectionStorage:
                 "None",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_extension as an empty string
             (
@@ -1736,8 +1732,8 @@ class TestCollectionStorage:
                 "",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
             # Test case with obj_extension as an empty dictionary
             (
@@ -1746,9 +1742,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 {},
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as an empty list
             (
@@ -1757,9 +1753,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 [],
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as a number
             (
@@ -1768,9 +1764,9 @@ class TestCollectionStorage:
                 "my_dataset",
                 123,
                 {
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             # Test case with obj_extension as an unrecognized string
             (
@@ -1780,8 +1776,8 @@ class TestCollectionStorage:
                 "newmodule",
                 {
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
+                    "expected_exception": "RuntimeError",
+                },
             ),
         ],
     )
@@ -1813,22 +1809,18 @@ class TestCollectionStorage:
         )
         if expected_dict["expected_exception"] == "RuntimeError":
             with pytest.raises(RuntimeError) as e:
-                Storage.read_object(
-                    obj_type, obj_id, obj_extension
-                )
+                Storage.read_object(obj_type, obj_id, obj_extension)
             assert e.value.args[0] == expected_dict["expected_error_message"]
 
         elif expected_dict["expected_exception"] == "ValidationError":
             with pytest.raises(ValidationError) as e:
-                Storage.read_object(
-                    obj_type, obj_id, obj_extension
-                )
+                Storage.read_object(obj_type, obj_id, obj_extension)
             assert len(e.value.errors()) == 1
-            assert e.value.errors()[0]["msg"].find(expected_dict["expected_error_message"])
-        
+            assert expected_dict["expected_error_message"] in e.value.errors()[0]["msg"]
+
         else:
             assert False
-    
+
     @pytest.mark.parametrize(
         "mock_result,obj_type,obj_id,obj_extension,obj_mod_type,expected_dict",
         [
@@ -1843,7 +1835,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ObjectInstance],
@@ -1855,7 +1847,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 ["", ObjectInstance],
@@ -1867,7 +1859,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [{}, ObjectInstance],
@@ -1879,7 +1871,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [[], ObjectInstance],
@@ -1891,7 +1883,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 [123, ObjectInstance],
@@ -1903,7 +1895,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Get instance invalid response
             (
@@ -1916,7 +1908,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", "None"],
@@ -1928,7 +1920,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - None",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", ""],
@@ -1940,7 +1932,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - ",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", {}],
@@ -1952,7 +1944,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - {}",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", []],
@@ -1964,7 +1956,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - []",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 ["None", 123],
@@ -1976,7 +1968,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "[Storage]: Unable to get defined object module instance - 123",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
         ],
     )
@@ -2019,17 +2011,13 @@ class TestCollectionStorage:
         )
         if expected_dict["expected_output"]:
             assert (
-                Storage.read_object(
-                    obj_type, obj_id, obj_extension, obj_mod_type
-                )
+                Storage.read_object(obj_type, obj_id, obj_extension, obj_mod_type)
                 is expected_dict["expected_output"]
             )
         else:
             if expected_dict["expected_exception"] == "RuntimeError":
                 with pytest.raises(RuntimeError) as e:
-                    Storage.read_object(
-                        obj_type, obj_id, obj_extension, obj_mod_type
-                    )
+                    Storage.read_object(obj_type, obj_id, obj_extension, obj_mod_type)
                 assert e.value.args[0] == expected_dict["expected_error_message"]
 
     # ------------------------------------------------------------------------------
@@ -2048,7 +2036,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             # Invalid case
             (
@@ -2059,9 +2047,9 @@ class TestCollectionStorage:
                 {
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
-            )
+                    "expected_exception": "RuntimeError",
+                },
+            ),
         ],
     )
     def test_delete_object(
@@ -2120,7 +2108,7 @@ class TestCollectionStorage:
                     "expected_output": True,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             # Valid case
             (
@@ -2132,7 +2120,7 @@ class TestCollectionStorage:
                     "expected_output": False,
                     "expected_error_message": "",
                     "expected_exception": "",
-                }
+                },
             ),
             # Invalid case
             (
@@ -2143,9 +2131,9 @@ class TestCollectionStorage:
                 {
                     "expected_output": False,
                     "expected_error_message": "[Storage]: No datasets found with ID: my_dataset",
-                    "expected_exception": "RuntimeError"
-                }
-            )
+                    "expected_exception": "RuntimeError",
+                },
+            ),
         ],
     )
     def test_is_object_exists(
@@ -2176,8 +2164,13 @@ class TestCollectionStorage:
             The result of Storage.is_object_exists is as expected based on the test parameters.
         """
         mocker.patch.object(Storage, "get_filepath", return_value=mock_result)
-        mocker.patch.object(Path, "exists", return_value=expected_dict["expected_output"])
-        assert Storage.is_object_exists(obj_type, obj_id, obj_extension) is expected_dict["expected_output"]
+        mocker.patch.object(
+            Path, "exists", return_value=expected_dict["expected_output"]
+        )
+        assert (
+            Storage.is_object_exists(obj_type, obj_id, obj_extension)
+            is expected_dict["expected_output"]
+        )
 
     # ------------------------------------------------------------------------------
     # Test get_objects functionality
@@ -2191,33 +2184,31 @@ class TestCollectionStorage:
                 "json",
                 {
                     "directory": ["tests/unit-tests/src/importmodules/"],
-                    "expected_output": ["tests/unit-tests/src/importmodules/arc-easy.json"],
-                }
+                    "expected_output": [
+                        "tests/unit-tests/src/importmodules/arc-easy.json"
+                    ],
+                },
             ),
             (
                 "DATASETS",
                 "py",
                 {
-                    "directory": [
-                        "tests/unit-tests/src/importmodules/"
-                    ],
+                    "directory": ["tests/unit-tests/src/importmodules/"],
                     "expected_output": [
                         "tests/unit-tests/src/importmodules/__init__.py",
-                        "tests/unit-tests/src/importmodules/sample_file.py"
+                        "tests/unit-tests/src/importmodules/sample_file.py",
                     ],
-                }
+                },
             ),
             (
                 "DATASETS",
                 "pdf",
                 {
-                    "directory": [
-                        "tests/unit-tests/src/importmodules/"
-                    ],
+                    "directory": ["tests/unit-tests/src/importmodules/"],
                     "expected_output": [],
-                }
+                },
             ),
-        ]
+        ],
     )
     def test_get_objects(self, mocker, obj_type, obj_extension, expected_dict):
         """
@@ -2238,7 +2229,11 @@ class TestCollectionStorage:
         Raises:
             AssertionError: If the list of file paths does not match the expected output.
         """
-        mocker.patch.object(EnvironmentVars, "get_file_directory", return_value=expected_dict["directory"])
+        mocker.patch.object(
+            EnvironmentVars,
+            "get_file_directory",
+            return_value=expected_dict["directory"],
+        )
         iterator = Storage.get_objects(obj_type, obj_extension)
         try:
             files_list = [value for value in iterator]
@@ -2255,9 +2250,9 @@ class TestCollectionStorage:
                 "json",
                 {
                     "to_mock": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 "None",
@@ -2266,7 +2261,7 @@ class TestCollectionStorage:
                     "to_mock": False,
                     "expected_error_message": "[Storage]: 'None' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 "",
@@ -2275,34 +2270,34 @@ class TestCollectionStorage:
                     "to_mock": False,
                     "expected_error_message": "[Storage]: '' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             (
                 {},
                 "json",
                 {
                     "to_mock": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 [],
                 "json",
                 {
                     "to_mock": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 123,
                 "json",
                 {
                     "to_mock": False,
-                    "expected_error_message": "1 validation error for create_object",
-                    "expected_exception": "ValidationError"
-                }
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
             ),
             (
                 "newmodule",
@@ -2311,7 +2306,7 @@ class TestCollectionStorage:
                     "to_mock": False,
                     "expected_error_message": "[Storage]: 'newmodule' is not a recognized EnvironmentVar value.",
                     "expected_exception": "RuntimeError",
-                }
+                },
             ),
             # Parameter 2
             (
@@ -2320,9 +2315,9 @@ class TestCollectionStorage:
                 {
                     "to_mock": True,
                     "directory": ["tests/unit-tests/src/importmodules/"],
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2332,7 +2327,7 @@ class TestCollectionStorage:
                     "directory": ["tests/unit-tests/src/importmodules/"],
                     "expected_output": [],
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2342,7 +2337,7 @@ class TestCollectionStorage:
                     "directory": ["tests/unit-tests/src/importmodules/"],
                     "expected_output": [],
                     "expected_exception": "",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2350,9 +2345,9 @@ class TestCollectionStorage:
                 {
                     "to_mock": True,
                     "directory": ["tests/unit-tests/src/importmodules/"],
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2360,9 +2355,9 @@ class TestCollectionStorage:
                 {
                     "to_mock": True,
                     "directory": ["tests/unit-tests/src/importmodules/"],
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2370,9 +2365,9 @@ class TestCollectionStorage:
                 {
                     "to_mock": True,
                     "directory": ["tests/unit-tests/src/importmodules/"],
-                    "expected_error_message": "1 validation error for create_object",
+                    "expected_error_message": "Input should be a valid string",
                     "expected_exception": "ValidationError",
-                }
+                },
             ),
             (
                 "DATASETS",
@@ -2382,11 +2377,13 @@ class TestCollectionStorage:
                     "directory": ["tests/unit-tests/src/importmodules/"],
                     "expected_output": [],
                     "expected_exception": "",
-                }
+                },
             ),
-        ]
+        ],
     )
-    def test_get_objects_invalid_arguments(self, mocker, obj_type, obj_extension, expected_dict):
+    def test_get_objects_invalid_arguments(
+        self, mocker, obj_type, obj_extension, expected_dict
+    ):
         """
         Test the Storage.get_objects method with invalid arguments.
 
@@ -2408,23 +2405,23 @@ class TestCollectionStorage:
             AssertionError: If the actual outcome does not match the expected outcome.
         """
         if expected_dict["to_mock"]:
-            mocker.patch.object(EnvironmentVars, "get_file_directory", return_value=expected_dict["directory"])
-            
+            mocker.patch.object(
+                EnvironmentVars,
+                "get_file_directory",
+                return_value=expected_dict["directory"],
+            )
+
         if expected_dict["expected_exception"] == "RuntimeError":
             with pytest.raises(RuntimeError) as e:
-                Storage.get_objects(
-                    obj_type, obj_extension
-                )
+                Storage.get_objects(obj_type, obj_extension)
             assert e.value.args[0] == expected_dict["expected_error_message"]
 
         elif expected_dict["expected_exception"] == "ValidationError":
             with pytest.raises(ValidationError) as e:
-                Storage.get_objects(
-                    obj_type, obj_extension
-                )
+                Storage.get_objects(obj_type, obj_extension)
             assert len(e.value.errors()) == 1
-            assert e.value.errors()[0]["msg"].find(expected_dict["expected_error_message"])
-        
+            assert expected_dict["expected_error_message"] in e.value.errors()[0]["msg"]
+
         else:
             iterator = Storage.get_objects(obj_type, obj_extension)
             try:

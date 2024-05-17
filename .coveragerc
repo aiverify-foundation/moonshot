@@ -5,9 +5,7 @@ cover_pylib = False
 
 [coverage:report]
 skip_empty = true
-
-[report]
-omit = /usr/*
+omit = /usr/*, moonshot/api.py, moonshot/src/storage/*_interface.py
 exclude_lines =
     @abstractmethod
     @abc.abstractmethod

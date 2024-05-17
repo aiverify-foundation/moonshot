@@ -85,7 +85,11 @@ def get_instance(id: str, filepath: str) -> Any:
             obj = getattr(module, attr)
 
             # Check if the attribute is a class and has the same module name as the id
-            if inspect.isclass(obj) and obj.__name__ == id:
+            if (
+                inspect.isclass(obj)
+                and "None" not in obj.__module__
+                and obj.__module__ == id
+            ):
                 return obj
 
     # Return None if no instance of the class is found

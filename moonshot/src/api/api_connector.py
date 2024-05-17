@@ -1,3 +1,5 @@
+from pydantic import validate_call
+
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 
@@ -5,6 +7,7 @@ from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoi
 # ------------------------------------------------------------------------------
 # Connector APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_create_connector_from_endpoint(ep_id: str) -> Connector:
     """
     Creates a connector based on the provided endpoint ID.
@@ -22,6 +25,7 @@ def api_create_connector_from_endpoint(ep_id: str) -> Connector:
     return Connector.create(ConnectorEndpoint.read(ep_id))
 
 
+@validate_call
 def api_create_connectors_from_endpoints(ep_ids: list[str]) -> list[Connector]:
     """
     Creates connectors for multiple endpoints based on their IDs.
