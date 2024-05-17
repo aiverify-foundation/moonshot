@@ -52,9 +52,6 @@ class RedTeamingProgress:
         Returns:
             None
         """
-        # prompt_time = datetime.fromisoformat(red_teaming_prompt_arguments["start_time"])
-        # delta = dt.timedelta(seconds=float(red_teaming_prompt_arguments["duration"]))
-        # response_time = prompt_time + delta
         prompt_response_dict = {
             "conn_id": red_teaming_prompt_arguments["conn_id"],
             "context_strategy": red_teaming_prompt_arguments["cs_id"],
@@ -72,9 +69,6 @@ class RedTeamingProgress:
         if red_teaming_prompt_arguments["conn_id"] not in self.chats:
             self.chats[red_teaming_prompt_arguments["conn_id"]] = []
         self.chats[red_teaming_prompt_arguments["conn_id"]].append(prompt_response_dict)
-        self.am_id = red_teaming_prompt_arguments.get("am_id", "")
-        self.pt_id = red_teaming_prompt_arguments.get("pt_id", "")
-        self.cs_id = red_teaming_prompt_arguments.get("cs_id", "")
         self.status = run_status
 
     def reset_chats(self) -> None:
