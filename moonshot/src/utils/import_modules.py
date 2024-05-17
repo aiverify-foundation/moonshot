@@ -2,6 +2,7 @@ import importlib.util
 import inspect
 from importlib.machinery import ModuleSpec
 from types import ModuleType
+from typing import Any
 
 
 def create_module_spec(module_name: str, module_file_path: str) -> None | ModuleSpec:
@@ -56,7 +57,7 @@ def import_module_from_spec(module_spec: ModuleSpec) -> ModuleType | None:
     return module
 
 
-def get_instance(id: str, filepath: str):
+def get_instance(id: str, filepath: str) -> Any:
     """
     A helper method to get an instance of a class from a module
 
@@ -84,7 +85,7 @@ def get_instance(id: str, filepath: str):
             obj = getattr(module, attr)
 
             # Check if the attribute is a class and has the same module name as the id
-            if inspect.isclass(obj) and obj.__module__ == id:
+            if inspect.isclass(obj) and obj.__name__ == id:
                 return obj
 
     # Return None if no instance of the class is found

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Iterator
 
 import xxhash
+from pydantic import validate_call
 
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
 from moonshot.src.storage.db_interface import DBInterface
@@ -14,6 +15,7 @@ from moonshot.src.utils.import_modules import get_instance
 
 class Storage:
     @staticmethod
+    @validate_call
     def create_object(
         obj_type: str,
         obj_id: str,
@@ -29,24 +31,30 @@ class Storage:
             obj_id (str): The ID of the object.
             obj_info (dict): A dictionary containing the object information.
             obj_extension (str): The file extension (e.g., 'json', 'py').
-            obj_mod_type (str, optional): The module type for object serialization. Defaults to 'json'.
+            obj_mod_type (str, optional): The module type for object serialization. Defaults to 'jsonio'.
         """
+        if not hasattr(EnvironmentVars, obj_type):
+            raise RuntimeError(
+                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+            )
+
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
-        if obj_filepath:
+        if obj_filepath and isinstance(obj_filepath, str):
             obj_mod_instance = get_instance(
                 obj_mod_type,
                 Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
-            if obj_mod_instance:
+            if obj_mod_instance and callable(obj_mod_instance):
                 return obj_mod_instance(obj_filepath).create_file(obj_info)
             else:
                 raise RuntimeError(
-                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError("Unable to create object.")
+            raise RuntimeError("[Storage]: Unable to create object.")
 
     @staticmethod
+    @validate_call
     def read_object_with_iterator(
         obj_type: str,
         obj_id: str,
@@ -77,24 +85,32 @@ class Storage:
             will contain only the specified keys and their values. If `iterator_keys` is provided, the dictionary
             will include iterators for the specified keys, enabling streamed data access.
         """
+        if not hasattr(EnvironmentVars, obj_type):
+            raise RuntimeError(
+                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+            )
+
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
-        if obj_filepath:
+        if obj_filepath and isinstance(obj_filepath, str):
             obj_mod_instance = get_instance(
                 obj_mod_type,
                 Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
-            if obj_mod_instance:
+            if obj_mod_instance and callable(obj_mod_instance):
                 return obj_mod_instance(obj_filepath).read_file_iterator(
                     json_keys, iterator_keys
                 )
             else:
                 raise RuntimeError(
-                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
+            raise RuntimeError(
+                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
+            )
 
     @staticmethod
+    @validate_call
     def read_object(
         obj_type: str, obj_id: str, obj_extension: str, obj_mod_type: str = "jsonio"
     ) -> dict:
@@ -110,36 +126,53 @@ class Storage:
         Returns:
             dict: A dictionary containing the object information.
         """
+        if not hasattr(EnvironmentVars, obj_type):
+            raise RuntimeError(
+                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+            )
+
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
-        if obj_filepath:
+        if obj_filepath and isinstance(obj_filepath, str):
             obj_mod_instance = get_instance(
                 obj_mod_type,
                 Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
-            if obj_mod_instance:
+            if obj_mod_instance and callable(obj_mod_instance):
                 return obj_mod_instance(obj_filepath).read_file()
             else:
                 raise RuntimeError(
-                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
+            raise RuntimeError(
+                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
+            )
 
     @staticmethod
-    def delete_object(obj_type: str, obj_id: str, obj_extension: str) -> None:
+    @validate_call
+    def delete_object(obj_type: str, obj_id: str, obj_extension: str) -> bool:
         """
-        Deletes an object.
+        Deletes the specified object file.
 
         Args:
             obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
             obj_id (str): The ID of the object.
             obj_extension (str): The file extension (e.g., 'json', 'py').
+
+        Returns:
+            bool: True if the file was successfully deleted.
+
+        Raises:
+            RuntimeError: If no file is found with the specified ID and type.
         """
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
         if obj_filepath:
             Path(obj_filepath).unlink()
+            return True
         else:
-            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
+            raise RuntimeError(
+                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
+            )
 
     @staticmethod
     def count_objects(
@@ -166,6 +199,7 @@ class Storage:
         return count
 
     @staticmethod
+    @validate_call
     def get_objects(obj_type: str, obj_extension: str) -> Iterator[str]:
         """
         Retrieves all the object files with the specified extension from one or more directories.
@@ -177,6 +211,11 @@ class Storage:
         Returns:
             Iterator[str]: An iterator that yields the filepaths of the object files.
         """
+        if not hasattr(EnvironmentVars, obj_type):
+            raise RuntimeError(
+                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+            )
+
         directories = EnvironmentVars.get_file_directory(obj_type)
         return chain.from_iterable(
             glob.iglob(f"{directory}/*.{obj_extension}") for directory in directories
@@ -253,6 +292,7 @@ class Storage:
         )
 
     @staticmethod
+    @validate_call
     def is_object_exists(obj_type: str, obj_id: str, obj_extension: str) -> bool:
         """
         Checks if the object exists.
