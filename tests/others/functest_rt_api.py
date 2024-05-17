@@ -104,7 +104,7 @@ def run_manual_rt():
     print("Running Manual Red Teamming")
     runner_name = "test mrt"
     runner_id = "test-mrt"
-    endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo"]
+    endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo", "openai-gpt4"]
 
     mrt_arguments = {
         "manual_rt_args": {
@@ -120,20 +120,19 @@ def run_manual_rt():
     print("1) Creating Runner")
     runner = api_create_runner(
         name=runner_name,
-        endpoints=endpoints,
+        endpoints=endpoints
     )
     runner.close()
 
     print("2)Loading and Running runner")
-    runner = api_load_runner(runner_id)
-    
+    runner = api_load_runner(runner_id, progress_callback_func=runner_callback_fn)
     loop = asyncio.get_event_loop()
-    runner = api_load_runner(runner_id)
     manual_rt_results = loop.run_until_complete(
         runner.run_red_teaming(mrt_arguments)
     )
     runner.close()
     print("Manual Red Teaming Results:", manual_rt_results)
+    return manual_rt_results
 
 def run_automated_rt():
     # Run automated red teaming
@@ -266,20 +265,19 @@ def test_attack_apis():
     print("Get All Context Strategy Metadata")
     print(api_get_all_context_strategy_metadata(), "\n")    
 
-runner_name = "test-runner-art"
-runner_id = "test-runner-art"
 
-# tests automated and red teaming. creates a runner, and runss manual and automated red teaming
-run_manual_rt()
-run_automated_rt()
-run_manual_and_automated_rt()
+if __name__ == "__main__":
+# # tests automated and red teaming. creates a runner, and runss manual and automated red teaming
+    run_manual_rt()
+    run_automated_rt()
+    run_manual_and_automated_rt()
 
-# test cancellation of automated red teaming
-runner_id = "test-art"
-test_art_and_cancel()
+    # test cancellation of automated red teaming
+    runner_id = "test-art"
+    test_art_and_cancel()
 
-# tests all session apis
-test_session_apis(runner_id)
+    # tests all session apis
+    test_session_apis(runner_id)
 
-# # tests all attack apis
-test_attack_apis()
+    # tests all attack apis
+    test_attack_apis()

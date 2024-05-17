@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class ChatRecord(BaseModel):
-    chat_record_id: int
     conn_id: str
     context_strategy: Optional[str]
     prompt_template: Optional[str]
@@ -14,7 +13,7 @@ class ChatRecord(BaseModel):
     prepared_prompt: str
     system_prompt: Optional[str]
     predicted_result: str
-    duration: float
+    duration: str
     prompt_time: str
 
 
