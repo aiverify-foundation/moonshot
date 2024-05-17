@@ -267,9 +267,6 @@ def test_attack_apis():
 
 
 if __name__ == "__main__":
-    runner_name = "test-art"
-    runner_id = "test-mrtx"
-
 # # tests automated and red teaming. creates a runner, and runss manual and automated red teaming
     run_manual_rt()
     run_automated_rt()
