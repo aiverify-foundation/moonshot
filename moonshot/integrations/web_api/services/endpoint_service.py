@@ -48,7 +48,11 @@ class EndpointService(BaseService):
     def update_endpoint(
         self, endpoint_id: str, endpoint_data: EndpointUpdateDTO
     ) -> None:
-        update_data = {k: v for k, v in endpoint_data.items() if v is not None}
+        update_data = {
+            k: v
+            for k, v in endpoint_data.to_dict().items()
+            if v is not None and k != "id"
+        }
         moonshot_api.api_update_endpoint(ep_id=endpoint_id, **update_data)
 
     @exception_handler
