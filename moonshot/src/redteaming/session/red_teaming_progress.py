@@ -113,9 +113,6 @@ class RedTeamingProgress:
 
         The dictionary includes the following keys:
         - "current_runner_id": The ID of the current runner.
-        - "current_am_id": The ID of the current attack module.
-        - "current_pt_id": The ID of the current prompt template.
-        - "current_cs_id": The ID of the current context strategy.
         - "current_chats": The chats that will be returned during a callback.
         - "current_batch_size": The current batch size, which indicates the number of chats returned during a callback.
         - "current_status": The current status of the run.
