@@ -1,6 +1,6 @@
 from .... import api as moonshot_api
-from ..schemas.endpoint_response_model import EndpointDataModel
 from ..schemas.endpoint_create_dto import EndpointUpdateDTO
+from ..schemas.endpoint_response_model import EndpointDataModel
 from .base_service import BaseService
 from .utils.exceptions_handler import exception_handler
 
