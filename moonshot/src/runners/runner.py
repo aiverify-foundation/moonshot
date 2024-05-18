@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 from typing import Callable
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -161,7 +161,7 @@ class Runner:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(runner_id: str) -> RunnerArguments:
         """
         Retrieves the runner data and constructs a RunnerArguments object.
@@ -188,7 +188,7 @@ class Runner:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(runner_id: str) -> bool:
         """
         Deletes the runner and its associated database instance.

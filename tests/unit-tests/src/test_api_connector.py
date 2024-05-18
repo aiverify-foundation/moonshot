@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import pytest
 from pydantic import ValidationError
 
@@ -16,14 +19,33 @@ class TestCollectionApiConnector:
         # Reset
         api_set_environment_variables(
             {
-                "CONNECTORS": "./tests/unit-tests/src/data/connectors/",
-                "CONNECTORS_ENDPOINTS": "./tests/unit-tests/src/data/connectors-endpoints/",
-                "IO_MODULES": "./tests/unit-tests/src/data/io-modules/",
+                "CONNECTORS": "tests/unit-tests/src/data/connectors/",
+                "CONNECTORS_ENDPOINTS": "tests/unit-tests/src/data/connectors-endpoints/",
+                "IO_MODULES": "tests/unit-tests/src/data/io-modules/",
             }
+        )
+
+        # Copy endpoint and connector
+        shutil.copyfile(
+            "tests/unit-tests/src/data/samples/openai-connector.py",
+            "tests/unit-tests/src/data/connectors/openai-connector.py",
+        )
+        shutil.copyfile(
+            "tests/unit-tests/src/data/samples/openai-gpt4.json",
+            "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
         )
 
         # Perform tests
         yield
+
+        # Delete the endpoint using os.remove
+        endpoint_paths = [
+            "tests/unit-tests/src/data/connectors/openai-connector.py",
+            "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
+        ]
+        for endpoint_path in endpoint_paths:
+            if os.path.exists(endpoint_path):
+                os.remove(endpoint_path)
 
     # ------------------------------------------------------------------------------
     # Test api_create_connector_from_endpoint functionality
@@ -38,7 +60,15 @@ class TestCollectionApiConnector:
                 "openai",
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Storage]: No connectors_endpoints found with ID: openai",
+                    "expected_error_message": "No connectors_endpoints found with ID: openai",
+                    "expected_exception": "RuntimeError",
+                },
+            ),
+            (
+                "",
+                {
+                    "expected_output": False,
+                    "expected_error_message": "No connectors_endpoints found with ID: ",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -54,7 +84,7 @@ class TestCollectionApiConnector:
                 "None",
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Storage]: No connectors_endpoints found with ID: None",
+                    "expected_error_message": "No connectors_endpoints found with ID: None",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -86,20 +116,19 @@ class TestCollectionApiConnector:
     )
     def test_api_create_connector_from_endpoint(self, ep_id, expected_dict):
         """
-        Test the api_create_connector_from_endpoint function with various endpoint IDs.
+        Validate the behavior of the api_create_connector_from_endpoint function.
 
-        This test checks if the api_create_connector_from_endpoint function behaves as expected when provided with
-        different endpoint IDs and expected outcomes. It asserts that the function returns a Connector instance when
-        expected, and raises the appropriate exceptions with the correct error messages when an error is expected.
+        This test ensures that the api_create_connector_from_endpoint function conforms to expectations when given
+        various endpoint IDs. It verifies that a Connector instance is returned when anticipated, and that the correct
+        exceptions are thrown with the appropriate error messages when an error condition is encountered.
 
-        Args:
-            self: Instance of the test class.
-            ep_id (str): The endpoint ID to test the function with.
-            expected_dict (dict): A dictionary containing the expected output, error message, and exception.
+        Parameters:
+            ep_id (str): The endpoint ID for testing the function.
+            expected_dict (dict): A dictionary with keys 'expected_output', 'expected_error_message', and 'expected_exception'
+                                  detailing the expected results of the test.
 
         Raises:
-            AssertionError: If the function's output does not match the expected output or if the expected exception
-                            is not raised with the correct error message.
+            AssertionError: The actual function output or raised exception does not align with the expected results.
         """
         if expected_dict["expected_output"]:
             assert isinstance(api_create_connector_from_endpoint(ep_id), Connector)
@@ -119,7 +148,7 @@ class TestCollectionApiConnector:
                 )
 
             else:
-                assert False, "Unexpected exception type provided in test case."
+                assert False
 
     # ------------------------------------------------------------------------------
     # Test api_create_connectors_from_endpoints functionality
@@ -133,6 +162,14 @@ class TestCollectionApiConnector:
             # Invalid cases
             (
                 "openai",
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be a valid list",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "",
                 {
                     "expected_output": False,
                     "expected_error_message": "Input should be a valid list",
@@ -181,7 +218,15 @@ class TestCollectionApiConnector:
                 ["openai"],
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Storage]: No connectors_endpoints found with ID: openai",
+                    "expected_error_message": "No connectors_endpoints found with ID: openai",
+                    "expected_exception": "RuntimeError",
+                },
+            ),
+            (
+                [""],
+                {
+                    "expected_output": False,
+                    "expected_error_message": "No connectors_endpoints found with ID: ",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -197,7 +242,7 @@ class TestCollectionApiConnector:
                 ["None"],
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Storage]: No connectors_endpoints found with ID: None",
+                    "expected_error_message": "No connectors_endpoints found with ID: None",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -229,7 +274,7 @@ class TestCollectionApiConnector:
                 ["openai-gpt4", "openai"],
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Storage]: No connectors_endpoints found with ID: openai",
+                    "expected_error_message": "No connectors_endpoints found with ID: openai",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -237,26 +282,25 @@ class TestCollectionApiConnector:
     )
     def test_api_create_connectors_from_endpoints(self, ep_id, expected_dict):
         """
-        Test the api_create_connectors_from_endpoints function.
+        Validates the behavior of api_create_connectors_from_endpoints with various inputs.
 
-        This test checks if the api_create_connectors_from_endpoints function behaves as expected when provided with
-        different endpoint IDs and expected outcomes. It tests for both successful connector creation and expected
-        exceptions.
+        This test ensures that the api_create_connectors_from_endpoints function performs as expected when given
+        different endpoint IDs. It checks for successful connector creation and the correct handling of exceptions.
 
-        Args:
-            ep_id (str | list): The endpoint ID or list of endpoint IDs to create connectors from.
-            expected_dict (dict): A dictionary containing the expected test outcomes, which includes:
-                - expected_output (bool): The expected result of the function call (True if connectors are expected to be created successfully).
-                - expected_error_message (str): The expected error message if an exception is raised.
-                - expected_exception (str): The type of exception expected to be raised as a string.
+        Parameters:
+            ep_id (str | list): The endpoint ID or a list of endpoint IDs for connector creation.
+            expected_dict (dict): A dictionary with the expected outcomes of the test, containing:
+                - expected_output (bool): The anticipated result of the function call (True if successful creation of connectors is expected).
+                - expected_error_message (str): The error message expected if an exception occurs.
+                - expected_exception (str): The name of the expected exception as a string.
 
         Raises:
-            AssertionError: If the actual behavior of the function does not match the expected outcome.
+            AssertionError: If the function's actual behavior does not align with the expected outcome.
         """
         if expected_dict["expected_output"]:
-            insts = api_create_connectors_from_endpoints(ep_id)
-            for inst in insts:
-                assert isinstance(inst, Connector)
+            instances = api_create_connectors_from_endpoints(ep_id)
+            for instance in instances:
+                assert isinstance(instance, Connector)
         else:
             if expected_dict["expected_exception"] == "RuntimeError":
                 with pytest.raises(RuntimeError) as e:
@@ -280,11 +324,13 @@ class TestCollectionApiConnector:
     # ------------------------------------------------------------------------------
     def test_api_get_all_connector_type(self):
         """
-        Test the api_get_all_connector_type function.
+        Verify that the api_get_all_connector_type function returns the expected connector types.
 
-        This test verifies that the api_get_all_connector_type function returns the correct list of connector types.
+        This unit test checks that the list of connector types returned by the api_get_all_connector_type function
+        matches the expected list of connector types known to be available in the system.
         """
-        assert api_get_all_connector_type() == [
-            "openai-connector",
-            "test_connectors_file",
-        ]
+        expected_connector_types = ["openai-connector"]
+        actual_connector_types = api_get_all_connector_type()
+        assert (
+            actual_connector_types == expected_connector_types
+        ), f"Expected connector types {expected_connector_types}, but got {actual_connector_types}"

@@ -1,0 +1,12 @@
+{
+    "name": "ARC-Easy",
+    "description": "A dataset of genuine grade-school level, multiple-choice science questions in advanced Q&A. This is the easy set.",
+    "license": "CC BY-SA",
+    "reference": "https://allenai.org/data/arc",
+    "examples": [
+        {
+            "input": "Which factor will most likely cause a person to develop a fever?\nA. a leg muscle relaxing after exercise\nB. a bacterial population in the bloodstream\nC. several viral particles on the skin\nD. carbohydrates being digested in the stomach\n",
+            "target": "B. a bacterial population in the bloodstream"
+        }
+    ]
+}

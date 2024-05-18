@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -86,7 +86,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(rec_id: str) -> RecipeArguments:
         """
         Retrieves the details of a specific recipe.
@@ -207,7 +207,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(rec_id: str) -> bool:
         """
         Deletes a recipe identified by its unique ID.

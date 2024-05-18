@@ -1,9 +1,12 @@
+from pydantic import validate_call
+
 from moonshot.src.metrics.metric import Metric
 
 
 # ------------------------------------------------------------------------------
 # Metrics APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_delete_metric(met_id: str) -> bool:
     """
     Deletes a metric identified by its unique metric ID.

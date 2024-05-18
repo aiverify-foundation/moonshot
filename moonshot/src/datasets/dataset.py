@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
@@ -14,7 +14,7 @@ class Dataset:
     cache_extension = "json"
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(ds_id: str) -> DatasetArguments:
         """
         Fetches the details of a given dataset.
@@ -85,7 +85,7 @@ class Dataset:
         return dataset_info
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(ds_id: str) -> bool:
         """
         Deletes a dataset from storage.

@@ -1,3 +1,5 @@
+from pydantic import ValidationError, validate_call
+
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
@@ -7,6 +9,7 @@ from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
 # ------------------------------------------------------------------------------
 # Connector Endpoint APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_create_endpoint(
     name: str,
     connector_type: str,
@@ -54,6 +57,7 @@ def api_create_endpoint(
     return ConnectorEndpoint.create(connector_endpoint_args)
 
 
+@validate_call
 def api_read_endpoint(ep_id: str) -> dict:
     """
     Reads an endpoint from the connector manager.
@@ -69,6 +73,7 @@ def api_read_endpoint(ep_id: str) -> dict:
     return ConnectorEndpoint.read(ep_id).to_dict()
 
 
+@validate_call
 def api_update_endpoint(ep_id: str, **kwargs) -> bool:
     """
     Updates an existing endpoint with new values.
@@ -92,17 +97,26 @@ def api_update_endpoint(ep_id: str, **kwargs) -> bool:
     try:
         existing_endpoint = ConnectorEndpoint.read(ep_id)
     except Exception:
-        raise RuntimeError(f"Endpoint with ID '{ep_id}' does not exist")
+        raise RuntimeError(
+            f"[api_connector_endpoint]: Endpoint with ID '{ep_id}' does not exist"
+        )
 
     # Update the fields of the existing endpoint with the provided kwargs
     for key, value in kwargs.items():
         if hasattr(existing_endpoint, key):
             setattr(existing_endpoint, key, value)
 
+    # Perform pydantic check on the updated existing endpoint
+    try:
+        ConnectorEndpointArguments(**existing_endpoint.to_dict())
+    except ValidationError as e:
+        raise e
+
     # Update the endpoint
     return ConnectorEndpoint.update(existing_endpoint)
 
 
+@validate_call
 def api_delete_endpoint(ep_id: str) -> bool:
     """
     Deletes an endpoint from the connector manager.

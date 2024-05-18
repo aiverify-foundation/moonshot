@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
@@ -10,7 +10,7 @@ from moonshot.src.storage.storage import Storage
 
 class Result:
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(result_id: str) -> dict:
         """
         Reads the result data from storage for a given result ID.
@@ -59,7 +59,7 @@ class Result:
             raise RuntimeError(f"Unable to get results for {result_id}.")
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(result_id: str) -> bool:
         """
         Deletes the result data associated with the given result ID from storage.

@@ -35,7 +35,7 @@ class Storage:
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
-                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+                f"'{obj_type}' is not a recognized EnvironmentVar value."
             )
 
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
@@ -48,10 +48,10 @@ class Storage:
                 return obj_mod_instance(obj_filepath).create_file(obj_info)
             else:
                 raise RuntimeError(
-                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError("[Storage]: Unable to create object.")
+            raise RuntimeError("Unable to create object.")
 
     @staticmethod
     @validate_call
@@ -87,7 +87,7 @@ class Storage:
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
-                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+                f"'{obj_type}' is not a recognized EnvironmentVar value."
             )
 
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
@@ -102,12 +102,10 @@ class Storage:
                 )
             else:
                 raise RuntimeError(
-                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError(
-                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
-            )
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
     @validate_call
@@ -128,7 +126,7 @@ class Storage:
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
-                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+                f"'{obj_type}' is not a recognized EnvironmentVar value."
             )
 
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension)
@@ -141,12 +139,10 @@ class Storage:
                 return obj_mod_instance(obj_filepath).read_file()
             else:
                 raise RuntimeError(
-                    f"[Storage]: Unable to get defined object module instance - {obj_mod_instance}"
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
                 )
         else:
-            raise RuntimeError(
-                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
-            )
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
     @validate_call
@@ -170,9 +166,7 @@ class Storage:
             Path(obj_filepath).unlink()
             return True
         else:
-            raise RuntimeError(
-                f"[Storage]: No {obj_type.lower()} found with ID: {obj_id}"
-            )
+            raise RuntimeError(f"No {obj_type.lower()} found with ID: {obj_id}")
 
     @staticmethod
     def count_objects(
@@ -213,7 +207,7 @@ class Storage:
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
-                f"[Storage]: '{obj_type}' is not a recognized EnvironmentVar value."
+                f"'{obj_type}' is not a recognized EnvironmentVar value."
             )
 
         directories = EnvironmentVars.get_file_directory(obj_type)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -73,7 +73,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(cb_id: str) -> CookbookArguments:
         """
         Retrieves the details of a specified cookbook.
@@ -136,7 +136,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(cb_id: str) -> bool:
         """
         Deletes a cookbook identified by its ID.
