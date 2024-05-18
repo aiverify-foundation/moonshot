@@ -510,10 +510,10 @@ delete_cookbook_args.add_argument("cookbook", type=str, help="Name of the cookbo
 run_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Run a cookbook.",
     epilog="Example:\n run_cookbook "
-    '-n 1 -s 1 -p "You are an intelligent AI" '
     '"my new cookbook runner" '
-    "\"['common-risk-easy']\" "
-    "\"['openai-gpt35-turbo']\"",
+    "\"['chinese-safety-cookbook']\" "
+    "\"['openai-gpt35-turbo']\" "
+    '-n 1 -r 1 -s "You are an intelligent AI" ',
 )
 run_cookbook_args.add_argument("name", type=str, help="Name of cookbook runner")
 run_cookbook_args.add_argument("cookbooks", type=str, help="List of cookbooks to run")
@@ -522,10 +522,10 @@ run_cookbook_args.add_argument(
     "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
 )
 run_cookbook_args.add_argument(
-    "-s", "--random_seed", type=int, default=0, help="Random seed number"
+    "-r", "--random_seed", type=int, default=0, help="Random seed number"
 )
 run_cookbook_args.add_argument(
-    "-p", "--system_prompt", type=str, default="", help="System Prompt to use"
+    "-s", "--system_prompt", type=str, default="", help="System Prompt to use"
 )
 run_cookbook_args.add_argument(
     "-l",
