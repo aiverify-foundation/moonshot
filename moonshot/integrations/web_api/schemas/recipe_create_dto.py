@@ -2,9 +2,20 @@ from typing import Optional
 
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as RecipePydanticModel
 
+from pydantic import Field
 
 class RecipeCreateDTO(RecipePydanticModel):
     id: Optional[str] = None
+    name: str = Field(..., min_length=1)
+    description: str = Field(..., min_length=1)
+    tags: Optional[list[str]] = None
+    categories: Optional[list[str]] = None
+    datasets: list[str] = Field(..., min_length=1)
+    metrics: list[str] = Field(..., min_length=1)
+    prompt_templates: Optional[list[str]] = None
+    attack_modules: Optional[list[str]] = None
+    grading_scale: Optional[dict[str, list[int]]] = None
+    stats: Optional[dict] = None
 
 
 class RecipeUpdateDTO(RecipePydanticModel):
