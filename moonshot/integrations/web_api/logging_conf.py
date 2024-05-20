@@ -1,12 +1,12 @@
-
-import sys
 import logging
+import os
+import sys
 from logging.handlers import RotatingFileHandler
 from typing import Literal
-from dependency_injector import providers
-from .types.types import UvicornLoggingConfig
-import os
 
+from dependency_injector import providers
+
+from .types.types import UvicornLoggingConfig
 
 COLORS = {
     "HEADER": "\033[95m",
@@ -20,6 +20,7 @@ COLORS = {
     "WHITE": "\033[97m",
 }
 
+
 class ColorizedFormatter(logging.Formatter):
     LEVEL_COLORS = {
         logging.DEBUG: COLORS["OKBLUE"],
@@ -29,7 +30,13 @@ class ColorizedFormatter(logging.Formatter):
         logging.CRITICAL: COLORS["HEADER"],
     }
 
-    def __init__(self, fmt: str, datefmt: str | None = None, style: Literal['%'] = '%', disableColor: bool = False):
+    def __init__(
+        self,
+        fmt: str,
+        datefmt: str | None = None,
+        style: Literal["%"] = "%",
+        disableColor: bool = False,
+    ):
         super().__init__(fmt, datefmt, style)
         self.disableColor = disableColor
 
@@ -41,18 +48,20 @@ class ColorizedFormatter(logging.Formatter):
             message = super().format(record)
             return color + message + COLORS["ENDC"]
 
+
 def create_logging_dir(log_file_path: str):
     if not os.path.exists(log_file_path):
         os.makedirs(log_file_path)
+
 
 def configure_app_logging(cfg: providers.Configuration):
     if cfg.log.logging():
         create_logging_dir(cfg.log.log_file_path())
 
     file_handler = RotatingFileHandler(
-        filename=cfg.log.log_file_path()+"/web_api.log",
+        filename=cfg.log.log_file_path() + "/web_api.log",
         maxBytes=cfg.log.log_file_max_size(),
-        backupCount=cfg.log.log_file_backup_count()
+        backupCount=cfg.log.log_file_backup_count(),
     )
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(ColorizedFormatter(cfg.log.format()))
@@ -64,6 +73,7 @@ def configure_app_logging(cfg: providers.Configuration):
     )
 
     logging.info("Logging is configured.")
+
 
 def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingConfig:
     if cfg.log.logging():
@@ -80,13 +90,13 @@ def create_uvicorn_log_config(cfg: providers.Configuration) -> UvicornLoggingCon
             "file_formatter": {
                 "()": "moonshot.integrations.web_api.logging_conf.ColorizedFormatter",
                 "format": cfg.log.format(),
-                "disableColor": True
+                "disableColor": True,
             },
         },
         "handlers": {
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
-                "filename": cfg.log.log_file_path()+"/web_api.log",
+                "filename": cfg.log.log_file_path() + "/web_api.log",
                 "maxBytes": cfg.log.log_file_max_size(),
                 "backupCount": cfg.log.log_file_backup_count(),
                 "formatter": "file_formatter",

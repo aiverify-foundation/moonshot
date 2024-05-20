@@ -16,14 +16,12 @@ class EnvVariables(Enum):
     DATASETS = "DATASETS"
     IO_MODULES = "IO_MODULES"
     METRICS = "METRICS"
-    METRICS_CONFIG = "METRICS_CONFIG"
     PROMPT_TEMPLATES = "PROMPT_TEMPLATES"
     RECIPES = "RECIPES"
-    RECIPES_PROCESSING_MODULES = "RECIPES_PROCESSING_MODULES"
     RESULTS = "RESULTS"
+    RESULTS_MODULES = "RESULTS_MODULES"
     RUNNERS = "RUNNERS"
-    SESSIONS = "SESSIONS"
-    STOP_STRATEGIES = "STOP_STRATEGIES"
+    RUNNERS_MODULES = "RUNNERS_MODULES"
 
 
 class EnvironmentVars:
@@ -55,7 +53,11 @@ class EnvironmentVars:
     ]
     DATABASES = [
         env_vars.get(EnvVariables.DATABASES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/databases")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/databases"
+            )
+        ),
     ]
     DATABASES_MODULES = [
         env_vars.get(EnvVariables.DATABASES_MODULES.value),
@@ -73,14 +75,6 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.METRICS.value),
         str(importlib.resources.files(__app_name__).joinpath("data/metrics")),
     ]
-    METRICS_CONFIG = [
-        env_vars.get(EnvVariables.METRICS_CONFIG.value),
-        str(
-            importlib.resources.files(__app_name__).joinpath(
-                "data/metrics/metrics_config.json"
-            )
-        ),
-    ]
     PROMPT_TEMPLATES = [
         env_vars.get(EnvVariables.PROMPT_TEMPLATES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/prompt-templates")),
@@ -89,29 +83,29 @@ class EnvironmentVars:
         env_vars.get(EnvVariables.RECIPES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/recipes")),
     ]
-    RECIPES_PROCESSING_MODULES = [
-        env_vars.get(EnvVariables.RECIPES_PROCESSING_MODULES.value),
+    RESULTS = [
+        env_vars.get(EnvVariables.RESULTS.value),
         str(
             importlib.resources.files(__app_name__).joinpath(
-                "data/recipes-processing-modules"
+                "data/generated-outputs/results"
             )
         ),
     ]
-    RESULTS = [
-        env_vars.get(EnvVariables.RESULTS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/results")),
+    RESULTS_MODULES = [
+        env_vars.get(EnvVariables.RESULTS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/results-modules")),
     ]
     RUNNERS = [
         env_vars.get(EnvVariables.RUNNERS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/runners")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/runners"
+            )
+        ),
     ]
-    SESSIONS = [
-        env_vars.get(EnvVariables.SESSIONS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/sessions")),
-    ]
-    STOP_STRATEGIES = [
-        env_vars.get(EnvVariables.STOP_STRATEGIES.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/stop-strategies")),
+    RUNNERS_MODULES = [
+        env_vars.get(EnvVariables.RUNNERS_MODULES.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/runners-modules")),
     ]
 
     @staticmethod

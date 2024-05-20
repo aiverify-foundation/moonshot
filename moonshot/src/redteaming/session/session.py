@@ -1,39 +1,48 @@
+from __future__ import annotations
+
+import asyncio
 import time
 from ast import literal_eval
 from datetime import datetime
-
-from slugify import slugify
+from typing import Any, Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
-from moonshot.src.storage.db_accessor import DBAccessor
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
+from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
+from moonshot.src.runners.runner_type import RunnerType
+from moonshot.src.runs.run_status import RunStatus
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.import_modules import get_instance
 
 
 class SessionMetadata:
     def __init__(
         self,
-        session_id: str = "",
-        name: str = "",
-        description: str = "",
-        endpoints: str = "",
-        created_epoch: float = 0.0,
-        created_datetime: str = "",
-        context_strategy: str = "",
-        prompt_template: str = "",
-        chat_ids: str = "",
+        session_id: str,
+        endpoints: list[str],
+        created_epoch: float,
+        created_datetime: str,
+        prompt_template: str,
+        context_strategy: str,
+        cs_num_of_prev_prompts: int,
+        attack_module: str,
+        metric: str,
+        system_prompt: str,
     ):
         self.session_id = session_id
-        self.name = name
-        self.description = description
         self.endpoints = endpoints
         self.created_epoch = created_epoch
         self.created_datetime = created_datetime
-        self.context_strategy = context_strategy
         self.prompt_template = prompt_template
-        self.chat_ids = chat_ids
+        self.context_strategy = context_strategy
+        self.cs_num_of_prev_prompts = cs_num_of_prev_prompts
+        self.attack_module = attack_module
+        self.metric = metric
+        self.system_prompt = system_prompt
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict:
         """
         Converts the SessionMetadata instance into a dictionary.
 
@@ -42,363 +51,658 @@ class SessionMetadata:
         """
         return {
             "session_id": self.session_id,
-            "name": self.name,
-            "description": self.description,
             "endpoints": self.endpoints,
             "created_epoch": str(self.created_epoch),
             "created_datetime": self.created_datetime,
-            "context_strategy": self.context_strategy,
             "prompt_template": self.prompt_template,
-            "chat_ids": self.chat_ids,
+            "context_strategy": self.context_strategy,
+            "cs_num_of_prev_prompts": self.cs_num_of_prev_prompts,
+            "attack_module": self.attack_module,
+            "metric": self.metric,
+            "system_prompt": self.system_prompt,
         }
+
+    def to_tuple(self) -> tuple:
+        """
+        Converts the SessionMetadata instance into a tuple.
+
+        Returns:
+            tuple: A tuple representation of the SessionMetadata instance.
+        """
+        return (
+            self.session_id,
+            str(self.endpoints),
+            self.created_epoch,
+            self.created_datetime,
+            self.prompt_template,
+            self.context_strategy,
+            self.cs_num_of_prev_prompts,
+            self.attack_module,
+            self.metric,
+            self.system_prompt,
+        )
+
+    @classmethod
+    def from_tuple(cls, data_tuple: tuple) -> SessionMetadata:
+        """
+        Creates a SessionMetadata instance from a tuple using the class method.
+
+        Args:
+            data_tuple (tuple): A tuple containing session_id, endpoints, created_epoch, and created_datetime.
+
+        Returns:
+            SessionMetadata: An instance of SessionMetadata.
+        """
+        (
+            runner_id,
+            endpoints,
+            created_epoch,
+            created_datetime,
+            prompt_template,
+            context_strategy,
+            cs_num_of_prev_prompts,
+            attack_module,
+            metric,
+            system_prompt,
+        ) = data_tuple
+
+        return cls(
+            runner_id,
+            literal_eval(endpoints),
+            created_epoch,
+            created_datetime,
+            prompt_template,
+            context_strategy,
+            cs_num_of_prev_prompts,
+            attack_module,
+            metric,
+            system_prompt,
+        )
 
 
 class Session:
-    sql_update_session_metadata_chat = """
-        UPDATE session_metadata_table SET chat_ids=? WHERE session_id=?
-    """
-    sql_read_session_metadata = """
-            SELECT * from session_metadata_table
-    """
-    sql_read_session_chat_metadata = """
-            SELECT * from chat_metadata_table
-    """
-    sql_update_prompt_template = """
-            UPDATE session_metadata_table SET prompt_template=? WHERE session_id =?
-    """
-    sql_update_context_strategy = """
-            UPDATE session_metadata_table SET context_strategy=? WHERE session_id =?
-    """
+    DEFAULT_CONTEXT_STRATEGY_PROMPT = 5
     sql_create_session_metadata_table = """
             CREATE TABLE IF NOT EXISTS session_metadata_table (
             session_id text PRIMARY KEY NOT NULL,
-            name text NOT NULL,
-            description text NOT NULL,
             endpoints text NOT NULL,
             created_epoch INTEGER NOT NULL,
             created_datetime text NOT NULL,
-            context_strategy text,
             prompt_template text,
-            chat_ids text
+            context_strategy text,
+            cs_num_of_prev_prompts int,
+            attack_module text,
+            metric text,
+            system_prompt text
             );
     """
-    sql_create_chat_metadata_table = """
-            CREATE TABLE IF NOT EXISTS chat_metadata_table (
-            chat_id text PRIMARY KEY,
-            endpoint text NOT NULL,
-            created_epoch INTEGER NOT NULL,
-            created_datetime text NOT NULL
-            );
+
+    sql_create_chat_history_table = """
+        CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        connection_id text NOT NULL,
+        context_strategy text,
+        prompt_template text,
+        attack_module text,
+        metric text,
+        prompt text NOT NULL,
+        prepared_prompt text NOT NULL,
+        system_prompt text,
+        predicted_result text NOT NULL,
+        duration text NOT NULL,
+        prompt_time text NOT NULL
+        );
     """
 
     sql_create_session_metadata_record = """
         INSERT INTO session_metadata_table (
-        session_id,name,description,endpoints,created_epoch,created_datetime,context_strategy,prompt_template)
-        VALUES(?,?,?,?,?,?,?,?)
+        session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy,cs_num_of_prev_prompts,
+        attack_module, metric, system_prompt) VALUES(?,?,?,?,?,?,?,?,?,?)
+    """
+
+    sql_read_session_metadata = """
+        SELECT * from session_metadata_table
+    """
+
+    sql_update_session_metadata_field = """
+        UPDATE session_metadata_table SET {}=? WHERE session_id=?
+    """
+
+    sql_drop_table = """
+        DROP TABLE IF EXISTS {}
     """
 
     def __init__(
-        # TODO system prompt
         self,
-        name: str = "",
-        description: str = "",
-        endpoints: list[str] = [],
-        session_id: str = "",
-        prompt_template: str = "",
-        context_strategy: str = "",
+        runner_id: str,
+        runner_type: RunnerType,
+        runner_args: dict,
+        database_instance: Any | None,
+        endpoints: list[str],
+        results_file_path: str,
+        progress_callback_func: Callable | None = None,
     ):
-
-        # Checks if cs and pt exist if they are specified
-        if context_strategy:
-            if not Storage.is_object_exists(
-                EnvVariables.CONTEXT_STRATEGY.name, context_strategy, "py"
-            ):
-                raise RuntimeError(
-                    f"Unable to find Context Strategy {context_strategy}. Please select another one."
-                )
-        if prompt_template:
-            if not Storage.is_object_exists(
-                EnvVariables.PROMPT_TEMPLATES.name, prompt_template, "json"
-            ):
-                raise RuntimeError(
-                    f"Unable to find Prompt Template {prompt_template}. Please select another one."
-                )
-
-        # There is an existing session
-        if session_id:
-            # Check if session_id is valid
-            if Storage.is_object_exists(EnvVariables.SESSIONS.name, session_id, "db"):
-                self.db_instance = Storage.create_database_connection(
-                    obj_type=EnvVariables.DATABASES.name,
-                    obj_id=session_id,
-                    obj_extension="db",
-                )
-                self.metadata = self.get_session_metadata_by_id(session_id)
-            else:
-                raise RuntimeError(
-                    f"Unable to resume existing session {session_id}. Please create a new session."
-                )
-
-        # New session
-        else:
-            created_epoch = time.time()
-            created_datetime = datetime.fromtimestamp(created_epoch).strftime(
-                "%Y%m%d-%H%M%S"
-            )
-            session_id = f"{slugify(name)}_{created_datetime}"
-
-            session_meta_tuple = (
-                session_id,
-                name,
-                description,
-                str(endpoints),
-                created_epoch,
-                created_datetime,
-                context_strategy,
-                prompt_template,
-            )
-            self.create_new_session(session_meta_tuple, endpoints)
-            self.metadata = self.get_session_metadata_by_id(session_id)
-
-    def create_new_session(
-        self,
-        session_meta_tuple: tuple,
-        endpoints: list,
-    ) -> None:
         """
-        Creates a new session in the database with the provided metadata and endpoints.
+        Initializes a new session with the given parameters, creates session metadata,
+        and sets up the database tables for session metadata and chat history.
 
         Args:
-            session_meta_tuple (tuple): A tuple containing session metadata.
-            endpoints (list): A list of endpoints associated with the session.
+            runner_id (str): The unique identifier for the runner.
+            runner_type (RunnerType): The type of runner being used.
+            runner_args (dict): A dictionary of arguments specific to the runner.
+            database_instance (Any | None): The database instance to connect to, or None if not available.
+            endpoints (list[str]): A list of endpoint identifiers.
+            results_file_path (str): The file path where results should be stored.
+            progress_callback_func (Callable | None): An optional callback function for progress updates.
+        """
+        created_epoch = time.time()
+        created_datetime = datetime.fromtimestamp(created_epoch).strftime(
+            "%Y%m%d-%H%M%S"
+        )
+
+        self.runner_id = runner_id
+        self.runner_args = runner_args
+        self.runner_type = runner_type
+        self.results_file_path = results_file_path
+        self.progress_callback_func = progress_callback_func
+        self.database_instance = database_instance
+
+        self.red_teaming_progress = RedTeamingProgress(
+            self.runner_id, self.runner_args, self.progress_callback_func
+        )
+
+        self.cancel_event = asyncio.Event()
+
+        prompt_template = self.runner_args.get("prompt_template", "")
+        context_strategy = self.runner_args.get("context_strategy", "")
+        cs_num_of_prev_prompts = self.runner_args.get(
+            "cs_num_of_prev_prompts", Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        )
+        attack_module = self.runner_args.get("attack_module", "")
+        system_prompt = self.runner_args.get("system_prompt", "")
+        metric_id = self.runner_args.get("metric_id", "")
+
+        if self.database_instance:
+            # create session metadata table if it does not exist
+            if not Storage.check_database_table_exists(
+                self.database_instance, "session_metadata_table"
+            ):
+                Storage.create_database_table(
+                    self.database_instance, Session.sql_create_session_metadata_table
+                )
+
+            # get session metadata record
+            session_metadata_records = Storage.read_database_records(
+                self.database_instance, Session.sql_read_session_metadata
+            )
+
+            # check if the session metadata record already exists
+            if session_metadata_records:
+                print("[Session] Session already exists.")
+                self.session_metadata = SessionMetadata.from_tuple(
+                    session_metadata_records[0]
+                )
+            # create a new record if session metadata does not exist
+            else:
+                print("[Session] Creating new session.")
+
+                # create chat history table for each endpoint
+                for endpoint in endpoints:
+                    endpoint_id = endpoint.replace("-", "_")
+                    Storage.create_database_table(
+                        self.database_instance,
+                        Session.sql_create_chat_history_table.format(endpoint_id),
+                    )
+                self.session_metadata = SessionMetadata(
+                    runner_id,
+                    endpoints,
+                    created_epoch,
+                    created_datetime,
+                    prompt_template,
+                    context_strategy,
+                    cs_num_of_prev_prompts,
+                    attack_module,
+                    system_prompt,
+                    metric_id,
+                )
+
+                Storage.create_database_record(
+                    self.database_instance,
+                    self.session_metadata.to_tuple(),
+                    Session.sql_create_session_metadata_record,
+                )
+        else:
+            raise RuntimeError(
+                "[Session] Failed to initialise Session. No database instance provided."
+            )
+
+    @staticmethod
+    def load(database_instance: DBInterface | None) -> dict | None:
+        """
+        Loads run data for a given session_id from the database, or the latest run if run_id is None.
+
+        This method retrieves run data for the specified run_id from the database, or if run_id is None,
+        it retrieves the latest run. If the database instance is not provided, it raises a RuntimeError.
+        If the database instance is provided, it invokes the read_record method of the database instance
+        with the given run_id or the latest run and returns a RunArguments object created from the retrieved record.
+
+        Parameters:
+            database_instance (DBInterface | None): The database accessor instance.
+            run_id (int | None): The ID of the run to retrieve, or None to retrieve the latest run.
+
+        Returns:
+            RunArguments: An object containing the details of the run with the given run_id or the latest run.
+        """
+        if not database_instance:
+            raise RuntimeError("[Session] Runner instance database not provided.")
+
+        # runner does not have session, return None
+        if not Storage.check_database_table_exists(
+            database_instance, "session_metadata_table"
+        ):
+            return None
+
+        # retrieve session metadata
+        session_metadata_info = Storage.read_database_records(
+            database_instance,
+            Session.sql_read_session_metadata,
+        )
+
+        if not session_metadata_info:
+            raise RuntimeError("[Session] Failed to get Session metadata.")
+
+        # convert session metadata from tuple to dict
+        session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
+        session_metadata_dict = session_metadata_obj.to_dict()
+
+        return session_metadata_dict
+
+    async def run(self) -> list | None:
+        """
+        Asynchronously executes the session run process.
+
+        This method orchestrates the entire session run process asynchronously. It initializes the session,
+        sets up the necessary environment, executes the session's main logic, handles any errors, and finally,
+        compiles and returns the results in a dictionary format. Throughout the process, it updates
+        the session's status and logs progress.
+
+        Returns:
+            dict: A dictionary containing the results of the session run, including any errors encountered.
+        """
+        # ------------------------------------------------------------------------------
+        # Part 1: Get asyncio running loop
+        # ------------------------------------------------------------------------------
+        print("[Session] Part 1: Loading asyncio running loop...")
+        loop = asyncio.get_running_loop()
+
+        # ------------------------------------------------------------------------------
+        # Part 2: Load runner processing module
+        # ------------------------------------------------------------------------------
+        print("[Session] Part 2: Loading runner processing module...")
+        start_time = time.perf_counter()
+        runner_module_instance = None
+        try:
+            runner_processing_module_name = self.runner_args.get(
+                "runner_processing_module", None
+            )
+            if runner_processing_module_name:
+                # Intialize the runner instance
+                runner_module_instance = get_instance(
+                    runner_processing_module_name,
+                    Storage.get_filepath(
+                        EnvVariables.RUNNERS_MODULES.name,
+                        runner_processing_module_name,
+                        "py",
+                    ),
+                )
+                if runner_module_instance:
+                    runner_module_instance = runner_module_instance()
+                else:
+                    raise RuntimeError(
+                        f"Unable to get defined runner module instance - {runner_module_instance}"
+                    )
+            else:
+                raise RuntimeError(
+                    f"Failed to get runner processing module name: {runner_processing_module_name}"
+                )
+
+        except Exception as e:
+            print(
+                f"[Session] Failed to load runner processing module in Part 2 due to error: {str(e)}"
+            )
+            raise e
+
+        finally:
+            print(
+                f"[Session] Loading runner processing module took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+        # ------------------------------------------------------------------------------
+        # Part 3: Run runner processing module
+        # ------------------------------------------------------------------------------
+        print("[Session] Part 3: Running runner processing module...")
+        start_time = time.perf_counter()
+        runner_results = {}
+
+        try:
+            if runner_module_instance:
+                runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
+                    loop,
+                    self.runner_args,
+                    self.database_instance,
+                    self.session_metadata,
+                    self.check_redteaming_type(),
+                    self.red_teaming_progress,
+                    self.cancel_event,
+                )
+            else:
+                raise RuntimeError("Failed to initialise runner module instance.")
+
+        except Exception as e:
+            print(
+                f"[Session] Failed to run runner processing module in Part 3 due to error: {str(e)}"
+            )
+            raise e
+
+        finally:
+            self.red_teaming_progress.status = RunStatus.COMPLETED
+            if self.check_redteaming_type() == RedTeamingType.AUTOMATED:
+                self.red_teaming_progress.notify_progress()
+            print(
+                f"[Session] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
+            )
+
+        # ------------------------------------------------------------------------------
+        # Part 4: Wrap up run
+        # ------------------------------------------------------------------------------
+        print("[Session] Part 4: Wrap up run...")
+        return runner_results
+
+    def cancel(self) -> None:
+        """
+        Sets the cancel event to stop the automated red teaming process.
+
+        This method is used to signal that the automated red teaming process should be cancelled. It sets the
+        cancel_event which can be checked in various points of the asynchronous red teaming process to gracefully stop
+        the execution.
 
         Returns:
             None
         """
-        try:
-            session_id = session_meta_tuple[0]
-            created_epoch = session_meta_tuple[4]
-            created_datetime = session_meta_tuple[5]
-            session_db_instance = Storage.create_database_connection(
-                EnvVariables.SESSIONS.name, session_id, "db"
-            )
+        print("[Session] Cancelling automated red teaming...")
+        self.cancel_event.set()
 
-            # creates chat tables, updates chat metadata, and updates session metadata with chat ids
-            Storage.create_database_table(
-                session_db_instance, Session.sql_create_session_metadata_table
+    def check_redteaming_type(self) -> RedTeamingType:
+        """
+        Checks the type of red teaming strategy based on the runner arguments.
+
+        Returns:
+            RedTeamingType: The type of red teaming strategy.
+
+        Raises:
+            RuntimeError: If the red teaming arguments are missing.
+        """
+        if (
+            "attack_strategies" in self.runner_args
+            and self.runner_args.get("attack_strategies") is not None
+        ):
+            return RedTeamingType.AUTOMATED
+        elif (
+            "manual_rt_args" in self.runner_args
+            and self.runner_args.get("manual_rt_args") is not None
+        ):
+            return RedTeamingType.MANUAL
+        else:
+            raise RuntimeError("Missing red teaming arguments.")
+
+    @staticmethod
+    def update_context_strategy(
+        db_instance: DBInterface | None, runner_id: str, context_strategy: str
+    ) -> bool:
+        """
+        Updates the context strategy for a specific runner in the database.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the context strategy in.
+            runner_id (str): The ID of the runner.
+            context_strategy (str): The name of the context strategy to be used.
+
+        Returns:
+            bool: The status on whether the context strategy is updated successfully.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the context strategy does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if context_strategy and not Storage.is_object_exists(
+            EnvVariables.CONTEXT_STRATEGY.name, context_strategy, "py"
+        ):
+            raise RuntimeError(
+                f"[Session] Context Strategy {context_strategy} does not exist."
             )
-            Storage.create_database_table(
-                session_db_instance, Session.sql_create_chat_metadata_table
-            )
-            Storage.create_database_record(
-                session_db_instance,
-                session_meta_tuple,
-                Session.sql_create_session_metadata_record,
-            )
-            list_of_chats = [
-                Chat(session_db_instance, endpoint, created_epoch, created_datetime)
-                for endpoint in endpoints
-            ]
-            chat_ids = [str(chat.chat_id) for chat in list_of_chats]
+        else:
             Storage.update_database_record(
-                session_db_instance,
-                (str(chat_ids), session_id),
-                Session.sql_update_session_metadata_chat,
+                db_instance,
+                (context_strategy, runner_id),
+                Session.sql_update_session_metadata_field.format("context_strategy"),
             )
-        except Exception:
-            raise
+            return True
 
     @staticmethod
-    def get_connection_instance_by_session_id(session_id: str) -> DBAccessor:
+    def update_cs_num_of_prev_prompts(
+        db_instance: DBInterface | None, runner_id: str, cs_num_of_prev_prompts: int
+    ) -> bool:
         """
-        Creates and returns a database connection instance for a given session ID.
-
-        It is used to access the database to perform operations.
+        Updates the number of previous prompts for a specific runner in the database.
 
         Args:
-            session_id (str): The unique identifier for the session.
+            db_instance (DBInterface | None): The database instance to update the number of previous prompts in.
+            runner_id (str): The ID of the runner.
+            cs_num_of_prev_prompts (int): The new number of previous prompts to be used.
 
         Returns:
-            A database connection instance specific to the session identified by session_id.
+            bool: The status on whether the number of prompts for context strategy is updated successfully.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
         """
-
-        session_db_instance = Storage.create_database_connection(
-            obj_type=EnvVariables.SESSIONS.name, obj_id=session_id, obj_extension="db"
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        Storage.update_database_record(
+            db_instance,
+            (cs_num_of_prev_prompts, runner_id),
+            Session.sql_update_session_metadata_field.format("cs_num_of_prev_prompts"),
         )
-
-        return session_db_instance
+        return True
 
     @staticmethod
-    def get_session_metadata_by_id(session_id: str) -> SessionMetadata:
+    def update_prompt_template(
+        db_instance: DBInterface | None, runner_id: str, prompt_template: str
+    ) -> bool:
         """
-        Retrieves and returns the session metadata for a given session ID.
-
-        This method fetches the session metadata from the database associated with the specified session ID. It
-        establishes a database connection, retrieves the session metadata, and then constructs a SessionMetadata
-        object with the retrieved data. Additionally, it converts the 'endpoints' and 'chat_ids' fields from string
-        representations to their original data types using literal_eval.
+        Updates the prompt template in the database for the specified runner.
 
         Args:
-            session_id (str): The unique identifier for the session whose metadata is to be retrieved.
+            db_instance (DBInterface | None): The database instance to update the prompt template in.
+            runner_id (str): The ID of the runner.
+            prompt_template (str): The new prompt template to be used.
 
         Returns:
-            SessionMetadata: An instance of SessionMetadata populated with the session's metadata, including
-                            converted 'endpoints' and 'chat_ids' fields.
+            bool: The status on whether the prompt template is updated successfully.
+
+            Raises:
+                RuntimeError: If the database instance is not provided or if the prompt template does not exist.
         """
-
-        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
-        session_metadata_records = Storage.read_database_records(
-            session_db_instance, Session.sql_read_session_metadata
-        )
-        if session_metadata_records is not None:
-            session_metadata_tuple = session_metadata_records[0]
-            session_metadata = SessionMetadata(*session_metadata_tuple)
-
-            # parse string of lists to lists. they are stored as string as the db does not support
-            session_metadata.endpoints = literal_eval(session_metadata.endpoints)
-            session_metadata.chat_ids = literal_eval(session_metadata.chat_ids)
-            return session_metadata
-        else:
-            raise RuntimeError(
-                "Unable to retrieve Session metadata. Please create a new Session"
-            )
-
-    @staticmethod
-    def get_session_chats_by_session_id(session_id: str) -> list[Chat]:
-        """
-        Retrieves and returns a list of Chat instances for all chats associated with a given session ID.
-
-        This method establishes a database connection for the specified session ID and fetches the metadata for all
-        chats associated with that session. It then creates and returns a list of Chat instances, each initialized
-        with the database connection and the metadata for one of the chats. This allows for interaction with and
-        manipulation of individual chat sessions within the specified session.
-
-        Args:
-            session_id (str): The unique identifier for the session whose chats are to be retrieved.
-
-        Returns:
-            list: A list of Chat instances, each representing a chat session associated with the specified session ID.
-        """
-        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
-        list_of_chat_metadata = Storage.read_database_records(
-            session_db_instance, Session.sql_read_session_chat_metadata
-        )
-
-        if list_of_chat_metadata is not None:
-            return [
-                Chat.load_chat(
-                    session_db_instance, str(chat_metadata[0]), str(chat_metadata[1])
-                )
-                for chat_metadata in list_of_chat_metadata
-            ]
-        else:
-            raise RuntimeError(
-                "Unable to retrieve Chat metadata. Please create a new Session"
-            )
-
-    @staticmethod
-    def delete_session(session_id: str) -> None:
-        """
-        Deletes the database file associated with a given session ID.
-
-        Args:
-            session_id (str): The unique identifier for the session whose database file is to be deleted.
-        """
-        try:
-            Storage.delete_object(EnvVariables.SESSIONS.name, session_id, "db")
-        except OSError as e:
-            print(f"Failed to delete Session file: {e.filename} - {e.strerror}")
-        else:
-            print(f"Successfully deleted Session - {session_id}")
-
-    @staticmethod
-    async def send_prompt(session_id: str, user_prompt: str) -> None:
-        # get session db connection
-        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
-        session_metadata_records = Storage.read_database_records(
-            session_db_instance, Session.sql_read_session_metadata
-        )
-        if session_metadata_records is not None:
-            session_metadata_tuple = session_metadata_records[0]
-            session_metadata = SessionMetadata(*session_metadata_tuple)
-            # get cs, pt, endpoint chat ids from session metadata
-            context_strategy_name: str = session_metadata.context_strategy
-            prompt_template_name: str = session_metadata.prompt_template
-            list_of_endpoints: list[str] = literal_eval(session_metadata.endpoints)
-            list_of_chat_ids: list[str] = literal_eval(session_metadata.chat_ids)
-
-            # pass required configuration to individual chats to send prompt
-            for chat_id, endpoint in zip(list_of_chat_ids, list_of_endpoints):
-                await Chat.send_prompt(
-                    session_db_instance=session_db_instance,
-                    chat_id=chat_id,
-                    endpoint=str(endpoint),
-                    user_prompt=user_prompt,
-                    context_strategy_name=context_strategy_name,
-                    prompt_template_name=prompt_template_name,
-                )
-        else:
-            raise RuntimeError(
-                "Unable to retrieve Session metadata. Please create a new Session"
-            )
-
-    @staticmethod
-    def update_prompt_template(session_id: str, prompt_template_name: str) -> None:
-        """
-        Updates the prompt template for a specific session.
-
-        This method creates a database connection for the session identified by session_id and then calls the
-        `StorageManager.update_prompt_template` method to update the prompt template with the provided name.
-        It allows for changing the prompt template associated with the session, enabling customization of prompts
-        used within the session.
-
-        Args:
-            session_id (str): The unique identifier of the session for which the prompt template is to be updated.
-            prompt_template_name (str): The new prompt template name to be assigned to the session.
-
-        Returns:
-            None: This method does not return a value but updates the prompt template for the specified session.
-        """
-        if not Storage.is_object_exists(
-            EnvVariables.PROMPT_TEMPLATES.name, prompt_template_name, "json"
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if prompt_template and not Storage.is_object_exists(
+            EnvVariables.PROMPT_TEMPLATES.name, prompt_template, "json"
         ):
             raise RuntimeError(
-                f"Unable to find Prompt Template {prompt_template_name}. Please select another one."
+                f"[Session] Prompt Template {prompt_template} does not exist."
             )
-        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
-        Storage.update_database_record(
-            session_db_instance,
-            (prompt_template_name, session_id),
-            Session.sql_update_prompt_template,
-        )
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (prompt_template, runner_id),
+                Session.sql_update_session_metadata_field.format("prompt_template"),
+            )
+            return True
 
     @staticmethod
-    def update_context_strategy(session_id: str, context_strategy_name: str) -> None:
+    def update_metric(
+        db_instance: DBInterface | None, runner_id: str, metric_id: str
+    ) -> bool:
         """
-        Updates the context strategy for a specific session.
-
-        This method creates a database connection for the session identified by session_id and then calls the
-        `StorageManager.update_context_strategy` method to update the context strategy with the provided name.
-        It allows for changing the context strategy associated with the session, enabling customization of context
-        management within the session.
+        Updates the metric in the database for the specified runner.
 
         Args:
-            session_id (str): The unique identifier of the session for which the context strategy is to be updated.
-            context_strategy_name (str): The new context strategy name to be assigned to the session.
+            db_instance (DBInterface | None): The database instance to update the metric in.
+            runner_id (str): The ID of the runner.
+            metric_id (str): The new metric to be used.
 
         Returns:
-            None: This method does not return a value but updates the context strategy for the specified session.
-        """
+            bool: The status on whether the metric is updated successfully.
 
-        if not Storage.is_object_exists(
-            EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+        Raises:
+            RuntimeError: If the database instance is not provided or if the metric does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if metric_id and not Storage.is_object_exists(
+            EnvVariables.METRICS.name, metric_id, "py"
+        ):
+            raise RuntimeError(f"[Session] Metric {metric_id} does not exist.")
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (metric_id, runner_id),
+                Session.sql_update_session_metadata_field.format("metric"),
+            )
+            return True
+
+    @staticmethod
+    def update_system_prompt(
+        db_instance: DBInterface | None, runner_id: str, system_prompt: str
+    ) -> bool:
+        """
+        Updates the system prompt in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the system prompt in.
+            runner_id (str): The ID of the runner.
+            system_prompt (str): The new system prompt to be used.
+
+        Returns:
+            bool: The status on whether the system prompt is updated successfully.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        Storage.update_database_record(
+            db_instance,
+            (system_prompt, runner_id),
+            Session.sql_update_session_metadata_field.format("system_prompt"),
+        )
+        return True
+
+    @staticmethod
+    def update_attack_module(
+        db_instance: DBInterface | None, runner_id: str, attack_module_id: str
+    ) -> bool:
+        """
+        Updates the attack module in the database for the specified runner.
+
+        Args:
+            db_instance (DBInterface | None): The database instance to update the attack module in.
+            runner_id (str): The ID of the runner.
+            attack_module_id (str): The new attack module to be used.
+
+        Returns:
+            bool: The status on whether the attack module is updated successfully.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the attack module does not exist.
+        """
+        if not db_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+        if attack_module_id and not Storage.is_object_exists(
+            EnvVariables.ATTACK_MODULES.name, attack_module_id, "py"
         ):
             raise RuntimeError(
-                f"Unable to find Context Strategy {context_strategy_name}. Please select another one."
+                f"[Session] Attack Module {attack_module_id} does not exist."
             )
-        session_db_instance = Session.get_connection_instance_by_session_id(session_id)
-        Storage.update_database_record(
-            session_db_instance,
-            (context_strategy_name, session_id),
-            Session.sql_update_context_strategy,
+        else:
+            Storage.update_database_record(
+                db_instance,
+                (attack_module_id, runner_id),
+                Session.sql_update_session_metadata_field.format("attack_module"),
+            )
+            return True
+
+    @staticmethod
+    def delete(database_instance: DBInterface | None) -> bool:
+        """
+        Deletes the session metadata and associated endpoint tables from the database.
+
+        Args:
+            database_instance (DBInterface | None): The database instance to delete the session from.
+
+        Returns:
+            bool: The status on whether the session is deleted successfully.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if failed to get session metadata.
+        """
+        if not database_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+
+        session_metadata_info = Storage.read_database_records(
+            database_instance,
+            Session.sql_read_session_metadata,
         )
+        if not session_metadata_info:
+            raise RuntimeError("[Session] Failed to get Session metadata.")
+
+        session_metadata_obj = SessionMetadata.from_tuple(session_metadata_info[0])
+        Storage.delete_database_table(
+            database_instance, Session.sql_drop_table.format("session_metadata_table")
+        )
+        for endpoint in session_metadata_obj.endpoints:
+            endpoint = endpoint.replace("-", "_")
+            Storage.delete_database_table(
+                database_instance, Session.sql_drop_table.format(endpoint)
+            )
+        return True
+
+    @staticmethod
+    def get_session_chats(database_instance: DBInterface | None) -> dict:
+        """
+        Retrieves the chat history for all endpoints in a session.
+
+        Args:
+            database_instance (DBInterface | None): The database instance to retrieve the chat history from.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
+
+        Returns:
+            dict: A dictionary where the keys are endpoint IDs and the values are lists of chat history
+            for each endpoint.
+        """
+        if not database_instance:
+            raise RuntimeError("[Session] Database instance not provided.")
+
+        session_metadata = Session.load(database_instance)
+        chats = {}
+        if session_metadata is not None and "endpoints" in session_metadata:
+            endpoint_list = session_metadata.get("endpoints", [])
+            for endpoint_id in endpoint_list:
+                list_of_chats_from_one_ep = Chat.load_chat_history(
+                    database_instance, endpoint_id.replace("-", "_")
+                )
+                chats.update({endpoint_id: list_of_chats_from_one_ep})
+        return chats

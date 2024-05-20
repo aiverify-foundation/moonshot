@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from abc import abstractmethod
+from pathlib import Path
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
 
 class ContextStrategy:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, cs_id: str) -> None:
+        self.id = cs_id
 
     @classmethod
     def load(cls, cs_id: str) -> ContextStrategy:
@@ -33,18 +34,98 @@ class ContextStrategy:
             Storage.get_filepath(EnvVariables.CONTEXT_STRATEGY.name, cs_id, "py"),
         )
         if context_strategy_inst:
-            return context_strategy_inst()
+            return context_strategy_inst(cs_id)
         else:
             raise RuntimeError(
                 f"Unable to get defined context strategy instance - {cs_id}"
             )
 
-    @abstractmethod
-    def add_in_context(
-        self, user_prompt: str, list_of_previous_prompts: list[dict] = []
-    ):
-        pass
+    @staticmethod
+    def get_all_context_strategies() -> list[str]:
+        """
+        Retrieves the names of all context strategy files.
 
-    @abstractmethod
-    def get_number_of_prev_prompts(self, no_prev_prompts: int):
-        pass
+        This method fetches the names of all context strategy files by scanning the directory specified in the
+        EnvironmentVars. It filters out filenames containing double underscores before returning the list
+        of context strategy names.
+
+        Returns:
+            list: A list of context strategy file names.
+        """
+        filepaths = []
+        context_strategy_files = Storage.get_objects(
+            EnvVariables.CONTEXT_STRATEGY.name, "py"
+        )
+        for context_strategy in context_strategy_files:
+            filepaths.append(Path(context_strategy).stem)
+        return filepaths
+
+    @staticmethod
+    def delete(cs_id: str) -> bool:
+        """
+        Deletes a context strategy module instance by its ID.
+
+        This method attempts to delete a context strategy instance using the provided ID.
+        If the deletion is successful, it returns True.
+
+        If an error occurs during the deletion process, it prints an error message and re-raises the exception.
+
+        Args:
+            cs_id (str): The unique identifier of the context strategy to be deleted.
+
+        Returns:
+            bool: True if the deletion was successful.
+
+        Raises:
+            Exception: If an error occurs during the deletion process.
+        """
+        try:
+            Storage.delete_object(EnvVariables.CONTEXT_STRATEGY.name, cs_id, "py")
+            return True
+
+        except Exception as e:
+            print(f"Failed to delete context strategy: {str(e)}")
+            raise e
+
+    @staticmethod
+    def process_prompt_cs(
+        user_prompt: str,
+        context_strategy_name: str,
+        db_instance: DBInterface,
+        endpoint_id,
+        num_of_previous_chats: int,
+    ) -> str:
+        """
+        Process the user prompt using the specified context strategy.
+
+        Args:
+            user_prompt (str): The user prompt to process.
+            context_strategy_name (str): The name of the context strategy to use.
+            db_instance (DBInterface): The database interface instance.
+            endpoint_id: The ID of the endpoint.
+            num_of_previous_chats (int): The number of previous chats to add.
+
+        Returns:
+            str: The processed user prompt based on the context strategy.
+        """
+        from moonshot.src.redteaming.session.chat import Chat
+
+        context_strategy_instance = get_instance(
+            context_strategy_name,
+            Storage.get_filepath(
+                EnvVariables.CONTEXT_STRATEGY.name, context_strategy_name, "py"
+            ),
+        )
+
+        if context_strategy_instance:
+            # get the last n chats
+            list_of_chats = Chat.get_n_chat_history(
+                db_instance, endpoint_id, num_of_previous_chats
+            )
+            context_strategy_instance = context_strategy_instance(context_strategy_name)
+            return context_strategy_instance.add_in_context(user_prompt, list_of_chats)
+        else:
+            print(
+                "Cannot load context strategy. Make sure the name of the context strategy is correct."
+            )
+            return ""

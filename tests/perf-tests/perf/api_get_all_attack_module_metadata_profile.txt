@@ -1,0 +1,17 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:39  Samples:  7
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.038     CPU time: 0.002
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.037 profile_function  tests/test_api_perf.py:97
+└─ 0.037 api_get_all_attack_module_metadata  moonshot/src/api/api_red_teaming.py:23
+   └─ 0.037 get_available_items  moonshot/src/redteaming/attack/attack_module.py:392
+      ├─ 0.033 _get_or_update_attack_module_info  moonshot/src/redteaming/attack/attack_module.py:437
+      │  └─ 0.033 get_file_hash  moonshot/src/storage/storage.py:207
+      │     └─ 0.033 open  <built-in>
+      └─ 0.004 get_cache_information  moonshot/src/redteaming/attack/attack_module.py:347
+         └─ 0.004 read_object  moonshot/src/storage/storage.py:96
+            └─ 0.004 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+

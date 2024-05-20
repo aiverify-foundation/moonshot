@@ -5,7 +5,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 # ------------------------------------------------------------------------------
 # Cookbook APIs
 # ------------------------------------------------------------------------------
-def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None:
+def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     """
     Creates a new cookbook.
 
@@ -18,6 +18,9 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None
         name (str): The name of the new cookbook.
         description (str): A brief description of the new cookbook.
         recipes (list[str]): A list of recipes to be included in the new cookbook.
+
+    Returns:
+        str: The ID of the newly created cookbook.
     """
     # Create a new cookbook
     # We do not need to provide the id.
@@ -29,7 +32,7 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> None
         description=description,
         recipes=recipes,
     )
-    Cookbook.create(cb_args)
+    return Cookbook.create(cb_args)
 
 
 def api_read_cookbook(cb_id: str) -> dict:
@@ -65,26 +68,23 @@ def api_read_cookbooks(cb_ids: list[str]) -> list[dict]:
     return [Cookbook.read(cb_id).to_dict() for cb_id in cb_ids]
 
 
-def api_update_cookbook(cb_id: str, **kwargs) -> None:
+def api_update_cookbook(cb_id: str, **kwargs) -> bool:
     """
-    Updates an existing cookbook in the cookbook manager.
+    Updates the fields of an existing cookbook with the provided keyword arguments.
 
-    This function updates an existing cookbook in the cookbook manager using the provided cookbook details.
-    It first checks if the cookbook exists, then updates the fields of the existing cookbook with the provided kwargs,
-    and finally calls the Cookbook's update_cookbook method to update the cookbook.
+    This function first checks if the cookbook with the given ID exists. If it does, it updates the fields
+    of the cookbook with the provided keyword arguments. If a field does not exist on the cookbook, it is ignored.
+    After updating the fields, it persists the changes to the cookbook.
 
     Args:
         cb_id (str): The ID of the cookbook to update.
-        kwargs: A dictionary of arguments for the cookbook. Possible keys are:
-            name (str): The name of the cookbook.
-            description (str): The description of the cookbook.
-            recipes (list[str]): The list of recipes in the cookbook.
-
-    Raises:
-        RuntimeError: If the cookbook with the provided ID does not exist.
+        **kwargs: Arbitrary keyword arguments representing the fields to update and their new values.
 
     Returns:
-        None
+        bool: True if the cookbook was successfully updated.
+
+    Raises:
+        Exception: If there's an error during the update process.
     """
     # Check if the cookbook exists
     try:
@@ -98,20 +98,26 @@ def api_update_cookbook(cb_id: str, **kwargs) -> None:
             setattr(existing_cookbook, key, value)
 
     # Update the cookbook
-    Cookbook.update(existing_cookbook)
+    return Cookbook.update(existing_cookbook)
 
 
-def api_delete_cookbook(cb_id: str) -> None:
+def api_delete_cookbook(cb_id: str) -> bool:
     """
-    Deletes a cookbook.
+    Deletes a cookbook based on the provided cookbook ID.
 
-    This function calls the `delete_cookbook` method of the `Cookbook` class, which deletes the cookbook
-    corresponding to the provided ID.
+    This function calls the `delete` method of the `Cookbook` class with the given cookbook ID. If the cookbook
+    is successfully deleted, the method returns True, otherwise it returns False.
 
     Args:
         cb_id (str): The ID of the cookbook to delete.
+
+    Returns:
+        bool: True if the cookbook was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
     """
-    Cookbook.delete(cb_id)
+    return Cookbook.delete(cb_id)
 
 
 def api_get_all_cookbook() -> list[dict]:

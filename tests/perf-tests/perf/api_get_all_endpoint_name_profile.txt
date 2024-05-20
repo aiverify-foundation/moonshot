@@ -1,0 +1,21 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  2
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.002     CPU time: 0.006
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.002 profile_function  tests/test_api_perf.py:97
+└─ 0.002 api_get_all_endpoint_name  moonshot/src/api/api_connector_endpoint.py:139
+   └─ 0.002 get_available_items  moonshot/src/connectors_endpoints/connector_endpoint.py:162
+      └─ 0.002 _read_endpoint  moonshot/src/connectors_endpoints/connector_endpoint.py:81
+         ├─ 0.001 read_object  moonshot/src/storage/storage.py:96
+         │  └─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
+         │     └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+         └─ 0.001 get_creation_datetime  moonshot/src/storage/storage.py:184
+            └─ 0.001 get_filepath  moonshot/src/storage/storage.py:232
+               └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
+                  └─ 0.001 PosixPath.__new__  pathlib.py:868
+                        [4 frames hidden]  pathlib
+                           0.001 _PosixFlavour.parse_parts  pathlib.py:56
+

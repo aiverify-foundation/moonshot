@@ -1,6 +1,5 @@
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
-from moonshot.src.recipes.recipe_type import RecipeType
 
 
 # ------------------------------------------------------------------------------
@@ -10,48 +9,48 @@ def api_create_recipe(
     name: str,
     description: str,
     tags: list[str],
+    categories: list[str],
     datasets: list[str],
     prompt_templates: list[str],
     metrics: list[str],
-    type: str,
-    attack_strategies: list[dict],
-) -> None:
+    attack_modules: list[str],
+    grading_scale: dict[str, list[int]],
+) -> str:
     """
-    Creates a new recipe and stores it in json.
+    Creates a new recipe with the given parameters.
 
-    This function takes a variety of parameters, including the name, description, tags, datasets,
-    prompt templates, metrics, type, attack strategies, and context strategies of the recipe.
-    It then creates a new RecipeArguments object with these parameters, and calls the Recipe.create
-    method to store the new recipe in the json file.
-
-    Note: The id of the recipe is generated from the name of the recipe using the slugify function,
-    so it does not need to be provided.
+    This function takes various parameters that define a recipe, creates a RecipeArguments
+    object with these parameters, and then calls the Recipe.create method to create a new
+    recipe in the system.
 
     Args:
         name (str): The name of the recipe.
-        description (str): The description of the recipe.
-        tags (list[str]): The tags associated with the recipe.
-        datasets (list[str]): The datasets used by the recipe.
-        prompt_templates (list[str]): The prompt templates used by the recipe.
-        metrics (list[str]): The metrics used by the recipe.
-        type (str): The type of the recipe.
-        attack_strategies (list[dict]): The attack strategies used by the recipe.
+        description (str): A description of the recipe.
+        tags (list[str]): A list of tags associated with the recipe.
+        categories (list[str]): A list of categories the recipe belongs to.
+        datasets (list[str]): A list of datasets used in the recipe.
+        prompt_templates (list[str]): A list of prompt templates for the recipe.
+        metrics (list[str]): A list of metrics to evaluate the recipe.
+        attack_modules (list[str]): A list of attack modules used in the recipe.
+        grading_scale (dict[str, list[int]]): A grading scale dictionary where the key is the grade and the
+        value is a list of integers representing the scale.
 
     Returns:
-        None
+        str: The ID of the newly created recipe.
     """
     rec_args = RecipeArguments(
         id="",
         name=name,
         description=description,
         tags=tags,
+        categories=categories,
         datasets=datasets,
         prompt_templates=prompt_templates,
         metrics=metrics,
-        type=RecipeType(type),
-        attack_strategies=attack_strategies,
+        attack_modules=attack_modules,
+        grading_scale=grading_scale,
     )
-    Recipe.create(rec_args)
+    return Recipe.create(rec_args)
 
 
 def api_read_recipe(rec_id: str) -> dict:
@@ -89,18 +88,20 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
     return [Recipe.read(rec_id).to_dict() for rec_id in rec_ids]
 
 
-def api_update_recipe(rec_id: str, **kwargs) -> None:
+def api_update_recipe(rec_id: str, **kwargs) -> bool:
     """
-    Updates a recipe with the provided fields.
+    Updates a recipe with the given keyword arguments.
 
-    This function takes a recipe ID and a variable number of keyword arguments as input.
-    It first checks if the recipe with the given ID exists. If it does, it updates the fields
-    of the existing recipe with the provided keyword arguments. If the recipe does not exist,
-    it raises a RuntimeError.
+    This function takes a recipe ID and arbitrary keyword arguments, checks if the recipe exists,
+    and updates the fields of the recipe with the provided values. If the recipe does not exist,
+    a RuntimeError is raised. If the update is successful, it returns True.
 
     Args:
         rec_id (str): The ID of the recipe to update.
-        **kwargs: Variable number of keyword arguments representing the fields to update.
+        **kwargs: Arbitrary keyword arguments representing the fields to update.
+
+    Returns:
+        bool: True if the recipe was successfully updated.
 
     Raises:
         RuntimeError: If the recipe with the given ID does not exist.
@@ -113,30 +114,34 @@ def api_update_recipe(rec_id: str, **kwargs) -> None:
 
     # Update the fields of the existing recipe with the provided kwargs
     for key, value in kwargs.items():
-        if key == "type":
-            value = RecipeType(value)
         if hasattr(existing_recipe, key):
             setattr(existing_recipe, key, value)
 
     # Update the endpoint
-    Recipe.update(existing_recipe)
+    return Recipe.update(existing_recipe)
 
 
-def api_delete_recipe(rec_id: str) -> None:
+def api_delete_recipe(rec_id: str) -> bool:
     """
-    Deletes a recipe.
+    Deletes a recipe identified by its unique recipe ID.
 
-    This method takes a recipe ID as input, deletes the corresponding JSON file from the directory specified by
-    `EnvironmentVars.RECIPES`. If the operation fails for any reason, an exception is raised and the
-    error is printed.
+    This function takes a recipe ID, verifies the existence of the recipe, and if found, calls the delete method from
+    the Recipe class to remove the recipe from storage.
+
+    If the deletion is successful, it returns True.
+    If the recipe does not exist or an exception occurs during deletion, a RuntimeError is raised with an
+    appropriate error message.
 
     Args:
-        rec_id (str): The ID of the recipe to delete.
+        rec_id (str): The unique identifier for the recipe to be deleted.
+
+    Returns:
+        bool: True if the recipe was successfully deleted.
 
     Raises:
-        Exception: If there is an error during file deletion or any other operation within the method.
+        RuntimeError: If the deletion process encounters an error.
     """
-    Recipe.delete(rec_id)
+    return Recipe.delete(rec_id)
 
 
 def api_get_all_recipe() -> list[dict]:

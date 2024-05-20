@@ -2,35 +2,30 @@ from typing import Callable
 
 from moonshot.src.runners.runner import Runner
 from moonshot.src.runners.runner_arguments import RunnerArguments
-from moonshot.src.runners.runner_type import RunnerType
 
 
 # ------------------------------------------------------------------------------
 # Runner APIs
 # ------------------------------------------------------------------------------
-def api_create_recipe_runner(
+def api_create_runner(
     name: str,
-    recipes: list[str],
     endpoints: list[str],
-    num_of_prompts: int,
+    description: str = "",
     progress_callback_func: Callable | None = None,
 ) -> Runner:
     """
-    Creates a new recipe runner.
+    Creates a new runner.
 
-    This function takes a variety of parameters, including the name, recipes, endpoints,
-    number of prompts, and a progress callback function. It then creates a new RunnerArguments
-    object with these parameters, and calls the Runner.create method to create a new recipe runner.
-
-    Note: The id of the runner is generated from the name of the runner using the slugify function,
+    This function takes the name, endpoints, and an optional progress callback function to create a new Runner instance.
+    The id of the runner is generated from the name of the runner using the slugify function,
     so it does not need to be provided.
 
     Args:
         name (str): The name of the runner.
-        recipes (list[str]): The recipes to be used by the runner.
-        endpoints (list[str]): The endpoints to be used by the runner.
-        num_of_prompts (int): The number of prompts to be used by the runner.
-        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
+        endpoints (list[str]): A list of endpoint identifiers for the runner.
+        description (str, optional): A brief description of the runner. Defaults to an empty string.
+        progress_callback_func (Callable | None, optional): An optional callback function for progress updates.
+        Defaults to None.
 
     Returns:
         Runner: A new Runner object.
@@ -42,53 +37,8 @@ def api_create_recipe_runner(
     runner_args = RunnerArguments(
         id="",
         name=name,
-        run_type=RunnerType.RECIPE,
-        recipes=recipes,
         endpoints=endpoints,
-        num_of_prompts=num_of_prompts,
-        progress_callback_func=progress_callback_func,
-    )
-    return Runner.create(runner_args)
-
-
-def api_create_cookbook_runner(
-    name: str,
-    cookbooks: list[str],
-    endpoints: list[str],
-    num_of_prompts: int,
-    progress_callback_func: Callable | None = None,
-) -> Runner:
-    """
-    Creates a new cookbook runner.
-
-    This function takes a variety of parameters, including the name, cookbooks, endpoints,
-    number of prompts, and a progress callback function. It then creates a new RunnerArguments
-    object with these parameters, and calls the Runner.create method to create a new cookbook runner.
-
-    Note: The id of the runner is generated from the name of the runner using the slugify function,
-    so it does not need to be provided.
-
-    Args:
-        name (str): The name of the runner.
-        cookbooks (list[str]): The cookbooks to be used by the runner.
-        endpoints (list[str]): The endpoints to be used by the runner.
-        num_of_prompts (int): The number of prompts to be used by the runner.
-        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
-
-    Returns:
-        Runner: A new Runner object.
-    """
-    # Create a new cookbook runner
-    # We do not need to provide the id.
-    # This is because during creating:
-    # 1. the id is slugify from the name and stored as id.
-    runner_args = RunnerArguments(
-        id="",
-        name=name,
-        run_type=RunnerType.COOKBOOK,
-        cookbooks=cookbooks,
-        endpoints=endpoints,
-        num_of_prompts=num_of_prompts,
+        description=description,
         progress_callback_func=progress_callback_func,
     )
     return Runner.create(runner_args)
@@ -129,19 +79,23 @@ def api_read_runner(runner_id: str) -> dict:
     return Runner.read(runner_id).to_dict()
 
 
-def api_delete_runner(runner_id: str) -> None:
+def api_delete_runner(runner_id: str) -> bool:
     """
-    Deletes a runner based on the provided runner ID.
+    Deletes a runner by its identifier.
 
-    This function takes a runner ID as input and deletes the corresponding runner.
+    This function takes a runner ID as input and calls the delete method from the Runner class
+    to remove the specified runner from storage.
 
     Args:
-        runner_id (str): The ID of the runner to be deleted.
+        runner_id (str): The unique identifier of the runner to be deleted.
 
     Returns:
-        None
+        bool: True if the runner was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
     """
-    Runner.delete(runner_id)
+    return Runner.delete(runner_id)
 
 
 def api_get_all_runner() -> list[dict]:

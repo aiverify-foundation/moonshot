@@ -1,0 +1,25 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:39  Samples:  7
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.007     CPU time: 0.007
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.007 profile_function  tests/test_api_perf.py:97
+├─ 0.006 api_get_all_result_name  moonshot/src/api/api_result.py:58
+│  └─ 0.006 get_available_items  moonshot/src/results/result.py:83
+│     ├─ 0.005 _read_result  moonshot/src/results/result.py:38
+│     │  └─ 0.005 read_object  moonshot/src/storage/storage.py:96
+│     │     ├─ 0.004 get_instance  moonshot/src/utils/import_modules.py:59
+│     │     │  ├─ 0.002 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+│     │     │  │  ├─ 0.001 max  <built-in>
+│     │     │  │  └─ 0.001 loads  <built-in>
+│     │     │  └─ 0.002 create_module_spec  moonshot/src/utils/import_modules.py:7
+│     │     │     └─ 0.002 find_spec  <frozen importlib.util>:73
+│     │     └─ 0.001 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+│     │        └─ 0.001 load  json/__init__.py:274
+│     │              [4 frames hidden]  json
+│     └─ 0.001 [self]  moonshot/src/results/result.py
+└─ 0.001 Profiler.stop  pyinstrument/profiler.py:138
+      [2 frames hidden]  pyinstrument
+

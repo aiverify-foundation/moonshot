@@ -1,4 +1,4 @@
-from moonshot.src.prompt_templates.prompt_template_manager import PromptTemplateManager
+from moonshot.src.prompt_templates.prompt_template import PromptTemplate
 
 
 # ------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ def api_get_all_prompt_template_detail() -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each representing the details of a prompt template.
     """
-    return PromptTemplateManager.get_all_prompt_template_details()
+    return PromptTemplate.get_all_prompt_template_details()
 
 
 def api_get_all_prompt_template_name() -> list[str]:
@@ -21,4 +21,20 @@ def api_get_all_prompt_template_name() -> list[str]:
     Returns:
         list[str]: A list of prompt template names.
     """
-    return PromptTemplateManager.get_all_prompt_template_names()
+    return PromptTemplate.get_all_prompt_template_names()
+
+
+def api_delete_prompt_template(pt_id: str) -> bool:
+    """
+    Deletes a prompt template by its identifier.
+
+    Args:
+        pt_id (str): The unique identifier of the prompt template to be deleted.
+
+    Returns:
+        bool: True if the prompt template was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
+    """
+    return PromptTemplate.delete(pt_id)

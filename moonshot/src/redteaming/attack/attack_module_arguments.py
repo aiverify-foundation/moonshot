@@ -1,27 +1,44 @@
+import asyncio
+
 from pydantic import BaseModel
+
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
+from moonshot.src.storage.db_interface import DBInterface
 
 
 class AttackModuleArguments(BaseModel):
-    # name of the attack module
-    name: str
+    class Config:
+        arbitrary_types_allowed = True
 
-    # list of Connector instance to connect to the endpoints specified in the Recipe
-    connector_instances: list
+    # list of connector endpoints
+    connector_ids: list = []
 
-    # list of Stop Strategy instances used to stop the automated red teaming
-    stop_strategy_instances: list
-
-    # list of names of datasets to be used (if any)
-    datasets: list = []
-
-    # list of prompt template names to be used (if any)
+    # list of prompt template ids to be used (if any)
     prompt_templates: list = []
 
-    # list of metric instances to be used (if any)
-    metric_instances: list = []
+    # user's prompt
+    prompt: str
 
-    # list of context strategy instance to be used (if any)
-    context_strategies: list = []
+    # system prompt
+    system_prompt: str = ""
+
+    # list of metric ids to be used (if any)
+    metric_ids: list = []
+
+    # list of context strategy ids and other params to be used (if any)
+    context_strategy_info: list = []
+
+    # DBAccessor for the attack module to access DB data
+    db_instance: DBInterface
+
+    # chat batch size for returning chat information by callback
+    chat_batch_size: int = 0
+
+    # callback function to return chat information
+    red_teaming_progress: RedTeamingProgress | None = None
+
+    # an asyncio event to cancel red teaming if a cancel signal is sent
+    cancel_event: asyncio.Event
 
     # a dict that contains other params that is required by the attack module (if any)
     params: dict = {}
