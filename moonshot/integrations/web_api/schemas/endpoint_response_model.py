@@ -7,4 +7,5 @@ class EndpointDataModel(ConnectorEndpointPydanticModel):
     pass
 
     def mask_token(self):
-        self.token = "*" * 20
+        if self.token:
+            self.token = "*" * 20
