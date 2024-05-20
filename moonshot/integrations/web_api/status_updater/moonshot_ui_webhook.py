@@ -34,6 +34,12 @@ class MoonshotUIWebhook(
                 "http://localhost:3000/api/v1/benchmarks/status",
             )
         )
+        self.art_url = str(
+            dotenv_values().get(
+                "MOONSHOT_UI_ART_CALLBACK_URL",
+                "http://localhost:3000/api/v1/redteaming/status",
+            )
+        )
 
     def on_progress_update(self, progress_data: TestRunProgress) -> None:
         logger = logging.getLogger()
@@ -56,7 +62,7 @@ class MoonshotUIWebhook(
         self.auto_red_team_test_state.update_progress_status(progress_data)
         print("Calling Auto Red Team Callback")
         try:
-            response = requests.post(self.url, json=progress_data)
+            response = requests.post(self.art_url, json=progress_data)
             response.raise_for_status()
             logger.log(level=logging.DEBUG, msg=response.json())
             logger.log(
