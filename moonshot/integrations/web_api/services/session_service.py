@@ -109,7 +109,6 @@ class SessionService(BaseService):
                 session['description'] = runners_dict[sess_id]['description']
                 retn_session.append(session)
         
-        # retn_session now contains the updated session metadata with runner 'id' and 'description'
         return [
             SessionMetadataModel(**metadata) for metadata in sessions_metadata_dicts
         ]
