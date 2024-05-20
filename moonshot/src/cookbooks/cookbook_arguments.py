@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic import BaseModel
 
 
@@ -28,32 +26,7 @@ class CookbookArguments(BaseModel):
         """
         return {
             "id": self.id,
-            "name": self.check_type("name", str),
-            "description": self.check_type("description", str),
-            "recipes": self.check_type("recipes", list),
+            "name": self.name,
+            "description": self.description,
+            "recipes": self.recipes,
         }
-
-    def check_type(self, attribute: str, expected_type: type) -> Any:
-        """
-        Checks the type of a given attribute of the CookbookArguments instance.
-
-        This method retrieves the value of the specified attribute and checks if its type matches the expected type.
-        If the types do not match, it raises a TypeError with a message indicating the attribute name, the expected type
-        , and the actual type of the value.
-
-        Args:
-            attribute (str): The name of the attribute to check.
-            expected_type (type): The expected type of the attribute.
-
-        Returns:
-            Any: The value of the attribute if its type matches the expected type.
-
-        Raises:
-            TypeError: If the type of the attribute does not match the expected type.
-        """
-        value = getattr(self, attribute)
-        if not isinstance(value, expected_type):
-            raise TypeError(
-                f"Expected type for {attribute} is {expected_type}, but got {type(value)}"
-            )
-        return value

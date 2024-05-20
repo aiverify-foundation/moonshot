@@ -98,40 +98,15 @@ class RecipeArguments(BaseModel):
             The keys are the attribute names and the values are the attribute values.
         """
         return {
-            "id": self.check_type("id", str),
-            "name": self.check_type("name", str),
-            "description": self.check_type("description", str),
-            "tags": self.check_type("tags", list),
-            "categories": self.check_type("categories", list),
-            "datasets": self.check_type("datasets", list),
-            "prompt_templates": self.check_type("prompt_templates", list),
-            "metrics": self.check_type("metrics", list),
-            "attack_modules": self.check_type("attack_modules", list),
-            "grading_scale": self.check_type("grading_scale", dict),
-            "stats": self.check_type("stats", dict),
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "tags": self.tags,
+            "categories": self.categories,
+            "datasets": self.datasets,
+            "prompt_templates": self.prompt_templates,
+            "metrics": self.metrics,
+            "attack_modules": self.attack_modules,
+            "grading_scale": self.grading_scale,
+            "stats": self.stats,
         }
-
-    def check_type(self, attribute: str, expected_type: type) -> Any:
-        """
-        Checks the type of a given attribute of the RecipeArguments instance.
-
-        This method retrieves the value of the specified attribute and checks if its type matches the expected type.
-        If the types do not match, it raises a TypeError with a message indicating the attribute name, the expected type
-        , and the actual type of the value.
-
-        Args:
-            attribute (str): The name of the attribute to check.
-            expected_type (type): The expected type of the attribute.
-
-        Returns:
-            Any: The value of the attribute if its type matches the expected type.
-
-        Raises:
-            TypeError: If the type of the attribute does not match the expected type.
-        """
-        value = getattr(self, attribute)
-        if not isinstance(value, expected_type):
-            raise TypeError(
-                f"Expected type for {attribute} is {expected_type}, but got {type(value)}"
-            )
-        return value
