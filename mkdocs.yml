@@ -90,6 +90,8 @@ nav:
       - Running Benchmark: web_ui/run_benchmark_test.md
       - Cookbook: web_ui/cookbook.md
       - Red Teaming: web_ui/red_teaming.md
+  - Contributor Guide:
+      - Create Sample: contributor_guide/create_sample.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md
