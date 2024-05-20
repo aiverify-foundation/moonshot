@@ -1,19 +1,14 @@
 from pydantic import BaseModel, RootModel
 
+from ..schemas.session_response_model import ChatRecord
 
-class Chat(BaseModel):
-    prompt: str
-    response: str
-    prompt_time: str
-    response_time: str
+
 
 class PromptInfo(BaseModel):
     current_runner_id: str
-    current_am_id: str
-    current_cs_id: str
-    current_pt_id: str
-    current_chats: dict[str,list[Chat]]
+    current_chats: dict[str, list[ChatRecord]]
     current_batch_size: int
     current_status: str
-    
-PromptResponseModel = RootModel[list[PromptInfo]]
+
+
+PromptResponseModel = RootModel[PromptInfo]

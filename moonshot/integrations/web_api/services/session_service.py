@@ -42,7 +42,7 @@ class SessionService(BaseService):
     @exception_handler
     def create_new_session(
         self, session_create_dto: SessionCreateDTO
-    ) -> SessionMetadataModel:
+    ) -> SessionResponseModel:
         """
         Create a new session with a new runner and return the session metadata.
 
@@ -82,7 +82,12 @@ class SessionService(BaseService):
         if session_metadata_dict is None:
             raise ValueError(f"No session metadata found for runner ID {runner.id}")
 
-        return SessionMetadataModel(**session_metadata_dict)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=None,
+        )
 
     @exception_handler
     def get_all_session(self) -> list[SessionMetadataModel]:
@@ -92,7 +97,18 @@ class SessionService(BaseService):
         Returns:
             list[SessionMetadataModel]: A list of session metadata models for all sessions.
         """
+        retn_session = []
+        runners_with_session = moonshot_api.api_get_all_runner()
         sessions_metadata_dicts = moonshot_api.api_get_all_session_metadata()
+        
+        runners_dict = {runner['id']: runner for runner in runners_with_session}
+        
+        for session in sessions_metadata_dicts:
+            sess_id = session.get("session_id")
+            if sess_id in runners_dict:
+                session['description'] = runners_dict[sess_id]['description']
+                retn_session.append(session)
+        
         return [
             SessionMetadataModel(**metadata) for metadata in sessions_metadata_dicts
         ]
@@ -135,15 +151,18 @@ class SessionService(BaseService):
                 f"Session metadata for runner ID {runner.id} must be a dictionary."
             )
 
-        session_metadata = SessionMetadataModel(**session_metadata_dict)
-
         session_chat = (
             moonshot_api.api_get_all_chats_from_session(runner.id)
             if include_history
             else None
         )
 
-        return SessionResponseModel(session=session_metadata, chat_records=session_chat)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=session_chat,
+        )
 
     @exception_handler
     def update_session_chat(self, runner_id: str):

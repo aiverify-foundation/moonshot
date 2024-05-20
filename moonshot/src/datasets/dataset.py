@@ -86,21 +86,26 @@ class Dataset:
 
     @staticmethod
     @validate_arguments
-    def delete(ds_id: str) -> None:
+    def delete(ds_id: str) -> bool:
         """
-        Deletes a dataset given its unique identifier.
+        Deletes a dataset from storage.
 
-        This method attempts to delete the dataset corresponding to the provided `ds_id` from the storage.
-        If the deletion process encounters any issues, it logs the error message and re-raises the exception.
+        This method attempts to delete the dataset with the given ID from the storage. If the deletion is successful,
+        it returns True. If an exception occurs during the deletion process, it prints an error message and re-raises
+        the exception.
 
         Args:
             ds_id (str): The unique identifier of the dataset to be deleted.
 
+        Returns:
+            bool: True if the dataset was successfully deleted.
+
         Raises:
-            Exception: If there's an error during the deletion process.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.DATASETS.name, ds_id, "json")
+            return True
 
         except Exception as e:
             print(f"Failed to delete dataset: {str(e)}")

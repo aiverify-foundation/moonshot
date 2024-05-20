@@ -2,7 +2,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments as Cookb
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
-from ..schemas.cookbook_create_dto import CookbookCreateDTO
+from ..schemas.cookbook_create_dto import CookbookCreateDTO, CookbookUpdateDTO
 from ..schemas.cookbook_response_model import CookbookResponseModel
 from ..services.base_service import BaseService
 from ..services.recipe_service import get_total_prompt_in_recipe
@@ -103,7 +103,7 @@ class CookbookService(BaseService):
 
     @exception_handler
     def update_cookbook(
-        self, cookbook_data: CookbookCreateDTO, cookbook_id: str
+        self, cookbook_data: CookbookUpdateDTO, cookbook_id: str
     ) -> None:
         """
         Update an existing cookbook with new data.
@@ -112,12 +112,12 @@ class CookbookService(BaseService):
             cookbook_data (CookbookCreateDTO): Data transfer object containing new cookbook details.
             cookbook_id (str): The ID of the cookbook to update.
         """
-        moonshot_api.api_update_cookbook(
-            cb_id=cookbook_id,
-            name=cookbook_data.name,
-            description=cookbook_data.description,
-            recipes=cookbook_data.recipes,
-        )
+        update_data = {
+            k: v
+            for k, v in cookbook_data.to_dict().items()
+            if v is not None and k != "id"
+        }
+        moonshot_api.api_update_cookbook(cb_id=cookbook_id, **update_data)
 
     @exception_handler
     def delete_cookbook(self, cookbook_id: str) -> None:

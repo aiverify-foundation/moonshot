@@ -4,21 +4,20 @@ from moonshot.src.datasets.dataset import Dataset
 # ------------------------------------------------------------------------------
 # Datasets APIs
 # ------------------------------------------------------------------------------
-def api_delete_dataset(ds_id: str) -> None:
+def api_delete_dataset(ds_id: str) -> bool:
     """
-    Deletes a dataset.
-
-    This method takes a dataset ID as input, deletes the corresponding JSON file from the directory specified by
-    `EnvironmentVars.datasets`. If the operation fails for any reason, an exception is raised and the
-    error is printed.
+    Deletes a dataset identified by its unique dataset ID.
 
     Args:
-        ds_id (str): The ID of the dataset to delete.
+        ds_id (str): The unique identifier for the dataset to be deleted.
+
+    Returns:
+        bool: True if the dataset was successfully deleted.
 
     Raises:
-        Exception: If there is an error during file deletion or any other operation within the method.
+        Exception: If the deletion process encounters an error.
     """
-    Dataset.delete(ds_id)
+    return Dataset.delete(ds_id)
 
 
 def api_get_all_datasets() -> list[dict]:

@@ -133,7 +133,7 @@ async def get_session_by_runner_id(
 async def create_session(
     session_dto: SessionCreateDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> SessionMetadataModel:
+) -> SessionResponseModel:
     """
     Create a new session based on the provided session data transfer object (DTO).
 
@@ -142,7 +142,7 @@ async def create_session(
         session_service (SessionService): The service responsible for session operations.
 
     Returns:
-        SessionMetadataModel: The metadata of the newly created session.
+        SessionResponseModel: The metadata of the newly created session.
 
     Raises:
         HTTPException: An error with status code 404 if the session cannot be created due to a file not found.
@@ -209,7 +209,7 @@ async def cancel_auto_redteam(
     """
     Cancel the automated red team operation for a given session.
 
-    This endpoint is used to stop any ongoing automated red team operations for the session 
+    This endpoint is used to stop any ongoing automated red team operations for the session
     associated with the provided runner_id.
 
     Args:

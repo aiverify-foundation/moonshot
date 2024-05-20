@@ -112,7 +112,7 @@ def api_get_all_session_metadata() -> list:
     )
 
 
-def api_update_context_strategy(runner_id: str, context_strategy: str) -> None:
+def api_update_context_strategy(runner_id: str, context_strategy: str) -> bool:
     """
     Updates the context strategy for a specific runner.
 
@@ -125,14 +125,14 @@ def api_update_context_strategy(runner_id: str, context_strategy: str) -> None:
         context_strategy (str): The new context strategy to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the context strategy is updated successfully.
     """
-    Session.update_context_strategy(
+    return Session.update_context_strategy(
         api_load_runner(runner_id).database_instance, runner_id, context_strategy
     )
 
 
-def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) -> None:
+def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) -> bool:
     """
     Updates the number of previous prompts used in a context strategy for a specific runner.
 
@@ -145,14 +145,14 @@ def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) 
         num_of_prev_prompts (int): The new number of previous prompts to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the number of prompts for context strategy is updated successfully.
     """
-    Session.update_cs_num_of_prev_prompts(
+    return Session.update_cs_num_of_prev_prompts(
         api_load_runner(runner_id).database_instance, runner_id, num_of_prev_prompts
     )
 
 
-def api_update_prompt_template(runner_id: str, prompt_template: str) -> None:
+def api_update_prompt_template(runner_id: str, prompt_template: str) -> bool:
     """
     Updates the prompt template for a specific runner.
 
@@ -165,14 +165,14 @@ def api_update_prompt_template(runner_id: str, prompt_template: str) -> None:
         prompt_template (str): The new prompt template to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the prompt template is updated successfully.
     """
-    Session.update_prompt_template(
+    return Session.update_prompt_template(
         api_load_runner(runner_id).database_instance, runner_id, prompt_template
     )
 
 
-def api_update_metric(runner_id: str, metric_id: str) -> None:
+def api_update_metric(runner_id: str, metric_id: str) -> bool:
     """
     Updates the metric for a specific runner.
 
@@ -185,14 +185,14 @@ def api_update_metric(runner_id: str, metric_id: str) -> None:
         metric_id (str): The new metric to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the metric is updated successfully.
     """
-    Session.update_metric(
+    return Session.update_metric(
         api_load_runner(runner_id).database_instance, runner_id, metric_id
     )
 
 
-def api_update_system_prompt(runner_id: str, system_prompt: str) -> None:
+def api_update_system_prompt(runner_id: str, system_prompt: str) -> bool:
     """
     Updates the system prompt for a specific runner.
 
@@ -205,14 +205,14 @@ def api_update_system_prompt(runner_id: str, system_prompt: str) -> None:
         system_prompt (str): The new system prompt to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the system prompt is updated successfully.
     """
-    Session.update_system_prompt(
+    return Session.update_system_prompt(
         api_load_runner(runner_id).database_instance, runner_id, system_prompt
     )
 
 
-def api_update_attack_module(runner_id: str, attack_module_id: str) -> None:
+def api_update_attack_module(runner_id: str, attack_module_id: str) -> bool:
     """
     Updates the attack module for a specific runner.
 
@@ -225,14 +225,14 @@ def api_update_attack_module(runner_id: str, attack_module_id: str) -> None:
         attack_module_id (str): The new attack module to be set for the runner.
 
     Returns:
-        None
+        bool: The status on whether the attack module is updated successfully.
     """
-    Session.update_attack_module(
+    return Session.update_attack_module(
         api_load_runner(runner_id).database_instance, runner_id, attack_module_id
     )
 
 
-def api_delete_session(runner_id: str) -> None:
+def api_delete_session(runner_id: str) -> bool:
     """
     Deletes the session for a specific runner.
 
@@ -243,9 +243,9 @@ def api_delete_session(runner_id: str) -> None:
         runner_id (str): The ID of the runner for which the session needs to be deleted.
 
     Returns:
-        None
+        bool: The status on whether the session is deleted successfully.
     """
-    Session.delete(api_load_runner(runner_id).database_instance)
+    return Session.delete(api_load_runner(runner_id).database_instance)
 
 
 def api_get_all_chats_from_session(runner_id: str) -> dict | None:
