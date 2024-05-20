@@ -75,7 +75,12 @@ class ConnectorEndpoint:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return ConnectorEndpointArguments(**ConnectorEndpoint._read_endpoint(ep_id))
+            if ep_id:
+                return ConnectorEndpointArguments(
+                    **ConnectorEndpoint._read_endpoint(ep_id)
+                )
+            else:
+                raise RuntimeError("Connector Endpoint ID is empty")
 
         except Exception as e:
             print(f"Failed to read endpoint: {str(e)}")

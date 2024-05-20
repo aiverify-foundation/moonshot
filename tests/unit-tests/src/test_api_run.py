@@ -3,8 +3,7 @@ import shutil
 
 import pytest
 
-from moonshot.src.api.api_environment_variables import api_set_environment_variables
-from moonshot.src.api.api_run import api_get_all_run
+from moonshot.api import api_get_all_run, api_set_environment_variables
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_status import RunStatus
 
@@ -39,6 +38,8 @@ class TestCollectionApiRun:
         run_data_files = [
             "tests/unit-tests/src/data/runners/my-new-recipe-runner.json",
             "tests/unit-tests/src/data/databases/my-new-recipe-runner.db",
+            "tests/unit-tests/src/data/runners/my-new-recipe-runner-no-db.json",
+            "tests/unit-tests/src/data/databases/my-new-recipe-runner-no-db.db",
         ]
         for run_data_file in run_data_files:
             if os.path.exists(run_data_file):

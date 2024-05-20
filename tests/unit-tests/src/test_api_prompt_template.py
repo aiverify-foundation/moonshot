@@ -4,18 +4,18 @@ import shutil
 import pytest
 from pydantic import ValidationError
 
-from moonshot.src.api.api_environment_variables import api_set_environment_variables
-from moonshot.src.api.api_prompt_template import (
+from moonshot.api import (
     api_delete_prompt_template,
     api_get_all_prompt_template_detail,
     api_get_all_prompt_template_name,
+    api_set_environment_variables,
 )
 
 
 class TestCollectionApiPromptTemplate:
     @pytest.fixture(autouse=True)
     def init(self):
-        # Reset
+        # Set environment variables for prompt templates and IO modules
         api_set_environment_variables(
             {
                 "PROMPT_TEMPLATES": "tests/unit-tests/src/data/prompt-templates/",
@@ -23,162 +23,153 @@ class TestCollectionApiPromptTemplate:
             }
         )
 
-        # Copy endpoint
+        # Copy sample prompt template for testing
         shutil.copyfile(
             "tests/unit-tests/src/data/samples/answer-template.json",
             "tests/unit-tests/src/data/prompt-templates/answer-template.json",
         )
 
-        # Perform tests
+        # Setup complete, proceed with tests
         yield
 
-        # Delete the endpoint using os.remove
-        prompt_templates = [
+        # Cleanup: Remove test prompt template file
+        prompt_template_path = (
             "tests/unit-tests/src/data/prompt-templates/answer-template.json"
-        ]
-        for prompt_template in prompt_templates:
-            if os.path.exists(prompt_template):
-                os.remove(prompt_template)
+        )
+        if os.path.exists(prompt_template_path):
+            os.remove(prompt_template_path)
 
     # ------------------------------------------------------------------------------
     # Test api_get_all_prompt_template_name functionality
     # ------------------------------------------------------------------------------
     def test_api_get_all_prompt_template_name(self):
         """
-        Test the api_get_all_prompt_template_name function.
+        Test the retrieval of all prompt template names.
 
         This test ensures that the api_get_all_prompt_template_name function returns a list of prompt template names
-        that matches the expected list of detected prompt templates.
+        that matches the expected list of available prompt templates.
         """
-        detected_prompt_templates = ["answer-template"]
+        expected_prompt_template_names = ["answer-template"]
 
-        prompt_templates = api_get_all_prompt_template_name()
-        print(prompt_templates)
-        assert len(prompt_templates) == len(
-            detected_prompt_templates
+        prompt_template_names = api_get_all_prompt_template_name()
+        assert len(prompt_template_names) == len(
+            expected_prompt_template_names
         ), "The number of prompt templates does not match the expected count."
 
-        for template in prompt_templates:
+        for template_name in prompt_template_names:
             assert (
-                template in detected_prompt_templates
-            ), f"The template '{template}' was not found in the list of detected prompt templates."
+                template_name in expected_prompt_template_names
+            ), f"The template name '{template_name}' was not found in the list of expected prompt template names."
 
     # ------------------------------------------------------------------------------
     # Test api_delete_prompt_template functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "pt_id,expected_dict",
+        "template_id,expected_result",
         [
             # Valid case
-            ("answer-template", {"expected_output": True}),
+            ("answer-template", {"success": True}),
             # Invalid cases
             (
                 "invalid_template",
                 {
-                    "expected_output": False,
-                    "expected_error_message": "No prompt_templates found with ID: invalid_template",
-                    "expected_exception": "RuntimeError",
+                    "success": False,
+                    "error_message": "No prompt_templates found with ID: invalid_template",
+                    "exception": RuntimeError,
                 },
             ),
             (
                 "",
                 {
-                    "expected_output": False,
-                    "expected_error_message": "No prompt_templates found with ID: ",
-                    "expected_exception": "RuntimeError",
+                    "success": False,
+                    "error_message": "No prompt_templates found with ID: ",
+                    "exception": RuntimeError,
                 },
             ),
             (
                 None,
                 {
-                    "expected_output": False,
-                    "expected_error_message": "Input should be a valid string",
-                    "expected_exception": "ValidationError",
+                    "success": False,
+                    "error_message": "Input should be a valid string",
+                    "exception": ValidationError,
                 },
             ),
             (
                 "None",
                 {
-                    "expected_output": False,
-                    "expected_error_message": "No prompt_templates found with ID: None",
-                    "expected_exception": "RuntimeError",
+                    "success": False,
+                    "error_message": "No prompt_templates found with ID: None",
+                    "exception": RuntimeError,
                 },
             ),
             (
                 {},
                 {
-                    "expected_output": False,
-                    "expected_error_message": "Input should be a valid string",
-                    "expected_exception": "ValidationError",
+                    "success": False,
+                    "error_message": "Input should be a valid string",
+                    "exception": ValidationError,
                 },
             ),
             (
                 [],
                 {
-                    "expected_output": False,
-                    "expected_error_message": "Input should be a valid string",
-                    "expected_exception": "ValidationError",
+                    "success": False,
+                    "error_message": "Input should be a valid string",
+                    "exception": ValidationError,
                 },
             ),
             (
                 123,
                 {
-                    "expected_output": False,
-                    "expected_error_message": "Input should be a valid string",
-                    "expected_exception": "ValidationError",
+                    "success": False,
+                    "error_message": "Input should be a valid string",
+                    "exception": ValidationError,
                 },
             ),
         ],
     )
-    def test_api_delete_prompt_template(self, pt_id, expected_dict):
+    def test_api_delete_prompt_template(self, template_id, expected_result):
         """
-        Test the api_delete_prompt_template function.
+        Test the deletion of a prompt template.
 
-        This test checks if the function either returns the expected output or raises the expected exception with the correct error message.
+        This test checks if the api_delete_prompt_template function successfully deletes the specified prompt template
+        or raises the expected exception with the correct error message.
 
         Args:
-            pt_id: The prompt template ID to delete.
-            expected_dict: A dictionary containing the 'expected_output', 'expected_error_message', and 'expected_exception' keys.
+            template_id: The ID of the prompt template to delete.
+            expected_result: A dictionary containing the expected 'success', 'error_message', and 'exception' keys.
         """
-        if expected_dict["expected_output"]:
-            response = api_delete_prompt_template(pt_id)
+        if expected_result["success"]:
+            result = api_delete_prompt_template(template_id)
             assert (
-                response == expected_dict["expected_output"]
-            ), "The response from api_delete_prompt_template does not match the expected output."
+                result == expected_result["success"]
+            ), "The api_delete_prompt_template function did not return the expected success state."
         else:
-            if expected_dict["expected_exception"] == "RuntimeError":
+            if expected_result["exception"] is RuntimeError:
                 with pytest.raises(RuntimeError) as e:
-                    api_delete_prompt_template(pt_id)
+                    api_delete_prompt_template(template_id)
                 assert (
-                    str(e.value) == expected_dict["expected_error_message"]
-                ), "The error message does not match the expected error message."
+                    e.value.args[0] == expected_result["error_message"]
+                ), "The error message from the exception does not match the expected error message."
 
-            elif expected_dict["expected_exception"] == "ValidationError":
+            elif expected_result["exception"] is ValidationError:
                 with pytest.raises(ValidationError) as e:
-                    api_delete_prompt_template(pt_id)
+                    api_delete_prompt_template(template_id)
+                assert len(e.value.errors()) == 1
                 assert (
-                    len(e.value.errors()) == 1
-                ), "The number of validation errors does not match the expected count."
-                assert (
-                    expected_dict["expected_error_message"]
-                    in e.value.errors()[0]["msg"]
-                ), "The validation error message does not contain the expected text."
-
-            else:
-                assert (
-                    False
-                ), "An unexpected exception type was specified in the test parameters."
+                    expected_result["error_message"] in e.value.errors()[0]["msg"]
+                ), "The error message from the exception does not match the expected error message."
 
     # ------------------------------------------------------------------------------
     # Test api_get_all_prompt_template_detail functionality
     # ------------------------------------------------------------------------------
     def test_api_get_all_prompt_template_detail(self):
         """
-        Test the api_get_all_prompt_template_detail function.
+        Test the retrieval of all prompt template details.
 
         This test verifies that the api_get_all_prompt_template_detail function returns the correct list of prompt templates with their details.
         """
-        detected_prompt_templates = [
+        expected_prompt_templates = [
             {
                 "id": "answer-template",
                 "name": "answer-template",
@@ -187,12 +178,12 @@ class TestCollectionApiPromptTemplate:
             }
         ]
 
-        prompt_templates = api_get_all_prompt_template_detail()
-        assert len(prompt_templates) == len(
-            detected_prompt_templates
-        ), "Mismatch in the number of prompt templates detected."
+        prompt_template_details = api_get_all_prompt_template_detail()
+        assert len(prompt_template_details) == len(
+            expected_prompt_templates
+        ), "The number of prompt templates detected does not match the expected count."
 
-        for template_detail in prompt_templates:
+        for template_detail in prompt_template_details:
             assert (
-                template_detail in detected_prompt_templates
-            ), f"Template detail {template_detail} not found in detected prompt templates."
+                template_detail in expected_prompt_templates
+            ), f"Prompt template detail {template_detail} not found in expected prompt templates."

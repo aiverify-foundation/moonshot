@@ -92,6 +92,9 @@ class Cookbook:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
+            if not cb_id:
+                raise RuntimeError("Cookbook ID is empty")
+
             obj_results = Storage.read_object(
                 EnvVariables.COOKBOOKS.name, cb_id, "json"
             )

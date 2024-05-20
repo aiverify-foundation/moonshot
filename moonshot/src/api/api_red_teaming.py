@@ -1,3 +1,5 @@
+from pydantic import validate_call
+
 from moonshot.src.redteaming.attack.attack_module import AttackModule
 
 
@@ -37,6 +39,7 @@ def api_get_all_attack_module_metadata() -> list[dict]:
     return attack_modules_metadata
 
 
+@validate_call
 def api_delete_attack_module(am_id: str) -> bool:
     """
     Deletes an attack module by its identifier.

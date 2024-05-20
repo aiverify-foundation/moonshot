@@ -1,3 +1,5 @@
+from pydantic import conlist, validate_call
+
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
 
@@ -5,6 +7,7 @@ from moonshot.src.recipes.recipe_arguments import RecipeArguments
 # ------------------------------------------------------------------------------
 # Recipe APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_create_recipe(
     name: str,
     description: str,
@@ -53,6 +56,7 @@ def api_create_recipe(
     return Recipe.create(rec_args)
 
 
+@validate_call
 def api_read_recipe(rec_id: str) -> dict:
     """
     Reads a recipe and returns its information.
@@ -69,7 +73,8 @@ def api_read_recipe(rec_id: str) -> dict:
     return Recipe.read(rec_id).to_dict()
 
 
-def api_read_recipes(rec_ids: list[str]) -> list[dict]:
+@validate_call
+def api_read_recipes(rec_ids: conlist(str, min_length=1)) -> list[dict]:
     """
     Reads multiple recipes and returns their information.
 
@@ -88,6 +93,7 @@ def api_read_recipes(rec_ids: list[str]) -> list[dict]:
     return [Recipe.read(rec_id).to_dict() for rec_id in rec_ids]
 
 
+@validate_call
 def api_update_recipe(rec_id: str, **kwargs) -> bool:
     """
     Updates a recipe with the given keyword arguments.
@@ -117,10 +123,14 @@ def api_update_recipe(rec_id: str, **kwargs) -> bool:
         if hasattr(existing_recipe, key):
             setattr(existing_recipe, key, value)
 
-    # Update the endpoint
+    # Perform pydantic check on the updated existing recipe
+    RecipeArguments.model_validate(existing_recipe.to_dict())
+
+    # Update the recipe
     return Recipe.update(existing_recipe)
 
 
+@validate_call
 def api_delete_recipe(rec_id: str) -> bool:
     """
     Deletes a recipe identified by its unique recipe ID.

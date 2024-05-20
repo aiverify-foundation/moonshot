@@ -1,4 +1,4 @@
-from pydantic import validate_call
+from pydantic import conlist, validate_call
 
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
@@ -26,16 +26,18 @@ def api_create_connector_from_endpoint(ep_id: str) -> Connector:
 
 
 @validate_call
-def api_create_connectors_from_endpoints(ep_ids: list[str]) -> list[Connector]:
+def api_create_connectors_from_endpoints(
+    ep_ids: conlist(str, min_length=1)
+) -> list[Connector]:
     """
     Creates connectors for multiple endpoints based on their IDs.
 
-    This function takes a list of endpoint IDs, retrieves the corresponding endpoint arguments for each ID, and then
-    creates and returns a list of connector objects based on those arguments. It utilizes the ConnectorManager's
-    read_endpoint method to fetch the endpoint arguments and the create_connector method to initialize the connectors.
+    This function takes a list of endpoint IDs, retrieves the corresponding endpoint arguments for each ID,
+    and then creates a connector for each set of arguments. It utilizes the ConnectorEndpoint's read method
+    to fetch the endpoint arguments and then calls the Connector's create method to initialize the connectors.
 
     Args:
-        ep_ids (list[str]): A list of endpoint IDs for which connectors are to be created.
+        ep_ids (conlist(str, min_length=1)): A list of endpoint IDs for which to create connectors.
 
     Returns:
         list[Connector]: A list of initialized Connector objects.

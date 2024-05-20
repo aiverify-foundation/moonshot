@@ -4,11 +4,11 @@ import shutil
 import pytest
 from pydantic import ValidationError
 
-from moonshot.src.api.api_environment_variables import api_set_environment_variables
-from moonshot.src.api.api_metrics import (
+from moonshot.api import (
     api_delete_metric,
     api_get_all_metric,
     api_get_all_metric_name,
+    api_set_environment_variables,
 )
 
 

@@ -29,7 +29,10 @@ class Result:
             Exception: If no result data is found or if an error occurs during the read operation.
         """
         try:
-            return Result._read_result(result_id)
+            if result_id:
+                return Result._read_result(result_id)
+            else:
+                raise RuntimeError("Result ID is empty")
 
         except Exception as e:
             print(f"Failed to read result: {str(e)}")

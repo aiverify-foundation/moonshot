@@ -179,9 +179,12 @@ class Runner:
             Exception: If an error occurs during the data retrieval or any other operation within the method.
         """
         try:
-            return RunnerArguments(
-                **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
-            )
+            if runner_id:
+                return RunnerArguments(
+                    **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
+                )
+            else:
+                raise RuntimeError("Runner ID is empty")
 
         except Exception as e:
             print(f"[Runner] Failed to read runner: {str(e)}")

@@ -1,14 +1,13 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RecipeArguments(BaseModel):
     # id (str): The ID of the recipe.
     id: str
 
-    # name (str): The name of the recipe.
-    name: str
+    name: str = Field(min_length=1)  # name (str): The name for the endpoint.
 
     # description (str): The description of the recipe.
     description: str
@@ -20,13 +19,13 @@ class RecipeArguments(BaseModel):
     categories: list[str]
 
     # datasets (list): The list of datasets used in the recipe.
-    datasets: list[str]
+    datasets: list[str] = Field(min_length=1)
 
     # prompt_templates (list): The list of prompt templates in the recipe.
     prompt_templates: list[str]
 
     # metrics (list): The list of metrics in the recipe.
-    metrics: list[str]
+    metrics: list[str] = Field(min_length=1)
 
     # attack_modules (list): The list of attack modules in the recipe.
     attack_modules: list[str]

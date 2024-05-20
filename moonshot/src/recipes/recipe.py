@@ -105,7 +105,10 @@ class Recipe:
             Exception: If there is an issue reading the file or during any other part of the process.
         """
         try:
-            return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
+            if rec_id:
+                return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
+            else:
+                raise RuntimeError("Recipe ID is empty")
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")

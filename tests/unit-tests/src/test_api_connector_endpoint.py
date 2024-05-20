@@ -5,15 +5,15 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from moonshot.src.api.api_connector_endpoint import (
+from moonshot.api import (
     api_create_endpoint,
     api_delete_endpoint,
     api_get_all_endpoint,
     api_get_all_endpoint_name,
     api_read_endpoint,
+    api_set_environment_variables,
     api_update_endpoint,
 )
-from moonshot.src.api.api_environment_variables import api_set_environment_variables
 
 
 class TestCollectionApiConnectorEndpoint:
@@ -457,7 +457,7 @@ class TestCollectionApiConnectorEndpoint:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "No connectors_endpoints found with ID: ",
+                    "expected_error_message": "Connector Endpoint ID is empty",
                     "expected_exception": "RuntimeError",
                 },
             ),

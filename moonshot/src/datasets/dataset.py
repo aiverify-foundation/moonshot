@@ -34,7 +34,10 @@ class Dataset:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return DatasetArguments(**Dataset._read_dataset(ds_id))
+            if ds_id:
+                return DatasetArguments(**Dataset._read_dataset(ds_id))
+            else:
+                raise RuntimeError("Dataset ID is empty")
 
         except Exception as e:
             print(f"Failed to read dataset: {str(e)}")

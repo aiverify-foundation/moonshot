@@ -1,4 +1,4 @@
-from pydantic import ValidationError, validate_call
+from pydantic import validate_call
 
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
@@ -107,10 +107,7 @@ def api_update_endpoint(ep_id: str, **kwargs) -> bool:
             setattr(existing_endpoint, key, value)
 
     # Perform pydantic check on the updated existing endpoint
-    try:
-        ConnectorEndpointArguments(**existing_endpoint.to_dict())
-    except ValidationError as e:
-        raise e
+    ConnectorEndpointArguments.model_validate(existing_endpoint.to_dict())
 
     # Update the endpoint
     return ConnectorEndpoint.update(existing_endpoint)

@@ -4,12 +4,12 @@ import shutil
 import pytest
 from pydantic import ValidationError
 
-from moonshot.src.api.api_context_strategy import (
+from moonshot.api import (
     api_delete_context_strategy,
     api_get_all_context_strategies,
     api_get_all_context_strategy_metadata,
+    api_set_environment_variables,
 )
-from moonshot.src.api.api_environment_variables import api_set_environment_variables
 
 
 class TestCollectionApiContextStrategy:

@@ -1,9 +1,12 @@
+from pydantic import conlist, validate_call
+
 from moonshot.src.results.result import Result
 
 
 # ------------------------------------------------------------------------------
 # Result APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_read_result(res_id: str) -> dict:
     """
     Reads a result and returns its information.
@@ -20,19 +23,25 @@ def api_read_result(res_id: str) -> dict:
     return Result.read(res_id)
 
 
-def api_read_results(res_ids: list[str]) -> list[dict]:
+@validate_call
+def api_read_results(res_ids: conlist(str, min_length=1)) -> list[dict]:
     """
-    This function takes a list of result ids as input and reads the corresponding results.
+    Reads multiple results and returns their information.
+
+    This function takes a list of result IDs as input, reads the corresponding database files from the storage manager,
+    and returns a list of dictionaries, each containing a result's information.
 
     Args:
-        res_ids (list[str]): The list of ids of the results to be read.
+        res_ids (conlist(str, min_length=1)): A list of result IDs.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing a result.
+        list[dict]: A list of dictionaries, each containing a result's information.
     """
+
     return [Result.read(res_id) for res_id in res_ids]
 
 
+@validate_call
 def api_delete_result(res_id: str) -> bool:
     """
     Deletes a result by its identifier.
