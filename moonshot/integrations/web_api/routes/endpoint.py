@@ -72,10 +72,7 @@ def get_all_endpoints(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        endpoint_models = endpoint_service.get_all_endpoints()
-        for endpoint_model in endpoint_models:
-            endpoint_model.mask_token()
-        return endpoint_models
+        return endpoint_service.get_all_endpoints()
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
@@ -146,10 +143,7 @@ def get_endpoint(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        endpoint_model = endpoint_service.get_endpoint(endpoint_id)
-        if endpoint_model:
-            endpoint_model.mask_token()
-        return endpoint_model
+        return endpoint_service.get_endpoint(endpoint_id)
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
