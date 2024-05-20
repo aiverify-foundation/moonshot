@@ -1,0 +1,9 @@
+{
+  "id": "my-new-recipe-runner-no-db",
+  "name": "my new recipe runner no db",
+  "database_file": "data/generated-outputs/databases/my-new-recipe-runner-no-db.db",
+  "endpoints": [
+    "openai-gpt35-turbo"
+  ],
+  "description": ""
+}
