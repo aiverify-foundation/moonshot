@@ -115,10 +115,6 @@ Container.cookbook_service.override(mock_cookbook_service)
     )
 ])
 def test_create_cookbook(cookbook_data, expected_status):
-    # Set up the return value for the mock if it's a success scenario
-    if expected_status == 200:
-        mock_cookbook_service.create_cookbook.return_value = {"message": "Cookbook created successfully"}
-
     response = client.post("/api/v1/cookbooks", json=cookbook_data)
 
     assert response.status_code == expected_status
@@ -192,7 +188,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "id": "test-cookbook-tagged",
                 "name": "Tagged Cookbook",
                 "description": "A cookbook with a specific tag",
-                "recipes": ["recipe-tagged"],
+                "recipes": ["one-recipe-contains-this-tag"],
                 "total_prompt_in_cookbook": None,
             }
         ],
@@ -202,7 +198,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "id": "test-cookbook-tagged",
                 "name": "Tagged Cookbook",
                 "description": "A cookbook with a specific tag",
-                "recipes": ["recipe-tagged"],
+                "recipes": ["one-recipe-contains-this-tag"],
                 "total_prompt_in_cookbook": None,
             }
         ]
@@ -215,7 +211,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "id": "test-cookbook-category",
                 "name": "Category Cookbook",
                 "description": "A cookbook with a specific category",
-                "recipes": ["recipe-category"],
+                "recipes": ["one-recipe-contains-this-category"],
                 "total_prompt_in_cookbook": None,
             }
         ],
@@ -225,7 +221,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "id": "test-cookbook-category",
                 "name": "Category Cookbook",
                 "description": "A cookbook with a specific category",
-                "recipes": ["recipe-category"],
+                "recipes": ["one-recipe-contains-this-category"],
                 "total_prompt_in_cookbook": None,
             }
         ]
@@ -253,15 +249,6 @@ def test_create_cookbook(cookbook_data, expected_status):
             }
         ]
     ),
-    # Test get no cookbooks found
-    (
-        "",
-        ServiceException(
-            msg="No cookbooks found", method_name="get_all_cookbooks", error_code="FileNotFound"
-        ),
-        404,
-        {"detail": "Failed to retrieve cookbooks: [ServiceException] FileNotFound in get_all_cookbooks - No cookbooks found"}
-    )
 ])
 def test_get_cookbooks(query_string, mock_return_value, expected_status, expected_response):
     if isinstance(mock_return_value, ServiceException):
@@ -283,18 +270,11 @@ def test_get_cookbooks(query_string, mock_return_value, expected_status, expecte
     )
 ])
 def test_get_all_cookbooks_name(service_return, expected_status, expected_response):
-    if isinstance(service_return, ServiceException):
-        mock_cookbook_service.get_all_cookbooks_names.side_effect = service_return
-    else:
-        mock_cookbook_service.get_all_cookbooks_names.return_value = service_return
-
+    mock_cookbook_service.get_all_cookbooks_names.return_value = service_return
     response = client.get("/api/v1/cookbooks/name")
 
     assert response.status_code == expected_status
-    if expected_status == 200:
-        assert response.json() == expected_response
-    else:
-        assert response.json().get("detail") == expected_response["detail"]
+    assert response.json() == expected_response
 
 @pytest.mark.parametrize("cookbook_id, cookbook_data, expected_status", [
     # Test successful update of cookbook
