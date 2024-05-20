@@ -97,7 +97,18 @@ class SessionService(BaseService):
         Returns:
             list[SessionMetadataModel]: A list of session metadata models for all sessions.
         """
+        retn_session = []
+        runners_with_session = moonshot_api.api_get_all_runner()
         sessions_metadata_dicts = moonshot_api.api_get_all_session_metadata()
+        
+        runners_dict = {runner['id']: runner for runner in runners_with_session}
+        
+        for session in sessions_metadata_dicts:
+            sess_id = session.get("session_id")
+            if sess_id in runners_dict:
+                session['description'] = runners_dict[sess_id]['description']
+                retn_session.append(session)
+        
         return [
             SessionMetadataModel(**metadata) for metadata in sessions_metadata_dicts
         ]
