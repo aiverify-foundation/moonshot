@@ -13,9 +13,9 @@ Moonshot can be used to run benchmarks and red team. To perform this, an LLM end
 
 ## Configuring Endpoints
 
-If your required connector type is available in our list, simply configure the connector by referring to [sample-my-gpt4-config.json](#). Ensure the following:
+If your required connector type is available in our list, simply configure the connector by referring to [sample-my-gpt4-config.json](https://github.com/moonshot-admin/moonshot/blob/main/examples/sample-my-gpt4-config.json). Ensure the following:
     
-1. Make a copy of the sample JSON file in the same directory and rename the file to your liking. Let's say I want to connect to GPT4, and I have renamed the file to  ```my-gpt4-config.json ```.
+1. Make a copy of the sample JSON file in your endpoint folder and rename the file to your liking. Let's say I want to connect to GPT4, and I have renamed the file to  ```my-gpt4-config.json ```.
 
 2. Modify the contents of ```my-gpt4-config.json ```:
     ```
@@ -40,7 +40,7 @@ If you do not see the connector for the LLM/LLM application you would like to co
 When you have configured your connector, you can start doing your benchmark tests and red teaming!
 
 ## Running Benchmark Tests
-To start running a benchmark, you will have to first select your Recipe or Cookbook. So what is a <b>Recipe</b> and a <b>Cookbook</b>? [Click on the links to find out more](/understanding_moonshot/introduction/).
+To start running a benchmark, you will have to first select your Recipe or Cookbook. So what is a <b>Recipe</b> and a <b>Cookbook</b>? [Click here to find the definition.](/understanding_moonshot/introduction/).
 
 <b>Recipe</b>: A file which contains the dataset(s), prompt template(s) and metric(s) to run for a benchmark. 
 
@@ -57,7 +57,7 @@ To start running a benchmark, you will have to first select your Recipe or Cookb
 
 To start red teaming, you will first have to create a <b>Session</b>. 
 
-<b>Session</b>: A Session helps users send prompts to multiple LLMs/LLM applications. Each session will comprise of <b>Chats</b>, which stores the conversation between users and the LLM/LLM application. 
+<b>Session</b>: A Session helps users send prompts to multiple LLM(s) applications. Each session will comprise of <b>Chats</b>, which stores the conversation between users and the LLM/LLM application. 
 
 1. Create/Resume a Session
 

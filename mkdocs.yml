@@ -53,7 +53,18 @@ nav:
   - Home : index.md
   - Understanding Moonshot:
     - Moonshot 101: understanding_moonshot/introduction.md
-    - API: understanding_moonshot/api.md
+    - API:
+      - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
+      - Connector API: understanding_moonshot/api_connector.md
+      - Context Strategy API: understanding_moonshot/api_context_strategy.md
+      - Cookbook API: understanding_moonshot/api_cookbook.md
+      - Environment Variable API: understanding_moonshot/api_environment_variables.md
+      - Metric API: understanding_moonshot/api_metrics.md
+      - Prompt Template API: understanding_moonshot/api_prompt_template.md
+      - Recipe API: understanding_moonshot/api_recipe.md
+      - Result API: understanding_moonshot/api_result.md
+      - Runner API: understanding_moonshot/api_runner.md
+      - Session API: understanding_moonshot/api_session.md
   - Getting Started: 
     - Installation : getting_started/installation.md
     - Walkthrough: getting_started/walkthrough.md
@@ -79,6 +90,8 @@ nav:
       - Running Benchmark: web_ui/run_benchmark_test.md
       - Cookbook: web_ui/cookbook.md
       - Red Teaming: web_ui/red_teaming.md
+  - Contributor Guide:
+      - Create Sample: contributor_guide/create_sample.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
   - Acknowledgement : acknowledgement/acknowledgement.md
