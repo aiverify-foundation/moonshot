@@ -58,11 +58,14 @@ nav:
       - Connector API: understanding_moonshot/api_connector.md
       - Context Strategy API: understanding_moonshot/api_context_strategy.md
       - Cookbook API: understanding_moonshot/api_cookbook.md
+      - Dataset API: understanding_moonshot/api_dataset.md
       - Environment Variable API: understanding_moonshot/api_environment_variables.md
       - Metric API: understanding_moonshot/api_metrics.md
       - Prompt Template API: understanding_moonshot/api_prompt_template.md
       - Recipe API: understanding_moonshot/api_recipe.md
+      - Red Teaming API: understanding_moonshot/api_red_teaming.md
       - Result API: understanding_moonshot/api_result.md
+      - Run API: understanding_moonshot/api_run.md
       - Runner API: understanding_moonshot/api_runner.md
       - Session API: understanding_moonshot/api_session.md
   - Getting Started: 
