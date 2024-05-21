@@ -2,10 +2,9 @@
 
 ## Preinstallation Requirements
 
-This project requires Python <span style="color:red;">3.11</span>
- or later. Ensure that you have Python 3.11 installed on your system before proceeding with installation and usage.
+This project <span style="color:red;">strictly</span> requires Python <span style="color:red;">3.11</span>. Ensure that you have Python 3.11 installed on your system before proceeding with installation and usage.
 
- | Software                                                                           | Minimum Version Requirement |
+ | Software                                                                           | Version Requirement |
 | ---------------------------------------------------------------------------------- | ------------------- |
 | [Python](https://www.python.org/downloads/)                                        | v3.11               |
 | [NodeJs](https://nodejs.org/en/download)                                           | v20.11.1 LTS or above               |
@@ -63,7 +62,7 @@ The source code is available on GitHub [here](https://github.com/moonshot-admin/
 ### Installation
 Install the Moonshot package using pip by fetching the package from the specificied repository:
 ```
-$ pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple projectmoonshot-imda[all]==0.3.10
+$ pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "projectmoonshot-imda[all]==0.3.13"
 
 ```
 
@@ -74,8 +73,20 @@ Moonshot can be run in 3 different modes depending on your needs:
 <span style="font-size:15px;"> 3. CLI</span>  
 
 
+Before running Moonshot, clone Moonshot data from GitHub and install the necessary requirements using:
+
+```
+$ python -m moonshot -i moonshot-data
+```
+
 #### Web and API Server 
-<span style="font-size:15px;"> To start the server and web-API:</span>
+<span style="font-size:15px;"> Before running the Web and API server, make sure <b>moonshot-ui</b> is installed. To clone moonshot-ui from GitHub:</span>
+
+```
+$ python -m moonshot -i moonshot-ui
+```
+
+<span style="font-size:15px;"> To start web-API server and UI server:</span>
 
 ```
 $ python -m moonshot web
@@ -93,9 +104,9 @@ $ python -m moonshot web-api
 $ python -m moonshot cli [command]
 ```
 
-<span style="font-size:15px;"> Replace [command] with a specific CLI command, for example:</span>
+<span style="font-size:15px;"> Replace [command] with a specific CLI command. For example, to run a recipe:</span>
 ```
-$ python -m moonshot cli interactive
+$ python -m moonshot cli run_recipe
 ``` 
 
 <span style="font-size:15px;"> Alternatively, to enter interactive mode in CLI (Recommended):</span>
@@ -104,22 +115,6 @@ $ python -m moonshot cli interactive
 ``` 
 
 ### Additional Arguments
-
-#### Clone Moonshot Data
-To clone Moonshot data from GitHub and install the necessary requirements from requirements.txt:  
-```
-python -m moonshot -i moonshot-data
-```
-
-#### Clone Moonshot UI
-To clone Moonshot UI from GitHub:  
-<span style="font-size: 15px;">Note:  
-1. Installation of moonshot-ui is required to start server and web-API using  ``` python -m moonshot web```  
-</span>
-
-```
-python -m moonshot -i moonshot-ui
-```
 
 #### Specify Custom Environment File
 If you have a custom '<b>.env</b>' file, specify the path to the file as follows:
