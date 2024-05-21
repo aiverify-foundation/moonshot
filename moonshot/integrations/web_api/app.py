@@ -73,7 +73,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
             "name": "Apache Software License 2.0",
             "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
         },
-        **app_kwargs  # Ensure existing kwargs are included
+        **app_kwargs
     )
 
     if cfg.cors.enabled():
