@@ -77,7 +77,7 @@ Moonshot can be run in 3 different modes depending on your needs:
 <span style="font-size:15px;"> 3. CLI</span>  
 
 
-Before running Moonshot, clone Moonshot data from GitHub and install the necessary requirements using:
+Before running Moonshot, clone Moonshot data from GitHub:
 
 ```
 $ python -m moonshot -i moonshot-data
@@ -110,7 +110,7 @@ $ python -m moonshot cli [command]
 
 Replace [command] with a specific CLI command. For example, to run a recipe:
 ```
-$ python -m moonshot cli run_recipe
+$ python -m moonshot cli list_cookbooks
 ``` 
 
 Alternatively, to enter interactive mode in CLI (Recommended):
