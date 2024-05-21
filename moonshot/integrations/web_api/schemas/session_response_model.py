@@ -19,6 +19,7 @@ class ChatRecord(BaseModel):
 
 class SessionMetadataModel(BaseModel):
     session_id: str = Field(min_length=1)
+    description: Optional[str] = ""
     endpoints: List[str] = Field(min_length=1)
     created_epoch: str
     created_datetime: str = Field(min_length=1)
