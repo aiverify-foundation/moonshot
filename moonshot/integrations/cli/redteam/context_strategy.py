@@ -10,10 +10,9 @@ from moonshot.api import (
     api_update_context_strategy,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.src.redteaming.session.session import Session
 
 console = Console()
-
-DEFAULT_CONTEXT_STRATEGY_PROMPT = 5
 
 
 def use_context_strategy(args: argparse.Namespace) -> None:
@@ -28,7 +27,7 @@ def use_context_strategy(args: argparse.Namespace) -> None:
     num_of_prev_prompts = (
         args.num_of_prev_prompts
         if args.num_of_prev_prompts
-        else DEFAULT_CONTEXT_STRATEGY_PROMPT
+        else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
     )
 
     # Check if current session exists. If it does, update context strategy and number of previous prompts

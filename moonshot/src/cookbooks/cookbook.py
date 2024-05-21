@@ -53,10 +53,20 @@ class Cookbook:
             str: The unique ID of the newly created cookbook.
 
         Raises:
+            RuntimeError: If any of the recipes specified in the cookbook does not exist.
             Exception: If there is an error during the file writing process or any other operation within the method.
         """
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
+
+            # check if recipes in list exist before creating cookbook
+            for recipe in cb_args.recipes:
+                if not Storage.is_object_exists(
+                    EnvVariables.RECIPES.name, recipe, "json"
+                ):
+                    raise RuntimeError(
+                        f"Failed to create cookbook: {recipe} recipe does not exist."
+                    )
             cb_info = {
                 "id": cb_id,
                 "name": cb_args.name,

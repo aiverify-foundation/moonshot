@@ -17,9 +17,7 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
-from moonshot.integrations.cli.redteam.context_strategy import (
-    DEFAULT_CONTEXT_STRATEGY_PROMPT,
-)
+from moonshot.src.redteaming.session.session import Session
 
 console = Console()
 
@@ -60,7 +58,7 @@ def new_session(args) -> None:
             if active_session["context_strategy"]:
                 active_session[
                     "cs_num_of_prev_prompts"
-                ] = DEFAULT_CONTEXT_STRATEGY_PROMPT
+                ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
             print(f"Using session: {active_session['session_id']}")
             update_chat_display()
         else:
@@ -86,7 +84,9 @@ def use_session(args) -> None:
     # Set the current session
     active_session.update(session_metadata)
     if active_session["context_strategy"]:
-        active_session["cs_num_of_prev_prompts"] = DEFAULT_CONTEXT_STRATEGY_PROMPT
+        active_session[
+            "cs_num_of_prev_prompts"
+        ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
     print(f"Using session: {active_session['session_id']}. ")
     update_chat_display()
 
@@ -203,7 +203,7 @@ def manual_red_teaming(user_prompt: str) -> None:
     num_of_prev_prompts = (
         active_session["cs_num_of_prev_prompts"]
         if active_session["context_strategy"]
-        else DEFAULT_CONTEXT_STRATEGY_PROMPT
+        else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
     )
 
     if context_strategy:
@@ -258,7 +258,7 @@ def run_attack_module(args):
     num_of_prev_prompts = (
         args.num_of_prev_prompts
         if args.num_of_prev_prompts
-        else DEFAULT_CONTEXT_STRATEGY_PROMPT
+        else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
     )
 
     if context_strategy:
