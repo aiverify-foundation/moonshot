@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.context_strategy_service import ContextStrategyService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Context Strategy"])
 
 @router.get("/api/v1/context-strategies")
 @inject
