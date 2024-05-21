@@ -10,6 +10,8 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 | [NodeJs](https://nodejs.org/en/download)                                           | v20.11.1 LTS or above               |
 | npm                                        | v10.8.0 or above               |
 
+Ensure that git is installed and it is recommended to create a new Python virtual environment before proceeding with installation.
+
 ## Installation from PyPi (To be updated - Please skip to next installation section)
 *You can find the Moonshot Package [here](https://pypi.org/project/projectmoonshot-imda/).*
 
