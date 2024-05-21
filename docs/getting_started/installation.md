@@ -10,7 +10,7 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 | [NodeJs](https://nodejs.org/en/download)                                           | v20.11.1 LTS or above               |
 | npm                                        | v10.8.0 or above               |
 
-## Installation from PyPi
+## Installation from PyPi (To be updated - Please skip to next installation section)
 *You can find the Moonshot Package [here](https://pypi.org/project/projectmoonshot-imda/).*
 
 
@@ -44,7 +44,7 @@ The source code is available on GitHub [here](https://github.com/moonshot-admin/
 
 1. Download the source files by cloning the repository:
 ```
-$ git clone git@github.com:moonshot-admin/moonshot.git
+$ git clone https://github.com/moonshot-admin/moonshot.git
 ```
 2. Change directory to project's root directory:
 ```
@@ -56,7 +56,7 @@ $ pip install -r requirements.txt
 ```
 
 
-## Installation from Source (Updated)
+## Installation from PyPi (Latest)
 The source code is available on GitHub [here](https://github.com/moonshot-admin/moonshot). Ensure that [git](https://git-scm.com/downloads) is installed before proceeding with below steps.
 
 ### Installation
