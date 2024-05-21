@@ -1,32 +1,9 @@
-from fastapi.testclient import TestClient
-from unittest.mock import Mock
-from moonshot.integrations.web_api.container import Container
-from moonshot.integrations.web_api.services.recipe_service import RecipeService
 import pytest
-from moonshot.integrations.web_api.app import create_app
+
 from moonshot.integrations.web_api.services.utils.exceptions_handler import ServiceException
 
-# Create a mock instance of RecipeService
-mock_recipe_service = Mock(spec=RecipeService)
 
-# Create a container for testing and override the RecipeService dependency
-test_container = Container()
-test_container.config.from_default()  
-test_container.recipe_service.override(mock_recipe_service)
-
-# Wire the container
-test_container.wire(modules=["moonshot.integrations.web_api.routes"])
-
-# Create a new FastAPI app instance for testing
-app = create_app(test_container.config)
-
-# Use TestClient with the app instance
-client = TestClient(app)
-
-# Override the RecipeService dependency in the container
-Container.recipe_service.override(mock_recipe_service)
-
-@pytest.mark.parametrize("recipe_data, expected_status", [
+@pytest.mark.parametrize("recipe_data, exception, expected_status, expected_response", [
     # Success scenario
     (
         {
@@ -39,7 +16,9 @@ Container.recipe_service.override(mock_recipe_service)
             "prompt_templates": ["template1"],
             "attack_modules": ["module1"],
         },
-        200
+        None,
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # Missing 'name'
     (
@@ -50,7 +29,9 @@ Container.recipe_service.override(mock_recipe_service)
             "datasets": ["dataset1"],
             "metrics": ["metric1"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'datasets'
     (
@@ -61,7 +42,9 @@ Container.recipe_service.override(mock_recipe_service)
             "categories": ["category1"],
             "metrics": ["metric1"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'metrics'
     (
@@ -72,7 +55,9 @@ Container.recipe_service.override(mock_recipe_service)
             "categories": ["category1"],
             "datasets": ["dataset1"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'description'
     (
@@ -85,7 +70,9 @@ Container.recipe_service.override(mock_recipe_service)
             "prompt_templates": ["template1"],
             "attack_modules": ["module1"],
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'tags'
     (
@@ -98,7 +85,9 @@ Container.recipe_service.override(mock_recipe_service)
             "prompt_templates": ["template1"],
             "attack_modules": ["module1"],
         },
-        200
+        None,
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # Missing 'categories'
     (
@@ -111,7 +100,9 @@ Container.recipe_service.override(mock_recipe_service)
             "prompt_templates": ["template1"],
             "attack_modules": ["module1"],
         },
-        200
+        None,
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # Missing 'prompt_templates'
     (
@@ -124,7 +115,9 @@ Container.recipe_service.override(mock_recipe_service)
             "metrics": ["metric1"],
             "attack_modules": ["module1"],
         },
-        200
+        None,
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # Missing 'attack_modules'
     (
@@ -137,24 +130,80 @@ Container.recipe_service.override(mock_recipe_service)
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
         },
-        200
+        None,
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # All fields missing
     (
         {},
-        422
+        None,
+        422,
+        None
+    ),
+    # Exception cases
+    (
+        {
+            "name": "Test Recipe",
+            "description": "A test recipe description",
+            "tags": ["tag1", "tag2"],
+            "categories": ["category1"],
+            "datasets": ["dataset1"],
+            "metrics": ["metric1"],
+            "prompt_templates": ["template1"],
+            "attack_modules": ["module1"],
+        },
+        ServiceException("A file not found error occurred", "create_recipe", "FileNotFound"),
+        404,
+        "A file not found error occurred"
+    ),
+    (
+        {
+            "name": "Test Recipe",
+            "description": "A test recipe description",
+            "tags": ["tag1", "tag2"],
+            "categories": ["category1"],
+            "datasets": ["dataset1"],
+            "metrics": ["metric1"],
+            "prompt_templates": ["template1"],
+            "attack_modules": ["module1"],
+        },
+        ServiceException("A validation error occurred", "create_recipe", "ValidationError"),
+        400,
+        "A validation error occurred"
+    ),
+    (
+        {
+            "name": "Test Recipe",
+            "description": "A test recipe description",
+            "tags": ["tag1", "tag2"],
+            "categories": ["category1"],
+            "datasets": ["dataset1"],
+            "metrics": ["metric1"],
+            "prompt_templates": ["template1"],
+            "attack_modules": ["module1"],
+        },
+        ServiceException("An unexpected error occurred", "create_recipe", "UnknownError"),
+        500,
+        "An unexpected error occurred"
     )
 ])
-def test_create_recipe(recipe_data, expected_status):
-    # Set up the return value for the mock if it's a success scenario
-    if expected_status == 200:
-        mock_recipe_service.create_recipe.return_value = {"message": "Recipe created successfully"}
+def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception, expected_status, expected_response):
+    if exception:
+        mock_recipe_service.create_recipe.side_effect = exception
+    else:
+        mock_recipe_service.create_recipe.return_value = recipe_data 
 
-    response = client.post("/api/v1/recipes", json=recipe_data)
+    response = test_client.post("/api/v1/recipes", json=recipe_data)
 
     assert response.status_code == expected_status
+    if exception:
+        assert expected_response in response.json()["detail"]
+    else:
+        if expected_status != 422:
+            assert response.json() == expected_response
 
-@pytest.mark.parametrize("query_string, mock_return_value, expected_status, expected_response", [
+@pytest.mark.parametrize("query_string, mock_return_value, exception, expected_status, expected_response", [
     # Test get all recipes success
     (
         "",
@@ -206,6 +255,7 @@ def test_create_recipe(recipe_data, expected_status):
                 "total_prompt_in_recipe": 3
             },
         ],
+        None,
         200,
         [
             {
@@ -307,6 +357,7 @@ def test_create_recipe(recipe_data, expected_status):
                 "total_prompt_in_recipe": 4
             },
         ],
+        None,
         200,
         [
             {
@@ -408,6 +459,7 @@ def test_create_recipe(recipe_data, expected_status):
                 "total_prompt_in_recipe": 2
             },
         ],
+        None,
         200,
         [
             {
@@ -509,6 +561,7 @@ def test_create_recipe(recipe_data, expected_status):
                 "total_prompt_in_recipe": 1
             },
         ],
+        None,
         200,
         [
             {
@@ -559,100 +612,131 @@ def test_create_recipe(recipe_data, expected_status):
             },
         ]
     ),
+    # Exception cases
+    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, "A file not found error occurred"),
+    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, "A validation error occurred"),
+    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, "An value error occurred"),
 ])
-def test_get_all_recipes(query_string, mock_return_value, expected_status, expected_response):
-    if isinstance(mock_return_value, ServiceException):
-        mock_recipe_service.get_all_recipes.side_effect = mock_return_value
+def test_get_all_recipes(test_client, mock_recipe_service, query_string, mock_return_value, exception, expected_status, expected_response):
+    if exception:
+        mock_recipe_service.get_all_recipes.side_effect = exception
     else:
         mock_recipe_service.get_all_recipes.return_value = mock_return_value
 
-    response = client.get(f"/api/v1/recipes?{query_string}")
+    response = test_client.get(f"/api/v1/recipes?{query_string}")
 
     assert response.status_code == expected_status
-    assert response.json() == expected_response
+    if exception:
+        assert expected_response in response.json()["detail"]
+    else:
+        assert response.json() == expected_response
 
-@pytest.mark.parametrize("service_return, expected_status, expected_response", [
-    # Test successful retrieval of recipe names
+@pytest.mark.parametrize("mock_return_value, exception, expected_status, expected_response", [
     (
         ["Recipe One", "Recipe Two"],
+        None,
         200,
         ["Recipe One", "Recipe Two"]
     ),
-    # Test no recipe names found
     (
-        ServiceException(
-            msg="No recipe names found", method_name="get_all_recipes_name", error_code="FileNotFound"
-        ),
+        None,
+        ServiceException("A file not found error occurred", "get_all_recipes_names", "FileNotFound"),
         404,
-        {"detail": "Failed to retrieve recipe names: [ServiceException] FileNotFound in get_all_recipes_name - No recipe names found"}
+        "A file not found error occurred"
+    ),
+    (
+        None,
+        ServiceException("A validation error occurred", "get_all_recipes_names", "ValidationError"),
+        400,
+        "A validation error occurred"
+    ),
+    (
+        None,
+        ServiceException("An value error occurred", "get_all_recipes_names", "ValueError"),
+        500,
+        "An value error occurred"
     )
 ])
-def test_get_all_recipes_name(service_return, expected_status, expected_response):
-    if isinstance(service_return, ServiceException):
-        mock_recipe_service.get_all_recipes_name.side_effect = service_return
+def test_get_all_recipes_name(test_client, mock_recipe_service ,mock_return_value, exception, expected_status, expected_response):
+    if exception:
+        mock_recipe_service.get_all_recipes_name.side_effect = exception
     else:
-        mock_recipe_service.get_all_recipes_name.return_value = service_return
+        mock_recipe_service.get_all_recipes_name.return_value = mock_return_value
 
-    response = client.get("/api/v1/recipes/name")
+    response = test_client.get("/api/v1/recipes/name")
 
     assert response.status_code == expected_status
-    if expected_status == 200:
-        assert response.json() == expected_response
+    if exception:
+        assert expected_response in response.json()["detail"]
     else:
-        assert response.json().get("detail") == expected_response["detail"]
+        assert response.json() == expected_response
 
-@pytest.mark.parametrize("recipe_id, recipe_data, expected_status", [
+
+@pytest.mark.parametrize("recipe_id, recipe_data, expected_status, expected_response", [
     # Test successful update of recipe
     (
         "valid-recipe-id",
         {"name": "Updated Recipe", "description": "Updated description", "tags": ["tag1", "tag2"]},
-        200
+        200,
+        {"message": "Recipe updated successfully"}
     ),
     # Test recipe not found
     (
         "invalid-recipe-id",
         {"name": "Non-existent Recipe", "description": "This recipe does not exist", "tags": ["tag1", "tag2"]},
-        404
+        404,
+        ServiceException("Recipe not found", "update_recipe", "FileNotFound")
     ),
     # Test validation error
     (
         "valid-recipe-id",
         {"name": "", "description": "Invalid data", "tags": []},  # Invalid data
-        400
+        400,
+        ServiceException("Validation error", "update_recipe", "ValidationError")
+    ),
+    # Test unknown error
+    (
+        "valid-recipe-id",
+        {"name": "Updated Recipe", "description": "Updated description", "tags": ["tag1", "tag2"]},
+        500,
+        ServiceException("Unknown error", "update_recipe", "UnknownError")
     ),
 ])
-def test_update_recipe(recipe_id, recipe_data, expected_status):
-    if expected_status == 200:
-        mock_recipe_service.update_recipe.return_value = None
-    elif expected_status == 404:
-        mock_recipe_service.update_recipe.side_effect = ServiceException(
-            msg="Recipe not found", method_name="update_recipe", error_code="FileNotFound"
-        )
-    elif expected_status == 400:
-        mock_recipe_service.update_recipe.side_effect = ServiceException(
-            msg="Validation error", method_name="update_recipe", error_code="ValidationError"
-        )
+def test_update_recipe(test_client, mock_recipe_service, recipe_id, recipe_data, expected_status, expected_response):
+    if isinstance(expected_response, ServiceException):
+        mock_recipe_service.update_recipe.side_effect = expected_response
+    else:
+        mock_recipe_service.update_recipe.return_value = recipe_data
 
-    response = client.put(f"/api/v1/recipes/{recipe_id}", json=recipe_data)
+    response = test_client.put(f"/api/v1/recipes/{recipe_id}", json=recipe_data)
 
     assert response.status_code == expected_status
+    if expected_status == 200:
+        assert response.json() == expected_response
+    elif isinstance(expected_response, ServiceException):
+        assert expected_response.msg in response.json()["detail"]
 
-@pytest.mark.parametrize("recipe_id, service_exception, expected_status", [
+@pytest.mark.parametrize("recipe_id, service_exception, expected_status, expected_response", [
     # Test successful deletion of recipe
-    ("valid-recipe-id", None, 200),
+    ("valid-recipe-id", None, 200, {"message": "Recipe deleted successfully"}),
     # Test recipe not found
-    ("invalid-recipe-id", ServiceException(msg="Recipe not found", method_name="delete_recipe", error_code="FileNotFound"), 404),
-    # Test other internal server error
-    ("valid-recipe-id", ServiceException(msg="Internal server error", method_name="delete_recipe", error_code="UnknownError"), 500),
+    ("invalid-recipe-id", ServiceException(msg="Recipe not found", method_name="delete_recipe", error_code="FileNotFound"), 404, "Recipe not found"),
+    # Test validation error
+    ("valid-recipe-id", ServiceException(msg="Validation error", method_name="delete_recipe", error_code="ValidationError"), 400, "Validation error"),
+    # Test unknown error
+    ("valid-recipe-id", ServiceException(msg="Internal server error", method_name="delete_recipe", error_code="UnknownError"), 500, "Internal server error"),
 ])
-def test_delete_recipe(recipe_id, service_exception, expected_status):
+def test_delete_recipe(test_client, mock_recipe_service, recipe_id, service_exception, expected_status, expected_response):
     if service_exception:
         mock_recipe_service.delete_recipe.side_effect = service_exception
     else:
         mock_recipe_service.delete_recipe.return_value = None
 
-    response = client.delete(f"/api/v1/recipes/{recipe_id}")
+    response = test_client.delete(f"/api/v1/recipes/{recipe_id}")
 
+    # Assert the expected status code
     assert response.status_code == expected_status
     if expected_status == 200:
-        assert response.json() == {"message": "Recipe deleted successfully"}
+        assert response.json() == expected_response
+    else:
+        assert expected_response in response.json()["detail"]

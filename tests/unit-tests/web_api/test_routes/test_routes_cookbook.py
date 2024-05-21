@@ -1,32 +1,8 @@
-from fastapi.testclient import TestClient
-from unittest.mock import Mock
-from moonshot.integrations.web_api.container import Container
-from moonshot.integrations.web_api.services.cookbook_service import CookbookService
 import pytest
-from moonshot.integrations.web_api.app import create_app
+
 from moonshot.integrations.web_api.services.utils.exceptions_handler import ServiceException
 
-# Create a mock instance of CookbookService
-mock_cookbook_service = Mock(spec=CookbookService)
-
-# Create a container for testing and override the CookbookService dependency
-test_container = Container()
-test_container.config.from_default()  
-test_container.cookbook_service.override(mock_cookbook_service)
-
-# Wire the container
-test_container.wire(modules=["moonshot.integrations.web_api.routes"])
-
-# Create a new FastAPI app instance for testing
-app = create_app(test_container.config)
-
-# Use TestClient with the app instance
-client = TestClient(app)
-
-# Override the CookbookService dependency in the container
-Container.cookbook_service.override(mock_cookbook_service)
-
-@pytest.mark.parametrize("cookbook_data, expected_status", [
+@pytest.mark.parametrize("cookbook_data, exception, expected_status, expected_response", [
     # Success scenario
     (
         {
@@ -34,7 +10,9 @@ Container.cookbook_service.override(mock_cookbook_service)
             "description": "A test cookbook description",
             "recipes": ["recipe1", "recipe2"]
         },
-        200
+        None,
+        200,
+        {"message": "Cookbook created successfully"}
     ),
     # Missing 'name'
     (
@@ -42,7 +20,9 @@ Container.cookbook_service.override(mock_cookbook_service)
             "description": "A test cookbook description without name",
             "recipes": ["recipe1", "recipe2"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'recipes'
     (
@@ -50,7 +30,9 @@ Container.cookbook_service.override(mock_cookbook_service)
             "name": "Test Cookbook",
             "description": "A test cookbook description without recipes"
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'description'
     (
@@ -58,28 +40,36 @@ Container.cookbook_service.override(mock_cookbook_service)
             "name": "Test Cookbook",
             "recipes": ["recipe1", "recipe2"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'name' and 'description'
     (
         {
             "recipes": ["recipe1", "recipe2"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Missing 'recipes' and 'description'
     (
         {
             "name": "Test Cookbook"
         },
+        None,
         422,
+        None
     ),
     # Missing 'name' and 'recipes'
     (
         {
             "description": "A test cookbook description without name and recipes"
         },
+        None,
         422,
+        None
     ),
     # Empty 'name'
     (
@@ -88,7 +78,9 @@ Container.cookbook_service.override(mock_cookbook_service)
             "description": "A test cookbook description with empty name",
             "recipes": ["recipe1", "recipe2"]
         },
-        422
+        None,
+        422,
+        None
     ),
     # Empty 'recipes'
     (
@@ -97,7 +89,9 @@ Container.cookbook_service.override(mock_cookbook_service)
             "description": "A test cookbook description with empty recipes",
             "recipes": []
         },
-        422
+        None,
+        422,
+        None
     ),
     # 'recipes' is not a list
     (
@@ -106,21 +100,66 @@ Container.cookbook_service.override(mock_cookbook_service)
             "description": "A test cookbook description with invalid recipes type",
             "recipes": "recipe1"
         },
-        422
+        None,
+        422,
+        None
     ),
     # All fields missing
     (
         {},
-        422
-    )
+        None,
+        422,
+        None
+    ),
+    # Exception cases
+    (
+        {
+            "name": "Test Cookbook",
+            "description": "A test cookbook description",
+            "recipes": ["recipe1", "recipe2"]
+        },
+        ServiceException("A file not found error occurred", "create_cookbook", "FileNotFound"),
+        404,
+        "A file not found error occurred"
+    ),
+    (
+        {
+            "name": "Test Cookbook",
+            "description": "A test cookbook description",
+            "recipes": ["recipe1", "recipe2"]
+        },
+        ServiceException("A validation error occurred", "create_cookbook", "ValidationError"),
+        400,
+        "A validation error occurred"
+    ),
+    (
+        {
+            "name": "Test Cookbook",
+            "description": "A test cookbook description",
+            "recipes": ["recipe1", "recipe2"]
+        },
+        ServiceException("An unexpected error occurred", "create_cookbook", "UnknownError"),
+        500,
+        "An unexpected error occurred"
+    ),
 ])
-def test_create_cookbook(cookbook_data, expected_status):
-    response = client.post("/api/v1/cookbooks", json=cookbook_data)
+def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expected_status, exception, expected_response):
+    if exception:
+        mock_cookbook_service.create_cookbook.side_effect = exception
+    else:
+        mock_cookbook_service.create_cookbook.return_value = cookbook_data 
+
+    response = test_client.post("/api/v1/cookbooks", json=cookbook_data)
 
     assert response.status_code == expected_status
+    if exception:
+        assert expected_response in response.json()["detail"]
+    else:
+        if expected_status != 422:
+            assert response.json() == expected_response
 
-@pytest.mark.parametrize("query_string, mock_return_value, expected_status, expected_response", [
-    # Test get all cookbooks success
+@pytest.mark.parametrize("query_string, mock_return_value, exception, expected_status, expected_response", [
+   # Test get all cookbooks success
     (
         "",
         [
@@ -139,6 +178,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "total_prompt_in_cookbook": None
             },
         ],
+        None,
         200,
         [
             {
@@ -169,6 +209,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "total_prompt_in_cookbook": None,
             }
         ],
+        None,
         200,
         [
             {
@@ -192,6 +233,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "total_prompt_in_cookbook": None,
             }
         ],
+        None,
         200,
         [
             {
@@ -215,6 +257,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "total_prompt_in_cookbook": None,
             }
         ],
+        None,
         200,
         [
             {
@@ -238,6 +281,7 @@ def test_create_cookbook(cookbook_data, expected_status):
                 "total_prompt_in_cookbook": 2,
             }
         ],
+        None,
         200,
         [
             {
@@ -249,92 +293,134 @@ def test_create_cookbook(cookbook_data, expected_status):
             }
         ]
     ),
+    # Exception cases
+    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, "A file not found error occurred"),
+    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, "A validation error occurred"),
+    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, "An value error occurred"),
 ])
-def test_get_cookbooks(query_string, mock_return_value, expected_status, expected_response):
-    if isinstance(mock_return_value, ServiceException):
-        mock_cookbook_service.get_all_cookbooks.side_effect = mock_return_value
+def test_get_cookbooks(test_client, mock_cookbook_service, query_string, mock_return_value, exception, expected_status, expected_response):
+    if exception:
+        mock_cookbook_service.get_all_cookbooks.side_effect = exception
     else:
         mock_cookbook_service.get_all_cookbooks.return_value = mock_return_value
 
-    response = client.get(f"/api/v1/cookbooks?{query_string}")
+    response = test_client.get(f"/api/v1/cookbooks?{query_string}")
 
     assert response.status_code == expected_status
-    assert response.json() == expected_response
+    if exception:
+        assert expected_response in response.json()["detail"]
+    else:
+        assert response.json() == expected_response
 
-@pytest.mark.parametrize("service_return, expected_status, expected_response", [
+@pytest.mark.parametrize("mock_return_value, exception, expected_status, expected_response", [
     # Test successful retrieval of cookbook names
     (
         ["Cookbook One", "Cookbook Two"],
+        None,
         200,
         ["Cookbook One", "Cookbook Two"]
+    ),
+    # Test exception when retrieving cookbook names
+    (
+        None,
+        ServiceException("A file not found error occurred", "get_all_cookbooks_names", "FileNotFound"),
+        404,
+        "A file not found error occurred"
+    ),
+    (
+        None,
+        ServiceException("A validation error occurred", "get_all_cookbooks_names", "ValidationError"),
+        400,
+        "A validation error occurred"
+    ),
+    (
+        None,
+        ServiceException("An value error occurred", "get_all_cookbooks_names", "ValueError"),
+        500,
+        "An value error occurred"
     )
 ])
-def test_get_all_cookbooks_name(service_return, expected_status, expected_response):
-    mock_cookbook_service.get_all_cookbooks_names.return_value = service_return
-    response = client.get("/api/v1/cookbooks/name")
+def test_get_all_cookbooks_name(test_client, mock_cookbook_service, mock_return_value, exception, expected_status, expected_response):
+    if exception:
+        mock_cookbook_service.get_all_cookbooks_names.side_effect = exception
+    else:
+        mock_cookbook_service.get_all_cookbooks_names.return_value = mock_return_value
+
+    response = test_client.get("/api/v1/cookbooks/name")
 
     assert response.status_code == expected_status
-    assert response.json() == expected_response
+    if exception:
+        assert expected_response in response.json()["detail"]
+    else:
+        assert response.json() == expected_response
 
-@pytest.mark.parametrize("cookbook_id, cookbook_data, expected_status", [
+
+@pytest.mark.parametrize("cookbook_id, cookbook_data, expected_status, expected_response", [
     # Test successful update of cookbook
     (
         "valid-cookbook-id",
         {"name": "Updated Cookbook", "description": "Updated description", "recipes": ["recipe-1"]},
-        200
+        200,
+        {"message": "Cookbook updated successfully"}
     ),
     # Test cookbook not found
     (
         "invalid-cookbook-id",
         {"name": "Non-existent Cookbook", "description": "This cookbook does not exist", "recipes": ["recipe-1"]},
-        404
+        404,
+        ServiceException("Recipe not found", "update_cookbook", "FileNotFound")
     ),
     # Test validation error
     (
         "valid-cookbook-id",
-        {"name": "", "description": "Invalid data", "recipes": []},  # Invalid data
-        422
+        {"name": "Updated Cookbook", "description": "Updated description", "recipes": ["recipe-1"]},
+        400,
+        ServiceException("Validation error", "update_cookbook", "ValidationError")
+    ),
+    # Test unknown error
+    (
+        "valid-cookbook-id",
+        {"name": "Another Cookbook", "description": "Another description", "recipes": ["recipe-2"]},
+        500,
+        ServiceException("Unknown error", "update_cookbook", "UnknownError")
     ),
 ])
-def test_update_cookbook(cookbook_id, cookbook_data, expected_status):
-    # Mock the service method based on the expected status
-    if expected_status == 200:
-        mock_cookbook_service.update_cookbook.return_value = None
-    elif expected_status == 404:
-        mock_cookbook_service.update_cookbook.side_effect = ServiceException(
-            msg="Cookbook not found", method_name="update_cookbook", error_code="FileNotFound"
-        )
-    elif expected_status == 400:
-        mock_cookbook_service.update_cookbook.side_effect = ServiceException(
-            msg="Validation error", method_name="update_cookbook", error_code="ValidationError"
-        )
+def test_update_cookbook(test_client, mock_cookbook_service, cookbook_id, cookbook_data, expected_status, expected_response):
+    if isinstance(expected_response, ServiceException):
+        mock_cookbook_service.update_cookbook.side_effect = expected_response
+    else:
+        mock_cookbook_service.update_cookbook.return_value = cookbook_data
 
-    response = client.put(f"/api/v1/cookbooks/{cookbook_id}", json=cookbook_data)
+    response = test_client.put(f"/api/v1/cookbooks/{cookbook_id}", json=cookbook_data)
 
     assert response.status_code == expected_status
+    if expected_status == 200:
+        assert response.json() == expected_response
+    elif isinstance(expected_response, ServiceException):
+        assert expected_response.msg in response.json()["detail"]
 
-@pytest.mark.parametrize("cb_id, service_exception, expected_status", [
+@pytest.mark.parametrize("cb_id, service_exception, expected_status, expected_response", [
     # Test successful deletion of cookbook
-    ("valid-cookbook-id", None, 200),
+    ("valid-cookbook-id", None, 200, {"message": "Cookbook deleted successfully"}),
     # Test cookbook not found
-    ("invalid-cookbook-id", ServiceException(msg="Cookbook not found", method_name="delete_cookbook", error_code="FileNotFound"), 404),
-    # Test other internal server error
-    ("valid-cookbook-id", ServiceException(msg="Internal server error", method_name="delete_cookbook", error_code="UnknownError"), 500),
+    ("invalid-cookbook-id", ServiceException(msg="Cookbook not found", method_name="delete_cookbook", error_code="FileNotFound"), 404, "Cookbook not found"),
+    # Test validation error
+    ("valid-cookbook-id", ServiceException(msg="Validation error", method_name="delete_cookbook", error_code="ValidationError"), 400, "Validation error"),
+    # Test unknown error
+    ("valid-cookbook-id", ServiceException(msg="Internal server error", method_name="delete_cookbook", error_code="UnknownError"), 500, "Internal server error"),
 ])
-def test_delete_cookbook(cb_id, service_exception, expected_status):
-    # Setup the mock service method
+def test_delete_cookbook(test_client, mock_cookbook_service, cb_id, service_exception, expected_status, expected_response):
     if service_exception:
         mock_cookbook_service.delete_cookbook.side_effect = service_exception
     else:
         mock_cookbook_service.delete_cookbook.return_value = None
 
     # Make the delete request
-    response = client.delete(f"/api/v1/cookbooks/{cb_id}")
+    response = test_client.delete(f"/api/v1/cookbooks/{cb_id}")
 
     # Assert the expected status code
     assert response.status_code == expected_status
-
-    # If the status code is 200, also check the success message
     if expected_status == 200:
-        assert response.json() == {"message": "Cookbook deleted successfully"}
-    
+        assert response.json() == expected_response
+    else:
+        assert expected_response in response.json()["detail"]
