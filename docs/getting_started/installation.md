@@ -17,26 +17,26 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 ### Installing the Moonshot Library
 The Moonshot Library allows you to interact with the Moonshot API without any additional features. This is the simplest way to get started with Moonshot if you only need to use the API. Install with:
 ```
-$ pip install projectmoonshot-imda
+$ pip install aiverify-moonshot
 ```
 
 ### Enabling Moonshot Web API
 The Moonshot Web API enables you to interact with the Moonshot Library through HTTP requests. The Web API accomodates building a web application or accessing the Moonshot Library from a remote machine. Install with:
 ```
-$ pip install "projectmoonshot-imda[web-api]"
+$ pip install "aiverify-moonshot[web-api]"
 ```
 
 ### Enabling Moonshot CLI
 The Moonshot CLI enables you to interact with the Moonshot Library through your terminal. This allows you to run Moonshot commands directly from your terminal. 
 
 ```
-$ pip install "projectmoonshot-imda[cli]"
+$ pip install "aiverify-moonshot[cli]"
 ```
 
 ### Enabling Both CLI and WebAPI
 This command enables you to interact with the Moonshot Library through HTTP requests and CLI. It gives you the most flexibility, as you can interact with Moonshot through both command-line commands and HTTP requests.
 ```
-$ pip install "projectmoonshot-imda[all]"
+$ pip install "aiverify-moonshot[all]"
 ```
 
 ## Installation from Source
