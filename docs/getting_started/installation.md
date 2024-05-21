@@ -48,9 +48,13 @@ $ git clone https://github.com/moonshot-admin/moonshot.git
 ```
 2. Change directory to project's root directory:
 ```
-$ cd moonshot
+cd moonshot
+```
+3. Checkout to the <i>run-moonshot</i> branch (temporary step):
+```
+git checkout run-moonshot
 ``` 
-3. Install the required packages:
+4. Install the required packages:
 ```
 $ pip install -r requirements.txt
 ```
@@ -80,36 +84,36 @@ $ python -m moonshot -i moonshot-data
 ```
 
 #### Web and API Server 
-<span style="font-size:15px;"> Before running the Web and API server, make sure <b>moonshot-ui</b> is installed. To clone moonshot-ui from GitHub:</span>
+Before running the Web and API server, make sure <b>moonshot-ui</b> is installed. To clone moonshot-ui from GitHub:
 
 ```
 $ python -m moonshot -i moonshot-ui
 ```
 
-<span style="font-size:15px;"> To start web-API server and UI server:</span>
+To start web-API server and UI server:
 
 ```
 $ python -m moonshot web
 ``` 
 
 #### API Server 
-<span style="font-size:15px;"> To run the web-API only:</span>
+To run the web-API only:
 ```
 $ python -m moonshot web-api
 ``` 
 
 #### CLI Commands
-<span style="font-size:15px;"> To execute CLI commands:</span>
+To execute CLI commands:
 ```
 $ python -m moonshot cli [command]
 ```
 
-<span style="font-size:15px;"> Replace [command] with a specific CLI command. For example, to run a recipe:</span>
+Replace [command] with a specific CLI command. For example, to run a recipe:
 ```
 $ python -m moonshot cli run_recipe
 ``` 
 
-<span style="font-size:15px;"> Alternatively, to enter interactive mode in CLI (Recommended):</span>
+Alternatively, to enter interactive mode in CLI (Recommended):
 ```
 $ python -m moonshot cli interactive
 ``` 
