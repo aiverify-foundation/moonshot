@@ -6,7 +6,7 @@ from ..schemas.prompt_template_response_model import PromptTemplatesResponseMode
 from ..services.prompt_template_service import PromptTemplateService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Prompt Template"])
 
 
 @router.get("/api/v1/prompt-templates")
