@@ -10,10 +10,20 @@ from moonshot.integrations.web_api.services.attack_module_service import AttackM
 from moonshot.integrations.web_api.services.prompt_template_service import PromptTemplateService
 from moonshot.integrations.web_api.services.runner_service import RunnerService
 from moonshot.integrations.web_api.services.benchmark_result_service import BenchmarkResultService
+from moonshot.integrations.web_api.services.dataset_service import DatasetService
+from moonshot.integrations.web_api.services.endpoint_service import EndpointService
 
 @pytest.fixture(scope="module")
 def mock_am_service():
     return Mock(spec=AttackModuleService)
+
+@pytest.fixture(scope="module")
+def mock_dataset_service():
+    return Mock(spec=DatasetService)
+
+@pytest.fixture(scope="module")
+def mock_endpoint_service():
+    return Mock(spec=EndpointService)
 
 @pytest.fixture(scope="module")
 def mock_bm_result_service():
@@ -47,11 +57,15 @@ def test_client(
     mock_recipe_service,
     mock_am_service,
     mock_cookbook_service,
-    mock_metric_service
+    mock_metric_service,
+    mock_endpoint_service,
+    mock_dataset_service,
     ):
     test_container = Container()
     test_container.config.from_default() 
 
+    test_container.endpoint_service.override(mock_endpoint_service)
+    test_container.dataset_service.override(mock_dataset_service)
     test_container.benchmark_result_service.override(mock_bm_result_service)
     test_container.runner_service.override(mock_runner_service)
     test_container.recipe_service.override(mock_recipe_service)

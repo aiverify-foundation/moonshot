@@ -291,9 +291,9 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
         ]
     ),
     # Exception cases
-    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, None),
-    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, None),
-    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, None),
+    (None, None, ServiceException("A file not found error occurred", "get_all_cookbooks", "FileNotFound"), 404, None),
+    (None, None, ServiceException("A validation error occurred", "get_all_cookbooks", "ValidationError"), 400, None),
+    (None, None, ServiceException("An value error occurred", "get_all_cookbooks", "ValueError"), 500, None),
 ])
 def test_get_cookbooks(test_client, mock_cookbook_service, query_string, mock_return_value, exception, expected_status, expected_response):
     if exception:
