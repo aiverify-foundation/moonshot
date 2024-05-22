@@ -8,8 +8,10 @@ from typing import Any, Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.redteaming.session.red_teaming_type import RedTeamingType
 from moonshot.src.runners.runner_type import RunnerType
+from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
@@ -155,8 +157,7 @@ class Session:
     sql_create_session_metadata_record = """
         INSERT INTO session_metadata_table (
         session_id,endpoints,created_epoch,created_datetime,prompt_template,context_strategy,cs_num_of_prev_prompts,
-        attack_module, metric, system_prompt)
-        VALUES(?,?,?,?,?,?,?,?,?,?)
+        attack_module, metric, system_prompt) VALUES(?,?,?,?,?,?,?,?,?,?)
     """
 
     sql_read_session_metadata = """
@@ -199,11 +200,18 @@ class Session:
             "%Y%m%d-%H%M%S"
         )
 
+        self.runner_id = runner_id
         self.runner_args = runner_args
         self.runner_type = runner_type
         self.results_file_path = results_file_path
         self.progress_callback_func = progress_callback_func
         self.database_instance = database_instance
+
+        self.red_teaming_progress = RedTeamingProgress(
+            self.runner_id, self.runner_args, self.progress_callback_func
+        )
+
+        self.cancel_event = asyncio.Event()
 
         prompt_template = self.runner_args.get("prompt_template", "")
         context_strategy = self.runner_args.get("context_strategy", "")
@@ -263,6 +271,10 @@ class Session:
                     self.session_metadata.to_tuple(),
                     Session.sql_create_session_metadata_record,
                 )
+        else:
+            raise RuntimeError(
+                "[Session] Failed to initialise Session. No database instance provided."
+            )
 
     @staticmethod
     def load(database_instance: DBInterface | None) -> dict | None:
@@ -305,7 +317,7 @@ class Session:
 
         return session_metadata_dict
 
-    async def run(self) -> dict:
+    async def run(self) -> list | None:
         """
         Asynchronously executes the session run process.
 
@@ -380,6 +392,8 @@ class Session:
                     self.database_instance,
                     self.session_metadata,
                     self.check_redteaming_type(),
+                    self.red_teaming_progress,
+                    self.cancel_event,
                 )
             else:
                 raise RuntimeError("Failed to initialise runner module instance.")
@@ -391,6 +405,9 @@ class Session:
             raise e
 
         finally:
+            self.red_teaming_progress.status = RunStatus.COMPLETED
+            if self.check_redteaming_type() == RedTeamingType.AUTOMATED:
+                self.red_teaming_progress.notify_progress()
             print(
                 f"[Session] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )
@@ -400,6 +417,20 @@ class Session:
         # ------------------------------------------------------------------------------
         print("[Session] Part 4: Wrap up run...")
         return runner_results
+
+    def cancel(self) -> None:
+        """
+        Sets the cancel event to stop the automated red teaming process.
+
+        This method is used to signal that the automated red teaming process should be cancelled. It sets the
+        cancel_event which can be checked in various points of the asynchronous red teaming process to gracefully stop
+        the execution.
+
+        Returns:
+            None
+        """
+        print("[Session] Cancelling automated red teaming...")
+        self.cancel_event.set()
 
     def check_redteaming_type(self) -> RedTeamingType:
         """
@@ -427,7 +458,7 @@ class Session:
     @staticmethod
     def update_context_strategy(
         db_instance: DBInterface | None, runner_id: str, context_strategy: str
-    ) -> None:
+    ) -> bool:
         """
         Updates the context strategy for a specific runner in the database.
 
@@ -435,6 +466,9 @@ class Session:
             db_instance (DBInterface | None): The database instance to update the context strategy in.
             runner_id (str): The ID of the runner.
             context_strategy (str): The name of the context strategy to be used.
+
+        Returns:
+            bool: The status on whether the context strategy is updated successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided or if the context strategy does not exist.
@@ -453,11 +487,12 @@ class Session:
                 (context_strategy, runner_id),
                 Session.sql_update_session_metadata_field.format("context_strategy"),
             )
+            return True
 
     @staticmethod
     def update_cs_num_of_prev_prompts(
         db_instance: DBInterface | None, runner_id: str, cs_num_of_prev_prompts: int
-    ) -> None:
+    ) -> bool:
         """
         Updates the number of previous prompts for a specific runner in the database.
 
@@ -465,6 +500,9 @@ class Session:
             db_instance (DBInterface | None): The database instance to update the number of previous prompts in.
             runner_id (str): The ID of the runner.
             cs_num_of_prev_prompts (int): The new number of previous prompts to be used.
+
+        Returns:
+            bool: The status on whether the number of prompts for context strategy is updated successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided.
@@ -476,11 +514,12 @@ class Session:
             (cs_num_of_prev_prompts, runner_id),
             Session.sql_update_session_metadata_field.format("cs_num_of_prev_prompts"),
         )
+        return True
 
     @staticmethod
     def update_prompt_template(
         db_instance: DBInterface | None, runner_id: str, prompt_template: str
-    ) -> None:
+    ) -> bool:
         """
         Updates the prompt template in the database for the specified runner.
 
@@ -489,8 +528,11 @@ class Session:
             runner_id (str): The ID of the runner.
             prompt_template (str): The new prompt template to be used.
 
-        Raises:
-            RuntimeError: If the database instance is not provided or if the prompt template does not exist.
+        Returns:
+            bool: The status on whether the prompt template is updated successfully.
+
+            Raises:
+                RuntimeError: If the database instance is not provided or if the prompt template does not exist.
         """
         if not db_instance:
             raise RuntimeError("[Session] Database instance not provided.")
@@ -506,11 +548,12 @@ class Session:
                 (prompt_template, runner_id),
                 Session.sql_update_session_metadata_field.format("prompt_template"),
             )
+            return True
 
     @staticmethod
     def update_metric(
         db_instance: DBInterface | None, runner_id: str, metric_id: str
-    ) -> None:
+    ) -> bool:
         """
         Updates the metric in the database for the specified runner.
 
@@ -518,6 +561,9 @@ class Session:
             db_instance (DBInterface | None): The database instance to update the metric in.
             runner_id (str): The ID of the runner.
             metric_id (str): The new metric to be used.
+
+        Returns:
+            bool: The status on whether the metric is updated successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided or if the metric does not exist.
@@ -534,11 +580,12 @@ class Session:
                 (metric_id, runner_id),
                 Session.sql_update_session_metadata_field.format("metric"),
             )
+            return True
 
     @staticmethod
     def update_system_prompt(
         db_instance: DBInterface | None, runner_id: str, system_prompt: str
-    ) -> None:
+    ) -> bool:
         """
         Updates the system prompt in the database for the specified runner.
 
@@ -546,6 +593,9 @@ class Session:
             db_instance (DBInterface | None): The database instance to update the system prompt in.
             runner_id (str): The ID of the runner.
             system_prompt (str): The new system prompt to be used.
+
+        Returns:
+            bool: The status on whether the system prompt is updated successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided.
@@ -557,11 +607,12 @@ class Session:
             (system_prompt, runner_id),
             Session.sql_update_session_metadata_field.format("system_prompt"),
         )
+        return True
 
     @staticmethod
     def update_attack_module(
         db_instance: DBInterface | None, runner_id: str, attack_module_id: str
-    ) -> None:
+    ) -> bool:
         """
         Updates the attack module in the database for the specified runner.
 
@@ -569,6 +620,9 @@ class Session:
             db_instance (DBInterface | None): The database instance to update the attack module in.
             runner_id (str): The ID of the runner.
             attack_module_id (str): The new attack module to be used.
+
+        Returns:
+            bool: The status on whether the attack module is updated successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided or if the attack module does not exist.
@@ -587,14 +641,18 @@ class Session:
                 (attack_module_id, runner_id),
                 Session.sql_update_session_metadata_field.format("attack_module"),
             )
+            return True
 
     @staticmethod
-    def delete(database_instance: DBInterface | None) -> None:
+    def delete(database_instance: DBInterface | None) -> bool:
         """
         Deletes the session metadata and associated endpoint tables from the database.
 
         Args:
             database_instance (DBInterface | None): The database instance to delete the session from.
+
+        Returns:
+            bool: The status on whether the session is deleted successfully.
 
         Raises:
             RuntimeError: If the database instance is not provided or if failed to get session metadata.
@@ -618,6 +676,7 @@ class Session:
             Storage.delete_database_table(
                 database_instance, Session.sql_drop_table.format(endpoint)
             )
+        return True
 
     @staticmethod
     def get_session_chats(database_instance: DBInterface | None) -> dict:

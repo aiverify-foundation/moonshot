@@ -4,13 +4,11 @@ from moonshot.src.api.api_session import api_create_session
 from moonshot.src.runners.runner import Runner
 
 from .... import api as moonshot_api
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
-from ..schemas.session_response_model import (
-    PromptResponseModel,
-    SessionMetadataModel,
-    SessionResponseModel,
-)
+from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
+from ..services.auto_red_team_test_manager import AutoRedTeamTestManager
 from ..services.runner_service import RunnerService
 from ..services.utils.exceptions_handler import exception_handler
 from ..status_updater.interface.redteam_progress_callback import (
@@ -25,6 +23,7 @@ class SessionService(BaseService):
     @inject
     def __init__(
         self,
+        auto_red_team_test_manager: AutoRedTeamTestManager,
         progress_status_updater: InterfaceRedTeamProgressCallback,
         runner_service: RunnerService,
     ) -> None:
@@ -35,6 +34,7 @@ class SessionService(BaseService):
             progress_status_updater (InterfaceRedTeamProgressCallback): The callback interface for progress updates.
             runner_service (RunnerService): The service for managing runners.
         """
+        self.auto_red_team_test_manager = auto_red_team_test_manager
         self.progress_status_updater = progress_status_updater
         self.runner_service = runner_service
         super().__init__()
@@ -42,7 +42,7 @@ class SessionService(BaseService):
     @exception_handler
     def create_new_session(
         self, session_create_dto: SessionCreateDTO
-    ) -> SessionMetadataModel:
+    ) -> SessionResponseModel:
         """
         Create a new session with a new runner and return the session metadata.
 
@@ -57,6 +57,7 @@ class SessionService(BaseService):
             runner_name=session_create_dto.name,
             endpoints=session_create_dto.endpoints,
             description=session_create_dto.description,
+            progress_callback_func=self.progress_status_updater.on_art_progress_update,
         )
         self.active_runner = runner
 
@@ -64,6 +65,10 @@ class SessionService(BaseService):
         runner_args = {
             "context_strategy": session_create_dto.context_strategy,
             "prompt_template": session_create_dto.prompt_template,
+            "cs_num_of_prev_prompts": session_create_dto.cs_num_of_prev_prompts,
+            "attack_module": session_create_dto.attack_module,
+            "metric": session_create_dto.metric,
+            "system_prompt": session_create_dto.system_prompt,
         }
 
         # Create a new session if the runner has a database instance
@@ -77,7 +82,12 @@ class SessionService(BaseService):
         if session_metadata_dict is None:
             raise ValueError(f"No session metadata found for runner ID {runner.id}")
 
-        return SessionMetadataModel(**session_metadata_dict)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=None,
+        )
 
     @exception_handler
     def get_all_session(self) -> list[SessionMetadataModel]:
@@ -87,7 +97,18 @@ class SessionService(BaseService):
         Returns:
             list[SessionMetadataModel]: A list of session metadata models for all sessions.
         """
+        retn_session = []
+        runners_with_session = moonshot_api.api_get_all_runner()
         sessions_metadata_dicts = moonshot_api.api_get_all_session_metadata()
+        
+        runners_dict = {runner['id']: runner for runner in runners_with_session}
+        
+        for session in sessions_metadata_dicts:
+            sess_id = session.get("session_id")
+            if sess_id in runners_dict:
+                session['description'] = runners_dict[sess_id]['description']
+                retn_session.append(session)
+        
         return [
             SessionMetadataModel(**metadata) for metadata in sessions_metadata_dicts
         ]
@@ -119,7 +140,9 @@ class SessionService(BaseService):
         Returns:
             SessionResponseModel: An object containing session metadata and optionally chat records.
         """
-        runner: Runner = self.runner_service.load_runner(runner_id)
+        runner: Runner = self.runner_service.load_runner(
+            runner_id, self.progress_status_updater.on_art_progress_update
+        )
         self.active_runner = runner
         session_metadata_dict = moonshot_api.api_load_session(self.active_runner.id)
 
@@ -128,15 +151,18 @@ class SessionService(BaseService):
                 f"Session metadata for runner ID {runner.id} must be a dictionary."
             )
 
-        session_metadata = SessionMetadataModel(**session_metadata_dict)
-
         session_chat = (
             moonshot_api.api_get_all_chats_from_session(runner.id)
             if include_history
             else None
         )
 
-        return SessionResponseModel(session=session_metadata, chat_records=session_chat)
+        return SessionResponseModel(
+            session_name=runner.name,
+            session_description=runner.description,
+            session=SessionMetadataModel(**session_metadata_dict),
+            chat_records=session_chat,
+        )
 
     @exception_handler
     def update_session_chat(self, runner_id: str):
@@ -245,8 +271,8 @@ class SessionService(BaseService):
 
     @exception_handler
     async def send_prompt(
-        self, runner_id: str, prompt: SessionPromptDTO
-    ) -> PromptResponseModel:
+        self, runner_id: str, prompt: SessionPromptDTO, batch_size: int = 5
+    ) -> PromptResponseModel | str:
         """
         Send a prompt to the runner for processing.
 
@@ -293,12 +319,22 @@ class SessionService(BaseService):
         if attack_module:
             rt_args["attack_module_id"] = attack_module
             rt_args["metric_ids"] = [metric] if metric else []
-            await self.active_runner.run_red_teaming({"attack_strategies": [rt_args]})
+            id = await self.auto_red_team_test_manager.schedule_art_task(
+                rt_args, self.active_runner, batch_size
+            )
+            return id
         else:
-            await self.active_runner.run_red_teaming({"manual_rt_args": rt_args})
+            response = await self.active_runner.run_red_teaming(
+                {"manual_rt_args": rt_args}
+            )
+            return PromptResponseModel.model_validate(response)
 
-        retn_val = self.update_session_chat(self.active_runner.id)
-        return retn_val
+    @exception_handler
+    async def cancel_auto_redteam(self, runner_id: str):
+        if self.active_runner.id != runner_id:
+            raise RuntimeError("Active session and requested session do not match.")
+
+        await self.auto_red_team_test_manager.cancel_task(self.active_runner.id)
 
     @exception_handler
     async def end_session(self, runner_id: str):

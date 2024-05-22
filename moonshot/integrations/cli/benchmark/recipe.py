@@ -54,7 +54,7 @@ def add_recipe(args) -> None:
         attack_modules = literal_eval(args.attack_modules)
         grading_scale = literal_eval(args.grading_scale)
 
-        api_create_recipe(
+        new_recipe_id = api_create_recipe(
             args.name,
             args.description,
             tags,
@@ -65,7 +65,7 @@ def add_recipe(args) -> None:
             attack_modules,
             grading_scale,
         )
-        print("[add_recipe]: Recipe created.")
+        print(f"[add_recipe]: Recipe ({new_recipe_id}) created.")
     except Exception as e:
         print(f"[add_recipe]: {str(e)}")
 
@@ -469,7 +469,7 @@ def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None
 # ------------------------------------------------------------------------------
 # Add recipe arguments
 add_recipe_args = cmd2.Cmd2ArgumentParser(
-    description="Add a new recipe.",
+    description="Add a new recipe. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_recipe 'My new recipe' "
     "'I am recipe description' "
     "\"['tag1','tag2']\" "

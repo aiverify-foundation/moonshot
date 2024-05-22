@@ -1,0 +1,32 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:39  Samples:  89
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.150     CPU time: 0.148
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.150 profile_function  tests/test_api_perf.py:97
+└─ 0.150 api_get_all_recipe_name  moonshot/src/api/api_recipe.py:153
+   └─ 0.150 get_available_items  moonshot/src/recipes/recipe.py:225
+      ├─ 0.136 _get_datasets_prompt_counts  moonshot/src/recipes/recipe.py:110
+      │  └─ 0.136 get_available_items  moonshot/src/datasets/dataset.py:154
+      │     ├─ 0.133 _get_or_update_dataset_info  moonshot/src/datasets/dataset.py:206
+      │     │  ├─ 0.127 get_file_hash  moonshot/src/storage/storage.py:207
+      │     │  │  ├─ 0.087 BufferedReader.read  <built-in>
+      │     │  │  └─ 0.037 [self]  moonshot/src/storage/storage.py
+      │     │  └─ 0.005 [self]  moonshot/src/datasets/dataset.py
+      │     └─ 0.003 PosixPath.__new__  pathlib.py:868
+      │           [4 frames hidden]  pathlib
+      └─ 0.014 _read_recipe  moonshot/src/recipes/recipe.py:129
+         └─ 0.013 read_object  moonshot/src/storage/storage.py:96
+            ├─ 0.007 get_instance  moonshot/src/utils/import_modules.py:59
+            │  ├─ 0.004 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+            │  └─ 0.003 create_module_spec  moonshot/src/utils/import_modules.py:7
+            │     └─ 0.002 [self]  moonshot/src/utils/import_modules.py
+            ├─ 0.003 JsonIO.read_file  moonshot/data/io-modules/jsonio.py:37
+            │  └─ 0.002 load  json/__init__.py:274
+            │        [2 frames hidden]  json
+            └─ 0.002 get_filepath  moonshot/src/storage/storage.py:232
+               └─ 0.002 get_file_path  moonshot/src/configs/env_variables.py:147
+                  └─ 0.002 PosixPath.__str__  pathlib.py:536
+

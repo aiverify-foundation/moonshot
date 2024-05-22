@@ -15,11 +15,14 @@ from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoi
 from moonshot.src.metrics.metric import Metric
 from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
+from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
 
 class AttackModule:
+    cache_name = "cache"
+    cache_extension = "json"
     sql_create_chat_record = """
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
@@ -35,6 +38,8 @@ class AttackModule:
             self.metric_ids = am_arguments.metric_ids
             self.context_strategy_info = am_arguments.context_strategy_info
             self.db_instance = am_arguments.db_instance
+            self.red_teaming_progress = am_arguments.red_teaming_progress
+            self.cancel_event = am_arguments.cancel_event
             self.params = am_arguments.params
 
     @classmethod
@@ -143,15 +148,18 @@ class AttackModule:
 
     async def _send_prompt_to_all_llm_default(self) -> list:
         """
-        Asynchronously sends prompts to all Language Learning Models (LLMs) using default settings.
+        NOTE: this method does not currently handle callbacks
+        Asynchronously sends the default prompt to all Language Learning Models (LLMs).
 
-        This method prepares prompts by processing them with prompt templates and/or context strategies if specified,
-        generates predictions for the prompts, and yields the results as a generator list.
+        This method generates prompts by appending the contents of the prompt template and modifies the prompt with the
+        context strategy for each LLM, sends each prompt to the respective LLM, and consolidates the responses into a
+        list.
 
         Returns:
-            list: A list of generators containing the results of the generated prompts.
+            list: A list of consolidated responses from all LLMs.
         """
         generator_list = []
+        consolidated_result_list = []
         if self.connector_ids:
             for target_llm_connector in self.connector_instances:
                 gen_prompts_generator = self._generate_prompts(
@@ -161,7 +169,16 @@ class AttackModule:
                     gen_prompts_generator, target_llm_connector
                 )
                 generator_list.append(gen_results_generator)
-        return generator_list
+
+            for generator in generator_list:
+                async for result in generator:
+                    if self.cancel_event.is_set():
+                        print(
+                            "[Red Teaming] Cancellation flag is set. Cancelling task..."
+                        )
+                        break
+                    consolidated_result_list.append(result)
+        return consolidated_result_list
 
     async def _send_prompt_to_all_llm(self, list_of_prompts: list) -> list:
         """
@@ -179,6 +196,13 @@ class AttackModule:
         consolidated_responses = []
         for prepared_prompt in list_of_prompts:
             for target_llm_connector in self.connector_instances:
+                if self.cancel_event.is_set():
+                    print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                    break
+
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_progress()
+
                 new_prompt_info = ConnectorPromptArguments(
                     prompt_index=1, prompt=prepared_prompt, target=""
                 )
@@ -187,22 +211,30 @@ class AttackModule:
                     new_prompt_info, target_llm_connector
                 )
                 consolidated_responses.append(response)
-                chat_tuple = (
-                    target_llm_connector.id,
-                    self.context_strategy_instances[0]
+
+                red_teaming_prompt_arguments = RedTeamingPromptArguments(
+                    conn_id=target_llm_connector.id,
+                    am_id=self.id,
+                    cs_id=self.context_strategy_instances[0].id
                     if self.context_strategy_info
                     else "",
-                    self.prompt_templates[0] if self.prompt_templates else "",
-                    self.id,
-                    self.metric_ids[0] if self.metric_ids else "",
-                    self.prompt,  # original prompt
-                    prepared_prompt,  # prepared prompt
-                    self.system_prompt,  # system prompt
-                    response.predicted_results,
-                    response.duration,
-                    str(start_time),
+                    me_id=self.metric_ids[0] if self.metric_ids else "",
+                    pt_id=self.prompt_templates[0] if self.prompt_templates else "",
+                    original_prompt=self.prompt,  # original prompt
+                    system_prompt=self.system_prompt,  # system prompt
+                    start_time=str(start_time),
+                    connector_prompt=response,
                 )
-                self._write_record_to_db(chat_tuple, target_llm_connector.id)
+
+                if self.red_teaming_progress:
+                    self.red_teaming_progress.update_red_teaming_chats(
+                        red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                    )
+
+                self._write_record_to_db(
+                    red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
+                )
+
         return consolidated_responses
 
     async def _send_prompt_to_single_llm(
@@ -223,6 +255,13 @@ class AttackModule:
         """
         consolidated_responses = []
         for prepared_prompt in list_of_prompts:
+            if self.cancel_event.is_set():
+                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                break
+
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_progress()
+
             new_prompt_info = ConnectorPromptArguments(
                 prompt_index=1, prompt=prepared_prompt, target=""
             )
@@ -231,22 +270,29 @@ class AttackModule:
                 new_prompt_info, target_llm_connector
             )
             consolidated_responses.append(response)
-            chat_tuple = (
-                target_llm_connector.id,
-                self.context_strategy_instances[0]
+            red_teaming_prompt_arguments = RedTeamingPromptArguments(
+                conn_id=target_llm_connector.id,
+                am_id=self.id,
+                cs_id=self.context_strategy_instances[0].id
                 if self.context_strategy_info
                 else "",
-                self.prompt_templates[0] if self.prompt_templates else "",
-                self.id,
-                self.metric_ids[0] if self.metric_ids else "",
-                self.prompt,  # original prompt
-                prepared_prompt,  # prepared prompt
-                self.system_prompt,  # system prompt
-                response.predicted_results,
-                response.duration,
-                str(start_time),
+                me_id=self.metric_ids[0] if self.metric_ids else "",
+                pt_id=self.prompt_templates[0] if self.prompt_templates else "",
+                original_prompt=self.prompt,  # original prompt
+                system_prompt=self.system_prompt,  # system prompt
+                start_time=str(start_time),
+                connector_prompt=response,
             )
-            self._write_record_to_db(chat_tuple, target_llm_connector.id)
+
+            # update callback arguments
+            if self.red_teaming_progress:
+                self.red_teaming_progress.update_red_teaming_chats(
+                    red_teaming_prompt_arguments.to_dict(), RunStatus.RUNNING
+                )
+            self._write_record_to_db(
+                red_teaming_prompt_arguments.to_tuple(), target_llm_connector.id
+            )
+
         return consolidated_responses
 
     def _write_record_to_db(
@@ -297,6 +343,9 @@ class AttackModule:
             RedTeamingPromptArguments: An asynchronous generator yielding the new prompt information.
         """
         async for prompt_info in gen_prompts_generator:
+            if self.cancel_event.is_set():
+                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                break
             new_prompt_info = RedTeamingPromptArguments(
                 conn_id=prompt_info.conn_id,
                 am_id=prompt_info.am_id,
@@ -313,6 +362,7 @@ class AttackModule:
             new_prompt_info.connector_prompt = await Connector.get_prediction(
                 new_prompt_info.connector_prompt, llm_connector
             )
+
             self._write_record_to_db(new_prompt_info.to_tuple(), llm_connector.id)
             yield new_prompt_info
 
@@ -343,39 +393,153 @@ class AttackModule:
         return None
 
     @staticmethod
-    def get_available_items() -> list[str]:
+    def get_cache_information() -> dict:
         """
-        Retrieves the available attack module IDs.
+        Retrieves cache information from the storage.
+
+        This method attempts to read the cache information from the storage and return it as a dictionary.
+        If the cache information does not exist or an error occurs, it returns an empty dictionary.
 
         Returns:
-            list[str]: A list of available attack module IDs.
+            dict: A dictionary containing the cache information or an empty dictionary if an error occurs
+            or if the cache information does not exist.
+
+        Raises:
+            Exception: If there's an error during the retrieval process, it is logged and an
+            empty dictionary is returned.
         """
         try:
-            retn_am_ids = []
+            # Retrieve cache information from the storage and return it as a dictionary
+            cache_info = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, AttackModule.cache_name, "json"
+            )
+            return cache_info if cache_info else {}
+        except Exception as e:
+            print(f"No previous cache information: {str(e)}")
+            return {}
 
+    @staticmethod
+    def write_cache_information(cache_info: dict) -> None:
+        """
+        Writes the updated cache information to the storage.
+
+        Args:
+            cache_info (dict): The cache information to be written.
+        """
+        try:
+            Storage.create_object(
+                obj_type=EnvVariables.ATTACK_MODULES.name,
+                obj_id=AttackModule.cache_name,
+                obj_info=cache_info,
+                obj_extension=AttackModule.cache_extension,
+            )
+        except Exception as e:
+            print(f"Failed to write cache information: {str(e)}")
+            raise e
+
+    @staticmethod
+    def get_available_items() -> tuple[list[str], list[dict]]:
+        """
+        Retrieves the list of available attack modules and their information.
+
+        This method scans the storage for attack modules, filters out any non-relevant files,
+        and updates the cache information if necessary. It returns a tuple containing a list of
+        attack module IDs and a list of dictionaries with detailed information about each module.
+
+        Returns:
+            tuple[list[str], list[dict]]: A tuple with two elements. The first element is a list
+                                           of attack module IDs. The second element is a list of
+                                           dictionaries, each containing information about an
+                                           attack module.
+        """
+        try:
+            retn_ams = []
+            retn_am_ids = []
+            am_cache_info = AttackModule.get_cache_information()
+            cache_needs_update = False  # Initialize a flag to track cache updates
             ams = Storage.get_objects(EnvVariables.ATTACK_MODULES.name, "py")
+
             for am in ams:
                 if "__" in am:
                     continue
-                retn_am_ids.append(Path(am).stem)
-            return retn_am_ids
+
+                am_name = Path(am).stem
+                am_info, cache_updated = AttackModule._get_or_update_attack_module_info(
+                    am_name, am_cache_info
+                )
+                if cache_updated:
+                    cache_needs_update = True  # Set the flag if any cache was updated
+
+                retn_ams.append(am_info)
+                retn_am_ids.append(am_name)
+
+            if cache_needs_update:  # Check the flag after the loop
+                AttackModule.write_cache_information(am_cache_info)
+
+            return retn_am_ids, retn_ams
+
         except Exception as e:
             print(f"Failed to get available attack modules: {str(e)}")
             raise e
 
     @staticmethod
-    def delete(am_id: str) -> None:
+    def _get_or_update_attack_module_info(
+        am_name: str, am_cache_info: dict
+    ) -> tuple[dict, bool]:
         """
-        Deletes the specified attack module.
+        Retrieves or updates the attack module information from the cache.
+
+        This method checks if the attack module information is already available in the cache and if the file hash
+        matches the one stored in the cache. If it does, the information is retrieved from the cache.
+
+        If not, the attack module information is read from the storage, the cache is updated with the new information
+        and the new file hash, and a flag is set to indicate that the cache has been updated.
 
         Args:
-            am_id (str): The ID of the attack module to delete.
+            am_name (str): The name of the attack module.
+            am_cache_info (dict): A dictionary containing the cached attack module information.
+
+        Returns:
+            tuple[dict, bool]: A tuple containing the dictionary with the attack module information
+                               and a boolean indicating whether the cache was updated or not.
+        """
+        file_hash = Storage.get_file_hash(
+            EnvVariables.ATTACK_MODULES.name, am_name, "py"
+        )
+        cache_updated = False
+
+        if am_name in am_cache_info and file_hash == am_cache_info[am_name]["hash"]:
+            am_metadata = am_cache_info[am_name].copy()
+            am_metadata.pop("hash", None)
+        else:
+            am_metadata = AttackModule.load(am_name).get_metadata()  # type: ignore ; ducktyping
+            am_cache_info[am_name] = am_metadata.copy()
+            am_cache_info[am_name]["hash"] = file_hash
+            cache_updated = True
+
+        return am_metadata, cache_updated
+
+    @staticmethod
+    def delete(am_id: str) -> bool:
+        """
+        Deletes the specified attack module from storage.
+
+        This method attempts to delete the attack module identified by the given ID from the storage.
+        If the deletion is successful, it returns True. If an exception occurs during the deletion process,
+        it prints an error message and re-raises the exception.
+
+        Args:
+            am_id (str): The ID of the attack module to be deleted.
+
+        Returns:
+            bool: True if the attack module was successfully deleted.
 
         Raises:
-            Exception: If an error occurs during deletion.
+            Exception: If an error occurs during the deletion process.
         """
         try:
             Storage.delete_object(EnvVariables.ATTACK_MODULES.name, am_id, "py")
+            return True
 
         except Exception as e:
             print(f"Failed to delete attack module: {str(e)}")
@@ -405,16 +569,14 @@ class RedTeamingPromptArguments(BaseModel):
 
     def to_tuple(self) -> tuple:
         """
-        Converts the PromptArguments instance into a tuple.
+        Converts the RedTeamingPromptArguments instance into a tuple.
 
-        This method collects all the attributes of the PromptArguments instance and forms a tuple
-        with the attribute values in this specific order: conn_id, rec_id, ds_id, pt_id, prompt,
-        target, predicted_results, duration.
-        This tuple is suitable for serialization tasks, like storing the prompt arguments data
-        in a database or transmitting it over a network.
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
+        with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
+        connector_prompt.prompt, connector_prompt.predicted_results, connector_prompt.duration, start_time.
 
         Returns:
-            tuple: A tuple representation of the PromptArguments instance.
+            tuple: A tuple representation of the RedTeamingPromptArguments instance.
         """
         return (
             self.conn_id,
@@ -429,3 +591,28 @@ class RedTeamingPromptArguments(BaseModel):
             str(self.connector_prompt.duration),
             self.start_time,
         )
+
+    def to_dict(self) -> dict:
+        """
+        Converts the RedTeamingPromptArguments instance into a dict.
+
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
+        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, prepared_prompt, system_prompt
+        response, duration, start_time.
+
+        Returns:
+            dict: A dict representation of the RedTeamingPromptArguments instance.
+        """
+        return {
+            "conn_id": self.conn_id,
+            "cs_id": self.cs_id,
+            "pt_id": self.pt_id,
+            "am_id": self.am_id,
+            "me_id": self.me_id,
+            "original_prompt": self.original_prompt,
+            "prepared_prompt": self.connector_prompt.prompt,
+            "system_prompt": self.system_prompt,
+            "response": str(self.connector_prompt.predicted_results),
+            "duration": str(self.connector_prompt.duration),
+            "start_time": self.start_time,
+        }

@@ -2,7 +2,6 @@ import argparse
 
 import cmd2
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
 
 from moonshot.api import (
@@ -63,7 +62,7 @@ def list_context_strategies() -> None:
             expand=True,
             header_style="bold",
         )
-        table.add_column("No.", justify="left", style="dim", width=2)
+        table.add_column("No.", justify="left", width=2)
         table.add_column("Context Strategy Information", justify="left", width=98)
         for context_strategy_index, context_strategy_data in enumerate(
             context_strategy_metadata_list, 1
@@ -72,7 +71,7 @@ def list_context_strategies() -> None:
             for k, v in context_strategy_data.items():
                 context_strategy_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
             table.add_row(str(context_strategy_index), context_strategy_data_str)
-        console.print(Panel(table))
+        console.print(table)
     else:
         console.print("[red]There are no context strategies found.[/red]", style="bold")
 

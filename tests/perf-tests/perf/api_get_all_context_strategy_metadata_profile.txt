@@ -1,0 +1,18 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  3
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.006     CPU time: 0.009
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.006 profile_function  tests/test_api_perf.py:97
+└─ 0.006 api_get_all_context_strategy_metadata  moonshot/src/api/api_context_strategy.py:38
+   └─ 0.006 <listcomp>  moonshot/src/api/api_context_strategy.py:49
+      └─ 0.006 ContextStrategy.load  moonshot/src/redteaming/attack/context_strategy.py:15
+         └─ 0.006 get_instance  moonshot/src/utils/import_modules.py:59
+            └─ 0.006 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+               ├─ 0.003 open_code  <built-in>
+               ├─ 0.001 <module>  moonshot/data/context-strategy/add_previous_prompt.py:1
+               │  └─ 0.001 BufferedReader.read  <built-in>
+               └─ 0.001 replace  <built-in>
+

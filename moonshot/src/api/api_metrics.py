@@ -4,35 +4,34 @@ from moonshot.src.metrics.metric import Metric
 # ------------------------------------------------------------------------------
 # Metrics APIs
 # ------------------------------------------------------------------------------
-def api_delete_metric(met_id: str) -> None:
+def api_delete_metric(met_id: str) -> bool:
     """
-    Deletes a metric.
-
-    This method takes a metric ID as input, deletes the corresponding JSON file from the directory specified by
-    `EnvironmentVars.METRICS`. If the operation fails for any reason, an exception is raised and the
-    error is printed.
+    Deletes a metric identified by its unique metric ID.
 
     Args:
-        met_id (str): The ID of the metric to delete.
+        met_id (str): The unique identifier for the metric to be deleted.
+
+    Returns:
+        bool: True if the metric was successfully deleted.
 
     Raises:
-        Exception: If there is an error during file deletion or any other operation within the method.
+        Exception: If the deletion process encounters an error.
     """
-    Metric.delete(met_id)
+    return Metric.delete(met_id)
 
 
 def api_get_all_metric() -> list[dict]:
     """
-    Retrieves all available metric metadata.
+    Retrieves all available metrics.
 
     This function calls the get_available_items method from the Metric class to retrieve all available metrics.
-    It then extracts the metadata of each metric and returns a list of these metadata dictionaries.
+    It then returns a list of dictionaries, each containing the details of a metric.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing the metadata of a metric.
+        list[dict]: A list of dictionaries, each representing a metric's details.
     """
-    _, metrics = Metric.get_available_items()
-    return [metric.get_metadata() for metric in metrics]  # type: ignore ; ducktyping
+    _, metrics_info = Metric.get_available_items()
+    return metrics_info
 
 
 def api_get_all_metric_name() -> list[str]:

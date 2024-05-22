@@ -1,17 +1,19 @@
 import logging
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException, Query, Body
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 from ..container import Container
+from ..schemas.prompt_response_model import PromptResponseModel
 from ..schemas.session_create_dto import SessionCreateDTO
 from ..schemas.session_prompt_dto import SessionPromptDTO
-from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel, PromptResponseModel
+from ..schemas.session_response_model import SessionMetadataModel, SessionResponseModel
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Red Teaming"])
 logger = logging.getLogger(__name__)
+
 
 @router.get("/")
 @inject
@@ -23,6 +25,7 @@ async def healthcheck() -> dict[str, str]:
         Dict[str, str]: The status message indicating the API is running.
     """
     return {"status": "web api is up and running"}
+
 
 @router.get("/api/v1/sessions")
 @inject
@@ -46,7 +49,6 @@ async def get_all_sessions(
     try:
         return session_service.get_all_session()
 
-    
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(status_code=404, detail=e.msg)
@@ -54,6 +56,7 @@ async def get_all_sessions(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
+
 
 @router.get("/api/v1/sessions/name")
 @inject
@@ -84,11 +87,15 @@ async def get_all_sessions_name(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.get("/api/v1/sessions/{runner_id}")
 @inject
 async def get_session_by_runner_id(
     runner_id: str,
-    include_history: bool = Query(default=False, description="Flag to determine if session history should be included."),
+    include_history: bool = Query(
+        default=False,
+        description="Flag to determine if session history should be included.",
+    ),
     session_service: SessionService = Depends(Provide[Container.session_service]),
 ) -> SessionResponseModel:
     """
@@ -108,7 +115,9 @@ async def get_session_by_runner_id(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        session_data = session_service.get_session_by_runner_id(runner_id, include_history)
+        session_data = session_service.get_session_by_runner_id(
+            runner_id, include_history
+        )
         return session_data
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -118,12 +127,13 @@ async def get_session_by_runner_id(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.post("/api/v1/sessions")
 @inject
 async def create_session(
     session_dto: SessionCreateDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> SessionMetadataModel:
+) -> SessionResponseModel:
     """
     Create a new session based on the provided session data transfer object (DTO).
 
@@ -132,7 +142,7 @@ async def create_session(
         session_service (SessionService): The service responsible for session operations.
 
     Returns:
-        SessionMetadataModel: The metadata of the newly created session.
+        SessionResponseModel: The metadata of the newly created session.
 
     Raises:
         HTTPException: An error with status code 404 if the session cannot be created due to a file not found.
@@ -150,17 +160,19 @@ async def create_session(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.post("/api/v1/sessions/{runner_id}/prompt")
 @inject
 async def prompt(
     runner_id: str,
     user_prompt: SessionPromptDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> PromptResponseModel:
+) -> PromptResponseModel | str:
     """
     Process a user prompt for a given session and return the session's response.
 
-    This endpoint receives a prompt from the user and sends it to the specified session. The session's response to the prompt is then returned to the user.
+    This endpoint receives a prompt from the user and sends it to the specified session.
+    The session's response to the prompt is then returned to the user.
 
     Args:
         runner_id (str): The unique identifier for the session to which the prompt will be sent.
@@ -168,12 +180,13 @@ async def prompt(
         session_service (SessionService): The service responsible for session management and prompt handling.
 
     Returns:
-        PromptResponseModel: A model representing the response to the user's prompt, including any chat records generated.
+        PromptResponseModel: A model representing the response to the user's prompt
+        ,including any chat records generated.
 
     Raises:
         HTTPException: Raised with status code 404 if the session associated with the runner_id is not found.
                        Raised with status code 400 if there is a validation error with the provided prompt data.
-                       Raised with status code 500 for any other server-side errors encountered while processing the prompt.
+                       Raised with status code 500 for any other server-side errors encountered while processing.
     """
     try:
         result = await session_service.send_prompt(runner_id, user_prompt)
@@ -185,6 +198,39 @@ async def prompt(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
+
+
+@router.post("/api/v1/sessions/{runner_id}/cancel")
+@inject
+async def cancel_auto_redteam(
+    runner_id: str,
+    session_service: SessionService = Depends(Provide[Container.session_service]),
+):
+    """
+    Cancel the automated red team operation for a given session.
+
+    This endpoint is used to stop any ongoing automated red team operations for the session
+    associated with the provided runner_id.
+
+    Args:
+        runner_id (str): The unique identifier for the session whose automated red team operation is to be canceled.
+        session_service (SessionService): The service responsible for managing red team sessions.
+
+    Raises:
+        HTTPException: Raised with status code 404 if the session associated with the runner_id is not found.
+                       Raised with status code 400 if there is a validation error with the runner_id.
+                       Raised with status code 500 for any other server-side errors encountered while processing.
+    """
+    try:
+        await session_service.cancel_auto_redteam(runner_id)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(status_code=404, detail=e.msg)
+        elif e.error_code == "ValidationError":
+            raise HTTPException(status_code=400, detail=e.msg)
+        else:
+            raise HTTPException(status_code=500, detail=e.msg)
+
 
 @router.delete("/api/v1/sessions/{session_id}")
 @inject
@@ -217,6 +263,7 @@ async def delete_session(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
+
 
 @router.put("/api/v1/sessions/{runner_id}/prompt-template/{prompt_template_name}")
 @inject
@@ -252,6 +299,7 @@ async def set_prompt_template(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.delete("/api/v1/sessions/{runner_id}/prompt-template/{prompt_template_name}")
 @inject
 async def unset_prompt_template(
@@ -286,7 +334,10 @@ async def unset_prompt_template(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
-@router.put("/api/v1/sessions/{runner_id}/context-strategy/{ctx_strategy_name}/{num_of_prompt}")
+
+@router.put(
+    "/api/v1/sessions/{runner_id}/context-strategy/{ctx_strategy_name}/{num_of_prompt}"
+)
 @inject
 async def set_context_strategy(
     runner_id: str,
@@ -322,7 +373,10 @@ async def set_context_strategy(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
-@router.delete("/api/v1/sessions/{runner_id}/context-strategy/{ctx_strategy_name}/{num_of_prompt}")
+
+@router.delete(
+    "/api/v1/sessions/{runner_id}/context-strategy/{ctx_strategy_name}/{num_of_prompt}"
+)
 @inject
 async def unset_context_strategy(
     runner_id: str,
@@ -358,6 +412,7 @@ async def unset_context_strategy(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.put("/api/v1/sessions/{runner_id}/attack-module/{atk_module_name}")
 @inject
 async def set_attack_module(
@@ -391,6 +446,7 @@ async def set_attack_module(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
+
 
 @router.delete("/api/v1/sessions/{runner_id}/attack-module/{atk_module_name}")
 @inject
@@ -426,6 +482,7 @@ async def unset_attack_module(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.put("/api/v1/sessions/{runner_id}/metric/{metric_name}")
 @inject
 async def set_metric(
@@ -460,6 +517,7 @@ async def set_metric(
         else:
             raise HTTPException(status_code=500, detail=e.msg)
 
+
 @router.delete("/api/v1/sessions/{runner_id}/metric/{metric_name}")
 @inject
 async def unset_metric(
@@ -493,6 +551,7 @@ async def unset_metric(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
+
 
 @router.put("/api/v1/sessions/{runner_id}/system-prompt")
 @inject
@@ -548,4 +607,3 @@ async def close_session(
             raise HTTPException(status_code=400, detail=e.msg)
         else:
             raise HTTPException(status_code=500, detail=e.msg)
-        

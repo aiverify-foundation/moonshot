@@ -43,7 +43,7 @@ def add_endpoint(args) -> None:
     try:
         params_dict = literal_eval(args.params)
 
-        api_create_endpoint(
+        new_endpoint_id = api_create_endpoint(
             args.name,
             args.connector_type,
             args.uri,
@@ -52,7 +52,7 @@ def add_endpoint(args) -> None:
             args.max_concurrency,
             params_dict,
         )
-        print("[add_endpoint]: Endpoint created.")
+        print(f"[add_endpoint]: Endpoint ({new_endpoint_id}) created.")
     except Exception as e:
         print(f"[add_endpoint]: {str(e)}")
 
@@ -154,8 +154,10 @@ def delete_endpoint(args) -> None:
         None
     """
     # Confirm with the user before deleting an endpoint
-    confirmation = console.input("[bold red]Are you sure you want to delete the endpoint (y/N)? [/]")
-    if confirmation.lower() != 'y':
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the endpoint (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
         console.print("[bold yellow]Endpoint deletion cancelled.[/]")
         return
     try:
@@ -265,7 +267,7 @@ def display_endpoints(endpoints_list):
 # ------------------------------------------------------------------------------
 # Add endpoint arguments
 add_endpoint_args = cmd2.Cmd2ArgumentParser(
-    description="Add a new endpoint.",
+    description="Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' "
     "MY_URI ADD_YOUR_TOKEN_HERE 1 1 \"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}\"",
 )

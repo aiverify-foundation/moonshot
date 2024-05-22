@@ -79,19 +79,23 @@ def api_read_runner(runner_id: str) -> dict:
     return Runner.read(runner_id).to_dict()
 
 
-def api_delete_runner(runner_id: str) -> None:
+def api_delete_runner(runner_id: str) -> bool:
     """
-    Deletes a runner based on the provided runner ID.
+    Deletes a runner by its identifier.
 
-    This function takes a runner ID as input and deletes the corresponding runner.
+    This function takes a runner ID as input and calls the delete method from the Runner class
+    to remove the specified runner from storage.
 
     Args:
-        runner_id (str): The ID of the runner to be deleted.
+        runner_id (str): The unique identifier of the runner to be deleted.
 
     Returns:
-        None
+        bool: True if the runner was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
     """
-    Runner.delete(runner_id)
+    return Runner.delete(runner_id)
 
 
 def api_get_all_runner() -> list[dict]:

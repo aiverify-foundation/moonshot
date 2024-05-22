@@ -1,5 +1,8 @@
+import asyncio
+
 from pydantic import BaseModel
 
+from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
 from moonshot.src.storage.db_interface import DBInterface
 
 
@@ -27,6 +30,15 @@ class AttackModuleArguments(BaseModel):
 
     # DBAccessor for the attack module to access DB data
     db_instance: DBInterface
+
+    # chat batch size for returning chat information by callback
+    chat_batch_size: int = 0
+
+    # callback function to return chat information
+    red_teaming_progress: RedTeamingProgress | None = None
+
+    # an asyncio event to cancel red teaming if a cancel signal is sent
+    cancel_event: asyncio.Event
 
     # a dict that contains other params that is required by the attack module (if any)
     params: dict = {}

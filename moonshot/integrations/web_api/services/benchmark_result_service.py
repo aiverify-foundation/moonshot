@@ -6,9 +6,9 @@ from ..types.types import BenchmarkResult
 
 class BenchmarkResultService(BaseService):
     @exception_handler
-    def get_all_results(self) -> list[BenchmarkResult] | BenchmarkResult | None:
-        results: list[BenchmarkResult] = moonshot_api.api_get_all_result()
-        return results
+    def get_all_results(self) -> list[BenchmarkResult]:
+        results = moonshot_api.api_get_all_result()
+        return [BenchmarkResult(**result) for result in results]
 
     @exception_handler
     def get_all_result_name(self) -> list[str] | None:
@@ -16,9 +16,9 @@ class BenchmarkResultService(BaseService):
         return results
 
     @exception_handler
-    def get_result_by_id(self, result_id: str) -> BenchmarkResult | None:
+    def get_result_by_id(self, result_id: str) -> BenchmarkResult:
         result = moonshot_api.api_read_result(result_id)
-        return result
+        return BenchmarkResult(**result)
 
     @exception_handler
     def delete_result(self, result_id: str) -> None:

@@ -3,10 +3,13 @@ import importlib.resources
 from dependency_injector import containers, providers
 
 from .services.attack_module_service import AttackModuleService
+from .services.auto_red_team_test_manager import AutoRedTeamTestManager
+from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.benchmark_test_state import BenchmarkTestState
 from .services.benchmarking_service import BenchmarkingService
+from .services.context_strategy_service import ContextStrategyService
 from .services.cookbook_service import CookbookService
 from .services.dataset_service import DatasetService
 from .services.endpoint_service import EndpointService
@@ -58,11 +61,24 @@ class Container(containers.DeclarativeContainer):
     benchmark_test_state: providers.Singleton[BenchmarkTestState] = providers.Singleton(
         BenchmarkTestState
     )
+    auto_red_team_test_state: providers.Singleton[
+        AutoRedTeamTestState
+    ] = providers.Singleton(AutoRedTeamTestState)
     webhook: providers.Singleton[MoonshotUIWebhook] = providers.Singleton(
-        MoonshotUIWebhook, benchmark_test_state=benchmark_test_state
+        MoonshotUIWebhook,
+        benchmark_test_state=benchmark_test_state,
+        auto_red_team_test_state=auto_red_team_test_state,
     )
     runner_service: providers.Singleton[RunnerService] = providers.Singleton(
         RunnerService
+    )
+    auto_red_team_test_manager: providers.Singleton[
+        AutoRedTeamTestManager
+    ] = providers.Singleton(
+        AutoRedTeamTestManager,
+        auto_red_team_test_state=auto_red_team_test_state,
+        progress_status_updater=webhook,
+        runner_service=runner_service,
     )
     benchmark_test_manager: providers.Singleton[
         BenchmarkTestManager
@@ -74,12 +90,16 @@ class Container(containers.DeclarativeContainer):
     )
     session_service: providers.Singleton[SessionService] = providers.Singleton(
         SessionService,
+        auto_red_team_test_manager=auto_red_team_test_manager,
         progress_status_updater=webhook,
         runner_service=runner_service,
     )
     prompt_template_service: providers.Singleton[
         PromptTemplateService
     ] = providers.Singleton(PromptTemplateService)
+    context_strategy_service: providers.Singleton[ContextStrategyService] = providers.Singleton(
+        ContextStrategyService
+    )
     benchmarking_service: providers.Singleton[
         BenchmarkingService
     ] = providers.Singleton(
@@ -111,6 +131,7 @@ class Container(containers.DeclarativeContainer):
         modules=[
             ".routes.redteam",
             ".routes.prompt_template",
+            ".routes.context_strategy",
             ".routes.benchmark",
             ".routes.endpoint",
             ".routes.recipe",

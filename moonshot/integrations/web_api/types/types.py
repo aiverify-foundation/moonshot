@@ -45,6 +45,16 @@ class TestRunProgress(TypedDict):
     current_error_messages: List[str]
 
 
+class RedTeamTestProgress(TypedDict):
+    current_runner_id: str
+    current_am_id: str
+    current_pt_id: str
+    current_cs_id: str
+    current_chats: list[dict]
+    current_batch_size: str
+    current_status: str
+
+
 class UvicornLoggingConfig(TypedDict):
     version: int
     formatters: dict[str, dict[str, Any]]

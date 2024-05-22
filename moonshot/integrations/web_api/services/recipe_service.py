@@ -1,8 +1,7 @@
-
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as Recipe
 
 from .... import api as moonshot_api
-from ..schemas.recipe_create_dto import RecipeCreateDTO
+from ..schemas.recipe_create_dto import RecipeCreateDTO, RecipeUpdateDTO
 from ..schemas.recipe_response_model import RecipeResponseModel
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
@@ -100,7 +99,7 @@ class RecipeService(BaseService):
         return recipes
 
     @exception_handler
-    def update_recipe(self, recipe_data: RecipeCreateDTO, recipe_id: str) -> None:
+    def update_recipe(self, recipe_data: RecipeUpdateDTO, recipe_id: str) -> None:
         """
         Update an existing recipe with new data.
 
@@ -108,17 +107,13 @@ class RecipeService(BaseService):
             recipe_data (RecipeCreateDTO): Data transfer object containing new recipe details.
             recipe_id (str): The ID of the recipe to update.
         """
-        moonshot_api.api_update_recipe(
-            rec_id=recipe_id,
-            name=recipe_data.name,
-            description=recipe_data.description,
-            tags=recipe_data.tags,
-            datasets=recipe_data.datasets,
-            prompt_templates=recipe_data.prompt_templates,
-            metrics=recipe_data.metrics,
-            attack_modules=recipe_data.attack_modules,
-            grading_scale=recipe_data.grading_scale,
-        )
+        update_data = {
+            k: v
+            for k, v in recipe_data.to_dict().items()
+            if v is not None and k not in ["id", "stats"]
+        }
+
+        moonshot_api.api_update_recipe(rec_id=recipe_id, **update_data)
 
     @exception_handler
     def delete_recipe(self, recipe_id: str) -> None:

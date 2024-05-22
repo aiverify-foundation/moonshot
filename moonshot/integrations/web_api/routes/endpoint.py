@@ -4,12 +4,12 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
 
 from ..container import Container
-from ..schemas.endpoint_create_dto import EndpointCreateDTO
+from ..schemas.endpoint_create_dto import EndpointCreateDTO, EndpointUpdateDTO
 from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.endpoint_service import EndpointService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Endpoint"])
 
 
 @router.post("/api/v1/llm-endpoints")
@@ -72,7 +72,10 @@ def get_all_endpoints(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        return endpoint_service.get_all_endpoints()
+        endpoint_models = endpoint_service.get_all_endpoints()
+        for endpoint_model in endpoint_models:
+            endpoint_model.mask_token()
+        return endpoint_models
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
@@ -143,7 +146,10 @@ def get_endpoint(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        return endpoint_service.get_endpoint(endpoint_id)
+        endpoint_model = endpoint_service.get_endpoint(endpoint_id)
+        if endpoint_model:
+            endpoint_model.mask_token()
+        return endpoint_model
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
@@ -163,7 +169,7 @@ def get_endpoint(
 @inject
 async def update_endpoint(
     endpoint_id: str,
-    endpoint_data: EndpointCreateDTO,
+    endpoint_data: EndpointUpdateDTO,
     endpoint_service: EndpointService = Depends(Provide[Container.endpoint_service]),
 ) -> dict[str, str] | tuple[dict[str, str], int]:
     """
