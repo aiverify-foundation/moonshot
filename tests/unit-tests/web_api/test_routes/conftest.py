@@ -12,10 +12,20 @@ from moonshot.integrations.web_api.services.runner_service import RunnerService
 from moonshot.integrations.web_api.services.benchmark_result_service import BenchmarkResultService
 from moonshot.integrations.web_api.services.dataset_service import DatasetService
 from moonshot.integrations.web_api.services.endpoint_service import EndpointService
+from moonshot.integrations.web_api.services.benchmarking_service import BenchmarkingService
+from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
+
+@pytest.fixture(scope="module")
+def mock_bm_test_state():
+    return Mock(spec=BenchmarkTestState)
 
 @pytest.fixture(scope="module")
 def mock_am_service():
     return Mock(spec=AttackModuleService)
+
+@pytest.fixture(scope="module")
+def mock_bm_service():
+    return Mock(spec=BenchmarkingService)
 
 @pytest.fixture(scope="module")
 def mock_dataset_service():
@@ -60,12 +70,16 @@ def test_client(
     mock_metric_service,
     mock_endpoint_service,
     mock_dataset_service,
+    mock_bm_service,
+    mock_bm_test_state,
     ):
     test_container = Container()
     test_container.config.from_default() 
 
     test_container.endpoint_service.override(mock_endpoint_service)
     test_container.dataset_service.override(mock_dataset_service)
+    test_container.benchmarking_service.override(mock_bm_service)
+    test_container.benchmark_test_state.override(mock_bm_test_state)
     test_container.benchmark_result_service.override(mock_bm_result_service)
     test_container.runner_service.override(mock_runner_service)
     test_container.recipe_service.override(mock_recipe_service)

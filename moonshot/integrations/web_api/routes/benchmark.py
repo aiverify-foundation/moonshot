@@ -82,6 +82,10 @@ def get_benchmark_progress(
             raise HTTPException(
                 status_code=400, detail=f"Failed to retrieve progress status: {e.msg}"
             )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve progress status: {e.msg}"
+            )
 
 
 @router.post("/api/v1/benchmarks/cancel/{runner_id}")
