@@ -47,19 +47,19 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             None,
             ServiceException("A file not found error occurred", "get_all_runner", "FileNotFound"),
             404,
-            "A file not found error occurred",
+            None
         ),
         (
             None,
             ServiceException("A validation error occurred", "get_all_runner", "ValidationError"),
             400,
-            "A validation error occurred",
+            None        
         ),
         (
             None,
             ServiceException("An server error occurred", "get_all_runner", "ServerError"),
             500,
-            "An server error occurred",
+            None        
         ),
     ],
 )
@@ -74,16 +74,16 @@ def test_get_all_runners(test_client, mock_runner_service, runner_data, exceptio
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 @pytest.mark.parametrize("runner_data, exception, expected_status, expected_response", [
     # Successful cases
     (["runner1", "runner2", "runner3"], None, 200, ["runner1", "runner2", "runner3"]),
     ([], None, 200, []),
     # Exception cases
-    (None, ServiceException("A file not found error occurred", "get_all_runner_name", "FileNotFound"), 404, "A file not found error occurred"),
-    (None, ServiceException("A validation error occurred", "get_all_runner_name", "ValidationError"), 400, "A validation error occurred"),
-    (None, ServiceException("An server error occurred", "get_all_runner_name", "ServerError"), 500, "An server error occurred"),
+    (None, ServiceException("A file not found error occurred", "get_all_runner_name", "FileNotFound"), 404, None),
+    (None, ServiceException("A validation error occurred", "get_all_runner_name", "ValidationError"), 400, None),
+    (None, ServiceException("An server error occurred", "get_all_runner_name", "ServerError"), 500, None),
 ])
 def test_get_all_runner_name(test_client, mock_runner_service, runner_data, exception, expected_status, expected_response):
     if exception:
@@ -96,7 +96,7 @@ def test_get_all_runner_name(test_client, mock_runner_service, runner_data, exce
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 @pytest.mark.parametrize(
     "runner_id, runner_data, exception, expected_status, expected_response",
@@ -127,21 +127,20 @@ def test_get_all_runner_name(test_client, mock_runner_service, runner_data, exce
             None,
             ServiceException("A file not found error occurred", "get_runner_by_id", "FileNotFound"),
             404,
-            "A file not found error occurred",
+            None
         ),
         (
             None,
             None,
             ServiceException("A validation error occurred", "get_runner_by_id", "ValidationError"),
-            400,
-            "A validation error occurred",
+            400,None        
         ),
         (
             None,
             None,
             ServiceException("An server error occurred", "get_runner_by_id", "ServerError"),
             500,
-            "An server error occurred",
+            None
         ),
     ],
 )
@@ -157,15 +156,15 @@ def test_get_runner_by_id(test_client, mock_runner_service, runner_id, runner_da
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 @pytest.mark.parametrize("runner_id, exception, expected_status, expected_response", [
     # Test successful deletion of runner
     ("valid-runner-id", None, 200, {"message": "Runner deleted successfully"}),
     # Exception cases
-    ("runner-id", ServiceException(msg="Runner not found", method_name="delete_run", error_code="FileNotFound"), 404, "Runner not found"),
-    ("runner-id", ServiceException(msg="Validation error", method_name="delete_run", error_code="ValidationError"), 400, "Validation error"),
-    ("runner-id", ServiceException(msg="Internal server error", method_name="delete_run", error_code="UnknownError"), 500, "Internal server error"),
+    ("runner-id", ServiceException(msg="Runner not found", method_name="delete_run", error_code="FileNotFound"), 404, None),
+    ("runner-id", ServiceException(msg="Validation error", method_name="delete_run", error_code="ValidationError"), 400, None),
+    ("runner-id", ServiceException(msg="Internal server error", method_name="delete_run", error_code="UnknownError"), 500, None),
 ])
 def test_delete_runner(test_client, mock_runner_service, runner_id, exception, expected_status, expected_response):
     if exception:
@@ -180,7 +179,7 @@ def test_delete_runner(test_client, mock_runner_service, runner_id, exception, e
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 @pytest.mark.parametrize("runner_id, run_id, mock_response, exception, expected_status, expected_response", [
     # Test successful deletion of runner
@@ -216,9 +215,9 @@ def test_delete_runner(test_client, mock_runner_service, runner_id, exception, e
     }
     ),
     # Exception cases
-    ("runner-id", "run_id", None, ServiceException(msg="Runner not found", method_name="get_run_details_by_runner", error_code="FileNotFound"), 404, "Runner not found"),
-    ("runner-id", "run_id", None, ServiceException(msg="Validation error", method_name="get_run_details_by_runner", error_code="ValidationError"), 400, "Validation error"),
-    ("runner-id", "run_id", None, ServiceException(msg="Internal server error", method_name="get_run_details_by_runner", error_code="UnknownError"), 500, "Internal server error"),
+    ("runner-id", "run_id", None, ServiceException(msg="Runner not found", method_name="get_run_details_by_runner", error_code="FileNotFound"), 404, None),
+    ("runner-id", "run_id", None, ServiceException(msg="Validation error", method_name="get_run_details_by_runner", error_code="ValidationError"), 400, None),
+    ("runner-id", "run_id", None, ServiceException(msg="Internal server error", method_name="get_run_details_by_runner", error_code="UnknownError"), 500, None),
 ])
 def test_get_run_details_by_runner(test_client, mock_runner_service, runner_id, run_id, mock_response, exception, expected_status, expected_response):
     if exception:
@@ -232,7 +231,7 @@ def test_get_run_details_by_runner(test_client, mock_runner_service, runner_id, 
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 @pytest.mark.parametrize("runner_id, mock_response, exception, expected_status, expected_response", [
     # Test successful deletion of runner
@@ -242,9 +241,9 @@ def test_get_run_details_by_runner(test_client, mock_runner_service, runner_id, 
     [1,2,3],
     ),
     # Exception cases
-    ("runner-id", None, ServiceException(msg="Runner not found", method_name="get_run_details_by_runner", error_code="FileNotFound"), 404, "Runner not found"),
-    ("runner-id", None, ServiceException(msg="Validation error", method_name="get_run_details_by_runner", error_code="ValidationError"), 400, "Validation error"),
-    ("runner-id", None, ServiceException(msg="Internal server error", method_name="get_run_details_by_runner", error_code="UnknownError"), 500, "Internal server error"),
+    ("runner-id", None, ServiceException(msg="Runner not found", method_name="get_run_details_by_runner", error_code="FileNotFound"), 404, None),
+    ("runner-id", None, ServiceException(msg="Validation error", method_name="get_run_details_by_runner", error_code="ValidationError"), 400, None),
+    ("runner-id", None, ServiceException(msg="Internal server error", method_name="get_run_details_by_runner", error_code="UnknownError"), 500, None),
 ])
 def test_get_run_ids_in_runner(test_client, mock_runner_service ,runner_id ,mock_response ,exception ,expected_status ,expected_response):
     if exception:
@@ -258,4 +257,4 @@ def test_get_run_ids_in_runner(test_client, mock_runner_service ,runner_id ,mock
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]

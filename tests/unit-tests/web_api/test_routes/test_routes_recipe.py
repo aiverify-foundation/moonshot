@@ -154,8 +154,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "attack_modules": ["module1"],
         },
         ServiceException("A file not found error occurred", "create_recipe", "FileNotFound"),
-        404,
-        "A file not found error occurred"
+        404, None
     ),
     (
         {
@@ -169,8 +168,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "attack_modules": ["module1"],
         },
         ServiceException("A validation error occurred", "create_recipe", "ValidationError"),
-        400,
-        "A validation error occurred"
+        400, None
     ),
     (
         {
@@ -184,8 +182,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "attack_modules": ["module1"],
         },
         ServiceException("An unexpected error occurred", "create_recipe", "UnknownError"),
-        500,
-        "An unexpected error occurred"
+        500, None
     )
 ])
 def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception, expected_status, expected_response):
@@ -198,7 +195,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         if expected_status != 422:
             assert response.json() == expected_response
@@ -613,9 +610,9 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
         ]
     ),
     # Exception cases
-    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, "A file not found error occurred"),
-    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, "A validation error occurred"),
-    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, "An value error occurred"),
+    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, None),
+    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, None),
+    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, None),
 ])
 def test_get_all_recipes(test_client, mock_recipe_service, query_string, mock_return_value, exception, expected_status, expected_response):
     if exception:
@@ -627,7 +624,7 @@ def test_get_all_recipes(test_client, mock_recipe_service, query_string, mock_re
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         assert response.json() == expected_response
 
@@ -641,20 +638,17 @@ def test_get_all_recipes(test_client, mock_recipe_service, query_string, mock_re
     (
         None,
         ServiceException("A file not found error occurred", "get_all_recipes_names", "FileNotFound"),
-        404,
-        "A file not found error occurred"
+        404, None
     ),
     (
         None,
         ServiceException("A validation error occurred", "get_all_recipes_names", "ValidationError"),
-        400,
-        "A validation error occurred"
+        400, None
     ),
     (
         None,
         ServiceException("An value error occurred", "get_all_recipes_names", "ValueError"),
-        500,
-        "An value error occurred"
+        500, None
     )
 ])
 def test_get_all_recipes_name(test_client, mock_recipe_service ,mock_return_value, exception, expected_status, expected_response):
@@ -667,7 +661,7 @@ def test_get_all_recipes_name(test_client, mock_recipe_service ,mock_return_valu
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         assert response.json() == expected_response
 
@@ -720,11 +714,11 @@ def test_update_recipe(test_client, mock_recipe_service, recipe_id, recipe_data,
     # Test successful deletion of recipe
     ("valid-recipe-id", None, 200, {"message": "Recipe deleted successfully"}),
     # Test recipe not found
-    ("invalid-recipe-id", ServiceException(msg="Recipe not found", method_name="delete_recipe", error_code="FileNotFound"), 404, "Recipe not found"),
+    ("invalid-recipe-id", ServiceException(msg="Recipe not found", method_name="delete_recipe", error_code="FileNotFound"), 404, None),
     # Test validation error
-    ("valid-recipe-id", ServiceException(msg="Validation error", method_name="delete_recipe", error_code="ValidationError"), 400, "Validation error"),
+    ("valid-recipe-id", ServiceException(msg="Validation error", method_name="delete_recipe", error_code="ValidationError"), 400, None),
     # Test unknown error
-    ("valid-recipe-id", ServiceException(msg="Internal server error", method_name="delete_recipe", error_code="UnknownError"), 500, "Internal server error"),
+    ("valid-recipe-id", ServiceException(msg="Internal server error", method_name="delete_recipe", error_code="UnknownError"), 500, None),
 ])
 def test_delete_recipe(test_client, mock_recipe_service, recipe_id, service_exception, expected_status, expected_response):
     if service_exception:
@@ -739,4 +733,4 @@ def test_delete_recipe(test_client, mock_recipe_service, recipe_id, service_exce
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert service_exception.msg in response.json()["detail"]

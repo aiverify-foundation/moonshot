@@ -6,9 +6,9 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     (["metric1", "metric2", "metric3"], None, 200, ["metric1", "metric2", "metric3"]),
     ([], None, 200, []),
     # Exception cases
-    (None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, "A file not found error occurred"),
-    (None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, "A validation error occurred"),
-    (None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, "An value error occurred"),
+    (None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, None),
+    (None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400,None),
+    (None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, None),
 ])
 def test_get_metrics(test_client, mock_metric_service, metrics_data, exception, expected_status, expected_response):
     if exception:
@@ -21,16 +21,16 @@ def test_get_metrics(test_client, mock_metric_service, metrics_data, exception, 
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
 
 
 @pytest.mark.parametrize("metric_id, exception, expected_status, expected_response", [
     # Successful case
     ("valid_metric_id", None, 200, {"message": "Metric deleted successfully"}),
     # Exception cases
-    ("nonexistent_metric_id", ServiceException("A file not found error occurred", "delete_metric", "FileNotFound"), 404, "A file not found error occurred"),
-    ("invalid_metric_id", ServiceException("A validation error occurred", "delete_metric", "ValidationError"), 400, "A validation error occurred"),
-    ("error_metric_id", ServiceException("An value error occurred", "delete_metric", "ValueError"), 500, "An value error occurred"),
+    ("nonexistent_metric_id", ServiceException("A file not found error occurred", "delete_metric", "FileNotFound"), 404, None),
+    ("invalid_metric_id", ServiceException("A validation error occurred", "delete_metric", "ValidationError"), 400, None),
+    ("error_metric_id", ServiceException("An value error occurred", "delete_metric", "ValueError"), 500, None),
 ])
 def test_delete_metric(test_client, mock_metric_service, metric_id, exception, expected_status, expected_response):
     if exception:
@@ -43,7 +43,7 @@ def test_delete_metric(test_client, mock_metric_service, metric_id, exception, e
     assert response.status_code == expected_status
 
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         assert response.json() == expected_response
     

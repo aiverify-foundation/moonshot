@@ -119,8 +119,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("A file not found error occurred", "create_cookbook", "FileNotFound"),
-        404,
-        "A file not found error occurred"
+        404, None
     ),
     (
         {
@@ -129,8 +128,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("A validation error occurred", "create_cookbook", "ValidationError"),
-        400,
-        "A validation error occurred"
+        400, None
     ),
     (
         {
@@ -139,8 +137,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("An unexpected error occurred", "create_cookbook", "UnknownError"),
-        500,
-        "An unexpected error occurred"
+        500, None
     ),
 ])
 def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expected_status, exception, expected_response):
@@ -153,7 +150,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         if expected_status != 422:
             assert response.json() == expected_response
@@ -294,9 +291,9 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
         ]
     ),
     # Exception cases
-    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, "A file not found error occurred"),
-    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, "A validation error occurred"),
-    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, "An value error occurred"),
+    (None, None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, None),
+    (None, None, ServiceException("A validation error occurred", "get_all_metric", "ValidationError"), 400, None),
+    (None, None, ServiceException("An value error occurred", "get_all_metric", "ValueError"), 500, None),
 ])
 def test_get_cookbooks(test_client, mock_cookbook_service, query_string, mock_return_value, exception, expected_status, expected_response):
     if exception:
@@ -308,7 +305,7 @@ def test_get_cookbooks(test_client, mock_cookbook_service, query_string, mock_re
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         assert response.json() == expected_response
 
@@ -324,20 +321,17 @@ def test_get_cookbooks(test_client, mock_cookbook_service, query_string, mock_re
     (
         None,
         ServiceException("A file not found error occurred", "get_all_cookbooks_names", "FileNotFound"),
-        404,
-        "A file not found error occurred"
+        404, None
     ),
     (
         None,
         ServiceException("A validation error occurred", "get_all_cookbooks_names", "ValidationError"),
-        400,
-        "A validation error occurred"
+        400, None
     ),
     (
         None,
         ServiceException("An value error occurred", "get_all_cookbooks_names", "ValueError"),
-        500,
-        "An value error occurred"
+        500, None
     )
 ])
 def test_get_all_cookbooks_name(test_client, mock_cookbook_service, mock_return_value, exception, expected_status, expected_response):
@@ -350,7 +344,7 @@ def test_get_all_cookbooks_name(test_client, mock_cookbook_service, mock_return_
 
     assert response.status_code == expected_status
     if exception:
-        assert expected_response in response.json()["detail"]
+        assert exception.msg in response.json()["detail"]
     else:
         assert response.json() == expected_response
 
@@ -403,11 +397,11 @@ def test_update_cookbook(test_client, mock_cookbook_service, cookbook_id, cookbo
     # Test successful deletion of cookbook
     ("valid-cookbook-id", None, 200, {"message": "Cookbook deleted successfully"}),
     # Test cookbook not found
-    ("invalid-cookbook-id", ServiceException(msg="Cookbook not found", method_name="delete_cookbook", error_code="FileNotFound"), 404, "Cookbook not found"),
+    ("invalid-cookbook-id", ServiceException(msg="Cookbook not found", method_name="delete_cookbook", error_code="FileNotFound"), 404, None),
     # Test validation error
-    ("valid-cookbook-id", ServiceException(msg="Validation error", method_name="delete_cookbook", error_code="ValidationError"), 400, "Validation error"),
+    ("valid-cookbook-id", ServiceException(msg="Validation error", method_name="delete_cookbook", error_code="ValidationError"), 400, None),
     # Test unknown error
-    ("valid-cookbook-id", ServiceException(msg="Internal server error", method_name="delete_cookbook", error_code="UnknownError"), 500, "Internal server error"),
+    ("valid-cookbook-id", ServiceException(msg="Internal server error", method_name="delete_cookbook", error_code="UnknownError"), 500, None),
 ])
 def test_delete_cookbook(test_client, mock_cookbook_service, cb_id, service_exception, expected_status, expected_response):
     if service_exception:
@@ -423,4 +417,4 @@ def test_delete_cookbook(test_client, mock_cookbook_service, cb_id, service_exce
     if expected_status == 200:
         assert response.json() == expected_response
     else:
-        assert expected_response in response.json()["detail"]
+        assert service_exception.msg in response.json()["detail"]
