@@ -78,7 +78,9 @@ def use_session(args) -> None:
     # Load session metadata
     session_metadata = api_load_session(runner_id)
     if not session_metadata:
-        print("Cannot find a session with the existing Runner ID. Please try again.")
+        print(
+            "[Session] Cannot find a session with the existing Runner ID. Please try again."
+        )
         return
 
     # Set the current session
@@ -304,7 +306,9 @@ def _reload_session(runner_id: str) -> None:
     global active_session
     session_metadata = api_load_session(runner_id)
     if not session_metadata:
-        print("Cannot find a session with the existing Runner ID. Please try again.")
+        print(
+            "[Session] Cannot find a session with the existing Runner ID. Please try again."
+        )
         return
     active_session.update(session_metadata)
 

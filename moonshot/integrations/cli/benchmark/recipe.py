@@ -479,7 +479,7 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     "\"['category1','category2']\" "
     "\"['bbq-lite-age-ambiguous']\" "
     "\"['bertscore','bleuscore']\" "
-    "-p \"['analogical-similarity','auto-categorisation']\" "
+    "-p \"['analogical-similarity','mmlu']\" "
     "-t \"['tag1','tag2']\" "
     "-a \"['charswap_attack_module']\" "
     "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
@@ -564,7 +564,7 @@ run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
     '"my new recipe runner" '
-    "\"['bbq','auto-categorisation']\" "
+    "\"['bbq','mmlu']\" "
     "\"['openai-gpt35-turbo']\" "
     '-n 1 -r 1 -s "You are an intelligent AI" ',
 )
