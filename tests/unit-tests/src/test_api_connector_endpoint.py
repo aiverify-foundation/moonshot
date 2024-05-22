@@ -30,7 +30,7 @@ class TestCollectionApiConnectorEndpoint:
 
         # Copy endpoint
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/openai-gpt4.json",
+            "tests/unit-tests/common/samples/openai-gpt4.json",
             "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
         )
 

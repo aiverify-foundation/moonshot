@@ -126,7 +126,7 @@ class Runner:
                     EnvVariables.CONNECTORS_ENDPOINTS.name, endpoint, "json"
                 ):
                     raise RuntimeError(
-                        f"[Runner]Connector endpoint {endpoint} does not exist."
+                        f"[Runner] Connector endpoint {endpoint} does not exist."
                     )
 
             runner_info = {

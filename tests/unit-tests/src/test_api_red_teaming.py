@@ -25,7 +25,7 @@ class TestCollectionApiAttackModule:
 
         # Copy attack module
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/sample_attack_module.py",
+            "tests/unit-tests/common/samples/sample_attack_module.py",
             "tests/unit-tests/src/data/attack-modules/sample_attack_module.py",
         )
 

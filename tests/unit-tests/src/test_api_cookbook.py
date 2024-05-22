@@ -23,6 +23,7 @@ class TestCollectionApiCookbook:
         api_set_environment_variables(
             {
                 "COOKBOOKS": "tests/unit-tests/src/data/cookbooks/",
+                "RECIPES": "tests/unit-tests/src/data/recipes/",
                 "DATASETS": "tests/unit-tests/src/data/datasets/",
                 "TEMPLATES": "tests/unit-tests/src/data/templates/",
             }
@@ -30,11 +31,11 @@ class TestCollectionApiCookbook:
 
         # Copy sample cookbook and dataset files for testing
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/sample-cookbook.json",
+            "tests/unit-tests/common/samples/sample-cookbook.json",
             "tests/unit-tests/src/data/cookbooks/sample-cookbook.json",
         )
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/arc.json",
+            "tests/unit-tests/common/samples/arc.json",
             "tests/unit-tests/src/data/recipes/arc.json",
         )
 

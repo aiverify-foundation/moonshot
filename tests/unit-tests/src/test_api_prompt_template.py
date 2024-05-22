@@ -25,7 +25,7 @@ class TestCollectionApiPromptTemplate:
 
         # Copy sample prompt template for testing
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/answer-template.json",
+            "tests/unit-tests/common/samples/answer-template.json",
             "tests/unit-tests/src/data/prompt-templates/answer-template.json",
         )
 

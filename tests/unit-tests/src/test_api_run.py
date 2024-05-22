@@ -23,11 +23,11 @@ class TestCollectionApiRun:
 
         # Copy run data
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/my-new-recipe-runner.json",
+            "tests/unit-tests/common/samples/my-new-recipe-runner.json",
             "tests/unit-tests/src/data/runners/my-new-recipe-runner.json",
         )
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/my-new-recipe-runner.db",
+            "tests/unit-tests/common/samples/my-new-recipe-runner.db",
             "tests/unit-tests/src/data/databases/my-new-recipe-runner.db",
         )
 
@@ -70,7 +70,7 @@ class TestCollectionApiRun:
                     "result_processing_module": "benchmarking-result",
                 },
                 "endpoints": ["openai-gpt35-turbo"],
-                "results_file": "/Users/lionelteo/Documents/moonshot/moonshot/data/generated-outputs/results/my-new-recipe-runner.json",
+                "results_file": "my-new-recipe-runner.json",
                 "start_time": 1716171596.8328981,
                 "end_time": 1716171597.730658,
                 "duration": 0,
@@ -118,7 +118,7 @@ class TestCollectionApiRun:
                                 "result_processing_module": "benchmarking-result",
                             },
                             "endpoints": ["openai-gpt35-turbo"],
-                            "results_file": "/Users/lionelteo/Documents/moonshot/moonshot/data/generated-outputs/results/my-new-recipe-runner.json",
+                            "results_file": "my-new-recipe-runner.json",
                             "start_time": 1716171596.8328981,
                             "end_time": 1716171597.730658,
                             "duration": 0,
@@ -147,7 +147,7 @@ class TestCollectionApiRun:
                                 "result_processing_module": "benchmarking-result",
                             },
                             "endpoints": ["openai-gpt35-turbo"],
-                            "results_file": "/Users/lionelteo/Documents/moonshot/moonshot/data/generated-outputs/results/my-new-recipe-runner.json",
+                            "results_file": "my-new-recipe-runner.json",
                             "start_time": 1716171596.8328981,
                             "end_time": 1716171597.730658,
                             "duration": 0,
@@ -180,7 +180,7 @@ class TestCollectionApiRun:
                                 "result_processing_module": "benchmarking-result",
                             },
                             "endpoints": ["openai-gpt35-turbo"],
-                            "results_file": "/Users/lionelteo/Documents/moonshot/moonshot/data/generated-outputs/results/my-new-recipe-runner.json",
+                            "results_file": "my-new-recipe-runner.json",
                             "start_time": 1716171596.8328981,
                             "end_time": 1716171597.730658,
                             "duration": 0,
@@ -209,7 +209,7 @@ class TestCollectionApiRun:
                                 "result_processing_module": "benchmarking-result",
                             },
                             "endpoints": ["openai-gpt35-turbo"],
-                            "results_file": "/Users/lionelteo/Documents/moonshot/moonshot/data/generated-outputs/results/my-new-recipe-runner.json",
+                            "results_file": "my-new-recipe-runner.json",
                             "start_time": 1716171596.8328981,
                             "end_time": 1716171597.730658,
                             "duration": 0,
@@ -257,7 +257,7 @@ class TestCollectionApiRun:
         """
         # Copy a sample runner file to the runners directory to simulate a runner without a database
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/my-new-recipe-runner-no-db.json",
+            "tests/unit-tests/common/samples/my-new-recipe-runner-no-db.json",
             "tests/unit-tests/src/data/runners/my-new-recipe-runner-no-db.json",
         )
 

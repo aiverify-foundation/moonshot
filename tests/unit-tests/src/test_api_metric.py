@@ -25,7 +25,7 @@ class TestCollectionApiMetric:
 
         # Copy metric
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/advglue.py",
+            "tests/unit-tests/common/samples/advglue.py",
             "tests/unit-tests/src/data/metrics/advglue.py",
         )
 

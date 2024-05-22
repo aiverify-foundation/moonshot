@@ -26,7 +26,7 @@ class TestCollectionApiDataset:
 
         # Copy dataset
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/arc-easy.json",
+            "tests/unit-tests/common/samples/arc-easy.json",
             "tests/unit-tests/src/data/datasets/arc-easy.json",
         )
 

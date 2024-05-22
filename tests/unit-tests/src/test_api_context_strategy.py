@@ -25,7 +25,7 @@ class TestCollectionApiContextStrategy:
 
         # Copy endpoint
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/add_previous_prompt.py",
+            "tests/unit-tests/common/samples/add_previous_prompt.py",
             "tests/unit-tests/src/data/context-strategy/add_previous_prompt.py",
         )
 

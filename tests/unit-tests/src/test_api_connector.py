@@ -27,11 +27,11 @@ class TestCollectionApiConnector:
 
         # Prepare test data by copying sample files
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/openai-connector.py",
+            "tests/unit-tests/common/samples/openai-connector.py",
             "tests/unit-tests/src/data/connectors/openai-connector.py",
         )
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/openai-gpt4.json",
+            "tests/unit-tests/common/samples/openai-gpt4.json",
             "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
         )
 

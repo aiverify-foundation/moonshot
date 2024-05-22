@@ -64,9 +64,7 @@ class Cookbook:
                 if not Storage.is_object_exists(
                     EnvVariables.RECIPES.name, recipe, "json"
                 ):
-                    raise RuntimeError(
-                        f"Failed to create cookbook: {recipe} recipe does not exist."
-                    )
+                    raise RuntimeError(f"{recipe} recipe does not exist.")
             cb_info = {
                 "id": cb_id,
                 "name": cb_args.name,

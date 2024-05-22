@@ -30,11 +30,11 @@ class TestCollectionApiRecipe:
 
         # Copy sample recipe and dataset files for testing
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/arc.json",
+            "tests/unit-tests/common/samples/arc.json",
             "tests/unit-tests/src/data/recipes/arc.json",
         )
         shutil.copyfile(
-            "tests/unit-tests/src/data/samples/arc-easy.json",
+            "tests/unit-tests/common/samples/arc-easy.json",
             "tests/unit-tests/src/data/datasets/arc-easy.json",
         )
 
