@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.runner_service import RunnerService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Runner"])
 
 
 @router.get("/api/v1/runners")

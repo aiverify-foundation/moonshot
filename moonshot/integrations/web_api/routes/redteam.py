@@ -11,7 +11,7 @@ from ..schemas.session_response_model import SessionMetadataModel, SessionRespon
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Red Teaming"])
 logger = logging.getLogger(__name__)
 
 

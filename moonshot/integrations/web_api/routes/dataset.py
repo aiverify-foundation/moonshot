@@ -6,7 +6,7 @@ from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.dataset_service import DatasetService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Datasets"])
 
 
 @router.get("/api/v1/datasets")
