@@ -14,11 +14,16 @@ from moonshot.integrations.web_api.services.dataset_service import DatasetServic
 from moonshot.integrations.web_api.services.endpoint_service import EndpointService
 from moonshot.integrations.web_api.services.benchmarking_service import BenchmarkingService
 from moonshot.integrations.web_api.services.session_service import SessionService
+from moonshot.integrations.web_api.services.context_strategy_service import ContextStrategyService
 from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
 
 @pytest.fixture(scope="module")
 def mock_bm_test_state():
     return Mock(spec=BenchmarkTestState)
+
+@pytest.fixture(scope="module")
+def mock_cs_service():
+    return Mock(spec=ContextStrategyService)
 
 @pytest.fixture(scope="module")
 def mock_am_service():
@@ -77,11 +82,13 @@ def test_client(
     mock_bm_service,
     mock_bm_test_state,
     mock_session_service,
+    mock_cs_service,
     ):
     test_container = Container()
     test_container.config.from_default() 
 
     test_container.session_service.override(mock_session_service)
+    test_container.context_strategy_service.override(mock_cs_service)
     test_container.endpoint_service.override(mock_endpoint_service)
     test_container.dataset_service.override(mock_dataset_service)
     test_container.benchmarking_service.override(mock_bm_service)

@@ -49,45 +49,22 @@ def test_get_all_prompt_templates_names(test_client, mock_pt_service, template_n
     else:
         assert exception.msg in response.json()["detail"]
 
-# Test for get_all_context_strategies
-@pytest.mark.parametrize("context_strategies, exception, expected_status, expected_response", [
-    # Successful cases
-    (["strategy1", "strategy2"], None, 200, ["strategy1", "strategy2"]),
-    ([], None, 200, []),
-    # Exception cases
-    (None, ServiceException("No context strategies found", "get_ctx_strategies", "FileNotFound"), 404, None),
-    (None, ServiceException("Context strategy validation error", "get_ctx_strategies", "ValidationError"), 400, None),
-    (None, ServiceException("Context strategy server error", "get_ctx_strategies", "ServerError"), 500, None),
-])
-def test_get_all_context_strategies(test_client, mock_pt_service, context_strategies, exception, expected_status, expected_response):
-    if exception:
-        mock_pt_service.get_ctx_strategies.side_effect = exception
-    else:
-        mock_pt_service.get_ctx_strategies.return_value = context_strategies
-
-    response = test_client.get("/api/v1/context-strategies")
-    assert response.status_code == expected_status
-    if expected_status == 200:
-        assert response.json() == expected_response
-    else:
-        assert exception.msg in response.json()["detail"]
-
-# Test for delete_context_strategy
-@pytest.mark.parametrize("strategy_name, exception, expected_status, expected_response", [
+# Test for delete_prompt_template
+@pytest.mark.parametrize("pt_name, exception, expected_status, expected_response", [
     # Successful case
-    ("valid_strategy", None, 200, {"success": True}),
+    ("pt_name", None, 200, {"success": True}),
     # Exception cases
-    ("nonexistent_strategy", ServiceException("Context strategy not found", "delete_ctx_strategy", "FileNotFound"), 404, None),
-    ("invalid_strategy", ServiceException("Context strategy validation error", "delete_ctx_strategy", "ValidationError"), 400, None),
-    ("error_strategy", ServiceException("Context strategy server error", "delete_ctx_strategy", "ServerError"), 500, None),
+    ("pt_name", ServiceException("Prompt Temeplate not found", "delete_prompt_template", "FileNotFound"), 404, None),
+    ("pt_name", ServiceException("Prompt Temeplate validation error", "delete_prompt_template", "ValidationError"), 400, None),
+    ("pt_name", ServiceException("Prompt Temeplate server error", "delete_prompt_template", "ServerError"), 500, None),
     ])
-def test_delete_context_strategy(test_client, mock_pt_service, strategy_name, exception, expected_status, expected_response):
+def test_delete_prompt_template(test_client, mock_pt_service, pt_name, exception, expected_status, expected_response):
     if exception:
-        mock_pt_service.delete_ctx_strategy.side_effect = exception
+        mock_pt_service.delete_prompt_template.side_effect = exception
     else:
-        mock_pt_service.delete_ctx_strategy.return_value = {"success": True}
+        mock_pt_service.delete_prompt_template.return_value = {"success": True}
 
-    response = test_client.delete(f"/api/v1/context-strategies/{strategy_name}")
+    response = test_client.delete(f"/api/v1/prompt-templates/{pt_name}")
     assert response.status_code == expected_status
     if expected_status == 200:
         assert response.json() == expected_response
