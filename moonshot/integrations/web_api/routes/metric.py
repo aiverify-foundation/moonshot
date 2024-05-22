@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.metric_service import MetricService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Metric"])
 
 
 @router.get("/api/v1/metrics")
