@@ -371,7 +371,7 @@ class TestCollectionApiResult:
                 None,
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Runner] Unable to create runner because the runner file does not exist.",
+                    "expected_error_message": "[Runner] Unable to load runner because the runner file does not exist.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -380,7 +380,7 @@ class TestCollectionApiResult:
                 None,
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Runner] Unable to create runner because the runner file does not exist.",
+                    "expected_error_message": "[Runner] Unable to load runner because the runner file does not exist.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -398,7 +398,7 @@ class TestCollectionApiResult:
                 None,
                 {
                     "expected_output": False,
-                    "expected_error_message": "[Runner] Unable to create runner because the runner file does not exist.",
+                    "expected_error_message": "[Runner] Unable to load runner because the runner file does not exist.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -429,6 +429,61 @@ class TestCollectionApiResult:
                     "expected_exception": "ValidationError",
                 },
             ),
+            # Progress callback func
+            (
+                "my-new-recipe-runner",
+                "my-vanilla-cake",
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "my-new-recipe-runner",
+                "",
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "my-new-recipe-runner",
+                "None",
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "my-new-recipe-runner",
+                {},
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "my-new-recipe-runner",
+                [],
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                "my-new-recipe-runner",
+                123,
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be callable",
+                    "expected_exception": "ValidationError",
+                },
+            ),
         ],
     )
     def test_load_runner(self, runner_id, progress_callback_func, expected_dict):
@@ -443,12 +498,12 @@ class TestCollectionApiResult:
         else:
             if expected_dict["expected_exception"] == "RuntimeError":
                 with pytest.raises(RuntimeError) as e:
-                    api_load_runner(runner_id)
+                    api_load_runner(runner_id, progress_callback_func)
                 assert e.value.args[0] == expected_dict["expected_error_message"]
 
             elif expected_dict["expected_exception"] == "ValidationError":
                 with pytest.raises(ValidationError) as e:
-                    api_load_runner(runner_id)
+                    api_load_runner(runner_id, progress_callback_func)
                 assert len(e.value.errors()) == 1
                 assert (
                     expected_dict["expected_error_message"]

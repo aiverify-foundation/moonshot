@@ -24,7 +24,6 @@ class TestCollectionApiRecipe:
             {
                 "RECIPES": "tests/unit-tests/src/data/recipes/",
                 "DATASETS": "tests/unit-tests/src/data/datasets/",
-                "TEMPLATES": "tests/unit-tests/src/data/templates/",
             }
         )
 

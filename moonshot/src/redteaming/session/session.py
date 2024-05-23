@@ -6,6 +6,8 @@ from ast import literal_eval
 from datetime import datetime
 from typing import Any, Callable
 
+from slugify import slugify
+
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
@@ -221,7 +223,12 @@ class Session:
             "%Y%m%d-%H%M%S"
         )
 
-        self.runner_id = runner_id
+        self.runner_id = slugify(runner_id, lowercase=True)
+        if self.runner_id != runner_id:
+            raise RuntimeError(
+                "[Session] Failed to initialise Session. Invalid Runner ID."
+            )
+
         self.runner_args = runner_args
         self.runner_type = runner_type
         self.results_file_path = results_file_path
@@ -295,8 +302,8 @@ class Session:
                     context_strategy,
                     cs_num_of_prev_prompts,
                     attack_module,
-                    system_prompt,
                     metric_id,
+                    system_prompt,
                 )
 
                 for endpoint in endpoints:
