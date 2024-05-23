@@ -9,8 +9,30 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 | [Python](https://www.python.org/downloads/)                                        | v3.11               |
 | [NodeJs](https://nodejs.org/en/download)                                           | v20.11.1 LTS or above               |
 | npm                                        | v10.8.0 or above               |
+| git                                        |                |
 
-Ensure that git is installed and it is recommended to create a new Python virtual environment before proceeding with installation.
+It is recommended to create a new Python virtual environment in your working directory before proceeding with installation. To do so, enter working directory and proceed with following steps:
+
+=== "Windows Powershell"
+
+    ``` 
+    $ python -m venv venv
+    $ venv/Scripts/Activate.ps1
+    ```
+
+=== "Windows Command Prompt"
+
+    ```
+    $ python -m venv venv
+    $ venv/Scripts/activate.bat
+    ```
+
+=== "Mac"
+
+    ```
+    $ python -m venv venv
+    $ source env/bin/activate
+    ```
 
 ## Installation from PyPi (To be updated - Please skip to next installation section)
 *You can find the Moonshot Package [here](https://pypi.org/project/projectmoonshot-imda/).*
