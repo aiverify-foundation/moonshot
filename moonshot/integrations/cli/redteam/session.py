@@ -76,21 +76,24 @@ def use_session(args) -> None:
     runner_id = args.runner_id
 
     # Load session metadata
-    session_metadata = api_load_session(runner_id)
-    if not session_metadata:
-        print(
-            "[Session] Cannot find a session with the existing Runner ID. Please try again."
-        )
-        return
+    try:
+        session_metadata = api_load_session(runner_id)
+        if not session_metadata:
+            print(
+                "[Session] Cannot find a session with the existing Runner ID. Please try again."
+            )
+            return
 
-    # Set the current session
-    active_session.update(session_metadata)
-    if active_session["context_strategy"]:
-        active_session[
-            "cs_num_of_prev_prompts"
-        ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-    print(f"Using session: {active_session['session_id']}. ")
-    update_chat_display()
+        # Set the current session
+        active_session.update(session_metadata)
+        if active_session["context_strategy"]:
+            active_session[
+                "cs_num_of_prev_prompts"
+            ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        print(f"Using session: {active_session['session_id']}. ")
+        update_chat_display()
+    except Exception as e:
+        print(f"[use_session]: {str(e)}")
 
 
 def end_session() -> None:
@@ -227,11 +230,14 @@ def manual_red_teaming(user_prompt: str) -> None:
     }
 
     # load runner, perform red teaming and close the runner
-    runner = api_load_runner(active_session["session_id"])
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(runner.run_red_teaming(mrt_arguments))
-    runner.close()
-    _reload_session(active_session["session_id"])
+    try:
+        runner = api_load_runner(active_session["session_id"])
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(runner.run_red_teaming(mrt_arguments))
+        runner.close()
+        _reload_session(active_session["session_id"])
+    except Exception as e:
+        print(f"[manual_red_teaming]: str({e})")
 
 
 def run_attack_module(args):
@@ -250,50 +256,53 @@ def run_attack_module(args):
     if not active_session:
         print("There is no active session. Activate a session to start red teaming.")
         return
+    try:
+        attack_module_id = args.attack_module_id
+        prompt = args.prompt
+        system_prompt = args.system_prompt if args.system_prompt else ""
+        context_strategy = args.context_strategy or []
+        prompt_template = [args.prompt_template] if args.prompt_template else []
+        metric = [args.metric] if args.metric else []
+        num_of_prev_prompts = (
+            args.num_of_prev_prompts
+            if args.num_of_prev_prompts
+            else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        )
 
-    attack_module_id = args.attack_module_id
-    prompt = args.prompt
-    system_prompt = args.system_prompt if args.system_prompt else ""
-    context_strategy = args.context_strategy or []
-    prompt_template = [args.prompt_template] if args.prompt_template else []
-    metric = [args.metric] if args.metric else []
-    num_of_prev_prompts = (
-        args.num_of_prev_prompts
-        if args.num_of_prev_prompts
-        else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-    )
+        if context_strategy:
+            context_strategy_info = [
+                {
+                    "context_strategy_id": context_strategy,
+                    "num_of_prev_prompts": num_of_prev_prompts,
+                }
+            ]
+        else:
+            context_strategy_info = []
 
-    if context_strategy:
-        context_strategy_info = [
+        # form runner arguments
+        attack_strategy = [
             {
-                "context_strategy_id": context_strategy,
-                "num_of_prev_prompts": num_of_prev_prompts,
+                "attack_module_id": attack_module_id,
+                "prompt": prompt,
+                "system_prompt": system_prompt,
+                "context_strategy_info": context_strategy_info,
+                "prompt_template_ids": prompt_template,
+                "metric_ids": metric,
             }
         ]
-    else:
-        context_strategy_info = []
+        runner_args = {}
+        runner_args["attack_strategies"] = attack_strategy
 
-    # form runner arguments
-    attack_strategy = [
-        {
-            "attack_module_id": attack_module_id,
-            "prompt": prompt,
-            "system_prompt": system_prompt,
-            "context_strategy_info": context_strategy_info,
-            "prompt_template_ids": prompt_template,
-            "metric_ids": metric,
-        }
-    ]
-    runner_args = {}
-    runner_args["attack_strategies"] = attack_strategy
+        # load runner, perform red teaming and close the runner
 
-    # load runner, perform red teaming and close the runner
-    runner = api_load_runner(active_session["session_id"])
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(runner.run_red_teaming(runner_args))
-    runner.close()
-    _reload_session(active_session["session_id"])
-    update_chat_display()
+        runner = api_load_runner(active_session["session_id"])
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(runner.run_red_teaming(runner_args))
+        runner.close()
+        _reload_session(active_session["session_id"])
+        update_chat_display()
+    except Exception as e:
+        print(f"[run_attack_module]: str({e})")
 
 
 def _reload_session(runner_id: str) -> None:
@@ -304,13 +313,16 @@ def _reload_session(runner_id: str) -> None:
         runner_id (str): The ID of the runner for which the session metadata needs to be reloaded.
     """
     global active_session
-    session_metadata = api_load_session(runner_id)
-    if not session_metadata:
-        print(
-            "[Session] Cannot find a session with the existing Runner ID. Please try again."
-        )
-        return
-    active_session.update(session_metadata)
+    try:
+        session_metadata = api_load_session(runner_id)
+        if not session_metadata:
+            print(
+                "[Session] Cannot find a session with the existing Runner ID. Please try again."
+            )
+            return
+        active_session.update(session_metadata)
+    except Exception as e:
+        print(f"[reload_session]: str({e})")
 
 
 def delete_session(args) -> None:

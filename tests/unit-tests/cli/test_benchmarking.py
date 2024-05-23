@@ -647,7 +647,7 @@ class TestBenchmarkingCLI:
     @pytest.mark.parametrize(
         "command_list, expected_output", 
         [   
-            # # Success: Delete existing cookbook TOFIX
+            # # Success: Delete existing cookbook
             # (f"delete_cookbook {test_cookbook_id}", "y", "[delete_cookbook]: Cookbook deleted."),
 
             # Failure: Delete with missing argument

@@ -190,13 +190,13 @@ class TestRedTeamingCLI:
                  f"use_session {test_session_id}"],
                 f"Using session: {test_session_id}",
             ),
-            # # Failure: Use existing runner with no session in the runner
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
-            #      "end_session",
-            #      f"use_session {test_session_id}"],
-            #     f"Using session: {test_session_id}",
-            # ),            
+            # Failure: Use existing runner with no session in the runner
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
+                 "end_session",
+                 f"use_session {test_session_id}"],
+                f"Using session: {test_session_id}",
+            ),            
 
             # Failure: Use non-existent runner
             (
@@ -230,12 +230,12 @@ class TestRedTeamingCLI:
                  f"use_context_strategy {test_context_strategy_id} -n 10"],
                 f"Updated session: {test_session_id}. Context Strategy: {test_context_strategy_id}.",
             ),            
-            # # Failure: Use non-existent context strategy TOFIX
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #     f"use_context_strategy nope"],
-            #     f"exist.",
-            # ),          
+            # Failure: Use non-existent context strategy TOFIX
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                f"use_context_strategy nope"],
+                f"Context Strategy nope does not exist.",
+            ),          
             # Failure: Use right context strategy with wrong type for number of prompts
             (
                 [f"use_context_strategy {test_context_strategy_id} -n helloworld"],
@@ -261,12 +261,12 @@ class TestRedTeamingCLI:
                 f"Updated session: {test_session_id}. Prompt Template: {test_prompt_template_id}.",
             ),
           
-            # # Failure: Use non-existent prompt template
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #      f"use_prompt_template nope"],
-            #     f"does not exist.",
-            # ),             
+            # Failure: Use non-existent prompt template
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 f"use_prompt_template nope"],
+                f"Prompt Template nope does not exist.",
+            ),             
             # Failure: Use prompt template with missing requirement argument
             (
                 ["use_prompt_template"],
@@ -373,36 +373,34 @@ class TestRedTeamingCLI:
     @pytest.mark.parametrize(
         "command_list, expected_output",
         [
-            # # Success: Example
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #      "run_attack_module sample_attack_module \"this is my prompt\" "
-            #      "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
-            #      ],
-            #     "[Prompt 1] took",
-            # ),
+            # Success: Example
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 "run_attack_module sample_attack_module \"this is my prompt\" "
+                 "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
+                 ],
+                "[Prompt 1] took",
+            ),
 
-            # # Success: Run with missing optional arguments
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #      "run_attack_module sample_attack_module \"this is my prompt\" "
-            #      ],
-            #     "[Prompt 1] took",
-            # ),
+            # Success: Run with missing optional arguments
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 "run_attack_module sample_attack_module \"this is my prompt\" "
+                 ],
+                "[Prompt 1] took",
+            ),
 
-            # # Failure: Run with missing required argument
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #      "run_attack_module \"this is my prompt\" "],
-            #     err_missing_required_arg,
-            # ),       
+            # Failure: Run with missing required argument
+            (
+                 ["run_attack_module \"this is my prompt\" "],
+                "the following arguments",
+            ),       
 
-            # # Failure: Run with missing required argument
-            # (
-            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-            #      "run_attack_module"],
-            #     err_missing_required_arg,
-            # ),       
+            # Failure: Run with missing required argument
+            (
+                 ["run_attack_module"],
+                err_missing_required_arg,
+            ),       
 
 
             # Failure: Run with non-existent attack module
