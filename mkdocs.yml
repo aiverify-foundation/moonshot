@@ -78,9 +78,11 @@ nav:
     - Command Line Interface (CLI):
       - Installation (CLI): getting_started/installation_cli.md
       - Quick Start Guide (CLI): getting_started/quick_start_cli.md
+    - Web API: 
+      - Installation (Web API): getting_started/installation_web_api.md
+      - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
     - Walkthrough: getting_started/walkthrough.md
     - Quick Start Guide (Library): getting_started/quick_start_library.md
-    - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
   - User Guide: 
     - Web API:
       - Get Started with Web API : web_api/web_api_guide.md
