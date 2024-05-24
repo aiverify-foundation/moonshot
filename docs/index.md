@@ -15,6 +15,6 @@
 **Moonshot** is a lightweight evaluation tool designed for AI developers and security experts to evaluate and red team Large Language Models (LLMs) or LLM applications. In this initial release, Moonshot is available through:
 
 1. Moonshot Library
-2. Moonshot CLI
-3. Moonshot Web API
-4. Moonshot UI: A UI extension that runs on top of the Moonshot Web API server. Moonshot UI can be found [here](https://github.com/moonshot-admin/moonshot-ui).
+2. [Moonshot CLI](./getting_started/installation_cli.md)
+3. [Moonshot Web API](./getting_started/installation_web_api.md) 
+4. [Moonshot UI](./getting_started/installation_ui.md): A UI extension that runs on top of the Moonshot Web API server. Moonshot UI can be found [here](https://github.com/moonshot-admin/moonshot-ui).

@@ -87,6 +87,8 @@ $ pip install -r requirements.txt
     $ python -m moonshot -i moonshot-ui
     ```
 
+<span style="font-size: 15px">  Find out more about what `-i moonshot-ui` does [here](../additional_information/additional_information.md).</span>
+
 2. To run the User Interface:
 
     ```
