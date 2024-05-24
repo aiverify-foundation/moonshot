@@ -42,6 +42,7 @@ def ms_lib_env_file(data_repo_name):
     RESULTS_MODULES="./{data_repo_name}/results-modules"
     RUNNERS="./{data_repo_name}/generated-outputs/runners"
     RUNNERS_MODULES="./{data_repo_name}/runners-modules"
+    TOKENIZERS_PARALLELISM = false 
     """
 
     env_content_web_api = """
