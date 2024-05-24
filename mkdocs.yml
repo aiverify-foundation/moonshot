@@ -71,7 +71,6 @@ nav:
       - Runner API: understanding_moonshot/api_runner.md
       - Session API: understanding_moonshot/api_session.md
   - Getting Started:
-    - Preinstallation: getting_started/preinstallation.md
     - User Interface (UI):
       - Installation (UI): getting_started/installation_ui.md
       - Quick Start Guide (UI): getting_started/quick_start_ui.md
