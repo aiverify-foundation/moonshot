@@ -1,8 +1,8 @@
 <div align="center">
 
-![Moonshot Logo](./misc/aiverify-moonshot-logo.png)
+![Moonshot Logo](https://github.com/moonshot-admin/moonshot/raw/new_dev_main/misc/aiverify-moonshot-logo.png)
 
-**Version 0.1.0**
+**Version 0.1.6**
 
 A simple and modular tool to evaluate and red-team any LLM application.
 
