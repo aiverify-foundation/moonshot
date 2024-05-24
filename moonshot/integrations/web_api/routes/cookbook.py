@@ -4,12 +4,12 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
-from ..schemas.cookbook_create_dto import CookbookCreateDTO
+from ..schemas.cookbook_create_dto import CookbookCreateDTO, CookbookUpdateDTO
 from ..schemas.cookbook_response_model import CookbookResponseModel
 from ..services.cookbook_service import CookbookService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Cookbook"])
 
 
 @router.post("/api/v1/cookbooks")
@@ -149,7 +149,7 @@ def get_all_cookbooks_name(
 @inject
 def update_cookbook(
     cookbook_id: str,
-    cookbook_data: CookbookCreateDTO,
+    cookbook_data: CookbookUpdateDTO,
     cookbook_service: CookbookService = Depends(Provide[Container.cookbook_service]),
 ) -> dict[str, str]:
     """
@@ -213,13 +213,13 @@ def delete_cookbook(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=404, detail=f"Failed to delete cookbook: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=400, detail=f"Failed to delete cookbook: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=500, detail=f"Failed to delete cookbook: {e.msg}"
             )

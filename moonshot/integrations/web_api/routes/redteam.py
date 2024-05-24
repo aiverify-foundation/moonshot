@@ -11,7 +11,7 @@ from ..schemas.session_response_model import SessionMetadataModel, SessionRespon
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Red Teaming"])
 logger = logging.getLogger(__name__)
 
 
@@ -133,7 +133,7 @@ async def get_session_by_runner_id(
 async def create_session(
     session_dto: SessionCreateDTO,
     session_service: SessionService = Depends(Provide[Container.session_service]),
-) -> SessionMetadataModel:
+) -> SessionResponseModel:
     """
     Create a new session based on the provided session data transfer object (DTO).
 
@@ -142,7 +142,7 @@ async def create_session(
         session_service (SessionService): The service responsible for session operations.
 
     Returns:
-        SessionMetadataModel: The metadata of the newly created session.
+        SessionResponseModel: The metadata of the newly created session.
 
     Raises:
         HTTPException: An error with status code 404 if the session cannot be created due to a file not found.
@@ -209,7 +209,7 @@ async def cancel_auto_redteam(
     """
     Cancel the automated red team operation for a given session.
 
-    This endpoint is used to stop any ongoing automated red team operations for the session 
+    This endpoint is used to stop any ongoing automated red team operations for the session
     associated with the provided runner_id.
 
     Args:
@@ -598,7 +598,7 @@ async def close_session(
     session_service: SessionService = Depends(Provide[Container.session_service]),
 ):
     try:
-        session_service.end_session(runner_id)
+        await session_service.end_session(runner_id)
         return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":

@@ -19,6 +19,7 @@ class ChatRecord(BaseModel):
 
 class SessionMetadataModel(BaseModel):
     session_id: str = Field(min_length=1)
+    description: Optional[str] = ""
     endpoints: List[str] = Field(min_length=1)
     created_epoch: str
     created_datetime: str = Field(min_length=1)
@@ -31,5 +32,7 @@ class SessionMetadataModel(BaseModel):
 
 
 class SessionResponseModel(BaseModel):
+    session_name: str
+    session_description: str
     session: SessionMetadataModel
     chat_records: Optional[Dict[str, List[ChatRecord]]]

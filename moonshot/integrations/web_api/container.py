@@ -9,6 +9,7 @@ from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.benchmark_test_state import BenchmarkTestState
 from .services.benchmarking_service import BenchmarkingService
+from .services.context_strategy_service import ContextStrategyService
 from .services.cookbook_service import CookbookService
 from .services.dataset_service import DatasetService
 from .services.endpoint_service import EndpointService
@@ -96,6 +97,9 @@ class Container(containers.DeclarativeContainer):
     prompt_template_service: providers.Singleton[
         PromptTemplateService
     ] = providers.Singleton(PromptTemplateService)
+    context_strategy_service: providers.Singleton[ContextStrategyService] = providers.Singleton(
+        ContextStrategyService
+    )
     benchmarking_service: providers.Singleton[
         BenchmarkingService
     ] = providers.Singleton(
@@ -127,6 +131,7 @@ class Container(containers.DeclarativeContainer):
         modules=[
             ".routes.redteam",
             ".routes.prompt_template",
+            ".routes.context_strategy",
             ".routes.benchmark",
             ".routes.endpoint",
             ".routes.recipe",
