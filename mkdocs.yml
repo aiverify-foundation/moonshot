@@ -70,12 +70,14 @@ nav:
       - Run API: understanding_moonshot/api_run.md
       - Runner API: understanding_moonshot/api_runner.md
       - Session API: understanding_moonshot/api_session.md
-  - Getting Started: 
-    - Installation : getting_started/installation.md
+  - Getting Started:
+    - Preinstallation: getting_started/preinstallation.md
+    - Command Line Interface (CLI):
+      - Installation (CLI): getting_started/installation_cli.md
+      - Quick Start Guide (CLI): getting_started/quick_start_cli.md
     - Walkthrough: getting_started/walkthrough.md
     - Quick Start Guide (Library): getting_started/quick_start_library.md
     - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
-    - Quick Start Guide (CLI): getting_started/quick_start_cli.md
   - User Guide: 
     - Web API:
       - Get Started with Web API : web_api/web_api_guide.md
