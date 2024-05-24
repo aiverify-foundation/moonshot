@@ -5,7 +5,7 @@ import platform
 import subprocess
 import os
 import threading 
-
+import nltk
 from dotenv import dotenv_values
 from moonshot.api import api_set_environment_variables
 """
@@ -41,6 +41,7 @@ def ms_lib_env_file(data_repo_name):
     RESULTS_MODULES="./{data_repo_name}/results-modules"
     RUNNERS="./{data_repo_name}/generated-outputs/runners"
     RUNNERS_MODULES="./{data_repo_name}/runners-modules"
+    TOKENIZERS_PARALLELISM = false 
     """
 
     env_content_web_api = """
@@ -86,6 +87,11 @@ def moonshot_data_installation():
         # Change directory to the folder
         os.chdir(folder_name)
         
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        nltk.download('averaged_perceptron_tagger')
+        nltk.download('universal_tagset')
+
         print(f"Installing requirements for {folder_name}")
         # Install the requirements if they exist
         if os.path.exists("requirements.txt"):
