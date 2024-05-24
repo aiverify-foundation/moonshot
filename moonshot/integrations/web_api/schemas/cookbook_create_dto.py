@@ -8,7 +8,7 @@ from pydantic import Field
 class CookbookCreateDTO(CookbookPydanticModel):
     id: Optional[str] = None
     name: str = Field(..., min_length=1)
-    description: str = Field(..., min_length=1)
+    description: Optional[str] = Field(default="", min_length=1)
     recipes: list[str] = Field(..., min_length=1)
 
 

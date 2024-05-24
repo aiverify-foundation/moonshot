@@ -36,15 +36,15 @@ async def get_all_results(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to delete result: {e.msg}"
+                status_code=404, detail=f"Failed to retrieve results: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to delete result: {e.msg}"
+                status_code=400, detail=f"Failed to retrieve results: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete result: {e.msg}"
+                status_code=500, detail=f"Failed to retrieve results: {e.msg}"
             )
 
 
@@ -120,15 +120,15 @@ async def get_one_results(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to delete result: {e.msg}"
+                status_code=404, detail=f"Failed to retrieve result: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to delete result: {e.msg}"
+                status_code=400, detail=f"Failed to retrieve result: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete result: {e.msg}"
+                status_code=500, detail=f"Failed to retrieve result: {e.msg}"
             )
 
 @router.delete("/api/v1/benchmarks/results/{result_id}")
