@@ -5,7 +5,6 @@ import platform
 import subprocess
 import os
 import threading 
-import nltk
 from dotenv import dotenv_values
 from moonshot.api import api_set_environment_variables
 """
@@ -91,6 +90,7 @@ def moonshot_data_installation():
         # Install the requirements if they exist
         if os.path.exists("requirements.txt"):
             run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
+            import nltk
             nltk.download('punkt')
             nltk.download('stopwords')
             nltk.download('averaged_perceptron_tagger')
