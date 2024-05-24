@@ -31,7 +31,7 @@ It is recommended to create a new Python virtual environment in your working dir
 
     ```
     $ python -m venv venv
-    $ source env/bin/activate
+    $ source venv/bin/activate
     ```
 
 ## Installation from PyPi (To be updated - Please skip to next installation section)
