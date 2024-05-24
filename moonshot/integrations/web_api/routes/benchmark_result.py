@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.benchmark_result_service import BenchmarkResultService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Benchmark Results"])
 
 
 @router.get("/api/v1/benchmarks/results")

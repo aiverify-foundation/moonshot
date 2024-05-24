@@ -8,7 +8,7 @@ from ..services.benchmarking_service import BenchmarkingService
 from ..services.utils.exceptions_handler import ServiceException
 from ..types.types import BenchmarkCollectionType
 
-router = APIRouter()
+router = APIRouter(tags=["Benchmarking"])
 
 
 @router.post("/api/v1/benchmarks")

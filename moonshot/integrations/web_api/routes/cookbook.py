@@ -9,7 +9,7 @@ from ..schemas.cookbook_response_model import CookbookResponseModel
 from ..services.cookbook_service import CookbookService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Cookbook"])
 
 
 @router.post("/api/v1/cookbooks")
