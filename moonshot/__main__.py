@@ -86,16 +86,15 @@ def moonshot_data_installation():
         
         # Change directory to the folder
         os.chdir(folder_name)
-        
-        nltk.download('punkt')
-        nltk.download('stopwords')
-        nltk.download('averaged_perceptron_tagger')
-        nltk.download('universal_tagset')
 
         print(f"Installing requirements for {folder_name}")
         # Install the requirements if they exist
         if os.path.exists("requirements.txt"):
             run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
+            nltk.download('punkt')
+            nltk.download('stopwords')
+            nltk.download('averaged_perceptron_tagger')
+            nltk.download('universal_tagset')
         
         # Change back to the base directory
         os.chdir("..")
