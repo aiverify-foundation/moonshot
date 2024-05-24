@@ -3,7 +3,27 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
 
 @pytest.mark.parametrize("metrics_data, exception, expected_status, expected_response", [
     # Successful cases
-    (["metric1", "metric2", "metric3"], None, 200, ["metric1", "metric2", "metric3"]),
+    (
+        [{
+        "id": "metric_1",
+        "name": "Metric 1",
+        "description": "Metric 1 Description."
+        },{
+        "id": "metric_2",
+        "name": "Metric 2",
+        "description": "Metric 2 Description."
+        }]
+    , None, 200, 
+        [{
+        "id": "metric_1",
+        "name": "Metric 1",
+        "description": "Metric 1 Description."
+        },{
+        "id": "metric_2",
+        "name": "Metric 2",
+        "description": "Metric 2 Description."
+        }]
+    ),
     ([], None, 200, []),
     # Exception cases
     (None, ServiceException("A file not found error occurred", "get_all_metric", "FileNotFound"), 404, None),

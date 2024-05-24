@@ -34,12 +34,12 @@ ut_sample_dir = "tests/unit-tests/common/samples"
 class TestRedTeamingCLI:
     @pytest.fixture(autouse=True)
     def init(self):
-        list_of_directories = ["attack-modules", "connectors-endpoints", "context-strategies", "cookbooks", 
-                               "databases", "databases-modules", "datasets", "io-modules", "metrics",
-                               "prompt-templates", "recipes", "runners"]
+        # list_of_directories = ["attack-modules", "connectors-endpoints", "context-strategies", "cookbooks", 
+        #                        "databases", "databases-modules", "datasets", "io-modules", "metrics",
+        #                        "prompt-templates", "recipes", "runners"]
         
-        for dir_name in list_of_directories:
-            os.makedirs(f"{ut_data_dir}/{dir_name}/", exist_ok=True)
+        # for dir_name in list_of_directories:
+        #     os.makedirs(f"{ut_data_dir}/{dir_name}/", exist_ok=True)
 
         # Set environment variables for result paths
         api_set_environment_variables(
@@ -163,6 +163,7 @@ class TestRedTeamingCLI:
             f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
             f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
             f"{ut_data_dir}/connectors/openai-connector.py",
+            f"{ut_data_dir}/runner-modules/redteaming.py",
         ]
 
         #files generated from unit tests
