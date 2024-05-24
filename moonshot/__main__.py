@@ -6,7 +6,7 @@ import subprocess
 import os
 import threading 
 from pathlib import Path
-
+import nltk
 from dotenv import dotenv_values
 from moonshot.api import api_set_environment_variables
 """
@@ -87,25 +87,15 @@ def moonshot_data_installation():
         # Change directory to the folder
         os.chdir(folder_name)
         
-        import shutil
-
-        # Define the source and destination paths
-        nltk_data_source = os.path.join(os.getcwd(), 'nltk_data')
-        home_directory = str(Path.home())
-        print(f"User's home directory: {home_directory}")
-
-        # Check if the source directory exists
-        if os.path.exists(nltk_data_source):
-            # Move the nltk_data folder to the destination
-            shutil.move(nltk_data_source, home_directory)
-            print(f"Moved nltk_data to {home_directory}")
-        else:
-            print("nltk_data directory does not exist in the current directory.")
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        nltk.download('averaged_perceptron_tagger')
+        nltk.download('universal_tagset')
 
         print(f"Installing requirements for {folder_name}")
         # Install the requirements if they exist
-        # if os.path.exists("requirements.txt"):
-        #     run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
+        if os.path.exists("requirements.txt"):
+            run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
         
         # Change back to the base directory
         os.chdir("..")
