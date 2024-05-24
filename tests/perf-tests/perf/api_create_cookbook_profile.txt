@@ -1,0 +1,9 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  0
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.001     CPU time: 0.002
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+No samples were recorded.
+

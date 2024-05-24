@@ -1,0 +1,44 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:41  Samples:  7947
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 32.737    CPU time: 15.990
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+32.740 _UnixSelectorEventLoop.run_forever  asyncio/base_events.py:593
+└─ 32.739 _UnixSelectorEventLoop._run_once  asyncio/base_events.py:1845
+      [4 frames hidden]  asyncio, selectors, <built-in>
+         25.849 Handle._run  asyncio/events.py:78
+         ├─ 17.858 profile_run_cookbook  tests/test_api_perf.py:569
+         │  └─ 17.858 profile_async_function  tests/test_api_perf.py:81
+         │     └─ 17.858 Runner.run_cookbooks  moonshot/src/runners/runner.py:351
+         │        └─ 17.856 Run.run  moonshot/src/runs/run.py:170
+         │           └─ 17.569 Benchmarking.generate  moonshot/data/runners-modules/benchmarking.py:44
+         │              └─ 17.513 Benchmarking._run_cookbook  moonshot/data/runners-modules/benchmarking.py:247
+         │                 └─ 17.495 Benchmarking._run_recipe  moonshot/data/runners-modules/benchmarking.py:329
+         │                    ├─ 11.577 ToxicityClassifier.get_results  moonshot/data/metrics/toxicity-classifier.py:35
+         │                    │  ├─ 10.026 AutoModelForSequenceClassification.from_pretrained  transformers/models/auto/auto_factory.py:444
+         │                    │  │     [112 frames hidden]  transformers, importlib, accelerate, ...
+         │                    │  └─ 1.376 AutoTokenizer.from_pretrained  transformers/models/auto/tokenization_auto.py:678
+         │                    │        [25 frames hidden]  transformers, huggingface_hub, reques...
+         │                    └─ 5.782 <listcomp>  moonshot/data/runners-modules/benchmarking.py:360
+         │                       └─ 5.782 Metric.load  moonshot/src/metrics/metric.py:16
+         │                          └─ 5.768 get_instance  moonshot/src/utils/import_modules.py:59
+         │                             └─ 5.764 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+         │                                └─ 5.742 <module>  moonshot/data/metrics/toxicity-classifier.py:1
+         │                                   ├─ 4.666 <module>  transformers/__init__.py:1
+         │                                   │     [22 frames hidden]  transformers, torch, huggingface_hub,...
+         │                                   └─ 1.066 _LazyModule.__getattr__  transformers/utils/import_utils.py:1494
+         │                                         [5 frames hidden]  transformers, importlib, <built-in>
+         ├─ 7.475 Benchmarking._process_single_prompt  moonshot/data/runners-modules/benchmarking.py:871
+         │  └─ 7.147 get_prediction  moonshot/src/connectors/connector.py:261
+         │     └─ 7.129 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:147
+         │        └─ 7.124 OpenAIConnector.wrapper  moonshot/src/connectors/connector.py:36
+         │           └─ 7.124 OpenAIConnector.get_response  moonshot/data/connectors/openai-connector.py:26
+         │              └─ 7.119 AsyncCompletions.create  openai/resources/chat/completions.py:1128
+         │                    [25 frames hidden]  openai, httpx, httpcore, anyio, asyncio
+         └─ 0.415 producer  moonshot/data/runners-modules/benchmarking.py:533
+            └─ 0.415 Benchmarking._generate_prompts  moonshot/data/runners-modules/benchmarking.py:659
+               └─ 0.403 Benchmarking._get_dataset_prompts  moonshot/data/runners-modules/benchmarking.py:745
+         6.882 kqueue.control  <built-in>
+

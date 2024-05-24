@@ -1,9 +1,10 @@
+import argparse
+
 import cmd2
 from rich.console import Console
 
 from moonshot.api import api_update_prompt_template
-from moonshot.src.configs.active_session_cfg import active_session
-import argparse
+from moonshot.integrations.cli.active_session_cfg import active_session
 
 console = Console()
 
@@ -20,13 +21,16 @@ def use_prompt_template(args: argparse.Namespace) -> None:
     # Check if current session exists
     if active_session:
         active_session["prompt_template"] = new_prompt_template_name
-        api_update_prompt_template(
-            active_session["session_id"], new_prompt_template_name
-        )
-        print(
-            f"Updated session: {active_session['session_id']}. "
-            f"Prompt Template: {active_session['prompt_template']}."
-        )
+        try:
+            api_update_prompt_template(
+                active_session["session_id"], new_prompt_template_name
+            )
+            print(
+                f"Updated session: {active_session['session_id']}. "
+                f"Prompt Template: {active_session['prompt_template']}."
+            )
+        except Exception as e:
+            print(f"[use_prompt_template]: {str(e)}")
     else:
         print(
             "There is no active session. Activate a session to send a prompt with a prompt template."
@@ -39,8 +43,12 @@ def clear_prompt_template() -> None:
     """
     # Check if current session exists
     if active_session:
-        active_session["prompt_template"] = ""
-        print("Cleared prompt template.")
+        try:
+            api_update_prompt_template(active_session["session_id"], "")
+            active_session["prompt_template"] = ""
+            print("Cleared prompt template.")
+        except Exception as e:
+            print(f"[clear_prompt_template: {str(e)}]")
     else:
         print(
             "There is no active session. Activate a session to send a prompt with a prompt template."

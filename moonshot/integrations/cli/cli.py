@@ -2,14 +2,17 @@ import cmd2
 from cmd2 import Statement
 from rich.console import Console
 
+from moonshot.integrations.cli.active_session_cfg import active_session
 from moonshot.integrations.cli.benchmark.benchmark import BenchmarkCommandSet
 from moonshot.integrations.cli.common.common import CommonCommandSet
 from moonshot.integrations.cli.initialisation.initialisation import (
     InitialisationCommandSet,
 )
 from moonshot.integrations.cli.redteam.redteam import RedTeamCommandSet
-from moonshot.integrations.cli.redteam.session import send_prompt, update_chat_display
-from moonshot.src.configs.active_session_cfg import active_session
+from moonshot.integrations.cli.redteam.session import (
+    manual_red_teaming,
+    update_chat_display,
+)
 
 console = Console()
 
@@ -41,16 +44,20 @@ class CommandLineInterface(cmd2.Cmd):
         if active_session:
             user_prompt = statement.command + " " + statement
             user_prompt = user_prompt.strip()
-            send_prompt(active_session["session_id"], user_prompt)
+            manual_red_teaming(user_prompt)
             # Update chat display with response
             update_chat_display()
 
     def postcmd(self, stop, line):
         if active_session:
+            if active_session["context_strategy"]:
+                cs_prompt = f"CS: ({active_session['context_strategy']},{active_session['cs_num_of_prev_prompts']})] > "
+            else:
+                cs_prompt = f"CS: {active_session['context_strategy']}]> "
             self.prompt = (
                 f"moonshot ({active_session['session_id']}) "
                 f"[PT: {active_session['prompt_template']}, "
-                f"CS: {active_session['context_strategy']}] > "
+                f"{cs_prompt}"
             )
         else:
             self.prompt = "moonshot > "

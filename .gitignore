@@ -164,8 +164,9 @@ cython_debug/
 
 # User defined files
 moonshot/data/connectors-endpoints/*.json
-moonshot/data/results/*.json
-moonshot/data/databases/*.db
+moonshot/data/generated-outputs/databases/*.db
+moonshot/data/generated-outputs/results/*.json
+moonshot/data/generated-outputs/runners/*.json
 moonshot/data/sessions/*.json
 
 # dev settings
@@ -173,3 +174,4 @@ moonshot/data/sessions/*.json
 
 # build files
 dist/
+*.db

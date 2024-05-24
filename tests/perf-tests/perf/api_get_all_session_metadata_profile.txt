@@ -1,0 +1,46 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:20:20  Samples:  9
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.009     CPU time: 0.009
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.009 profile_function  tests/test_api_perf.py:97
+└─ 0.009 api_get_all_session_metadata  moonshot/src/api/api_session.py:100
+   └─ 0.009 api_get_available_session_info  moonshot/src/api/api_session.py:71
+      ├─ 0.006 <listcomp>  moonshot/src/api/api_session.py:84
+      │  └─ 0.006 api_load_runner  moonshot/src/api/api_runner.py:47
+      │     └─ 0.006 Runner.load  moonshot/src/runners/runner.py:51
+      │        ├─ 0.003 create_database_connection  moonshot/src/storage/storage.py:275
+      │        │  ├─ 0.001 SQLite.create_connection  moonshot/data/databases-modules/sqlite.py:11
+      │        │  ├─ 0.001 get_instance  moonshot/src/utils/import_modules.py:59
+      │        │  │  └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+      │        │  │     └─ 0.001 open_code  <built-in>
+      │        │  └─ 0.001 get_filepath  moonshot/src/storage/storage.py:232
+      │        │     └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
+      │        │        └─ 0.001 PosixPath.__new__  pathlib.py:868
+      │        │              [4 frames hidden]  pathlib
+      │        └─ 0.003 wrapper_function  pydantic/v1/decorator.py:38
+      │              [3 frames hidden]  pydantic
+      │                 0.003 ValidatedFunction.execute  pydantic/v1/decorator.py:179
+      │                 └─ 0.003 read  moonshot/src/runners/runner.py:163
+      │                    └─ 0.003 read_object  moonshot/src/storage/storage.py:96
+      │                       └─ 0.003 get_instance  moonshot/src/utils/import_modules.py:59
+      │                          ├─ 0.002 create_module_spec  moonshot/src/utils/import_modules.py:7
+      │                          │  ├─ 0.001 getcwd  <built-in>
+      │                          │  └─ 0.001 find_spec  <frozen importlib.util>:73
+      │                          └─ 0.001 import_module_from_spec  moonshot/src/utils/import_modules.py:41
+      │                             └─ 0.001 <module>  moonshot/data/io-modules/jsonio.py:1
+      │                                └─ 0.001 __build_class__  <built-in>
+      ├─ 0.002 api_get_all_runner  moonshot/src/api/api_runner.py:97
+      │  └─ 0.002 get_available_items  moonshot/src/runners/runner.py:213
+      │     └─ 0.002 read_object  moonshot/src/storage/storage.py:96
+      │        └─ 0.002 get_instance  moonshot/src/utils/import_modules.py:59
+      │           └─ 0.002 create_module_spec  moonshot/src/utils/import_modules.py:7
+      │              └─ 0.002 find_spec  <frozen importlib.util>:73
+      │                    [3 frames hidden]  <frozen importlib, <built-in>
+      └─ 0.001 load  moonshot/src/redteaming/session/session.py:267
+         └─ 0.001 check_database_table_exists  moonshot/src/storage/storage.py:449
+            └─ 0.001 SQLite.check_database_table_exists  moonshot/data/databases-modules/sqlite.py:195
+               └─ 0.001 Cursor.execute  <built-in>
+

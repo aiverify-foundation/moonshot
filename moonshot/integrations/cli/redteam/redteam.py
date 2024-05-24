@@ -2,8 +2,15 @@ import argparse
 
 import cmd2
 
+from moonshot.integrations.cli.redteam.attack_module import (
+    delete_attack_module,
+    delete_attack_module_args,
+    list_attack_modules,
+)
 from moonshot.integrations.cli.redteam.context_strategy import (
     clear_context_strategy,
+    delete_context_strategy,
+    delete_context_strategy_args,
     list_context_strategies,
     use_context_strategy,
     use_context_strategy_args,
@@ -14,10 +21,14 @@ from moonshot.integrations.cli.redteam.prompt_template import (
     use_prompt_template_args,
 )
 from moonshot.integrations.cli.redteam.session import (
+    automated_rt_session_args,
+    delete_session,
+    delete_session_args,
     end_session,
     list_sessions,
     new_session,
     new_session_args,
+    run_attack_module,
     use_session,
     use_session_args,
 )
@@ -58,3 +69,22 @@ class RedTeamCommandSet(cmd2.CommandSet):
 
     def do_clear_context_strategy(self, _: cmd2.Statement) -> None:
         clear_context_strategy()
+
+    @cmd2.with_argparser(automated_rt_session_args)
+    def do_run_attack_module(self, args: argparse.Namespace) -> None:
+        run_attack_module(args)
+
+    def do_list_attack_modules(self, _: cmd2.Statement) -> None:
+        list_attack_modules()
+
+    @cmd2.with_argparser(delete_session_args)
+    def do_delete_session(self, args: argparse.Namespace) -> None:
+        delete_session(args)
+
+    @cmd2.with_argparser(delete_context_strategy_args)
+    def do_delete_context_strategy(self, args: argparse.Namespace) -> None:
+        delete_context_strategy(args)
+
+    @cmd2.with_argparser(delete_attack_module_args)
+    def do_delete_attack_module(self, args: argparse.Namespace) -> None:
+        delete_attack_module(args)

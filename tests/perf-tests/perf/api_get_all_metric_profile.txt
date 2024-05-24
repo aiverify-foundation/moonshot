@@ -1,0 +1,18 @@
+
+  _     ._   __/__   _ _  _  _ _/_   Recorded: 10:19:38  Samples:  1
+ /_//_/// /_\ / //_// / //_'/ //     Duration: 0.002     CPU time: 0.002
+/   _/                      v4.6.2
+
+Program: /Users/lionelteo/Documents/moonshot/tests/test_api_perf.py
+
+0.001 profile_function  tests/test_api_perf.py:97
+└─ 0.001 api_get_all_metric  moonshot/src/api/api_metrics.py:24
+   └─ 0.001 get_available_items  moonshot/src/metrics/metric.py:113
+      └─ 0.001 _get_or_update_metrics_info  moonshot/src/metrics/metric.py:156
+         └─ 0.001 get_file_hash  moonshot/src/storage/storage.py:207
+            └─ 0.001 get_filepath  moonshot/src/storage/storage.py:232
+               └─ 0.001 get_file_path  moonshot/src/configs/env_variables.py:147
+                  └─ 0.001 PosixPath.__new__  pathlib.py:868
+                        [3 frames hidden]  pathlib
+                           0.001 PosixPath._parse_args  pathlib.py:484
+

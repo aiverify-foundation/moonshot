@@ -1,105 +1,106 @@
 import asyncio
 import uuid
-from typing import Any, TypedDict
-from slugify import slugify
+from typing import Any
+
 from dependency_injector.wiring import inject
 
-from moonshot.src.benchmarking.executors.benchmark_executor_types import BenchmarkExecutorTypes
+from moonshot.src.runners.runner import Runner
 
-from .... import api as moonshot_api
-from ..types.types import CookbookTestRunProgress
-from ..services.benchmark_test_state import BenchmarkTestState
-from ..schemas.recipe_executor_create_dto import RecipeExecutorCreateDTO
-from ..status_updater.webhook import Webhook
-from ..schemas.cookbook_executor_create_dto import CookbookExecutorCreateDTO
+from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
 from ..services.base_service import BaseService
+from ..services.benchmark_test_state import BenchmarkTestState
+from ..services.runner_service import RunnerService
+from ..status_updater.interface.benchmark_progress_callback import (
+    InterfaceBenchmarkProgressCallback,
+)
+from ..types.types import BenchmarkCollectionType, TestRunProgress
 
-class BenchmarkTaskInfo(TypedDict):
-    async_task: asyncio.Task[Any]
-    status: CookbookTestRunProgress | None
+
 class BenchmarkTestManager(BaseService):
     @inject
-    def __init__(self, benchmark_test_state: BenchmarkTestState, webhook: Webhook) -> None:
+    def __init__(
+        self,
+        benchmark_test_state: BenchmarkTestState,
+        progress_status_updater: InterfaceBenchmarkProgressCallback,
+        runner_service: RunnerService,
+    ) -> None:
         self.benchmark_test_state = benchmark_test_state
-        self.webhook = webhook
+        self.progress_status_updater = progress_status_updater
+        self.runner_service = runner_service
         super().__init__()
 
     def generate_unique_task_id(self) -> str:
         unique_id = str(uuid.uuid4())
         return f"task_{unique_id}"
 
-    def add_task(self, executor_id: str, task: asyncio.Task[Any]) -> None:
-        self.benchmark_test_state.add_task(executor_id, task)
+    def add_task(
+        self, executor_id: str, task: asyncio.Task[Any], moonshot_runner: Runner
+    ) -> None:
+        self.benchmark_test_state.add_task(executor_id, task, moonshot_runner)
 
-    def remove_task(self, executor_id: str) -> BenchmarkTaskInfo:
-        return self.benchmark_test_state.remove_task(executor_id)
-    
-    def cancel_task(self, executor_id: str) -> None:
-        return self.benchmark_test_state.cancel_task(executor_id)
-    
-    def update_state(self, updates: CookbookTestRunProgress):
-        self.benchmark_test_state.update_state(updates)
+    def remove_task(self, executor_id: str) -> None:
+        self.benchmark_test_state.remove_task(executor_id)
+
+    async def cancel_task(self, executor_id: str) -> None:
+        await self.benchmark_test_state.cancel_task(executor_id)
+
+    def update_progress_status(self, updates: TestRunProgress):
+        self.benchmark_test_state.update_progress_status(updates)
 
     def on_task_completed(self, task: asyncio.Task[Any]) -> None:
         self.logger.debug(f"Task {task.get_name()} has completed")
 
-    #TODO - get executor id from excutor instance somehow
-    def get_executor_id(self, type: BenchmarkExecutorTypes, name: str) -> str:
-        # This is a temporary workaround to get exec id without awaiting the long running execution
-        # Unable to run execute separately because instance creation needs to be in the same async task
-        # Use the same slugify pattern that ms lib uses to get the ID upfront
-        # Review and refactor required for this - ID needs to be from MS lib
-        prefix = (
-                "recipe-"
-                if type == BenchmarkExecutorTypes.RECIPE
-                else "cookbook-"
-            )
-        id = slugify(prefix + name, lowercase=True)
-        return id
-
-    async def create_executor_and_execute(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> None:
+    async def run_test(
+        self,
+        benchmark_input_data: BenchmarkRunnerDTO,
+        benchmark_type: BenchmarkCollectionType,
+        moonshot_runner: Runner,
+    ) -> None:
         try:
-            if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-                executor = moonshot_api.api_create_cookbook_executor(
-                    name=executor_input_data.name,
-                    cookbooks=executor_input_data.cookbooks,
-                    endpoints=executor_input_data.endpoints,
-                    num_of_prompts=executor_input_data.num_of_prompts,
-                    progress_callback_func=self.webhook.on_executor_update
+            if benchmark_type == BenchmarkCollectionType.COOKBOOK:
+                async_run = moonshot_runner.run_cookbooks(
+                    cookbooks=benchmark_input_data.inputs,
+                    num_of_prompts=benchmark_input_data.num_of_prompts,
+                    random_seed=benchmark_input_data.random_seed,
+                    system_prompt=benchmark_input_data.system_prompt,
                 )
             else:
-                executor = moonshot_api.api_create_recipe_executor(
-                    name=executor_input_data.name,
-                    recipes=executor_input_data.recipes,
-                    endpoints=executor_input_data.endpoints,
-                    num_of_prompts=executor_input_data.num_of_prompts,
-                    progress_callback_func=self.webhook.on_executor_update
+                async_run = moonshot_runner.run_recipes(
+                    recipes=benchmark_input_data.inputs,
+                    num_of_prompts=benchmark_input_data.num_of_prompts,
+                    random_seed=benchmark_input_data.random_seed,
+                    system_prompt=benchmark_input_data.system_prompt,
                 )
         except Exception as e:
             self.logger.error(f"Failed to execute benchmark - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
-        await executor.execute()
-        executor.close_executor()
 
-    def schedule_test_task(self, executor_input_data: CookbookExecutorCreateDTO | RecipeExecutorCreateDTO) -> str:
+        await async_run
+        async_run.close()
+
+    async def schedule_test_task(
+        self, input_data: BenchmarkRunnerDTO, benchmark_type: BenchmarkCollectionType
+    ) -> str:
         task_id = self.generate_unique_task_id()
-        if isinstance(executor_input_data, CookbookExecutorCreateDTO):
-            type = BenchmarkExecutorTypes.COOKBOOK
-            #previously, executor.execute() was synchronous, so we run it on separate thread.
-            #now that it is awaitable, we just run it in the same thread
-            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
-        else:
-            type = BenchmarkExecutorTypes.RECIPE
-            exec_benchmark_coroutine = self.create_executor_and_execute(executor_input_data)
-        
-        task = asyncio.create_task(exec_benchmark_coroutine, name=task_id)
+        runner = self.runner_service.create_runner(
+            input_data.run_name,
+            input_data.endpoints,
+            input_data.description,
+            self.progress_status_updater.on_progress_update,
+        )
+        benchmark_coroutine = self.run_test(input_data, benchmark_type, runner)
+
+        task = asyncio.create_task(benchmark_coroutine, name=task_id)
+
         def on_executor_completion(task: asyncio.Task[Any]):
             if task.exception():
-                self.logger.error(f"Executor {task.get_name()} has failed - {task.exception()}")
+                self.logger.error(
+                    f"Executor {task.get_name()} has failed - {task.exception()}"
+                )
             else:
                 self.logger.debug(f"Executor {task.get_name()} has completed")
+
         task.add_done_callback(on_executor_completion)
-        # Id getter needs review. Read comments in function
-        id = self.get_executor_id(type, executor_input_data.name)
-        self.add_task(id, task)
-        return id
+
+        self.add_task(runner.id, task, runner)
+        return runner.id

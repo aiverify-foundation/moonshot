@@ -1,0 +1,11 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+cover_pylib = False
+
+[coverage:report]
+skip_empty = true
+omit = /usr/*, moonshot/api.py, moonshot/src/storage/*_interface.py
+exclude_lines =
+    @abstractmethod
+    @abc.abstractmethod

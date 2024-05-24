@@ -2,6 +2,7 @@ from ast import literal_eval
 
 import cmd2
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from moonshot.api import (
@@ -39,17 +40,21 @@ def add_endpoint(args) -> None:
     Returns:
         None
     """
-    params_dict = literal_eval(args.params)
+    try:
+        params_dict = literal_eval(args.params)
 
-    api_create_endpoint(
-        args.name,
-        args.connector_type,
-        args.uri,
-        args.token,
-        args.max_calls_per_second,
-        args.max_concurrency,
-        params_dict,
-    )
+        new_endpoint_id = api_create_endpoint(
+            args.name,
+            args.connector_type,
+            args.uri,
+            args.token,
+            args.max_calls_per_second,
+            args.max_concurrency,
+            params_dict,
+        )
+        print(f"[add_endpoint]: Endpoint ({new_endpoint_id}) created.")
+    except Exception as e:
+        print(f"[add_endpoint]: {str(e)}")
 
 
 def list_endpoints() -> None:
@@ -62,8 +67,11 @@ def list_endpoints() -> None:
     Returns:
         None
     """
-    endpoint_list = api_get_all_endpoint()
-    display_endpoints(endpoint_list)
+    try:
+        endpoint_list = api_get_all_endpoint()
+        display_endpoints(endpoint_list)
+    except Exception as e:
+        print(f"[list_endpoints]: {str(e)}")
 
 
 def list_connector_types() -> None:
@@ -76,8 +84,11 @@ def list_connector_types() -> None:
     Returns:
         None
     """
-    connector_type_list = api_get_all_connector_type()
-    display_connector_types(connector_type_list)
+    try:
+        connector_type_list = api_get_all_connector_type()
+        display_connector_types(connector_type_list)
+    except Exception as e:
+        print(f"[list_connector_types]: {str(e)}")
 
 
 def view_endpoint(args) -> None:
@@ -95,8 +106,11 @@ def view_endpoint(args) -> None:
     Returns:
         None
     """
-    endpoint_info = api_read_endpoint(args.endpoint)
-    display_endpoints([endpoint_info])
+    try:
+        endpoint_info = api_read_endpoint(args.endpoint)
+        display_endpoints([endpoint_info])
+    except Exception as e:
+        print(f"[view_endpoint]: {str(e)}")
 
 
 def update_endpoint(args) -> None:
@@ -115,9 +129,13 @@ def update_endpoint(args) -> None:
     Returns:
         None
     """
-    endpoint = args.endpoint
-    update_values = dict(literal_eval(args.update_kwargs))
-    api_update_endpoint(endpoint, **update_values)
+    try:
+        endpoint = args.endpoint
+        update_values = dict(literal_eval(args.update_kwargs))
+        api_update_endpoint(endpoint, **update_values)
+        print("[update_endpoint]: Endpoint updated.")
+    except Exception as e:
+        print(f"[update_endpoint]: {str(e)}")
 
 
 def delete_endpoint(args) -> None:
@@ -125,7 +143,8 @@ def delete_endpoint(args) -> None:
     Delete a specific endpoint.
 
     This function deletes a specific endpoint by calling the api_delete_endpoint function from the
-    moonshot.api module using the endpoint name provided in the args.
+    moonshot.api module using the endpoint name provided in the args. Before deletion, it asks for
+    user confirmation. If the user confirms, the endpoint is deleted; otherwise, the deletion is cancelled.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -134,7 +153,18 @@ def delete_endpoint(args) -> None:
     Returns:
         None
     """
-    api_delete_endpoint(args.endpoint)
+    # Confirm with the user before deleting an endpoint
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the endpoint (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
+        console.print("[bold yellow]Endpoint deletion cancelled.[/]")
+        return
+    try:
+        api_delete_endpoint(args.endpoint)
+        print("[delete_endpoint]: Endpoint deleted.")
+    except Exception as e:
+        print(f"[delete_endpoint]: {str(e)}")
 
 
 # ------------------------------------------------------------------------------
@@ -154,7 +184,14 @@ def display_connector_types(connector_types):
         None
     """
     if connector_types:
-        table = Table("No.", "Connector Type")
+        table = Table(
+            title="List of Connector Types",
+            show_lines=True,
+            expand=True,
+            header_style="bold",
+        )
+        table.add_column("No.", width=2)
+        table.add_column("Connector Type", justify="left", width=78)
         for connector_id, connector_type in enumerate(connector_types, 1):
             table.add_section()
             table.add_row(str(connector_id), connector_type)
@@ -179,17 +216,22 @@ def display_endpoints(endpoints_list):
     """
     if endpoints_list:
         table = Table(
-            "No.",
-            "Id",
-            "Name",
-            "Connector Type",
-            "Uri",
-            "Token",
-            "Max calls per second",
-            "Max concurrency",
-            "Params",
-            "Created Date",
+            title="List of Connector Endpoints",
+            show_lines=True,
+            expand=True,
+            header_style="bold",
         )
+        table.add_column("No.", justify="left", width=2)
+        table.add_column("Id", justify="left", width=10)
+        table.add_column("Name", justify="left", width=10)
+        table.add_column("Connector Type", justify="left", width=10)
+        table.add_column("Uri", justify="left", width=10)
+        table.add_column("Token", justify="left", width=10)
+        table.add_column("Max Calls Per Second", justify="left", width=5)
+        table.add_column("Max concurrency", justify="left", width=5)
+        table.add_column("Params", justify="left", width=30)
+        table.add_column("Created Date", justify="left", width=8)
+
         for endpoint_id, endpoint in enumerate(endpoints_list, 1):
             (
                 id,
@@ -212,7 +254,7 @@ def display_endpoints(endpoints_list):
                 token,
                 str(max_calls_per_second),
                 str(max_concurrency),
-                str(params),
+                escape(str(params)),
                 created_date,
             )
         console.print(table)
@@ -225,9 +267,9 @@ def display_endpoints(endpoints_list):
 # ------------------------------------------------------------------------------
 # Add endpoint arguments
 add_endpoint_args = cmd2.Cmd2ArgumentParser(
-    description="Add a new endpoint.",
-    epilog="Example:\n add_endpoint openai-gpt35 my-openai-endpoint "
-    "MY_URI ADD_YOUR_TOKEN_HERE 10 2 \"{'temperature': 0}\"",
+    description="Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.",
+    epilog="Example:\n add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' "
+    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 \"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}\"",
 )
 add_endpoint_args.add_argument(
     "connector_type",
@@ -250,8 +292,18 @@ add_endpoint_args.add_argument("params", type=str, help="Params of the new endpo
 # Update endpoint arguments
 update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
-    epilog="Example:\n update_endpoint test-openai-endpoint "
-    "\"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]\" ",
+    epilog=(
+        "Available keys:\n"
+        "  name: Name of the endpoint\n"
+        "  uri: URI of the endpoint\n"
+        "  token: Token of the endpoint\n"
+        "  max_calls_per_second: Rate limit for max calls per second\n"
+        "  max_concurrency: Rate limit for max concurrency\n"
+        "  params: Extra arguments for the endpoint\n\n"
+        "Example:\n"
+        "  update_endpoint openai-gpt4 \"[('name', 'my-special-openai-endpoint'), "
+        "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
+    ),
 )
 update_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
 update_endpoint_args.add_argument(
@@ -261,13 +313,13 @@ update_endpoint_args.add_argument(
 # View endpoint arguments
 view_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="View an endpoint.",
-    epilog="Example:\n view_endpoint test-openai-endpoint",
+    epilog="Example:\n view_endpoint openai-gpt4",
 )
 view_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
 
 # Delete endpoint arguments
 delete_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Delete an endpoint.",
-    epilog="Example:\n delete_endpoint test-openai-endpoint",
+    epilog="Example:\n delete_endpoint openai-gpt4",
 )
 delete_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")

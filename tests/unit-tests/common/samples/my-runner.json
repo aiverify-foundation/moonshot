@@ -1,0 +1,9 @@
+{
+  "id": "my-runner",
+  "name": "my-runner",
+  "database_file": "data/generated-outputs/databases/my-runner.db",
+  "endpoints": [
+    "openai-gpt4"
+  ],
+  "description": ""
+}

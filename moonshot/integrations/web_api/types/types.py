@@ -1,6 +1,8 @@
-from typing import Any, Dict, NotRequired, List
-from typing_extensions import TypedDict, Annotated
 from enum import Enum
+from typing import Any, List, NotRequired
+
+from typing_extensions import TypedDict
+
 
 class PromptDetails(TypedDict):
     chat_record_id: int
@@ -13,10 +15,12 @@ class PromptDetails(TypedDict):
     duration: str
     prompt_time: str
 
+
 class EndpointChatHistory(TypedDict):
     chat_id: str
     endpoint: str
     chat_history: list[PromptDetails]
+
 
 SessionChats = list[EndpointChatHistory]
 SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
@@ -24,20 +28,32 @@ SessionChatsGroupedBySessionId = dict[str, list[PromptDetails]]
 ExecutiResultItem = dict[str, float]
 ExecutionResults = dict[str, list[ExecutiResultItem]]
 
-class CookbookTestRunProgress(TypedDict):
-    exec_id: str
-    exec_name: str
-    exec_type: str
-    curr_duration: int
-    curr_status: str
-    curr_cookbook_index: int
-    curr_cookbook_name: str
-    curr_cookbook_total: int
-    curr_recipe_index: int
-    curr_recipe_name: str
-    curr_recipe_total: int
-    curr_progress: int
-    curr_error_messages: List[str]
+
+class TestRunProgress(TypedDict):
+    current_runner_id: str
+    current_runner_name: str
+    current_runner_type: str
+    current_duration: int
+    current_status: str
+    current_cookbook_index: int
+    current_cookbook_name: str
+    current_cookbook_total: int
+    current_recipe_index: int
+    current_recipe_name: str
+    current_recipe_total: int
+    current_progress: int
+    current_error_messages: List[str]
+
+
+class RedTeamTestProgress(TypedDict):
+    current_runner_id: str
+    current_am_id: str
+    current_pt_id: str
+    current_cs_id: str
+    current_chats: list[dict]
+    current_batch_size: str
+    current_status: str
+
 
 class UvicornLoggingConfig(TypedDict):
     version: int
@@ -72,8 +88,10 @@ class ResultMetadata(TypedDict):
     num_of_prompts: int
     status: str
 
+
 class RequiredMetadata(TypedDict):
     metadata: ResultMetadata
+
 
 class BenchmarkResult(TypedDict, RequiredMetadata, total=False):
     # This indicates that any other keys should map to dictionaries, but this is not enforced by static type checkers.
