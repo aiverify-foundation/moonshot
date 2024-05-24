@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -77,6 +77,25 @@ class Recipe:
                 "grading_scale": rec_args.grading_scale,
             }
 
+            Recipe.check_file_exists(
+                EnvVariables.PROMPT_TEMPLATES.name,
+                rec_args.prompt_templates,
+                "Prompt Template",
+                "json",
+            )
+            Recipe.check_file_exists(
+                EnvVariables.DATASETS.name, rec_args.datasets, "Dataset", "json"
+            )
+            Recipe.check_file_exists(
+                EnvVariables.METRICS.name, rec_args.metrics, "Metric", "py"
+            )
+            Recipe.check_file_exists(
+                EnvVariables.ATTACK_MODULES.name,
+                rec_args.attack_modules,
+                "Attack Module",
+                "py",
+            )
+
             # Write as json output
             Storage.create_object(EnvVariables.RECIPES.name, rec_id, rec_info, "json")
             return rec_id
@@ -86,7 +105,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(rec_id: str) -> RecipeArguments:
         """
         Retrieves the details of a specific recipe.
@@ -105,7 +124,10 @@ class Recipe:
             Exception: If there is an issue reading the file or during any other part of the process.
         """
         try:
-            return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
+            if rec_id:
+                return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
+            else:
+                raise RuntimeError("Recipe ID is empty")
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")
@@ -196,6 +218,25 @@ class Recipe:
             # Convert the recipe arguments to a dictionary
             rec_info = rec_args.to_dict()
 
+            Recipe.check_file_exists(
+                EnvVariables.PROMPT_TEMPLATES.name,
+                rec_args.prompt_templates,
+                "Prompt Template",
+                "json",
+            )
+            Recipe.check_file_exists(
+                EnvVariables.DATASETS.name, rec_args.datasets, "Dataset", "json"
+            )
+            Recipe.check_file_exists(
+                EnvVariables.METRICS.name, rec_args.metrics, "Metric", "py"
+            )
+            Recipe.check_file_exists(
+                EnvVariables.ATTACK_MODULES.name,
+                rec_args.attack_modules,
+                "Attack Module",
+                "py",
+            )
+
             # Write the updated recipe information to the file
             Storage.create_object(
                 EnvVariables.RECIPES.name, rec_args.id, rec_info, "json"
@@ -207,7 +248,7 @@ class Recipe:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(rec_id: str) -> bool:
         """
         Deletes a recipe identified by its unique ID.
@@ -271,3 +312,25 @@ class Recipe:
         except Exception as e:
             print(f"Failed to get available recipes: {str(e)}")
             raise e
+
+    @staticmethod
+    def check_file_exists(
+        env_var_name: str, file_list: list, file_type: str, extension: str
+    ) -> None:
+        """
+        Checks if a specified file exists in the storage.
+
+        Args:
+            env_var_name (str): The environment variable name where the file is stored.
+            file_name (str): The name of the file to check.
+            file_type (str): The type of the file.
+            extension (str): The extension of the file.
+
+        Raises:
+            RuntimeError: If the file does not exist in the storage.
+        """
+        for file_name in file_list:
+            if file_name and not Storage.is_object_exists(
+                env_var_name, file_name, extension
+            ):
+                raise RuntimeError(f"[Recipe] {file_type} {file_name} does not exist.")

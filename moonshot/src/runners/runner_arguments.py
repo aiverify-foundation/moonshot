@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RunnerArguments(BaseModel):
     id: str  # The ID of the Runner.
 
-    name: str  # The name of the Runner.
+    name: str = Field(min_length=1)  # The name of the Runner.
 
     database_file: str = ""  # The database file associated with the Runner.
 
-    endpoints: list[str] = []  # List of endpoints for the Runner.
+    endpoints: list[str] = Field(min_length=1)  # List of endpoints for the Runner.
 
     description: str = ""  # A brief description of the Runner.
 

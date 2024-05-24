@@ -1,3 +1,5 @@
+from pydantic import conlist, validate_call
+
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 
@@ -5,6 +7,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 # ------------------------------------------------------------------------------
 # Cookbook APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     """
     Creates a new cookbook.
@@ -35,6 +38,7 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     return Cookbook.create(cb_args)
 
 
+@validate_call
 def api_read_cookbook(cb_id: str) -> dict:
     """
     Retrieves a cookbook based on the provided cookbook ID.
@@ -51,23 +55,25 @@ def api_read_cookbook(cb_id: str) -> dict:
     return Cookbook.read(cb_id).to_dict()
 
 
-def api_read_cookbooks(cb_ids: list[str]) -> list[dict]:
+@validate_call
+def api_read_cookbooks(cb_ids: conlist(str, min_length=1)) -> list[dict]:
     """
     Retrieves a list of cookbooks based on the provided list of cookbook IDs.
 
-    This function iterates over the list of cookbook IDs, reads each cookbook using the `read_cookbook` method
-    of the `Cookbook` class, and converts the returned `Cookbook` object to a dictionary using its `to_dict` method.
-    It returns a list of these dictionaries.
+    This function iterates over the list of provided cookbook IDs, reads each cookbook using the `read_cookbook` method
+    of the `Cookbook` class, and converts the returned `Cookbook` objects to dictionaries using their `to_dict` method.
+    It then returns a list of these dictionary representations.
 
     Args:
-        cb_ids (list[str]): A list of cookbook IDs.
+        cb_ids (conlist(str, min_length=1)): A list of cookbook IDs.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing a cookbook.
+        list[dict]: A list of dictionaries representing the cookbooks.
     """
     return [Cookbook.read(cb_id).to_dict() for cb_id in cb_ids]
 
 
+@validate_call
 def api_update_cookbook(cb_id: str, **kwargs) -> bool:
     """
     Updates the fields of an existing cookbook with the provided keyword arguments.
@@ -97,10 +103,14 @@ def api_update_cookbook(cb_id: str, **kwargs) -> bool:
         if hasattr(existing_cookbook, key):
             setattr(existing_cookbook, key, value)
 
+    # Perform pydantic check on the updated existing cookbook
+    CookbookArguments.model_validate(existing_cookbook.to_dict())
+
     # Update the cookbook
     return Cookbook.update(existing_cookbook)
 
 
+@validate_call
 def api_delete_cookbook(cb_id: str) -> bool:
     """
     Deletes a cookbook based on the provided cookbook ID.

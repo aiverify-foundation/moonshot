@@ -1,5 +1,7 @@
 from typing import Callable
 
+from pydantic import validate_call
+
 from moonshot.src.runners.runner import Runner
 from moonshot.src.runners.runner_arguments import RunnerArguments
 
@@ -7,6 +9,7 @@ from moonshot.src.runners.runner_arguments import RunnerArguments
 # ------------------------------------------------------------------------------
 # Runner APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_create_runner(
     name: str,
     endpoints: list[str],
@@ -44,6 +47,7 @@ def api_create_runner(
     return Runner.create(runner_args)
 
 
+@validate_call
 def api_load_runner(
     runner_id: str, progress_callback_func: Callable | None = None
 ) -> Runner:
@@ -63,6 +67,7 @@ def api_load_runner(
     return Runner.load(runner_id, progress_callback_func)
 
 
+@validate_call
 def api_read_runner(runner_id: str) -> dict:
     """
     Reads a runner and returns its information.
@@ -79,6 +84,7 @@ def api_read_runner(runner_id: str) -> dict:
     return Runner.read(runner_id).to_dict()
 
 
+@validate_call
 def api_delete_runner(runner_id: str) -> bool:
     """
     Deletes a runner by its identifier.

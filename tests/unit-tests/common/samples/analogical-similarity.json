@@ -1,0 +1,41 @@
+{
+    "id": "analogical-similarity",
+    "name": "Analogical Similarity",
+    "description": "This recipe measures the model’s ability in discriminating between different degrees of analogical similarity in two given episodes. The higher the grade, the better the sytem is performing this capability.",
+    "tags": [],
+    "categories": [
+        "Capability"
+    ],
+    "datasets": [
+        "analogical-similarity"
+    ],
+    "prompt_templates": [
+        "analogical-similarity"
+    ],
+    "metrics": [
+        "relaxstrmatch"
+    ],
+    "attack_modules": [],
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
+}

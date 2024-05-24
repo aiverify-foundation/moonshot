@@ -46,13 +46,17 @@ def add_recipe(args) -> None:
         Exception: If there is an error during the creation of the recipe or the arguments cannot be evaluated.
     """
     try:
-        tags = literal_eval(args.tags)
+        tags = literal_eval(args.tags) if args.tags else []
         categories = literal_eval(args.categories)
         datasets = literal_eval(args.datasets)
-        prompt_templates = literal_eval(args.prompt_templates)
+        prompt_templates = (
+            literal_eval(args.prompt_templates) if args.prompt_templates else []
+        )
         metrics = literal_eval(args.metrics)
-        attack_modules = literal_eval(args.attack_modules)
-        grading_scale = literal_eval(args.grading_scale)
+        attack_modules = (
+            literal_eval(args.attack_modules) if args.attack_modules else []
+        )
+        grading_scale = literal_eval(args.grading_scale) if args.grading_scale else {}
 
         new_recipe_id = api_create_recipe(
             args.name,
@@ -472,42 +476,52 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Add a new recipe. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_recipe 'My new recipe' "
     "'I am recipe description' "
-    "\"['tag1','tag2']\" "
     "\"['category1','category2']\" "
     "\"['bbq-lite-age-ambiguous']\" "
-    "\"['analogical-similarity','auto-categorisation']\" "
     "\"['bertscore','bleuscore']\" "
-    '"[]" '
-    "\"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
+    "-p \"['analogical-similarity','mmlu']\" "
+    "-t \"['tag1','tag2']\" "
+    "-a \"['charswap_attack_module']\" "
+    "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")
 add_recipe_args.add_argument(
     "description", type=str, help="Description of the new recipe"
 )
 add_recipe_args.add_argument(
-    "tags", type=str, help="List of tags to be included in the new recipe"
+    "-t",
+    "--tags",
+    type=str,
+    help="List of tags to be included in the new recipe",
+    nargs="?",
 )
 add_recipe_args.add_argument(
     "categories", type=str, help="List of tags to be included in the new recipe"
 )
 add_recipe_args.add_argument("datasets", type=str, help="The dataset to be used")
 add_recipe_args.add_argument(
-    "prompt_templates",
+    "-p",
+    "--prompt_templates",
     type=str,
     help="List of prompt templates to be included in the new recipe",
+    nargs="?",
 )
 add_recipe_args.add_argument(
     "metrics", type=str, help="List of metrics to be included in the new recipe"
 )
 add_recipe_args.add_argument(
-    "attack_modules",
+    "-a",
+    "--attack_modules",
     type=str,
     help="List of attack modules to be included in the new recipe",
+    nargs="?",
 )
 add_recipe_args.add_argument(
-    "grading_scale",
+    "-g",
+    "--grading_scale",
     type=str,
-    help="List of attack modules to be included in the new recipe",
+    help="Dict of grading scale for the metric to be included in the new recipe",
+    nargs="?",
 )
 
 # Update recipe arguments
@@ -549,10 +563,10 @@ delete_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
 run_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Run a recipe.",
     epilog="Example:\n run_recipe "
-    '-n 1 -s 1 -p "You are an intelligent AI" '
     '"my new recipe runner" '
-    "\"['bbq','auto-categorisation']\" "
-    "\"['openai-gpt35-turbo']\"",
+    "\"['bbq','mmlu']\" "
+    "\"['openai-gpt35-turbo']\" "
+    '-n 1 -r 1 -s "You are an intelligent AI" ',
 )
 run_recipe_args.add_argument("name", type=str, help="Name of recipe runner")
 run_recipe_args.add_argument("recipes", type=str, help="List of recipes to run")
@@ -561,10 +575,10 @@ run_recipe_args.add_argument(
     "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
 )
 run_recipe_args.add_argument(
-    "-s", "--random_seed", type=int, default=0, help="Random seed number"
+    "-r", "--random_seed", type=int, default=0, help="Random seed number"
 )
 run_recipe_args.add_argument(
-    "-p", "--system_prompt", type=str, default="", help="System Prompt to use"
+    "-s", "--system_prompt", type=str, default="", help="System Prompt to use"
 )
 run_recipe_args.add_argument(
     "-l",

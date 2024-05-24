@@ -213,13 +213,13 @@ def delete_cookbook(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=404, detail=f"Failed to delete cookbook: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=400, detail=f"Failed to delete cookbook: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete endpoint: {e.msg}"
+                status_code=500, detail=f"Failed to delete cookbook: {e.msg}"
             )

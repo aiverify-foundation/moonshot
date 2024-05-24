@@ -12,7 +12,7 @@ router = APIRouter(tags=["Metric"])
 @inject
 def get_all_metrics(
     metric_service: MetricService = Depends(Provide[Container.metric_service]),
-) -> list[str]:
+) -> list[dict]:
     """
     Retrieve all metrics from the database.
 
