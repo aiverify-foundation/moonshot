@@ -1,6 +1,6 @@
 # Walkthrough
 
-Moonshot can be used to run benchmarks and red team. To perform this, an LLM endpoint must be configured to connect to an LLM/LLM application you wish to test. Currently, these are the connector types that is supported out of the box for connectiong to LLMs:
+Moonshot can be used to run benchmarks and red team. To perform this, an LLM endpoint must be configured to connect to an LLM/LLM application you wish to test. Currently, these are the connector types that is supported out of the box for connecting to LLMs:
     
 | Connector Types | LLM Connector Name |
 | --- | ----------- |
