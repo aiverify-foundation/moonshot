@@ -50,12 +50,17 @@ class TestCollectionApiResult:
         # Delete the run data using os.remove
         run_data_files = [
             "tests/unit-tests/src/data/runners/my-new-recipe-runner.json",
-            "tests/unit-tests/src/data/runners/my-new-runner.json",
-            "tests/unit-tests/src/data/runners/my-new-run-ner-1-23.json",
-            "tests/unit-tests/src/data/runners/my-new-runner-1.json",
-            "tests/unit-tests/src/data/runners/none.json",
-            "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
             "tests/unit-tests/src/data/databases/my-new-recipe-runner.db",
+            "tests/unit-tests/src/data/runners/my-new-runner.json",
+            "tests/unit-tests/src/data/databases/my-new-runner.db",
+            "tests/unit-tests/src/data/runners/my-new-run-ner-1-23.json",
+            "tests/unit-tests/src/data/databases/my-new-run-ner-1-23.db",
+            "tests/unit-tests/src/data/runners/my-new-runner-1.json",
+            "tests/unit-tests/src/data/databases/my-new-runner-1.db",
+            "tests/unit-tests/src/data/runners/none.json",
+            "tests/unit-tests/src/data/databases/none.db",
+            "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
+            
         ]
         for run_data_file in run_data_files:
             if os.path.exists(run_data_file):

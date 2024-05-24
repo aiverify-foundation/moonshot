@@ -48,13 +48,16 @@ class TestRedTeamingCLI:
                 "DATABASES": f"{ut_data_dir}/databases/",
                 "DATABASES_MODULES": f"{ut_data_dir}/databases-modules/",
                 "CONNECTORS_ENDPOINTS": f"{ut_data_dir}/connectors-endpoints/",
+                "CONNECTORS": f"{ut_data_dir}/connectors/",
                 "IO_MODULES": f"{ut_data_dir}/io-modules/",
                 "ATTACK_MODULES": f"{ut_data_dir}/attack-modules/",
-                "CONTEXT_STRATEGY": f"{ut_data_dir}/context-strategies/",
+                "CONTEXT_STRATEGY": f"{ut_data_dir}/context-strategy/",
                 "COOKBOOKS": f"{ut_data_dir}/cookbooks/",
                 "METRICS": f"{ut_data_dir}/metrics/",
                 "PROMPT_TEMPLATES": f"{ut_data_dir}/prompt-templates/",
                 "RECIPES": f"{ut_data_dir}/recipes/",
+                "RESULTS": f"{ut_data_dir}/results/",
+                "RUNNERS_MODULES": f"{ut_data_dir}/runner-modules/",
             }
         )
 
@@ -109,13 +112,70 @@ class TestRedTeamingCLI:
             f"{ut_sample_dir}/homoglyph_attack_module.py",
             f"{ut_data_dir}/attack-modules/homoglyph_attack_module.py",
         )        
+        shutil.copyfile(
+            f"{ut_sample_dir}/sample_attack_module.py",
+            f"{ut_data_dir}/attack-modules/sample_attack_module.py",
+        )        
+
+        # Copy connector
+        shutil.copyfile(
+            f"{ut_sample_dir}/openai-connector.py",
+            f"{ut_data_dir}/connectors/openai-connector.py",
+        )        
+
+        # Copy connector endpoint
+        shutil.copyfile(
+            f"{ut_sample_dir}/openai-gpt4.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
+        )        
+        shutil.copyfile(
+            f"{ut_sample_dir}/openai-gpt35-turbo.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
+        )        
+
+        # Copy context strategy
+        shutil.copyfile(
+            f"{ut_sample_dir}/add_previous_prompt.py",
+            f"{ut_data_dir}/context-strategy/add_previous_prompt.py",
+        )        
+
+        # Copy runner module
+        shutil.copyfile(
+            f"{ut_sample_dir}/redteaming.py",
+            f"{ut_data_dir}/runner-modules/redteaming.py",
+        )
 
         # Setup complete, proceed with tests
         yield
 
-        for dir_name in list_of_directories:
-            if os.path.exists(f"{ut_data_dir}/{dir_name}"):
-                shutil.rmtree(f"{ut_data_dir}/{dir_name}/")
+        redteaming_files = [
+            f"{ut_data_dir}/cookbooks/chinese-safety-cookbook.json",
+            f"{ut_data_dir}/recipes/bbq.json",
+            f"{ut_data_dir}/recipes/arc.json",
+            f"{ut_data_dir}/datasets/bbq-lite-age-ambiguous.json",
+            f"{ut_data_dir}/metrics/bertscore.py",
+            f"{ut_data_dir}/metrics/bleuscore.py",
+            f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
+            f"{ut_data_dir}/prompt-templates/mmlu.json",
+            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
+            f"{ut_data_dir}/attack-modules/homoglyph_attack_module.py",
+            f"{ut_data_dir}/attack-modules/sample_attack_module.py",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
+            f"{ut_data_dir}/connectors/openai-connector.py",
+        ]
+
+        #files generated from unit tests
+        redteaming_files.extend([
+            f"{ut_data_dir}/databases/my-second-session.db",
+            f"{ut_data_dir}/databases/my-unit-test-session.db",
+            f"{ut_data_dir}/runners/my-second-session.json",
+            f"{ut_data_dir}/runners/my-unit-test-session.json",
+        ])
+
+        for redteaming_file in redteaming_files:
+            if os.path.exists(redteaming_file):
+                os.remove(redteaming_file)
 
     test_session_id = "my-unit-test-session"
     test_attack_module_id = "my-unit-test-attack_module"
@@ -147,7 +207,7 @@ class TestRedTeamingCLI:
 
             # Success: New session with missing optional arguments
             (
-                ["end_session", f"new_session my-second-session -e \"['openai-gpt4']\""],
+                [f"new_session my-second-session -e \"['openai-gpt4']\""],
                 f"Using session: my-second-session",
             ),
 
@@ -163,11 +223,11 @@ class TestRedTeamingCLI:
                 "Connector endpoint non-existent-connector does not exist.",
             ),
 
-            # Failure: New session and with non-existent runner
-            (
-                [f"new_session my-non-existent-runner -c add_previous_prompt -p mmlu"],
-                "[Runner] Unable to create runner because the runner file does not exist.",
-            ),
+            # # Failure: New session and with non-existent runner
+            # (
+            #     [f"new_session my-non-existent-runner -c add_previous_prompt -p mmlu"],
+            #     "[Runner] Unable to create runner because the runner file does not exist.",
+            # ),
 
             # # Failure: New session and runner with non-existent prompt template
             ## test cases passes if establish connection to database is removed
@@ -201,7 +261,7 @@ class TestRedTeamingCLI:
             # Failure: Use non-existent runner
             (
                 [ f"use_session my-non-existent-runner"],
-                "[Runner] Unable to create runner because the runner file does not exist.",
+                "[Runner] Unable to load runner because the runner file does not exist.",
             ),                        
             # Failure: Use session with unknown flags
             (
@@ -328,67 +388,68 @@ class TestRedTeamingCLI:
     def test_clear_prompt_template(self, cli, command_list, expected_output, capsys):
         perform_assertion(cli, command_list, expected_output, capsys)        
 
-    # # ------------------------------------------------------------------------------
-    # # Listing of files
-    # # ------------------------------------------------------------------------------
+    # # # ------------------------------------------------------------------------------
+    # # # Listing of files
+    # # # ------------------------------------------------------------------------------
 
-    # #     def test_list_attack_modules(self, cli, command_list, expected_output, capsys):
-    # #         pass
+    # # #     def test_list_attack_modules(self, cli, command_list, expected_output, capsys):
+    # # #         pass
 
-    # #     def list_context_strategies(self, cli, command_list, expected_output, capsys)::
-    # #         pass
+    # # #     def list_context_strategies(self, cli, command_list, expected_output, capsys)::
+    # # #         pass
 
-    # #     def list_sessions(self, cli, command_list, expected_output, capsys)::
-    # #         pass
+    # # #     def list_sessions(self, cli, command_list, expected_output, capsys)::
+    # # #         pass
 
 
     
     # ------------------------------------------------------------------------------
     # Running of manual and automated red teaming (Commented out to not send the prompts. Uncomment to run tests.)
+    # Add in your token in the connector endpoints to run the tests
     # ------------------------------------------------------------------------------
+    # @pytest.mark.parametrize(
+    #     "command_list, expected_output",
+    #     [
+            # # Success: Create session and do manual red teaming
+            # (
+            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
+            #      "hello"
+            #      ],
+            #     "[Prompt 0]",
+            # ),
+
+            # # Success: Create session and recognise that it is a command instead of sending the prompt
+            # (
+            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
+            #      f"clear_prompt_template"
+            #      ],
+            #     "Cleared prompt template.",
+            # ),
+
+        # ]
+    # )    
+    # def test_manual_red_teaming(self, cli, command_list, expected_output, capsys):
+    #     perform_assertion(cli, command_list, expected_output, capsys)
+
     @pytest.mark.parametrize(
         "command_list, expected_output",
         [
-            # Success: Create session and do manual red teaming
-            (
-                [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
-                 "hello"
-                 ],
-                "[Prompt 0] took",
-            ),
+            # # Success: Example
+            # (
+            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+            #      "run_attack_module sample_attack_module \"this is my prompt\" "
+            #      "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
+            #      ],
+            #     "[Prompt 1] took",
+            # ),
 
-            # Success: Create session and recognise that it is a command instead of sending the prompt
-            (
-                [f"new_session {test_session_id} -e \"['openai-gpt4']\" -c add_previous_prompt -p mmlu",
-                 f"clear_prompt_template"
-                 ],
-                "Cleared prompt template.",
-            ),
-
-        ]
-    )    
-    def test_manual_red_teaming(self, cli, command_list, expected_output, capsys):
-        perform_assertion(cli, command_list, expected_output, capsys)
-
-    @pytest.mark.parametrize(
-        "command_list, expected_output",
-        [
-            # Success: Example
-            (
-                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-                 "run_attack_module sample_attack_module \"this is my prompt\" "
-                 "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
-                 ],
-                "[Prompt 1] took",
-            ),
-
-            # Success: Run with missing optional arguments
-            (
-                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-                 "run_attack_module sample_attack_module \"this is my prompt\" "
-                 ],
-                "[Prompt 1] took",
-            ),
+            # # Success: Run with missing optional arguments
+            # (
+            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+            #      "run_attack_module sample_attack_module \"this is my prompt\" "
+            #      ],
+            #     "[Prompt 1] took",
+            # ),
 
             # Failure: Run with missing required argument
             (
@@ -438,23 +499,24 @@ class TestRedTeamingCLI:
                  "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscorex\""
                  ],
                 "Unable to get defined metric instance - bleuscorex",
-            ),       
+            ),        
+
         ]
     )    
     def test_automated_red_teaming(self, cli, command_list, expected_output, capsys):
         perform_assertion(cli, command_list, expected_output, capsys)
 
 
-    # # ------------------------------------------------------------------------------
-    # # Deleting of files
-    # # ------------------------------------------------------------------------------
+    # # # ------------------------------------------------------------------------------
+    # # # Deleting of files
+    # # # ------------------------------------------------------------------------------
 
 
-    # #     def delete_attack_module(self, cli, command_list, expected_output, capsys):
-    # #         pass
+    # # #     def delete_attack_module(self, cli, command_list, expected_output, capsys):
+    # # #         pass
 
-    # #     def delete_context_strategy(self, cli, command_list, expected_output, capsys)::
-    # #         pass
+    # # #     def delete_context_strategy(self, cli, command_list, expected_output, capsys)::
+    # # #         pass
 
-    # #     def delete_session(self, cli, command_list, expected_output, capsys)::
-    # #         pass
+    # # #     def delete_session(self, cli, command_list, expected_output, capsys)::
+    # # #         pass

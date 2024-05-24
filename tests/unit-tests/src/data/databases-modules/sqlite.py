@@ -24,7 +24,7 @@ class SQLite(DBInterface):
         """
         try:
             self.sqlite_conn = sqlite3.connect(self.db_path)
-            print(f"Established connection to database ({self.db_path})")
+            # print(f"Established connection to database ({self.db_path})")
             return True
 
         except sqlite3.Error as sqlite3_error:

@@ -50,7 +50,7 @@ class TestRedTeamingCLI:
                 "CONNECTORS_ENDPOINTS": f"{ut_data_dir}/connectors-endpoints/",
                 "IO_MODULES": f"{ut_data_dir}/io-modules/",
                 "ATTACK_MODULES": f"{ut_data_dir}/attack-modules/",
-                "CONTEXT_STRATEGY": f"{ut_data_dir}/context-strategies/",
+                "CONTEXT_STRATEGY": f"{ut_data_dir}/context-strategy/",
                 "COOKBOOKS": f"{ut_data_dir}/cookbooks/",
                 "METRICS": f"{ut_data_dir}/metrics/",
                 "PROMPT_TEMPLATES": f"{ut_data_dir}/prompt-templates/",
@@ -113,9 +113,29 @@ class TestRedTeamingCLI:
         # Setup complete, proceed with tests
         yield
 
-        for dir_name in list_of_directories:
-            if os.path.exists(f"{ut_data_dir}/{dir_name}"):
-                shutil.rmtree(f"{ut_data_dir}/{dir_name}/")
+        common_files = [
+            f"{ut_data_dir}/cookbooks/chinese-safety-cookbook.json",
+            f"{ut_data_dir}/recipes/bbq.json",
+            f"{ut_data_dir}/recipes/arc.json",
+            f"{ut_data_dir}/datasets/bbq-lite-age-ambiguous.json",
+            f"{ut_data_dir}/metrics/bertscore.py",
+            f"{ut_data_dir}/metrics/bleuscore.py",
+            f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
+            f"{ut_data_dir}/prompt-templates/mmlu.json",
+            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
+            f"{ut_data_dir}/attack-modules/homoglyph_attack_module.py",
+        ]
+
+        #files generated from unit tests
+        common_files.extend([
+            f"{ut_data_dir}/connectors-endpoints/another-connector-endpoint.json",
+            f"{ut_data_dir}/connectors-endpoints/my-connector-endpoint.json",
+        ])
+
+
+        for common_file in common_files:
+            if os.path.exists(common_file):
+                os.remove(common_file)
 
     test_session_id = "my-unit-test-session"
     test_attack_module_id = "my-unit-test-attack_module"

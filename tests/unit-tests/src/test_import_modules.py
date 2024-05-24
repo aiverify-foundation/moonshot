@@ -21,8 +21,8 @@ class TestCollectionImportModules:
         valid_module_file_path (str): A valid file path to a sample Python file for testing.
     """
 
-    valid_init_module_file_path = "tests/unit-tests/src/importmodules/__init__.py"
-    valid_module_file_path = "tests/unit-tests/src/importmodules/sample_file.py"
+    valid_init_module_file_path = "tests/unit-tests/common/samples/__init__.py"
+    valid_module_file_path = "tests/unit-tests/common/samples/sample_file.py"
 
     # ------------------------------------------------------------------------------
     # Test create_module_spec functionality
