@@ -75,7 +75,6 @@ def moonshot_data_installation():
     # Code for moonshot-data installation
     print("Installing Moonshot Data from GitHub")
     repo = "https://github.com/moonshot-admin/moonshot-data"
-    branch_name = "main"
     folder_name = repo.split("/")[-1].replace(".git", "")
     
     # Check if the directory already exists
@@ -86,9 +85,6 @@ def moonshot_data_installation():
         
         # Change directory to the folder
         os.chdir(folder_name)
-        
-        # Checkout the branch
-        run_subprocess(["git", "checkout", branch_name], check=True)
         
         print(f"Installing requirements for {folder_name}")
         # Install the requirements if they exist
@@ -106,7 +102,6 @@ def moonshot_data_installation():
 def moonshot_ui_installation():
     # Code for moonshot-ui installation
     repo = "https://github.com/moonshot-admin/moonshot-ui"
-    branch_name = "dev-main"
     folder_name = repo.split("/")[-1].replace(".git", "")
     
     # Check if the directory already exists
@@ -117,9 +112,6 @@ def moonshot_ui_installation():
 
         # Change directory to the folder
         os.chdir(folder_name)
-
-        # Checkout the branch
-        run_subprocess(["git", "checkout", branch_name], check=True)
 
         print(f"Installing requirements for {folder_name}")        
         # Install the requirements if they exist
