@@ -5,7 +5,6 @@ import platform
 import subprocess
 import os
 import threading 
-from pathlib import Path
 import nltk
 from dotenv import dotenv_values
 from moonshot.api import api_set_environment_variables
