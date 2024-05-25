@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -45,10 +45,9 @@ all = [
 ]
 
 [tool.hatch.build.targets.sdist]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
   "examples/",
   "misc/",
@@ -58,10 +57,9 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["moonshot"]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
   "examples/",
   "misc/",
@@ -80,7 +78,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.1.6"
+version = "0.1.7"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
