@@ -7,6 +7,7 @@ This project requires Python <span style="color:red;">3.11</span>
  or later. Ensure that you have Python 3.11 installed on your system before proceeding with installation and usage.
 <!---
 To install Moonshot, there are 4 methods that you can choose from.
+
 ```
 $ pip install projectmoonshot-imda # To install Moonshot library.
 $ pip install "projectmoonshot-imda[web-api]" # To enable running Moonshot using the web API.
