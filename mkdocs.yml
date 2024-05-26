@@ -54,7 +54,7 @@ markdown_extensions:
 nav: 
   - Home : index.md
   - Understanding Moonshot:
-    - Moonshot 101: understanding_moonshot/introduction.md
+    - What's Moonshot: understanding_moonshot/introduction.md
     - API:
       - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
       - Connector API: understanding_moonshot/api_connector.md
