@@ -14,6 +14,7 @@ theme:
       - navigation.indexes
       - navigation.footer
       - navigation.top
+      - toc.integrate
   
   name: material
   palette:
@@ -91,7 +92,7 @@ nav:
       - Session Endpoints: web_api/sessions_endpoints.md
       - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
     - CLI: 
-      - Get Started with CLI : cli/cli_guide.md
+      - Get Started with CLIs : cli/cli_guide.md
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
       - Running Red Teaming: cli/red_teaming.md
