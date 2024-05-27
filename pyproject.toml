@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.1.0"
+version = "0.4.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -40,33 +40,47 @@ cli = [
     "rich==13.7.1",
 ]
 all = [
-    "projectmoonshot-imda[web-api]",
-    "projectmoonshot-imda[cli]",
+    "aiverify-moonshot[web-api]",
+    "aiverify-moonshot[cli]",
 ]
 
 [tool.hatch.build.targets.sdist]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["moonshot"]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 
@@ -80,7 +94,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.1.0"
+version = "0.4.0"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
