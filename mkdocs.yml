@@ -14,6 +14,7 @@ theme:
       - navigation.indexes
       - navigation.footer
       - navigation.top
+      - toc.integrate
   
   name: material
   palette:
@@ -41,6 +42,8 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - admonition
   - pymdownx.arithmatex:
       generic: true
@@ -52,14 +55,34 @@ markdown_extensions:
 nav: 
   - Home : index.md
   - Understanding Moonshot:
-    - Moonshot 101: understanding_moonshot/introduction.md
-    - API: understanding_moonshot/api.md
-  - Getting Started: 
-    - Installation : getting_started/installation.md
+    - What's Moonshot: understanding_moonshot/introduction.md
+    - API:
+      - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
+      - Connector API: understanding_moonshot/api_connector.md
+      - Context Strategy API: understanding_moonshot/api_context_strategy.md
+      - Cookbook API: understanding_moonshot/api_cookbook.md
+      - Dataset API: understanding_moonshot/api_dataset.md
+      - Environment Variable API: understanding_moonshot/api_environment_variables.md
+      - Metric API: understanding_moonshot/api_metrics.md
+      - Prompt Template API: understanding_moonshot/api_prompt_template.md
+      - Recipe API: understanding_moonshot/api_recipe.md
+      - Red Teaming API: understanding_moonshot/api_red_teaming.md
+      - Result API: understanding_moonshot/api_result.md
+      - Run API: understanding_moonshot/api_run.md
+      - Runner API: understanding_moonshot/api_runner.md
+      - Session API: understanding_moonshot/api_session.md
+  - Getting Started:
+    - Command Line Interface (CLI):
+      - Installation (CLI): getting_started/installation_cli.md
+      - Quick Start Guide (CLI): getting_started/quick_start_cli.md
+    - Web API: 
+      - Installation (Web API): getting_started/installation_web_api.md
+      - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
+    - User Interface (UI):
+      - Installation (UI): getting_started/installation_ui.md
+      - Quick Start Guide (UI): getting_started/quick_start_ui.md
     - Walkthrough: getting_started/walkthrough.md
     - Quick Start Guide (Library): getting_started/quick_start_library.md
-    - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
-    - Quick Start Guide (CLI): getting_started/quick_start_cli.md
   - User Guide: 
     - Web API:
       - Get Started with Web API : web_api/web_api_guide.md
@@ -69,7 +92,7 @@ nav:
       - Session Endpoints: web_api/sessions_endpoints.md
       - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
     - CLI: 
-      - Get Started with CLI : cli/cli_guide.md
+      - Get Started with CLIs : cli/cli_guide.md
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
       - Running Red Teaming: cli/red_teaming.md
@@ -79,6 +102,9 @@ nav:
       - Running Benchmark: web_ui/run_benchmark_test.md
       - Cookbook: web_ui/cookbook.md
       - Red Teaming: web_ui/red_teaming.md
+  - Contributor Guide:
+      - Create Sample: contributor_guide/create_sample.md
   - Troubleshoot : troubleshoot/troubleshoot.md
   - Examples : examples/example.md
+  - Additional Information: additional_information/additional_information.md
   - Acknowledgement : acknowledgement/acknowledgement.md
