@@ -41,8 +41,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "recipes": ["recipe1", "recipe2"]
         },
         None,
-        422,
-        None
+        200,
+        {"message": "Cookbook created successfully"}
     ),
     # Missing 'name' and 'description'
     (

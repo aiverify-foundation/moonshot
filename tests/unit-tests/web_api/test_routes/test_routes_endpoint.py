@@ -1,5 +1,6 @@
 import pytest
 from moonshot.integrations.web_api.services.utils.exceptions_handler import ServiceException
+from moonshot.integrations.web_api.schemas.endpoint_response_model import EndpointDataModel
 
 @pytest.mark.parametrize("endpoint_data, exception, expected_status, expected_response",[
     # Success Scenario
@@ -179,7 +180,8 @@ def test_get_all_endpoints(test_client, mock_endpoint_service, mock_response, ex
     if exception:
         mock_endpoint_service.get_all_endpoints.side_effect = exception
     else:
-        mock_endpoint_service.get_all_endpoints.return_value = mock_response
+        mock_response_model = [EndpointDataModel(**data) for data in mock_response]
+        mock_endpoint_service.get_all_endpoints.return_value = mock_response_model
 
     response = test_client.get(f"/api/v1/llm-endpoints")
 
@@ -187,7 +189,11 @@ def test_get_all_endpoints(test_client, mock_endpoint_service, mock_response, ex
     if exception:
         assert exception.msg in response.json()["detail"]
     else:
-        assert response.json() == expected_response
+        expected_response_model = [EndpointDataModel(**data) for data in expected_response]
+        for model in expected_response_model:
+            model.mask_token()
+        expected_response_dicts = [model.dict() for model in expected_response_model]
+        assert response.json() == expected_response_dicts
 
 @pytest.mark.parametrize("mock_response, exception, expected_status, expected_response", [
     # Success Scenario
@@ -268,7 +274,8 @@ def test_get_endpoint(test_client, mock_endpoint_service,endpoint_id, mock_respo
     if exception:
         mock_endpoint_service.get_endpoint.side_effect = exception
     else:
-        mock_endpoint_service.get_endpoint.return_value = mock_response
+        mock_response_model = EndpointDataModel(**mock_response)
+        mock_endpoint_service.get_endpoint.return_value = mock_response_model
 
     response = test_client.get(f"/api/v1/llm-endpoints/{endpoint_id}")
 
@@ -276,7 +283,10 @@ def test_get_endpoint(test_client, mock_endpoint_service,endpoint_id, mock_respo
     if exception:
         assert exception.msg in response.json()["detail"]
     else:
-        assert response.json() == expected_response
+        expected_response_model = EndpointDataModel(**expected_response)
+        expected_response_model.mask_token()
+        expected_dict = expected_response_model.dict()
+        assert response.json() == expected_dict
 
 
 @pytest.mark.parametrize(
