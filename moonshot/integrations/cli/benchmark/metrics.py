@@ -22,7 +22,7 @@ def list_metrics() -> None:
         None
     """
     try:
-        print("Listing metrics for the first time may take a while...")
+        print("Listing metrics may take a while...")
         metrics_list = api_get_all_metric()
         display_metrics(metrics_list)
     except Exception as e:
@@ -45,7 +45,7 @@ def view_metric(args) -> None:
         None
     """
     try:
-        print("Viewing metrics for the first time may take a while...")
+        print("Viewing metrics may take a while...")
         metrics_list = api_get_all_metric()
         metrics_name_list = api_get_all_metric_name()
 

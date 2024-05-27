@@ -16,7 +16,7 @@ from moonshot.api import (
 from moonshot.src.runners.runner import Runner
 
 
-class TestCollectionApiResult:
+class TestCollectionApiRunner:
     @pytest.fixture(autouse=True)
     def init(self):
         # Set environment variables for result paths
@@ -764,6 +764,7 @@ class TestCollectionApiResult:
         ]
 
         actual_runners = api_get_all_runner()
+        print(actual_runners)
         assert len(actual_runners) == len(
             expected_runners
         ), "The number of runners returned does not match the expected count."

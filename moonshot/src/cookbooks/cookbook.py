@@ -59,12 +59,17 @@ class Cookbook:
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
 
+            # check if the cookbook exists
+            if Storage.is_object_exists(EnvVariables.COOKBOOKS.name, cb_id, "json"):
+                raise RuntimeError(f"Cookbook with ID '{cb_id}' already exists.")
+
             # check if recipes in list exist before creating cookbook
             for recipe in cb_args.recipes:
                 if not Storage.is_object_exists(
                     EnvVariables.RECIPES.name, recipe, "json"
                 ):
                     raise RuntimeError(f"{recipe} recipe does not exist.")
+
             cb_info = {
                 "id": cb_id,
                 "name": cb_args.name,
@@ -133,6 +138,13 @@ class Cookbook:
             Exception: If there's an error during the update process.
         """
         try:
+            # check if recipes in list exist before creating cookbook
+            for recipe in cb_args.recipes:
+                if not Storage.is_object_exists(
+                    EnvVariables.RECIPES.name, recipe, "json"
+                ):
+                    raise RuntimeError(f"{recipe} recipe does not exist.")
+
             # Convert the cookbook arguments to a dictionary
             cb_info = cb_args.to_dict()
 
