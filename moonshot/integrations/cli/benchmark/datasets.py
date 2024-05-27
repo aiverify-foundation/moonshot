@@ -27,7 +27,7 @@ def list_datasets() -> None:
         None
     """
     try:
-        print("Listing datasets for the first time may take a while...")
+        print("Listing datasets may take a while...")
         datasets_list = api_get_all_datasets()
         display_datasets(datasets_list)
     except Exception as e:
@@ -50,7 +50,7 @@ def view_dataset(args) -> None:
         None
     """
     try:
-        print("Viewing datasets for the first time may take a while...")
+        print("Viewing datasets may take a while...")
         datasets_list = api_get_all_datasets()
         datasets_name_list = api_get_all_datasets_name()
 

@@ -11,7 +11,7 @@ def list_attack_modules() -> None:
     """
     Retrieves and prints the metadata of all attack modules.
     """
-    print("Listing attack modules for the first time may take a while...")
+    print("Listing attack modules may take a while...")
     attack_module_metadata_list = api_get_all_attack_module_metadata()
 
     if attack_module_metadata_list:

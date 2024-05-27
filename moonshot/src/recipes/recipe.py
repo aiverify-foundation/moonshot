@@ -64,6 +64,10 @@ class Recipe:
         """
         try:
             rec_id = slugify(rec_args.name, lowercase=True)
+            # check if the recipe exists
+            if Storage.is_object_exists(EnvVariables.RECIPES.name, rec_id, "json"):
+                raise RuntimeError(f"Recipe with ID '{rec_id}' already exists.")
+
             rec_info = {
                 "id": rec_id,
                 "name": rec_args.name,

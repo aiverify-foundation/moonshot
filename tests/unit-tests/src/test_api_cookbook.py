@@ -38,6 +38,10 @@ class TestCollectionApiCookbook:
             "tests/unit-tests/common/samples/arc.json",
             "tests/unit-tests/src/data/recipes/arc.json",
         )
+        shutil.copyfile(
+            "tests/unit-tests/common/samples/arc-easy.json",
+            "tests/unit-tests/src/data/recipes/arc-easy.json",
+        )
 
         # Yield to test execution
         yield
@@ -46,6 +50,7 @@ class TestCollectionApiCookbook:
         cookbook_paths = [
             "tests/unit-tests/src/data/cookbooks/sample-cookbook.json",
             "tests/unit-tests/src/data/recipes/arc.json",
+            "tests/unit-tests/src/data/recipes/arc-easy.json",
             "tests/unit-tests/src/data/cookbooks/my-new-coo-kbook-1-23.json",
             "tests/unit-tests/src/data/cookbooks/my-new-cookbook-1.json",
             "tests/unit-tests/src/data/cookbooks/my-new-cookbook.json",
@@ -618,7 +623,7 @@ class TestCollectionApiCookbook:
                 {
                     "name": "Another Updated Sample Cookbook",
                     "description": "A comprehensive guide to baking",
-                    "recipes": ["arc", "new-recipe"],
+                    "recipes": ["arc", "arc-easy"],
                 },
                 {"expected_output": True},
             ),
