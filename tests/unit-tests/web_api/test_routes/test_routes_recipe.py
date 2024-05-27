@@ -71,8 +71,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "attack_modules": ["module1"],
         },
         None,
-        422,
-        None
+        200,
+        {"message": "Recipe created successfully"}
     ),
     # Missing 'tags'
     (
