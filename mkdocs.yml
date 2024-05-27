@@ -4,6 +4,9 @@ repo_url: https://github.com/moonshot-admin/moonshot
 plugins:
   - search
   - mkdocstrings
+  - swagger-ui-tag:
+        defaultModelsExpandDepth: -1
+        docExpansion: none
 
 extra_css:
   - stylesheets/custom_style.css
@@ -16,19 +19,6 @@ theme:
       - navigation.top
   
   name: material
-  palette:
-    - scheme: default
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-      primary: custom
-      accent: purple
-    - scheme: slate
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-      primary: custom
-      accent: lime
   locale: en
   include_sidebar: false
 
@@ -66,13 +56,6 @@ nav:
       - Running Benchmark: web_ui/run_benchmark_test.md
       - Cookbook: web_ui/cookbook.md
       - Red Teaming: web_ui/red_teaming.md
-    - Web API:
-      - Get Started with Web API : web_api/web_api_guide.md
-      - Connector Endpoints: web_api/connector_endpoints.md
-      - Cookbook Endpoints: web_api/cookbook_endpoints.md
-      - Recipe Endpoints: web_api/recipe_endpoints.md
-      - Session Endpoints: web_api/sessions_endpoints.md
-      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
   - API Reference:
     - Moonshot Library:
         - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
@@ -89,6 +72,6 @@ nav:
         - Run API: understanding_moonshot/api_run.md
         - Runner API: understanding_moonshot/api_runner.md
         - Session API: understanding_moonshot/api_session.md
-    - Web-api:
-      - XXX
+    - Web-API:
+      - Web API Swagger: understanding_moonshot/web_api_swagger.md
   - Troubleshoot : troubleshoot/troubleshoot.md
