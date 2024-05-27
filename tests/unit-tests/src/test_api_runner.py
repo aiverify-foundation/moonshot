@@ -764,7 +764,6 @@ class TestCollectionApiRunner:
         ]
 
         actual_runners = api_get_all_runner()
-        print(actual_runners)
         assert len(actual_runners) == len(
             expected_runners
         ), "The number of runners returned does not match the expected count."
