@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.1.7"
+version = "0.4.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -49,10 +49,18 @@ exclude = [
   "assets/",
   "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -61,10 +69,18 @@ exclude = [
   "assets/",
   "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 
@@ -78,7 +94,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.1.7"
+version = "0.4.0"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"

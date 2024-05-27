@@ -1,8 +1,8 @@
 <div align="center">
 
-![Moonshot Logo](https://github.com/moonshot-admin/moonshot/raw/new_dev_main/misc/aiverify-moonshot-logo.png)
+![Moonshot Logo](https://github.com/moonshot-admin/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
 
-**Version 0.1.7**
+**Version 0.4.0**
 
 A simple and modular tool to evaluate any LLM application.
 
