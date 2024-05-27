@@ -74,9 +74,8 @@ env = {
 api_set_environment_variables(env)
 
 ```
-_Note: When changing the reference folder for data, users will no longer be able to access the stock cookbooks. To access these cookbooks, users should copy over their respctive json files and dependencies._
 
-### Step 4: Connecting End Points
+### Step 4: Connecting Endpoints
 You can establish connectivity to an LLM or LLM application by creating an endpoint within your environment.
 
 - View the list of connector types available in Moonshot with:
@@ -117,10 +116,13 @@ api_create_recipe(
     [], # tags
     ["auto-categorisation"], # datasets
     ["auto-categorisation"], # prompt templates
-    ["relaxstrmatch"] # metrics
+    ["relaxstrmatch"], # metrics
+    "benchmark", # type
+    [], # attack_strategies
 )
 ```
-- To add a new cookbook, use api_craete_cookbook(). 
+
+- To add a new cookbook, use api_create_cookbook(). 
 ```python
 api_create_cookbook(
     "new-cookbook", # name of cookbook
@@ -132,27 +134,27 @@ api_create_cookbook(
 ### Step 2: Select Recipe/Cookbook to Run a Benchmark
 To run a benchmark, select a recipe or cookbook that aligns with your desired evaluation or analysis objective.
 
-- To start benchmarking using a recipe, use `api_create_recipe_executor()`.
+- To start benchmarking using a recipe, use `api_create_recipe_runner()`.
 ```python
 recipes = ["auto-categorisation-2"]
 endpoints = ["test-openai-endpoint"]
 num_of_prompts = 5 # use a smaller number to test out the function
 
-bm_executor = api_create_recipe_executor(
-    "my new recipe executor",
+bm_runner = api_create_recipe_runner(
+    "my new recipe runner",
     recipes,
     endpoints,
     num_of_prompts
 )
 ```
-- To start benchmarking using a cookbook, use `api_create_cookbook_executor()`.
+- To start benchmarking using a cookbook, use `api_create_cookbook_runner()`.
 ```python
 cookbooks = ["new-cookbook"]
 endpoints = ["test-openai-endpoint"]
 num_of_prompts = 1
 
-bm_executor = api_create_cookbook_executor(
-    "my new cookbook executor",
+bm_runner = api_create_cookbook_runner(
+    "my new cookbook runner",
     cookbooks,
     endpoints,
     num_of_prompts
@@ -160,7 +162,7 @@ bm_executor = api_create_cookbook_executor(
 ```
 
 ### Step 3: View Results
-The results will be stored in the `moonshot/data/results` directory or the custom path that is defined during the [Set Up](#step-3-environment-variables-optional) process.
+The results will be stored in the `moonshot/data/results` directory by default. However, if a custom path is defined during the [Set Up](#step-3-environment-variables-optional) process, the results will be stored there instead.
 
 Analyze the output to gain insight into the performance your model/application.
 
@@ -173,9 +175,11 @@ To begin, create a Red Teaming session with the list of endpoints you wish to te
 endpoints = ["test-openai-endpoint"]
 
 my_rt_session = api_create_session(
-    "My Red Teaming Session",
-    "Creating a new red teaming description",
+    "My Red Teaming Session", #session name
+    "Creating a new red teaming description", # session description
     endpoints,
+    "add_previous_prompt", # context strategy [optional]
+    "legal-term-template", # prompt template [optional]
 )
 ```
 ### Step 2: Store Session ID
