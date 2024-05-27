@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.runner_service import RunnerService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Runner"])
 
 
 @router.get("/api/v1/runners")
@@ -206,7 +206,7 @@ def get_run_details_by_runner(
 def get_runs_id_in_runner(
     runner_id: str,
     runner_service: RunnerService = Depends(Provide[Container.runner_service]),
-) -> list[str]:
+) -> list[int]:
     """
     Retrieve a list of run identifiers associated with a specific runner.
 

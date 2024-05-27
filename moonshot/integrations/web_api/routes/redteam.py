@@ -11,7 +11,7 @@ from ..schemas.session_response_model import SessionMetadataModel, SessionRespon
 from ..services.session_service import SessionService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Red Teaming"])
 logger = logging.getLogger(__name__)
 
 
@@ -598,7 +598,7 @@ async def close_session(
     session_service: SessionService = Depends(Provide[Container.session_service]),
 ):
     try:
-        session_service.end_session(runner_id)
+        await session_service.end_session(runner_id)
         return {"success": True}
     except ServiceException as e:
         if e.error_code == "FileNotFound":

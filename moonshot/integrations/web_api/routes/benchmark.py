@@ -8,7 +8,7 @@ from ..services.benchmarking_service import BenchmarkingService
 from ..services.utils.exceptions_handler import ServiceException
 from ..types.types import BenchmarkCollectionType
 
-router = APIRouter()
+router = APIRouter(tags=["Benchmarking"])
 
 
 @router.post("/api/v1/benchmarks")
@@ -81,6 +81,10 @@ def get_benchmark_progress(
         elif e.error_code == "ValidationError":
             raise HTTPException(
                 status_code=400, detail=f"Failed to retrieve progress status: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve progress status: {e.msg}"
             )
 
 

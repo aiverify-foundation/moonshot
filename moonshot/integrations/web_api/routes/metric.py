@@ -5,14 +5,14 @@ from ..container import Container
 from ..services.metric_service import MetricService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Metric"])
 
 
 @router.get("/api/v1/metrics")
 @inject
 def get_all_metrics(
     metric_service: MetricService = Depends(Provide[Container.metric_service]),
-) -> list[str]:
+) -> list[dict]:
     """
     Retrieve all metrics from the database.
 

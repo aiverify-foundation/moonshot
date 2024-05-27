@@ -83,7 +83,7 @@ def view_cookbook(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            cookbook (str): The name of the cookbook to view.
+            cookbook (str): The id of the cookbook to view.
 
     Returns:
         None
@@ -170,7 +170,7 @@ def update_cookbook(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
-            cookbook (str): The name of the cookbook to update.
+            cookbook (str): The id of the cookbook to update.
             update_values (str): A string representation of a list of tuples. Each tuple contains a key
             and a value to update in the cookbook.
 
@@ -340,7 +340,9 @@ def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
         console.print("[red]There are no results.[/red]")
 
     # Print run stats
-    console.print(f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n{'='*50}")
+    console.print(
+        f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade that the recipes have in each cookbook\n{'='*50}"
+    )
 
 
 def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> None:
@@ -487,7 +489,7 @@ update_cookbook_args = cmd2.Cmd2ArgumentParser(
     "\"[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), "
     "('recipes', ['analogical-similarity'])]\"",
 )
-update_cookbook_args.add_argument("cookbook", type=str, help="Name of the cookbook")
+update_cookbook_args.add_argument("cookbook", type=str, help="Id of the cookbook")
 update_cookbook_args.add_argument(
     "update_values", type=str, help="Update cookbook key/value"
 )
@@ -497,23 +499,23 @@ view_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="View a cookbook.",
     epilog="Example:\n view_cookbook my-new-cookbook",
 )
-view_cookbook_args.add_argument("cookbook", type=str, help="Name of the cookbook")
+view_cookbook_args.add_argument("cookbook", type=str, help="Id of the cookbook")
 
 # Delete cookbook arguments
 delete_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Delete a cookbook.",
     epilog="Example:\n delete_cookbook my-new-cookbook",
 )
-delete_cookbook_args.add_argument("cookbook", type=str, help="Name of the cookbook")
+delete_cookbook_args.add_argument("cookbook", type=str, help="Id of the cookbook")
 
 # Run cookbook arguments
 run_cookbook_args = cmd2.Cmd2ArgumentParser(
     description="Run a cookbook.",
     epilog="Example:\n run_cookbook "
-    '-n 1 -s 1 -p "You are an intelligent AI" '
     '"my new cookbook runner" '
-    "\"['common-risk-easy']\" "
-    "\"['openai-gpt35-turbo']\"",
+    "\"['chinese-safety-cookbook']\" "
+    "\"['openai-gpt35-turbo']\" "
+    '-n 1 -r 1 -s "You are an intelligent AI" ',
 )
 run_cookbook_args.add_argument("name", type=str, help="Name of cookbook runner")
 run_cookbook_args.add_argument("cookbooks", type=str, help="List of cookbooks to run")
@@ -522,10 +524,10 @@ run_cookbook_args.add_argument(
     "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
 )
 run_cookbook_args.add_argument(
-    "-s", "--random_seed", type=int, default=0, help="Random seed number"
+    "-r", "--random_seed", type=int, default=0, help="Random seed number"
 )
 run_cookbook_args.add_argument(
-    "-p", "--system_prompt", type=str, default="", help="System Prompt to use"
+    "-s", "--system_prompt", type=str, default="", help="System Prompt to use"
 )
 run_cookbook_args.add_argument(
     "-l",

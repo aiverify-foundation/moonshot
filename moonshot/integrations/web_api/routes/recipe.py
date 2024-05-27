@@ -9,7 +9,7 @@ from ..schemas.recipe_response_model import RecipeResponseModel
 from ..services.recipe_service import RecipeService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Recipe"])
 
 
 @router.post("/api/v1/recipes")

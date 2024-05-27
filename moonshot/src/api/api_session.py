@@ -1,4 +1,7 @@
 from operator import itemgetter
+from typing import Any
+
+from pydantic import validate_call
 
 from moonshot.src.api.api_runner import api_get_all_runner, api_load_runner
 from moonshot.src.configs.env_variables import EnvVariables
@@ -11,6 +14,7 @@ from moonshot.src.storage.storage import Storage
 # ------------------------------------------------------------------------------
 # Session and Chat APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_load_session(runner_id: str) -> dict | None:
     """
     Loads the session details for a specific runner.
@@ -27,9 +31,10 @@ def api_load_session(runner_id: str) -> dict | None:
     return Session.load(api_load_runner(runner_id).database_instance)
 
 
+@validate_call
 def api_create_session(
-    runner_id: str, database_instance: DBInterface, endpoints: list, runner_args: dict
-) -> None:
+    runner_id: str, database_instance: Any, endpoints: list[str], runner_args: dict
+) -> Session:
     """
     Creates a new session for a specific runner.
 
@@ -37,21 +42,34 @@ def api_create_session(
 
     Args:
         runner_id (str): The unique identifier of the runner for which the session is to be created.
-        database_instance (DBInterface): The database instance to be used for the session.
+        database_instance (Any): The database instance to be used for the session.
         endpoints (list): A list of endpoints for the session.
         runner_args (dict): A dictionary of arguments for the runner.
 
     Returns:
-        None
+        Session
     """
-    Session(
-        runner_id,
-        RunnerType.REDTEAM,
-        {**runner_args},
-        database_instance,
-        endpoints,
-        Storage.get_filepath(EnvVariables.RESULTS.name, runner_id, "json", True),
-    )
+    if isinstance(database_instance, DBInterface):
+        if runner_id:
+            session_instance = Session(
+                runner_id,
+                RunnerType.REDTEAM,
+                {**runner_args},
+                database_instance,
+                endpoints,
+                Storage.get_filepath(
+                    EnvVariables.RESULTS.name, runner_id, "json", True
+                ),
+            )
+            return session_instance
+        else:
+            raise RuntimeError(
+                "[Session] Failed to initialise Session. String should have at least 1 character."
+            )
+    else:
+        raise RuntimeError(
+            "[Session] Failed to initialise Session. No database instance provided."
+        )
 
 
 def api_get_all_session_names() -> list[str]:
@@ -112,6 +130,7 @@ def api_get_all_session_metadata() -> list:
     )
 
 
+@validate_call
 def api_update_context_strategy(runner_id: str, context_strategy: str) -> bool:
     """
     Updates the context strategy for a specific runner.
@@ -132,6 +151,7 @@ def api_update_context_strategy(runner_id: str, context_strategy: str) -> bool:
     )
 
 
+@validate_call
 def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) -> bool:
     """
     Updates the number of previous prompts used in a context strategy for a specific runner.
@@ -152,6 +172,7 @@ def api_update_cs_num_of_prev_prompts(runner_id: str, num_of_prev_prompts: int) 
     )
 
 
+@validate_call
 def api_update_prompt_template(runner_id: str, prompt_template: str) -> bool:
     """
     Updates the prompt template for a specific runner.
@@ -172,6 +193,7 @@ def api_update_prompt_template(runner_id: str, prompt_template: str) -> bool:
     )
 
 
+@validate_call
 def api_update_metric(runner_id: str, metric_id: str) -> bool:
     """
     Updates the metric for a specific runner.
@@ -192,6 +214,7 @@ def api_update_metric(runner_id: str, metric_id: str) -> bool:
     )
 
 
+@validate_call
 def api_update_system_prompt(runner_id: str, system_prompt: str) -> bool:
     """
     Updates the system prompt for a specific runner.
@@ -212,6 +235,7 @@ def api_update_system_prompt(runner_id: str, system_prompt: str) -> bool:
     )
 
 
+@validate_call
 def api_update_attack_module(runner_id: str, attack_module_id: str) -> bool:
     """
     Updates the attack module for a specific runner.
@@ -232,6 +256,7 @@ def api_update_attack_module(runner_id: str, attack_module_id: str) -> bool:
     )
 
 
+@validate_call
 def api_delete_session(runner_id: str) -> bool:
     """
     Deletes the session for a specific runner.
@@ -248,6 +273,7 @@ def api_delete_session(runner_id: str) -> bool:
     return Session.delete(api_load_runner(runner_id).database_instance)
 
 
+@validate_call
 def api_get_all_chats_from_session(runner_id: str) -> dict | None:
     """
     Retrieves all chat messages from a specific session.

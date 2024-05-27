@@ -1,0 +1,5 @@
+{
+    "name": "mcq-template",
+    "description": "This template is used with BBQ dataset.",
+    "template": "\"{{ prompt }}\" Answer using only the choices given above without giving any explanation."
+}

@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 from typing import Callable
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -78,7 +78,7 @@ class Runner:
                 EnvVariables.RUNNERS.name, runner_id, "json"
             ):
                 raise RuntimeError(
-                    "[Runner] Unable to create runner because the runner file does not exist."
+                    "[Runner] Unable to load runner because the runner file does not exist."
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
@@ -126,7 +126,7 @@ class Runner:
                     EnvVariables.CONNECTORS_ENDPOINTS.name, endpoint, "json"
                 ):
                     raise RuntimeError(
-                        f"[Runner]Connector endpoint {endpoint} does not exist."
+                        f"[Runner] Connector endpoint {endpoint} does not exist."
                     )
 
             runner_info = {
@@ -161,7 +161,7 @@ class Runner:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(runner_id: str) -> RunnerArguments:
         """
         Retrieves the runner data and constructs a RunnerArguments object.
@@ -179,16 +179,19 @@ class Runner:
             Exception: If an error occurs during the data retrieval or any other operation within the method.
         """
         try:
-            return RunnerArguments(
-                **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
-            )
+            if runner_id:
+                return RunnerArguments(
+                    **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
+                )
+            else:
+                raise RuntimeError("Runner ID is empty")
 
         except Exception as e:
             print(f"[Runner] Failed to read runner: {str(e)}")
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(runner_id: str) -> bool:
         """
         Deletes the runner and its associated database instance.

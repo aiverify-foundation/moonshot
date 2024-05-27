@@ -1,3 +1,5 @@
+from pydantic import validate_call
+
 from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 
 
@@ -18,6 +20,7 @@ def api_get_all_context_strategies() -> list[str]:
     return ContextStrategy.get_all_context_strategies()
 
 
+@validate_call
 def api_delete_context_strategy(cs_id: str) -> bool:
     """
     Deletes a context strategy identified by its ID.
