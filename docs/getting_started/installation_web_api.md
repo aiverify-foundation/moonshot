@@ -69,11 +69,7 @@ $ git clone https://github.com/moonshot-admin/moonshot.git
 ```
 cd moonshot
 ```
-3. Checkout to the <i>run-moonshot</i> branch (temporary step):
-```
-git checkout run-moonshot
-``` 
-4. Install the required packages:
+3. Install the required packages:
 ```
 $ pip install -r requirements.txt
 ```
