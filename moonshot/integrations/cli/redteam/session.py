@@ -369,14 +369,20 @@ new_session_args.add_argument(
     "-c",
     "--context_strategy",
     type=str,
-    help="Name of the context strategy module to be used.",
+    help=(
+        "Name of the context_strategy to be used - indicate context strategy here if you wish to use with "
+        "the selected attack."
+    ),
     nargs="?",
 )
 new_session_args.add_argument(
     "-p",
     "--prompt_template",
     type=str,
-    help="Name of the prompt template to be used.",
+    help=(
+        "Name of the prompt template to be used - indicate prompt template here if you wish to use with "
+        "the selected attack."
+    ),
     nargs="?",
 )
 

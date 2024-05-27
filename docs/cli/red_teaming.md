@@ -1,63 +1,60 @@
-# Red Teaming
-To send custom prompts to LLM endpoint(s), you need to first create a **session**. In a **session**, you can send prompts to multiple LLM endpoints (each endpoint will have its own chat), utilise prompt templates, and context strategies. 
+# Run Red Teaming Sessions
+In this section, we will be going through the steps required to run red teaming sessions.
 
-- **Session**: A group of *Chat(s)*, depending on the number of endpoint(s) defined in the session. A Session can utilise one *Prompt Template* and *Context Strategy* at any one time. Every chat in a session will inherit the Prompt Template and Context Strategy set for the session.
-- **Endpoint**: The URI of the LLM API, where your prompts will be sent to.
-- **Chat**: The history of prompts and replies with a specific endpoint. Each endpoint in a session has a chat.
-- **Prompt Template**: Additional static information that is appended to your prompt to form the final prompt. The final prompt will be sent to the endpoint.
-- **Context Strategy**: Information to be sent with your current prompt to give a context or background to the LLM. Currently, the context strategy availabile are past prompt(s) and response(s) in the same chat. It is defined as an integer *n*, where *n* is the number of past prompts and responses to append to the current prompt.
+To run a test, you will need:
 
-**Sending a Prompt to Endpoint(s) via CLI**
+- **Endpoint Connector** - a configuration file to connect to your desired LLM endpoint
+- **Session** - a session allows users to perform manual and automated red teaming on the LLMs, and stores the prompts and responses to and fro.
+- **Prompt** - a prompt that you will be sending to LLMs in manual red teaming/ a starting prompt to input in attack modules before sending to the LLMs
 
-1. Create a session
-            
-    There are 3 parameters (**name**,**description** and **list of endpoint(s)**) required when creating a session. In this example, we are creating a session with 1 endpoint:  
-    ```
-    new_session my_test_sess "this is a session description" '["my-openai-gpt35"]'
-    ```
+For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
-2. Configure a prompt template for this session **(optional)**
+### Create an Endpoint Connector
+The guide to creating an endpoint connector be found [here](benchmarking.md###create-an-endpoint-connector)
 
-    - Once you have created a session, you can specify a prompt template to use for all the chats in this session. 
+### Create a Session
+Once your endpoint connector is created, we can start creating our session for red teaming.
 
-        ```
-        use_prompt_template <name of prompt template> 
-        ```
+Every session must reside in a runner. Before we create a session, we can view a list of runners currently available by entering `list_runners`:
+    ![list of runners](cli_images/runners.png)
 
-        - To see the list of prompt templates availabile:
-            ```
-            list_prompt_templates
-            ```
-
-3. Configure a context strategy for this session **(optional)**
-    - You can also specify the context strategy for the current session.
-        
-        ```
-        use_context_strategy <number of previous prompts>
-        ```
+There are two options to create a session, we can either use an existing runner, or create a new runner with a session. You can enter `new_session -h` to better understand its usage.
 
 
-4. Send the prompt to the endpoint by typing into the terminal directly (the following example has a prompt template and context strategy set to prepend to the prompt):
+1. Use existing runner. For example, to create a session with an existing runner with the following configurations:
+
+    - Runner ID (`id` in `list_runners`):  `my-test-mrt`
+    - Context strategy (`id` in `list_context_strategies`): `add_previous_prompt`
+    - Prompt template (`id` in `list_prompt_templates`): `mmlu`
     
-    - Prompt template: `auto-categorisation` with the following contents: `For the following statement, provide a short word or phrase as the completion of the sentence:`
-    - Context strategy: `1` (`1` previous prompt and response used as the context for the current prompt)
-    - Current prompt: `the capital of cambodia is` 
-    - Results:
-        
-        ![Redteaming prompt](../res/red-teaming-prompt.png)
- 
-!!! tip "Tip"
-    You can view the current prompt template and context strategy set by referring to `PT` and `CS` respectively in the CLI.
+    The command would be `new_session my-test-mrt -c add_previous_prompt -p mmlu`.  You should see that your session is created:
+    ![create session with existing runner](cli_images/create_session_existing_runner.png)
 
 
-**Red Teaming - Commands**
-```bash
-new_session            Add a new red teaming session.
-list_sessions          List all available sessions.
-use_session            Use an existing red teaming session.
-end_session            End the current session.
-list_prompt_templates  List all prompt templates available.
-use_prompt_template    Use a prompt template.
-use_context_strategy   Use a context strategy.
-```
-You can run `<command-name> --help` to better understand the usage of a command.
+    > **_NOTE:_**  Context strategy and prompt template are optional and can be set later so you can omit the `-c -p` flags if you do not need them    
+
+
+2. Create new runner. For example, to create a session with a new runner with the following configurations: 
+
+    - Runner ID: `my-new-runner-test-mrt`
+    - Endpoint: `openai-gpt35-turbo and openai-gpt4` (endpoint(s) is required when you create a new session)
+    - Prompt template (`id` in `list_prompt_templates`): `phrase-relatedness`
+
+    The command would be `new_session my-new-runner-test-mrt -e "['openai-gpt35-turbo','openai-gpt4']" -p phrase-relatedness`.
+
+    ![create session with new runner](cli_images/create_session_new_runner.png)
+
+Once you have a session created and activated, we can proceed with red teaming. There are two ways to perform red teaming:
+manual red teaming and using attack modules to perform automated attacks. 
+
+### Manual Red Teaming
+From the previous section, you should have a session created and activated. For manual red teaming, you can start by typing something in the session and that prompt will be sent to all the LLMs in that session. 
+    ![manual red teaming pt](cli_images/manual_red_teaming_pt.png)
+    > **_NOTE:_**  Anything entered in a session that is not a command will be considered a prompt and sent to the LLMs in that session! 
+
+### Run Attack Modules
+We will use the same session from manual red teaming. Enter `run_attack_module -h` to better understand its usage. For example, to run an attack module with the following configuration:
+    - Attack module ID (`Id` in `list_runners`):  `sample_attack_module`
+    - Prompt: `Hello world`
+    
+    
