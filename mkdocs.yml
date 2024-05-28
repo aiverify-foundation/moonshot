@@ -51,13 +51,24 @@ nav:
       - How to Run Benchmark Tests: tutorial/web-ui/benchmark.md
       - How to Run Red Teaming: tutorial/web-ui/redteam.md
     - CLI : 
-      - How to Create Custom Cookbook: tutorial/cli/create_cookbook.md
-      - How to Create Custom Recipe: tutorial/cli/create_cookbook.md
+      - How to Create Custom Benchmark Tests: tutorial/cli/create_benchmark_tests.md
       - How to Create Connector Endpoint: tutorial/cli/create_endpoint.md
-      - How to Start Automated Red Teaming: tutorial/cli/automated-rt.md
-      - How to Run Benchmark: tutorial/cli/benchmark.md
+      - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
+      - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
   - User Guide: 
-    - Web UI Guide: 
+    - Web API:
+      - Get Started with Web API : web_api/web_api_guide.md
+      - Connector Endpoints: web_api/connector_endpoints.md
+      - Cookbook Endpoints: web_api/cookbook_endpoints.md
+      - Recipe Endpoints: web_api/recipe_endpoints.md
+      - Session Endpoints: web_api/sessions_endpoints.md
+      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
+    - CLI: 
+      - Get Started with CLIs : cli/cli_guide.md
+      - Connecting to LLMs: cli/connecting_endpoints.md
+      - Running Benchmark: cli/benchmarking.md
+      - Running Red Teaming: cli/red_teaming.md
+    - Moonshot UI User Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
       - Model Endpoints: web_ui/model_endpoint.md
       - Running Benchmark: web_ui/run_benchmark_test.md
