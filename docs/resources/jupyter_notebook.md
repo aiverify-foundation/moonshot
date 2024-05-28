@@ -1,6 +1,6 @@
 Here are some examples of how you can run Moonshot using Jupyter Notebook.
 
-[Moonshot Feature Walkthrough](https://github.com/aiverify-foundation/moonshot/blob/main/examples/jupyter-notebook/Moonshot%20Feature%20Walkthrough.ipynb)
+[Moonshot Benchmark Feature Walkthrough](https://github.com/aiverify-foundation/moonshot/blob/main/examples/jupyter-notebook/Moonshot%20-%20Benchmark%20Feature%20Walkthrough.ipynb)
 
 [Tutorial 1 - Basic Workflow - Execute a Benchmark](https://github.com/aiverify-foundation/moonshot/blob/main/examples/jupyter-notebook/Tutorial%201%20-%20Basic%20Workflow%20-%20Execute%20a%20Benchmark.ipynb)
 
