@@ -196,7 +196,7 @@ Red-Teaming is the adversarial prompting of LLM applications to induce them to b
 Project Moonshot simplifies the process of Red-Teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with Red-Teaming tools like prompt templates, context strategies and attack modules.
 
 ![Red Teaming UI](https://github.com/aiverify-foundation/moonshot/raw/main/misc/redteam-ui.gif)
-* ✨ <b>Automated Red Teaming</b>
+✨ <b>Automated Red Teaming</b>
 
 As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
 
