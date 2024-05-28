@@ -63,17 +63,15 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     app_kwargs = {}
     if cfg.asyncio.monitor_task():
         app_kwargs["lifespan"] = lifespan
-        
+
+    app_kwargs["swagger_ui_parameters"] = {
+        "defaultModelsExpandDepth": -1,
+        "docExpansion": None
+        }
+
     app: CustomFastAPI = CustomFastAPI(
         title="Project Moonshot",
-        description="AI Verify advances Gen AI testing with Project Moonshot.",
-        version="0.1.0",
-        terms_of_service="README.md",
-        contact={"name": "The Moonshot Team", "email": "our.moonshot.team@gmail.com"},
-        license_info={
-            "name": "Apache Software License 2.0",
-            "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
-        },
+        version="0.4.0",
         **app_kwargs
     )
 

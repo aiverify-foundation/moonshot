@@ -4,6 +4,9 @@ repo_url: https://github.com/moonshot-admin/moonshot
 plugins:
   - search
   - mkdocstrings
+  - swagger-ui-tag:
+        defaultModelsExpandDepth: -1
+        docExpansion: none
 
 extra_css:
   - stylesheets/custom_style.css
@@ -16,19 +19,6 @@ theme:
       - navigation.top
   
   name: material
-  palette:
-    - scheme: default
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-      primary: custom
-      accent: purple
-    - scheme: slate
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-      primary: custom
-      accent: lime
   locale: en
   include_sidebar: false
 
@@ -58,7 +48,16 @@ nav:
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
   - Tutorials:
-    - XXX
+    - Web UI: 
+      - How to Create Custom Cookbook: tutorial/web-ui/create_cookbook.md
+      - How to Create Connector Endpoint: tutorial/web-ui/create_endpoint.md
+      - How to Create Connector: tutorial/s.md
+      - How to Start Automated Red Teaming: tutorial/s.md
+    - CLI : 
+      - How to Create Custom Cookbook: tutorial/create_cookbook.md
+      - How to Create Connector Endpoint: tutorial/create_endpoint.md
+      - How to Create Connector: tutorial/s.md
+      - How to Start Automated Red Teaming: tutorial/s.md
   - User Guide: 
     - Web UI Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
@@ -66,19 +65,11 @@ nav:
       - Running Benchmark: web_ui/run_benchmark_test.md
       - Cookbook: web_ui/cookbook.md
       - Red Teaming: web_ui/red_teaming.md
-    - Web API:
-      - Get Started with Web API : web_api/web_api_guide.md
-      - Connector Endpoints: web_api/connector_endpoints.md
-      - Cookbook Endpoints: web_api/cookbook_endpoints.md
-      - Recipe Endpoints: web_api/recipe_endpoints.md
-      - Session Endpoints: web_api/sessions_endpoints.md
-      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
     - CLI: 
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
       - Running Red Teaming: cli/red_teaming.md 
       - Adding Your Own Tests: cli/add_your_own_tests.md
-
   - API Reference:
     - Moonshot Library:
         - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
@@ -95,6 +86,13 @@ nav:
         - Run API: understanding_moonshot/api_run.md
         - Runner API: understanding_moonshot/api_runner.md
         - Session API: understanding_moonshot/api_session.md
-    - Web-api:
-      - XXX
+    - Web-API: understanding_moonshot/web_api_swagger.md
+  - Advance User:
+    - create metric: a.py
+    - create connector : a.py 
+    - create am : ok.py
+  - Resources:
+      - Jupyter temporary only NB: smt.md
+      - List of Recipe: smt .md
+      - Cookbook: sm.md
   - Troubleshoot : troubleshoot/troubleshoot.md
