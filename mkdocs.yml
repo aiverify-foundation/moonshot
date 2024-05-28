@@ -73,6 +73,12 @@ nav:
       - Recipe Endpoints: web_api/recipe_endpoints.md
       - Session Endpoints: web_api/sessions_endpoints.md
       - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
+    - CLI: 
+      - Connecting to LLMs: cli/connecting_endpoints.md
+      - Running Benchmark: cli/benchmarking.md
+      - Running Red Teaming: cli/red_teaming.md 
+      - Adding Your Own Tests: cli/add_your_own_tests.md
+
   - API Reference:
     - Moonshot Library:
         - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
