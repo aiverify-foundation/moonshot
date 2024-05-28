@@ -9,7 +9,7 @@ from ..schemas.endpoint_response_model import EndpointDataModel
 from ..services.endpoint_service import EndpointService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Endpoint"])
 
 
 @router.post("/api/v1/llm-endpoints")

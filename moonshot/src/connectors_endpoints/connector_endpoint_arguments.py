@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ConnectorEndpointArguments(BaseModel):
@@ -6,7 +6,7 @@ class ConnectorEndpointArguments(BaseModel):
     # During creation, id is not required. The id is automatically generated and returned
     id: str
 
-    name: str  # name (str): The name for the endpoint.
+    name: str = Field(min_length=1)  # name (str): The name for the endpoint.
 
     connector_type: str  # connector_type (str): The type of the LLM connector (e.g., 'GPT-3', 'Bert', etc.).
 
@@ -14,9 +14,13 @@ class ConnectorEndpointArguments(BaseModel):
 
     token: str  # token (str): The access token required to authenticate and access the LLM connector's API.
 
-    max_calls_per_second: int  # max_calls_per_second (int): The number of api calls per second
+    max_calls_per_second: int = Field(
+        gt=0
+    )  # max_calls_per_second (int): The number of api calls per second
 
-    max_concurrency: int  # max_concurrency (int): The number of concurrent api calls
+    max_concurrency: int = Field(
+        gt=0
+    )  # max_concurrency (int): The number of concurrent api calls
 
     params: dict  # params (dict): A dictionary that contains connection specified parameters
 

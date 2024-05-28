@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.benchmark_result_service import BenchmarkResultService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Benchmark Results"])
 
 
 @router.get("/api/v1/benchmarks/results")
@@ -36,11 +36,15 @@ async def get_all_results(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Unable to find results file: {e.msg}"
+                status_code=404, detail=f"Failed to retrieve results: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve results: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve progress status: {e.msg}"
+                status_code=500, detail=f"Failed to retrieve results: {e.msg}"
             )
 
 
@@ -116,13 +120,16 @@ async def get_one_results(
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Unable to find results file: {e.msg}"
+                status_code=404, detail=f"Failed to retrieve result: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve result: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve progress status: {e.msg}"
+                status_code=500, detail=f"Failed to retrieve result: {e.msg}"
             )
-
 
 @router.delete("/api/v1/benchmarks/results/{result_id}")
 @inject

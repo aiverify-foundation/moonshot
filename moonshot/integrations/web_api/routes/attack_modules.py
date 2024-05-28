@@ -5,7 +5,7 @@ from ..container import Container
 from ..services.attack_module_service import AttackModuleService
 from ..services.utils.exceptions_handler import ServiceException
 
-router = APIRouter()
+router = APIRouter(tags=["Attack Modules"])
 
 
 @router.get("/api/v1/attack-modules")

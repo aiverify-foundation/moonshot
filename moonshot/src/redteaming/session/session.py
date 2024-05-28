@@ -6,6 +6,8 @@ from ast import literal_eval
 from datetime import datetime
 from typing import Any, Callable
 
+from slugify import slugify
+
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.redteaming.session.chat import Chat
 from moonshot.src.redteaming.session.red_teaming_progress import RedTeamingProgress
@@ -18,6 +20,7 @@ from moonshot.src.utils.import_modules import get_instance
 
 
 class SessionMetadata:
+    # TODO: convert this into a pydantic model
     def __init__(
         self,
         session_id: str,
@@ -31,16 +34,16 @@ class SessionMetadata:
         metric: str,
         system_prompt: str,
     ):
-        self.session_id = session_id
-        self.endpoints = endpoints
-        self.created_epoch = created_epoch
-        self.created_datetime = created_datetime
-        self.prompt_template = prompt_template
-        self.context_strategy = context_strategy
-        self.cs_num_of_prev_prompts = cs_num_of_prev_prompts
-        self.attack_module = attack_module
-        self.metric = metric
-        self.system_prompt = system_prompt
+        self.session_id = self.check_type(session_id, str)
+        self.endpoints = self.check_type(endpoints, list)
+        self.created_epoch = self.check_type(created_epoch, float)
+        self.created_datetime = self.check_type(created_datetime, str)
+        self.prompt_template = self.check_type(prompt_template, str)
+        self.context_strategy = self.check_type(context_strategy, str)
+        self.cs_num_of_prev_prompts = self.check_type(cs_num_of_prev_prompts, int)
+        self.attack_module = self.check_type(attack_module, str)
+        self.metric = self.check_type(metric, str)
+        self.system_prompt = self.check_type(system_prompt, str)
 
     def to_dict(self) -> dict:
         """
@@ -118,6 +121,26 @@ class SessionMetadata:
             metric,
             system_prompt,
         )
+
+    def check_type(self, checked_attribute: Any, expected_type: type) -> Any:
+        """
+        Checks if the type of the given attribute matches the expected type.
+
+        Args:
+            checked_attribute (Any): The attribute to be checked.
+            expected_type (type): The expected type of the attribute.
+
+        Returns:
+            Any: The checked attribute if its type matches the expected type.
+
+        Raises:
+            TypeError: If the type of the checked attribute does not match the expected type.
+        """
+        if not isinstance(checked_attribute, expected_type):
+            raise TypeError(
+                f"Expected type for {checked_attribute} is {expected_type}, but got {type(checked_attribute)}"
+            )
+        return checked_attribute
 
 
 class Session:
@@ -200,7 +223,12 @@ class Session:
             "%Y%m%d-%H%M%S"
         )
 
-        self.runner_id = runner_id
+        self.runner_id = slugify(runner_id, lowercase=True)
+        if self.runner_id != runner_id:
+            raise RuntimeError(
+                "[Session] Failed to initialise Session. Invalid Runner ID."
+            )
+
         self.runner_args = runner_args
         self.runner_type = runner_type
         self.results_file_path = results_file_path
@@ -221,6 +249,23 @@ class Session:
         attack_module = self.runner_args.get("attack_module", "")
         system_prompt = self.runner_args.get("system_prompt", "")
         metric_id = self.runner_args.get("metric_id", "")
+
+        self.check_file_exists(
+            EnvVariables.PROMPT_TEMPLATES.name,
+            prompt_template,
+            "Prompt Template",
+            "json",
+        )
+        self.check_file_exists(
+            EnvVariables.CONTEXT_STRATEGY.name,
+            context_strategy,
+            "Context Strategy",
+            "py",
+        )
+        self.check_file_exists(
+            EnvVariables.ATTACK_MODULES.name, attack_module, "Attack Module", "py"
+        )
+        self.check_file_exists(EnvVariables.METRICS.name, metric_id, "Metric", "py")
 
         if self.database_instance:
             # create session metadata table if it does not exist
@@ -247,12 +292,7 @@ class Session:
                 print("[Session] Creating new session.")
 
                 # create chat history table for each endpoint
-                for endpoint in endpoints:
-                    endpoint_id = endpoint.replace("-", "_")
-                    Storage.create_database_table(
-                        self.database_instance,
-                        Session.sql_create_chat_history_table.format(endpoint_id),
-                    )
+
                 self.session_metadata = SessionMetadata(
                     runner_id,
                     endpoints,
@@ -262,9 +302,16 @@ class Session:
                     context_strategy,
                     cs_num_of_prev_prompts,
                     attack_module,
-                    system_prompt,
                     metric_id,
+                    system_prompt,
                 )
+
+                for endpoint in endpoints:
+                    endpoint_id = endpoint.replace("-", "_")
+                    Storage.create_database_table(
+                        self.database_instance,
+                        Session.sql_create_chat_history_table.format(endpoint_id),
+                    )
 
                 Storage.create_database_record(
                     self.database_instance,
@@ -542,13 +589,13 @@ class Session:
             raise RuntimeError(
                 f"[Session] Prompt Template {prompt_template} does not exist."
             )
-        else:
-            Storage.update_database_record(
-                db_instance,
-                (prompt_template, runner_id),
-                Session.sql_update_session_metadata_field.format("prompt_template"),
-            )
-            return True
+
+        Storage.update_database_record(
+            db_instance,
+            (prompt_template, runner_id),
+            Session.sql_update_session_metadata_field.format("prompt_template"),
+        )
+        return True
 
     @staticmethod
     def update_metric(
@@ -706,3 +753,23 @@ class Session:
                 )
                 chats.update({endpoint_id: list_of_chats_from_one_ep})
         return chats
+
+    def check_file_exists(
+        self, env_var_name: str, file_name: str, file_type: str, extension: str
+    ) -> None:
+        """
+        Checks if a specified file exists in the storage.
+
+        Args:
+            env_var_name (str): The environment variable name where the file is stored.
+            file_name (str): The name of the file to check.
+            file_type (str): The type of the file.
+            extension (str): The extension of the file.
+
+        Raises:
+            RuntimeError: If the file does not exist in the storage.
+        """
+        if file_name and not Storage.is_object_exists(
+            env_var_name, file_name, extension
+        ):
+            raise RuntimeError(f"[Session] {file_type} {file_name} does not exist.")

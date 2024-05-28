@@ -1,9 +1,12 @@
+from pydantic import validate_call
+
 from moonshot.src.datasets.dataset import Dataset
 
 
 # ------------------------------------------------------------------------------
 # Datasets APIs
 # ------------------------------------------------------------------------------
+@validate_call
 def api_delete_dataset(ds_id: str) -> bool:
     """
     Deletes a dataset identified by its unique dataset ID.

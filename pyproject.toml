@@ -3,8 +3,8 @@ requires = ["hatchling","hatch-build-scripts"]
 build-backend = "hatchling.build"
 
 [project]
-name = "projectmoonshot-imda"
-version = "0.3.4"
+name = "aiverify-moonshot"
+version = "0.4.0"
 authors = [
     { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
 ]
@@ -30,7 +30,7 @@ dependencies = [
 
 [project.optional-dependencies]
 web-api = [
-    "typing-extensions==4.11.0",
+    "typing-extensions==4.12.0",
     "fastapi==0.110.3",
     "uvicorn==0.29.0",
     "dependency-injector==4.41.0",
@@ -40,33 +40,47 @@ cli = [
     "rich==13.7.1",
 ]
 all = [
-    "projectmoonshot-imda[web-api]",
-    "projectmoonshot-imda[cli]",
+    "aiverify-moonshot[web-api]",
+    "aiverify-moonshot[cli]",
 ]
 
 [tool.hatch.build.targets.sdist]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["moonshot"]
-artifacts = [
-    "moonshot/data/connectors-endpoints/test-openai-endpoint.json"
-]
 exclude = [
+  "assets/",
+  "ci/",
   "docs/",
+  "mkdocs.yml",
   "examples/",
   "misc/",
   "poetry.lock",
   "tests/",
+  "test-report.html",
+  "test-report.json",
+  "test-badge.svg",
+  "cov-badge.svg",
+  "coverage.json",
+  "pytest.ini",
+  "run_unit_test.sh"
 ]
 
 
@@ -79,8 +93,8 @@ Issues = "https://github.com/moonshot-admin/moonshot/issues"
 allow-direct-references = true
 
 [tool.poetry]
-name = "projectmoonshot-imda"
-version = "0.3.4"
+name = "aiverify-moonshot"
+version = "0.4.0"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -94,7 +108,7 @@ jinja2 = "3.1.4"
 pydantic = "2.7.1"
 pyparsing = "3.1.2"
 xxhash = "3.4.1"
-typing-extensions = "4.11.0"
+typing-extensions = "4.12.0"
 fastapi = "0.110.3"
 uvicorn = "0.29.0"
 dependency-injector = "4.41.0"

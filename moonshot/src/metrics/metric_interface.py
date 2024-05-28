@@ -7,6 +7,9 @@ from moonshot.src.utils.timeit import timeit
 
 
 class MetricInterface:
+    config_name = "metrics_config"
+    config_extension = "json"
+
     @abstractmethod
     @timeit
     def get_metadata(self) -> dict | None:
@@ -63,7 +66,7 @@ class MetricInterface:
             dict: The metric configuration as a dictionary. Returns an empty dict if the configuration is not found.
 
         Raises:
-            Exception: If reading the metrics configuration fails.
+            Exception: If reading the metrics configuration fails or if the configuration cannot be created.
         """
         try:
             obj_results = Storage.read_object(
@@ -72,5 +75,21 @@ class MetricInterface:
             return obj_results.get(met_id, {})
 
         except Exception as e:
-            print(f"Failed to read metrics configuration: {str(e)}")
-            raise e
+            print(f"[MetricInterface] Failed to read metrics configuration: {str(e)}")
+            print("Attempting to create empty metrics configuration...")
+            try:
+                Storage.create_object(
+                    obj_type=EnvVariables.METRICS.name,
+                    obj_id="metrics_config",
+                    obj_info={},
+                    obj_extension="json",
+                )
+                # After creation, attempt to read it again to ensure it was created successfully
+                obj_results = Storage.read_object(
+                    EnvVariables.METRICS.name, "metrics_config", "json"
+                )
+                return obj_results.get(met_id, {})
+            except Exception as e:
+                raise Exception(
+                    f"[MetricInterface] Failed to create metrics configuration: {str(e)}"
+                )

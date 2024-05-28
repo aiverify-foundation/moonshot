@@ -10,10 +10,9 @@ from moonshot.api import (
     api_update_context_strategy,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.src.redteaming.session.session import Session
 
 console = Console()
-
-DEFAULT_CONTEXT_STRATEGY_PROMPT = 5
 
 
 def use_context_strategy(args: argparse.Namespace) -> None:
@@ -28,22 +27,25 @@ def use_context_strategy(args: argparse.Namespace) -> None:
     num_of_prev_prompts = (
         args.num_of_prev_prompts
         if args.num_of_prev_prompts
-        else DEFAULT_CONTEXT_STRATEGY_PROMPT
+        else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
     )
 
     # Check if current session exists. If it does, update context strategy and number of previous prompts
     if active_session:
         active_session["context_strategy"] = new_context_strategy_name
         active_session["cs_num_of_prev_prompts"] = num_of_prev_prompts
+        try:
+            api_update_context_strategy(
+                active_session["session_id"], new_context_strategy_name
+            )
+            print(
+                f"Updated session: {active_session['session_id']}. "
+                f"Context Strategy: {active_session['context_strategy']}."
+                f"No. of previous prompts for Context Strategy: {active_session['cs_num_of_prev_prompts']}."
+            )
+        except Exception as e:
+            print(f"[use_context_strategy]: {str(e)}")
 
-        api_update_context_strategy(
-            active_session["session_id"], new_context_strategy_name
-        )
-        print(
-            f"Updated session: {active_session['session_id']}. "
-            f"Context Strategy: {active_session['context_strategy']}."
-            f"No. of previous prompts for Context Strategy: {active_session['cs_num_of_prev_prompts']}."
-        )
     else:
         print(
             "There is no active session. Activate a session to send a prompt with a context strategy."
@@ -82,9 +84,12 @@ def clear_context_strategy() -> None:
     """
     # Check if current session exists
     if active_session:
-        api_update_context_strategy(active_session["session_id"], "")
-        active_session["context_strategy"] = ""
-        print("Cleared context strategy.")
+        try:
+            api_update_context_strategy(active_session["session_id"], "")
+            active_session["context_strategy"] = ""
+            print("Cleared context strategy.")
+        except Exception as e:
+            print(f"[clear_context_strategy: {str(e)}]")
     else:
         print(
             "There is no active session. Activate a session to send a prompt with a context strategy."

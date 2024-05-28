@@ -1,0 +1,5 @@
+{
+    "name": "mmlu",
+    "description": "To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context.",
+    "template": "Question:\n{{ prompt }}\nSelect the most appropriate answer or options to fill in the blank (if any): "
+}

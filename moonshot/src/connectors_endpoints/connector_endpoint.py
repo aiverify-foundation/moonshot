@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -55,7 +55,7 @@ class ConnectorEndpoint:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(ep_id: str) -> ConnectorEndpointArguments:
         """
         Fetches the details of a given endpoint.
@@ -75,7 +75,12 @@ class ConnectorEndpoint:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
-            return ConnectorEndpointArguments(**ConnectorEndpoint._read_endpoint(ep_id))
+            if ep_id:
+                return ConnectorEndpointArguments(
+                    **ConnectorEndpoint._read_endpoint(ep_id)
+                )
+            else:
+                raise RuntimeError("Connector Endpoint ID is empty")
 
         except Exception as e:
             print(f"Failed to read endpoint: {str(e)}")
@@ -143,7 +148,7 @@ class ConnectorEndpoint:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(ep_id: str) -> bool:
         """
         Deletes the endpoint with the specified ID.

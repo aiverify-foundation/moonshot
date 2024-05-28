@@ -19,6 +19,7 @@ from .routes import (
     endpoint,
     metric,
     prompt_template,
+    context_strategy,
     recipe,
     runner,
 )
@@ -63,7 +64,16 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     if cfg.asyncio.monitor_task():
         app_kwargs["lifespan"] = lifespan
 
-    app: CustomFastAPI = CustomFastAPI(**app_kwargs)
+    app_kwargs["swagger_ui_parameters"] = {
+        "defaultModelsExpandDepth": -1,
+        "docExpansion": None
+        }
+
+    app: CustomFastAPI = CustomFastAPI(
+        title="Project Moonshot",
+        version="0.4.0",
+        **app_kwargs
+    )
 
     if cfg.cors.enabled():
         logger.info("CORS is enabled")
@@ -84,6 +94,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
 
     app.include_router(red_team_router)
     app.include_router(prompt_template.router)
+    app.include_router(context_strategy.router)
     app.include_router(benchmark.router)
     app.include_router(endpoint.router)
     app.include_router(recipe.router)

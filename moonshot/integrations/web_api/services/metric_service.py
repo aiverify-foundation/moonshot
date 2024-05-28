@@ -5,7 +5,7 @@ from ..services.utils.exceptions_handler import exception_handler
 
 class MetricService(BaseService):
     @exception_handler
-    def get_all_metric(self) -> list[str]:
+    def get_all_metric(self) -> list[dict]:
         metrics = moonshot_api.api_get_all_metric()
         return metrics
 

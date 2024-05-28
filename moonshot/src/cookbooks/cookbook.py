@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
@@ -53,10 +53,23 @@ class Cookbook:
             str: The unique ID of the newly created cookbook.
 
         Raises:
+            RuntimeError: If any of the recipes specified in the cookbook does not exist.
             Exception: If there is an error during the file writing process or any other operation within the method.
         """
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
+
+            # check if the cookbook exists
+            if Storage.is_object_exists(EnvVariables.COOKBOOKS.name, cb_id, "json"):
+                raise RuntimeError(f"Cookbook with ID '{cb_id}' already exists.")
+
+            # check if recipes in list exist before creating cookbook
+            for recipe in cb_args.recipes:
+                if not Storage.is_object_exists(
+                    EnvVariables.RECIPES.name, recipe, "json"
+                ):
+                    raise RuntimeError(f"{recipe} recipe does not exist.")
+
             cb_info = {
                 "id": cb_id,
                 "name": cb_args.name,
@@ -73,7 +86,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def read(cb_id: str) -> CookbookArguments:
         """
         Retrieves the details of a specified cookbook.
@@ -92,6 +105,9 @@ class Cookbook:
             Exception: If there's an error during the file reading process or any other operation within the method.
         """
         try:
+            if not cb_id:
+                raise RuntimeError("Cookbook ID is empty")
+
             obj_results = Storage.read_object(
                 EnvVariables.COOKBOOKS.name, cb_id, "json"
             )
@@ -122,6 +138,13 @@ class Cookbook:
             Exception: If there's an error during the update process.
         """
         try:
+            # check if recipes in list exist before creating cookbook
+            for recipe in cb_args.recipes:
+                if not Storage.is_object_exists(
+                    EnvVariables.RECIPES.name, recipe, "json"
+                ):
+                    raise RuntimeError(f"{recipe} recipe does not exist.")
+
             # Convert the cookbook arguments to a dictionary
             cb_info = cb_args.to_dict()
 
@@ -136,7 +159,7 @@ class Cookbook:
             raise e
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(cb_id: str) -> bool:
         """
         Deletes a cookbook identified by its ID.

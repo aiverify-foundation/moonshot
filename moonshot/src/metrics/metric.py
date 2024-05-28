@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic.v1 import validate_arguments
+from pydantic import validate_call
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 
@@ -40,7 +41,7 @@ class Metric:
             raise RuntimeError(f"Unable to get defined metric instance - {met_id}")
 
     @staticmethod
-    @validate_arguments
+    @validate_call
     def delete(met_id: str) -> bool:
         """
         Deletes a metric identified by its unique metric ID.
@@ -88,8 +89,10 @@ class Metric:
                 EnvVariables.METRICS.name, Metric.cache_name, Metric.cache_extension
             )
             return cache_info if cache_info else {}
-        except Exception as e:
-            print(f"No previous cache information: {str(e)}")
+        except Exception:
+            print(
+                f"No previous cache information because {Metric.cache_name} is not found."
+            )
             return {}
 
     @staticmethod
@@ -132,7 +135,7 @@ class Metric:
             mets = Storage.get_objects(EnvVariables.METRICS.name, "py")
 
             for met in mets:
-                if "__" in met:
+                if "__" in met or MetricInterface.config_name in met:
                     continue
 
                 met_name = Path(met).stem
