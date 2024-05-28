@@ -48,13 +48,14 @@ nav:
     - Web UI: 
       - How to Create Custom Cookbook: tutorial/web-ui/create_cookbook.md
       - How to Create Connector Endpoint: tutorial/web-ui/create_endpoint.md
-      - How to Create Connector: tutorial/s.md
-      - How to Start Automated Red Teaming: tutorial/s.md
+      - How to Run Benchmark Tests: tutorial/web-ui/benchmark.md
+      - How to Run Red Teaming: tutorial/web-ui/redteam.md
     - CLI : 
-      - How to Create Custom Cookbook: tutorial/create_cookbook.md
-      - How to Create Connector Endpoint: tutorial/create_endpoint.md
-      - How to Create Connector: tutorial/s.md
-      - How to Start Automated Red Teaming: tutorial/s.md
+      - How to Create Custom Cookbook: tutorial/cli/create_cookbook.md
+      - How to Create Custom Recipe: tutorial/cli/create_cookbook.md
+      - How to Create Connector Endpoint: tutorial/cli/create_endpoint.md
+      - How to Start Automated Red Teaming: tutorial/cli/automated-rt.md
+      - How to Run Benchmark: tutorial/cli/benchmark.md
   - User Guide: 
     - Web UI Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
@@ -85,9 +86,11 @@ nav:
         - Session API: api_reference/api_session.md
     - Web-API: api_reference/web_api_swagger.md
   - Advance User:
-    - create metric: a.py
-    - create connector : a.py 
-    - create am : ok.py
+    - How to Create a Metric: a.py
+    - How to Create a Moonshot-Compatible Dataset : a.py 
+    - How to Create an Attack Module : ok.py
+    - How to Create a Prompt Template: a.py
+    - How to Create a Connector : a-py
   - Resources:
       - Jupyter Notebook: resources/jupyter_notebook.md
       - Cookbook: resources/cookbooks.md
