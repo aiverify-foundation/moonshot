@@ -10,7 +10,7 @@ To run a test, you will need:
 For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
 ### Create an Endpoint Connector
-The guide to creating an endpoint connector be found [here](benchmarking.md###create-an-endpoint-connector)
+If you have not already created an endpoint connector, check out the guide [here](connecting_endpoints.md).
 
 ### Create a Session
 Once your endpoint connector is created, we can start creating our session for red teaming.

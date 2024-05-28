@@ -102,7 +102,7 @@ def view_recipe(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            recipe (str): The name of the recipe to view.
+            recipe (str): The id of the recipe to view.
 
     Returns:
         None
@@ -188,7 +188,7 @@ def update_recipe(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
-            recipe (str): The name of the recipe to update.
+            recipe (str): The id of the recipe to update.
             update_values (str): A string representation of a list of tuples. Each tuple contains a key
             and a value to update in the recipe.
 
@@ -382,7 +382,9 @@ def show_recipe_results(recipes, endpoints, recipe_results, duration):
         console.print("[red]There are no results.[/red]")
 
     # Print run stats
-    console.print(f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n{'='*50}")
+    console.print(
+        f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade that the recipes have in each cookbook\n{'='*50}"
+    )
 
 
 def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None:
@@ -540,7 +542,7 @@ update_recipe_args = cmd2.Cmd2ArgumentParser(
     "Example command:\n"
     "  update_recipe my-new-recipe \"[('name', 'My Updated Recipe'), ('tags', ['fairness', 'bbq'])]\" ",
 )
-update_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
+update_recipe_args.add_argument("recipe", type=str, help="Id of the recipe")
 update_recipe_args.add_argument(
     "update_values", type=str, help="Update recipe key/value"
 )
@@ -550,14 +552,14 @@ view_recipe_args = cmd2.Cmd2ArgumentParser(
     description="View a recipe.",
     epilog="Example:\n view_recipe my-new-recipe",
 )
-view_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
+view_recipe_args.add_argument("recipe", type=str, help="Id of the recipe")
 
 # Delete recipe arguments
 delete_recipe_args = cmd2.Cmd2ArgumentParser(
     description="Delete a recipe.",
     epilog="Example:\n delete_recipe my-new-recipe",
 )
-delete_recipe_args.add_argument("recipe", type=str, help="Name of the recipe")
+delete_recipe_args.add_argument("recipe", type=str, help="Id of the recipe")
 
 # Run recipe arguments
 run_recipe_args = cmd2.Cmd2ArgumentParser(

@@ -16,7 +16,7 @@ from moonshot.api import (
 from moonshot.src.runners.runner import Runner
 
 
-class TestCollectionApiResult:
+class TestCollectionApiRunner:
     @pytest.fixture(autouse=True)
     def init(self):
         # Set environment variables for result paths
