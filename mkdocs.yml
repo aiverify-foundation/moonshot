@@ -54,10 +54,10 @@ nav:
       - How to Create Connector: tutorial/s.md
       - How to Start Automated Red Teaming: tutorial/s.md
     - CLI : 
-      - How to Create Custom Cookbook: tutorial/create_cookbook.md
-      - How to Create Connector Endpoint: tutorial/create_endpoint.md
-      - How to Create Connector: tutorial/s.md
-      - How to Start Automated Red Teaming: tutorial/s.md
+      - How to Create Custom Benchmark Tests: tutorial/cli/create_benchmark_tests.md
+      - How to Create Connector Endpoint: tutorial/cli/create_endpoint.md
+      - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
+      - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
   - User Guide: 
     - Web UI Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
