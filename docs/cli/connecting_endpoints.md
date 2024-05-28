@@ -1,42 +1,46 @@
-## Connecting Endpoints
+In this section, we will be going through the steps required to create an endpoint connector.
 
-Establish and save connections to the endpoints of the LLMs that you wish to evaluate. 
+Before we jump into executing tests and performing red teaming on LLMs, we have to first create an endpoint connector. This endpoint connector will help us to connect to a specific LLM.
 
-Moonshot currently provides easy connection to: OpenAI's GPT4 & GPT3.5, GPT2 and Llama2-13b-gptq on Hugging Face, and Anthropic's Claude2.
+For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
-!!! important "Important"
-    Please note that you will most likely need to supply your own API token/key to connect to the LLM endpoints.
+### Using an Existing Endpoint Connector
+
+1. To view the endpoint connectors available, enter `list_endpoints`. You will see a list of available endpoints that we have created beforehand:
+
+    ![list of endpoints](cli_images/endpoints.png)
+
+2. If there is no endpoint connector for you here, you create your own endpoint connector [here](#creating-an-endpoint-connector). Otherwise, enter `update_endpoint -h` to understand how to modify the endpoint connector you want to use (like adding your own API key):
+
+    - Example: `update_endpoint openai-gpt4 "[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"`
+
+        Here, we are updating an endpoint connector with the ID `open-gpt-4`. The keys and values to be updated are tuples in a list (i.e. update the `name` field to `my-special-openai-endpoint`)
+
+3. Use the `update_endpoint` command to update your endpoint, then use the `view_endpoint` command to view your updated endpoint connector:
+
+    ![endpoint updated](cli_images/update_endpoint.png)
+
+### Creating an Endpoint Connector
+
+1. To understand more about creating an endpoint connector, enter `add_endpoint -h`:
+    - Example: `add_endpoint openai-connector 'my-openai-connector' myendpointuri mythisismysecretapitoken 2 10 "{'temperature': 0.5}"`. 
+    
+        To view the list of connector types, enter `list_connector_types`:
+    ![list of connector types](cli_images/connector_types.png)
+        
+        In this example, we are creating an endpoint connector for the `openai-connector` **connector type**:
+
+        - Name of your endpoint connenctor (unique identifier): `my-openai-connector`
+        - URI: `myendpointuri` (can set this to a random string like `none` if it is not required by your endpoint connector)
+        - API token: `thisismysecretapitoken`
+        - Max number of calls made to the endpoint per second: `2`
+        - Max concurrency of the endpoint:`10`
+        - Other parameters that this endpoint may need:
+            - Temperature: 0.5        
+
+        > **_NOTE:_** If you do not see the connector type you want to use, refer to this TODO guide to learn how to create your own connector type. 
 
 
-To connect to these models, you simply need to create an endpoint configuration file under the directory `data/connectors-endpoints` and define the following fields in that file:
-
-
-
-- **type**: The python module name of LLM that you would like to connect to. (It should be any ONE of the Python modules available at `data/connectors`) 
-- **name**: The name of this endpoint (It should also be the name of this file)
-- **uri**: The URI of the LLM endpoint. 
-- **token**: Your API token/key to connect to the LLM endpoint.
-- **max_calls_per_second**: The maximum number of API calls made to the LLM endpoint per second.
-- **max_concurrency**: The maximum number of open concurrent connections to the LLM endpoint.
-- **params**: The parameter(s) required to be sent to the LLM endpoint. (optional)
- 
-For example, if you wish to create an endpoint configuration file to connect to Claude 2, you can create a file named `my-anthropic-claude2.json` in `data/connectors-endpoints`. The contents of `my-anthropic-claude2.json` should look something like this:
-
-    {
-        "type": "claude2",
-        "name": "my-anthropic-claude2",
-        "uri": "<your_endpoint_url>",
-        "token": "<your_api_token>",
-        "max_calls_per_second": 100,
-        "max_concurrency": 100,
-        "params": {}
-    }
-💡**Quick Start:** If you have an OpenAI API key, simply edit the pre-configured endpoint at `my-openai-gpt35.json`, and you'll be able to start evaluating or red-teaming GPT3.5. 
-
-**Connecting LLMs - CLI Commands**
-```bash                                                          
-list_connect_types    Get a list of available LLM connection types.
-add_endpoint          Add a new endpoint.
-list_endpoints        Get a list of configured LLM endpoints.
-```
-You can run `<command-name> --help` to better understand the usage of a command or view cli guide [here](../cli/cli_guide.md).
+2. Use the `create_endpoint` command to create your endpoint, then use the `view_endpoint <YOUR ENDPOINT CONNECTOR ID>` command to view your newly created endpoint connector:
+        > **_NOTE:_** The ID of the connector endpoint is created by slugifying the name.
+    ![endpoint connected](cli_images/endpoint_created.png)
