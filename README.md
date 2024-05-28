@@ -94,7 +94,7 @@ To run Moonshot Web UI:
 python -m moonshot web
 ```
 Open [http://localhost:3000/](http://localhost:3000/) in a browser and you should see:
-![Moonshot UI Home](https://github.com/aiverify-foundation/moonshot/raw/mainmisc/ui-homepage.png)
+![Moonshot UI Home](https://github.com/aiverify-foundation/moonshot/raw/main/misc/ui-homepage.png)
 
 #### Interactive CLI
 To run Moonshot CLI:
