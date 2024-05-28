@@ -1,4 +1,4 @@
-<div align="center">
+ <div align="center">
 
 ![Moonshot Logo](https://github.com/moonshot-admin/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
 
@@ -16,9 +16,9 @@ A simple and modular tool to evaluate any LLM application.
 Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), Project Moonshot is one of the first tools to bring [Benchmarking](#benchmarking-with-moonshot) and [Red-Teaming](#red-teaming-with-moonshot) together to help AI developers, compliance teams and AI system owners <b>evaluate LLMs and LLM applications</b>.
 
 In this initial version, Moonshot can be used through several interfaces:
-- User-friendly Web UI - [Web UI User Guide]()
-- Interactive Command Line Interface - [CLI User Guide]()
-- Seamless Integration into your MLOps workflow via Moonshot Library APIs or Moonshot Web APIs - [Notebook Examples](), [Web API Docs]()
+- User-friendly Web UI - [Web UI User Guide](https://aiverify-foundation.github.io/moonshot/web_ui/web_ui_guide/)
+- Interactive Command Line Interface - [CLI User Guide](https://aiverify-foundation.github.io/moonshot/cli/connecting_endpoints/)
+- Seamless Integration into your MLOps workflow via Moonshot Library APIs or Moonshot Web APIs - [Notebook Examples](https://github.com/aiverify-foundation/moonshot/tree/main/examples/jupyter-notebook), [Web API Docs](https://aiverify-foundation.github.io/moonshot/api_reference/web_api_swagger/)
 
 </br>
 
@@ -55,7 +55,7 @@ python -m moonshot -i moonshot-data -i moonshot-ui
 ```
 Check out our [Installation Guide]() for a more details.
 
-If you are having installation issues, see the [Troubleshooting Guide]().
+If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/troubleshoot/troubleshoot/).
 <details>
 <summary><b>Other installation options</b></summary>
 Here's a summary of other installation commands available:
@@ -82,7 +82,7 @@ pip install -r requirements.txt
 
 🖼️ If you plan to install our Web UI, you will also need [moonshot-ui](https://github.com/aiverify-foundation/moonshot-ui)
 
-Check out our [Installation Guide]() for a more details.
+Check out our [Installation Guide](https://aiverify-foundation.github.io/moonshot/getting_started/quick_install/) for a more details.
 </details>
 </br>
 
@@ -152,7 +152,7 @@ Moonshot helps you identify and run only the most relevant tests, optimizing the
 
 * ✨ <b>Adding custom tests</b>
 
-You can also tailor your evaluation process with custom datasets, to evaluate AI Systems for unique use cases. To do so, you can easily create your own <b>📜recipes</b> in Moonshot. See [How to create a custom recipe]().
+You can also tailor your evaluation process with custom datasets, to evaluate AI Systems for unique use cases. To do so, you can easily create your own <b>📜recipes</b> in Moonshot. See [How to create a custom recipe](https://aiverify-foundation.github.io/moonshot/tutorial/cli/create_benchmark_tests/).
 
 ```
 {
@@ -177,7 +177,7 @@ A Recipe consists of 2 essential components:
 3. <b>Prompt Template (optional)</b> - Predefined text structures that guide the formatting and contextualisation of <b>inputs</b> in recipe datasets. </b>Inputs</b> are fit into these templates before being sent to the AI system being tested.
 4. <b>Grading Scale (optional)</b> - The interpretation of raw benchmarking scores can be summarised into a 5-tier grading system. Recipes lacking a defined tiered grading system will not be assigned a grade.
 
-[More about recipes]().
+[More about recipes](https://aiverify-foundation.github.io/moonshot/resources/recipes/).
 
 </details>
 <br/>
@@ -186,7 +186,7 @@ A Recipe consists of 2 essential components:
 
 Using Moonshot's Web UI, you can produce a HTML report that visualises your test results in easy-to-read charts. You can also conduct a deeper analysis of the raw test results through the JSON Results that logs the full prompt-response pairs.
 
-![Report Example Chart](./misc/report-example-chart.png)
+![Report Example Chart](https://github.com/moonshot-admin/moonshot/raw/main/misc/report-example-chart.png)
 
 </br>
 
@@ -196,13 +196,13 @@ Red-Teaming is the adversarial prompting of LLM applications to induce them to b
 
 Project Moonshot simplifies the process of Red-Teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with Red-Teaming tools like prompt templates, context strategies and attack modules.
 
-![Red Teaming UI](./misc/redteaming-ui.png)
+![Red Teaming UI](https://github.com/moonshot-admin/moonshot/raw/main/misc/redteaming-ui.png)
 
 * ✨ <b>Automated Red Teaming</b>
 
 As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
 
-[View attack modules available]().
+[View attack modules available](https://aiverify-foundation.github.io/moonshot/resources/attack-modules/).
 
 
 </br></br>
