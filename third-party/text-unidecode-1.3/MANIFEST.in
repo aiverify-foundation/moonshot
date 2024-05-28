@@ -1,3 +1,0 @@
-include LICENSE
-include _dump.pl
-include test_unidecode.py

@@ -1,5 +1,5 @@
 annotated-types==0.7.0 ; python_version >= "3.11" and python_version < "3.12"
-anyio==4.3.0 ; python_version >= "3.11" and python_version < "3.12"
+anyio==4.4.0 ; python_version >= "3.11" and python_version < "3.12"
 attrs==23.2.0 ; python_version >= "3.11" and python_version < "3.12"
 click==8.1.7 ; python_version >= "3.11" and python_version < "3.12"
 cmd2==2.4.3 ; python_version >= "3.11" and python_version < "3.12"
