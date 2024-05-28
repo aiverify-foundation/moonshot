@@ -48,7 +48,8 @@ nav:
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
   - Tutorials:
-    - XXX
+    - How To Create Custom Cookbook: tutorial/create_cookbook.md
+    - How To Create Connector Endpoint: tutorial/create_endpoint.md
   - User Guide: 
     - Web UI Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
