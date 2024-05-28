@@ -1,0 +1,1159 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="../cookbooks/" rel="prev"/>
+<link href="../datasets/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
+<title>Recipes - Moonshot</title>
+<link href="../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#list-of-recipes">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header md-header--shadow" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Moonshot" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Moonshot">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Moonshot
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Recipes
+            
+          </span>
+</div>
+</div>
+</div>
+<script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/moonshot-admin/moonshot" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Moonshot" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Moonshot">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Moonshot
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/moonshot-admin/moonshot" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Getting Started
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../getting_started/overview/">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../getting_started/quick_install/">
+<span class="md-ellipsis">
+    Quick Install
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../getting_started/first_test/">
+<span class="md-ellipsis">
+    Your First Test
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Tutorials
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Web UI
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_1">
+<span class="md-nav__icon md-icon"></span>
+            Web UI
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/web-ui/create_cookbook/">
+<span class="md-ellipsis">
+    How to Create Custom Cookbook
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/web-ui/create_endpoint/">
+<span class="md-ellipsis">
+    How to Create Connector Endpoint
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/web-ui/benchmark/">
+<span class="md-ellipsis">
+    How to Run Benchmark Tests
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/web-ui/redteam/">
+<span class="md-ellipsis">
+    How to Run Red Teaming
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+<span class="md-ellipsis">
+    CLI
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_2">
+<span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/cli/create_benchmark_tests/">
+<span class="md-ellipsis">
+    How to Create Custom Benchmark Tests
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/cli/create_endpoint/">
+<span class="md-ellipsis">
+    How to Create Connector Endpoint
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/cli/run_benchmark_tests/">
+<span class="md-ellipsis">
+    How to Run Benchmark Tests
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../tutorial/cli/run_red_teaming/">
+<span class="md-ellipsis">
+    How to Run Red Teaming
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Contributor
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_3">
+<span class="md-nav__icon md-icon"></span>
+            Contributor
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../a.py">
+<span class="md-ellipsis">
+    How to Create a Metric
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../a.py">
+<span class="md-ellipsis">
+    How to Create a Moonshot-Compatible Dataset
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ok.py">
+<span class="md-ellipsis">
+    How to Create an Attack Module
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../a.py">
+<span class="md-ellipsis">
+    How to Create a Prompt Template
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../a-py">
+<span class="md-ellipsis">
+    How to Create a Connector
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    User Guide
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+<span class="md-ellipsis">
+    CLI
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_1">
+<span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/cli_guide/">
+<span class="md-ellipsis">
+    Get Started with CLIs
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/connecting_endpoints/">
+<span class="md-ellipsis">
+    Connecting to LLMs
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/benchmarking/">
+<span class="md-ellipsis">
+    Running Benchmark
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/red_teaming/">
+<span class="md-ellipsis">
+    Running Red Teaming
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Moonshot UI User Guide
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_2">
+<span class="md-nav__icon md-icon"></span>
+            Moonshot UI User Guide
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../web_ui/web_ui_guide/">
+<span class="md-ellipsis">
+    Get Started with Web UI
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../web_ui/model_endpoint/">
+<span class="md-ellipsis">
+    Model Endpoints
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../web_ui/run_benchmark_test/">
+<span class="md-ellipsis">
+    Running Benchmark
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../web_ui/cookbook/">
+<span class="md-ellipsis">
+    Cookbook
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../web_ui/red_teaming/">
+<span class="md-ellipsis">
+    Red Teaming
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+<span class="md-ellipsis">
+    CLI
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_3">
+<span class="md-nav__icon md-icon"></span>
+            CLI
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/connecting_endpoints/">
+<span class="md-ellipsis">
+    Connecting to LLMs
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/benchmarking/">
+<span class="md-ellipsis">
+    Running Benchmark
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/red_teaming/">
+<span class="md-ellipsis">
+    Running Red Teaming
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../cli/add_your_own_tests/">
+<span class="md-ellipsis">
+    Adding Your Own Tests
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Moonshot Library
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            Moonshot Library
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_connector_endpoint/">
+<span class="md-ellipsis">
+    Connector Endpoint API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_connector/">
+<span class="md-ellipsis">
+    Connector API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_context_strategy/">
+<span class="md-ellipsis">
+    Context Strategy API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_cookbook/">
+<span class="md-ellipsis">
+    Cookbook API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_dataset/">
+<span class="md-ellipsis">
+    Dataset API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_environment_variables/">
+<span class="md-ellipsis">
+    Environment Variable API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_metrics/">
+<span class="md-ellipsis">
+    Metric API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_prompt_template/">
+<span class="md-ellipsis">
+    Prompt Template API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_recipe/">
+<span class="md-ellipsis">
+    Recipe API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_red_teaming/">
+<span class="md-ellipsis">
+    Red Teaming API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_result/">
+<span class="md-ellipsis">
+    Result API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_run/">
+<span class="md-ellipsis">
+    Run API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_runner/">
+<span class="md-ellipsis">
+    Runner API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_session/">
+<span class="md-ellipsis">
+    Session API
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Web-API
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_2">
+<span class="md-nav__icon md-icon"></span>
+            Web-API
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/web_api_guide/">
+<span class="md-ellipsis">
+    Setting Up
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/web_api_swagger/">
+<span class="md-ellipsis">
+    Swagger
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Resources
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Resources
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../jupyter_notebook/">
+<span class="md-ellipsis">
+    Jupyter Notebook
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cookbooks/">
+<span class="md-ellipsis">
+    Cookbook
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Recipes
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../datasets/">
+<span class="md-ellipsis">
+    Datasets
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../metrics/">
+<span class="md-ellipsis">
+    Metrics
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../troubleshoot/troubleshoot/">
+<span class="md-ellipsis">
+    Troubleshoot
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="list-of-recipes">List of Recipes</h1>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Datasets</th>
+<th>Metrics</th>
+<th>Prompt Templates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RealtimeQA</td>
+<td>RealTime QA is a dynamic question answering (QA) platform that inquires about the present. The higher the grade, the better the system is handling hallucination.</td>
+<td>1. realtimeqa-past</td>
+<td>1. exactstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>squad-shifts-tnf</td>
+<td>Zero-shot reading comprehension on paragraphs and questions from squadshifts. Augmented to true/false statement. The higher the grade, the better the model performs this capability.</td>
+<td>1. squad-shifts-tnf</td>
+<td>1. relaxstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Non-Violent Crimes</td>
+<td>This recipe measures the model's responses in dealing with prompts that enable, encourage, or endorse the commission of non-violent crimes. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-nvc-malicious-user<br/>2. mlc-nvc-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>TAMIL-KURAL-CLASSIFICATION</td>
+<td>This recipe is used to test the comprehension abilities for the Thirukkural. Thirukkural is a classic Tamil literature composed by the ancient Tamil poet Thiruvalluvar. It consists of 1330 couplets (kurals) that are grouped into 133 chapters, each containing 10 couplets. The higher the grade, the better the model performs in this task.</td>
+<td>1. tamil-kural-classification</td>
+<td>1. exactstrmatch</td>
+<td>1. tamil-templatekuralclassification</td>
+</tr>
+<tr>
+<td>University Tutorial Questions in Singapore's Legal Classes</td>
+<td>To measure the model's ability in understanding legal context in Singapore.</td>
+<td>1. sg-university-tutorial-questions-legal</td>
+<td>1. bertscore</td>
+<td>1. answer-template</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Child Abuse and Exploitation</td>
+<td>This recipe measures the model's responses in dealing with prompts that contain, describe, enable, encourage, or endorse the sexual abuse of children. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-cae-malicious-user<br/>2. mlc-cae-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>TAMIL-TANGLISH-TWEETS</td>
+<td>This recipe is used to perform sentiment analysis on code-mixed Tamil and English tweets. The higher the grade, the better the model performs in this task.</td>
+<td>1. tamil-tanglish-tweets</td>
+<td>1. exactstrmatch</td>
+<td>1. tamil-templatetanglishsa</td>
+</tr>
+<tr>
+<td>ChallengingToxicityPrompts</td>
+<td>This recipe measures the model's ability in generating toxic phrases or sentences when given a toxic phrase. The higher the grade, the less toxic the system is.</td>
+<td>1. challenging-toxicity-prompts</td>
+<td>1. toxicity-classifier</td>
+<td>1. complete-sentence</td>
+</tr>
+<tr>
+<td>Singapore Legal Glossary</td>
+<td>To measure the model's ability in understanding legal term used commonly in Singapore.</td>
+<td>1. sg-legal-glossary</td>
+<td>1. bertscore</td>
+<td>1. legal-term-template</td>
+</tr>
+<tr>
+<td>EnronEmail</td>
+<td>The Enron email dataset is aimed at evaluating if there is leakage of private information. The dataset was used in DecodingTrust as part of its privacy evaluation.</td>
+<td>1. privacy-enronemails</td>
+<td>1. leakagerate</td>
+<td>1. enronemail-templatea<br/>2. enronemail-templateb<br/>3. enronemail-templatec<br/>4. enronemail-templated</td>
+</tr>
+<tr>
+<td>Bias Benchmark for QA</td>
+<td>This recipe measures the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with age ambiguous and disambiguous questions. The higher the grade, the better the system is in handling social biases.</td>
+<td>1. bbq-lite-age-ambiguous<br/>2. bbq-lite-age-disamb<br/>3. bbq-lite-disability-status-ambiguous<br/>4. bbq-lite-disability-status-disamb<br/>5. bbq-lite-gender-ambiguous<br/>6. bbq-lite-gender-disamb<br/>7. bbq-lite-nationality-ambiguous<br/>8. bbq-lite-nationality-disamb<br/>9. bbq-lite-physical-appearance-ambiguous<br/>10. bbq-lite-physical-appearance-disamb<br/>11. bbq-lite-race-ethnicity-ambiguous<br/>12. bbq-lite-race-ethnicity-disamb<br/>13. bbq-lite-race-x-gender-ambiguous<br/>14. bbq-lite-race-x-gender-disamb<br/>15. bbq-lite-race-x-ses-ambiguous<br/>16. bbq-lite-race-x-ses-ambiguous<br/>17. bbq-lite-religion-ambiguous<br/>18. bbq-lite-religion-disamb<br/>19. bbq-lite-ses-ambiguous<br/>20. bbq-lite-ses-disamb<br/>21. bbq-lite-sexual-orientation-ambiguous<br/>22. bbq-lite-sexual-orientation-disamb</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>Chinese Bias Becnhmark for QA - Lite</td>
+<td>This recipe measures a system's ability to respond to safety-related, biased, and stereotypical questions in Chinese. A higher grade indicates that the system under test is safer, less biased, and less stereotypical.</td>
+<td>1. cbbq-lite-age-ambiguous<br/>2. cbbq-lite-age-disamb<br/>3. cbbq-lite-disability-ambiguous<br/>4. cbbq-lite-disability-disamb<br/>5. cbbq-lite-disease-ambiguous<br/>6. cbbq-lite-disease-disamb<br/>7. cbbq-lite-educational-qualification-ambiguous<br/>8. cbbq-lite-educational-qualification-disamb<br/>9. cbbq-lite-ethnicity-ambiguous<br/>10. cbbq-lite-ethnicity-disamb<br/>11. cbbq-lite-gender-ambiguous<br/>12. cbbq-lite-gender-disamb<br/>13. cbbq-lite-household-registration-ambiguous<br/>14. cbbq-lite-household-registration-disamb<br/>15. cbbq-lite-nationality-ambiguous<br/>16. cbbq-lite-nationality-disamb<br/>17. cbbq-lite-physical-appearance-ambiguous<br/>18. cbbq-lite-physical-appearance-disamb<br/>19. cbbq-lite-race-ambiguous<br/>20. cbbq-lite-race-disamb<br/>21. cbbq-lite-region-ambiguous<br/>22. cbbq-lite-region-disamb<br/>23. cbbq-lite-SES-ambiguous<br/>24. cbbq-lite-SES-disamb<br/>25. cbbq-lite-sexual-orientation-ambiguous<br/>26. cbbq-lite-sexual-orientation-disamb</td>
+<td>1. exactstrmatch</td>
+<td>1. chinese-mcq-template</td>
+</tr>
+<tr>
+<td>Cause and Effect</td>
+<td>This recipe measure the model's ability in understanding the cause and effect in a sentence. The higher the grade, the better the system is in performing this capability.</td>
+<td>1. cause-and-effect</td>
+<td>1. relaxstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>TruthfulQA (MCQ)</td>
+<td>TruthfulQA aims to measure the truthfulness of a model. The higher the grade, the more truthful the system is.</td>
+<td>1. truthfulqa-mcq</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>GRE Reading Comprehension</td>
+<td>To measure the model's ability to summarize text, infer and deduce knowledge from context, and match the context. The higher the grade, the better the system is in performing this capability.</td>
+<td>1. gre-reading-comprehension</td>
+<td>1. relaxstrmatch</td>
+<td>1. answer-template</td>
+</tr>
+<tr>
+<td>Safety questions written in Singapore's context</td>
+<td>This recipe evaluates whether a system under test can perform well when a harmful question is written in Singapore's context. By achieving a high grade, the target demonstrates that it is lower in risk.</td>
+<td>1. singapore-safety-questions</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>COQA Conversational Q&amp;A</td>
+<td>To measure the ability of machines to understand a text passage and answer a series of interconnected questions. The higher the grade, the better the system performs for this capability.</td>
+<td>1. coqa-conversational-qna</td>
+<td>1. exactstrmatch</td>
+<td>1. answer-template</td>
+</tr>
+<tr>
+<td>Bias - Occupation</td>
+<td>This recipe tests if a targeted system thinks that a certain demographic group can handle a job role better than others.</td>
+<td>1. occupation</td>
+<td>1. gpt4annotator</td>
+<td>1. job-role-bias</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Violent Crimes</td>
+<td>This recipe measures the model's responses in dealing with prompts that enable, encourage, or endorse the commission of violent crimes. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-vcr-malicious-user<br/>2. mlc-vcr-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Commonsense Morality (Easy)</td>
+<td>This recipe measures whether how the system performs when given prompts embedded the body of moral standards and principles that most people intuitively accept. The higher the grade, the better the system performs.</td>
+<td>1. commonsense-morality-easy-variation1</td>
+<td>1. exactstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Hate</td>
+<td>This recipe measures the model's responses in dealing with prompts that demean or dehumanize people on the basis of their sensitive, personal characteristics. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-hat-malicious-user<br/>2. mlc-hat-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Winograde</td>
+<td>To measure model's ability in answering commonsense reasoning, expert-crafted pronoun resolution problems that are designed to be unsolvable for statistical models. The higher the score, the better the model is.</td>
+<td>1. winogrande</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>ARC</td>
+<td>To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy and challenge sets. The higher the grade, the better the sytem is performing this capability.</td>
+<td>1. arc-challenge<br/>2. arc-easy</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>Contextual Parametric Knowledge Conflicts</td>
+<td>This recipe measures the model’s ability in making informed predictions. The higher the grade, the better the system can perform for this capability.</td>
+<td>1. contextual-parametric-knowledge-conflicts</td>
+<td>1. relaxstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>Commonsense Morality (Hard)</td>
+<td>This recipe measures whether how the system performs when given prompts embedded the body of moral standards and principles that most people intuitively accept. The higher the grade, the better the system performs.</td>
+<td>1. commonsense-morality-hard-variation1</td>
+<td>1. exactstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>RealToxicityPrompts (Completion)</td>
+<td>RealToxicityPrompts aims to measure the model's ability in identify toxic sentences. The higher the grade, the less toxic the system is.</td>
+<td>1. real-toxicity-prompts</td>
+<td>1. toxicity-classifier</td>
+<td>1. real-toxicity-prompt-template2</td>
+</tr>
+<tr>
+<td>Analogical Similarity</td>
+<td>This recipe measures the model’s ability in discriminating between different degrees of analogical similarity in two given episodes. The higher the grade, the better the sytem is performing this capability.</td>
+<td>1. analogical-similarity</td>
+<td>1. relaxstrmatch</td>
+<td>1. analogical-similarity</td>
+</tr>
+<tr>
+<td>GSM8K</td>
+<td>To measure model's ability in solvinggrade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations. The higher the grade, the better the system can perform this capability.</td>
+<td>1. gsm8k</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Sex-related Crimes</td>
+<td>This recipe measures the model's responses in dealing with prompts that enable, encourage, or endorse the commission of sex-related crimes. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-scr-malicious-user<br/>2. mlc-scr-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Chemical, Biological, Radiological, Nuclear, and Explosives</td>
+<td>This recipe measures the model's responses in dealing with prompts that enable, encourage, or endorse the creation of weapons of mass destruction. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-cbr-malicious-user<br/>2. mlc-cbr-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Jailbreak-DAN</td>
+<td>This recipe assesses whether the system will be jailbroken using the common jailbreak methods. The higher the grade, the better the system is protected against common jailbreaks.</td>
+<td>1. jailbreak-dan</td>
+<td>1. reverseexactstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Auto Categorisation</td>
+<td>This recipe measures the model's ability in categorising elements into groups. The higher the grade, the system performs better in this capability.</td>
+<td>1. auto-categorisation</td>
+<td>1. relaxstrmatch</td>
+<td>1. complete-sentence</td>
+</tr>
+<tr>
+<td>Medical MCQ</td>
+<td>In this recipe, we measure how well a system is able to answer healthcare questions using various datasets related to healthcare. The higher the grade, the better the system performs in answering healthare questions.</td>
+<td>1. medmcqa<br/>2. medqa-us<br/>3. pubmedqa</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>TAMIL-NEWS-CLASSIFICATION</td>
+<td>This recipe is to classify a static set of Tamil News. The task is to classify news to its respective category. The higher the grade, the better the model performs in this task.</td>
+<td>1. tamil-tamilnews-classification</td>
+<td>1. exactstrmatch</td>
+<td>1. tamil-templatenewsclassification</td>
+</tr>
+<tr>
+<td>CValues - The benchmark for measuring alignment in LLMs using Chinese Langauges.</td>
+<td>This recipe measures the alignment ability of LLMs in both safety and responsibility in Chinese Language. A higher grade means that the LLMs are more aligned to human's values.</td>
+<td>1. cvalues</td>
+<td>1. exactstrmatch</td>
+<td>1. chinese-mcq-template</td>
+</tr>
+<tr>
+<td>TruthfulQA</td>
+<td>TruthfulQA aims to measure the truthfulness of a model. This is an experimental recipe using Rouge Score</td>
+<td>1. truthfulqa-open-ended</td>
+<td>1. rougescorer</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>Facts about Singapore</td>
+<td>This recipe evaluates the accuracy of facts about Singapore. A higher score reflects the target's ability to answer questions about Singapore with a high level of precision and detail. By achieving a high grade, the target demonstrates a thorough understanding and knowledge of Singapore's key events, transport system, and facts.</td>
+<td>1. singapore-transport-system<br/>2. singapore-iconic-places<br/>3. singapore-political-history<br/>4. singapore-public-housing<br/>5. singapore-facts-tnf<br/>6. singapore-places-tnf<br/>7. singapore-food-tnf</td>
+<td>1. exactstrmatch</td>
+<td>-</td>
+</tr>
+<tr>
+<td>AdvGLUE</td>
+<td>AdvGLUE is a comprehensive robustness evaluation benchmark that concentrates on assessing the adversarial robustness of language models. It encompasses textual adversarial attacks from various perspectives and hierarchies, encompassing word-level transformations and sentence-level manipulations. A higher grade indicates that the system under test is more resilient to changes in the sentences.</td>
+<td>1. advglue-all</td>
+<td>1. advglue</td>
+<td>-</td>
+</tr>
+<tr>
+<td>MMLU</td>
+<td>To measure model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more. The higher the grade, the better the system performs.</td>
+<td>1. mmlu-all</td>
+<td>1. exactstrmatch</td>
+<td>1. mmlu</td>
+</tr>
+<tr>
+<td>HellaSwag</td>
+<td>To measure commonsense with questions that are trivial for humans but difficult for statistical models. The higher the grade, the better the system performs this capability.</td>
+<td>1. hellaswag</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>UCI Adult Dataset</td>
+<td>This recipe contains the easy variation of UCI adult dataset where LLM is expected to classify the attributes correctly. The higher the score, the better the model is.</td>
+<td>1. uciadult</td>
+<td>1. exactstrmatch</td>
+<td>1. uciadult-template</td>
+</tr>
+<tr>
+<td>MMLU - Medical related questions.</td>
+<td>MMLU benchmark measures model's ability in answering accurately across 57 tasks including elementary mathemathics, US history, computer science, law, and more. In this recipe, we extracted all the tasks related to healthare. The higher the grade, the better the system performs in answering healthcare related questions.</td>
+<td>1. mmlu-anatomy<br/>2. mmlu-clinicalknowledge<br/>3. mmlu-collegebiology<br/>4. mmlu-collegemedicine<br/>5. mmlu-medicalgenetics<br/>6. mmlu-professionalmedicine</td>
+<td>1. exactstrmatch</td>
+<td>1. mcq-template</td>
+</tr>
+<tr>
+<td>MLCommons AI Safety Benchmark - Suicide &amp; Self-Harm</td>
+<td>This recipe measures the model's responses in dealing with prompts that enable, encourage, or endorse acts of intentional self-harm. A high grade indicates that the system under test handles the response well.</td>
+<td>1. mlc-ssh-vulnerable-user<br/>2. mlc-ssh-typical-user</td>
+<td>1. llamaguardannotator</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Winobias</td>
+<td>Winobias dataset is used to test representational harm in LLMs. LLM should refuse to answer. The higher the score, the better the model is.</td>
+<td>1. winobias-type1</td>
+<td>1. reverseexactstrmatch</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Cookbook" class="md-footer__link md-footer__link--prev" href="../cookbooks/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Cookbook
+              </div>
+</div>
+</a>
+<a aria-label="Next: Datasets" class="md-footer__link md-footer__link--next" href="../datasets/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Datasets
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "navigation.top", "toc.integrate", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.081f42fc.min.js"></script>
+<script>document$.subscribe(() => {
+            window.update_swagger_ui_iframe_height = function (id) {
+                var iFrameID = document.getElementById(id);
+                if (iFrameID) {
+                    full_height = (iFrameID.contentWindow.document.body.scrollHeight + 80) + "px";
+                    iFrameID.height = full_height;
+                    iFrameID.style.height = full_height;
+                }
+            }
+        
+            let iframe_id_list = []
+            var iframes = document.getElementsByClassName("swagger-ui-iframe");
+            for (var i = 0; i < iframes.length; i++) { 
+                iframe_id_list.push(iframes[i].getAttribute("id"))
+            }
+        
+            let ticking = true;
+            
+            document.addEventListener('scroll', function(e) {
+                if (!ticking) {
+                    window.requestAnimationFrame(()=> {
+                        let half_vh = window.innerHeight/2;
+                        for(var i = 0; i < iframe_id_list.length; i++) {
+                            let element = document.getElementById(iframe_id_list[i])
+                            if(element==null){
+                                return
+                            }
+                            let diff = element.getBoundingClientRect().top
+                            if(element.contentWindow.update_top_val){
+                                element.contentWindow.update_top_val(half_vh - diff)
+                            }
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        
+            const dark_scheme_name = "slate"
+            
+            window.scheme = document.body.getAttribute("data-md-color-scheme")
+            const options = {
+                attributeFilter: ['data-md-color-scheme'],
+            };
+            function color_scheme_callback(mutations) {
+                for (let mutation of mutations) {
+                    if (mutation.attributeName === "data-md-color-scheme") {
+                        scheme = document.body.getAttribute("data-md-color-scheme")
+                        var iframe_list = document.getElementsByClassName("swagger-ui-iframe")
+                        for(var i = 0; i < iframe_list.length; i++) {
+                            var ele = iframe_list.item(i);
+                            if (ele) {
+                                if (scheme === dark_scheme_name) {
+                                    ele.contentWindow.enable_dark_mode();
+                                } else {
+                                    ele.contentWindow.disable_dark_mode();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            observer = new MutationObserver(color_scheme_callback);
+            observer.observe(document.body, options);
+            })</script></body>
+</html>
