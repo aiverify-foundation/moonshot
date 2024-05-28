@@ -3,44 +3,40 @@ In this section, we will be going through the steps required to run red teaming 
 
 To run a test, you will need:
 
-- **Endpoint Connector** - a configuration file to connect to your desired LLM endpoint
+- **Connector Endpoint** - a configuration file to connect to your desired LLM endpoint
 - **Session** - a session allows users to perform manual and automated red teaming on the LLMs, and stores the prompts and responses to and fro.
 - **Prompt** - a prompt that you will be sending to LLMs in manual red teaming/ a starting prompt to input in attack modules before sending to the LLMs
 
 For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
-### Create an Endpoint Connector
-If you have not already created an endpoint connector, check out the guide [here](connecting_endpoints.md).
+### Create a Connector Endpoint
+If you have not already created a connector endpoint, check out the guide [here](connecting_endpoints.md).
 
 ### Create a Session
-Once your endpoint connector is created, we can start creating our session for red teaming.
+Once your connector endpoint is created, we can start creating our session for red teaming.
 
 Every session must reside in a runner. Before we create a session, we can view a list of runners currently available by entering `list_runners`:
     ![list of runners](cli_images/runners.png)
 
-There are two options to create a session, we can either use an existing runner, or create a new runner with a session. You can enter `new_session -h` to better understand its usage.
+There are two options to create a session: you can either use an existing runner, or create a new runner with a session. To better understand its usage, enter `new_session -h`.
 
-
-1. Use existing runner. For example, to create a session with an existing runner with the following configurations:
-
-    - Runner ID (`id` in `list_runners`):  `my-test-mrt`
-    - Context strategy (`id` in `list_context_strategies`): `add_previous_prompt`
-    - Prompt template (`id` in `list_prompt_templates`): `mmlu`
+1. Use existing runner.
+    - Example: `new_session my-test-mrt -c add_previous_prompt -p mmlu`
+        - Runner ID: `my-test-mrt`
+        - Context strategy: `add_previous_prompt`
+        - Prompt template:  `mmlu`
     
-    The command would be `new_session my-test-mrt -c add_previous_prompt -p mmlu`.  You should see that your session is created:
     ![create session with existing runner](cli_images/create_session_existing_runner.png)
 
 
     > **_NOTE:_**  Context strategy and prompt template are optional and can be set later so you can omit the `-c -p` flags if you do not need them    
 
 
-2. Create new runner. For example, to create a session with a new runner with the following configurations: 
-
-    - Runner ID: `my-new-runner-test-mrt`
-    - Endpoint: `openai-gpt35-turbo and openai-gpt4` (endpoint(s) is required when you create a new session)
-    - Prompt template (`id` in `list_prompt_templates`): `phrase-relatedness`
-
-    The command would be `new_session my-new-runner-test-mrt -e "['openai-gpt35-turbo','openai-gpt4']" -p phrase-relatedness`.
+2. Create new runner.
+    - Example: `new_session my-new-runner-test-mrt -e "['openai-gpt35-turbo','openai-gpt4']" -p phrase-relatedness`
+        - Runner ID: `my-new-runner-test-mrt`
+        - Endpoint: `['openai-gpt35-turbo','openai-gpt4']`
+        - Prompt template: `phrase-relatedness`
 
     ![create session with new runner](cli_images/create_session_new_runner.png)
 
@@ -50,11 +46,49 @@ manual red teaming and using attack modules to perform automated attacks.
 ### Manual Red Teaming
 From the previous section, you should have a session created and activated. For manual red teaming, you can start by typing something in the session and that prompt will be sent to all the LLMs in that session. 
     ![manual red teaming pt](cli_images/manual_red_teaming_pt.png)
-    > **_NOTE:_**  Anything entered in a session that is not a command will be considered a prompt and sent to the LLMs in that session! 
+> **_NOTE:_**  Anything entered in a session that is not a command will be considered a prompt and sent to the LLMs in that session! 
 
-### Run Attack Modules
-We will use the same session from manual red teaming. Enter `run_attack_module -h` to better understand its usage. For example, to run an attack module with the following configuration:
-    - Attack module ID (`Id` in `list_runners`):  `sample_attack_module`
-    - Prompt: `Hello world`
-    
-    
+### Automated Red Teaming (Run Attack Modules)
+We will use the same session from manual red teaming in this example. Enter `run_attack_module -h` to better understand its usage.
+
+- Example: `run_attack_module charswap_attack "The grandpa and his son went to does not know how to use a phone?\na)Grandpa\nb)Son."`
+    - Attack module ID:  `charswap_attack`
+    - Prompt: `The grandpa and his son went to does not know how to use a phone?\na)Grandpa\nb)Son.`
+    ![automated red teaming](cli_images/automated_red_teaming.png)
+
+Refer to this [section](#more-about-automated-red-teaming) for more information on automated red teaming
+
+### Ending and Resuming a Session
+End Session - Once you are done with red teaming, you can close the session by entering `end_session`. 
+
+View sessions -  You can view your sessions by entering `list_sessions`.
+
+Resume session - You can resume a session by entering `use_session <desired session id>`, where `<desired session id>` is an `id` in `list_sessions`. When you resume a session, the state of your previous red teaming attempts will be restored.
+
+### Configurations in a Session
+
+- These are the configurations you can set in a session:
+
+    - Context strategy: a Python module that helps to add context to the current prompt (i.e. add in the previous five prompts sent.) 
+
+        Available commands:
+
+        - `use_context_strategy <desired context strategy id>`: You can use `list_context_strategies` to view the list of context strategies available and `<desired context strategy id>` should correspond to an `Id` in this list.
+            - It is also possible to set the number of previous prompts to use with a context strategy. For example, to add `8` previous prompts as context using the `add_previous_prompt`, the command would be `use_context_strategy add_previous_prompt -n 8`
+        - `clear_context_strategy`: Clears the prompt template used in a session.
+
+
+    - Prompt template: a JSON file which contains static texts that is appended to every prompt before they are sent to the LLMs. It should correspond to an `id` in `list_prompt_templates`.
+
+        Available commands:
+
+        - `use_prompt_template <desired prompt template id>`: You can use `list_prompt_templates` to view the list of prompt templates available and `<desired prompt template id>` should correspond to an `id` in this list.
+
+        - `clear_prompt_template`: Clears the context strategy used in a session.
+
+### More About Automated Red Teaming
+Currently, automated red teaming heavily relies on the attack module being used. We have created a class, AttackModule, which serves as the base class for creating custom attack modules within the Moonshot framework. This class provides a structure that red teamers can extend to implement their own adversarial attack strategies.
+
+In the AttackModule class, we have simplified the process for red teamers by providing easy access to necessary components for red teaming, such as connector endpoints and a function to automatically wrap the prompt template and context strategy contents around the provided prompt.
+
+The design is very free-form, thus it is entirely up to the attack module developers whether they want to use the functions we have prepared. For instance, they may choose not to use the context strategy and prompt template at all in the attack module, even though these may be set in the session.

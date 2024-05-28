@@ -13,11 +13,11 @@
         - To run the help example, enter `add_cookbook 'My new cookbook' 'I am cookbook description' "['analogical-similarity','auto-categorisation']"`
 
 4. View the newly created recipe or cookbook:
-    - Enter `view_recipe my-new-recipe` to view recipe:
+    - Enter `view_recipe my-new-recipe`:
 
         ![new recipe](images/new_recipe.png)
 
-    - Enter `view_cookbook my-new-recipe` to view recipe:
+    - Enter `view_cookbook my-new-cookbook`:
 
         ![new cookbook](images/new_cookbook.png)
 

@@ -56,17 +56,14 @@ nav:
       - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
       - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
     - Contributor:
-      - How to Create a Metric: a.py
-      - How to Create a Moonshot-Compatible Dataset : a.py 
-      - How to Create an Attack Module : ok.py
-      - How to Create a Prompt Template: a.py
-      - How to Create a Connector : a-py
+      - How to Create a Connector : contributor_guide/create_connector.md
+      - How to Create a Moonshot-Compatible Dataset (Coming soon!): never.md
+      - How to Create an Attack Module (Coming soon!) : gonna.md
+      - How to Create a Metric (Coming soon!): give.md
+      - How to Create a Prompt Template (Coming soon!): you.md
+      - How to Create a Context Strategy (Coming soon!): up.md
+
   - User Guide: 
-    - CLI: 
-      - Get Started with CLIs : cli/cli_guide.md
-      - Connecting to LLMs: cli/connecting_endpoints.md
-      - Running Benchmark: cli/benchmarking.md
-      - Running Red Teaming: cli/red_teaming.md
     - Moonshot UI User Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
       - Model Endpoints: web_ui/model_endpoint.md

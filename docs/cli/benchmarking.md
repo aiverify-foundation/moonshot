@@ -3,17 +3,17 @@ In this section, we will be going through the steps required to run a test in CL
 
 To run a test, you will need:
 
-- **Endpoint Connector** - a configuration file to connect to your desired LLM endpoint
+- **Connector Endpoint** - a configuration file to connect to your desired LLM endpoint
 - **Cookbook/Recipe** - benchmarks you want to run TODO
 
 For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
-### Create an Endpoint Connector
-If you have not already created an endpoint connector, check out the guide [here](connecting_endpoints.md).
+### Select a Connector Endpoint
+If we do not have a connector endpoint you need, check out the guide [here](connecting_endpoints.md) to create one yourself.
 
 
 ### Running a Test Using Our Predefined Cookbook
-Once your endpoint connector is created, we can start choosing the test we want to run. 
+Once you have your connector endpoint, we can start choosing the test we want to run. 
 
 1. To view all the cookbooks available, enter `list_cookbooks`. You will see a list of available cookbooks:
 
@@ -24,12 +24,12 @@ Once your endpoint connector is created, we can start choosing the test we want 
 
         - Runner ID (`id` in `list_runners`): my-new-cookbook-runner (Enter `list_runners` to view the runners available. If you do not want to use an existing runner or do not have a runner yet, the `run_cookbook` command will create a runner for you using a slugified ID.)
         - ID of the cookbook (`ID` in `list_cookbooks`): `common-risk-easy`
-        - ID of your endpoint connector (`Id` column in `list_endpoints`): `my-openai-connector` 
+        - ID of your connector endpoint (`Id` column in `list_endpoints`): `my-openai-connector` 
         - Number of prompts (Optional TODO): `1` 
         - Random seed (Optional TODO): `2`
         - System prompt (Optional system prompt which overwrites our default system prompt): `This is a customised system prompt`
 
-    > **_NOTE:_**  You can run more than one cookbook and endpoint by adding them into the list( i.e. `"['common-risk-easy','common-risk-hard']"`)
+    > **_TIP:_**  You can run more than one cookbook and endpoint by adding them into the list( i.e. `"['common-risk-easy','common-risk-hard']"`)
 
 3. Run your cookbook with the `run_cookbook` command. You should see a table of results from your run:
 
@@ -48,7 +48,7 @@ You can choose to run a recipe instead of a cookbook as well.
 
     - Runner ID (`id` in `list_runners`): my-new-recipe-runner (Enter `list_runners` to view the runners available. If you do not want to use an existing runner or do not have a runner yet, the `run_recipe` command will create a runner for you using a slugified ID.)
     - ID of the recipes (`ID` in `list_recipes`): `auto-categorisation` and `winobias`
-    - Name of your endpoint connector (`Id` column in `list_endpoints`): `my-openai-connector` 
+    - Name of your connector endpoint (`Id` column in `list_endpoints`): `my-openai-connector` 
     - Number of prompts (TODO): `1` 
     - Random seed (TODO): `2`
     - System prompt: `This is a customised system prompt`

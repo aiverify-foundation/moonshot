@@ -9,7 +9,7 @@ Some of the things that you can add into Moonshot are:
 For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter `python -m moonshot cli interactive`
 
 ### Create a New Dataset
-Refer to [TODO](../../examples/jupyter-notebook/) for the guide.
+Refer to [this Jupyter notebook example](https://github.com/aiverify-foundation/moonshot/blob/main/examples/jupyter-notebook/Tutorial%202%20-%20Basic%20Workflow%20-%20Add%20your%20own%20test.ipynb) for the guide (Under the **Prepare the Dataset** section).
 
 ### Create a New Recipe
 To run this dataset, you need to create a new recipe. A recipe contains all the details required to run a benchmark. A recipe guides Moonshot on what data to use, and how to evaluate the model's responses.

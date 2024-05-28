@@ -377,7 +377,7 @@ class AttackModule:
             ]
         else:
             raise RuntimeError(
-                "[Red Teaming] No endpoint connectors specified for red teaming."
+                "[Red Teaming] No connector endpoints specified for red teaming."
             )
 
         if self.metric_ids:
