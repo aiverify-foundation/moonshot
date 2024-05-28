@@ -1,6 +1,6 @@
 <div align="center">
 
-![Moonshot Logo](https://github.com/moonshot-admin/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
+![Moonshot Logo](https://github.com/aiverify-foundation/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
 
 **Version 0.4.0**
 
@@ -94,7 +94,7 @@ To run Moonshot Web UI:
 python -m moonshot web
 ```
 Open [http://localhost:3000/](http://localhost:3000/) in a browser and you should see:
-![Moonshot UI Home](./misc/aiverify-moonshot-UI.png)
+![Moonshot UI Home](https://github.com/aiverify-foundation/moonshot/misc/aiverify-moonshot-UI.png)
 
 
 #### Interactive CLI
@@ -102,7 +102,7 @@ To run Moonshot CLI:
 ```
 python -m moonshot cli interactive
 ```
-![Moonshot cli](./misc/aiverify-moonshot-CLI.png)
+![Moonshot cli](https://github.com/aiverify-foundation/moonshot/misc/aiverify-moonshot-CLI.png)
 
 
 </br></br>
@@ -186,7 +186,7 @@ A Recipe consists of 2 essential components:
 
 Using Moonshot's Web UI, you can produce a HTML report that visualises your test results in easy-to-read charts. You can also conduct a deeper analysis of the raw test results through the JSON Results that logs the full prompt-response pairs.
 
-![Report Example Chart](https://github.com/moonshot-admin/moonshot/raw/main/misc/report-example-chart.png)
+![Report Example Chart](https://github.com/aiverify-foundation/moonshot/raw/main/misc/report-example-chart.png)
 
 </br>
 
@@ -196,8 +196,7 @@ Red-Teaming is the adversarial prompting of LLM applications to induce them to b
 
 Project Moonshot simplifies the process of Red-Teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with Red-Teaming tools like prompt templates, context strategies and attack modules.
 
-![Red Teaming UI](https://github.com/moonshot-admin/moonshot/raw/main/misc/redteaming-ui.png)
-
+![Red Teaming UI](https://github.com/aiverify-foundation/moonshot/raw/main/misc/redteaming-ui.png)
 * ✨ <b>Automated Red Teaming</b>
 
 As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
