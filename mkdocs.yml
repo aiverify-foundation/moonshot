@@ -55,14 +55,13 @@ nav:
       - How to Create Connector Endpoint: tutorial/cli/create_endpoint.md
       - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
       - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
+    - Contributor:
+      - How to Create a Metric: a.py
+      - How to Create a Moonshot-Compatible Dataset : a.py 
+      - How to Create an Attack Module : ok.py
+      - How to Create a Prompt Template: a.py
+      - How to Create a Connector : a-py
   - User Guide: 
-    - Web API:
-      - Get Started with Web API : web_api/web_api_guide.md
-      - Connector Endpoints: web_api/connector_endpoints.md
-      - Cookbook Endpoints: web_api/cookbook_endpoints.md
-      - Recipe Endpoints: web_api/recipe_endpoints.md
-      - Session Endpoints: web_api/sessions_endpoints.md
-      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
     - CLI: 
       - Get Started with CLIs : cli/cli_guide.md
       - Connecting to LLMs: cli/connecting_endpoints.md
@@ -95,13 +94,9 @@ nav:
         - Run API: api_reference/api_run.md
         - Runner API: api_reference/api_runner.md
         - Session API: api_reference/api_session.md
-    - Web-API: api_reference/web_api_swagger.md
-  - Advance User:
-    - How to Create a Metric: a.py
-    - How to Create a Moonshot-Compatible Dataset : a.py 
-    - How to Create an Attack Module : ok.py
-    - How to Create a Prompt Template: a.py
-    - How to Create a Connector : a-py
+    - Web-API:
+        - Setting Up: api_reference/web_api_guide.md
+        - Swagger: api_reference/web_api_swagger.md
   - Resources:
       - Jupyter Notebook: resources/jupyter_notebook.md
       - Cookbook: resources/cookbooks.md
