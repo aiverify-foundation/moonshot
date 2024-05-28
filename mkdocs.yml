@@ -96,7 +96,7 @@ nav:
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
       - Running Red Teaming: cli/red_teaming.md
-    - Web UI Guide: 
+    - Moonshot UI User Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
       - Model Endpoints: web_ui/model_endpoint.md
       - Running Benchmark: web_ui/run_benchmark_test.md
