@@ -12,7 +12,7 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 | git                                        |                |
 
 ## Install Moonshot
-Run the following commands in a virtual environment of your choice:
+Run the following command in a virtual environment of your choice:
 
 ```
 $ pip install "aiverify-moonshot[all]"
