@@ -48,8 +48,16 @@ nav:
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
   - Tutorials:
-    - How To Create Custom Cookbook: tutorial/create_cookbook.md
-    - How To Create Connector Endpoint: tutorial/create_endpoint.md
+    - Web UI: 
+      - How to Create Custom Cookbook: tutorial/web-ui/create_cookbook.md
+      - How to Create Connector Endpoint: tutorial/web-ui/create_endpoint.md
+      - How to Create Connector: tutorial/s.md
+      - How to Start Automated Red Teaming: tutorial/s.md
+    - CLI : 
+      - How to Create Custom Cookbook: tutorial/create_cookbook.md
+      - How to Create Connector Endpoint: tutorial/create_endpoint.md
+      - How to Create Connector: tutorial/s.md
+      - How to Start Automated Red Teaming: tutorial/s.md
   - User Guide: 
     - Web UI Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
@@ -73,6 +81,13 @@ nav:
         - Run API: understanding_moonshot/api_run.md
         - Runner API: understanding_moonshot/api_runner.md
         - Session API: understanding_moonshot/api_session.md
-    - Web-API:
-      - Web API Swagger: understanding_moonshot/web_api_swagger.md
+    - Web-API: understanding_moonshot/web_api_swagger.md
+  - Advance User:
+    - create metric: a.py
+    - create connector : a.py 
+    - create am : ok.py
+  - Resources:
+      - Jupyter temporary only NB: smt.md
+      - List of Recipe: smt .md
+      - Cookbook: sm.md
   - Troubleshoot : troubleshoot/troubleshoot.md
