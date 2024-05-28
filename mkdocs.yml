@@ -13,11 +13,11 @@ extra_css:
 
 theme:
   features:
-      - navigation.sections
-      - navigation.indexes
       - navigation.footer
       - navigation.top
-  
+      - toc.integrate
+      - toc.follow
+
   name: material
   locale: en
   include_sidebar: false
@@ -93,6 +93,6 @@ nav:
     - create am : ok.py
   - Resources:
       - Jupyter temporary only NB: smt.md
-      - List of Recipe: smt .md
+      - Recipes: resources/recipe.md
       - Cookbook: sm.md
   - Troubleshoot : troubleshoot/troubleshoot.md
