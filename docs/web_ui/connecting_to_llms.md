@@ -26,12 +26,6 @@
 
 3. Select the endpoints to the AI systems that you wish to run benchmarks on, and click the next button when done. 
 
-    !!! NOTE 
-        If you wish to run any of these cookbooks, you will need to provide additional API keys: <br>
-            1. MLCommons AI Safety Benchmarks v0.5, Facts about Singapore 
-
-
-
 
     Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’. (You don’t need to select Together Llama Guard 7B Assistant for testing) 
     ![Selection of Endpoints](./imgs/selecting_endpoints(10).png)
