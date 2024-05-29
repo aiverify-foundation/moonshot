@@ -1,5 +1,5 @@
 site_name: Moonshot
-repo_url: https://github.com/moonshot-admin/moonshot
+repo_url: https://github.com/aiverify-foundation/moonshot
 
 plugins:
   - search
