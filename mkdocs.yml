@@ -65,13 +65,13 @@ nav:
       - How to Create a Context Strategy (Coming soon!): up.md
   - User Guide: 
     - Moonshot Web UI: 
+      - Get Started with Moonshot Web UI: web_ui/web_ui_guide.md
       - Home: web_ui/homepage.md
       - Endpoint: web_ui/endpoint.md
       - Benchmarking: web_ui/benchmarking.md
       - Redteaming: web_ui/redteaming.md
       - History: web_ui/history.md
       - Utils: web_ui/utils.md
-      - Get Started with Moonshot Web UI: web_ui/web_ui_guide.md
       - Choosing Relevant Tests: web_ui/choosing_relevant_tests.md
       - Connecting to LLMs: web_ui/connecting_to_llms.md
       - Running Benchmarks: web_ui/running_benchmarks.md
