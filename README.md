@@ -138,7 +138,7 @@ Benchmarks are “Exam questions” to test the model across a variety of compet
 
 Project Moonshot offers a range of benchmarks to measure your LLM application's performance in Capability, Quality, and Trust & Safety. These include benchmarks widely used by the community like Google's BigBench and HuggingFace's leaderboards, and more domain/task specific tests like Tamil Language and Medical LLM benchmarks. 
 
-The AI Verify Foundation is also partnering [MLCommons](https://mlcommons.org/) to develop globally aligned safety benchmarks for LLMs. Currently, you will be able to run v0.5 of the Safety Baseline Benchmark using Project Moonshot.
+The AI Verify Foundation is also partnering [MLCommons](https://mlcommons.org/) to develop globally aligned safety benchmarks for LLMs. Currently, you will be able to run v0.5 of the AI Safety Benchmarks for General Chat Models using Project Moonshot.
 
 Check out the full list of tests [here](https://github.com/aiverify-foundation/moonshot-data).
 
