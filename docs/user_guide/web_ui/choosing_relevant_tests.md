@@ -1,9 +1,11 @@
 # Choosing Relevant Tests
 
 1. Click on ‘Get Started’ 
-    ![Home Page for Moonshot](./imgs/get_started(1).png)
+
+![Home Page for Moonshot](./imgs/get_started(1).png)
 
 2. This page lists the cookbooks that Project Moonshot provides. Each cookbook contains tests of the same theme. Select the areas that are relevant to your use case. This is not final as you will be able to further curate the scope and scale of the tests in following steps.   
+
     [View full list of cookbook details](../resources/cookbooks.md) 
 
     !!! note 

@@ -8,7 +8,7 @@ Below are the descriptions for each field in the form:
 | Name                    | Description                                                                                                                         | Example                                     |
 |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
 | **Name** (Required)     | A unique name for you to identify this new endpoint by                                                                              | `My GPT4`                                   |
-| **Connection Type** (Required) | Type of API to use. If you do not see the type that you need, see [How to build a custom connector](URL)                            | `openai-connector`                          |
+| **Connection Type** (Required) | Type of API to use. If you do not see the type that you need, see [How to build a custom connector](../../tutorial/contributor/create_connector.md)                            | `openai-connector`                          |
 | **URI**                 | URI to the endpoint to be tested                                                                                                    | `<left blank>`                              |
 | **Token**               | Your private API token                                                                                                              | `123myopenaicontoken456`                    |
 | **Max Calls Per Second**| The maximum number of calls to be made to the endpoint per second                                                                   | `10`                                        |

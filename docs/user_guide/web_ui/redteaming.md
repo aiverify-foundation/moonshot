@@ -2,7 +2,7 @@ When you click on the redteaming icon, you will be directed to this page.
 
 ![redteam_home](./imgs/redteam_home.png)
 
-The 'Start New Session' button will allow you to create a new red teaming session. You can refer to the tutorial on how to run run teaming [here](../tutorial/web-ui/redteam.md).
+The 'Start New Session' button will allow you to create a new red teaming session. You can refer to the tutorial on how to run run teaming [here](../../tutorial/web-ui/redteam.md).
 
 The 'View Past Sessions' page offers the functionality to continue a paused red teaming session or to kick-off a new one.
 

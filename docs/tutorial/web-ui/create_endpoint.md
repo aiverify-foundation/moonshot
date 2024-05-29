@@ -1,20 +1,27 @@
-In this tutorial, we will walk you through the process of connecting to your Large Language Models (LLMs) using Model Endpoints in Moonshot. 
+In this tutorial, you will learn how to configure and seamlessly connect Moonshot to your AI systems. A connector endpoint is a set of configuration that tells Moonshot how to connect to your AI model.
 
-As a user, you may have developed or have access to various LLMs that you want to integrate into the Moonshot toolkit. Model Connectors are the bridge that allows this integration, connecting to your LLMs via Connectors. 
+Let's dive in and start connecting your models.
 
-This tutorial will provide a step-by-step guide on how to write the necessary configuration to establish this connection, enabling you to seamlessly integrate and utilize your LLMs within Moonshot. Let's dive in and start connecting your models.
+Click on the "model endpoint" icon in the sidebar panel.
 
-1. Navigate to the sidebar and click on the first icon to select model endpoints.
 ![select model endpoints](./res/create_endpoint_1.png)
 
-2. Initiate the creation of a new endpoint by clicking on 'Create New Endpoint'. 
+Click on 'Create New Endpoint' to create a new endpoint.
+
 ![create new endpoint](./res/create_endpoint_2.png)
 
-3. A form will appear. Fill in the required fields and if you need to add more details, click on "More Configs" to access additional parameters.
+A form will appear. Enter the details. If your AI models require more details, click on "More Configs" to add/amend the additional parameters.
+
 ![select more config](./res/create_endpoint_3.png)
 
-4. After you have filled in all the necessary details and additional parameters, confirm your entries by clicking 'OK'.
+!!! note
+
+    You can add in additional parameters that are required by your model. An example is *top_k*.
+
+Click 'OK' to confirm your details.
+
 ![confirm config](./res/create_endpoint_4.png)
 
-5. To finalize the creation of your endpoint, click 'Save'.
+Click 'Save' to save your configuration.
+
 ![save endpoint](./res/create_endpoint_5.png)

@@ -2,7 +2,7 @@ When you click on the benchmarking icon, you will be directed to this page.
 
 ![homepage](./imgs/benchmark_home.png)
 
-The 'Start New Run' button will allow you to create a new benchmark run. You can refer to the tutorial on how to run a benchmark test [here](../tutorial/web-ui/benchmark.md).
+The 'Start New Run' button will allow you to create a new benchmark run. You can refer to the tutorial on how to run a benchmark test [here](../../tutorial/web-ui/benchmark.md).
 
 The 'View Past Runs' page allows you to examine the outcomes of your previous runs or initiate a new run.
 

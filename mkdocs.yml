@@ -66,17 +66,19 @@ nav:
   - User Guide: 
     - Moonshot Web UI: 
       - Get Started with Moonshot Web UI: user_guide/web_ui/web_ui_guide.md
-      - Home: user_guide/web_ui/homepage.md
-      - Endpoint: user_guide/web_ui/endpoint.md
-      - Benchmarking: user_guide/web_ui/benchmarking.md
-      - Redteaming: user_guide/web_ui/redteaming.md
-      - History: user_guide/web_ui/history.md
-      - Utils: user_guide/web_ui/utils.md
-      - Choosing Relevant Tests: user_guide/web_ui/choosing_relevant_tests.md
-      - Connecting to LLMs: user_guide/web_ui/connecting_to_llms.md
-      - Running Benchmarks: user_guide/web_ui/running_benchmarks.md
-      - Red Teaming: user_guide/web_ui/red_teaming.md
-      - Creating Custom Cookbooks: user_guide/web_ui/creating_custom_cookbooks.md
+      - Moonshot Interface:
+        - Home: user_guide/web_ui/homepage.md
+        - Endpoint: user_guide/web_ui/endpoint.md
+        - Benchmarking: user_guide/web_ui/benchmarking.md
+        - Red Teaming: user_guide/web_ui/redteaming.md
+        - History: user_guide/web_ui/history.md
+        - Utils: user_guide/web_ui/utils.md
+      - Testing Workflow:
+        - Choosing Relevant Tests: user_guide/web_ui/choosing_relevant_tests.md
+        - Connecting to LLMs: user_guide/web_ui/connecting_to_llms.md
+        - Running Benchmarks: user_guide/web_ui/running_benchmarks.md
+        - Conducting Red Teaming: user_guide/web_ui/running_red_teaming.md
+        - Creating Custom Cookbooks: user_guide/web_ui/creating_custom_cookbooks.md
     - CLI: 
       - Connecting to LLMs: user_guide/cli/connecting_endpoints.md
       - Running Benchmark: user_guide/cli/benchmarking.md
