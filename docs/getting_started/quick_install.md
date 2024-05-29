@@ -32,6 +32,12 @@ $ python -m moonshot web
 
 Lastly, access Moonshot UI using a browser (`http://localhost:3000`).
 
+!!! Warning
+    If you are a Windows user, ensure to install the following dependencies:
+    ```
+    $ pip3 install tensorflow-io-gcs-filesystem>=0.23.1
+    $ pip3 install tensorflow-intel==2.16.1
+    ```
 ## Extra Resources
 
 ### Setting up Virtual Environment

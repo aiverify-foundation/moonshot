@@ -56,6 +56,7 @@ nav:
       - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
       - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
     - Contributor:
+      - Configuring Moonshot WebAPI : contributor_guide/configure_web_api.md
       - How to Create a Connector : contributor_guide/create_connector.md
       - How to Create a Moonshot-Compatible Dataset (Coming soon!): never.md
       - How to Create an Attack Module (Coming soon!) : gonna.md
