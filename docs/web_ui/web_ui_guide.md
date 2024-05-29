@@ -1,6 +1,4 @@
-# User Guide for Moonshot Web UI
-
-## <b>Getting Started with Moonshot Web UI</b>
+# Getting Started with Moonshot Web UI
 
 In this step-by-step tutorial, we will walk you through the key functionalities of Project Moonshot’s user-friendly web UI. 
 

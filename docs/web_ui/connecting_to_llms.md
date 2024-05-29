@@ -15,12 +15,12 @@
     | Name                    | Description                                                                                                                         | Example                                     |
     |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
     | **Name** (Required)     | A unique name for you to identify this new endpoint by                                                                              | `My GPT4`                                   |
-    | **Connection Type** (Required) | Type of API to use. If you do not see the type that you need, see [How to build a custom connector](URL)                            | `openai-connector`                          |
+    | **Connection Type** (Required) | Type of API to use. If you do not see the type that you need, see [How to build a custom connector](URL) TODO                           | `openai-connector`                          |
     | **URI**                 | URI to the endpoint to be tested                                                                                                    | `<left blank>`                              |
     | **Token**               | Your private API token                                                                                                              | `123myopenaicontoken456`                    |
     | **Max Calls Per Second**| The maximum number of calls to be made to the endpoint per second                                                                   | `10`                                        |
     | **Max Concurrency**     | The maximum number of calls that can be made to the endpoint at any one time                                                        | `1`                                         |
-    | **Other Parameters**    | Certain connector types require extra parameters. E.g., for OpenAI connectors, you will need to specify the `model`. See [OpenAI docs](https://platform.openai.com/docs/models) | `{ "timeout": 300, "allow_retries": true, "num_of_retries": 3, "temperature": 0.5, "model": "gpt-4" }` |
+    | **Other Parameters**    | Certain connector types require extra parameters. E.g., for OpenAI connectors, you will need to specify the `model`. See [OpenAI docs](https://platform.openai.com/docs/models) | ```{ "timeout": 300, "allow_retries": true, "num_of_retries": 3, "temperature": 0.5, "model": "gpt-4" }``` |
 
 
 
