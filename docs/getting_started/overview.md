@@ -4,9 +4,9 @@ Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/?utm_sourc
 
 ## What does Moonshot do?
 
-Moonshot provides ready access to test LLMs from popular model providers E.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key. See Model Connectors Available.
+Moonshot provides ready access to test LLMs from popular model providers E.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key.
 
-If you are testing other models or your own LLM Application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as little lines of code as possible. How to create a custom model connector.
+If you are testing other models or your own LLM Application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as little lines of code as possible.
 
 ### Benchmark
 
