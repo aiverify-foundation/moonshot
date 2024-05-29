@@ -24,13 +24,14 @@ Project Moonshot simplifies the process of Red-Teaming by providing an easy to u
 
 As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
 
-# Glossary
+## Glossary
+Here are some common terms that may be used in this documentation:
 
 | Term | Description |
 | --- | ---|
-| Connector | Model Connectors in Moonshot enable users to integrate new models into the toolkit by connecting to their Large Language Models (LLMs) via API connectors.  |
-| Cookbook | The Cookbook in Moonshot contains one or more recipes, each designed to generate results when selected to run with the model endpoints. It serves as a comprehensive guide for conducting evaluations and tests, offering a structured approach to assessing LLM applications' performance and addressing potential risks. |
-| Recipe | A Recipe in Moonshot brings together 3 essential components. A recipe can contain one or more datasets, prompt templates and metrics.  |
-| Datasets | Datasets consist of a collection of input-target pairs, where the 'input' is a prompt provided to the LLM (being tested), and the 'target' is the correct response or ground truth. | 
-| Session | A Session feature allows users to initiate interactions with selected models, enabling them to engage in chats and send prompts to red team the models.  | 
-| Chat | A Chat refers to an interaction directed to a specific model within a session, initiating the red teaming prompt process. Users can communicate with individual models, sending prompts and assessing their responses to identify potential vulnerabilities and areas for improvement in LLM applications. | 
+| Connector | The **Connector** in Moonshot enable users to integrate new models into the toolkit by connecting to their Large Language Models (LLMs) via API connectors.  |
+| Cookbook | A **Cookbook** in Moonshot contains one or more recipes, each designed to generate results when selected to run with the model endpoints. It serves as a comprehensive guide for conducting evaluations and tests, offering a structured approach to assessing LLM applications' performance and addressing potential risks. |
+| Recipe | A **Recipe** in Moonshot brings together 3 essential components. A recipe can contain one or more datasets, prompt templates and metrics.  |
+| Datasets | **Datasets** consist of a collection of input-target pairs, where the 'input' is a prompt provided to the LLM (being tested), and the 'target' is the correct response or ground truth. | 
+| Session | A **Session** feature allows users to initiate interactions with selected models, enabling them to engage in chats and send prompts to red team the models.  | 
+| Chat | A **Chat** refers to an interaction directed to a specific model within a session, initiating the red teaming prompt process. Users can communicate with individual models, sending prompts and assessing their responses to identify potential vulnerabilities and areas for improvement in LLM applications. | 

@@ -9,5 +9,5 @@
 Below are some useful links to help you get started with Moonshot.
 
 * If you want to quickly start on Moonshot, look at our [getting started](./getting_started/quick_install.md).
-* If you need a full user guide on Moonshot UI, our [Web UI guide](./user_guide/web_ui/) is your best take.
-* If you want to integrate our library with your CI/CD pipeline, take a look at our [API reference](http://localhost:8000/understanding_moonshot/api_connector_endpoint/).
+* If you want to learn how to use Moonshot-UI, [Web UI guide](./user_guide/web_ui/web_ui_guide.md) is the best place.
+* If you want to integrate our library with your CI/CD pipeline, we suggest taking a look at our [API reference](./api_reference/api_connector.md).

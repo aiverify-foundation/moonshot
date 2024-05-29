@@ -107,4 +107,4 @@ nav:
       - Metrics: resources/metrics.md
       - Attack Modules: resources/attack_modules.md
   - Contributor Guide: contributing.md
-  - Troubleshoot : troubleshoot.md
+  - Common Issues : common_issues.md
