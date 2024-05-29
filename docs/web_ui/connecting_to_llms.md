@@ -6,11 +6,11 @@
 
     - If you wish to test other LLMs or your own hosted LLM application, click on ‘Create New Endpoint’. 
 
-    ![alt text](./imgs/benchmarking(8).png)
+    ![List of Endpoints](./imgs/benchmarking(8).png)
 
 2. Provide the following info as necessary, and click ‘Save’ to create/ update the endpoint. 
 
-    ![alt text](./imgs/benchmarking(9).png)
+    ![Creating New Endpoints](./imgs/benchmarking(9).png)
 
     | Name                    | Description                                                                                                                         | Example                                     |
     |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
@@ -33,5 +33,5 @@
 
 
 
-    Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’.(You don’t need to select Together Llama Guard 7B Assistant for testing) 
-    ![alt text](./imgs/selecting_endpoints(10).png)
+    Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’. (You don’t need to select Together Llama Guard 7B Assistant for testing) 
+    ![Selection of Endpoints](./imgs/selecting_endpoints(10).png)
