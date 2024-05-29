@@ -101,21 +101,21 @@ After running a recipe or cookbook, you view the results and summary of the runs
 - View result: After running a cookbook or recipe, the result will be shown in a table immediately. You can view the results after that as well:
     - Run help example: 
         
-        `view_result my-new-cookbook-runner`
+            view_result my-new-cookbook-runner
 
 ![view result](cli_images/view_result.png)    
 
 - View runner summary: In the examples above, we have created two runners `my-new-cookbook-runner` and `my-new-recipe-runner`. You can view the summary of runs and sessions that we have done for the runner:
     - Run help example: 
     
-        `view_runner my-new-cookbook-runner`
+            view_runner my-new-cookbook-runner
 
 ![view runner](cli_images/view_runner.png)
 
 - View the runs of a runner: Every runner can have multiple runs. In the example above, we did a run `my-new-cookbook-runner`. You can view the all the runs in this runner (in this case you should see 1 run):
     - Run help example: 
     
-        `view_run my-new-cookbook-runner`
+            view_run my-new-cookbook-runner
 
 ![view run](cli_images/view_run.png)
 
