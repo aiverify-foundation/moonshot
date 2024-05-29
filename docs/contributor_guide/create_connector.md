@@ -1,9 +1,11 @@
-Currently, we do not have a better way to create a new connector as it involves users to create it as a Python module. The most straightforward way is to copy and paste an existing connector module, and modify the codes.
+Currently, we do not have a better way to create a new connector as it is a Python module. The most straightforward way is to copy and paste an existing connector module, and modify the codes.
 
 
-All connectors inherit the super class [Connector](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py). In this super class, we initialise it with certain variables which we think are common across various connectors (i.e. `token`, `max_concurrency`, etc). These variables come from another class called [ConnectorEndpoint](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py), but we will get to this later.
+All connectors inherit the super class [Connector](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py). In this super class, we initialise it with certain variables which we think are common across various connectors (i.e. `token`, `max_concurrency`, etc). These variables come from another class called [ConnectorEndpoint](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py).
 
-We will <mark>use</mark> our OpenAI connector [openai-connector](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py) as an example:
+We will use a set of modified codes from one of our connectors [openai-connector](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py) as an example:
+
+
 ```
     def __init__(self, ep_arguments: ConnectorEndpointArguments):
         # Initialize super class
@@ -11,8 +13,12 @@ We will <mark>use</mark> our OpenAI connector [openai-connector](https://github.
 
         # This is optional. You can keep this here if your model needs to take in a model field from the user
         self.model = self.optional_params.get("model", "")
+```
+    - The `__init__()` function initialises the Connector class. This must be included in your code.
+    <br><br>
 
-    @Connector.rate_limited #TODO
+```
+    @Connector.rate_limited # Limits the number of calls per second made to the LLM based on a variable max_calls_per_second. 
     @perform_retry # Performs retries based on a variable num_of_retries. Throws a ConnectionError when the number of retries is hit. 
     async def get_response(self, prompt: str) -> str:
         """
@@ -33,7 +39,11 @@ We will <mark>use</mark> our OpenAI connector [openai-connector](https://github.
 
         # Return the response of the LLM 
         return await self._process_response(response) # an example
+```
+    - The `get_response()` is an abstract method that must be instantiated. This is where you will insert your codes to send promts to the LLM and get back the response.
+    <br><br>
 
+```
     async def _process_response(self, response: Any) -> str:
         """
         An optional helper method we have in all our connector types to process the response from the LLM. The way to
@@ -49,3 +59,12 @@ We will <mark>use</mark> our OpenAI connector [openai-connector](https://github.
         """
         return str(response) # an example
 ```
+    - The `_process_response()` is an optional method that we have included in all our connectors to help us format the response from the LLM.
+
+
+Once you have your connector created, move it to your own `moonshot-data/connectors` folder. The name of your connector will be your file name (i.e. the name of your connector will be `new-custom-connector` if your connector file name is `new-custom-connector.py`)
+
+You should be able to see your connector when you list the connectors:
+
+- `list_connector_types`
+![recipe added](images/new_connector.png)
