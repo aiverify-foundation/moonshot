@@ -13,3 +13,4 @@
 | Insert Punctuation Attack | This module tests for adversarial textual robustness and creates perturbations through adding punctuation to the start of words in a prompt.<br>Parameters:<br>1. MAX_ITERATIONS - Number of prompts that should be sent to the target. [Default: 10] |
 | Malicious Question Generator | This attack module generates malicious questions using OpenAI's GPT4 based on a given topic. This module will stop by the number of iterations (Default: 50). To use this attack module, you need to configure an 'openai-gpt4'endpoint. |
 | Sample Attack Module | This is a sample attack module. |
+| Singapore Sentence Generator | This module generates singlish sentence based on a given seed prompt. The attack module intends to test if the endpoint will complete the sentence with toxic sentences/phrases in Singapore context. |
