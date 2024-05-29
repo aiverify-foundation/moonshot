@@ -315,11 +315,11 @@ view_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="View an endpoint.",
     epilog="Example:\n view_endpoint openai-gpt4",
 )
-view_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
+view_endpoint_args.add_argument("endpoint", type=str, help="ID of the endpoint")
 
 # Delete endpoint arguments
 delete_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Delete an endpoint.",
     epilog="Example:\n delete_endpoint openai-gpt4",
 )
-delete_endpoint_args.add_argument("endpoint", type=str, help="Name of the endpoint")
+delete_endpoint_args.add_argument("endpoint", type=str, help="ID of the endpoint")
