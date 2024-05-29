@@ -14,6 +14,7 @@
 | BBQ-lite on gender - Disambiguated Questions | This dataset is an excerpt from Bias Benchmark from QA on gender, containing only the disambiguated questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
 | ARC-Easy | A dataset of genuine grade-school level, multiple-choice science questions in advanced Q&A. This is the challenge set. | CC BY-SA | https://allenai.org/data/arc |
 | BBQ-lite on nationality - Ambiguous Questions | This dataset is an excerpt from Bias Benchmark from QA on nationality, containing only the ambiguous questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
+| m3exam-vietnamese | This dataset contains local exam questions for testing Vietnamese capability. | CC BY-NC-SA | https://github.com/DAMO-NLP-SG/M3Exam |
 | BBQ-lite on physical-appearance - Disambiguated Questions | This dataset is an excerpt from Bias Benchmark from QA on physical-appearance, containing only the disambiguated questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
 | tanglish-tweets-SA | Code-mixed Tamil and English tweets curated for the sentiment analysis task. | CC0: Public Domain | - |
 | Ethics-Commonsense-Hard | This dataset contains prompts that embedded the body of moral standards and principles that most people intuitively accept. | MIT License | https://github.com/hendrycks/ethics/ |
@@ -73,10 +74,10 @@
 | BBQ-lite on race-ethnicity - Disambiguated Questions | This dataset is an excerpt from Bias Benchmark from QA on race-ethnicity, containing only the disambiguated questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
 | GSM8K | This dataset consists of high quality grade school math problems created by human. These problems take between 2 and 8 steps to solve, and usually requires a sequence of elementary calculations. | MIT License | https://github.com/openai/grade-school-math |
 | MLC Baseline - Child Abuse and Exploitation | Responses that contain, describe, enable, encourage, or endorse the sexual abuse of children. | - | - |
+| m3exam-indonesian | This dataset contains local exam questions for testing Indonesian capability. | CC BY-NC-SA | https://github.com/DAMO-NLP-SG/M3Exam |
 | BBQ-lite on race-x-gender - Disambiguated Questions | This dataset is an excerpt from Bias Benchmark from QA on race-x-gender, containing only the disambiguated questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
 | MLC Baseline - Sex-Related Crimes | Responses that enable, encourage, or endorse the commission of sex-related crimes. | - | - |
 | BBQ-lite on disability-status - Ambiguous Questions | This dataset is an excerpt from Bias Benchmark from QA on disability-status, containing only the ambiguous questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
-| - | - | - | - |
 | MMLU College Biology | MMLU measure knowledge acquired during pretraining by evaluating models exclusively in zero-shot and few-shot settings. This particular dataset contains questions on MMLU College Biology | MIT License | https://github.com/hendrycks/test |
 | ChallengingToxicityPrompts | ChallengingToxicityPrompts was created by the authors of DecodingTrust, with the aim to measure the model's ability in identify toxic sentences. | CC BY-SA 4.0 | https://github.com/AI-secure/DecodingTrust |
 | BBQ-lite on religion - Disambiguated Questions | This dataset is an excerpt from Bias Benchmark from QA on religion, containing only the disambiguated questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
@@ -99,6 +100,7 @@
 | C-Values - Values of Chinese Large Language attack_modules | This dataset contains prompts that can measure the alignment ability of LLMs in both safety and responsibility in Chinese Language. | Apache-2.0 license | - |
 | BBQ-lite on physical-appearance - Ambiguous Questions | This dataset is an excerpt from Bias Benchmark from QA on physical-appearance, containing only the ambiguous questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
 | enronemail | The Enron email dataset is aimed at evaluating if there is leakage of private information. The dataset was used in DecodingTrust as part of its privacy evaluation. | Apache-2.0 | https://github.com/ParakweetLabs/EmailIntentDataSet |
+| m3exam-thai | This dataset contains local exam questions for testing Thai capability. | CC BY-NC-SA | https://github.com/DAMO-NLP-SG/M3Exam |
 | MMLU Medical Genetics | MMLU measure knowledge acquired during pretraining by evaluating models exclusively in zero-shot and few-shot settings. This particular dataset contains questions on MMLU Medical Genetics | MIT License | https://github.com/hendrycks/test |
 | Chinese Version - Bias Benchmark for QA | This aims to measure social biases across 9 different categories in Chinese language. | - | https://github.com/YFHuangxxxx/CBBQ |
 | BBQ-lite on ses - Ambiguous Questions | This dataset is an excerpt from Bias Benchmark from QA on ses, containing only the ambiguous questions. | CC-BY-4.0 license | https://arxiv.org/pdf/2110.08193v2 |
