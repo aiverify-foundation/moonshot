@@ -56,8 +56,8 @@ nav:
       - How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
       - How to Run Red Teaming: tutorial/cli/run_red_teaming.md
     - Contributor:
-      - Configuring Moonshot WebAPI : contributor_guide/configure_web_api.md
-      - How to Create a Connector : contributor_guide/create_connector.md
+      - Configuring Moonshot WebAPI : tutorial/contributor/configure_web_api.md
+      - How to Create a Connector : tutorial/contributor/create_connector.md
       - How to Create a Moonshot-Compatible Dataset (Coming soon!): never.md
       - How to Create an Attack Module (Coming soon!) : gonna.md
       - How to Create a Metric (Coming soon!): give.md
@@ -65,23 +65,23 @@ nav:
       - How to Create a Context Strategy (Coming soon!): up.md
   - User Guide: 
     - Moonshot Web UI: 
-      - Get Started with Moonshot Web UI: web_ui/web_ui_guide.md
-      - Home: web_ui/homepage.md
-      - Endpoint: web_ui/endpoint.md
-      - Benchmarking: web_ui/benchmarking.md
-      - Redteaming: web_ui/redteaming.md
-      - History: web_ui/history.md
-      - Utils: web_ui/utils.md
-      - Choosing Relevant Tests: web_ui/choosing_relevant_tests.md
-      - Connecting to LLMs: web_ui/connecting_to_llms.md
-      - Running Benchmarks: web_ui/running_benchmarks.md
-      - Red Teaming: web_ui/red_teaming.md
-      - Creating Custom Cookbooks: web_ui/creating_custom_cookbooks.md
+      - Get Started with Moonshot Web UI: user_guide/web_ui/web_ui_guide.md
+      - Home: user_guide/web_ui/homepage.md
+      - Endpoint: user_guide/web_ui/endpoint.md
+      - Benchmarking: user_guide/web_ui/benchmarking.md
+      - Redteaming: user_guide/web_ui/redteaming.md
+      - History: user_guide/web_ui/history.md
+      - Utils: user_guide/web_ui/utils.md
+      - Choosing Relevant Tests: user_guide/web_ui/choosing_relevant_tests.md
+      - Connecting to LLMs: user_guide/web_ui/connecting_to_llms.md
+      - Running Benchmarks: user_guide/web_ui/running_benchmarks.md
+      - Red Teaming: user_guide/web_ui/red_teaming.md
+      - Creating Custom Cookbooks: user_guide/web_ui/creating_custom_cookbooks.md
     - CLI: 
-      - Connecting to LLMs: cli/connecting_endpoints.md
-      - Running Benchmark: cli/benchmarking.md
-      - Running Red Teaming: cli/red_teaming.md 
-      - Adding Your Own Tests: cli/add_your_own_tests.md
+      - Connecting to LLMs: user_guide/cli/connecting_endpoints.md
+      - Running Benchmark: user_guide/cli/benchmarking.md
+      - Running Red Teaming: user_guide/cli/red_teaming.md 
+      - Adding Your Own Tests: user_guide/cli/add_your_own_tests.md
   - API Reference:
     - Moonshot Library:
         - Connector Endpoint API: api_reference/api_connector_endpoint.md
@@ -106,5 +106,5 @@ nav:
       - Datasets: resources/datasets.md
       - Metrics: resources/metrics.md
       - Attack Modules: resources/attack_modules.md
-
-  - Troubleshoot : troubleshoot/troubleshoot.md
+  - Contributor Guide: contributing.md
+  - Troubleshoot : troubleshoot.md

@@ -1,10 +1,8 @@
- Currently, the most straightforward way is to copy and paste an existing connector module, and modify the codes. This feature is currently not available on the web UI and CLI.
-
+Currently, the most straightforward way is to copy and paste an existing connector module, and modify the codes. This feature is currently not available on the web UI and CLI.
 
 All connectors inherit the super class [Connector](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py). In this super class, we initialise it with certain variables which we think are common across various connectors (i.e. `token`, `max_concurrency`, etc). These variables come from another class called [ConnectorEndpoint](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py).
 
 We will use a set of modified codes from one of our connectors [openai-connector](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py) as an example:
-
 
 ```
     def __init__(self, ep_arguments: ConnectorEndpointArguments):
@@ -71,5 +69,5 @@ You should be able to see your connector when you list the connectors:
 
 Once you are able to see your newly created, you can proceed to create a configuration file(connector endpoint) for your newly created connector:
 
-- [Create via web UI](../tutorial/web-ui/create_endpoint.md)
-- [Create via CLI](../cli/connecting_endpoints.md#creating-a-connector-endpoint)
+- [Create via web UI](../../tutorial/web-ui/create_endpoint.md)
+- [Create via CLI](../../cli/connecting_endpoints.md#creating-a-connector-endpoint)
