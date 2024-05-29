@@ -93,6 +93,35 @@ result = {
 
 The `grading_criteria` will be used by the grading scale in the recipe to assess the outcome of the test. The key `grading_criteria` must be present in the returned dictionary, but its value can be an empty dictionary. If the value is an empty dictionary, the report generated from the UI will display '-' as the grade.
 
+### Adding a new dataset.
+
+You can find a list of [available datasets here](https://github.com/aiverify-foundation/moonshot-data/tree/main/datasets).
+
+To create a Moonshot-compatible dataset, you can convert your raw dataset into this format:
+
+```
+{
+    "name": "name of the dataset",
+    "description": "description",
+    "license": "",
+    "reference": "",
+    "examples": [
+        {
+            "input": "prompt 1",
+            "target": "ground truth"
+        },
+
+        {
+            "input": "prompt 2",
+            "target": "ground truth"
+        }
+        ....
+    ]
+}
+```
+
+To run your dataset, you need to create a [recipe](#adding-a-new-recipe) so that Moonshot knows how it can be evaluated. The filename of the dataset will serve as the unique identifier in the recipe. 
+
 ### Adding a new recipe
 
 You can find a list of [available recipes here](https://github.com/aiverify-foundation/moonshot-data/tree/main/recipes).
@@ -105,8 +134,48 @@ To create a recipe, you can copy one of the recipe files and edit the following 
 4. `tags`: This is a list of tags, which can help the user to find your recipe. We suggest to insert some relevant keywords related to domain and nature of the test.
 5. `categories`: This helps to group the recipe. We suggest using `Trust & Safety`, `Capability` and `Quality`.
 6. `datasets`: This contains a list of dataset identifiers used in this recipe. This dataset must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/datasets).
-7. `metrics`: This contains a list of metric identifiers used in this recipe. This metric must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/metrics).
-8. `grading_scale`: This grading scale helps to determine the outcome of the test. Leaving this empty will result in '-' as its grade in the report. 
+7. `prompt_templates`: This contains a list of prompt templates used in this recipe. This prompt template must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/prompt-templates).
+8. `attack_modules`: A list of attack modules that is used in this recipe. The attack modules must be available in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/attack-modules).
+9. `metrics`: This contains a list of metric identifiers used in this recipe. This metric must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/metrics).
+10. `grading_scale`: This grading scale helps to determine the outcome of the test. Leaving this empty will result in '-' as its grade in the report.
+
+Here's an example recipe:
+
+```
+{
+    "id": "recipe1",
+    "name": "Recipe 1",
+    "description": "This recipe measures performance of the system.",
+    "tags": ["Safety"],
+    "categories": ["Trust & Safety"],
+    "datasets": ["dataset1"],
+    "prompt_templates": [],
+    "metrics": ["exactstrmatch"],
+    "attack_modules": [],
+    "grading_scale": {
+        "A": [
+            80,
+            100
+        ],
+        "B": [
+            60,
+            79
+        ],
+        "C": [
+            40,
+            59
+        ],
+        "D": [
+            20,
+            39
+        ],
+        "E": [
+            0,
+            19
+        ]
+    }
+}
+```
 
 ### Adding a new cookbook
 
@@ -118,6 +187,20 @@ To create a cookbook, you can copy one of the cookbook files and edit the follow
 2. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
 3. `description`: This describes what the recipe test.
 4. `recipes`: This contains a list of recipe identifiers that this cookbook will execute. These recipes must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/recipes).
+
+Here's an example cookbook:
+
+```
+{
+    "id": "example-cookbook",
+    "name": "Example Cookbook",
+    "description": "This cookbook measures the system performance. ",
+    "recipes": [
+        "recipe1",
+        "recipe2"
+    ]
+}
+```
 
 ## Contributing by Pull Requests (PRs)
 
