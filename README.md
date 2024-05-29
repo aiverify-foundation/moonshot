@@ -53,7 +53,7 @@ pip install "aiverify-moonshot[all]"
 # Clone and install test assets and Web UI
 python -m moonshot -i moonshot-data -i moonshot-ui
 ```
-Check out our [Installation Guide]() for a more details.
+Check out our [Installation Guide](https://aiverify-foundation.github.io/moonshot/getting_started/quick_install/) for a more details.
 
 If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/troubleshoot/troubleshoot/).
 <details>
@@ -109,13 +109,11 @@ python -m moonshot cli interactive
 ## User Guides
 Check out our user guides for step-by-step walkthrough of each interface type.
 
-[Getting Started with Moonshot Web UI]()
+[Getting Started with Moonshot Web UI](https://aiverify-foundation.github.io/moonshot/web_ui/web_ui_guide/)
 
-[Getting Started with Moonshot Interactive CLI]()
+[Getting Started with Moonshot Interactive CLI](https://aiverify-foundation.github.io/moonshot/cli/connecting_endpoints/)
 
-[Moonshot Library Python Notebook Examples]()
-
-[Using Moonshot Web APIs]()
+[Moonshot Library Python Notebook Examples](https://github.com/aiverify-foundation/moonshot/tree/main/examples/jupyter-notebook)
 
 
 </br></br>
@@ -144,12 +142,12 @@ The AI Verify Foundation is also partnering [MLCommons](https://mlcommons.org/) 
 
 Check out the full list of tests [here](https://github.com/aiverify-foundation/moonshot-data).
 
-* ✨ <b>Run only the most relevant tests</b>
+✨ <b>Run only the most relevant tests</b>
 
-Moonshot helps you identify and run only the most relevant tests, optimizing the testing process. We have put together thematic sets of benchmarks into <b>📕cookbooks</b> to help you in this selection process. Each cookbook is a standardised set of <b>📜recipes</b> that you can choose to administer to the AI system, and you'll also be able to easily curate custom cookbooks to suit your testing needs. See [How to create a custom cookbook]().
+Moonshot helps you identify and run only the most relevant tests, optimizing the testing process. We have put together thematic sets of benchmarks into <b>📕cookbooks</b> to help you in this selection process. Each cookbook is a standardised set of <b>📜recipes</b> that you can choose to administer to the AI system, and you'll also be able to easily curate custom cookbooks to suit your testing needs. See [How to create a custom cookbook](https://aiverify-foundation.github.io/moonshot/tutorial/web-ui/create_cookbook/).
 
 
-* ✨ <b>Adding custom tests</b>
+✨ <b>Adding custom tests</b>
 
 You can also tailor your evaluation process with custom datasets, to evaluate AI Systems for unique use cases. To do so, you can easily create your own <b>📜recipes</b> in Moonshot. See [How to create a custom recipe](https://aiverify-foundation.github.io/moonshot/tutorial/cli/create_benchmark_tests/).
 
@@ -181,7 +179,7 @@ A Recipe consists of 2 essential components:
 </details>
 <br/>
 
-* ✨ <b>Interpreting test results</b>
+✨ <b>Interpreting test results</b>
 
 Using Moonshot's Web UI, you can produce a HTML report that visualises your test results in easy-to-read charts. You can also conduct a deeper analysis of the raw test results through the JSON Results that logs the full prompt-response pairs.
 
