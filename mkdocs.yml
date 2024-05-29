@@ -62,14 +62,9 @@ nav:
       - How to Create a Metric (Coming soon!): give.md
       - How to Create a Prompt Template (Coming soon!): you.md
       - How to Create a Context Strategy (Coming soon!): up.md
-
   - User Guide: 
     - Moonshot UI User Guide: 
       - Get Started with Web UI: web_ui/web_ui_guide.md
-      - Model Endpoints: web_ui/model_endpoint.md
-      - Running Benchmark: web_ui/run_benchmark_test.md
-      - Cookbook: web_ui/cookbook.md
-      - Red Teaming: web_ui/red_teaming.md
     - CLI: 
       - Connecting to LLMs: cli/connecting_endpoints.md
       - Running Benchmark: cli/benchmarking.md
@@ -91,9 +86,7 @@ nav:
         - Run API: api_reference/api_run.md
         - Runner API: api_reference/api_runner.md
         - Session API: api_reference/api_session.md
-    - Web-API:
-        - Setting Up: api_reference/web_api_guide.md
-        - Swagger: api_reference/web_api_swagger.md
+    - Web-API: api_reference/web_api_swagger.md
   - Resources:
       - Jupyter Notebook: resources/jupyter_notebook.md
       - Cookbook: resources/cookbooks.md

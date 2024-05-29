@@ -1,7 +1,7 @@
 
-In this tutorial, we will guide you through the process of creating a Cookbook in Moonshot. Imagine you are a user who has been working with various model endpoints and you've found a set of recipes that generate the results you need. Instead of selecting these recipes individually each time, you want to create a Cookbook.
+In this tutorial, we will guide you through the process of creating a cookbook in Moonshot. Imagine you are a user who has been working with various model endpoints and you've found a set of recipes that generate the results you need. Instead of selecting these recipes individually each time, you want to create a cookbook.
 
- A Cookbook in Moonshot is a collection of one or more recipes, each designed to generate specific results when run with the model endpoints. This Cookbook will serve as your personalized guide for conducting evaluations and tests, offering a structured approach to assessing your LLM applications' performance and addressing potential risks. Let's get started on creating your first Cookbook.
+ A cookbook in Moonshot is a collection of one or more recipes, each designed to generate specific results when run with the model endpoints. This cookbook will serve as your personalized guide for conducting evaluations and tests, offering a structured approach to assessing your LLM applications' performance and addressing potential risks. Let's get started on creating your first cookbook.
 
 
 1. Navigate to 'Create Cookbooks, Select Recipes'.
