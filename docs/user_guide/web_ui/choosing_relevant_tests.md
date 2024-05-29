@@ -6,7 +6,7 @@
 
 2. This page lists the cookbooks that Project Moonshot provides. Each cookbook contains tests of the same theme. Select the areas that are relevant to your use case. This is not final as you will be able to further curate the scope and scale of the tests in following steps.   
 
-    [View full list of cookbook details](../resources/cookbooks.md) 
+    [View full list of cookbook details](../../resources/cookbooks.md) 
 
     !!! note 
         Some of these cookbooks contain scoring metrics that require connection to specific models. 

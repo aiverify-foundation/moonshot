@@ -41,6 +41,7 @@ markdown_extensions:
 nav: 
   - Home: index.md
   - Getting Started: 
+
     - Overview: getting_started/overview.md
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
@@ -58,21 +59,16 @@ nav:
     - Contributor:
       - Configuring Moonshot WebAPI : tutorial/contributor/configure_web_api.md
       - How to Create a Connector : tutorial/contributor/create_connector.md
-      - How to Create a Moonshot-Compatible Dataset (Coming soon!): never.md
-      - How to Create an Attack Module (Coming soon!) : gonna.md
-      - How to Create a Metric (Coming soon!): give.md
-      - How to Create a Prompt Template (Coming soon!): you.md
-      - How to Create a Context Strategy (Coming soon!): up.md
   - User Guide: 
     - Moonshot Web UI: 
       - Get Started with Moonshot Web UI: user_guide/web_ui/web_ui_guide.md
       - Moonshot Interface:
-        - Home: user_guide/web_ui/homepage.md
-        - Endpoint: user_guide/web_ui/endpoint.md
-        - Benchmarking: user_guide/web_ui/benchmarking.md
-        - Red Teaming: user_guide/web_ui/redteaming.md
-        - History: user_guide/web_ui/history.md
-        - Utils: user_guide/web_ui/utils.md
+        - Home: user_guide/web_ui/moonshot_interface/homepage.md
+        - Endpoint: user_guide/web_ui/moonshot_interface/endpoint.md
+        - Benchmarking: user_guide/web_ui/moonshot_interface/benchmarking.md
+        - Red Teaming: user_guide/web_ui/moonshot_interface/redteaming.md
+        - History: user_guide/web_ui/moonshot_interface/history.md
+        - Utils: user_guide/web_ui/moonshot_interface/utils.md
       - Testing Workflow:
         - Choosing Relevant Tests: user_guide/web_ui/choosing_relevant_tests.md
         - Connecting to LLMs: user_guide/web_ui/connecting_to_llms.md

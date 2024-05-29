@@ -6,7 +6,7 @@ Before starting on this tutorial, you should [Install and Set Up Moonshot Web UI
 
 This tutorial will walk you through the UI’s guided workflow to: 
 
-1. [Introduction to Moonshot Interface](./homepage.md)
+1. [Introduction to Moonshot Interface](./moonshot_interface/homepage.md)
 2. [Choose tests relevant to your LLMs](./choosing_relevant_tests.md)
 3. [Set up connection to your LLMs](./connecting_to_llms.md)
 4. [Run Benchmarks](./running_benchmarks.md)

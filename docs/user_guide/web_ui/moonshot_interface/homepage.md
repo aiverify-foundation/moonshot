@@ -1,5 +1,5 @@
 
-![homepage](./imgs/homepage.png)
+![homepage](../imgs/homepage.png)
 
 The Moonshot landing page appears when you first launch the UI.
 
@@ -9,11 +9,11 @@ The sidebar contains several icons, each representing a different page within th
 
 | Icon | Description |
 |:----:|:-----------:|
-| ![model_endpoint](./imgs/model_endpoint.png) | This icon directs you to the endpoint list page, where you can view, create, and manage your endpoints. |
-| ![benchmarking](./imgs/benchmarking.png) | This icon takes you to the benchmarking page. Here, you can initiate benchmarking processes to evaluate your models against standard tests. |
-| ![redteaming](./imgs/redteaming.png) | This icon leads you to the redteaming page. On this page, you can start a redteaming process to discover new vulnerabilities in your models. |
-| ![history](./imgs/history.png) | This icon navigates you to the history page of your runs. Here, you can review the details and results of your past runs. |
-| ![utils](./imgs/utils.png) | This icon guides you to the list of prompt templates and context strategies. These resources can help you customize your testing processes. |
+| ![model_endpoint](../imgs/model_endpoint.png) | This icon directs you to the endpoint list page, where you can view, create, and manage your endpoints. |
+| ![benchmarking](../imgs/benchmarking.png) | This icon takes you to the benchmarking page. Here, you can initiate benchmarking processes to evaluate your models against standard tests. |
+| ![redteaming](../imgs/redteaming.png) | This icon leads you to the redteaming page. On this page, you can start a redteaming process to discover new vulnerabilities in your models. |
+| ![history](../imgs/history.png) | This icon navigates you to the history page of your runs. Here, you can review the details and results of your past runs. |
+| ![utils](../imgs/utils.png) | This icon guides you to the list of prompt templates and context strategies. These resources can help you customize your testing processes. |
 
 ## Discover new vulnerabilities
 
