@@ -21,4 +21,4 @@
 ![connector endpoint](images/connector_endpoint.png)
 
 
-You can view more information on creating connector endpoint [here](../../user_guide/cli/connecting_endpoints.md#creating-an-endpoint-connector).
+You can view more information on creating connector endpoint [here](../../user_guide/cli/connecting_endpoints.md).
