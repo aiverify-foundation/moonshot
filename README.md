@@ -16,8 +16,8 @@ A simple and modular tool to evaluate any LLM application.
 Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), Project Moonshot is one of the first tools to bring Benchmarking and Red-Teaming together to help AI developers, compliance teams and AI system owners <b>evaluate LLMs and LLM applications</b>.
 
 In this initial version, Moonshot can be used through several interfaces:
-- User-friendly Web UI - [Web UI User Guide](https://aiverify-foundation.github.io/moonshot/web_ui/web_ui_guide/)
-- Interactive Command Line Interface - [CLI User Guide](https://aiverify-foundation.github.io/moonshot/cli/connecting_endpoints/)
+- User-friendly Web UI - [Web UI User Guide](https://aiverify-foundation.github.io/moonshot/user_guide/web_ui/web_ui_guide/)
+- Interactive Command Line Interface - [CLI User Guide](https://aiverify-foundation.github.io/moonshot/user_guide/cli/connecting_endpoints/)
 - Seamless Integration into your MLOps workflow via Moonshot Library APIs or Moonshot Web APIs - [Notebook Examples](https://github.com/aiverify-foundation/moonshot/tree/main/examples/jupyter-notebook), [Web API Docs](https://aiverify-foundation.github.io/moonshot/api_reference/web_api_swagger/)
 
 </br>
@@ -55,7 +55,7 @@ python -m moonshot -i moonshot-data -i moonshot-ui
 ```
 Check out our [Installation Guide](https://aiverify-foundation.github.io/moonshot/getting_started/quick_install/) for a more details.
 
-If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/troubleshoot/troubleshoot/).
+If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/common_issues/).
 <details>
 <summary><b>Other installation options</b></summary>
 Here's a summary of other installation commands available:
@@ -109,9 +109,9 @@ python -m moonshot cli interactive
 ## User Guides
 Check out our user guides for step-by-step walkthrough of each interface type.
 
-[Getting Started with Moonshot Web UI](https://aiverify-foundation.github.io/moonshot/web_ui/web_ui_guide/)
+[Getting Started with Moonshot Web UI](https://aiverify-foundation.github.io/moonshot/user_guide/web_ui/web_ui_guide/)
 
-[Getting Started with Moonshot Interactive CLI](https://aiverify-foundation.github.io/moonshot/cli/connecting_endpoints/)
+[Getting Started with Moonshot Interactive CLI](https://aiverify-foundation.github.io/moonshot/user_guide/cli/connecting_endpoints/)
 
 [Moonshot Library Python Notebook Examples](https://github.com/aiverify-foundation/moonshot/tree/main/examples/jupyter-notebook)
 
@@ -120,15 +120,15 @@ Check out our user guides for step-by-step walkthrough of each interface type.
 
 ## Key Features
 
-To get started with Moonshot, we recommend reading the following section, which provides a high-level overview of Moonshot's key features. For more detailed information, a comprehensive documentation can be found [here]().
+To get started with Moonshot, we recommend reading the following section, which provides a high-level overview of Moonshot's key features. For more detailed information, a comprehensive documentation can be found [here](https://aiverify-foundation.github.io/moonshot/).
 
 </br>
 
 ### 🔗 Accessing the AI system to be tested
 
-Moonshot provides ready access to test LLMs from popular model providers E.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key. [See Model Connectors Available](). 
+Moonshot provides ready access to test LLMs from popular model providers E.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key. [See Model Connectors Available](https://github.com/aiverify-foundation/moonshot-data/tree/main/connectors). 
 
-If you are testing other models or your own LLM Application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as little lines of code as possible. [How to create a custom model connector](). 
+If you are testing other models or your own LLM Application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as little lines of code as possible. [How to create a custom model connector](https://aiverify-foundation.github.io/moonshot/tutorial/contributor/create_connector/). 
 
 </br>
 
@@ -199,7 +199,7 @@ Project Moonshot simplifies the process of Red-Teaming by providing an easy to u
 
 As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
 
-[View attack modules available](https://aiverify-foundation.github.io/moonshot/resources/attack-modules/).
+[View attack modules available](https://github.com/aiverify-foundation/moonshot-data/tree/main/attack-modules).
 
 
 </br></br>
