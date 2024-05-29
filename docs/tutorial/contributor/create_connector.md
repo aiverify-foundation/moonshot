@@ -70,4 +70,4 @@ You should be able to see your connector when you list the connectors:
 Once you are able to see your newly created, you can proceed to create a configuration file(connector endpoint) for your newly created connector:
 
 - [Create via Web UI](../../tutorial/web-ui/create_endpoint.md)
-- [Create via CLI](../../cli/connecting_endpoints.md#creating-a-connector-endpoint)
+- [Create via CLI](../../user_guide/cli/connecting_endpoints.md#creating-a-connector-endpoint)

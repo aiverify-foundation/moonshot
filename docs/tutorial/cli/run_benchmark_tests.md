@@ -36,4 +36,4 @@
 
         ![cookbook results](images/cookbook_results_table.png)
 
-You can view more information on running benchmarks [here](../../cli/benchmarking.md).
+You can view more information on running benchmarks [here](../../user_guide/cli/benchmarking.md).

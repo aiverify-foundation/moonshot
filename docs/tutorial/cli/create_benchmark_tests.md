@@ -38,4 +38,4 @@
 
         ![new cookbook](images/new_cookbook.png)
 
-You can view more information on how creating benchmark tests [here](../../cli/add_your_own_tests.md).
+You can view more information on how creating benchmark tests [here](../../user_guide/cli/add_your_own_tests.md).

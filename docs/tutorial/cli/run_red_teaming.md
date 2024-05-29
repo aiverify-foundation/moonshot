@@ -42,6 +42,6 @@ Continuing from Step 3 or manual red teaming, you can choose to run an attack mo
     
 ![run attack module](images/run_attack_module.png)
 
-You can view more information on running red teaming [here](../../cli/red_teaming.md).    
+You can view more information on running red teaming [here](../../user_guide/cli/red_teaming.md).    
 
 
