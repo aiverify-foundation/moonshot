@@ -11,17 +11,18 @@
 
         MLCommons AI Safety Benchmarks v0.5 (Requires an API key for accessing Llama Guard via Together AI) 
 
-        Facts about Singapore (Requires an API key for accessing Llama Guard via Together AI) 
+        Facts about Singapore (Requires an API key for accessing Llama Guard via Together AI)
 
-    [How to set up alternative connections](../tutorial/web-ui/create_endpoint.md) 
+        See the troubleshooting guide for more info on setting up alternative connections to Llama Guard.
 
-3. When done, click on the next button. 
+
+4. When done, click on the next button. 
     ![List of Cookbooks](./imgs/list_cookbooks(2).png) 
 
-4. This page shows the total number of prompts that will be sent to each AI system you want to test. Click on ‘these cookbooks’ to see in greater detail what tests will be run. 
+5. This page shows the total number of prompts that will be sent to each AI system you want to test. Click on ‘these cookbooks’ to see in greater detail what tests will be run. 
     ![Cookbooks that will be running](./imgs/cookbook_recommendations(3).png) 
 
-5. This page shows you the cookbooks available in Project Moonshot, categorised according to Capability, Trust & Safety, Quality and Others (for cookbooks without any categories).   
+6. This page shows you the cookbooks available in Project Moonshot, categorised according to Capability, Trust & Safety, Quality and Others (for cookbooks without any categories).   
 
     You can click on ‘About’ for each cookbook to see what recipes it contains. 
 
