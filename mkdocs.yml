@@ -40,8 +40,8 @@ markdown_extensions:
 
 nav: 
   - Home: index.md
-  - Getting Started: 
-
+  - Getting Started:
+    - Quick Start Guide: getting_started/quick_start.md
     - Overview: getting_started/overview.md
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
