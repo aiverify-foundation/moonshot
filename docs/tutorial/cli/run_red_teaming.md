@@ -1,3 +1,5 @@
+In this tutorial, you will learn how to conduct red teaming using Moonshot's command line interface. Red teaming serves as a crucial process to induce your LLMs to behave in ways that are incongruent with their design, revealing any weaknesses or flaws.
+
 1. Change directory to the root directory of Moonshot.
 
 2. Enter the following command to enter the CLI interactive mode:

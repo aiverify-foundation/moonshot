@@ -1,3 +1,5 @@
+In this tutorial, you will learn how to run a benchmark in Moonshot. Benchmarks are a set of "exam questions" that can help to evaluate and assess the capabilities and safety of the AI system.
+
 1. Change directory to the root directory of Moonshot.
 
 2. Enter the following command to enter the CLI interactive mode:
