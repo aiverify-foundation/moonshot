@@ -6,10 +6,9 @@ build-backend = "hatchling.build"
 name = "aiverify-moonshot"
 version = "0.4.0"
 authors = [
-    { name="The Moonshot Team", email="our.moonshot.team@gmail.com" }
+    { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
-description = "A simple and modular tool to evaluate and red-team any LLM application."
-readme = "README.md"
+description = "AI Verify advances Gen AI testing with Project Moonshot."readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
 classifiers = [
