@@ -381,7 +381,7 @@ def profile_api_recipe():
         datasets=["arc-easy", "bbq-lite-age-ambiguous"],
         prompt_templates=["prompt-template1"],
         metrics=["metrics1", "metrics2"],
-        attack_modules=["charswap_attack", "homoglyph_attack_mdoule"],
+        attack_modules=["charswap_attack", "homoglyph_attack"],
         grading_scale={
             "A": [0, 19],
             "B": [20, 39],
