@@ -30,13 +30,13 @@ If this page doesn't contain an answer to your question, you might want to raise
 
 We highly recommend using `pypi` to install our latest release.
 
-### What happen if I'm not using Python 3.11?
+### What happens if I'm not using Python 3.11?
 
 You may face issues installing some of the dependencies. We suggest using virtual environment of your choice and use Python 3.11 with Moonshot.
 
-### What happen if I experience timeouts during package installation?
+### What happens if I experience timeouts during package installation?
 
-Some of the functions may not work as expected. We suggest users to resinstall Moonshot to ensure that all libaries are installed successfully.
+Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
 ## Using Moonshot
 
@@ -60,8 +60,8 @@ If you are not running any of the above, you should check the details of the spe
 If you do not have tokens for Llama Guard via Together AI, 
 
 1.	Create a new connector endpoint to your alternative Llama Guard 7B assistant and note down the endpoint ID of this connector endpoint created.
-2.	Open up moonshot-data/metrics_config.json in a code editor
-3.	Replace “together-llama-guard-7b-assistant” with your new endpoint ID.
+2.	Open up `moonshot-data/metrics_config.json` in a code editor
+3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
 ### I can't delete my runner in the CLI on Windows.
@@ -79,8 +79,23 @@ We are working to produce a fix. In the meanwhile, please exit the program and d
 
 ### I can't save my token for the connector endpoint!
 
-We are aware that there might 
+We acknowledge a potential issue with saving tokens via the UI. As a workaround, you can directly access the JSON file of your endpoint. This file is located in the `moonshot-data/connector-endpoints` directory, which was created during the installation process.
 
+Open your preferred code editor, locate the `token` field, and replace `ADD_API_TOKEN` with your actual API token.
+```
+{
+  "id": "example-connector-endpoint",
+  "name": "Example Endpoint",
+  "connector_type": "...",
+  "uri": "",
+  "token": "ADD_API_TOKEN",
+  "max_calls_per_second": 1,
+  "max_concurrency": 1,
+  "params": {
+      ...
+  }
+}
+```
 
 ### I cannot see my newly created endpoints in the model endpoint page.
 

@@ -6,7 +6,7 @@ Click on the "model endpoints" icon in the sidebar panel.
 
 ![select model endpoints](./res/create_endpoint_1.png)
 
-Click on 'Create New Endpoint' to create a new endpoint.
+Click on "Create New Endpoint" to create a new endpoint.
 
 ![create new endpoint](./res/create_endpoint_2.png)
 
@@ -18,10 +18,10 @@ A form will appear. Enter the details. If your AI models require more details, c
 
     You can add in additional parameters that are required by your model. An example is *top_k*.
 
-Click 'OK' to confirm your details.
+Click "OK" to confirm your details.
 
 ![confirm config](./res/create_endpoint_4.png)
 
-Click 'Save' to save your configuration.
+Click "Save" to save your configuration.
 
 ![save endpoint](./res/create_endpoint_5.png)

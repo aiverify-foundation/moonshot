@@ -6,18 +6,18 @@ Click on "Create cookbooks".
 
 ![navigate to create cookbook](./res/create_cookbook_1.png)
 
-Enter the name and description. Once done, click on 'Select Recipes'.
+Enter the name and description. Once done, click on "Select Recipes".
 
 ![fill in details](./res/create_cookbook_2.png)
 
-You will be presented with a list of available recipes in Moonshot. Select the recipes you wish to include in your custom cookbook and confirm by clicking on ‘Add to Cookbook’.
+You will be presented with a list of available recipes in Moonshot. Select the recipes you wish to include in your custom cookbook and confirm by clicking on "Add to Cookbook".
 
 ![choose recipes](./res/create_cookbook_3.png)
 
-Finalise the creation of your cookbook by clicking on ‘Create Cookbook'.
+Finalise the creation of your cookbook by clicking on "Create Cookbook".
 
 ![finalize cookbook](./res/create_cookbook_4.png)
 
-Once your cookbook is created, you can view it along with any other cookbooks you've created by clicking on 'View Cookbooks'. 
+Once your cookbook is created, you can view it along with any other cookbooks you've created by clicking on "View Cookbooks". 
 
 ![view cookbooks](./res/create_cookbook_5.png)

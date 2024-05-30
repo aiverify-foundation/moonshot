@@ -21,7 +21,7 @@ Before contributing to Moonshot's test assets, you should first ensure that you 
 
 ### Create a Github Account
 
-You will need to [sign up](https://github.com/signup) a Github user account.
+You will need to [sign up](https://github.com/signup) for a Github user account.
 
 ### Setting up your development environment
 

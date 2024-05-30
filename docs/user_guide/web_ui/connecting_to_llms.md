@@ -1,6 +1,6 @@
 # Connecting to LLMs
 
-1. This page shows you the connector endpoints available to be tested. Project Moonshot comes with pre-configured connector endpoints to some popular model providers, you will just need to provide your API key.  
+1. This page shows you the connector endpoints available to be tested. Moonshot comes with pre-configured connector endpoints to some popular model providers, you will just need to provide your API key.  
 
     - Click on ‘Edit’ to add in the API key for any of these models you may wish to test. 
 
@@ -20,7 +20,7 @@
     | **Token**               | Your private API token                                                                                                              | `123myopenaicontoken456`                    |
     | **Max Calls Per Second**| The maximum number of calls to be made to the endpoint per second                                                                   | `10`                                        |
     | **Max Concurrency**     | The maximum number of calls that can be made to the endpoint at any one time                                                        | `1`                                         |
-    | **Other Parameters**    | Certain connector types require extra parameters. E.g., for OpenAI connectors, you will need to specify the `model`. See [OpenAI docs](https://platform.openai.com/docs/models) | ```{ "timeout": 300, "allow_retries": true, "num_of_retries": 3, "temperature": 0.5, "model": "gpt-4" }``` |
+    | **Other Parameters**    | Certain connector types require extra parameters. e.g., for OpenAI connectors, you will need to specify the `model`. See [OpenAI docs](https://platform.openai.com/docs/models) | ```{ "timeout": 300, "allow_retries": true, "num_of_retries": 3, "temperature": 0.5, "model": "gpt-4" }``` |
 
 
 

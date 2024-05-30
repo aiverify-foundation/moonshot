@@ -1,6 +1,6 @@
 # Creating Custom Cookbooks
 
-Using the recipes available on Project Moonshot, you can easily curate custom cookbooks to suit your testing needs. 
+Using the recipes available on Moonshot, you can easily curate custom cookbooks to suit your testing needs. 
 
 1. Click on ‘Create cookbooks, Select Recipes &rarr;’  
     ![Home Page](./imgs/create_custom_cookbook(36).png)

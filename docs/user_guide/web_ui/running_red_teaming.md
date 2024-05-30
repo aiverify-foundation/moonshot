@@ -8,7 +8,7 @@
 
     ![Choose Endpoints](./imgs/red_teaming_endpoints_selection(17).png)
 
-3. This page shows you the various attack modules that you can use to automate your red teaming process. Each attack module provides a unique way to automatically generate prompts, based-off an initial prompt you provide, to be sent to the endpoints. Some of these attack modules require the connection to a helper model E.g. GPT4. 
+3. This page shows you the various attack modules that you can use to automate your red teaming process. Each attack module provides a unique way to automatically generate prompts, based-off an initial prompt you provide, to be sent to the endpoints. Some of these attack modules require the connection to a helper model e.g., GPT4. 
 
     Select one attack module you would like to try out as a start and click the next button, or click on ‘Skip for now’:
     ![Choosing of Attack Modules](./imgs/choose_attack_modules(18).png)
@@ -25,7 +25,7 @@
 
 5. Click ‘Start’ to create the new red teaming session. 
 
-6.  This page shows Project Moonshot’s red teaming interface.  
+6.  This page shows Moonshot’s red teaming interface.  
 
     ![Red teaming Interface](./imgs/red_teaming_interface(20).png)
 

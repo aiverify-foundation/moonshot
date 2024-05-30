@@ -1,10 +1,10 @@
-Currently, the most straightforward way is to copy and paste an existing connector module, and modify the codes. This feature is currently not available on the web UI and CLI.
+Currently, the most straightforward way is to duplicate an existing connector module, and modify the codes. This feature is currently not available on the Web UI and CLI.
 
-All connectors inherit the super class [Connector](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py). In this super class, we initialise it with certain variables which we think are common across various connectors (i.e. `token`, `max_concurrency`, etc). These variables come from another class called [ConnectorEndpoint](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py).
+All connectors inherit the super class [Connector](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py). We initalise this super class with certain variables that are common across various connectors (i.e. `token`, `max_concurrency`, etc). These variables come from another class called [ConnectorEndpoint](https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py).
 
 ## Initialise Connector Class
 
-We will use a set of modified codes from one of our connectors [openai-connector](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py) as an example:
+We will use a set of modified code from one of our connectors [openai-connector](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py) as an example:
 
 
 ```
@@ -44,7 +44,7 @@ async def get_response(self, prompt: str) -> str:
 
 ## Modify Response Method
 
-The `get_response()` is an abstract method that must be instantiated. This is where you will insert your codes to send promts to the LLM and get back the response.
+The `get_response()` is an abstract method that must be instantiated. This is where you will insert your code to send prompts to the LLM and receive responses.
 
 ```
 async def _process_response(self, response: Any) -> str:
@@ -62,7 +62,7 @@ async def _process_response(self, response: Any) -> str:
     """
     return str(response) # an example
 ```
-The `_process_response()` is an optional method that we have included in all our connectors to help us format the response from the LLM.
+The `_process_response()` is an optional method that is included in all our connectors to aid in formatting responses from the LLM.
 
 ## List Your Newly Created Connector
 
@@ -78,7 +78,7 @@ moonshot > list_connector_types
 
 ## What's Next
 
-Once you are able to see your newly created, you can proceed to create a connector endpoint (i.e. configuration file) for your newly created connector:
+Once you are able to see your newly created connector, you can proceed to create a connector endpoint (i.e. configuration file) :
 
 - [Create Connector Endpoint via Web UI](../../tutorial/web-ui/create_endpoint.md)
 - [Create Connector Endpoint via CLI](../../user_guide/cli/connecting_endpoints.md#creating-a-connector-endpoint)

@@ -16,7 +16,7 @@ For the following steps, they will be done in interactive mode in CLI. To activa
 You will see a list of available connector endpoints that we have created beforehand:
 ![list of endpoints](cli_images/endpoints.png)
 
-2. If there is no connector endpoint for you here, you create your own connector endpoint [here](#creating-a-connector-endpoint). Otherwise, enter the following command to understand how to modify the connector endpoint you want to use (like adding your own API key):
+2. If there is no connector endpoint for you here, you create your own connector endpoint [here](#creating-a-connector-endpoint). Otherwise, enter the following command to modify the connector endpoint you want to use (e.g., adding your own API key):
 
         update_endpoint -h
 
@@ -26,7 +26,7 @@ You will see a list of available connector endpoints that we have created before
 
     Here, we are updating a connector endpoint with the ID `openai-gpt4`. The keys and values to be updated are tuples in a list (i.e. update the key `name` with the value`my-special-openai-endpoint`)
 
-3. Use the `update_endpoint` command to update your connector endpoint. Enter the following command to view your updated connector endpoint:
+3. After you have used the `update_endpoint` command to update your connector endpoint. Enter the following command to view your updated connector endpoint:
 
         view_endpoint openai-gpt4
 
@@ -34,7 +34,7 @@ You will see a list of available connector endpoints that we have created before
 
 ### Creating a Connector Endpoint
 
-1. Enter the following command to understand more on how to create a connector endpoint, enter 
+1. Enter the following command to understand more on how to create a connector endpoint 
 
         add_endpoint -h
 
@@ -59,7 +59,7 @@ You will see a list of available connector endpoints that we have created before
         > **_NOTE:_** If you do not see the connector type you want to use, refer to our guide in contributor_guide/create_connector.md to learn how to create your own connector type. 
 
 
-2. Use the `add_endpoint` command to create your endpoint. Enter the following command to view your newly created connector endpoint:
+2. After you have used the `add_endpoint` command to create your endpoint. Enter the following command to view your newly created connector endpoint:
 
         view_endpoint my-openai-connector
     
