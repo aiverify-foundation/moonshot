@@ -105,3 +105,5 @@ To run automated red teaming, click on "Attack Module" and select one of the mod
 Type a cuss word in the prompt. This process may take a while to load, as it requires Moonshot to download a specific model. Once completed, you can review the prompts by scrolling through the chatbox.
 
 ![alt text](getting_started/17.png)
+
+## Next Step

@@ -18,7 +18,7 @@ Run the following command in a virtual environment of your choice:
 $ pip install "aiverify-moonshot[all]"
 ```
 
-Once install, Moonshot provides commands to download all the test assets required to start testing your AI system:
+Once installed, Moonshot provides commands to download all the test assets required to start testing your AI system:
 
 ```
 $ python -m moonshot -i moonshot-data -i moonshot-ui
