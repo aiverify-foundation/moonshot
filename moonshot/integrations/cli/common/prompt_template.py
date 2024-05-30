@@ -46,7 +46,17 @@ def delete_prompt_template(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_prompt_templates(prompt_templates):
+def display_prompt_templates(prompt_templates) -> None:
+    """
+    Display the list of prompt templates in a formatted table.
+
+    This function takes a list of prompt templates and displays them in a formatted table.
+    Each row in the table represents a prompt template with its ID, name, description, and contents.
+    If the list of prompt templates is empty, it prints a message indicating that no prompt templates were found.
+
+    Args:
+        prompt_templates (list): A list of dictionaries, each representing a prompt template.
+    """
     table = Table(
         title="List of Prompt Templates",
         show_lines=True,

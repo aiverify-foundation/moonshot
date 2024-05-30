@@ -85,9 +85,9 @@ exclude = [
 
 
 [project.urls]
-Repository = "https://github.com/moonshot-admin/moonshot"
-Documentation = "https://moonshot-admin.github.io/moonshot/"
-Issues = "https://github.com/moonshot-admin/moonshot/issues"
+Repository = "https://github.com/aiverify-foundation/moonshot"
+Documentation = "https://aiverify-foundation.github.io/moonshot/"
+Issues = "https://github.com/aiverify-foundation/moonshot/issues"
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -105,27 +105,12 @@ python-slugify = "8.0.4"
 python-dotenv = "1.0.1"
 ijson = "3.2.3"
 jinja2 = "3.1.4"
-pydantic = "2.7.1"
+pydantic = "2.7.2"
 pyparsing = "3.1.2"
 xxhash = "3.4.1"
 typing-extensions = "4.12.0"
 fastapi = "0.110.3"
-uvicorn = "0.29.0"
+uvicorn = "0.30.0"
 dependency-injector = "4.41.0"
 cmd2 = "2.4.3"
 rich = "13.7.1"
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-isort = "^5.13.2"
-pre-commit = "^3.7.0"
-pytest = "^8.2.0"
-coverage = "^7.5.0"
-pytest-mock = "^3.14.0"
-flake8 = "^7.0.0"
-poetry-plugin-export = "^1.7.1"
-pyinstrument = "^4.6.2"
-anybadge = "^1.14.0"
-pytest-cov = "^5.0.0"
-pytest-html = "^4.1.1"
-pytest-json = "^0.4.0"
