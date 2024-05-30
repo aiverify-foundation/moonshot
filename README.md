@@ -13,7 +13,7 @@ A simple and modular tool to evaluate any LLM application.
 
 <b>Motivation </b>
 
-Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), Project Moonshot is one of the first tools to bring [Benchmarking](#benchmarking-with-moonshot) and [Red-Teaming](#red-teaming-with-moonshot) together to help AI developers, compliance teams and AI system owners <b>evaluate LLMs and LLM applications</b>.
+Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/?utm_source=Github&utm_medium=referral&utm_campaign=20230607_AI_Verify_Foundation_GitHub), [Project Moonshot](https://github.com/aiverify-foundation/moonshot/pull/new/update_readme_link) is one of the first tools to bring [Benchmarking](#benchmarking-with-moonshot) and [Red-Teaming](#red-teaming-with-moonshot) together to help AI developers, compliance teams and AI system owners <b>evaluate LLMs and LLM applications</b>.
 
 In this initial version, Moonshot can be used through several interfaces:
 - User-friendly Web UI - [Web UI User Guide]()
