@@ -1,6 +1,6 @@
 When you click on the utils icon, you will be directed to this page.
 
-By clicking, you can access the list of available Prompt Templates and Context Strategies for use.
+By clicking, you can access the list of available prompt templates and context strategies for use.
 
 ![utils_home](../imgs/utils_home.png)
 

@@ -4,7 +4,7 @@ In this tutorial, you will learn how to run a benchmark in Moonshot. Benchmarks 
 !!! note
     Project Moonshot offers a wide range of benchmarks, including widely recognized ones like Google's BigBench and HuggingFace's leaderboards, as well as more domain/task-specific tests like Tamil Language and Medical LLM benchmarks.
 
-This tutorial will provide a step-by-step guide on how to run these benchmark tests, enabling you to measure your LLM application's performance in Capability, Quality, and Trust & Safety. 
+This tutorial will provide a step-by-step guide on how to run these benchmark tests, enabling you to measure your LLM application's performance in the categories of Capability, Quality, and Trust & Safety. 
 
 Let's get started on running your first benchmark test.
 
@@ -35,11 +35,11 @@ Here, you are required to select an endpoint for testing. If needed, you can cre
 !!! warning
     Before proceeding, please ensure that you have your Together Llama Guard 7B Assistant endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
 
-On this page, you need to fill out the form. If you wish to test a smaller dataset, replace the value in the 'Run a smaller set' field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each recipe. Once you've completed the form, click on 'Run' to start the test.
+On this page, you need to fill out the form. If you wish to test a smaller dataset, replace the value in the 'Run a smaller set' field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each dataset. Once you've completed the form, click on 'Run' to start the test.
 
 ![Fill out the form and start the test](./res/run_bm_7.png)
 
-The benchmark test is now running. You can click on 'see details' to view the endpoints and cookbooks that are currently running. If you wish to exit an ongoing run, click on 'cancel'.
+The benchmark test is now running. You can click on 'see details' to view the endpoints and cookbooks that are currently running. If you wish to exit an ongoing run, click on 'Cancel'.
 
 ![View test details or cancel the run](./res/run_bm_8.png)
 

@@ -1,4 +1,4 @@
-When you click on the redteaming icon, you will be directed to this page.
+When you click on the red teaming icon, you will be directed to this page.
 
 ![redteam_home](../imgs/redteam_home.png)
 

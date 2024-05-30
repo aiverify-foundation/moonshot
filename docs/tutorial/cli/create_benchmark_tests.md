@@ -1,3 +1,5 @@
+In this tutorial, you will learn how to create a custom cookbook via our command line interface. A cookbook is a collection of one or more tests (or recipes). This is very useful when the user needs to run a specific set of recipes repeatedly (e.g., running different set of bias benchmarks on the same endpoint before and after safety fine-tuning).
+
 1. Change directory to the root directory of Moonshot.
 
 2. Enter the following command to enter the CLI interactive mode:
