@@ -81,6 +81,22 @@ We are working to produce a fix. In the meanwhile, please exit the program and d
 
 We acknowledge a potential issue with saving tokens via the UI. As a workaround, you can directly access the JSON file of your endpoint. This file is located in the `moonshot-data/connector-endpoints` directory, which was created during the installation process.
 
+Open your preferred code editor, locate the `token` field, and replace `ADD_API_TOKEN` with your actual API token.
+```
+{
+  "id": "example-connector-endpoint",
+  "name": "Example Endpoint",
+  "connector_type": "...",
+  "uri": "",
+  "token": "ADD_API_TOKEN",
+  "max_calls_per_second": 1,
+  "max_concurrency": 1,
+  "params": {
+      ...
+  }
+}
+```
+
 ### I cannot see my newly created endpoints in the model endpoint page.
 
 Please refresh the page.
