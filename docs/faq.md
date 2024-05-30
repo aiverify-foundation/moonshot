@@ -30,11 +30,11 @@ If this page doesn't contain an answer to your question, you might want to raise
 
 We highly recommend using `pypi` to install our latest release.
 
-### What happen if I'm not using Python 3.11?
+### What happens if I'm not using Python 3.11?
 
 You may face issues installing some of the dependencies. We suggest using virtual environment of your choice and use Python 3.11 with Moonshot.
 
-### What happen if I experience timeouts during package installation?
+### What happens if I experience timeouts during package installation?
 
 Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
@@ -79,8 +79,7 @@ We are working to produce a fix. In the meanwhile, please exit the program and d
 
 ### I can't save my token for the connector endpoint!
 
-We are aware that there might 
-
+We acknowledge a potential issue with saving tokens via the UI. As a workaround, you can directly access the JSON file of your endpoint. This file is located in the `moonshot-data/connector-endpoints` directory, which was created during the installation process.
 
 ### I cannot see my newly created endpoints in the model endpoint page.
 

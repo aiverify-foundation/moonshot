@@ -8,6 +8,6 @@ The 'Past Benchmark Runs' page allows you to examine the outcomes of your previo
 
 ![past_bm](../imgs/past_bm.png)
 
-The 'Past Red Team Sessions' page offers the functionality to continue a paused red teaming session or to kick-off a new one.
+The 'Past Red Teaming Sessions' page offers the functionality to continue a paused red teaming session or to kick-off a new one.
 
 ![past_rt](../imgs/past_rt.png)
