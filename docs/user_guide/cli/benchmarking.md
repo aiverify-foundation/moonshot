@@ -67,7 +67,7 @@ You can choose to run a recipe instead of a cookbook as well.
     ![list of recipes](cli_images/recipes.png)
 
 
-2. To under more about how to run a recipe, enter:
+2. To understand more about how to run a recipe, enter:
 
         run_recipe -h
 
