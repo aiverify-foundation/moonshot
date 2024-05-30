@@ -80,6 +80,7 @@ nav:
       - (CLI) Running Benchmark: user_guide/cli/benchmarking.md
       - (CLI) Running Red Teaming: user_guide/cli/red_teaming.md 
       - (CLI) Adding Your Own Tests: user_guide/cli/add_your_own_tests.md
+      - (CLI) CLI Command List: user_guide/cli/cli_command_list.md
   - API Reference:
     - Moonshot Library:
         - Connector Endpoint API: api_reference/api_connector_endpoint.md
