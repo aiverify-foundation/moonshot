@@ -2,9 +2,10 @@
 In this section, we will be going through the steps required to add tests in CLI.
 
 Some of the things that you can add into Moonshot are:
-- Dataset - Bring your own dataset and add it into Moonshot
-- Recipe - Contains all the details to run a benchmark
-- Cookbook - A set of recipes
+
+* Dataset - Bring your own dataset and add it into Moonshot
+* Recipe - Contains all the details to run a benchmark
+* Cookbook - A set of recipes
 
 For the following steps, they will be done in interactive mode in CLI. To activate interactive mode, enter: 
 

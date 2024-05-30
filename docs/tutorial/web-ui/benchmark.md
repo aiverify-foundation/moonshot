@@ -35,7 +35,7 @@ Here, you are required to select an endpoint for testing. If needed, you can cre
 !!! warning
     Before proceeding, please ensure that you have your Together Llama Guard 7B Assistant endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
 
-On this page, you need to fill out the form. If you wish to test a smaller dataset, replace the value in the 'Run a smaller set' field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each dataset. Once you've completed the form, click on 'Run' to start the test.
+On this page, you need to fill out the form. If you wish to test a smaller dataset, replace the value in the 'Run a smaller set' field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each dataset, as specified in the recipe. Once you've completed the form, click on 'Run' to start the test.
 
 ![Fill out the form and start the test](./res/run_bm_7.png)
 
