@@ -25,7 +25,7 @@
 
 5. Click ‘Start’ to create the new red teaming session. 
 
-6.  This page shows Project Moonshot’s red teaming interface.  
+6.  This page shows Moonshot’s red teaming interface.  
 
     ![Red teaming Interface](./imgs/red_teaming_interface(20).png)
 

@@ -1,6 +1,6 @@
 # Connecting to LLMs
 
-1. This page shows you the connector endpoints available to be tested. Project Moonshot comes with pre-configured connector endpoints to some popular model providers, you will just need to provide your API key.  
+1. This page shows you the connector endpoints available to be tested. Moonshot comes with pre-configured connector endpoints to some popular model providers, you will just need to provide your API key.  
 
     - Click on ‘Edit’ to add in the API key for any of these models you may wish to test. 
 

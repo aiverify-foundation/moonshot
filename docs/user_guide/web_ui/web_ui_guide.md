@@ -1,6 +1,6 @@
 # Getting Started with Moonshot Web UI
 
-In this step-by-step tutorial, we will walk you through the key functionalities of Project Moonshot’s user-friendly web UI. 
+In this step-by-step tutorial, we will walk you through the key functionalities of Moonshot’s user-friendly web UI. 
 
 Before starting on this tutorial, you should [Install and Set Up Moonshot Web UI](../../getting_started/quick_install.md) and have an understanding of [Moonshot’s key features](https://github.com/aiverify-foundation/moonshot/blob/main/README.md#key-features). 
 

@@ -2,7 +2,7 @@
 In this tutorial, you will learn how to run a benchmark in Moonshot. Benchmarks are a set of "exam questions" that can help to evaluate and assess the capabilities and safety of the AI system.
 
 !!! note
-    Project Moonshot offers a wide range of benchmarks, including widely recognized ones like Google's BigBench and HuggingFace's leaderboards, as well as more domain/task-specific tests like Tamil Language and Medical LLM benchmarks.
+    Moonshot offers a wide range of benchmarks, including widely recognized ones like Google's BigBench and HuggingFace's leaderboards, as well as more domain/task-specific tests like Tamil Language and Medical LLM benchmarks.
 
 This tutorial will provide a step-by-step guide on how to run these benchmark tests, enabling you to measure your LLM application's performance in the categories of Capability, Quality, and Trust & Safety. 
 
