@@ -5,11 +5,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="../red_teaming/" rel="prev"/>
-<link href="../cli_command_list/" rel="next"/>
+<link href="../add_your_own_tests/" rel="prev"/>
+<link href="../../../api_reference/api_connector_endpoint/" rel="next"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
-<title>(CLI) Adding Your Own Tests - Moonshot</title>
+<title>(CLI) CLI Command List - Moonshot</title>
 <link href="../../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -22,7 +22,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#add-your-own-benchmark-tests">
+<a class="md-skip" href="#list-of-cli-commands">
           Skip to content
         </a>
 </div>
@@ -46,7 +46,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              (CLI) Adding Your Own Tests
+              (CLI) CLI Command List
             
           </span>
 </div>
@@ -493,94 +493,16 @@
   </span>
 </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../add_your_own_tests/">
+<span class="md-ellipsis">
+    (CLI) Adding Your Own Tests
+  </span>
+</a>
+</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    (CLI) Adding Your Own Tests
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
 <a class="md-nav__link md-nav__link--active" href="./">
-<span class="md-ellipsis">
-    (CLI) Adding Your Own Tests
-  </span>
-</a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#launch-moonshot-cli">
-<span class="md-ellipsis">
-      Launch Moonshot CLI
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#create-a-new-dataset">
-<span class="md-ellipsis">
-      Create a New Dataset
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#create-a-new-recipe">
-<span class="md-ellipsis">
-      Create a New Recipe
-    </span>
-</a>
-<nav aria-label="Create a New Recipe" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#add-recipe">
-<span class="md-ellipsis">
-      Add Recipe
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#view-recipe">
-<span class="md-ellipsis">
-      View Recipe
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#create-a-new-cookbook">
-<span class="md-ellipsis">
-      Create a New Cookbook
-    </span>
-</a>
-<nav aria-label="Create a New Cookbook" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#add-cookbook">
-<span class="md-ellipsis">
-      Add Cookbook
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#view-cookbook">
-<span class="md-ellipsis">
-      View Cookbook
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../cli_command_list/">
 <span class="md-ellipsis">
     (CLI) CLI Command List
   </span>
@@ -811,120 +733,259 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="add-your-own-benchmark-tests">Add Your Own Benchmark Tests</h1>
-<p>In this tutorial, we will be going through the steps required to add new test using CLI.</p>
-<p>You will learn how to:</p>
-<ul>
-<li>Add a new dataset into Moonshot</li>
-<li>Add a new recipe to run a benchmark</li>
-<li>Add a new cookbook to run a set of benchmarks</li>
-</ul>
-<h2 id="launch-moonshot-cli">Launch Moonshot CLI</h2>
-<p>You can launch Moonshot CLI by running the following command:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>python -m moonshot cli interactive
-</span></code></pre></div>
-<h2 id="create-a-new-dataset">Create a New Dataset</h2>
-<p>You can convert your raw dataset into Moonshot-compatible dataset using the following schema. Once you have created the new dataset, you can save the file in <code>moonshot-data/datasets</code> for Moonshot to access this dataset.</p>
-<p>Use your favourite text editor and save the following json data in <code>moonshot-data/datasets/example-dataset.json</code>.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Fruits Dataset"</span><span class="p">,</span>
-</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    <span class="s2">"description"</span><span class="p">:</span><span class="s2">"Measures whether the model knows what is a fruit"</span><span class="p">,</span>
-</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>    <span class="s2">"license"</span><span class="p">:</span> <span class="s2">"MIT license"</span><span class="p">,</span>
-</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>    <span class="s2">"reference"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>    <span class="s2">"examples"</span><span class="p">:</span> <span class="p">[</span>
-</span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>        <span class="p">{</span>
-</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Lemon a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-9"><a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"Yes."</span>
-</span><span id="__span-1-10"><a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>        <span class="p">},</span>
-</span><span id="__span-1-11"><a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a>        <span class="p">{</span>
-</span><span id="__span-1-12"><a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Apple a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-13"><a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"Yes."</span>
-</span><span id="__span-1-14"><a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>        <span class="p">},</span>
-</span><span id="__span-1-15"><a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>        <span class="p">{</span>
-</span><span id="__span-1-16"><a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Bak Choy a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-17"><a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"No."</span>
-</span><span id="__span-1-18"><a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a>        <span class="p">},</span>
-</span><span id="__span-1-19"><a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a>        <span class="p">{</span>
-</span><span id="__span-1-20"><a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Bak Kwa a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-21"><a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"No."</span>
-</span><span id="__span-1-22"><a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a>        <span class="p">},</span>
-</span><span id="__span-1-23"><a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a>        <span class="p">{</span>
-</span><span id="__span-1-24"><a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Dragonfruit a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-25"><a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"Yes."</span>
-</span><span id="__span-1-26"><a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a>        <span class="p">},</span>
-</span><span id="__span-1-27"><a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a>        <span class="p">{</span>
-</span><span id="__span-1-28"><a href="#__codelineno-1-28" id="__codelineno-1-28" name="__codelineno-1-28"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Orange a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-29"><a href="#__codelineno-1-29" id="__codelineno-1-29" name="__codelineno-1-29"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"Yes."</span>
-</span><span id="__span-1-30"><a href="#__codelineno-1-30" id="__codelineno-1-30" name="__codelineno-1-30"></a>        <span class="p">},</span>
-</span><span id="__span-1-31"><a href="#__codelineno-1-31" id="__codelineno-1-31" name="__codelineno-1-31"></a>        <span class="p">{</span>
-</span><span id="__span-1-32"><a href="#__codelineno-1-32" id="__codelineno-1-32" name="__codelineno-1-32"></a>            <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"Is Coke Zero a Fruit? Answer Yes or No."</span><span class="p">,</span>
-</span><span id="__span-1-33"><a href="#__codelineno-1-33" id="__codelineno-1-33" name="__codelineno-1-33"></a>            <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"No."</span>
-</span><span id="__span-1-34"><a href="#__codelineno-1-34" id="__codelineno-1-34" name="__codelineno-1-34"></a>        <span class="p">}</span>
-</span><span id="__span-1-35"><a href="#__codelineno-1-35" id="__codelineno-1-35" name="__codelineno-1-35"></a>    <span class="p">]</span>
-</span><span id="__span-1-36"><a href="#__codelineno-1-36" id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>The name of the dataset is the unique identifier for the dataset. This will be used in the recipes.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You can also refer to <a href="https://github.com/aiverify-foundation/moonshot/blob/main/examples/jupyter-notebook/Tutorial%202%20-%20Basic%20Workflow%20-%20Add%20your%20own%20test.ipynb">this Jupyter notebook example</a> for more details how a dataset can be created.</p>
-</div>
-<h2 id="create-a-new-recipe">Create a New Recipe</h2>
-<p>To run the new Moonshot-compatible dataset that you have created in <code>moonshot-data/datasets</code>, we must first create a new recipe. </p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>A recipe contains all the details required to run a benchmark. A recipe guides Moonshot on what data to use, and how to evaluate the model's responses.</p>
-</div>
-<h3 id="add-recipe">Add Recipe</h3>
-<p>In Moonshot CLI, the user can use <code>add_recipe</code> to add a new recipe in Moonshot. The parameters of the command are shown below:</p>
-<ul>
-<li>Name (A unique name for the recipe): <code>My new recipe</code></li>
-<li>Description (An explanation of what the recipe does and what it's for): <code>I am recipe description</code></li>
-<li>Categories (Broader classifications that help organize recipes into collections): <code>['category1','category2']</code></li>
-<li>Datasets (The data that will be used when running the recipe. This could be a set of prompts, questions, or any input that - the model will respond to): <code>['bbq-lite-age-ambiguous']</code></li>
-<li>Metrics (Criteria or measurements used to evaluate the model's responses, such as accuracy, fluency, or adherence to a - prompt): <code>['bertscore','bleuscore']</code></li>
-<li>Prompt Templates (Optional pre-prompt or post-prompt): <code>['analogical-similarity','mmlu']</code></li>
-<li>Tags (Optional keywords that categorize the recipe, making it easier to find and group with similar recipes): <code>['tag1','tag2']</code></li>
-<li>Attack Strategies (Optional components that introduce adversarial testing scenarios to probe the model's robustness): <code>['charswap_attack']</code></li>
-<li>Grading Scale (Optional set of thresholds or criteria used to grade or score the model's performance): <code>{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}</code></li>
-</ul>
-<p>You can also view the description of this command using the following command:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>moonshot &gt; add_recipe -h
-</span></code></pre></div>
-<p>Add a new recipe using the dataset that you have created in the previous section using the following command:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>add_recipe 'My new recipe' 'I am recipe description' "['fruits']" "['capability']" "['example-dataset']" "[]" "['exactstrmatch']" "[]" "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}" 
-</span></code></pre></div>
-<h3 id="view-recipe">View Recipe</h3>
-<p>Once created, you can view your recipe using <code>view_recipe</code>.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>moonshot &gt; view_recipe my-new-recipe
-</span></code></pre></div>
-<p><img alt="recipe added" src="../cli_images/add_recipe.png"/></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The ID of the recipe is created by slugifying the name. In this case, the ID of this recipe is <code>my-new-recipe</code>.</p>
-</div>
-<h2 id="create-a-new-cookbook">Create a New Cookbook</h2>
-<p>We can also create a new cookbook with our new recipe. A cookbook in Moonshot is a curated collection of recipes. A cookbook is very useful when the user wants to group a certain type of tests into a single execution.</p>
-<h3 id="add-cookbook">Add Cookbook</h3>
-<p>To add a new cookbook, simply run the following command: </p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a>moonshot &gt; add_cookbook [name] [description] [cookbooks]
-</span></code></pre></div>
-<p>The fields are as follows for this example: </p>
-<ul>
-<li>Name (A unique name for the cookbook): <code>My new cookbook</code></li>
-<li>Description (A detailed explanation of the cookbook's purpose and the types of recipes it contains): <code>I am cookbook description</code></li>
-<li>Recipes (A list of recipe names that are included in the cookbook. Each recipe represents a specific test or benchmark): <code>['analogical-similarity','auto-categorisation']</code></li>
-</ul>
-<p>You can also view the description of this command using the following command:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>moonshot &gt; add_cookbook -h
-</span></code></pre></div>
-<p>Use the following command to create a new cookbook with your newly created recipe:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>add_cookbook 'My new cookbook' 'I am cookbook description' "['my-new-recipe','auto-categorisation']"
-</span></code></pre></div>
-<h3 id="view-cookbook">View Cookbook</h3>
-<p>Enter the following command to view your newly created cookbook:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>view_cookbook my-new-cookbook
-</span></code></pre></div>
-<p><img alt="cookbook added" src="../cli_images/add_cookbook.png"/></p>
+<h1 id="list-of-cli-commands">List of CLI Commands</h1>
+<p>This page is mainly for users who are most interested in using the CLI to perform benchmark tests and run red teaming. We have prepared the list of commands you can run in the CLI so users can have a rough sense of what can be done in the CLI.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>add_cookbook<br/><sub><code>add_cookbook 'My new cookbook' 'I am cookbook description' "['analogical-similarity','auto-categorisation']"</code></sub></td>
+<td>Add a new cookbook. The 'name' argument will be slugified to create a unique identifier.</td>
+<td><table><tr><td>name (str)</td><td>Name of the new cookbook<br/><sub>example: <code>'My new cookbook'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new cookbook<br/><sub>example: <code>'I am cookbook description'</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to be included in the new cookbook (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"['analogical-similarity','auto-categorisation']"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_cookbooks<br/><sub><code>list_cookbooks</code></sub></td>
+<td>List all available cookbooks.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>update_cookbook<br/><sub><code>update_cookbook my-new-cookbook "[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td>
+<td>Update a cookbook.</td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr><tr><td>update_values (str)</td><td>List of tuples of (key,value) to update in the cookbook (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_cookbook<br/><sub><code>view_cookbook my-new-cookbook</code></sub></td>
+<td>View a cookbook.</td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_cookbook<br/><sub><code>delete_cookbook my-new-cookbook</code></sub></td>
+<td>Delete a cookbook.</td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>run_cookbook<br/><sub><code>run_cookbook 'my new cookbook runner' "['chinese-safety-cookbook']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
+<td>Run a cookbook.</td>
+<td><table><tr><td>name (str)</td><td>Name of cookbook runner<br/><sub>example: <code>'my new cookbook runner'</code></sub></td></tr><tr><td>cookbooks (str)</td><td>List of cookbooks to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['chinese-safety-cookbook']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_datasets<br/><sub><code>list_datasets</code></sub></td>
+<td>List all available datasets.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_dataset<br/><sub><code>view_dataset bbq-lite-age-ambiguous</code></sub></td>
+<td>View a dataset file.</td>
+<td><table><tr><td>dataset_filename (str)</td><td>Name of the dataset file<br/><sub>example: <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_dataset<br/><sub><code>delete_dataset bbq-lite-age-ambiguous</code></sub></td>
+<td>Delete a dataset.</td>
+<td><table><tr><td>dataset (str)</td><td>Name of the dataset<br/><sub>example: <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_metrics<br/><sub><code>list_metrics</code></sub></td>
+<td>List all available metrics.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_metric<br/><sub><code>view_metric my-new-metric</code></sub></td>
+<td>View a metric file.</td>
+<td><table><tr><td>metric_filename (str)</td><td>Name of the metric file<br/><sub>example: <code>my-new-metric</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_metric<br/><sub><code>delete_metric my-new-metric</code></sub></td>
+<td>Delete a metric.</td>
+<td><table><tr><td>metric (str)</td><td>Name of the metric<br/><sub>example: <code>my-new-metric</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>add_recipe<br/><sub><code>add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -a "['charswap_attack']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td>
+<td>Add a new recipe. The 'name' argument will be slugified to create a unique identifier.</td>
+<td><table><tr><td>name (str)</td><td>Name of the new recipe<br/><sub>example: <code>'My new recipe'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new recipe<br/><sub>example: <code>'I am recipe description'</code></sub></td></tr><tr><td>categories (str)</td><td>List of categories to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['category1','category2']"</code></sub></td></tr><tr><td>datasets (str)</td><td>The dataset to be used (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq-lite-age-ambiguous']"</code></sub></td></tr><tr><td>metrics (str)</td><td>List of metrics to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bertscore','bleuscore']"</code></sub></td></tr><tr><td>-p, --prompt_templates (str)</td><td>List of prompt templates to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['analogical-similarity','mmlu']"</code></sub></td></tr><tr><td>-t, --tags (str)</td><td>List of tags to be included in the new recipe<br/><sub>example: <code>"['tag1','tag2']"</code></sub></td></tr><tr><td>-a, --attack_modules (str)</td><td>List of attack modules to be included in the new recipe (currently in string format). It will be converted into a list in the backend. * We currently only support running 1 attack module<br/><sub>example: <code>"['charswap_attack']"</code></sub></td></tr><tr><td>-g, --grading_scale (str)</td><td>Dict of grading scale for the metric to be included in the new recipe<br/><sub>example: <code>"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_recipes<br/><sub><code>list_recipes</code></sub></td>
+<td>List all available recipes.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_recipe<br/><sub><code>view_recipe my-new-recipe</code></sub></td>
+<td>View a recipe.</td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>run_recipe<br/><sub><code>run_recipe 'my new recipe runner' "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
+<td>Execute a recipe with the specified parameters.</td>
+<td><table><tr><td>name (str)</td><td>Name of recipe runner<br/><sub>example: <code>my new recipe runner</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq','mmlu']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
+</tr>
+<tr>
+<td>update_recipe<br/><sub><code>update_recipe my-new-recipe "[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code></sub></td>
+<td>Update a recipe.</td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr><tr><td>update_values (str)</td><td>List of tuples of (key,value) to update in the recipe (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_recipe<br/><sub><code>delete_recipe my-new-recipe</code></sub></td>
+<td>Delete a recipe.</td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_results<br/><sub><code>list_results</code></sub></td>
+<td>List all available results.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_result<br/><sub><code>view_result my-new-cookbook-runner</code></sub></td>
+<td>View a result file.</td>
+<td><table><tr><td>result_filename (str)</td><td>Name of the result file<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_result<br/><sub><code>delete_result my-new-cookbook-runner</code></sub></td>
+<td>Delete a result.</td>
+<td><table><tr><td>result (str)</td><td>Name of the result<br/><sub>example: ``</sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_runs<br/><sub><code>list_runs</code></sub></td>
+<td>List all runs.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_run<br/><sub><code>view_run my-new-cookbook-runner</code></sub></td>
+<td>View the details of a specific run.</td>
+<td><table><tr><td>runner_id (str)</td><td>Name of the runner<br/><sub>example: ``</sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_runners<br/><sub><code>list_runners</code></sub></td>
+<td>List all runners.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>view_runner<br/><sub><code>view_runner my-new-cookbook-runner</code></sub></td>
+<td>View a runner.</td>
+<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_runner<br/><sub><code>delete_runner my-new-cookbook-runner</code></sub></td>
+<td>Delete a runner.</td>
+<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>add_endpoint<br/><sub><code>add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' MY_URI ADD_YOUR_TOKEN_HERE 1 1 "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"</code></sub></td>
+<td>Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.</td>
+<td><table><tr><td>connector_type (str)</td><td>Type of connection for the endpoint<br/><sub>example: <code>openai-connector</code></sub></td></tr><tr><td>name (str)</td><td>Name of the new endpoint<br/><sub>example: <code>'OpenAI GPT3.5 Turbo 1106'</code></sub></td></tr><tr><td>uri (str)</td><td>URI of the new endpoint<br/><sub>example: <code>MY_URI</code></sub></td></tr><tr><td>token (str)</td><td>Token of the new endpoint<br/><sub>example: <code>MY_URI ADD_YOUR_TOKEN_HERE</code></sub></td></tr><tr><td>max_calls_per_second (int)</td><td>Max calls per second of the new endpoint<br/><sub>example: <code>1</code></sub></td></tr><tr><td>max_concurrency (int)</td><td>Max concurrency of the new endpoint<br/><sub>example: <code>1</code></sub></td></tr><tr><td>params (str)</td><td>Params of the new endpoint<br/><sub>example: <code>"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>update_endpoint<br/><sub><code>update_endpoint openai-gpt4 "[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"</code></sub></td>
+<td>Update an endpoint.</td>
+<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr><tr><td>update_kwargs (str)</td><td>List of tuples of (key,value) to update in the endpoint (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_endpoint<br/><sub><code>view_endpoint openai-gpt4</code></sub></td>
+<td>View an endpoint.</td>
+<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_endpoint<br/><sub><code>delete_endpoint openai-gpt4</code></sub></td>
+<td>Delete a recipe.</td>
+<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_connector_types<br/><sub><code>list_connector_types</code></sub></td>
+<td>List all connector types.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>list_endpoints<br/><sub><code>list_endpoints</code></sub></td>
+<td>List all endpoints.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>list_prompt_templates<br/><sub><code>list_prompt_templates</code></sub></td>
+<td>List all prompt templates available.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>delete_prompt_template<br/><sub><code>delete_prompt_template squad-shifts</code></sub></td>
+<td><code>Delete a prompt template.</code></td>
+<td><table><tr><td>prompt_template (str)</td><td>The ID of the prompt template to delete<br/><sub>example: <code>squad-shifts</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_attack_modules<br/><sub><code>list_attack_modules</code></sub></td>
+<td>List all available attack modules.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>delete_attack_module<br/><sub><code>delete_attack_module sample_attack_module</code></sub></td>
+<td>Delete an attack module.</td>
+<td><table><tr><td>attack_module (str)</td><td>The ID of the attack module to delete<br/><sub>example: <code>sample_attack_module</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_context_strategies<br/><sub><code>list_context_strategies</code></sub></td>
+<td>List all available context strategies.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>use_context_strategy<br/><sub><code>use_context_strategy my_strategy_one -n 8</code></sub></td>
+<td>Use a context strategy.</td>
+<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to use<br/><sub>example: <code>my_strategy_one</code></sub></td></tr><tr><td>-n, --num_of_prev_prompts (int)</td><td>The number of previous prompts to use with the context strategy<br/><sub>example: <code>8</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>clear_context_strategy<br/><sub><code>clear_context_strategy</code></sub></td>
+<td>Resets the context in a session.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>delete_context_strategy<br/><sub><code>delete_context_strategy add_previous_prompt</code></sub></td>
+<td>Deletes a context strategy after confirming with the user.</td>
+<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to delete<br/><sub>example: <code>add_previous_prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_prompt_template<br/><sub><code>use_prompt_template 'analogical-similarity'</code></sub></td>
+<td>Use a prompt template by specifying its name while user is in a session.</td>
+<td><table><tr><td>prompt_template (str)</td><td>Name of the prompt template<br/><sub>example: <code>'analogical-similarity'</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>clear_prompt_template<br/><sub><code>clear_prompt_template</code></sub></td>
+<td>Resets the prompt template in a session.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>new_session<br/><sub><code>new_session my-runner -e "['openai-gpt4']" -c add_previous_prompt -p mmlu</code></sub></td>
+<td>Creates a new session based on the provided arguments.</td>
+<td><table><tr><td>runner_id (str)</td><td>ID of the runner. Creates a new runner if runner does not exist.<br/><sub>example: <code>my-runner</code></sub></td></tr><tr><td>endpoints (list)</td><td>List of endpoint(s) for the runner that is only compulsory for creating a new runner (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt4']"</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context_strategy to be used - indicate context strategy here if you wish to use with the selected attack.<br/><sub>example: <code>add_previous_prompt</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used - indicate prompt template here if you wish to use with the selected attack.<br/><sub>example: <code>mmlu</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_session<br/><sub><code>use_session runner_id</code></sub></td>
+<td>Resumes a session by specifying its runner ID and updates the active session.</td>
+<td><table><tr><td>runner_id (str)</td><td>The ID of the runner<br/><sub>example: <code>runner_id</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>end_session<br/><sub><code>end_session</code></sub></td>
+<td>Ends the current session by clearing active_session variable.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>list_sessions<br/><sub><code>list_sessions</code></sub></td>
+<td>Retrieves and displays the list of sessions.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>run_attack_module<br/><sub><code>run_attack_module sample_attack_module 'this is my prompt' -s 'test system prompt' -c 'add_previous_prompt' -p 'mmlu' -m 'bleuscore'</code></sub></td>
+<td>Runs automated red teaming in the current session.</td>
+<td><table><tr><td>attack_module_id (str)</td><td>ID of the attack module.<br/><sub>example: <code>sample_attack_module</code></sub></td></tr><tr><td>prompt (str)</td><td>Prompt to be used for the attack.<br/><sub>example: <code>'this is my prompt'</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to be used for the attack. If not specified, the default system prompt will be used.<br/><sub>example: <code>'test system prompt'</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context strategy module to be used.<br/><sub>example: <code>'add_previous_prompt'</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used.<br/><sub>example: <code>mmlu</code></sub></td></tr><tr><td>-m, --metric (str)</td><td>Name of the metric module to be used.<br/><sub>example: <code>bleuscore</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_session<br/><sub><code>delete_session my-test-runner</code></sub></td>
+<td>Delete a session</td>
+<td><table><tr><td>session (str)</td><td>The runner ID of the session to delete<br/><sub>example: <code>my-test-runner</code></sub></td></tr></table></td>
+</tr>
+</tbody>
+</table>
 </article>
 </div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
@@ -936,7 +997,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: (CLI) Running Red Teaming" class="md-footer__link md-footer__link--prev" href="../red_teaming/">
+<a aria-label="Previous: (CLI) Adding Your Own Tests" class="md-footer__link md-footer__link--prev" href="../add_your_own_tests/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -945,17 +1006,17 @@
                 Previous
               </span>
 <div class="md-ellipsis">
-                (CLI) Running Red Teaming
+                (CLI) Adding Your Own Tests
               </div>
 </div>
 </a>
-<a aria-label="Next: (CLI) CLI Command List" class="md-footer__link md-footer__link--next" href="../cli_command_list/">
+<a aria-label="Next: Connector Endpoint API" class="md-footer__link md-footer__link--next" href="../../../api_reference/api_connector_endpoint/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                (CLI) CLI Command List
+                Connector Endpoint API
               </div>
 </div>
 <div class="md-footer__button md-icon">

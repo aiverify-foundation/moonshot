@@ -9,7 +9,7 @@
 <link href="../../../user_guide/web_ui/web_ui_guide/" rel="next"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
-<title>How to Create a Connector - Moonshot</title>
+<title>Create a New Custom Connector - Moonshot</title>
 <link href="../../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -22,6 +22,9 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
+<a class="md-skip" href="#initialise-connector-class">
+          Skip to content
+        </a>
 </div>
 <div data-md-component="announce">
 </div>
@@ -43,7 +46,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              How to Create a Connector
+              Create a New Custom Connector
             
           </span>
 </div>
@@ -199,28 +202,28 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/create_cookbook/">
 <span class="md-ellipsis">
-    How to Create Custom Cookbook
+    (UI) How to Create Custom Cookbook
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/create_endpoint/">
 <span class="md-ellipsis">
-    How to Create Connector Endpoint
+    (UI) How to Create Connector Endpoint
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/benchmark/">
 <span class="md-ellipsis">
-    How to Run Benchmark Tests
+    (UI) How to Run Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/redteam/">
 <span class="md-ellipsis">
-    How to Run Red Teaming
+    (UI) How to Run Red Teaming
   </span>
 </a>
 </li>
@@ -244,28 +247,28 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/create_benchmark_tests/">
 <span class="md-ellipsis">
-    How to Create Custom Benchmark Tests
+    (CLI) How to Create Custom Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/create_endpoint/">
 <span class="md-ellipsis">
-    How to Create Connector Endpoint
+    (CLI) How to Create Connector Endpoint
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/run_benchmark_tests/">
 <span class="md-ellipsis">
-    How to Run Benchmark Tests
+    (CLI) How to Run Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/run_red_teaming/">
 <span class="md-ellipsis">
-    How to Run Red Teaming
+    (CLI) How to Run Red Teaming
   </span>
 </a>
 </li>
@@ -289,17 +292,59 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../configure_web_api/">
 <span class="md-ellipsis">
-    Configuring Moonshot WebAPI
+    Configure Moonshot Web-API
   </span>
 </a>
 </li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Create a New Custom Connector
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
-    How to Create a Connector
+    Create a New Custom Connector
   </span>
 </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#initialise-connector-class">
+<span class="md-ellipsis">
+      Initialise Connector Class
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#modify-response-method">
+<span class="md-ellipsis">
+      Modify Response Method
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#list-your-newly-created-connector">
+<span class="md-ellipsis">
+      List Your Newly Created Connector
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#whats-next">
+<span class="md-ellipsis">
+      What's Next
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -418,35 +463,35 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/choosing_relevant_tests/">
 <span class="md-ellipsis">
-    Choosing Relevant Tests
+    (UI) Choosing Relevant Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/connecting_to_llms/">
 <span class="md-ellipsis">
-    Connecting to LLMs
+    (UI) Connecting to LLMs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/running_benchmarks/">
 <span class="md-ellipsis">
-    Running Benchmarks
+    (UI) Running Benchmarks
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/running_red_teaming/">
 <span class="md-ellipsis">
-    Conducting Red Teaming
+    (UI) Conducting Red Teaming
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/creating_custom_cookbooks/">
 <span class="md-ellipsis">
-    Creating Custom Cookbooks
+    (UI) Creating Custom Cookbooks
   </span>
 </a>
 </li>
@@ -473,28 +518,35 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/connecting_endpoints/">
 <span class="md-ellipsis">
-    Connecting to LLMs
+    (CLI) Connecting to LLMs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/benchmarking/">
 <span class="md-ellipsis">
-    Running Benchmark
+    (CLI) Running Benchmark
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/red_teaming/">
 <span class="md-ellipsis">
-    Running Red Teaming
+    (CLI) Running Red Teaming
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/add_your_own_tests/">
 <span class="md-ellipsis">
-    Adding Your Own Tests
+    (CLI) Adding Your Own Tests
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../user_guide/cli/cli_command_list/">
+<span class="md-ellipsis">
+    (CLI) CLI Command List
   </span>
 </a>
 </li>
@@ -710,9 +762,9 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../common_issues/">
+<a class="md-nav__link" href="../../../faq/">
 <span class="md-ellipsis">
-    Common Issues
+    FAQ
   </span>
 </a>
 </li>
@@ -723,69 +775,70 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1>How to Create a Connector</h1>
-<p>Currently, the most straightforward way is to copy and paste an existing connector module, and modify the codes. This feature is currently not available on the web UI and CLI.</p>
-<p>All connectors inherit the super class <a href="https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py">Connector</a>. In this super class, we initialise it with certain variables which we think are common across various connectors (i.e. <code>token</code>, <code>max_concurrency</code>, etc). These variables come from another class called <a href="https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py">ConnectorEndpoint</a>.</p>
-<p>We will use a set of modified codes from one of our connectors <a href="https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py">openai-connector</a> as an example:</p>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>    def __init__(self, ep_arguments: ConnectorEndpointArguments):
-</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>        # Initialize super class
-</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>        super().__init__(ep_arguments)
+<h1>Create a New Custom Connector</h1>
+<p>Currently, the most straightforward way is to duplicate an existing connector module, and modify the codes. This feature is currently not available on the Web UI and CLI.</p>
+<p>All connectors inherit the super class <a href="https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors/connector.py">Connector</a>. We initalise this super class with certain variables that are common across various connectors (i.e. <code>token</code>, <code>max_concurrency</code>, etc). These variables come from another class called <a href="https://github.com/aiverify-foundation/moonshot/blob/main/moonshot/src/connectors_endpoints/connector_endpoint.py">ConnectorEndpoint</a>.</p>
+<h2 id="initialise-connector-class">Initialise Connector Class</h2>
+<p>We will use a set of modified code from one of our connectors <a href="https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors/openai-connector.py">openai-connector</a> as an example:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>def __init__(self, ep_arguments: ConnectorEndpointArguments):
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>    # Initialize super class
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    super().__init__(ep_arguments)
 </span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>        # This is optional. You can keep this here if your model needs to take in a model field from the user
-</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>        self.model = self.optional_params.get("model", "")
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>    # This is optional. You can keep this here if your model needs to take in a model field from the user
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>    self.model = self.optional_params.get("model", "")
 </span></code></pre></div>
-    - The <code>__init__()</code> function initialises the Connector class. This must be included in your code.
-    <br/><br/></p>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>    @Connector.rate_limited # Limits the number of calls per second made to the LLM based on a variable max_calls_per_second. 
-</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>    @perform_retry # Performs retries based on a variable num_of_retries. Throws a ConnectionError when the number of retries is hit. 
-</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    async def get_response(self, prompt: str) -&gt; str:
-</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>        """
-</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>        Copy and paste this function and insert your codes to send prompts and receive responses from the target LLM 
-</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>        here. 
+<p>The <code>__init__()</code> function initialises the Connector class. This must be included in your code.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>@Connector.rate_limited # Limits the number of calls per second made to the LLM based on a variable max_calls_per_second. 
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>@perform_retry # Performs retries based on a variable num_of_retries. Throws a ConnectionError when the number of retries is hit. 
+</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>async def get_response(self, prompt: str) -&gt; str:
+</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>    """
+</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>    Copy and paste this function and insert your codes to send prompts and receive responses from the target LLM 
+</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>    here. 
 </span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>        Args:
-</span><span id="__span-1-9"><a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>            prompt (str): The input prompt to send to the target LLM.
+</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>    Args:
+</span><span id="__span-1-9"><a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>        prompt (str): The input prompt to send to the target LLM.
 </span><span id="__span-1-10"><a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a>        Returns:
-</span><span id="__span-1-12"><a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>            str: The text response generated by the target LLM.
-</span><span id="__span-1-13"><a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>        """
-</span><span id="__span-1-14"><a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>        # You may want to insert codes to perform appending or editing of prompt before sending to LLM
-</span><span id="__span-1-15"><a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>        connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}" # just an example
+</span><span id="__span-1-11"><a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a>    Returns:
+</span><span id="__span-1-12"><a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>        str: The text response generated by the target LLM.
+</span><span id="__span-1-13"><a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>    """
+</span><span id="__span-1-14"><a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>    # You may want to insert codes to perform appending or editing of prompt before sending to LLM
+</span><span id="__span-1-15"><a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>    connector_prompt = f"{self.pre_prompt}{prompt}{self.post_prompt}" # just an example
 </span><span id="__span-1-16"><a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a>
-</span><span id="__span-1-17"><a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a>        # Every LLM requires their connector to send the prompts in a specific way with certain configurations
-</span><span id="__span-1-18"><a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a>        response = await self._client.chat.completions.create(**new_params) # an example from the OpenAI Connector
+</span><span id="__span-1-17"><a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a>    # Every LLM requires their connector to send the prompts in a specific way with certain configurations
+</span><span id="__span-1-18"><a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a>    response = await self._client.chat.completions.create(**new_params) # an example from the OpenAI Connector
 </span><span id="__span-1-19"><a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a>
-</span><span id="__span-1-20"><a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a>        # Return the response of the LLM 
-</span><span id="__span-1-21"><a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a>        return await self._process_response(response) # an example
+</span><span id="__span-1-20"><a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a>    # Return the response of the LLM 
+</span><span id="__span-1-21"><a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a>    return await self._process_response(response) # an example
 </span></code></pre></div>
-    - The <code>get_response()</code> is an abstract method that must be instantiated. This is where you will insert your codes to send promts to the LLM and get back the response.
-    <br/><br/></p>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>    async def _process_response(self, response: Any) -&gt; str:
-</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>        """
-</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>        An optional helper method we have in all our connector types to process the response from the LLM. The way to
-</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>        process responses from different LLMs can be different. You can insert codes to process the response here if 
-</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>        you want.
+<h2 id="modify-response-method">Modify Response Method</h2>
+<p>The <code>get_response()</code> is an abstract method that must be instantiated. This is where you will insert your code to send prompts to the LLM and receive responses.</p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>async def _process_response(self, response: Any) -&gt; str:
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>    """
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>    An optional helper method we have in all our connector types to process the response from the LLM. The way to
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>    process responses from different LLMs can be different. You can insert codes to process the response here if 
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>    you want.
 </span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>        Args:
-</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>            response (Any): The response from the LLM. It depends on what the LLM returns as a response
-</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>            (i.e. could be a dict, string, list, etc)
+</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>    Args:
+</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>        response (Any): The response from the LLM. It depends on what the LLM returns as a response
+</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>        (i.e. could be a dict, string, list, etc)
 </span><span id="__span-2-10"><a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>        Returns:
-</span><span id="__span-2-12"><a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>            str: The processed response
-</span><span id="__span-2-13"><a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a>        """
-</span><span id="__span-2-14"><a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a>        return str(response) # an example
+</span><span id="__span-2-11"><a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>    Returns:
+</span><span id="__span-2-12"><a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>        str: The processed response
+</span><span id="__span-2-13"><a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a>    """
+</span><span id="__span-2-14"><a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a>    return str(response) # an example
 </span></code></pre></div>
-    - The <code>_process_response()</code> is an optional method that we have included in all our connectors to help us format the response from the LLM.</p>
+The <code>_process_response()</code> is an optional method that is included in all our connectors to aid in formatting responses from the LLM.</p>
+<h2 id="list-your-newly-created-connector">List Your Newly Created Connector</h2>
 <p>Once you have your connector created, move it to your own <code>moonshot-data/connectors</code> folder. The name of your connector will be your file name (i.e. the name of your connector will be <code>new-custom-connector</code> if your connector file name is <code>new-custom-connector.py</code>)</p>
-<p>You should be able to see your connector when you list the connectors:</p>
+<p>If you are using CLI, you should be able to see your connector when you list the connectors using the following command:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>moonshot &gt; list_connector_types
+</span></code></pre></div>
+<p><img alt="recipe added" src="../images/new_connector.png"/></p>
+<h2 id="whats-next">What's Next</h2>
+<p>Once you are able to see your newly created connector, you can proceed to create a connector endpoint (i.e. configuration file) :</p>
 <ul>
-<li><code>list_connector_types</code>
-<img alt="recipe added" src="../images/new_connector.png"/></li>
-</ul>
-<p>Once you are able to see your newly created, you can proceed to create a configuration file(connector endpoint) for your newly created connector:</p>
-<ul>
-<li><a href="../../web-ui/create_endpoint/">Create via Web UI</a></li>
-<li><a href="../../../user_guide/cli/connecting_endpoints/#creating-a-connector-endpoint">Create via CLI</a></li>
+<li><a href="../../web-ui/create_endpoint/">Create Connector Endpoint via Web UI</a></li>
+<li><a href="../../../user_guide/cli/connecting_endpoints/#creating-a-connector-endpoint">Create Connector Endpoint via CLI</a></li>
 </ul>
 </article>
 </div>
@@ -798,7 +851,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Configuring Moonshot WebAPI" class="md-footer__link md-footer__link--prev" href="../configure_web_api/">
+<a aria-label="Previous: Configure Moonshot Web-API" class="md-footer__link md-footer__link--prev" href="../configure_web_api/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -807,7 +860,7 @@
                 Previous
               </span>
 <div class="md-ellipsis">
-                Configuring Moonshot WebAPI
+                Configure Moonshot Web-API
               </div>
 </div>
 </a>

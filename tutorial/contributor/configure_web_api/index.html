@@ -9,7 +9,7 @@
 <link href="../create_connector/" rel="next"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
-<title>Configuring Moonshot WebAPI - Moonshot</title>
+<title>Configure Moonshot Web-API - Moonshot</title>
 <link href="../../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -46,7 +46,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Configuring Moonshot WebAPI
+              Configure Moonshot Web-API
             
           </span>
 </div>
@@ -202,28 +202,28 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/create_cookbook/">
 <span class="md-ellipsis">
-    How to Create Custom Cookbook
+    (UI) How to Create Custom Cookbook
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/create_endpoint/">
 <span class="md-ellipsis">
-    How to Create Connector Endpoint
+    (UI) How to Create Connector Endpoint
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/benchmark/">
 <span class="md-ellipsis">
-    How to Run Benchmark Tests
+    (UI) How to Run Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../web-ui/redteam/">
 <span class="md-ellipsis">
-    How to Run Red Teaming
+    (UI) How to Run Red Teaming
   </span>
 </a>
 </li>
@@ -247,28 +247,28 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/create_benchmark_tests/">
 <span class="md-ellipsis">
-    How to Create Custom Benchmark Tests
+    (CLI) How to Create Custom Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/create_endpoint/">
 <span class="md-ellipsis">
-    How to Create Connector Endpoint
+    (CLI) How to Create Connector Endpoint
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/run_benchmark_tests/">
 <span class="md-ellipsis">
-    How to Run Benchmark Tests
+    (CLI) How to Run Benchmark Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../cli/run_red_teaming/">
 <span class="md-ellipsis">
-    How to Run Red Teaming
+    (CLI) How to Run Red Teaming
   </span>
 </a>
 </li>
@@ -293,13 +293,13 @@
 <input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
 <span class="md-ellipsis">
-    Configuring Moonshot WebAPI
+    Configure Moonshot Web-API
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
-    Configuring Moonshot WebAPI
+    Configure Moonshot Web-API
   </span>
 </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
@@ -309,25 +309,68 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#getting-started">
+<a class="md-nav__link" href="#launch-moonshot-web-api">
 <span class="md-ellipsis">
-      Getting Started
+      Launch Moonshot Web API
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#configuring-your-env-file">
+<a class="md-nav__link" href="#customising-moonshot-web-api-configuration">
 <span class="md-ellipsis">
-      Configuring your .env File
+      Customising Moonshot Web API Configuration
+    </span>
+</a>
+<nav aria-label="Customising Moonshot Web API Configuration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-your-environment-variable-file">
+<span class="md-ellipsis">
+      Configuring Your Environment Variable File
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#configuring-your-configyml-file">
+<a class="md-nav__link" href="#configuring-your-configuration-file">
 <span class="md-ellipsis">
-      Configuring your config.yml File
+      Configuring your Configuration File
     </span>
 </a>
+<nav aria-label="Configuring your Configuration File" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#asyncio">
+<span class="md-ellipsis">
+      asyncio
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ssl">
+<span class="md-ellipsis">
+      ssl
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cors">
+<span class="md-ellipsis">
+      cors
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#log">
+<span class="md-ellipsis">
+      log
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -335,7 +378,7 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../create_connector/">
 <span class="md-ellipsis">
-    How to Create a Connector
+    Create a New Custom Connector
   </span>
 </a>
 </li>
@@ -456,35 +499,35 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/choosing_relevant_tests/">
 <span class="md-ellipsis">
-    Choosing Relevant Tests
+    (UI) Choosing Relevant Tests
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/connecting_to_llms/">
 <span class="md-ellipsis">
-    Connecting to LLMs
+    (UI) Connecting to LLMs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/running_benchmarks/">
 <span class="md-ellipsis">
-    Running Benchmarks
+    (UI) Running Benchmarks
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/running_red_teaming/">
 <span class="md-ellipsis">
-    Conducting Red Teaming
+    (UI) Conducting Red Teaming
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/web_ui/creating_custom_cookbooks/">
 <span class="md-ellipsis">
-    Creating Custom Cookbooks
+    (UI) Creating Custom Cookbooks
   </span>
 </a>
 </li>
@@ -511,28 +554,35 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/connecting_endpoints/">
 <span class="md-ellipsis">
-    Connecting to LLMs
+    (CLI) Connecting to LLMs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/benchmarking/">
 <span class="md-ellipsis">
-    Running Benchmark
+    (CLI) Running Benchmark
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/red_teaming/">
 <span class="md-ellipsis">
-    Running Red Teaming
+    (CLI) Running Red Teaming
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../../user_guide/cli/add_your_own_tests/">
 <span class="md-ellipsis">
-    Adding Your Own Tests
+    (CLI) Adding Your Own Tests
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../user_guide/cli/cli_command_list/">
+<span class="md-ellipsis">
+    (CLI) CLI Command List
   </span>
 </a>
 </li>
@@ -748,9 +798,9 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../common_issues/">
+<a class="md-nav__link" href="../../../faq/">
 <span class="md-ellipsis">
-    Common Issues
+    FAQ
   </span>
 </a>
 </li>
@@ -762,59 +812,163 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="running-moonshot-as-a-web-api">Running Moonshot as a Web API</h1>
-<p>Moonshot Web API is built using FastAPI. This guide will help you get started and configure your environment.</p>
+<p>Moonshot Web API is built using FastAPI. This guide will help you get started and configure your environment. This will be useful if you are intending to create your own UI.</p>
+<h2 id="launch-moonshot-web-api">Launch Moonshot Web API</h2>
 <p>To run Moonshot Web API:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>$ python -m moonshot web-api
 </span></code></pre></div></p>
 <p>For instructions on setting up the Moonshot UI, please refer to the <a href="https://github.com/aiverify-foundation/moonshot-ui">Moonshot UI repository</a>.</p>
-<h2 id="getting-started">Getting Started</h2>
-<p>By default, Moonshot WebAPI uses its own configuration settings. However, you can customize these settings by providing your own <code>.env</code> file in the directory where you are running Moonshot.</p>
-<h2 id="configuring-your-env-file">Configuring your <code>.env</code> File</h2>
+<h2 id="customising-moonshot-web-api-configuration">Customising Moonshot Web API Configuration</h2>
+<p>By default, Moonshot Web API uses its own configuration settings. However, you can customize these settings by providing your own <code>.env</code> file in the directory where you are running Moonshot.</p>
+<h3 id="configuring-your-environment-variable-file">Configuring Your Environment Variable File</h3>
 <p>The <code>.env</code> file should include the following variables:</p>
-<ul>
-<li><code>MS_WEB_API_CONFIG</code>: This is used to specify the path to your configuration file. For example: <code>/User/path/to/your/config.yml</code>.</li>
-<li><code>APP_ENVIRONMENT</code>: This defines the environment in which you are running Moonshot. For example: <code>PROD</code>.</li>
-<li><code>HOST</code>: This is the host where you wish to run Moonshot. For example: <code>127.0.0.1</code>.</li>
-<li><code>PORT</code>: This is the port at which you wish to run your FastAPI. For example: <code>5000</code>.</li>
-</ul>
-<h2 id="configuring-your-configyml-file">Configuring your <code>config.yml</code> File</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MS_WEB_API_CONFIG</code></td>
+<td>This is used to specify the path to your configuration file.</td>
+<td><code>/User/path/to/your/config.yml</code></td>
+</tr>
+<tr>
+<td><code>APP_ENVIRONMENT</code></td>
+<td>This defines the environment in which you are running Moonshot.</td>
+<td><code>PROD</code></td>
+</tr>
+<tr>
+<td><code>HOST</code></td>
+<td>This is the host where you wish to run Moonshot.</td>
+<td><code>127.0.0.1</code></td>
+</tr>
+<tr>
+<td><code>PORT</code></td>
+<td>This is the port at which you wish to run your FastAPI.</td>
+<td><code>/5000</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuring-your-configuration-file">Configuring your Configuration File</h3>
 <p>The <code>config.yml</code> file contains several sections. Here's a brief overview of each section:</p>
-<ul>
-<li>
-<p><code>asyncio</code></p>
-<ul>
-<li><code>monitor_task</code>: This flag determines whether to monitor tasks in asyncio or not. For example: <code>monitor_task: false</code>.</li>
-</ul>
-</li>
-<li>
-<p><code>ssl</code></p>
-<ul>
-<li><code>enabled</code>: This flag determines whether SSL is enabled or not. For example: <code>enabled: ${ENABLE_SSL:false}</code>.</li>
-<li><code>file_path</code>: This is the path to the directory containing the SSL certificate and key files. For example: <code>file_path: "${SSL_FILE_PATH:./web_api/certs}"</code>.</li>
-<li><code>cert_filename</code>: This is the filename of the SSL certificate. For example: <code>cert_filename: "cert.pem"</code>.</li>
-<li><code>key_filename</code>: This is the filename of the SSL key. For example: <code>key_filename: "key.pem"</code>.</li>
-</ul>
-</li>
-<li>
-<p><code>cors</code></p>
-<ul>
-<li><code>enabled</code>: This flag determines whether CORS is enabled or not. For example: <code>enabled: false</code>.</li>
-<li><code>allowed_origins</code>: This is a list of origins that are allowed to make cross-origin requests. For example: <code>allowed_origins: "http://localhost:3000"</code>.</li>
-</ul>
-</li>
-<li>
-<p><code>log</code></p>
-<ul>
-<li><code>logging</code>: This flag determines whether logging is enabled or not. For example: <code>logging: ${LOGGING:true}</code>.</li>
-<li><code>level</code>: This sets the level of logging. It could be <code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, or <code>CRITICAL</code>. For example: <code>level: ${LOG_LEVEL:DEBUG}</code>.</li>
-<li><code>format</code>: This specifies the format of the log messages. For example: <code>format: "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s"</code>.</li>
-<li><code>log_file_path</code>: This is the path where the log files will be stored. For example: <code>log_file_path: "/path/to/write/moonshot.logs"</code>.</li>
-<li><code>log_file_max_size</code>: This is the maximum size (in bytes) that a log file can have before it gets rolled over. For example: <code>log_file_max_size: 5242880</code>.</li>
-<li><code>log_file_backup_count</code>: This is the number of backup log files to keep. For example: <code>log_file_backup_count: 3</code>.</li>
-</ul>
-</li>
-</ul>
-<p>For example on how to structure your <code>config.yml</code> file, refer to the example provided <a href="https://github.com/aiverify-foundation/moonshot/blob/main/examples/config.yml">here</a>.</p>
+<h4 id="asyncio"><code>asyncio</code></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>monitor_task</code></td>
+<td>This flag determines whether to monitor tasks in asyncio or not.</td>
+<td><code>monitor_task: false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="ssl"><code>ssl</code></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>This flag determines whether SSL is enabled or not.</td>
+<td><code>enabled: ${ENABLE_SSL:false}</code></td>
+</tr>
+<tr>
+<td><code>file_path</code></td>
+<td>This is the path to the directory containing the SSL certificate and key files.</td>
+<td><code>file_path: "${SSL_FILE_PATH:./web_api/certs}</code></td>
+</tr>
+<tr>
+<td><code>cert_filename</code></td>
+<td>This is the filename of the SSL certificate.</td>
+<td><code>cert_filename: "cert.pem"</code></td>
+</tr>
+<tr>
+<td><code>key_filename</code></td>
+<td>This is the filename of the SSL key.</td>
+<td><code>key_filename: "key.pem"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="cors"><code>cors</code></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>This flag determines whether CORS is enabled or not.</td>
+<td><code>enabled: false</code></td>
+</tr>
+<tr>
+<td><code>allowed_origins</code></td>
+<td>This is a list of origins that are allowed to make cross-origin requests.</td>
+<td><code>allowed_origins: "http://localhost:3000"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="log"><code>log</code></h4>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logging</code></td>
+<td>This flag determines whether logging is enabled or not.</td>
+<td><code>logging: ${LOGGING:true}</code></td>
+</tr>
+<tr>
+<td><code>level</code></td>
+<td>This sets the level of logging. It could be <code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, or <code>CRITICAL</code>.</td>
+<td><code>level: ${LOG_LEVEL:DEBUG}</code></td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td>This specifies the format of the log messages.</td>
+<td><code>format: "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s"</code></td>
+</tr>
+<tr>
+<td><code>log_file_path</code></td>
+<td>This is the path where the log files will be stored.</td>
+<td><code>log_file_path: "/path/to/write/moonshot.logs"</code></td>
+</tr>
+<tr>
+<td><code>log_file_max_size</code></td>
+<td>This is the maximum size (in bytes) that a log file can have before it gets rolled over.</td>
+<td><code>log_file_max_size: 5242880</code></td>
+</tr>
+<tr>
+<td><code>log_file_backup_count</code></td>
+<td>This is the number of backup log files to keep.</td>
+<td><code>log_file_backup_count: 3"</code></td>
+</tr>
+</tbody>
+</table>
+<p>For more example on how to structure your <code>config.yml</code> file, refer to the example provided <a href="https://github.com/aiverify-foundation/moonshot/blob/main/examples/config.yml">here</a>.</p>
 </article>
 </div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
@@ -826,7 +980,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: How to Run Red Teaming" class="md-footer__link md-footer__link--prev" href="../../cli/run_red_teaming/">
+<a aria-label="Previous: (CLI) How to Run Red Teaming" class="md-footer__link md-footer__link--prev" href="../../cli/run_red_teaming/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -835,17 +989,17 @@
                 Previous
               </span>
 <div class="md-ellipsis">
-                How to Run Red Teaming
+                (CLI) How to Run Red Teaming
               </div>
 </div>
 </a>
-<a aria-label="Next: How to Create a Connector" class="md-footer__link md-footer__link--next" href="../create_connector/">
+<a aria-label="Next: Create a New Custom Connector" class="md-footer__link md-footer__link--next" href="../create_connector/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                How to Create a Connector
+                Create a New Custom Connector
               </div>
 </div>
 <div class="md-footer__button md-icon">
