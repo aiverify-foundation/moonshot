@@ -4,25 +4,25 @@ Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/?utm_sourc
 
 ## What does Moonshot do?
 
-Moonshot provides ready access to test LLMs from popular model providers E.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key.
+Moonshot provides ready access to test LLMs from popular model providers e.g., OpenAI, Anthropic, Together, HuggingFace. You will just need to provide your API Key.
 
-If you are testing other models or your own LLM Application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as little lines of code as possible.
+If you are testing other models or your own LLM application hosted on a custom server, you will need to create your own Model Connector. Fortunately, Model Connectors in Moonshot are designed in such a way that you will need to write as few lines of code as possible.
 
 ### Benchmark
 
 Benchmarks are “Exam questions” to test the model across a variety of competencies, e.g., language and context understanding.
 
-Project Moonshot offers a range of benchmarks to measure your LLM application's performance in Capability, Quality, and Trust & Safety. These include benchmarks widely used by the community like Google's BigBench and HuggingFace's leaderboards, and more domain/task specific tests like Tamil Language and Medical LLM benchmarks.
+Project Moonshot offers a range of benchmarks to measure your LLM application's performance in the categories of Capability, Quality, and Trust & Safety. These include benchmarks widely used by the community like Google's BigBench and HuggingFace's leaderboards, and more domain/task specific tests like Tamil Language and Medical LLM benchmarks.
 
 ### Red Teaming
 
-Red-Teaming is the adversarial prompting of LLM applications to induce them to behave in a manner incongruent with their design. This process is crucial to identify vulnerabilities in AI systems.
+Red teaming is the adversarial prompting of LLM applications to induce them to behave in a manner incongruent with their design. This process is crucial to identify vulnerabilities in AI systems.
 
-Project Moonshot simplifies the process of Red-Teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with Red-Teaming tools like prompt templates, context strategies and attack modules.
+Project Moonshot simplifies the process of red teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with red teaming utilities like prompt templates, context strategies and attack modules.
 
 #### Automated Red Teaming
 
-As Red-Teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
+As red teaming conventionally relies on human ingenuity, it is hard to scale. Project Moonshot has developed some attack modules based on research-backed techniques that will enable you to automatically generate adversarial prompts.
 
 ## Glossary
 Here are some common terms that may be used in this documentation:

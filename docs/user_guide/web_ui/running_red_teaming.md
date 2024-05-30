@@ -1,6 +1,6 @@
 # Red Teaming
 
-1. Click on ‘Discover new vulnerabilities, Start Red Teaming’ to start a new red teaming session. 
+1. Click on ‘Discover new vulnerabilities’ to start a new red teaming session. 
 
     ![Homepage](./imgs/red_teaming_discover(16).png)
 
@@ -25,7 +25,7 @@
 
 5. Click ‘Start’ to create the new red teaming session. 
 
-6. This page shows Project Moonshot’s red teaming interface.  
+6.  This page shows Project Moonshot’s red teaming interface.  
 
     ![Red teaming Interface](./imgs/red_teaming_interface(20).png)
 
@@ -50,8 +50,11 @@ You can use some of these tools to enhance your red teaming process:
 
 1. **Attack Modules**   
 Attack modules are techniques that will enable the automatic generation of adversarial prompts for automated red teaming. Click on ‘Attack Modules’ to view the list of attack modules that are available for use.
+
     ![View Attack Modules](./imgs/red_teaming_attack_module(22).png)
+    
     Click on ‘Use’ to select an attack module.
+
     ![Select Attack Modules](./imgs/select_attack_module(23).png)
     
     !!! NOTE 
@@ -72,7 +75,6 @@ Attack modules are techniques that will enable the automatic generation of adver
     ![Remove Attack Module](./imgs/remove_attack_module(25).png)
 
     
-
 1. **Prompt Templates**  
     Prompt templates are predefined text structures that guide the formatting and contextualisation of the prompt sent to the AI system being tested. Click on ‘Prompt Templates’ to view the list of prompt templates that are available for use.  
     ![List of Prompt Templates](./imgs/prompt_template(26).png)
@@ -90,7 +92,8 @@ Attack modules are techniques that will enable the automatic generation of adver
     ![Remove Prompt Template](./imgs/remove_prompt_template_set(30).png)
 
 2. **Context Strategies**  
-    Context Strategies are predefined approaches to append the red teaming session's context to each prompt. Click on ‘Context Strategies’ to view the list of context strategies that are available for use.  
+    Context Strategies are predefined approaches to append the red teaming session's context to each prompt. Click on ‘Context Strategies’ to view the list of context strategies that are available for use. 
+     
     ![List Context Strategies](./imgs/available_context_strategies(31).png)
     
 

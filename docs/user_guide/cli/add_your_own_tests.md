@@ -1,4 +1,4 @@
-# Add Your Own B enchmark Tests
+# Add Your Own Benchmark Tests
 
 In this tutorial, we will be going through the steps required to add new test using CLI.
 

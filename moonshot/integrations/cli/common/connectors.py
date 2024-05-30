@@ -294,7 +294,7 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
     epilog=(
         "Available keys:\n"
-        "  name: ID of the endpoint\n"
+        "  name: name of the endpoint\n"
         "  uri: URI of the endpoint\n"
         "  token: Token of the endpoint\n"
         "  max_calls_per_second: Rate limit for max calls per second\n"
@@ -305,7 +305,7 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
         "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
     ),
 )
-update_endpoint_args.add_argument("endpoint", type=str, help="IDs of the endpoint. This field is not editable via CLI after creation.")
+update_endpoint_args.add_argument("endpoint", type=str, help="ID of the endpoint. This field is not editable via CLI after creation.")
 update_endpoint_args.add_argument(
     "update_kwargs", type=str, help="Update endpoint key/value"
 )

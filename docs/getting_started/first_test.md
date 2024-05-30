@@ -37,14 +37,14 @@ Once you have completed the selection, click on the arrow to proceed to the next
 
 ![This step shows the total number of prompts available in this benchmark.](getting_started/3.png)
 
-In the next step, connect to your AI system. Click "Edit" for one of the OpenAI models, such as OpenAI GPT-3.5 Turbo.
+Connect to your AI system. Click "Edit" for one of the OpenAI models, such as OpenAI GPT-3.5 Turbo.
 
 ![alt text](getting_started/4.png)
 
 Enter your API token on this screen, then click "Save". Repeat this step for "Together Llama Guard 7B Assistant."
 
 !!! note
-    Some cookbooks use another LLM to evaluate the response. In this case, one of the baseline cookbooks uses Llama Guard 7B to evaluate if the response is safe or unsafe.
+    Some cookbooks use another LLM to evaluate the response. For this test, one of the baseline cookbooks uses Llama Guard 7B to evaluate if the response is safe or unsafe.
 
 ![alt text](getting_started/5.png)
 
@@ -98,7 +98,7 @@ In the red teaming screen, you can type any text in the textbox at the bottom to
 
 ![alt text](getting_started/15.png)
 
-To run automated red teaming, click on "Attack Module" and select one of the modules. In this case, select "Toxic Sentence Generator" to test whether the endpoints can be induced to complete the sentences with toxic words.
+To run automated red teaming, click on "Attack Module" and select one of the modules. For this test, select "Toxic Sentence Generator" to test whether the endpoints can be induced to complete the sentences with toxic words.
 
 ![alt text](getting_started/16.png)
 

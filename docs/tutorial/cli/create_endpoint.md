@@ -1,3 +1,5 @@
+In this tutorial, you will learn how to configure and seamlessly connect Moonshot to your AI systems. A connector endpoint is a set of configuration that tells Moonshot how to connect to your AI model.
+
 1. Change directory to the root directory of Moonshot. 
 
 2. Enter the following command to enter the CLI interactive mode:

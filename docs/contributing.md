@@ -51,7 +51,7 @@ The best way to start developing a new metric is to learn by an example. We have
 
 Using `samplemetric.py` as an example, you can edit the following elements from line 20 to line 22.
 
-1. `id`: This is the identifier of the metric that the user will use in their recipe or red teaming module. This should be the filename.
+1. `id`: This is the identifier of the metric that the user will use in their recipe or red teaming module. This should be the file name.
 2. `name`: This is the name of the metric. This will be shown when the user lists the metrics.
 3. `description`: This is the description of the metrics. This will be shown when the user lists the metrics. The description should describe what the metrics measure.
 
@@ -128,7 +128,7 @@ You can find a list of [available recipes here](https://github.com/aiverify-foun
 
 To create a recipe, you can copy one of the recipe files and edit the following elements:
 
-1. `id`: This is an unique identifier that will be used by the user. This should be the filename.
+1. `id`: This is an unique identifier that will be used by the user. This should be the file name.
 2. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
 3. `description`: This describes what the recipe tests. We recommend also including what constitutes a better score and what that implies..
 4. `tags`: This is a list of tags, which can help the user to find your recipe. We suggest to insert some relevant keywords related to domain and nature of the test.
@@ -183,7 +183,7 @@ You can find a list of [available cookbooks here](https://github.com/aiverify-fo
 
 To create a cookbook, you can copy one of the cookbook files and edit the following elements:
 
-1. `id`: This is an unique identifier that will be used by the user. This should be the filename.
+1. `id`: This is an unique identifier that will be used by the user. This should be the file name.
 2. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
 3. `description`: This describes what the recipe test.
 4. `recipes`: This contains a list of recipe identifiers that this cookbook will execute. These recipes must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/recipes).
