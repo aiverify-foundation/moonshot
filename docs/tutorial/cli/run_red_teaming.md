@@ -38,7 +38,7 @@ Continuing from Step 3 or manual red teaming, you can choose to run an attack mo
 
     To run the help example, enter:
 
-        run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" -c "add_previous_prompt" -p "mmlu" -m "bleuscore"`
+        run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" -c "add_previous_prompt" -p "mmlu" -m "bleuscore"
     
     You should see your prompt and response:
     
