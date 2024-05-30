@@ -2,7 +2,7 @@ In this tutorial, you will learn how to configure and seamlessly connect Moonsho
 
 Let's dive in and start connecting your models.
 
-Click on the "model endpoint" icon in the sidebar panel.
+Click on the "model endpoints" icon in the sidebar panel.
 
 ![select model endpoints](./res/create_endpoint_1.png)
 

@@ -2,7 +2,7 @@ In this tutorial, you will learn how to create a custom cookbook via our web int
 
 Let's get started on creating your first cookbook.
 
-Click on "Create Cookbooks". 
+Click on "Create cookbooks". 
 
 ![navigate to create cookbook](./res/create_cookbook_1.png)
 

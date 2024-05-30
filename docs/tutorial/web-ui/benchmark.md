@@ -8,7 +8,7 @@ This tutorial will provide a step-by-step guide on how to run these benchmark te
 
 Let's get started on running your first benchmark test.
 
-In the homepage, click on "Evaluate". Alternatively, you can click on "Get Started".
+In the homepage, click on "Evaluate against standard tests". Alternatively, you can click on "Get Started".
 
 ![Navigate to Evaluate against standard tests](./res/run_bm_1.png)
 
@@ -39,7 +39,7 @@ On this page, you need to fill out the form. If you wish to test a smaller datas
 
 ![Fill out the form and start the test](./res/run_bm_7.png)
 
-The benchmark test is now running. You can click on 'see details' to view the endpoints and cookbooks that are currently running. If you wish to exit an ongoing run, click on 'cancel'.
+The benchmark test is now running. You can click on 'See Details' to view the endpoints and cookbooks that are currently running. If you wish to exit an ongoing run, click on 'Cancel'.
 
 ![View test details or cancel the run](./res/run_bm_8.png)
 

@@ -29,7 +29,7 @@ Here are some common terms that may be used in this documentation:
 
 | Term | Description |
 | --- | ---|
-| Connector | The **Connector** in Moonshot enable users to integrate new models into the toolkit by connecting to their Large Language Models (LLMs) via API connectors.  |
+| Connector | A **Connector** in Moonshot enables users to integrate new models into the toolkit by connecting to their Large Language Models (LLMs) via API connectors.  |
 | Cookbook | A **Cookbook** in Moonshot contains one or more recipes, each designed to generate results when selected to run with the model endpoints. It serves as a comprehensive guide for conducting evaluations and tests, offering a structured approach to assessing LLM applications' performance and addressing potential risks. |
 | Recipe | A **Recipe** in Moonshot brings together 3 essential components. A recipe can contain one or more datasets, prompt templates and metrics.  |
 | Datasets | **Datasets** consist of a collection of input-target pairs, where the 'input' is a prompt provided to the LLM (being tested), and the 'target' is the correct response or ground truth. | 

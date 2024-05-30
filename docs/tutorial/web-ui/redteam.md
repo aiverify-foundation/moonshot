@@ -6,7 +6,7 @@ This tutorial will provide a step-by-step guide on how to run red teaming, enabl
 
 Let's get started on your first Red Teaming session.
 
-First, click on 'Discover' in the homepage.
+First, click on 'Discover new vulnerabilities' in the homepage.
 
 ![Navigate to Discover new vulnerabilities](./res/run_rt_1.png)
 
@@ -14,7 +14,7 @@ On this page, you are prompted to select an endpoint for testing. You have the o
 
 ![Endpoint selection page](./res/run_rt_2.png)
 
-This step presents a list of attack modules available for your red teaming. For the purpose of this tutorial, select 'skip for now'.
+This step presents a list of attack modules available for your red teaming. For the purpose of this tutorial, select 'Skip for now'.
 
 ![Attack modules selection page](./res/run_rt_3.png)
 
@@ -28,7 +28,7 @@ You have now entered a session to conduct your red teaming. This session include
 
 #### Manual Red Teaming
 
-During manual red teaming, you have the option to utilize tools like Prompt Templates and Context Strategy. These tools assist in structuring and providing context to your prompts.
+During manual red teaming, you have the option to utilise tools like prompt templates and context strategies. These tools assist in structuring and providing context to your prompts.
 
 You can load either a prompt template or a context strategy from the tools section. 
 After making your selection, input your prompt into the chat window. You will then observe the enhancements that have been incorporated into your prompt.
@@ -37,7 +37,7 @@ After making your selection, input your prompt into the chat window. You will th
 #### Automated Red Teaming
 To initiate an automated red teaming, you would need to load an attack module.
 
-Navigate to the 'Attack Module' within the tools section. Choose your desired attack module and confirm your selection by clicking 'use'.
+Navigate to the 'Attack Module' within the tools section. Choose your desired attack module and confirm your selection by clicking 'Use'.
 
 ![Load Attack Module](./res/load_am.gif)
 

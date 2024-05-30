@@ -9,7 +9,7 @@ In this guide, you will learn how to
 
 ## Launch Moonshot UI
 
-Moonshot UI is designed to simplify the testing workflows. Once Moonshot is [installed](./quick_install.md), you can start the user inferface using the  following command:
+Moonshot UI is designed to simplify the testing workflows. Once Moonshot is [installed](./quick_install.md), you can start the Web UI using the  following command:
 
 ```
 python -m moonshot web
@@ -22,7 +22,7 @@ Then, use your browser and navigate to `http://localhost:3000`
 
 ## Run Benchmark Test
 
-Upon navigating to the webpage, you will be greeted with our main screen. To start a benchmark test, click on "Get Started."
+Upon navigating to the webpage, you will be greeted with our main screen. To start a benchmark test, click on "Get Started".
 
 ![The main page of Moonshot UI](getting_started/1.png)
 
@@ -61,7 +61,7 @@ The progress bar will be shown in the screen.
 !!! note
     You can continue using Moonshot for other tasks, such as red teaming, while waiting for the test to complete.
 
-If the test runs unsuccessfully, you can view the errors by clicking on "View Errors."
+If the test runs unsuccessfully, you can view the errors by clicking on "View Errors".
 
 ![alt text](getting_started/8.png)
 
@@ -102,8 +102,6 @@ To run automated red teaming, click on "Attack Module" and select one of the mod
 
 ![alt text](getting_started/16.png)
 
-Type a cuss word in the prompt. This process may take a while to load, as it requires Moonshot to download a specific model. Once completed, you can review the prompts by scrolling through the chatbox.
+Type a cuss word in the prompt. **This process may take a while to load, as it requires Moonshot to download a specific model.** Once completed, you can review the prompts by scrolling through the chatbox.
 
 ![alt text](getting_started/17.png)
-
-## Next Step
