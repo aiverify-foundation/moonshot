@@ -11,13 +11,13 @@ The sidebar contains several icons, each representing a different page within th
 |:----:|:-----------:|
 | ![model_endpoint](../imgs/model_endpoint.png) | This icon directs you to the endpoint list page, where you can view, create, and manage your endpoints. |
 | ![benchmarking](../imgs/benchmarking.png) | This icon takes you to the benchmarking page. Here, you can initiate benchmarking processes to evaluate your models against standard tests. |
-| ![redteaming](../imgs/redteaming.png) | This icon leads you to the redteaming page. On this page, you can start a redteaming process to discover new vulnerabilities in your models. |
+| ![redteaming](../imgs/redteaming.png) | This icon leads you to the red teaming page. On this page, you can start a red teaming process to discover new vulnerabilities in your models. |
 | ![history](../imgs/history.png) | This icon navigates you to the history page of your runs. Here, you can review the details and results of your past runs. |
 | ![utils](../imgs/utils.png) | This icon guides you to the list of prompt templates and context strategies. These resources can help you customize your testing processes. |
 
 ## Discover new vulnerabilities
 
-The "Discover new vulnerabilities" button initiates a redteaming process. Redteaming is a proactive approach to identifying vulnerabilities in your models before they can be exploited.
+The "Discover new vulnerabilities" button initiates a red teaming process. Red teaming is a proactive approach to identifying vulnerabilities in your models before they can be exploited.
 
 ## Evaluate against standard tests
 

@@ -10,7 +10,7 @@ If you are testing other models or your own LLM application hosted on a custom s
 
 ### Benchmark
 
-Benchmarks are “Exam questions” to test the model across a variety of competencies, e.g., language and context understanding.
+Benchmarks are “exam questions” to test the model across a variety of competencies, e.g., language and context understanding.
 
 Moonshot offers a range of benchmarks to measure your LLM application's performance in the categories of Capability, Quality, and Trust & Safety. These include benchmarks widely used by the community like Google's BigBench and HuggingFace's leaderboards, and more domain/task specific tests like Tamil Language and Medical LLM benchmarks.
 

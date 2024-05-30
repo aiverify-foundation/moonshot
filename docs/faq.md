@@ -36,7 +36,7 @@ You may face issues installing some of the dependencies. We suggest using virtua
 
 ### What happen if I experience timeouts during package installation?
 
-Some of the functions may not work as expected. We suggest users to resinstall Moonshot to ensure that all libaries are installed successfully.
+Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
 ## Using Moonshot
 
@@ -60,8 +60,8 @@ If you are not running any of the above, you should check the details of the spe
 If you do not have tokens for Llama Guard via Together AI, 
 
 1.	Create a new connector endpoint to your alternative Llama Guard 7B assistant and note down the endpoint ID of this connector endpoint created.
-2.	Open up moonshot-data/metrics_config.json in a code editor
-3.	Replace “together-llama-guard-7b-assistant” with your new endpoint ID.
+2.	Open up `moonshot-data/metrics_config.json` in a code editor
+3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
 ### I can't delete my runner in the CLI on Windows.

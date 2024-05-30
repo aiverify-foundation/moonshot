@@ -86,11 +86,11 @@ Select one or more endpoints to red team on this screen. Click the arrow to proc
 
 ![alt text](getting_started/12.png)
 
-In this screen, you have the option to select one of the attack modules to automatically red team your model. For the purposes of this guide, we will skip this step. Click "Skip for now."
+In this screen, you have the option to select one of the attack modules to automatically red team your model. For the purposes of this guide, we will skip this step. Click "Skip for now".
 
 ![alt text](getting_started/13.png)
 
-Enter a name and type a description in this screen, then click "Start."
+Enter a name and type a description in this screen, then click "Start".
 
 ![alt text](getting_started/14.png)
 

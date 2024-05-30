@@ -44,7 +44,7 @@ async def get_response(self, prompt: str) -> str:
 
 ## Modify Response Method
 
-The `get_response()` is an abstract method that must be instantiated. This is where you will insert your codes to send promts to the LLM and get back the response.
+The `get_response()` is an abstract method that must be instantiated. This is where you will insert your codes to send prompts to the LLM and get back the response.
 
 ```
 async def _process_response(self, response: Any) -> str:
