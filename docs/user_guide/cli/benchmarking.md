@@ -26,7 +26,7 @@ Once you have your connector endpoint, we can start choosing the test we want to
 
     ![list of cookbooks](cli_images/cookbooks.png)
 
-2. To under more about how to run a cookbook, enter:
+2. To understand more about how to run a cookbook, enter:
 
         run_cookbook -h
 
@@ -67,7 +67,7 @@ You can choose to run a recipe instead of a cookbook as well.
     ![list of recipes](cli_images/recipes.png)
 
 
-2. To under more about how to run a recipe, enter:
+2. To understand more about how to run a recipe, enter:
 
         run_recipe -h
 
