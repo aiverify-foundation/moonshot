@@ -1,0 +1,4153 @@
+{
+    "openapi": "3.1.0", 
+    "info": {
+        "title": "Moonshot Web API",
+        "version": "0.4.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Healthcheck",
+                "description": "Check the health of the web API.\n\nReturns:\n    Dict[str, str]: The status message indicating the API is running.",
+                "operationId": "healthcheck__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object",
+                                    "title": "Response Healthcheck  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions": {
+            "get": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Get All Sessions",
+                "description": "Fetches a list of all session metadata from the service layer.\n\nThis endpoint does not require any parameters and will return a list of session metadata objects.\nEach object contains details about a specific session without including the session history.\n\nReturns:\n    List[SessionMetadataModel]: A list of session metadata objects.\n\nRaises:\n    HTTPException: 404 error if no sessions are found.\n                   400 error if there is a validation issue with the request.\n                   500 error for any other server-side issues.",
+                "operationId": "get_all_sessions_api_v1_sessions_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionMetadataModel"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Sessions Api V1 Sessions Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Create Session",
+                "description": "Create a new session based on the provided session data transfer object (DTO).\n\nArgs:\n    session_dto (SessionCreateDTO): The DTO containing the data needed to create a session.\n    session_service (SessionService): The service responsible for session operations.\n\nReturns:\n    SessionResponseModel: The metadata of the newly created session.\n\nRaises:\n    HTTPException: An error with status code 404 if the session cannot be created due to a file not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "create_session_api_v1_sessions_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SessionCreateDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/name": {
+            "get": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Get All Sessions Name",
+                "description": "Retrieve the names of all sessions.\n\nArgs:\n    session_service (SessionService): The service responsible for session operations.\n\nReturns:\n    List[str]: A list of session names.\n\nRaises:\n    HTTPException: An error with status code 404 if no session names are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_sessions_name_api_v1_sessions_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Sessions Name Api V1 Sessions Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}": {
+            "get": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Get Session By Runner Id",
+                "description": "Retrieve session data for a given runner ID, optionally including chat history.\n\nArgs:\n    runner_id (str): The unique identifier for the runner.\n    include_history (bool): A flag to determine if the session history should be included in the response.\n    session_service (SessionService): The service responsible for session operations.\n\nReturns:\n    SessionResponseModel: The session data, including metadata and optionally chat records.\n\nRaises:\n    HTTPException: An error with status code 404 if no session is found for the runner ID.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_session_by_runner_id_api_v1_sessions__runner_id__get",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "include_history",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "description": "Flag to determine if session history should be included.",
+                            "default": false,
+                            "title": "Include History"
+                        },
+                        "description": "Flag to determine if session history should be included."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/prompt": {
+            "post": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Prompt",
+                "description": "Process a user prompt for a given session and return the session's response.\n\nThis endpoint receives a prompt from the user and sends it to the specified session.\nThe session's response to the prompt is then returned to the user.\n\nArgs:\n    runner_id (str): The unique identifier for the session to which the prompt will be sent.\n    user_prompt (SessionPromptDTO): The data transfer object containing the prompt information from the user.\n    session_service (SessionService): The service responsible for session management and prompt handling.\n\nReturns:\n    PromptResponseModel: A model representing the response to the user's prompt\n    ,including any chat records generated.\n\nRaises:\n    HTTPException: Raised with status code 404 if the session associated with the runner_id is not found.\n                   Raised with status code 400 if there is a validation error with the provided prompt data.\n                   Raised with status code 500 for any other server-side errors encountered while processing.",
+                "operationId": "prompt_api_v1_sessions__runner_id__prompt_post",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SessionPromptDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/RootModel_PromptInfo_"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ],
+                                    "title": "Response Prompt Api V1 Sessions  Runner Id  Prompt Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/cancel": {
+            "post": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Cancel Auto Redteam",
+                "description": "Cancel the automated red team operation for a given session.\n\nThis endpoint is used to stop any ongoing automated red team operations for the session\nassociated with the provided runner_id.\n\nArgs:\n    runner_id (str): The unique identifier for the session whose automated red team operation is to be canceled.\n    session_service (SessionService): The service responsible for managing red team sessions.\n\nRaises:\n    HTTPException: Raised with status code 404 if the session associated with the runner_id is not found.\n                   Raised with status code 400 if there is a validation error with the runner_id.\n                   Raised with status code 500 for any other server-side errors encountered while processing.",
+                "operationId": "cancel_auto_redteam_api_v1_sessions__runner_id__cancel_post",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{session_id}": {
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Delete Session",
+                "description": "Delete a session by its ID.\n\nArgs:\n    session_id (str): The unique identifier of the session to delete.\n    session_service (SessionService): The service responsible for deleting sessions.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the session is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_session_api_v1_sessions__session_id__delete",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Session Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Delete Session Api V1 Sessions  Session Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/prompt-template/{prompt_template_name}": {
+            "put": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Set Prompt Template",
+                "description": "Select a prompt template for the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    prompt_template_name (str): The name of the prompt template to select.\n    session_service (SessionService): The service responsible for managing session prompt templates.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the prompt template is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "set_prompt_template_api_v1_sessions__runner_id__prompt_template__prompt_template_name__put",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "prompt_template_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Prompt Template Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Set Prompt Template Api V1 Sessions  Runner Id  Prompt Template  Prompt Template Name  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Unset Prompt Template",
+                "description": "Remove prompt template from the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    prompt_template_name (str): The name of the prompt template to remove.\n    session_service (SessionService): The service responsible for managing session prompt templates.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the prompt template is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "unset_prompt_template_api_v1_sessions__runner_id__prompt_template__prompt_template_name__delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "prompt_template_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Prompt Template Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Unset Prompt Template Api V1 Sessions  Runner Id  Prompt Template  Prompt Template Name  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/context-strategy/{ctx_strategy_name}/{num_of_prompt}": {
+            "put": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Set Context Strategy",
+                "description": "Set a context strategy for the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    ctx_strategy_name (str): The name of the context strategy to set.\n    num_of_prompt (int): The number of prompts to apply the context strategy to.\n    session_service (SessionService): The service responsible for managing session context strategies.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the context strategy is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "set_context_strategy_api_v1_sessions__runner_id__context_strategy__ctx_strategy_name___num_of_prompt__put",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "ctx_strategy_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Ctx Strategy Name"
+                        }
+                    },
+                    {
+                        "name": "num_of_prompt",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Num Of Prompt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Set Context Strategy Api V1 Sessions  Runner Id  Context Strategy  Ctx Strategy Name   Num Of Prompt  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Unset Context Strategy",
+                "description": "Remove a context strategy from the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    ctx_strategy_name (str): The name of the context strategy to remove.\n    num_of_prompt (int): The number of prompts to apply the context strategy to, defaults to 0.\n    session_service (SessionService): The service responsible for managing session context strategies.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the context strategy is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "unset_context_strategy_api_v1_sessions__runner_id__context_strategy__ctx_strategy_name___num_of_prompt__delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "ctx_strategy_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Ctx Strategy Name"
+                        }
+                    },
+                    {
+                        "name": "num_of_prompt",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Num Of Prompt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Unset Context Strategy Api V1 Sessions  Runner Id  Context Strategy  Ctx Strategy Name   Num Of Prompt  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/attack-module/{atk_module_name}": {
+            "put": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Set Attack Module",
+                "description": "Set an attack module for the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    atk_module_name (str): The name of the attack module to set.\n    session_service (SessionService): The service responsible for managing session attack modules.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the attack module is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "set_attack_module_api_v1_sessions__runner_id__attack_module__atk_module_name__put",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "atk_module_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Atk Module Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Set Attack Module Api V1 Sessions  Runner Id  Attack Module  Atk Module Name  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Unset Attack Module",
+                "description": "Remove an attack module from the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    atk_module_name (str): The name of the attack module to remove.\n    session_service (SessionService): The service responsible for managing session attack modules.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the attack module is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "unset_attack_module_api_v1_sessions__runner_id__attack_module__atk_module_name__delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "atk_module_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Atk Module Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Unset Attack Module Api V1 Sessions  Runner Id  Attack Module  Atk Module Name  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/metric/{metric_name}": {
+            "put": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Set Metric",
+                "description": "Set a metric for the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    metric_name (str): The name of the metric to set.\n    session_service (SessionService): The service responsible for managing session metrics.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the metric is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "set_metric_api_v1_sessions__runner_id__metric__metric_name__put",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "metric_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Metric Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Set Metric Api V1 Sessions  Runner Id  Metric  Metric Name  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Unset Metric",
+                "description": "Remove a metric from the current session.\n\nArgs:\n    runner_id (str): The unique identifier of the session.\n    metric_name (str): The name of the metric to remove.\n    session_service (SessionService): The service responsible for managing session metrics.\n\nReturns:\n    Dict[str, bool]: A dictionary with a key 'success' indicating the operation result.\n\nRaises:\n    HTTPException: An error with status code 404 if the metric is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "unset_metric_api_v1_sessions__runner_id__metric__metric_name__delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "metric_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Metric Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Unset Metric Api V1 Sessions  Runner Id  Metric  Metric Name  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/system-prompt": {
+            "put": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Set System Prompts",
+                "operationId": "set_system_prompts_api_v1_sessions__runner_id__system_prompt_put",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_set_system_prompts_api_v1_sessions__runner_id__system_prompt_put"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Set System Prompts Api V1 Sessions  Runner Id  System Prompt Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Unset System Prompts",
+                "operationId": "unset_system_prompts_api_v1_sessions__runner_id__system_prompt_delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "system_prompt",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "title": "System Prompt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Unset System Prompts Api V1 Sessions  Runner Id  System Prompt Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{runner_id}/close": {
+            "get": {
+                "tags": [
+                    "Red Teaming"
+                ],
+                "summary": "Close Session",
+                "operationId": "close_session_api_v1_sessions__runner_id__close_get",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prompt-templates": {
+            "get": {
+                "tags": [
+                    "Prompt Template"
+                ],
+                "summary": "Get All Prompt Templates",
+                "description": "Retrieve all prompt templates from the database.\n\nArgs:\n    prompt_template_service (PromptTemplateService): The service responsible for retrieving prompt templates.\n\nReturns:\n    PromptTemplatesResponseModel: A model representing all prompt templates.\n\nRaises:\n    HTTPException: An error with status code 404 if no prompt templates are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_prompt_templates_api_v1_prompt_templates_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_list_PromptTemplate__"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prompt-templates/name": {
+            "get": {
+                "tags": [
+                    "Prompt Template"
+                ],
+                "summary": "Get All Prompt Templates Names",
+                "description": "Retrieve the names of all prompt templates from the database.\n\nArgs:\n    prompt_template_service (PromptTemplateService): The service responsible for retrieving prompt template names.\n\nReturns:\n    list[str]: A list of prompt template names.\n\nRaises:\n    HTTPException: An error with status code 404 if no prompt template names are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_prompt_templates_names_api_v1_prompt_templates_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Prompt Templates Names Api V1 Prompt Templates Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prompt-templates/{prompt_template_name}": {
+            "delete": {
+                "tags": [
+                    "Prompt Template"
+                ],
+                "summary": "Delete Prompt Template",
+                "description": "Delete a prompt template from the database by its name.\n\nArgs:\n    prompt_template_name (str): The name of the prompt template to delete.\n    prompt_template_service (PromptTemplateService): The service responsible for deleting the prompt template.\n\nReturns:\n    dict[str, bool]: A dictionary with a key 'success' indicating the result of the deletion operation.\n\nRaises:\n    HTTPException: An error with status code 404 if the prompt template is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_prompt_template_api_v1_prompt_templates__prompt_template_name__delete",
+                "parameters": [
+                    {
+                        "name": "prompt_template_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Prompt Template Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Delete Prompt Template Api V1 Prompt Templates  Prompt Template Name  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/context-strategies": {
+            "get": {
+                "tags": [
+                    "Context Strategy"
+                ],
+                "summary": "Get All Context Strategies",
+                "description": "Retrieve all context strategies from the database.\n\nArgs:\n    context_strategy_service (ContextStrategyService): The service responsible for retrieving context strategies.\n\nReturns:\n    list[dict]: A list of context strategies with details.\n\nRaises:\n    HTTPException: An error with status code 404 if no context strategies are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_context_strategies_api_v1_context_strategies_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "object"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Context Strategies Api V1 Context Strategies Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/context-strategies/name": {
+            "get": {
+                "tags": [
+                    "Context Strategy"
+                ],
+                "summary": "Get All Context Strategies Name",
+                "description": "Retrieve all context strategies from the database.\n\nArgs:\n    context_strategy_service (ContextStrategyService): The service responsible for retrieving context strategies.\n\nReturns:\n    list[str]: A list of context strategies.\n\nRaises:\n    HTTPException: An error with status code 404 if no context strategies are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_context_strategies_name_api_v1_context_strategies_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Context Strategies Name Api V1 Context Strategies Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/context-strategies/{ctx_strategy_name}": {
+            "delete": {
+                "tags": [
+                    "Context Strategy"
+                ],
+                "summary": "Delete Context Strategy",
+                "description": "Delete a context strategy from the database by its name.\n\nArgs:\n    ctx_strategy_name (str): The name of the context strategy to delete.\n    context_strategy_service (ContextStrategyService): The service responsible for deleting the context strategy.\n\nReturns:\n    dict[str, bool]: A dictionary with a key 'success' indicating the result of the deletion operation.\n\nRaises:\n    HTTPException: An error with status code 404 if the context strategy is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_context_strategy_api_v1_context_strategies__ctx_strategy_name__delete",
+                "parameters": [
+                    {
+                        "name": "ctx_strategy_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Ctx Strategy Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "boolean"
+                                    },
+                                    "title": "Response Delete Context Strategy Api V1 Context Strategies  Ctx Strategy Name  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks": {
+            "post": {
+                "tags": [
+                    "Benchmarking"
+                ],
+                "summary": "Benchmark Executor",
+                "description": "Execute a benchmark test.\n\nArgs:\n    type (BenchmarkCollectionType): The type of benchmark to execute.\n    data (BenchmarkRunnerDTO): The data required to execute the benchmark.\n    benchmarking_service (BenchmarkingService, optional): The service that will execute the benchmark.\n\nReturns:\n    dict: A dictionary with the 'id' key containing the ID of the created execution task.\n\nRaises:\n    HTTPException: If the provided type is invalid (status code 400) or if the service fails to create\n    and execute the benchmark (status code 500).",
+                "operationId": "benchmark_executor_api_v1_benchmarks_post",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BenchmarkCollectionType"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BenchmarkRunnerDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "Response Benchmark Executor Api V1 Benchmarks Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks/status": {
+            "get": {
+                "tags": [
+                    "Benchmarking"
+                ],
+                "summary": "Get Benchmark Progress",
+                "description": "Retrieve the progress status of all benchmarks.\n\nArgs:\n    benchmark_state (BenchmarkTestState, optional): The state service that tracks benchmark progress.\n\nReturns:\n    The progress status of all benchmarks.\n\nRaises:\n    HTTPException: If there is an error retrieving the progress status, with a status code indicating the\n    nature of the error (404 for file not found, 400 for validation error).",
+                "operationId": "get_benchmark_progress_api_v1_benchmarks_status_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks/cancel/{runner_id}": {
+            "post": {
+                "tags": [
+                    "Benchmarking"
+                ],
+                "summary": "Cancel Benchmark Executor",
+                "description": "Cancel a benchmark execution task.\n\nArgs:\n    runner_id (str): The ID of the runner executing the benchmark.\n    benchmarking_service (BenchmarkingService): The service that will cancel the benchmark execution.\n\nReturns:\n    None\n\nRaises:\n    HTTPException: If the service is unable to cancel the benchmark, with a status code\n    500 indicating an internal server error.",
+                "operationId": "cancel_benchmark_executor_api_v1_benchmarks_cancel__runner_id__post",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/llm-endpoints": {
+            "get": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Get All Endpoints",
+                "description": "Get all the endpoints from the database.\n\nArgs:\n    endpoint_service (EndpointService): The service responsible for retrieving all endpoints.\n\nReturns:\n    list[Optional[EndpointDataModel]]: A list of endpoint data models,\n    which may contain None if an endpoint is not found.\n\nRaises:\n    HTTPException: An error with status code 404 if the file is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_endpoints_api_v1_llm_endpoints_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/components/schemas/EndpointDataModel"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ]
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Endpoints Api V1 Llm Endpoints Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Add New Endpoint",
+                "description": "Add a new endpoint to the database.\n\nArgs:\n    endpoint_data (EndpointCreateDTO): The data transfer object containing endpoint details.\n    endpoint_service (EndpointService): The service responsible for adding the endpoint.\n\nReturns:\n    dict[str, str]: A message indicating the successful addition of the endpoint.\n\nRaises:\n    HTTPException: An error with status code 404 if the file is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "add_new_endpoint_api_v1_llm_endpoints_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EndpointCreateDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "prefixItems": [
+                                                {
+                                                    "additionalProperties": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "maxItems": 2,
+                                            "minItems": 2
+                                        }
+                                    ],
+                                    "title": "Response Add New Endpoint Api V1 Llm Endpoints Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/llm-endpoints/name": {
+            "get": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Get All Endpoints Name",
+                "description": "Get all the endpoint names from the database.\n\nArgs:\n    endpoint_service (EndpointService): The service responsible for retrieving all endpoint names.\n\nReturns:\n    list[Optional[str]]: A list of endpoint names, which may contain None if an endpoint name is not found.\n\nRaises:\n    HTTPException: An error with status code 404 if the file is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_endpoints_name_api_v1_llm_endpoints_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ]
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Endpoints Name Api V1 Llm Endpoints Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/llm-endpoints/{endpoint_id}": {
+            "get": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Get Endpoint",
+                "description": "Get an endpoint from the database by its ID.\n\nArgs:\n    endpoint_id (str): The unique identifier of the endpoint to retrieve.\n    endpoint_service (EndpointService): The service responsible for retrieving the endpoint.\n\nReturns:\n    EndpointDataModel | None: The endpoint data model if found, otherwise None.\n\nRaises:\n    HTTPException: An error with status code 404 if the endpoint is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_endpoint_api_v1_llm_endpoints__endpoint_id__get",
+                "parameters": [
+                    {
+                        "name": "endpoint_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Endpoint Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/EndpointDataModel"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "title": "Response Get Endpoint Api V1 Llm Endpoints  Endpoint Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Update Endpoint",
+                "description": "Update an existing endpoint in the database by its ID.\n\nArgs:\n    endpoint_id (str): The unique identifier of the endpoint to update.\n    endpoint_data (EndpointCreateDTO): The data transfer object containing the updated endpoint details.\n    endpoint_service (EndpointService): The service responsible for updating the endpoint.\n\nReturns:\n    dict[str, str]: A message indicating the successful update of the endpoint.\n\nRaises:\n    HTTPException: An error with status code 404 if the endpoint is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "update_endpoint_api_v1_llm_endpoints__endpoint_id__put",
+                "parameters": [
+                    {
+                        "name": "endpoint_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Endpoint Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EndpointUpdateDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ],
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        }
+                                    ],
+                                    "title": "Response Update Endpoint Api V1 Llm Endpoints  Endpoint Id  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Delete Endpoint",
+                "description": "Delete an existing endpoint from the database by its ID.\n\nArgs:\n    endpoint_id (str): The unique identifier of the endpoint to delete.\n    endpoint_service (EndpointService): The service responsible for deleting the endpoint.\n\nReturns:\n    dict[str, str]: A message indicating the successful deletion of the endpoint.\n\nRaises:\n    HTTPException: An error with status code 404 if the endpoint is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_endpoint_api_v1_llm_endpoints__endpoint_id__delete",
+                "parameters": [
+                    {
+                        "name": "endpoint_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Endpoint Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ],
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        }
+                                    ],
+                                    "title": "Response Delete Endpoint Api V1 Llm Endpoints  Endpoint Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/connectors": {
+            "get": {
+                "tags": [
+                    "Endpoint"
+                ],
+                "summary": "Get All Connectors",
+                "description": "Get all the connector types from the database.\n\nArgs:\n    endpoint_service (EndpointService): The service responsible for retrieving all connector types.\n\nReturns:\n    list[Optional[str]]: A list of connector types, which may contain None if a connector type is not found.\n\nRaises:\n    HTTPException: An error with status code 404 if the file is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_connectors_api_v1_connectors_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ]
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Connectors Api V1 Connectors Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/recipes": {
+            "post": {
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Create Recipe",
+                "description": "Endpoint to add a new recipe to the database.\n\nParameters:\n    recipe_data (RecipeCreateDTO): The data transfer object containing the recipe details.\n    recipe_service (RecipeService): The service layer responsible for the creation logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message indicating the successful creation of the recipe.\n\nRaises:\n    HTTPException: 404 if the recipe cannot be created because the file is not found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "create_recipe_api_v1_recipes_post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecipeCreateDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Create Recipe Api V1 Recipes Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Get All Recipes",
+                "description": "Endpoint to retrieve all recipes from the database, with optional filters, sorting, and count inclusion.\n\nParameters:\n    ids (str, optional): Filter to retrieve recipes by list of comma separated recipe ids.\n    tags (str, optional): Filter to retrieve recipes by tags.\n    categories (str, optional): Filter to retrieve recipes by categories.\n    sort_by (str, optional): Parameter to sort recipes by a specific field.\n    count (bool, optional): Flag to indicate whether to include the count of recipes in the response.\n    recipe_service (RecipeService): The service layer responsible for the retrieval logic.\n\nReturns:\n    list[RecipeResponseModel]: A list of recipe, filtered, sorted, and with counts.\n\nRaises:\n    HTTPException: 404 if no recipes are found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "get_all_recipes_api_v1_recipes_get",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Get recipes to query",
+                            "title": "Ids"
+                        },
+                        "description": "Get recipes to query"
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter recipes by tags",
+                            "title": "Tags"
+                        },
+                        "description": "Filter recipes by tags"
+                    },
+                    {
+                        "name": "categories",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Filter recipes by categories",
+                            "title": "Categories"
+                        },
+                        "description": "Filter recipes by categories"
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Sort recipes by a specific field",
+                            "title": "Sort By"
+                        },
+                        "description": "Sort recipes by a specific field"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "description": "Whether to include the count of recipes",
+                            "default": false,
+                            "title": "Count"
+                        },
+                        "description": "Whether to include the count of recipes"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecipeResponseModel"
+                                    },
+                                    "title": "Response Get All Recipes Api V1 Recipes Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/recipes/name": {
+            "get": {
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Get All Recipes Name",
+                "description": "Endpoint to retrieve all recipe names from the database.\n\nParameters:\n    recipe_service (RecipeService): The service layer responsible for retrieving recipe names.\n\nReturns:\n    list[str]: A list of recipe names.\n\nRaises:\n    HTTPException: 404 if no recipe names are found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "get_all_recipes_name_api_v1_recipes_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Recipes Name Api V1 Recipes Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/recipes/{recipe_id}": {
+            "put": {
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Update Recipe",
+                "description": "Endpoint to update an existing recipe in the database by its ID.\n\nParameters:\n    recipe_data (RecipeCreateDTO): The data transfer object containing the updated recipe details.\n    recipe_id (str): The unique identifier of the recipe to update.\n    recipe_service (RecipeService): The service layer responsible for the update logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message indicating the successful update of the recipe.\n\nRaises:\n    HTTPException: 404 if the recipe to be updated cannot be found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "update_recipe_api_v1_recipes__recipe_id__put",
+                "parameters": [
+                    {
+                        "name": "recipe_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Recipe Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecipeUpdateDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Update Recipe Api V1 Recipes  Recipe Id  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Delete Recipe",
+                "description": "Endpoint to delete a recipe from the database by its ID.\n\nParameters:\n    recipe_id (str): The unique identifier of the recipe to delete.\n    recipe_service (RecipeService): The service layer responsible for the deletion logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message indicating the successful deletion of the recipe.\n\nRaises:\n    HTTPException: 404 if the recipe to be deleted cannot be found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "delete_recipe_api_v1_recipes__recipe_id__delete",
+                "parameters": [
+                    {
+                        "name": "recipe_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Recipe Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Delete Recipe Api V1 Recipes  Recipe Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cookbooks": {
+            "post": {
+                "tags": [
+                    "Cookbook"
+                ],
+                "summary": "Create Cookbook",
+                "description": "Endpoint to create a new cookbook entry in the database.\n\nParameters:\n    cookbook_data (CookbookCreateDTO): The DTO containing the details for the new cookbook.\n    cookbook_service (CookbookService): The service layer responsible for the creation logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message key indicating successful creation.\n\nRaises:\n    HTTPException: 404 if the cookbook cannot be found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "create_cookbook_api_v1_cookbooks_post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CookbookCreateDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Create Cookbook Api V1 Cookbooks Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Cookbook"
+                ],
+                "summary": "Get All Cookbooks",
+                "description": "Endpoint to retrieve a list of all cookbooks, with optional filtering.\n\nParameters:\n    ids (Optional[str]): A string to filter cookbooks by ids.\n    tags (Optional[str]): A string to filter cookbooks by tags.\n    categories (Optional[str]): A string to filter cookbooks by categories.\n    categories_excluded (Optional[str]): A string to filter out (exclude) cookbooks by categories.\n    count (bool): A flag to decide if the count of recipes should be included.\n    cookbook_service (CookbookService): The service layer responsible for retrieval logic.\n\nReturns:\n    list[CookbookResponseModel]: A list of CookbookResponseModel instances that match the filters.\n\nRaises:\n    HTTPException: 404 if no cookbooks could be found.\n                   400 if there is a validation error with the filters.\n                   500 for any other internal server error.",
+                "operationId": "get_all_cookbooks_api_v1_cookbooks_get",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Get recipes to query",
+                            "title": "Ids"
+                        },
+                        "description": "Get recipes to query"
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter cookbooks by tags",
+                            "title": "Tags"
+                        },
+                        "description": "Filter cookbooks by tags"
+                    },
+                    {
+                        "name": "categories",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter cookbooks by categories",
+                            "title": "Categories"
+                        },
+                        "description": "Filter cookbooks by categories"
+                    },
+                    {
+                        "name": "categories_excluded",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter out (exlude) cookbooks by categories",
+                            "title": "Categories Excluded"
+                        },
+                        "description": "Filter out (exlude) cookbooks by categories"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "description": "Whether to include the count of recipes",
+                            "default": false,
+                            "title": "Count"
+                        },
+                        "description": "Whether to include the count of recipes"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CookbookResponseModel"
+                                    },
+                                    "title": "Response Get All Cookbooks Api V1 Cookbooks Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cookbooks/name": {
+            "get": {
+                "tags": [
+                    "Cookbook"
+                ],
+                "summary": "Get All Cookbooks Name",
+                "description": "Endpoint to retrieve the names of all cookbooks in the database.\n\nParameters:\n    cookbook_service (CookbookService): The service layer responsible for retrieving the names.\n\nReturns:\n    list[str]: A list of strings representing the names of all cookbooks.\n\nRaises:\n    HTTPException: 404 if no cookbook names could be found.\n                   400 if there is a validation error.\n                   500 for any other internal server error.",
+                "operationId": "get_all_cookbooks_name_api_v1_cookbooks_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Cookbooks Name Api V1 Cookbooks Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cookbooks/{cookbook_id}": {
+            "put": {
+                "tags": [
+                    "Cookbook"
+                ],
+                "summary": "Update Cookbook",
+                "description": "Endpoint to update the details of an existing cookbook in the database.\n\nParameters:\n    cookbook_id (str): The unique identifier of the cookbook to be updated.\n    cookbook_data (CookbookCreateDTO): The DTO containing the updated details for the cookbook.\n    cookbook_service (CookbookService): The service layer responsible for the update logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message key indicating successful update.\n\nRaises:\n    HTTPException: 404 if the cookbook with the given ID cannot be found.\n                   400 if there is a validation error with the provided data.\n                   500 for any other internal server error.",
+                "operationId": "update_cookbook_api_v1_cookbooks__cookbook_id__put",
+                "parameters": [
+                    {
+                        "name": "cookbook_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Cookbook Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CookbookUpdateDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Update Cookbook Api V1 Cookbooks  Cookbook Id  Put"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/cookbooks/{cb_id}": {
+            "delete": {
+                "tags": [
+                    "Cookbook"
+                ],
+                "summary": "Delete Cookbook",
+                "description": "Endpoint to delete a cookbook entry from the database using its ID.\n\nParameters:\n    cb_id (str): The unique identifier of the cookbook to be deleted.\n    cookbook_service (CookbookService): The service layer responsible for the deletion logic.\n\nReturns:\n    dict[str, str]: A dictionary with a message key indicating successful deletion.\n\nRaises:\n    HTTPException: 404 if the cookbook with the given ID cannot be found.\n                   400 if there is a validation error.\n                   500 for any other internal server error.",
+                "operationId": "delete_cookbook_api_v1_cookbooks__cb_id__delete",
+                "parameters": [
+                    {
+                        "name": "cb_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Cb Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Delete Cookbook Api V1 Cookbooks  Cb Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks/results": {
+            "get": {
+                "tags": [
+                    "Benchmark Results"
+                ],
+                "summary": "Get All Results",
+                "description": "Retrieve all benchmark results.\n\nThis endpoint retrieves a list of all benchmark results from the database. Each benchmark result is\nrepresented as a dictionary containing its associated data.\n\nArgs:\n    benchmark_result_service (BenchmarkResultService): The service responsible for fetching benchmark results.\n\nReturns:\n    list[dict]: A list of dictionaries, each representing a single benchmark result.\n\nRaises:\n    HTTPException: Raised if the results file cannot be found (404) or if an unspecified error occurs (500).",
+                "operationId": "get_all_results_api_v1_benchmarks_results_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "object"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Results Api V1 Benchmarks Results Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks/results/name": {
+            "get": {
+                "tags": [
+                    "Benchmark Results"
+                ],
+                "summary": "Get All Results Name",
+                "description": "Get all benchmark result names from the database.\n\nThis endpoint retrieves the names of all benchmark results stored in the database.\n\nArgs:\n    benchmark_result_service (BenchmarkResultService): The service responsible for fetching\n    the names of the benchmark results.\n\nReturns:\n    A list of all benchmark result names.\n\nRaises:\n    HTTPException: An error occurred while trying to find the result names file (404),\n                   a validation error occurred (400), or\n                   an unspecified error occurred (500).",
+                "operationId": "get_all_results_name_api_v1_benchmarks_results_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/benchmarks/results/{result_id}": {
+            "get": {
+                "tags": [
+                    "Benchmark Results"
+                ],
+                "summary": "Get One Results",
+                "description": "Retrieve a single benchmark result by its ID.\n\nThis endpoint fetches the details of a specific benchmark result identified by the provided result_id.\n\nArgs:\n    result_id (str): The unique identifier of the benchmark result to retrieve.\n    benchmark_result_service (BenchmarkResultService): The service responsible for fetching the benchmark result.\n\nReturns:\n    dict: A dictionary containing the details of the benchmark result.\n\nRaises:\n    HTTPException: An error occurred while trying to find the results file (404) or\n                   an unspecified error occurred (500).",
+                "operationId": "get_one_results_api_v1_benchmarks_results__result_id__get",
+                "parameters": [
+                    {
+                        "name": "result_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Result Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Benchmark Results"
+                ],
+                "summary": "Delete Result",
+                "description": "Delete a benchmark result by its ID.\n\nThis endpoint deletes a specific benchmark result identified by the provided result_id.\n\nArgs:\n    result_id (str): The unique identifier of the benchmark result to delete.\n    benchmark_result_service (BenchmarkResultService): The service responsible for deleting the benchmark result.\n\nReturns:\n    dict[str, str] | tuple[dict[str, str], int]: A message indicating successful deletion,\n    or an HTTPException with an appropriate status code.\n\nRaises:\n    HTTPException: An error occurred while trying to delete the result due to the result not being found (404),\n                   a validation error occurred (400), or\n                   an unspecified error occurred (500).",
+                "operationId": "delete_result_api_v1_benchmarks_results__result_id__delete",
+                "parameters": [
+                    {
+                        "name": "result_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Result Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ],
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        }
+                                    ],
+                                    "title": "Response Delete Result Api V1 Benchmarks Results  Result Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metrics": {
+            "get": {
+                "tags": [
+                    "Metric"
+                ],
+                "summary": "Get All Metrics",
+                "description": "Retrieve all metrics from the database.\n\nArgs:\n    metric_service (MetricService): The service responsible for retrieving metrics.\n\nReturns:\n    list[str]: A list of all metrics.\n\nRaises:\n    HTTPException: An error with status code 404 if no metrics are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_metrics_api_v1_metrics_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "object"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Metrics Api V1 Metrics Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metrics/{metric_id}": {
+            "delete": {
+                "tags": [
+                    "Metric"
+                ],
+                "summary": "Delete Metric",
+                "description": "Delete a metric from the database by its ID.\n\nArgs:\n    metric_id (str): The unique identifier of the metric to delete.\n    metric_service (MetricService): The service responsible for deleting the metric.\n\nReturns:\n    dict[str, str] | tuple[dict[str, str], int]: A message indicating the successful deletion of the metric,\n    or an HTTPException with an appropriate status code.\n\nRaises:\n    HTTPException: An error with status code 404 if the metric is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_metric_api_v1_metrics__metric_id__delete",
+                "parameters": [
+                    {
+                        "name": "metric_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Metric Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ],
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        }
+                                    ],
+                                    "title": "Response Delete Metric Api V1 Metrics  Metric Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/runners": {
+            "get": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Get All Runners",
+                "description": "Retrieve all runners from the database.\n\nArgs:\n    runner_service (RunnerService): The service responsible for retrieving runners.\n\nReturns:\n    list: A list of all runners.\n\nRaises:\n    HTTPException: An error with status code 404 if no runners are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_runners_api_v1_runners_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {},
+                                    "type": "array",
+                                    "title": "Response Get All Runners Api V1 Runners Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/runners/name": {
+            "get": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Get All Runner Name",
+                "description": "Retrieve all runner names from the database.\n\nArgs:\n    runner_service (RunnerService): The service responsible for retrieving runner names.\n\nReturns:\n    list: A list of all runner names.\n\nRaises:\n    HTTPException: An error with status code 404 if no runner names are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_runner_name_api_v1_runners_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {},
+                                    "type": "array",
+                                    "title": "Response Get All Runner Name Api V1 Runners Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/runners/{runner_id}": {
+            "get": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Get Runner By Id",
+                "description": "Retrieve a specific runner by their ID from the database.\n\nArgs:\n    runner_id (str): The unique identifier of the runner to retrieve.\n    runner_service (RunnerService): The service responsible for retrieving the runner.\n\nReturns:\n    dict: The runner information if found.\n\nRaises:\n    HTTPException: An error with status code 404 if the runner is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_runner_by_id_api_v1_runners__runner_id__get",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "Response Get Runner By Id Api V1 Runners  Runner Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Delete Runner",
+                "description": "Delete a specific runner by their ID from the database.\n\nArgs:\n    runner_id (str): The unique identifier of the runner to delete.\n    runner_service (RunnerService): The service responsible for deleting the runner.\n\nReturns:\n    dict: A message indicating the successful deletion of the runner.\n\nRaises:\n    HTTPException: An error with status code 404 if the runner is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_runner_api_v1_runners__runner_id__delete",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "Response Delete Runner Api V1 Runners  Runner Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/runners/{runner_id}/runs/{run_id}": {
+            "get": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Get Run Details By Runner",
+                "description": "Retrieve the details of a specific run by a runner.\n\nArgs:\n    runner_id (str): The unique identifier of the runner.\n    run_id (str): The unique identifier of the run.\n    runner_service (RunnerService): The service responsible for retrieving run details.\n\nReturns:\n    dict: The details of the run.\n\nRaises:\n    HTTPException: An error with status code 404 if the run details are not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_run_details_by_runner_api_v1_runners__runner_id__runs__run_id__get",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    },
+                    {
+                        "name": "run_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Run Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "title": "Response Get Run Details By Runner Api V1 Runners  Runner Id  Runs  Run Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/runners/{runner_id}/runs": {
+            "get": {
+                "tags": [
+                    "Runner"
+                ],
+                "summary": "Get Runs Id In Runner",
+                "description": "Retrieve a list of run identifiers associated with a specific runner.\n\nArgs:\n    runner_id (str): The unique identifier of the runner.\n    runner_service (RunnerService): The service responsible for retrieving the list of runs.\n\nReturns:\n    List[str]: A list of run identifiers.\n\nRaises:\n    HTTPException: An error with status code 404 if no runs are found for the runner.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_runs_id_in_runner_api_v1_runners__runner_id__runs_get",
+                "parameters": [
+                    {
+                        "name": "runner_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Runner Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "title": "Response Get Runs Id In Runner Api V1 Runners  Runner Id  Runs Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/datasets": {
+            "get": {
+                "tags": [
+                    "Datasets"
+                ],
+                "summary": "Get All Datasets",
+                "description": "Retrieve all datasets from the database.\n\nArgs:\n    dataset_service (DatasetService): The service responsible for retrieving datasets.\n\nReturns:\n    list: A list of all datasets.\n\nRaises:\n    HTTPException: An error with status code 404 if no datasets are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_datasets_api_v1_datasets_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/DatasetResponseDTO"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Datasets Api V1 Datasets Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/datasets/name": {
+            "get": {
+                "tags": [
+                    "Datasets"
+                ],
+                "summary": "Get All Datasets Name",
+                "description": "Retrieve the names of all datasets from the database.\n\nArgs:\n    dataset_service (DatasetService): The service responsible for retrieving dataset names.\n\nReturns:\n    list[str]: A list of dataset names.\n\nRaises:\n    HTTPException: An error with status code 404 if no dataset names are found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "get_all_datasets_name_api_v1_datasets_name_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Datasets Name Api V1 Datasets Name Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/datasets/{dataset_id}": {
+            "delete": {
+                "tags": [
+                    "Datasets"
+                ],
+                "summary": "Delete Dataset",
+                "description": "Delete a dataset from the database by its ID.\n\nArgs:\n    dataset_id (str): The unique identifier of the dataset to delete.\n    dataset_service (DatasetService): The service responsible for deleting the dataset.\n\nReturns:\n    dict[str, str]: A message indicating the successful deletion of the dataset.\n\nRaises:\n    HTTPException: An error with status code 404 if the dataset is not found.\n                   An error with status code 400 if there is a validation error.\n                   An error with status code 500 for any other server-side error.",
+                "operationId": "delete_dataset_api_v1_datasets__dataset_id__delete",
+                "parameters": [
+                    {
+                        "name": "dataset_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Dataset Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Delete Dataset Api V1 Datasets  Dataset Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/attack-modules": {
+            "get": {
+                "tags": [
+                    "Attack Modules"
+                ],
+                "summary": "Get All Attack Module",
+                "description": "Retrieve all attack modules from the database.\n\nArgs:\n    am_service (AttackModuleService): The service responsible for fetching attack modules.\n\nReturns:\n    list: A list of attack modules if successful.\n\nRaises:\n    HTTPException: An error with status code 404 if attack modules file is not found.\n    HTTPException: An error with status code 400 if there is a validation error with the request.\n    HTTPException: An error with status code 500 for any other type of server-side error.",
+                "operationId": "get_all_attack_module_api_v1_attack_modules_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Attack Module Api V1 Attack Modules Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/attack-modules/metadata": {
+            "get": {
+                "tags": [
+                    "Attack Modules"
+                ],
+                "summary": "Get All Attack Module Metadata",
+                "operationId": "get_all_attack_module_metadata_api_v1_attack_modules_metadata_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {},
+                                    "type": "array",
+                                    "title": "Response Get All Attack Module Metadata Api V1 Attack Modules Metadata Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BenchmarkCollectionType": {
+                "type": "string",
+                "enum": [
+                    "cookbook",
+                    "recipe"
+                ],
+                "title": "BenchmarkCollectionType"
+            },
+            "BenchmarkRunnerDTO": {
+                "properties": {
+                    "run_name": {
+                        "type": "string",
+                        "title": "Run Name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "endpoints": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Endpoints"
+                    },
+                    "inputs": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Inputs"
+                    },
+                    "num_of_prompts": {
+                        "type": "integer",
+                        "title": "Num Of Prompts"
+                    },
+                    "random_seed": {
+                        "type": "integer",
+                        "title": "Random Seed"
+                    },
+                    "system_prompt": {
+                        "type": "string",
+                        "title": "System Prompt"
+                    },
+                    "runner_processing_module": {
+                        "type": "string",
+                        "title": "Runner Processing Module"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "run_name",
+                    "description",
+                    "endpoints",
+                    "inputs",
+                    "num_of_prompts",
+                    "random_seed",
+                    "system_prompt",
+                    "runner_processing_module"
+                ],
+                "title": "BenchmarkRunnerDTO"
+            },
+            "Body_set_system_prompts_api_v1_sessions__runner_id__system_prompt_put": {
+                "properties": {
+                    "system_prompt": {
+                        "type": "string",
+                        "title": "System Prompt"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "system_prompt"
+                ],
+                "title": "Body_set_system_prompts_api_v1_sessions__runner_id__system_prompt_put"
+            },
+            "ChatRecord": {
+                "properties": {
+                    "conn_id": {
+                        "type": "string",
+                        "title": "Conn Id"
+                    },
+                    "context_strategy": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Context Strategy"
+                    },
+                    "prompt_template": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Prompt Template"
+                    },
+                    "attack_module": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Attack Module"
+                    },
+                    "metric": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metric"
+                    },
+                    "prompt": {
+                        "type": "string",
+                        "title": "Prompt"
+                    },
+                    "prepared_prompt": {
+                        "type": "string",
+                        "title": "Prepared Prompt"
+                    },
+                    "system_prompt": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "System Prompt"
+                    },
+                    "predicted_result": {
+                        "type": "string",
+                        "title": "Predicted Result"
+                    },
+                    "duration": {
+                        "type": "string",
+                        "title": "Duration"
+                    },
+                    "prompt_time": {
+                        "type": "string",
+                        "title": "Prompt Time"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "conn_id",
+                    "context_strategy",
+                    "prompt_template",
+                    "attack_module",
+                    "metric",
+                    "prompt",
+                    "prepared_prompt",
+                    "system_prompt",
+                    "predicted_result",
+                    "duration",
+                    "prompt_time"
+                ],
+                "title": "ChatRecord"
+            },
+            "CookbookCreateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description",
+                        "default": ""
+                    },
+                    "recipes": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Recipes"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "recipes"
+                ],
+                "title": "CookbookCreateDTO"
+            },
+            "CookbookResponseModel": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "recipes": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Recipes"
+                    },
+                    "total_prompt_in_cookbook": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Total Prompt In Cookbook"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "recipes"
+                ],
+                "title": "CookbookResponseModel"
+            },
+            "CookbookUpdateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "recipes": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array",
+                                "minItems": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Recipes"
+                    }
+                },
+                "type": "object",
+                "title": "CookbookUpdateDTO"
+            },
+            "DatasetResponseDTO": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "num_of_dataset_prompts": {
+                        "type": "integer",
+                        "title": "Num Of Dataset Prompts"
+                    },
+                    "created_date": {
+                        "type": "string",
+                        "title": "Created Date"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "num_of_dataset_prompts",
+                    "created_date"
+                ],
+                "title": "DatasetResponseDTO"
+            },
+            "EndpointCreateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "connector_type": {
+                        "type": "string",
+                        "title": "Connector Type"
+                    },
+                    "uri": {
+                        "type": "string",
+                        "title": "Uri"
+                    },
+                    "token": {
+                        "type": "string",
+                        "title": "Token"
+                    },
+                    "max_calls_per_second": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Max Calls Per Second"
+                    },
+                    "max_concurrency": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Max Concurrency"
+                    },
+                    "params": {
+                        "type": "object",
+                        "title": "Params"
+                    },
+                    "created_date": {
+                        "type": "string",
+                        "title": "Created Date",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "connector_type",
+                    "uri",
+                    "token",
+                    "max_calls_per_second",
+                    "max_concurrency",
+                    "params"
+                ],
+                "title": "EndpointCreateDTO"
+            },
+            "EndpointDataModel": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "connector_type": {
+                        "type": "string",
+                        "title": "Connector Type"
+                    },
+                    "uri": {
+                        "type": "string",
+                        "title": "Uri"
+                    },
+                    "token": {
+                        "type": "string",
+                        "title": "Token"
+                    },
+                    "max_calls_per_second": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Max Calls Per Second"
+                    },
+                    "max_concurrency": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Max Concurrency"
+                    },
+                    "params": {
+                        "type": "object",
+                        "title": "Params"
+                    },
+                    "created_date": {
+                        "type": "string",
+                        "title": "Created Date",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "connector_type",
+                    "uri",
+                    "token",
+                    "max_calls_per_second",
+                    "max_concurrency",
+                    "params"
+                ],
+                "title": "EndpointDataModel"
+            },
+            "EndpointUpdateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Name"
+                    },
+                    "connector_type": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Connector Type"
+                    },
+                    "uri": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Uri"
+                    },
+                    "token": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Token"
+                    },
+                    "max_calls_per_second": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Calls Per Second"
+                    },
+                    "max_concurrency": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Concurrency"
+                    },
+                    "params": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Params"
+                    },
+                    "created_date": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Created Date"
+                    }
+                },
+                "type": "object",
+                "title": "EndpointUpdateDTO"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "PromptInfo": {
+                "properties": {
+                    "current_runner_id": {
+                        "type": "string",
+                        "title": "Current Runner Id"
+                    },
+                    "current_chats": {
+                        "additionalProperties": {
+                            "items": {
+                                "$ref": "#/components/schemas/ChatRecord"
+                            },
+                            "type": "array"
+                        },
+                        "type": "object",
+                        "title": "Current Chats"
+                    },
+                    "current_batch_size": {
+                        "type": "integer",
+                        "title": "Current Batch Size"
+                    },
+                    "current_status": {
+                        "type": "string",
+                        "title": "Current Status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "current_runner_id",
+                    "current_chats",
+                    "current_batch_size",
+                    "current_status"
+                ],
+                "title": "PromptInfo"
+            },
+            "PromptTemplate": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "template": {
+                        "type": "string",
+                        "title": "Template"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "template"
+                ],
+                "title": "PromptTemplate"
+            },
+            "RecipeCreateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description",
+                        "default": ""
+                    },
+                    "tags": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tags"
+                    },
+                    "categories": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Categories"
+                    },
+                    "datasets": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Datasets"
+                    },
+                    "prompt_templates": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Prompt Templates"
+                    },
+                    "metrics": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Metrics"
+                    },
+                    "attack_modules": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Attack Modules"
+                    },
+                    "grading_scale": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": {
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "type": "array"
+                                },
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grading Scale"
+                    },
+                    "stats": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Stats"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "datasets",
+                    "metrics"
+                ],
+                "title": "RecipeCreateDTO"
+            },
+            "RecipeResponseModel": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "tags": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Tags"
+                    },
+                    "categories": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Categories"
+                    },
+                    "datasets": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Datasets"
+                    },
+                    "prompt_templates": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Prompt Templates"
+                    },
+                    "metrics": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Metrics"
+                    },
+                    "attack_modules": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Attack Modules"
+                    },
+                    "grading_scale": {
+                        "additionalProperties": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "type": "array"
+                        },
+                        "type": "object",
+                        "title": "Grading Scale"
+                    },
+                    "stats": {
+                        "type": "object",
+                        "title": "Stats",
+                        "default": {}
+                    },
+                    "total_prompt_in_recipe": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Total Prompt In Recipe"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "tags",
+                    "categories",
+                    "datasets",
+                    "prompt_templates",
+                    "metrics",
+                    "attack_modules",
+                    "grading_scale"
+                ],
+                "title": "RecipeResponseModel"
+            },
+            "RecipeUpdateDTO": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id"
+                    },
+                    "name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description",
+                        "default": ""
+                    },
+                    "tags": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tags"
+                    },
+                    "categories": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Categories"
+                    },
+                    "datasets": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Datasets"
+                    },
+                    "prompt_templates": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Prompt Templates"
+                    },
+                    "metrics": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metrics"
+                    },
+                    "attack_modules": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Attack Modules"
+                    },
+                    "grading_scale": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": {
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "type": "array"
+                                },
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Grading Scale"
+                    },
+                    "stats": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Stats"
+                    }
+                },
+                "type": "object",
+                "title": "RecipeUpdateDTO"
+            },
+            "RootModel_PromptInfo_": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PromptInfo"
+                    }
+                ],
+                "title": "RootModel[PromptInfo]"
+            },
+            "RootModel_list_PromptTemplate__": {
+                "items": {
+                    "$ref": "#/components/schemas/PromptTemplate"
+                },
+                "type": "array",
+                "title": "RootModel[list[PromptTemplate]]"
+            },
+            "SessionCreateDTO": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 3,
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 1000
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description",
+                        "default": ""
+                    },
+                    "endpoints": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Endpoints"
+                    },
+                    "context_strategy": {
+                        "type": "string",
+                        "title": "Context Strategy",
+                        "default": ""
+                    },
+                    "prompt_template": {
+                        "type": "string",
+                        "title": "Prompt Template",
+                        "default": ""
+                    },
+                    "attack_module": {
+                        "type": "string",
+                        "title": "Attack Module",
+                        "default": ""
+                    },
+                    "metric": {
+                        "type": "string",
+                        "title": "Metric",
+                        "default": ""
+                    },
+                    "system_prompt": {
+                        "type": "string",
+                        "title": "System Prompt",
+                        "default": ""
+                    },
+                    "cs_num_of_prev_prompts": {
+                        "type": "integer",
+                        "title": "Cs Num Of Prev Prompts",
+                        "default": 5
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "endpoints"
+                ],
+                "title": "SessionCreateDTO"
+            },
+            "SessionMetadataModel": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Session Id"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description",
+                        "default": ""
+                    },
+                    "endpoints": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Endpoints"
+                    },
+                    "created_epoch": {
+                        "type": "string",
+                        "title": "Created Epoch"
+                    },
+                    "created_datetime": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Created Datetime"
+                    },
+                    "prompt_template": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Prompt Template"
+                    },
+                    "context_strategy": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Context Strategy"
+                    },
+                    "cs_num_of_prev_prompts": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cs Num Of Prev Prompts",
+                        "default": 5
+                    },
+                    "attack_module": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Attack Module"
+                    },
+                    "metric": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metric"
+                    },
+                    "system_prompt": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "System Prompt"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "endpoints",
+                    "created_epoch",
+                    "created_datetime",
+                    "prompt_template",
+                    "context_strategy",
+                    "attack_module",
+                    "metric",
+                    "system_prompt"
+                ],
+                "title": "SessionMetadataModel"
+            },
+            "SessionPromptDTO": {
+                "properties": {
+                    "history_length": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "History Length",
+                        "default": 10
+                    },
+                    "user_prompt": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "User Prompt"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_prompt"
+                ],
+                "title": "SessionPromptDTO"
+            },
+            "SessionResponseModel": {
+                "properties": {
+                    "session_name": {
+                        "type": "string",
+                        "title": "Session Name"
+                    },
+                    "session_description": {
+                        "type": "string",
+                        "title": "Session Description"
+                    },
+                    "session": {
+                        "$ref": "#/components/schemas/SessionMetadataModel"
+                    },
+                    "chat_records": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ChatRecord"
+                                    },
+                                    "type": "array"
+                                },
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Chat Records"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_name",
+                    "session_description",
+                    "session",
+                    "chat_records"
+                ],
+                "title": "SessionResponseModel"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

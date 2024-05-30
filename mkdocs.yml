@@ -1,35 +1,21 @@
 site_name: Moonshot
-repo_url: https://github.com/moonshot-admin/moonshot
+repo_url: https://github.com/aiverify-foundation/moonshot
 
 plugins:
   - search
   - mkdocstrings
-
-extra_css:
-  - stylesheets/custom_style.css
+  - swagger-ui-tag:
+        defaultModelsExpandDepth: -1
+        docExpansion: none
 
 theme:
   features:
-      - navigation.sections
-      - navigation.indexes
       - navigation.footer
       - navigation.top
       - toc.integrate
-  
+      - toc.follow
+
   name: material
-  palette:
-    - scheme: default
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-      primary: custom
-      accent: purple
-    - scheme: slate
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-      primary: custom
-      accent: lime
   locale: en
   include_sidebar: false
 
@@ -53,58 +39,71 @@ markdown_extensions:
   - attr_list
 
 nav: 
-  - Home : index.md
-  - Understanding Moonshot:
-    - What's Moonshot: understanding_moonshot/introduction.md
-    - API:
-      - Connector Endpoint API: understanding_moonshot/api_connector_endpoint.md
-      - Connector API: understanding_moonshot/api_connector.md
-      - Context Strategy API: understanding_moonshot/api_context_strategy.md
-      - Cookbook API: understanding_moonshot/api_cookbook.md
-      - Dataset API: understanding_moonshot/api_dataset.md
-      - Environment Variable API: understanding_moonshot/api_environment_variables.md
-      - Metric API: understanding_moonshot/api_metrics.md
-      - Prompt Template API: understanding_moonshot/api_prompt_template.md
-      - Recipe API: understanding_moonshot/api_recipe.md
-      - Red Teaming API: understanding_moonshot/api_red_teaming.md
-      - Result API: understanding_moonshot/api_result.md
-      - Run API: understanding_moonshot/api_run.md
-      - Runner API: understanding_moonshot/api_runner.md
-      - Session API: understanding_moonshot/api_session.md
+  - Home: index.md
   - Getting Started:
-    - Command Line Interface (CLI):
-      - Installation (CLI): getting_started/installation_cli.md
-      - Quick Start Guide (CLI): getting_started/quick_start_cli.md
-    - Web API: 
-      - Installation (Web API): getting_started/installation_web_api.md
-      - Quick Start Guide (Web API): getting_started/quick_start_web_api.md
-    - User Interface (UI):
-      - Installation (UI): getting_started/installation_ui.md
-      - Quick Start Guide (UI): getting_started/quick_start_ui.md
-    - Walkthrough: getting_started/walkthrough.md
-    - Quick Start Guide (Library): getting_started/quick_start_library.md
+    - Quick Start Guide: getting_started/quick_start.md
+    - Overview: getting_started/overview.md
+    - Quick Install: getting_started/quick_install.md
+    - Your First Test: getting_started/first_test.md
+  - Tutorials:
+    - Web UI: 
+      - (UI) How to Create Custom Cookbook: tutorial/web-ui/create_cookbook.md
+      - (UI) How to Create Connector Endpoint: tutorial/web-ui/create_endpoint.md
+      - (UI) How to Run Benchmark Tests: tutorial/web-ui/benchmark.md
+      - (UI) How to Run Red Teaming: tutorial/web-ui/redteam.md
+    - CLI : 
+      - (CLI) How to Create Custom Benchmark Tests: tutorial/cli/create_benchmark_tests.md
+      - (CLI) How to Create Connector Endpoint: tutorial/cli/create_endpoint.md
+      - (CLI) How to Run Benchmark Tests: tutorial/cli/run_benchmark_tests.md
+      - (CLI) How to Run Red Teaming: tutorial/cli/run_red_teaming.md
+    - Contributor:
+      - Configure Moonshot Web-API : tutorial/contributor/configure_web_api.md
+      - Create a New Custom Connector : tutorial/contributor/create_connector.md
   - User Guide: 
-    - Web API:
-      - Get Started with Web API : web_api/web_api_guide.md
-      - Connector Endpoints: web_api/connector_endpoints.md
-      - Cookbook Endpoints: web_api/cookbook_endpoints.md
-      - Recipe Endpoints: web_api/recipe_endpoints.md
-      - Session Endpoints: web_api/sessions_endpoints.md
-      - Prompt Template Endpoints: web_api/prompt_template_endpoints.md
+    - Moonshot Web UI: 
+      - Get Started with Moonshot Web UI: user_guide/web_ui/web_ui_guide.md
+      - Moonshot Interface:
+        - Home: user_guide/web_ui/moonshot_interface/homepage.md
+        - Endpoint: user_guide/web_ui/moonshot_interface/endpoint.md
+        - Benchmarking: user_guide/web_ui/moonshot_interface/benchmarking.md
+        - Red Teaming: user_guide/web_ui/moonshot_interface/redteaming.md
+        - History: user_guide/web_ui/moonshot_interface/history.md
+        - Utils: user_guide/web_ui/moonshot_interface/utils.md
+      - Testing Workflow:
+        - (UI) Choosing Relevant Tests: user_guide/web_ui/choosing_relevant_tests.md
+        - (UI) Connecting to LLMs: user_guide/web_ui/connecting_to_llms.md
+        - (UI) Running Benchmarks: user_guide/web_ui/running_benchmarks.md
+        - (UI) Conducting Red Teaming: user_guide/web_ui/running_red_teaming.md
+        - (UI) Creating Custom Cookbooks: user_guide/web_ui/creating_custom_cookbooks.md
     - CLI: 
-      - Get Started with CLIs : cli/cli_guide.md
-      - Connecting to LLMs: cli/connecting_endpoints.md
-      - Running Benchmark: cli/benchmarking.md
-      - Running Red Teaming: cli/red_teaming.md
-    - Web UI Guide: 
-      - Get Started with Web UI: web_ui/web_ui_guide.md
-      - Model Endpoints: web_ui/model_endpoint.md
-      - Running Benchmark: web_ui/run_benchmark_test.md
-      - Cookbook: web_ui/cookbook.md
-      - Red Teaming: web_ui/red_teaming.md
-  - Contributor Guide:
-      - Create Sample: contributor_guide/create_sample.md
-  - Troubleshoot : troubleshoot/troubleshoot.md
-  - Examples : examples/example.md
-  - Additional Information: additional_information/additional_information.md
-  - Acknowledgement : acknowledgement/acknowledgement.md
+      - (CLI) Connecting to LLMs: user_guide/cli/connecting_endpoints.md
+      - (CLI) Running Benchmark: user_guide/cli/benchmarking.md
+      - (CLI) Running Red Teaming: user_guide/cli/red_teaming.md 
+      - (CLI) Adding Your Own Tests: user_guide/cli/add_your_own_tests.md
+      - (CLI) CLI Command List: user_guide/cli/cli_command_list.md
+  - API Reference:
+    - Moonshot Library:
+        - Connector Endpoint API: api_reference/api_connector_endpoint.md
+        - Connector API: api_reference/api_connector.md
+        - Context Strategy API: api_reference/api_context_strategy.md
+        - Cookbook API: api_reference/api_cookbook.md
+        - Dataset API: api_reference/api_dataset.md
+        - Environment Variable API: api_reference/api_environment_variables.md
+        - Metric API: api_reference/api_metrics.md
+        - Prompt Template API: api_reference/api_prompt_template.md
+        - Recipe API: api_reference/api_recipe.md
+        - Red Teaming API: api_reference/api_red_teaming.md
+        - Result API: api_reference/api_result.md
+        - Run API: api_reference/api_run.md
+        - Runner API: api_reference/api_runner.md
+        - Session API: api_reference/api_session.md
+    - Web-API: api_reference/web_api_swagger.md
+  - Resources:
+      - Jupyter Notebook: resources/jupyter_notebook.md
+      - Cookbook: resources/cookbooks.md
+      - Recipes: resources/recipes.md
+      - Datasets: resources/datasets.md
+      - Metrics: resources/metrics.md
+      - Attack Modules: resources/attack_modules.md
+  - Contributor Guide: contributing.md
+  - FAQ : faq.md

@@ -69,7 +69,7 @@ def run_manual_and_automated_rt():
     
     art_arguments = {
         "attack_strategies": [{
-            "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
+            "attack_module_id": "charswap_attack", # sample_attack_module, charswap_attack
             "prompt": "hello world",
             "system_prompt": "test system prompt",
             "context_strategy_info": [{
@@ -143,7 +143,7 @@ def run_automated_rt():
     endpoints = ["openai-gpt35-turbo-16k", "openai-gpt35-turbo"]
     art_arguments = {
         "attack_strategies": [{
-            "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
+            "attack_module_id": "charswap_attack", # sample_attack_module, charswap_attack
             "prompt": "hello world",
             "system_prompt": "test system prompt",
             "context_strategy_info": [{
@@ -181,7 +181,7 @@ def test_art_and_cancel():
         runner = api_load_runner(runner_id)
         art_arguments = {
             "attack_strategies": [{
-                "attack_module_id": "charswap_attack_module", # sample_attack_module, charswap_attack_module
+                "attack_module_id": "charswap_attack", # sample_attack_module, charswap_attack
                 "prompt": "hello world",
                 "system_prompt": "test system prompt",
                 "context_strategy_info": [{

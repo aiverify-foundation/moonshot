@@ -327,7 +327,7 @@ class RedTeaming:
             ]
         else:
             raise RuntimeError(
-                "[Red Teaming] No endpoint connectors specified for red teaming."
+                "[Red Teaming] No connector endpoints specified for red teaming."
             )
 
         if self.context_strategy_info:

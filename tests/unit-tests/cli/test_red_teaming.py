@@ -105,12 +105,12 @@ class TestRedTeamingCLI:
 
         # Copy attack modules
         shutil.copyfile(
-            f"{ut_sample_dir}/charswap_attack_module.py",
-            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
+            f"{ut_sample_dir}/charswap_attack.py",
+            f"{ut_data_dir}/attack-modules/charswap_attack.py",
         )
         shutil.copyfile(
-            f"{ut_sample_dir}/homoglyph_attack_module.py",
-            f"{ut_data_dir}/attack-modules/homoglyph_attack_module.py",
+            f"{ut_sample_dir}/homoglyph_attack.py",
+            f"{ut_data_dir}/attack-modules/homoglyph_attack.py",
         )        
         shutil.copyfile(
             f"{ut_sample_dir}/sample_attack_module.py",
@@ -157,8 +157,8 @@ class TestRedTeamingCLI:
             f"{ut_data_dir}/metrics/bleuscore.py",
             f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
             f"{ut_data_dir}/prompt-templates/mmlu.json",
-            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
-            f"{ut_data_dir}/attack-modules/homoglyph_attack_module.py",
+            f"{ut_data_dir}/attack-modules/charswap_attack.py",
+            f"{ut_data_dir}/attack-modules/homoglyph_attack.py",
             f"{ut_data_dir}/attack-modules/sample_attack_module.py",
             f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
             f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",

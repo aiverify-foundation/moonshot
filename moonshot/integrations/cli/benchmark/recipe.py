@@ -483,7 +483,7 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     "\"['bertscore','bleuscore']\" "
     "-p \"['analogical-similarity','mmlu']\" "
     "-t \"['tag1','tag2']\" "
-    "-a \"['charswap_attack_module']\" "
+    "-a \"['charswap_attack']\" "
     "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")

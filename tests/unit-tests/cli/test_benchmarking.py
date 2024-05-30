@@ -127,8 +127,8 @@ class TestBenchmarkingCLI:
 
         # Copy attack modules
         shutil.copyfile(
-            f"{ut_sample_dir}/charswap_attack_module.py",
-            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
+            f"{ut_sample_dir}/charswap_attack.py",
+            f"{ut_data_dir}/attack-modules/charswap_attack.py",
         )
 
         # Copy connector
@@ -172,7 +172,7 @@ class TestBenchmarkingCLI:
             f"{ut_data_dir}/metrics/bleuscore.py",
             f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
             f"{ut_data_dir}/prompt-templates/mmlu.json",
-            f"{ut_data_dir}/attack-modules/charswap_attack_module.py",
+            f"{ut_data_dir}/attack-modules/charswap_attack.py",
             f"{ut_data_dir}/connectors/openai-connector.py",
             # f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
             f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
@@ -236,7 +236,7 @@ class TestBenchmarkingCLI:
                 "\"['bbq-lite-age-ambiguous']\" "
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 err_missing_required_arg
             ),
@@ -248,7 +248,7 @@ class TestBenchmarkingCLI:
                 "\"['category1','category2']\" "
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 err_missing_required_arg
             ),
@@ -262,7 +262,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 f"[add_recipe]: Recipe ({test_recipe_id}) created."
             ),
@@ -276,7 +276,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 "Dataset bbq-lite-age-ambiguousx does not exist."
             ),
@@ -291,7 +291,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscorex']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 "Metric bleuscorex does not exist."
             ),
@@ -306,7 +306,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlux']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 "Prompt Template mmlux does not exist."
             ),
@@ -320,9 +320,9 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_modulex']\" "
+                "-a \"['charswap_attackx']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
-                "Attack Module charswap_attack_modulex does not exist."
+                "Attack Module charswap_attackx does not exist."
             ),
 
             # Failure: Add with incorrect parameter type for lists
@@ -334,7 +334,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"'charswap_attack_module'\" "
+                "-a \"'charswap_attack'\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
                 "[add_recipe]: 1 validation error for api_create_recipe"              
             ),
@@ -347,7 +347,7 @@ class TestBenchmarkingCLI:
                 "\"['bertscore','bleuscore']\" " 
                 "-p \"['analogical-similarity','mmlu']\" "
                 "-t \"['tag1','tag2']\" "
-                "-a \"['charswap_attack_module']\" "
+                "-a \"['charswap_attack']\" "
                 "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "
                 "-x o"],
                 err_unrecognised_arg
@@ -449,7 +449,7 @@ class TestBenchmarkingCLI:
     #         # ("bleuscore"),
 
     #         # # Success: attack strategies
-    #         # ("charswap_attack_module")
+    #         # ("charswap_attack")
 
     #         # Failure: Test with unrecognised flag
     #         ([f"view_recipe {test_recipe_id} -x o"], err_unrecognised_arg),
@@ -511,7 +511,7 @@ class TestBenchmarkingCLI:
              f"update_recipe {test_recipe_id} \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['bbq-lite-age-ambiguous']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\""],
              "[update_recipe]: Recipe updated."
@@ -528,7 +528,7 @@ class TestBenchmarkingCLI:
             f"update_recipe {test_recipe_id} \"[('name', ['Name should not be a list']), ('tags', ['updated tag']), "
              " ('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['bbq-lite-age-ambiguous']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', [{'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}]) "
              "]\""],
              "[update_recipe]: 2 validation errors for RecipeArguments"
@@ -538,7 +538,7 @@ class TestBenchmarkingCLI:
             ([f"update_recipe \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['bbq-lite-age-ambiguous']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\""],
              err_missing_required_arg
@@ -555,7 +555,7 @@ class TestBenchmarkingCLI:
             f"update_recipe {test_recipe_id} \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['nope']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\""],
              "Dataset nope does not exist."
@@ -572,7 +572,7 @@ class TestBenchmarkingCLI:
             f"update_recipe {test_recipe_id} \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['bbq-lite-age-ambiguous']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['nope']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['nope']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\""],
              "Metric nope does not exist."
@@ -589,7 +589,7 @@ class TestBenchmarkingCLI:
             f"update_recipe {test_recipe_id} \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['bbq-lite-age-ambiguous']), ('prompt_templates', ['analogical-similarity', 'nope']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\""],
              "Prompt Template nope does not exist."
@@ -616,7 +616,7 @@ class TestBenchmarkingCLI:
             ([f"update_recipe {test_recipe_id} \"[('name', 'My Updated Recipe2'), ('tags', ['updated tag']), "
              "('description', 'updated description'), ('categories', ['updated cat 1', 'updated cat 2']), "
              " ('datasets', ['nope']), ('prompt_templates', ['analogical-similarity', 'mmlu']), "
-             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack_module']), "
+             " ('metrics', ['bleuscore']), ('attack_modules', ['charswap_attack']), "
              " ('grading_scale', {'New A':[75,100],'New B':[50,74],'New C':[25,49],'New D':[0,24]}) "
              "]\" -x o"],
              err_unrecognised_arg

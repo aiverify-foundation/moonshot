@@ -381,7 +381,7 @@ def profile_api_recipe():
         datasets=["arc-easy", "bbq-lite-age-ambiguous"],
         prompt_templates=["prompt-template1"],
         metrics=["metrics1", "metrics2"],
-        attack_modules=["charswap_attack_module", "homoglyph_attack_mdoule"],
+        attack_modules=["charswap_attack", "homoglyph_attack"],
         grading_scale={
             "A": [0, 19],
             "B": [20, 39],
@@ -422,8 +422,8 @@ def profile_api_red_teaming():
     The profiling helps in understanding the efficiency of the red teaming API functions and identifying potential
     bottlenecks or areas for optimization.
     """
-    source_path = "moonshot/data/attack-modules/charswap_attack_module.py"
-    destination_path = "moonshot/data/attack-modules/charswap_attack_module1.py"
+    source_path = "moonshot/data/attack-modules/charswap_attack.py"
+    destination_path = "moonshot/data/attack-modules/charswap_attack1.py"
     shutil.copy(source_path, destination_path)
 
     profile_function(
@@ -431,7 +431,7 @@ def profile_api_red_teaming():
     )
     profile_function(api_get_all_attack_modules, "api_get_all_attack_modules")
     profile_function(
-        api_delete_attack_module, "api_delete_attack_module", "charswap_attack_module1"
+        api_delete_attack_module, "api_delete_attack_module", "charswap_attack1"
     )
 
 
