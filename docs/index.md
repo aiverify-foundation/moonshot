@@ -4,7 +4,11 @@
 
 # Welcome to Moonshot's Documentation
 
+<<<<<<< HEAD
 **Moonshot** is a tool designed for AI developers and security experts to test and evaluate AI systems. Moonshot seamlessly integrates into your model development workflow, enabling repeatable tests through interactive use via command line interface (CLI), Python notebooks, or a Web UI.
+=======
+**Moonshot** is a tool designed for AI developers and security experts to evaluate and red team any LLM/ LLM application. In this initial version, Moonshot can be used through its interative Command Line Interface, within python notebooks (example), or even seamlessly integrated into your model development workflow to to run repeatable tests.
+>>>>>>> 01e65cc5f336e10ed3c3fbc063afb6afac6a1ef3
 
 Below are some useful links to help you get started with Moonshot.
 

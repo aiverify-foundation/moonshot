@@ -67,6 +67,7 @@ Attack modules are techniques that will enable the automatic generation of adver
         To provide the API keys, go to ‘Model Endpoints’ and click on ‘Edit’ for OpenAI GPT4, provide your API token, and click ‘Save’. (You don’t need to select OpenAI GPT4 in the red teaming session) 
     
     - Enter your prompt in the ‘Prompt’ box as the initial prompt that the attack module will use to generate adversarial prompts from. 
+    
     - Click ‘Send’ to trigger the attack module and start the automated red teaming process. Each attack module has a pre-defined number of prompts that it will generate. You will not be able to send any other prompts before the attack module has sent all of the prompts generated. 
 
     ![Start Automated Red Teaming Process](./imgs/send_prompt(24).png)
@@ -92,6 +93,7 @@ Attack modules are techniques that will enable the automatic generation of adver
     ![Remove Prompt Template](./imgs/remove_prompt_template_set(30).png)
 
 2. **Context Strategies**  
+
     Context Strategies are predefined approaches to append the red teaming session's context to each prompt. Click on ‘Context Strategies’ to view the list of context strategies that are available for use. 
      
     ![List Context Strategies](./imgs/available_context_strategies(31).png)

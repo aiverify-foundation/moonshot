@@ -15,7 +15,6 @@ On this page, you are prompted to select an endpoint for testing. You have the o
 ![Endpoint selection page](./res/run_rt_2.png)
 
 This step presents a list of attack modules available for your red teaming. For the purpose of this tutorial, select 'Skip for now'.
-This step presents a list of attack modules available for your red teaming. For the purpose of this tutorial, select 'Skip for now'.
 
 ![Attack modules selection page](./res/run_rt_3.png)
 
@@ -29,7 +28,7 @@ You have now entered a session to conduct your red teaming. This session include
 
 #### Manual Red Teaming
 
-During manual red teaming, you have the option to utilize tools like Prompt Templates and Context Strategy. These tools assist in structuring and providing context to your prompts.
+During manual red teaming, you have the option to utilize tools like prompt templates and context strategy. These tools assist in structuring and providing context to your prompts.
 
 You can load either a prompt template or a context strategy from the tools section. 
 After making your selection, input your prompt into the chat window. You will then observe the enhancements that have been incorporated into your prompt.
