@@ -1,4 +1,4 @@
-# Pre-merge Checks (for Python projects)
+# Pre-merge Checks
 # 1. Unit tests with code coverage (pytest)
 # 2. Code quality analysis (flake8)
 # 3. Dependency analysis (vulnerabilities)
@@ -14,10 +14,16 @@ on:
     branches:
       - 'main'
     paths:
-      - 'test-engine-core/**'
+      - '**'
 
   # Run this workflow manually from Actions tab
   workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'main'
+        type: string
 
 # Allow one concurrent deployment
 concurrency:
@@ -27,7 +33,7 @@ concurrency:
 jobs:
 
   pre-merge-checks:
-    # Run only when PR is assigned, even on subsequent commits (i.e. synchronize)
+    # Run only when PR is assigned, even on subsequent commits (i.e. synchronize), or manually triggered
     if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
 
     runs-on: ubuntu-latest
@@ -35,11 +41,19 @@ jobs:
 
     steps:
 
-      # Checkout code
-      - name: Checkout code
+      - name: Checkout Code (Pull_Request)
+        if: github.event_name == 'pull_request'
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+
+      - name: Checkout Code (Workflow_Dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch_to_test }}
           fetch-depth: 0
 
       # Install dependencies
@@ -98,17 +112,17 @@ jobs:
           find ../ -type f -name ".gitignore" -exec rm {} +
           [ -d "docs/pre-merge/core" ] && rm -rf docs/pre-merge/core
           mkdir -p docs/pre-merge/core
-          mv ../test-engine-core/htmlcov docs/pre-merge/core/
-          mv ../test-engine-core/flake8-report docs/pre-merge/core/
-          mv ../test-engine-core/assets docs/pre-merge/core/         
-          mv ../test-engine-core/*.svg docs/pre-merge/core/
-          mv ../test-engine-core/*.html docs/pre-merge/core/
-          mv ../test-engine-core/*.md docs/pre-merge/core/
-          mv ../test-engine-core/*.txt docs/pre-merge/core/
+          mv ../htmlcov docs/pre-merge/core/
+          mv ../flake8-report docs/pre-merge/core/
+          mv ../assets docs/pre-merge/core/         
+          mv ../*.svg docs/pre-merge/core/
+          mv ../*.html docs/pre-merge/core/
+          mv ../*.md docs/pre-merge/core/
+          mv ../*.txt docs/pre-merge/core/
           git add docs/pre-merge/core
           git config user.name "aiverify"
           git config user.email "aiverify@imda.gov.sg"
-          git commit -m "feat(portal) actions publish test-engine-core reports to dashboard"
+          git commit -m "feat(portal) actions publish moonshot core reports to dashboard"
           git push
           set -e          
 
