@@ -263,6 +263,9 @@ def run_attack_module(args):
         context_strategy = args.context_strategy or []
         prompt_template = [args.prompt_template] if args.prompt_template else []
         metric = [args.metric] if args.metric else []
+        optional_arguments = (
+            literal_eval(args.optional_args) if args.optional_args else {}
+        )
         num_of_prev_prompts = (
             args.num_of_prev_prompts
             if args.num_of_prev_prompts
@@ -288,6 +291,7 @@ def run_attack_module(args):
                 "context_strategy_info": context_strategy_info,
                 "prompt_template_ids": prompt_template,
                 "metric_ids": metric,
+                "optional_params": optional_arguments,
             }
         ]
         runner_args = {}
@@ -407,7 +411,8 @@ automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
         'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
-        '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
+        '-c "add_previous_prompt" -p "mmlu" -m "bleuscore" '
+        "-o \"{'max_number_of_iteration': 1, 'my_optional_param': 'hello world'}\""
     ),
 )
 
@@ -455,6 +460,13 @@ automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
 )
 
+automated_rt_session_args.add_argument(
+    "-o",
+    "--optional_args",
+    type=str,
+    help="Optional parameters to input into the red teaming module.",
+    nargs="?",
+)
 
 # Delete session arguments
 delete_session_args = cmd2.Cmd2ArgumentParser(
