@@ -83,6 +83,9 @@ def moonshot_data_installation():
         # Clone the repository
         run_subprocess(["git", "clone", repo], check=True)
         
+        # Create .env to point to installed folder
+        ms_lib_env_file(folder_name)
+        
         # Change directory to the folder
         os.chdir(folder_name)
 
@@ -99,8 +102,6 @@ def moonshot_data_installation():
         # Change back to the base directory
         os.chdir("..")
 
-        # Create .env to point to installed folder
-        ms_lib_env_file(folder_name)
     else:
         print(f"Directory {folder_name} already exists, skipping clone.")
 
