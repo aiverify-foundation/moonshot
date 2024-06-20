@@ -10,6 +10,7 @@ from moonshot.api import (
     api_update_context_strategy,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.utils.utils import find_keyword
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
@@ -52,30 +53,30 @@ def use_context_strategy(args: argparse.Namespace) -> None:
         )
 
 
-def list_context_strategies() -> None:
+def list_context_strategies(args) -> None:
     """
     List all context strategies available.
+
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find context strategies with a keyword.
+
+    Returns:
+        None
     """
     context_strategy_metadata_list = api_get_all_context_strategy_metadata()
-    if context_strategy_metadata_list:
-        table = Table(
-            title="Context Strategy List",
-            show_lines=True,
-            expand=True,
-            header_style="bold",
+    keyword = args.find.lower() if args.find else ""
+
+    if keyword:
+        filtered_attack_modules_list = find_keyword(
+            keyword, context_strategy_metadata_list
         )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Context Strategy Information", justify="left", width=98)
-        for context_strategy_index, context_strategy_data in enumerate(
-            context_strategy_metadata_list, 1
-        ):
-            context_strategy_data_str = ""
-            for k, v in context_strategy_data.items():
-                context_strategy_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
-            table.add_row(str(context_strategy_index), context_strategy_data_str)
-        console.print(table)
+        if filtered_attack_modules_list:
+            display_context_strategies(filtered_attack_modules_list)
+        else:
+            print("No context strategies containing keyword found.")
     else:
-        console.print("[red]There are no context strategies found.[/red]", style="bold")
+        display_context_strategies(context_strategy_metadata_list)
 
 
 def clear_context_strategy() -> None:
@@ -118,6 +119,40 @@ def delete_context_strategy(args) -> None:
         print(f"[delete_context_strategy]: {str(e)}")
 
 
+def display_context_strategies(context_strategies: list) -> None:
+    """
+    Display a list of context strategies.
+
+    This function takes a list of context strategies and displays them in a table format. If the list is empty,
+    it prints a message indicating that no attack modules were found.
+
+    Args:
+        context_strategies (list): A list of context strategies.
+
+    Returns:
+        None
+    """
+    if context_strategies:
+        table = Table(
+            title="Context Strategy List",
+            show_lines=True,
+            expand=True,
+            header_style="bold",
+        )
+        table.add_column("No.", justify="left", width=2)
+        table.add_column("Context Strategy Information", justify="left", width=98)
+        for context_strategy_index, context_strategy_data in enumerate(
+            context_strategies, 1
+        ):
+            context_strategy_data_str = ""
+            for k, v in context_strategy_data.items():
+                context_strategy_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
+            table.add_row(str(context_strategy_index), context_strategy_data_str)
+        console.print(table)
+    else:
+        console.print("[red]There are no context strategies found.[/red]", style="bold")
+
+
 # Use context strategy arguments
 use_context_strategy_args = cmd2.Cmd2ArgumentParser(
     description="Use a context strategy.",
@@ -144,4 +179,18 @@ delete_context_strategy_args = cmd2.Cmd2ArgumentParser(
 
 delete_context_strategy_args.add_argument(
     "context_strategy", type=str, help="The ID of the context strategy to delete"
+)
+
+# List context strategies arguments
+list_context_strategies_args = cmd2.Cmd2ArgumentParser(
+    description="List all context strategies.",
+    epilog='Example:\n list_context_strategies -f "previous_prompt"',
+)
+
+list_context_strategies_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find context strategies with keyword",
+    nargs="?",
 )

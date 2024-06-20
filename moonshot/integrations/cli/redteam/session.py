@@ -17,6 +17,7 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.utils.utils import find_keyword
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
@@ -104,33 +105,36 @@ def end_session() -> None:
     active_session.clear()
 
 
-def list_sessions() -> None:
+def list_sessions(args) -> None:
     """
     Retrieves and displays the list of sessions.
 
     This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
     If no sessions are found, a message is printed to the console.
+
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find session(s) with a keyword.
+
+    Returns:
+        None
     """
-    session_metadata_list = api_get_all_session_metadata()
-    if session_metadata_list:
-        table = Table(
-            title="Session List", show_lines=True, expand=True, header_style="bold"
-        )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Session ID", justify="left", width=20)
-        table.add_column("Contains", justify="left", width=78)
+    try:
+        session_metadata_list = api_get_all_session_metadata()
+        keyword = args.find.lower() if args.find else ""
 
-        for session_index, session_data in enumerate(session_metadata_list, 1):
-            session_id = session_data.get("session_id", "")
-            endpoints = ", ".join(session_data.get("endpoints", []))
-            created_datetime = session_data.get("created_datetime", "")
-
-            session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
-            contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
-            table.add_row(str(session_index), session_info, contains_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no sessions found.[/red]", style="bold")
+        if keyword:
+            filtered_session_metadata_list = find_keyword(
+                keyword, session_metadata_list
+            )
+            if filtered_session_metadata_list:
+                display_sessions(filtered_session_metadata_list)
+            else:
+                print("No sessions containing keyword found.")
+        else:
+            display_sessions(session_metadata_list)
+    except Exception as e:
+        print(f"[list_sessions]: {str(e)}")
 
 
 def update_chat_display() -> None:
@@ -351,6 +355,41 @@ def delete_session(args) -> None:
         print(f"[delete_session]: {str(e)}")
 
 
+def display_sessions(sessions: list) -> None:
+    """
+    Display a list of sessions.
+
+    This function takes a list of sessions and displays them in a table format. If the list is empty, it prints a
+    message indicating that no sessions were found.
+
+    Args:
+        sessions (list): A list of sessions.
+
+    Returns:
+        None
+    """
+
+    if sessions:
+        table = Table(
+            title="Session List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("No.", justify="left", width=2)
+        table.add_column("Session ID", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=78)
+
+        for session_index, session_data in enumerate(sessions, 1):
+            session_id = session_data.get("session_id", "")
+            endpoints = ", ".join(session_data.get("endpoints", []))
+            created_datetime = session_data.get("created_datetime", "")
+
+            session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
+            contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
+            table.add_row(str(session_index), session_info, contains_info)
+        console.print(table)
+    else:
+        console.print("[red]There are no sessions found.[/red]", style="bold")
+
+
 # use session arguments
 use_session_args = cmd2.Cmd2ArgumentParser(
     description="Use an existing red teaming session by specifying the runner ID.",
@@ -476,4 +515,19 @@ delete_session_args = cmd2.Cmd2ArgumentParser(
 
 delete_session_args.add_argument(
     "session", type=str, help="The runner ID of the session to delete"
+)
+
+
+# List sessions arguments
+list_sessions_args = cmd2.Cmd2ArgumentParser(
+    description="List all sessions.",
+    epilog='Example:\n list_sessions -f "my-sessions"',
+)
+
+list_sessions_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find session(s) with keyword",
+    nargs="?",
 )

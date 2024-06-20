@@ -8,6 +8,7 @@ from moonshot.api import (
     api_get_all_datasets_name,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_str_format
+from moonshot.integrations.cli.utils.utils import find_keyword
 
 console = Console()
 
@@ -15,7 +16,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_datasets() -> None:
+def list_datasets(args) -> None:
     """
     List all available datasets.
 
@@ -23,13 +24,25 @@ def list_datasets() -> None:
     moonshot.api module. It then displays the datasets using the display_datasets function. If an exception occurs,
     it prints an error message.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find dataset(s) with a keyword.
+
     Returns:
         None
     """
     try:
         print("Listing datasets may take a while...")
         datasets_list = api_get_all_datasets()
-        display_datasets(datasets_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_datasets_list = find_keyword(keyword, datasets_list)
+            if filtered_datasets_list:
+                display_datasets(filtered_datasets_list)
+            else:
+                print("No datasets containing keyword found.")
+        else:
+            display_datasets(datasets_list)
     except Exception as e:
         print(f"[list_datasets]: {str(e)}")
 
@@ -162,3 +175,17 @@ delete_dataset_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n delete_dataset bbq-lite-age-ambiguous",
 )
 delete_dataset_args.add_argument("dataset", type=str, help="Name of the dataset")
+
+# List dataset arguments
+list_datasets_args = cmd2.Cmd2ArgumentParser(
+    description="List all datasets.",
+    epilog='Example:\n list_datasets -f "bbq"',
+)
+
+list_datasets_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find dataset(s) with keyword",
+    nargs="?",
+)

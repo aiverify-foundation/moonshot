@@ -18,6 +18,7 @@ from moonshot.api import (
     api_update_recipe,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
+from moonshot.integrations.cli.utils.utils import find_keyword
 
 console = Console()
 
@@ -74,7 +75,7 @@ def add_recipe(args) -> None:
         print(f"[add_recipe]: {str(e)}")
 
 
-def list_recipes() -> None:
+def list_recipes(args) -> None:
     """
     List all available recipes.
 
@@ -82,12 +83,24 @@ def list_recipes() -> None:
     moonshot.api module.
     It then displays the retrieved recipes using the display_recipes function.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find recipe(s) with a keyword.
+
     Returns:
         None
     """
     try:
         recipes_list = api_get_all_recipe()
-        display_recipes(recipes_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_recipes_list = find_keyword(keyword, recipes_list)
+            if filtered_recipes_list:
+                display_recipes(filtered_recipes_list)
+            else:
+                print("No recipes containing keyword found.")
+        else:
+            display_recipes(recipes_list)
     except Exception as e:
         print(f"[list_recipes]: {str(e)}")
 
@@ -382,9 +395,9 @@ def show_recipe_results(recipes, endpoints, recipe_results, duration):
         console.print("[red]There are no results.[/red]")
 
     # Print run stats
-    console.print(
-        f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade that the recipes have in each cookbook\n{'='*50}"
-    )
+    run_stats = f"""{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade
+    that the recipes have in each cookbook\n{'='*50}"""
+    console.print(run_stats)
 
 
 def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None:
@@ -595,4 +608,18 @@ run_recipe_args.add_argument(
     type=str,
     default="benchmarking-result",
     help="Result processing module to use",
+)
+
+# List recipe arguments
+list_recipes_args = cmd2.Cmd2ArgumentParser(
+    description="List all recipes.",
+    epilog='Example:\n list_recipes -f "mmlu"',
+)
+
+list_recipes_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find recipe(s) with keyword",
+    nargs="?",
 )

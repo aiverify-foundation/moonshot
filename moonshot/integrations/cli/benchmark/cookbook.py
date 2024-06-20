@@ -23,6 +23,7 @@ from moonshot.integrations.cli.benchmark.recipe import (
     display_view_statistics_format,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
+from moonshot.integrations.cli.utils.utils import find_keyword
 
 console = Console()
 
@@ -55,7 +56,7 @@ def add_cookbook(args) -> None:
         print(f"[add_cookbook]: {str(e)}")
 
 
-def list_cookbooks() -> None:
+def list_cookbooks(args) -> None:
     """
     List all available cookbooks.
 
@@ -63,12 +64,24 @@ def list_cookbooks() -> None:
     moonshot.api module.
     It then displays the retrieved cookbooks using the display_cookbooks function.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find cookbook(s) with a keyword.
+
     Returns:
         None
     """
     try:
         cookbooks_list = api_get_all_cookbook()
-        display_cookbooks(cookbooks_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_cookbooks_list = find_keyword(keyword, cookbooks_list)
+            if filtered_cookbooks_list:
+                display_cookbooks(filtered_cookbooks_list)
+            else:
+                print("No cookbooks containing keyword found.")
+        else:
+            display_cookbooks(cookbooks_list)
     except Exception as e:
         print(f"[list_cookbooks]: {str(e)}")
 
@@ -340,9 +353,9 @@ def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
         console.print("[red]There are no results.[/red]")
 
     # Print run stats
-    console.print(
-        f"{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade that the recipes have in each cookbook\n{'='*50}"
-    )
+    run_stats = f"""{'='*50}\n[blue]Time taken to run: {duration}s[/blue]\n*Overall rating will be the lowest grade
+     that the recipes have in each cookbook\n{'='*50}"""
+    console.print(run_stats)
 
 
 def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> None:
@@ -542,4 +555,18 @@ run_cookbook_args.add_argument(
     type=str,
     default="benchmarking-result",
     help="Result processing module to use",
+)
+
+# List cookbook arguments
+list_cookbooks_args = cmd2.Cmd2ArgumentParser(
+    description="List all cookbooks.",
+    epilog='Example:\n list_cookbooks -f "risk"',
+)
+
+list_cookbooks_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find cookbook(s) with keyword",
+    nargs="?",
 )

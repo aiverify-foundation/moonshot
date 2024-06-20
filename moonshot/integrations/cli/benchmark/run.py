@@ -7,6 +7,7 @@ from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
 )
+from moonshot.integrations.cli.utils.utils import find_keyword
 
 console = Console()
 
@@ -14,7 +15,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_runs() -> None:
+def list_runs(args) -> None:
     """
     List all runs.
 
@@ -23,12 +24,24 @@ def list_runs() -> None:
     in a user-friendly format on the command line interface. If an exception occurs during the retrieval
     or display process, it prints an error message.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find run(s) with a keyword.
+
     Returns:
         None
     """
     try:
         runner_run_info = api_get_all_run()
-        display_runs(runner_run_info)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_runs_list = find_keyword(keyword, runner_run_info)
+            if filtered_runs_list:
+                display_runs(filtered_runs_list)
+            else:
+                print("No runs containing keyword found.")
+        else:
+            display_runs(runner_run_info)
     except Exception as e:
         print(f"[list_runs]: {str(e)}")
 
@@ -138,3 +151,18 @@ view_run_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n view_run my-new-cookbook-runner",
 )
 view_run_args.add_argument("runner_id", type=str, help="Name of the runner")
+
+
+# List run arguments
+list_runs_args = cmd2.Cmd2ArgumentParser(
+    description="List all runs.",
+    epilog='Example:\n list_runs -f "my-run"',
+)
+
+list_runs_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find run(s) with keyword",
+    nargs="?",
+)
