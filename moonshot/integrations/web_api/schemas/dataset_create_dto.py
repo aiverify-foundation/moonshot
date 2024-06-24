@@ -6,12 +6,10 @@ from pydantic import Field
 from pyparsing import Iterator
 
 class DatasetCreateDTO(DatasetPydanticModel):
-    # not needed fields
     id: Optional[str] = None
     examples: Iterator[dict] = None  
-    #end
     name: str = Field(..., min_length=1)
     description: str = Field(default="", min_length=1)
-    license: str
-    reference: str
+    license: Optional[str] = ""
+    reference: Optional[str] = ""
     params: dict
