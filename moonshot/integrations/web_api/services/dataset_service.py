@@ -19,24 +19,14 @@ class DatasetService(BaseService):
         Raises:
             Exception: If an error occurs during dataset creation.
         """
-        if method == "hf":
-            moonshot_api.api_create_datasets(
-                name=dataset_data.name,
-                description=dataset_data.description,
-                reference=dataset_data.reference,
-                license=dataset_data.license,
-                method="hf",
-                **dataset_data.params,
-            )
-        elif method == "csv":
-            moonshot_api.api_create_datasets(
-                name=dataset_data.name,
-                description=dataset_data.description,
-                reference=dataset_data.reference,
-                license=dataset_data.license,
-                method="csv",
-                **dataset_data.params,
-            )
+        moonshot_api.api_create_datasets(
+            name=dataset_data.name,
+            description=dataset_data.description,
+            reference=dataset_data.reference,
+            license=dataset_data.license,
+            method=method,
+            **dataset_data.params
+        )
 
     @exception_handler
     def get_all_datasets(self) -> list[DatasetResponseDTO]:
