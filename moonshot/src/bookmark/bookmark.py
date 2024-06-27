@@ -124,3 +124,17 @@ class Bookmark:
     def close(self) -> None:
         if self.db_instance:
             Storage.close_database_connection(self.db_instance)
+
+
+    def export_bookmarks(self, export_file_name: str = "bookmarks") -> None:
+        list_of_bookmarks_tuples = Storage.read_database_records(
+            self.db_instance,
+            Bookmark.sql_select_bookmarks_record,
+        )
+        print("tuple bm", list_of_bookmarks_tuples)
+        bookmarks_json = [
+            BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
+            for bookmark_tuple in list_of_bookmarks_tuples
+        ]
+
+        Storage.create_object(EnvVariables.BOOKMARK.name, export_file_name, {"bookmarks": bookmarks_json}, "json")

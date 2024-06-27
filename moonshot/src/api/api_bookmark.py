@@ -18,3 +18,6 @@ def api_delete_bookmark(bookmark_id: int):
 
 def api_delete_all_bookmark():
     bookmark_instance.delete_all_bookmark()
+
+def api_export_bookmarks():
+    bookmark_instance.export_bookmarks()
