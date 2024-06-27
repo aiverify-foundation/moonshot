@@ -7,6 +7,7 @@ __app_name__ = "moonshot"
 
 class EnvVariables(Enum):
     ATTACK_MODULES = "ATTACK_MODULES"
+    BOOKMARK = "BOOKMARK"
     CONNECTORS = "CONNECTORS"
     CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
     CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
@@ -30,6 +31,10 @@ class EnvironmentVars:
     ATTACK_MODULES = [
         env_vars.get(EnvVariables.ATTACK_MODULES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/attack-modules")),
+    ]
+    BOOKMARK = [
+        env_vars.get(EnvVariables.BOOKMARK.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/bookmark")),
     ]
     CONNECTORS = [
         env_vars.get(EnvVariables.CONNECTORS.value),

@@ -100,6 +100,37 @@ class DBInterface:
         """
         pass
 
+
+    @abstractmethod
+    def delete_record_by_id(self, record_id: int, delete_record_sql: str) -> None:
+        """
+        This method is used to delete a record from the database. The details of the operation
+        are implementation specific and should be provided by the concrete class that inherits from this abstract class.
+
+        Args:
+            record_id (int): The ID of the record to be deleted.
+            delete_record_sql (str): The SQL query to delete a record.
+
+        Returns:
+            None
+        """
+        pass
+
+    @abstractmethod
+    def delete_records_in_table(self, delete_record_sql: str) -> None:
+        """
+        This method is used to delete all records from a specified table in the database. The details of the operation
+        are implementation specific and should be provided by the concrete class that inherits from this abstract class.
+
+        Args:
+            delete_record_sql (str): The SQL query to delete all records from a table.
+
+        Returns:
+            None
+        """
+        pass
+
+
     @abstractmethod
     def check_database_table_exists(self, table_name: str) -> bool:
         """
