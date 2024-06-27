@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from pydantic import BaseModel
@@ -13,6 +12,7 @@ class BookmarkArguments(BaseModel):
     prompt_template: str
     attack_module: str
     bookmark_time: str = None
+
     @classmethod
     def from_tuple(cls, values: tuple) -> BookmarkArguments:
         """
@@ -32,5 +32,5 @@ class BookmarkArguments(BaseModel):
             context_strategy=values[4],
             prompt_template=values[5],
             attack_module=values[6],
-            bookmark_time=values[7]
+            bookmark_time=values[7],
         )

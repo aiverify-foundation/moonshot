@@ -1,7 +1,9 @@
-from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
-from moonshot.src.storage.storage import Storage
-from moonshot.src.configs.env_variables import EnvVariables
 from datetime import datetime
+
+from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
+from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.storage.storage import Storage
+
 
 class Bookmark:
     _instance = None
@@ -16,7 +18,7 @@ class Bookmark:
     sql_create_bookmark_table = """
         CREATE TABLE IF NOT EXISTS bookmark (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         prompt TEXT NOT NULL,
         response TEXT NOT NULL,
         context_strategy TEXT,
@@ -26,9 +28,9 @@ class Bookmark:
         );
     """
 
-    sql_insert_bookmark_record= """
+    sql_insert_bookmark_record = """
         INSERT INTO bookmark (
-        name, prompt, response, context_strategy, prompt_template, attack_module, bookmark_time) 
+        name, prompt, response, context_strategy, prompt_template, attack_module, bookmark_time)
         VALUES (?,?,?,?,?,?,?);
     """
 
@@ -52,28 +54,35 @@ class Bookmark:
         self.db_instance = Storage.create_database_connection(
             EnvVariables.BOOKMARK.name, db_name, "db"
         )
-        Storage.create_database_table(self.db_instance, Bookmark.sql_create_bookmark_table)
-    
-    def add_bookmark(self, bookmark:BookmarkArguments) -> None:
-        if bookmark.bookmark_time is None:
-            bookmark.bookmark_time = datetime.now().replace(microsecond=0).isoformat(" ")
-        data = (
-                bookmark.name,
-                bookmark.prompt,
-                bookmark.response,
-                bookmark.context_strategy,
-                bookmark.prompt_template,
-                bookmark.attack_module,
-                bookmark.bookmark_time
-            )
-        Storage.create_database_record(
-            self.db_instance, data, Bookmark.sql_insert_bookmark_record
+        Storage.create_database_table(
+            self.db_instance, Bookmark.sql_create_bookmark_table
         )
-        print("Bookmark record added")
+
+    def add_bookmark(self, bookmark: BookmarkArguments) -> None:
+        if bookmark.bookmark_time is None:
+            bookmark.bookmark_time = (
+                datetime.now().replace(microsecond=0).isoformat(" ")
+            )
+        data = (
+            bookmark.name,
+            bookmark.prompt,
+            bookmark.response,
+            bookmark.context_strategy,
+            bookmark.prompt_template,
+            bookmark.attack_module,
+            bookmark.bookmark_time,
+        )
+        try:
+            Storage.create_database_record(
+                self.db_instance, data, Bookmark.sql_insert_bookmark_record
+            )
+        except Exception as e:
+            print(f"Failed to add bookmark record: {e}")
 
     def get_all_bookmarks(self) -> list:
         list_of_bookmarks_tuples = Storage.read_database_records(
-            self.db_instance, Bookmark.sql_select_bookmarks_record,
+            self.db_instance,
+            Bookmark.sql_select_bookmarks_record,
         )
         if list_of_bookmarks_tuples:
             list_of_bookmarks = [
@@ -86,15 +95,15 @@ class Bookmark:
 
     def get_bookmark_by_id(self, bookmark_id: int) -> BookmarkArguments:
         if bookmark_id is not None:
-            bookmark_info = Storage.read_database_record(self.db_instance, 
-                                        (bookmark_id,), 
-                                        Bookmark.sql_select_bookmark_record)
+            bookmark_info = Storage.read_database_record(
+                self.db_instance, (bookmark_id,), Bookmark.sql_select_bookmark_record
+            )
             return BookmarkArguments.from_tuple(bookmark_info)
         else:
             raise RuntimeError(
                 f"[Bookmark] Failed to get database record for bookmark_id {bookmark_id}: {self.db_instance}"
             )
-    
+
     def delete_bookmark(self, bookmark_id: int) -> None:
         if bookmark_id is not None:
             Storage.delete_database_record_by_id(
@@ -105,7 +114,7 @@ class Bookmark:
             raise RuntimeError(
                 f"[Bookmark] Failed to get database record for bookmark_id {bookmark_id}: {self.db_instance}"
             )
-        
+
     def delete_all_bookmark(self) -> None:
         Storage.delete_database_record_in_table(
             self.db_instance, Bookmark.sql_delete_bookmark_records
