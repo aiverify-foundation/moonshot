@@ -93,12 +93,12 @@ class Bookmark:
             list_of_bookmarks = []
         return list_of_bookmarks
 
-    def get_bookmark_by_id(self, bookmark_id: int) -> BookmarkArguments:
+    def get_bookmark_by_id(self, bookmark_id: int) -> dict:
         if bookmark_id is not None:
             bookmark_info = Storage.read_database_record(
                 self.db_instance, (bookmark_id,), Bookmark.sql_select_bookmark_record
             )
-            return BookmarkArguments.from_tuple(bookmark_info)
+            return BookmarkArguments.from_tuple_to_dict(bookmark_info)
         else:
             raise RuntimeError(
                 f"[Bookmark] Failed to get database record for bookmark_id {bookmark_id}: {self.db_instance}"

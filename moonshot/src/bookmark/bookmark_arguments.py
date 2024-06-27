@@ -14,23 +14,23 @@ class BookmarkArguments(BaseModel):
     bookmark_time: str = None
 
     @classmethod
-    def from_tuple(cls, values: tuple) -> BookmarkArguments:
+    def from_tuple_to_dict(cls, values: tuple) -> dict:
         """
-        Creates a BookmarkArguments instance from a tuple of values.
+        Creates a dictionary from a tuple of values representing BookmarkArguments fields.
 
         Args:
             values (tuple): A tuple containing the fields of BookmarkArguments in order.
 
         Returns:
-            BookmarkArguments: An instance of BookmarkArguments.
+            dict: A dictionary representing the BookmarkArguments.
         """
-        return cls(
-            id=values[0],
-            name=values[1],
-            prompt=values[2],
-            response=values[3],
-            context_strategy=values[4],
-            prompt_template=values[5],
-            attack_module=values[6],
-            bookmark_time=values[7],
-        )
+        return {
+            "id": values[0],
+            "name": values[1],
+            "prompt": values[2],
+            "response": values[3],
+            "context_strategy": values[4],
+            "prompt_template": values[5],
+            "attack_module": values[6],
+            "bookmark_time": values[7],
+        }
