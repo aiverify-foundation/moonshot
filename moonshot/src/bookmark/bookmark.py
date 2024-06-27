@@ -79,14 +79,14 @@ class Bookmark:
         except Exception as e:
             print(f"Failed to add bookmark record: {e}")
 
-    def get_all_bookmarks(self) -> list:
+    def get_all_bookmarks(self) -> list[dict]:
         list_of_bookmarks_tuples = Storage.read_database_records(
             self.db_instance,
             Bookmark.sql_select_bookmarks_record,
         )
         if list_of_bookmarks_tuples:
             list_of_bookmarks = [
-                BookmarkArguments.from_tuple(bookmark_tuple).dict()
+                BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
                 for bookmark_tuple in list_of_bookmarks_tuples
             ]
         else:
