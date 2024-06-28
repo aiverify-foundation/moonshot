@@ -11,8 +11,6 @@ console = Console()
 
 def add_dataset(args) -> None:
     try:
-        # params_dict = literal_eval(args.params)
-
         new_dataset_id = api_create_datasets(
             args.name,
             args.description,
