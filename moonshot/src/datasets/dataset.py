@@ -61,9 +61,9 @@ class Dataset:
 
             examples = [{}]
             if method == "csv":
-                examples = Dataset.__convert_csv(kwargs["csv_file_path"])
+                examples = Dataset._convert_csv(kwargs["csv_file_path"])
             elif method == "hf":
-                examples = Dataset.__download_hf(kwargs)
+                examples = Dataset._download_hf(kwargs)
 
             ds_info = {
                 "id": ds_id,
@@ -83,7 +83,7 @@ class Dataset:
             raise e
 
     @staticmethod
-    def __convert_csv(csv_file: str) -> list[dict]:
+    def _convert_csv(csv_file: str) -> list[dict]:
         """
         Converts a CSV file to a list of dictionaries.
 
@@ -101,7 +101,7 @@ class Dataset:
         return data
 
     @staticmethod
-    def __download_hf(hf_args) -> list[dict]:
+    def _download_hf(hf_args) -> list[dict]:
         """
         Downloads a dataset from Hugging Face and converts it to a list of dictionaries.
 
