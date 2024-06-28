@@ -41,4 +41,4 @@ class AttackModuleArguments(BaseModel):
     cancel_event: asyncio.Event
 
     # a dict that contains other params that is required by the attack module (if any)
-    params: dict = {}
+    optional_params: dict = {}
