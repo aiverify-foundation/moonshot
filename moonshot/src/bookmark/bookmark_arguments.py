@@ -11,7 +11,7 @@ class BookmarkArguments(BaseModel):
     context_strategy: str
     prompt_template: str
     attack_module: str
-    bookmark_time: str = None
+    bookmark_time: str
 
     @classmethod
     def from_tuple_to_dict(cls, values: tuple) -> dict:
