@@ -50,10 +50,12 @@ jobs:
       run: |
           echo "BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
 
-    - name: Install & Scan MOONSHOT
+    - name: Setup Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: "3.11"
+
+    - name: Install & Scan MOONSHOT
       run: |
           python -m venv venv
           source venv/bin/activate
