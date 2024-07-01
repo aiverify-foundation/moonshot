@@ -29,6 +29,7 @@ from moonshot.src.api.api_dataset import (
     api_delete_dataset,
     api_get_all_datasets,
     api_get_all_datasets_name,
+    api_create_datasets
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
@@ -152,4 +153,5 @@ __all__ = [
     "api_update_metric",
     "api_update_prompt_template",
     "api_update_system_prompt",
+    "api_create_datasets"
 ]
