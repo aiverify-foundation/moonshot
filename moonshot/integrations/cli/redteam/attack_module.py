@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_attack_module, api_get_all_attack_module_metadata
-from moonshot.integrations.cli.utils.utils import find_keyword
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 

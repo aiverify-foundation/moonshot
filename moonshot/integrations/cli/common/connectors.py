@@ -13,7 +13,7 @@ from moonshot.api import (
     api_read_endpoint,
     api_update_endpoint,
 )
-from moonshot.integrations.cli.utils.utils import find_keyword
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 

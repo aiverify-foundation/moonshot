@@ -17,8 +17,8 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
-from moonshot.integrations.cli.utils.utils import find_keyword
 from moonshot.src.redteaming.session.session import Session
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 

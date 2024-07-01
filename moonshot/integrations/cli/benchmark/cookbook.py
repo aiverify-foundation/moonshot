@@ -23,7 +23,7 @@ from moonshot.integrations.cli.benchmark.recipe import (
     display_view_statistics_format,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
-from moonshot.integrations.cli.utils.utils import find_keyword
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
