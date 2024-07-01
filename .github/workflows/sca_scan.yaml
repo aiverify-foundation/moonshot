@@ -56,6 +56,7 @@ jobs:
     - name: Install & Scan MOONSHOT
       run: |
           echo $BRANCH
+          ls
           cd moonshot
           python -m venv venv
           pip install -r requirements.txt
