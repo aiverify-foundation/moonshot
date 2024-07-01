@@ -8,7 +8,9 @@ from moonshot.integrations.cli.common.connectors import (
     delete_endpoint,
     delete_endpoint_args,
     list_connector_types,
+    list_connector_types_args,
     list_endpoints,
+    list_endpoints_args,
     update_endpoint,
     update_endpoint_args,
     view_endpoint,
@@ -18,6 +20,7 @@ from moonshot.integrations.cli.common.prompt_template import (
     delete_prompt_template,
     delete_prompt_template_args,
     list_prompt_templates,
+    list_prompt_templates_args,
 )
 
 
@@ -30,14 +33,17 @@ class CommonCommandSet(cmd2.CommandSet):
     # List contents
     # ------------------------------------------------------------------------------
 
-    def do_list_connector_types(self, _: cmd2.Statement) -> None:
-        list_connector_types()
+    @cmd2.with_argparser(list_connector_types_args)
+    def do_list_connector_types(self, args: argparse.Namespace) -> None:
+        list_connector_types(args)
 
-    def do_list_endpoints(self, _: cmd2.Statement) -> None:
-        list_endpoints()
+    @cmd2.with_argparser(list_endpoints_args)
+    def do_list_endpoints(self, args: argparse.Namespace) -> None:
+        list_endpoints(args)
 
-    def do_list_prompt_templates(self, _: cmd2.Statement) -> None:
-        list_prompt_templates()
+    @cmd2.with_argparser(list_prompt_templates_args)
+    def do_list_prompt_templates(self, args: argparse.Namespace) -> None:
+        list_prompt_templates(args)
 
     @cmd2.with_argparser(delete_prompt_template_args)
     def do_delete_prompt_template(self, args: argparse.Namespace) -> None:

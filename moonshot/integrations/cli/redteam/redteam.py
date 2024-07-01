@@ -6,12 +6,14 @@ from moonshot.integrations.cli.redteam.attack_module import (
     delete_attack_module,
     delete_attack_module_args,
     list_attack_modules,
+    list_attack_modules_args,
 )
 from moonshot.integrations.cli.redteam.context_strategy import (
     clear_context_strategy,
     delete_context_strategy,
     delete_context_strategy_args,
     list_context_strategies,
+    list_context_strategies_args,
     use_context_strategy,
     use_context_strategy_args,
 )
@@ -26,6 +28,7 @@ from moonshot.integrations.cli.redteam.session import (
     delete_session_args,
     end_session,
     list_sessions,
+    list_sessions_args,
     new_session,
     new_session_args,
     run_attack_module,
@@ -46,8 +49,9 @@ class RedTeamCommandSet(cmd2.CommandSet):
     def do_end_session(self, _: cmd2.Statement) -> None:
         end_session()
 
-    def do_list_sessions(self, _: cmd2.Statement) -> None:
-        list_sessions()
+    @cmd2.with_argparser(list_sessions_args)
+    def do_list_sessions(self, args: argparse.Namespace) -> None:
+        list_sessions(args)
 
     @cmd2.with_argparser(use_session_args)
     def do_use_session(self, args: argparse.Namespace) -> None:
@@ -60,8 +64,9 @@ class RedTeamCommandSet(cmd2.CommandSet):
     def do_clear_prompt_template(self, _: cmd2.Statement) -> None:
         clear_prompt_template()
 
-    def do_list_context_strategies(self, _: cmd2.Statement) -> None:
-        list_context_strategies()
+    @cmd2.with_argparser(list_context_strategies_args)
+    def do_list_context_strategies(self, args: argparse.Namespace) -> None:
+        list_context_strategies(args)
 
     @cmd2.with_argparser(use_context_strategy_args)
     def do_use_context_strategy(self, args: argparse.Namespace) -> None:
@@ -74,8 +79,9 @@ class RedTeamCommandSet(cmd2.CommandSet):
     def do_run_attack_module(self, args: argparse.Namespace) -> None:
         run_attack_module(args)
 
-    def do_list_attack_modules(self, _: cmd2.Statement) -> None:
-        list_attack_modules()
+    @cmd2.with_argparser(list_attack_modules_args)
+    def do_list_attack_modules(self, args: argparse.Namespace) -> None:
+        list_attack_modules(args)
 
     @cmd2.with_argparser(delete_session_args)
     def do_delete_session(self, args: argparse.Namespace) -> None:
