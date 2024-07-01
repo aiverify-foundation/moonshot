@@ -32,6 +32,9 @@ $ python -m moonshot web
 
 Lastly, access Moonshot UI using a browser (`http://localhost:3000`).
 
+!!! warning
+    If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the dependency for moonshot-data. Please refer to this [FAQ](../faq.md#i-am-unable-to-install-pytorch) for a potential solution.
+
 ## Extra Resources
 
 ### Setting up Virtual Environment
