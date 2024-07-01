@@ -100,3 +100,7 @@ Open your preferred code editor, locate the `token` field, and replace `ADD_API_
 ### I cannot see my newly created endpoints in the model endpoint page.
 
 Please refresh the page.
+
+### I am unable to install PyTorch
+
+If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
