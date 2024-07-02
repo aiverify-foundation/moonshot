@@ -43,6 +43,7 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
+        pip install -r requirements.txt
 
     - name: Checkout Moonshot Data
       uses: actions/checkout@v3
@@ -78,7 +79,6 @@ jobs:
 
     - name: Run Moonshot
       run: |
-         pip install python-dotenv
          python -m moonshot web &
 
     - name: Run Smoke Test
