@@ -75,6 +75,7 @@ jobs:
         cd moonshot-ui
         npm ci
         npm run build
+        pwd
         source venv/bin/activate
         cd ../
         python -m moonshot web
