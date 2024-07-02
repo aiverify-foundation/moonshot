@@ -953,7 +953,7 @@ class TestCollectionApiRecipe:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Recipe ID is empty",
+                    "expected_error_message": "Recipe ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -1143,7 +1143,7 @@ class TestCollectionApiRecipe:
                 [""],
                 {
                     "expected_output": False,
-                    "expected_error_message": "Recipe ID is empty",
+                    "expected_error_message": "Recipe ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),

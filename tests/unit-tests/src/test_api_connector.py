@@ -68,7 +68,7 @@ class TestCollectionApiConnector:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty",
+                    "expected_error_message": "Connector Endpoint ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -225,7 +225,7 @@ class TestCollectionApiConnector:
                 [""],
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty",
+                    "expected_error_message": "Connector Endpoint ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),

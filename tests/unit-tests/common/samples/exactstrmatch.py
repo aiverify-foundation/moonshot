@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Any
 
 from moonshot.src.metrics.metric_interface import MetricInterface
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ExactStrMatch(MetricInterface):
     def __init__(self):
-        self.id = "exactstrmatch"
+        self.id = Path(__file__).stem
         self.name = "ExactStrMatch"
         self.description = (
             "ExactStrMatch will compare the output from language model with a single target"

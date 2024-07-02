@@ -457,7 +457,7 @@ class TestCollectionApiConnectorEndpoint:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty",
+                    "expected_error_message": "Connector Endpoint ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -588,7 +588,7 @@ class TestCollectionApiConnectorEndpoint:
                 },
                 {
                     "expected_output": False,
-                    "expected_error_message": "[api_connector_endpoint]: Endpoint with ID 'openai' does not exist",
+                    "expected_error_message": "[api_update_endpoint]: Endpoint with ID 'openai' does not exist",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -599,7 +599,7 @@ class TestCollectionApiConnectorEndpoint:
                 },
                 {
                     "expected_output": False,
-                    "expected_error_message": "[api_connector_endpoint]: Endpoint with ID '' does not exist",
+                    "expected_error_message": "[api_update_endpoint]: Endpoint with ID '' does not exist",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -621,7 +621,7 @@ class TestCollectionApiConnectorEndpoint:
                 },
                 {
                     "expected_output": False,
-                    "expected_error_message": "[api_connector_endpoint]: Endpoint with ID 'None' does not exist",
+                    "expected_error_message": "[api_update_endpoint]: Endpoint with ID 'None' does not exist",
                     "expected_exception": "RuntimeError",
                 },
             ),
