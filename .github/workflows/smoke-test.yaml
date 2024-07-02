@@ -66,8 +66,9 @@ jobs:
     - name: Setup Moonshot UI
       run: |
         cd moonshot-ui
-        pip install -r requirements.txt
-
+        ls
+        npm install
+        
     - name: Checkout Smoke Test 
       uses: actions/checkout@v3
       with:
