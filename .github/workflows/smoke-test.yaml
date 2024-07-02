@@ -59,6 +59,7 @@ jobs:
 
     - name: Setup Moonshot Data
       run: |
+        source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
 
@@ -73,8 +74,7 @@ jobs:
       run: |
         cd moonshot-ui
         npm ci
-        cd ../
-        pwd
+        npm run build
         source venv/bin/activate
         python -m moonshot web
 
