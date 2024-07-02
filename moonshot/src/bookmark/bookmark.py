@@ -143,9 +143,7 @@ class Bookmark:
                     f"[Bookmark] No record found for bookmark_id {bookmark_id}"
                 )
         else:
-            raise RuntimeError(
-                f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
-            )
+            raise RuntimeError(f"[Bookmark] Invalid bookmark_id: {bookmark_id}")
 
     def delete_bookmark(self, bookmark_id: int) -> None:
         """
@@ -160,9 +158,7 @@ class Bookmark:
             )
             print("Bookmark record deleted")
         else:
-            raise RuntimeError(
-                f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
-            )
+            raise RuntimeError(f"[Bookmark] Invalid bookmark_id: {bookmark_id}")
 
     def delete_all_bookmark(self) -> None:
         """
@@ -173,7 +169,9 @@ class Bookmark:
         )
         print("All bookmark records deleted")
 
-    def export_bookmarks(self, export_file_name: str = "bookmarks", write_file: bool = False) -> list[dict]:
+    def export_bookmarks(
+        self, write_file: bool = False, export_file_name: str = "bookmarks"
+    ) -> list[dict]:
         """
         Export all bookmarks to a JSON file or external storage.
 

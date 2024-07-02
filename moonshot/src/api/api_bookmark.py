@@ -80,7 +80,7 @@ def api_delete_all_bookmarks() -> None:
     bookmark_instance.delete_all_bookmark()
 
 
-def api_export_bookmarks(export_file_name: str = "bookmarks", write_file: bool = False) -> list[dict]:
+def api_export_bookmarks(write_file: bool = False, export_file_name: str = "bookmarks") -> list[dict]:
     """
     Exports bookmarks to a specified file or external storage if write_file is True.
 
@@ -91,4 +91,4 @@ def api_export_bookmarks(export_file_name: str = "bookmarks", write_file: bool =
     Returns:
         list[dict]: A list of bookmarks if write_file is False, otherwise the result of the write operation.
     """
-    return bookmark_instance.export_bookmarks(export_file_name, write_file)
+    return bookmark_instance.export_bookmarks(write_file, export_file_name)
