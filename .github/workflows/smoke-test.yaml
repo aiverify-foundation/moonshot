@@ -26,7 +26,7 @@ concurrency:
 jobs:
   smoke-test:
 
-    runs-on: alpine:latest
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
