@@ -1,7 +1,14 @@
 from moonshot.src.bookmark.bookmark import Bookmark
 from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
 
-bookmark_instance = Bookmark()
+_bookmark_instance = None
+
+
+def get_bookmark_instance():
+    global _bookmark_instance
+    if _bookmark_instance is None:
+        _bookmark_instance = Bookmark()
+    return _bookmark_instance
 
 
 def api_insert_bookmark(
@@ -11,7 +18,7 @@ def api_insert_bookmark(
     context_strategy: str,
     prompt_template: str,
     attack_module: str,
-) -> None:
+) -> dict:
     """
     Inserts a new bookmark into the database.
 
@@ -37,7 +44,7 @@ def api_insert_bookmark(
         attack_module=attack_module,
         bookmark_time="",  # bookmark_time will be set to current time in add_bookmark method
     )
-    bookmark_instance.add_bookmark(bookmark_args)
+    return get_bookmark_instance().add_bookmark(bookmark_args)
 
 
 def api_get_all_bookmarks() -> list[dict]:
@@ -47,7 +54,7 @@ def api_get_all_bookmarks() -> list[dict]:
     Returns:
         list[dict]: A list of bookmarks, each represented as a dictionary.
     """
-    return bookmark_instance.get_all_bookmarks()
+    return get_bookmark_instance().get_all_bookmarks()
 
 
 def api_get_bookmark_by_id(bookmark_id: int) -> dict:
@@ -60,27 +67,29 @@ def api_get_bookmark_by_id(bookmark_id: int) -> dict:
     Returns:
         dict: The bookmark details corresponding to the provided ID.
     """
-    return bookmark_instance.get_bookmark_by_id(bookmark_id)
+    return get_bookmark_instance().get_bookmark_by_id(bookmark_id)
 
 
-def api_delete_bookmark(bookmark_id: int) -> None:
+def api_delete_bookmark(bookmark_id: int) -> dict:
     """
     Removes a bookmark from the database using its ID.
 
     Args:
         bookmark_id (int): The ID of the bookmark to be removed.
     """
-    bookmark_instance.delete_bookmark(bookmark_id)
+    return get_bookmark_instance().delete_bookmark(bookmark_id)
 
 
-def api_delete_all_bookmarks() -> None:
+def api_delete_all_bookmark() -> dict:
     """
     Removes all bookmarks from the database.
     """
-    bookmark_instance.delete_all_bookmark()
+    return get_bookmark_instance().delete_all_bookmark()
 
 
-def api_export_bookmarks(write_file: bool = False, export_file_name: str = "bookmarks") -> list[dict]:
+def api_export_bookmarks(
+    write_file: bool = False, export_file_name: str = "bookmarks"
+) -> list[dict]:
     """
     Exports bookmarks to a specified file or external storage if write_file is True.
 
@@ -91,4 +100,4 @@ def api_export_bookmarks(write_file: bool = False, export_file_name: str = "book
     Returns:
         list[dict]: A list of bookmarks if write_file is False, otherwise the result of the write operation.
     """
-    return bookmark_instance.export_bookmarks(write_file, export_file_name)
+    return get_bookmark_instance().export_bookmarks(write_file, export_file_name)

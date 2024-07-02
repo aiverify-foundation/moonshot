@@ -72,12 +72,15 @@ class Bookmark:
             self.db_instance, Bookmark.sql_create_bookmark_table
         )
 
-    def add_bookmark(self, bookmark: BookmarkArguments) -> None:
+    def add_bookmark(self, bookmark: BookmarkArguments) -> dict:
         """
-        Add a new bookmark to the database.
+        Add a new bookmark to the database and return the success status.
 
         Args:
             bookmark (BookmarkArguments): The bookmark data to add.
+
+        Returns:
+            bool: True if the bookmark was added successfully, False otherwise.
         """
         if bookmark.bookmark_time is None:
             bookmark.bookmark_time = (
@@ -93,11 +96,16 @@ class Bookmark:
             bookmark.bookmark_time,
         )
         try:
-            Storage.create_database_record(
+            results = Storage.create_database_record(
                 self.db_instance, data, Bookmark.sql_insert_bookmark_record
             )
+            if results is not None:
+                return {"success": True, "message": "Bookmark added successfully."}
+            else:
+                raise Exception("Error inserting record into database.")
         except Exception as e:
-            print(f"Failed to add bookmark record: {e}")
+            error_message = f"Failed to add bookmark record: {e}"
+            return {"success": False, "message": error_message}
 
     def get_all_bookmarks(self) -> list[dict]:
         """
@@ -145,7 +153,7 @@ class Bookmark:
         else:
             raise RuntimeError(f"[Bookmark] Invalid bookmark_id: {bookmark_id}")
 
-    def delete_bookmark(self, bookmark_id: int) -> None:
+    def delete_bookmark(self, bookmark_id: int) -> dict:
         """
         Delete a bookmark by its unique ID.
 
@@ -153,21 +161,33 @@ class Bookmark:
             bookmark_id (int): The unique identifier for the bookmark to be deleted.
         """
         if bookmark_id is not None:
-            Storage.delete_database_record_by_id(
-                self.db_instance, bookmark_id, Bookmark.sql_delete_bookmark_record
-            )
-            print("Bookmark record deleted")
+            try:
+                Storage.delete_database_record_by_id(
+                    self.db_instance, bookmark_id, Bookmark.sql_delete_bookmark_record
+                )
+                return {"success": True, "message": "Bookmark record deleted."}
+            except Exception as e:
+                error_message = f"Failed to delete bookmark record: {e}"
+                return {"success": False, "message": error_message}
         else:
-            raise RuntimeError(f"[Bookmark] Invalid bookmark_id: {bookmark_id}")
+            error_message = f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
+            return {"success": False, "message": error_message}
 
-    def delete_all_bookmark(self) -> None:
+    def delete_all_bookmark(self) -> dict:
         """
-        Delete all bookmarks from the database.
+        Delete all bookmarks from the database and return the operation result.
+
+        Returns:
+            dict: A dictionary with 'success' status and 'message' containing an error message if failed.
         """
-        Storage.delete_database_record_in_table(
-            self.db_instance, Bookmark.sql_delete_bookmark_records
-        )
-        print("All bookmark records deleted")
+        try:
+            Storage.delete_database_record_in_table(
+                self.db_instance, Bookmark.sql_delete_bookmark_records
+            )
+            return {"success": True, "message": "All bookmark records deleted."}
+        except Exception as e:
+            error_message = f"Failed to delete all bookmark records: {e}"
+            return {"success": False, "message": error_message}
 
     def export_bookmarks(
         self, write_file: bool = False, export_file_name: str = "bookmarks"
