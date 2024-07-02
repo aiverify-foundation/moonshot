@@ -76,9 +76,8 @@ jobs:
         npm ci
         npm run build
         cd ../
-        ls
         source venv/bin/activate
-        python -m moonshot web
+        python -m moonshot web &
 
     - name: Checkout Smoke Test 
       uses: actions/checkout@v3
