@@ -41,7 +41,6 @@ jobs:
     
     - name: Setup Moonshot
       run: |
-        pwd
         python -m venv venv
         source venv/bin/activate
 
@@ -50,13 +49,11 @@ jobs:
       with: 
          repository: aiverify-foundation/moonshot-data
          ref: main
-         path: moonshot/moonshot-data
+         path: moonshot-data
 
     - name: Setup Moonshot Data
       run: |
-        pwd
-        cd moonshot/moonshot-data
-        pwd
+        cd moonshot-data
         pip install -r requirements.txt
 
     - name: Checkout Moonshot UI
@@ -64,13 +61,11 @@ jobs:
       with:
         repository: aiverify-foundation/moonshot-ui
         ref: main
-        path: moonshot/moonshot-ui
+        path: moonshot-ui
     
     - name: Setup Moonshot UI
       run: |
-        pwd
-        cd moonshot/moonshot-ui
-        pwd
+        cd moonshot-ui
         pip install -r requirements.txt
 
     - name: Checkout Smoke Test 
@@ -82,16 +77,11 @@ jobs:
 
     - name: Run Moonshot
       run: |
-         pwd
-         cd moonshot
-         pwd
          python -m moonshot web &
 
     - name: Run Smoke Test
       run: |
-         pwd
          cd moonshot-smoke-testing
-         pwd
          npm ci
          npx playwright install
          npx playwright test tests/main-page.spec.ts
