@@ -67,8 +67,9 @@ jobs:
     - name: Setup Moonshot UI
       run: |
         cd moonshot-ui
-        npm install
-        npx playwright install
+        npm ci
+        cd ../
+        python -m moonshot web
 
     - name: Checkout Smoke Test 
       uses: actions/checkout@v3
@@ -76,10 +77,6 @@ jobs:
           repository: aiverify-foundation/moonshot-smoke-testing
           ref: main
           path: moonshot-smoke-testing
-
-    - name: Run Moonshot
-      run: |
-         python -m moonshot web &
 
     - name: Run Smoke Test
       run: |
