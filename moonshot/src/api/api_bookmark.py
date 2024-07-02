@@ -60,7 +60,7 @@ def api_get_bookmark_by_id(bookmark_id: int) -> dict:
     Returns:
         dict: The bookmark details corresponding to the provided ID.
     """
-    return bookmark_instance.get_bookbookmarks_by_id(bookmark_id)
+    return bookmark_instance.get_bookmark_by_id(bookmark_id)
 
 
 def api_delete_bookmark(bookmark_id: int) -> None:
