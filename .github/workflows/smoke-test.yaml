@@ -66,9 +66,9 @@ jobs:
     - name: Setup Moonshot UI
       run: |
         cd moonshot-ui
-        ls
         npm install
-        
+        npx playwright install
+
     - name: Checkout Smoke Test 
       uses: actions/checkout@v3
       with:
@@ -78,6 +78,7 @@ jobs:
 
     - name: Run Moonshot
       run: |
+         pip install dotenv
          python -m moonshot web &
 
     - name: Run Smoke Test
