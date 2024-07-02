@@ -54,7 +54,7 @@ jobs:
       uses: actions/checkout@v3
       with: 
          repository: aiverify-foundation/moonshot-data
-         ref: main
+         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
          path: moonshot-data
 
     - name: Setup Moonshot Data
@@ -67,7 +67,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: aiverify-foundation/moonshot-ui
-        ref: main
+        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
         path: moonshot-ui
     
     - name: Setup Moonshot UI
