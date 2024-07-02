@@ -41,6 +41,7 @@ jobs:
     
     - name: Setup Moonshot
       run: |
+        pwd
         python -m venv venv
         source venv/bin/activate
 
@@ -53,7 +54,9 @@ jobs:
 
     - name: Setup Moonshot Data
       run: |
+        pwd
         cd moonshot/moonshot-data
+        pwd
         pip install -r requirements.txt
 
     - name: Checkout Moonshot UI
@@ -65,8 +68,9 @@ jobs:
     
     - name: Setup Moonshot UI
       run: |
-        ls
+        pwd
         cd moonshot/moonshot-ui
+        pwd
         pip install -r requirements.txt
 
     - name: Checkout Smoke Test 
@@ -78,12 +82,16 @@ jobs:
 
     - name: Run Moonshot
       run: |
+         pwd
          cd moonshot
+         pwd
          python -m moonshot web &
 
     - name: Run Smoke Test
       run: |
+         pwd
          cd moonshot-smoke-testing
+         pwd
          npm ci
          npx playwright install
          npx playwright test tests/main-page.spec.ts
