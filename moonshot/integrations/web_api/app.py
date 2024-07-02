@@ -71,7 +71,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
 
     app: CustomFastAPI = CustomFastAPI(
         title="Project Moonshot",
-        version="0.4.0",
+        version="0.4.1",
         **app_kwargs
     )
 
