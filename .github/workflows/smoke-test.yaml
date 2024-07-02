@@ -26,7 +26,7 @@ concurrency:
 jobs:
   smoke-test:
 
-    runs-on: alpine:3.17
+    runs-on: alpine:latest
     timeout-minutes: 20
 
     steps:
