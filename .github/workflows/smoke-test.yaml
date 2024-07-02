@@ -85,5 +85,5 @@ jobs:
       run: |
          cd moonshot-smoke-testing
          npm ci
-         npx playwright install
+         npx playwright install --with-deps
          npx playwright test tests/main-page.spec.ts
