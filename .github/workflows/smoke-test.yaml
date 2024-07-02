@@ -75,9 +75,8 @@ jobs:
         cd moonshot-ui
         npm ci
         npm run build
-        pwd
+        cd ../../
         source venv/bin/activate
-        cd ../
         python -m moonshot web
 
     - name: Checkout Smoke Test 
