@@ -9,9 +9,17 @@ class Bookmark:
     _instance = None
 
     def __new__(cls, db_name="bookmark"):
+        """
+        Create a new instance of the Bookmark class or return the existing instance.
+
+        Args:
+            db_name (str): The name of the database.
+
+        Returns:
+            Bookmark: The singleton instance of the Bookmark class.
+        """
         if cls._instance is None:
             cls._instance = super(Bookmark, cls).__new__(cls)
-            # Initialize the instance if it hasn't been done yet
             cls._instance.__init_instance(db_name)
         return cls._instance
 
@@ -51,6 +59,12 @@ class Bookmark:
     """
 
     def __init_instance(self, db_name) -> None:
+        """
+        Initialize the database instance for the Bookmark class.
+
+        Args:
+            db_name (str): The name of the database.
+        """
         self.db_instance = Storage.create_database_connection(
             EnvVariables.BOOKMARK.name, db_name, "db"
         )
@@ -59,6 +73,12 @@ class Bookmark:
         )
 
     def add_bookmark(self, bookmark: BookmarkArguments) -> None:
+        """
+        Add a new bookmark to the database.
+
+        Args:
+            bookmark (BookmarkArguments): The bookmark data to add.
+        """
         if bookmark.bookmark_time is None:
             bookmark.bookmark_time = (
                 datetime.now().replace(microsecond=0).isoformat(" ")
@@ -80,6 +100,12 @@ class Bookmark:
             print(f"Failed to add bookmark record: {e}")
 
     def get_all_bookmarks(self) -> list[dict]:
+        """
+        Retrieve all bookmarks from the database.
+
+        Returns:
+            list[dict]: A list of all bookmarks as dictionaries.
+        """
         list_of_bookmarks_tuples = Storage.read_database_records(
             self.db_instance,
             Bookmark.sql_select_bookmarks_record,
@@ -94,17 +120,40 @@ class Bookmark:
         return list_of_bookmarks
 
     def get_bookmark_by_id(self, bookmark_id: int) -> dict:
+        """
+        Retrieve a bookmark by its unique ID.
+
+        Args:
+            bookmark_id (int): The unique identifier for the bookmark.
+
+        Returns:
+            dict: The bookmark information as a dictionary.
+
+        Raises:
+            RuntimeError: If the bookmark cannot be found.
+        """
         if bookmark_id is not None:
             bookmark_info = Storage.read_database_record(
                 self.db_instance, (bookmark_id,), Bookmark.sql_select_bookmark_record
             )
-            return BookmarkArguments.from_tuple_to_dict(bookmark_info)
+            if bookmark_info is not None:
+                return BookmarkArguments.from_tuple_to_dict(bookmark_info)
+            else:
+                raise RuntimeError(
+                    f"[Bookmark] No record found for bookmark_id {bookmark_id}"
+                )
         else:
             raise RuntimeError(
-                f"[Bookmark] Failed to get database record for bookmark_id {bookmark_id}: {self.db_instance}"
+                f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
             )
 
     def delete_bookmark(self, bookmark_id: int) -> None:
+        """
+        Delete a bookmark by its unique ID.
+
+        Args:
+            bookmark_id (int): The unique identifier for the bookmark to be deleted.
+        """
         if bookmark_id is not None:
             Storage.delete_database_record_by_id(
                 self.db_instance, bookmark_id, Bookmark.sql_delete_bookmark_record
@@ -112,33 +161,52 @@ class Bookmark:
             print("Bookmark record deleted")
         else:
             raise RuntimeError(
-                f"[Bookmark] Failed to get database record for bookmark_id {bookmark_id}: {self.db_instance}"
+                f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
             )
 
     def delete_all_bookmark(self) -> None:
+        """
+        Delete all bookmarks from the database.
+        """
         Storage.delete_database_record_in_table(
             self.db_instance, Bookmark.sql_delete_bookmark_records
         )
         print("All bookmark records deleted")
 
-    def close(self) -> None:
-        if self.db_instance:
-            Storage.close_database_connection(self.db_instance)
+    def export_bookmarks(self, export_file_name: str = "bookmarks", write_file: bool = False) -> list[dict]:
+        """
+        Export all bookmarks to a JSON file or external storage.
 
-    def export_bookmarks(self, export_file_name: str = "bookmarks") -> None:
+        Args:
+            export_file_name (str): The name of the file to export the bookmarks to.
+            write_file (bool): Whether to write the bookmarks to a file.
+
+        Returns:
+            list[dict]: A list of all bookmarks as dictionaries.
+        """
         list_of_bookmarks_tuples = Storage.read_database_records(
             self.db_instance,
             Bookmark.sql_select_bookmarks_record,
         )
-        print("tuple bm", list_of_bookmarks_tuples)
+
         bookmarks_json = [
             BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
             for bookmark_tuple in list_of_bookmarks_tuples
         ]
 
-        Storage.create_object(
-            EnvVariables.BOOKMARK.name,
-            export_file_name,
-            {"bookmarks": bookmarks_json},
-            "json",
-        )
+        if write_file:
+            Storage.create_object(
+                EnvVariables.BOOKMARK.name,
+                export_file_name,
+                {"bookmarks": bookmarks_json},
+                "json",
+            )
+
+        return bookmarks_json
+
+    def close(self) -> None:
+        """
+        Close the database connection.
+        """
+        if self.db_instance:
+            Storage.close_database_connection(self.db_instance)

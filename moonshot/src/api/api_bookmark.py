@@ -13,19 +13,18 @@ def api_insert_bookmark(
     attack_module: str,
 ) -> None:
     """
-    Inserts a new bookmark.
+    Inserts a new bookmark into the database.
 
-    This function takes the details for a new bookmark as input. It then creates a new
-    BookmarkArguments object with these details. The function then calls the Bookmark's
-    add_bookmark method to insert the new bookmark.
+    This function constructs a BookmarkArguments object with the provided details and
+    invokes the add_bookmark method of a Bookmark instance to persist the new bookmark.
 
     Args:
-        name (str): The name of the bookmark, must be unique.
-        prompt (str): The prompt text for the bookmark.
-        response (str): The response text for the bookmark.
-        context_strategy (str): The context strategy for the bookmark.
-        prompt_template (str): The prompt template for the bookmark.
-        attack_module (str): The attack module for the bookmark.
+        name (str): The unique name of the bookmark.
+        prompt (str): The associated prompt text for the bookmark.
+        response (str): The corresponding response text for the bookmark.
+        context_strategy (str): The strategy used for context management in the bookmark.
+        prompt_template (str): The template used for generating the prompt.
+        attack_module (str): The attack module linked with the bookmark.
     """
     # Create a new BookmarkArguments object
     bookmark_args = BookmarkArguments(
@@ -41,51 +40,55 @@ def api_insert_bookmark(
     bookmark_instance.add_bookmark(bookmark_args)
 
 
-def api_get_all_bookmarks():
+def api_get_all_bookmarks() -> list[dict]:
     """
-    Retrieves all bookmarks from the database.
+    Retrieves a list of all bookmarks from the database.
 
     Returns:
-        list: A list of all bookmarks as dictionaries.
+        list[dict]: A list of bookmarks, each represented as a dictionary.
     """
     return bookmark_instance.get_all_bookmarks()
 
 
-def api_get_bookmark_by_id(bookmark_id: int):
+def api_get_bookmark_by_id(bookmark_id: int) -> dict:
     """
-    Retrieves a bookmark by its unique ID.
+    Retrieves the details of a specific bookmark by its ID.
 
     Args:
-        bookmark_id (int): The unique identifier for the bookmark.
+        bookmark_id (int): The ID of the bookmark to retrieve.
 
     Returns:
-        BookmarkArguments: The bookmark corresponding to the given ID.
+        dict: The bookmark details corresponding to the provided ID.
     """
-    return bookmark_instance.get_bookmark_by_id(bookmark_id)
+    return bookmark_instance.get_bookbookmarks_by_id(bookmark_id)
 
 
-def api_delete_bookmark(bookmark_id: int):
+def api_delete_bookmark(bookmark_id: int) -> None:
     """
-    Deletes a bookmark from the database by its unique ID.
+    Removes a bookmark from the database using its ID.
 
     Args:
-        bookmark_id (int): The unique identifier for the bookmark to be deleted.
+        bookmark_id (int): The ID of the bookmark to be removed.
     """
     bookmark_instance.delete_bookmark(bookmark_id)
 
 
-def api_delete_all_bookmark():
+def api_delete_all_bookmarks() -> None:
     """
-    Deletes all bookmarks from the database.
+    Removes all bookmarks from the database.
     """
     bookmark_instance.delete_all_bookmark()
 
 
-def api_export_bookmarks():
+def api_export_bookmarks(export_file_name: str = "bookmarks", write_file: bool = False) -> list[dict]:
     """
-    Exports all bookmarks to a file or external storage.
+    Exports bookmarks to a specified file or external storage if write_file is True.
+
+    Args:
+        export_file_name (str): The name of the file to export the bookmarks to.
+        write_file (bool): A flag indicating whether to write the bookmarks to a file.
 
     Returns:
-        str: A message indicating the export status.
+        list[dict]: A list of bookmarks if write_file is False, otherwise the result of the write operation.
     """
-    return bookmark_instance.export_bookmarks()
+    return bookmark_instance.export_bookmarks(export_file_name, write_file)
