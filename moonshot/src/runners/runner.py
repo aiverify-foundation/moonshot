@@ -82,7 +82,7 @@ class Runner:
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
-                EnvVariables.DATABASES.name, runner_id, "db"
+                EnvVariables.DATABASES.name, Path(runner_args.database_file).stem, "db"
             )
             runner_args.progress_callback_func = progress_callback_func
             return cls(runner_args)
