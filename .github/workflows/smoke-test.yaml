@@ -43,14 +43,14 @@ jobs:
 
     - name: Checkout Moonshot (Pull Request)
       if: github.event_name == 'pull_request'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           repository: aiverify-foundation/moonshot-data
           ref: ${{ inputs.moonshot_branch }}
@@ -68,7 +68,7 @@ jobs:
 
     - name: Checkout Moonshot Data (Pull Request)
       if: github.event_name == 'pull_request'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with: 
          repository: aiverify-foundation/moonshot-data
          ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
@@ -76,7 +76,7 @@ jobs:
 
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with: 
          repository: aiverify-foundation/moonshot-data
          ref: ${{ inputs.moonshot_data_branch }}
@@ -90,7 +90,7 @@ jobs:
 
     - name: Checkout Moonshot UI (Pull Request)
       if: github.event_name == 'pull_request'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ vars.MOONSHOT_UI_BRANCH }}
@@ -98,7 +98,7 @@ jobs:
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
@@ -114,7 +114,7 @@ jobs:
         python -m moonshot web &
 
     - name: Checkout Smoke Test 
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           repository: aiverify-foundation/moonshot-smoke-testing
           path: moonshot-smoke-testing
