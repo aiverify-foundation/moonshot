@@ -11,7 +11,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_metrics(args) -> None:
+def list_metrics(args) -> list | None:
     """
     List all available metrics.
 
@@ -24,7 +24,7 @@ def list_metrics(args) -> None:
         find (str): Optional field to find metric(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Metric or None if there is no result.
     """
     try:
         print("Listing metrics may take a while...")
@@ -34,10 +34,13 @@ def list_metrics(args) -> None:
             filtered_metrics_list = find_keyword(keyword, metrics_list)
             if filtered_metrics_list:
                 display_metrics(filtered_metrics_list)
+                return filtered_metrics_list
             else:
                 print("No metrics containing keyword found.")
+                return None
         else:
             display_metrics(metrics_list)
+            return metrics_list
     except Exception as e:
         print(f"[list_metrics]: {str(e)}")
 

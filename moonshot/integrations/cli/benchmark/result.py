@@ -17,7 +17,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_results(args) -> None:
+def list_results(args) -> list | None:
     """
     List all available results.
 
@@ -30,7 +30,7 @@ def list_results(args) -> None:
         find (str): Optional field to find result(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Result or None if there is no result.
     """
     try:
         results_list = api_get_all_result()
@@ -39,10 +39,13 @@ def list_results(args) -> None:
             filtered_results_list = find_keyword(keyword, results_list)
             if filtered_results_list:
                 display_results(filtered_results_list)
+                return filtered_results_list
             else:
                 print("No results containing keyword found.")
+                return None
         else:
             display_results(results_list)
+            return results_list
     except Exception as e:
         print(f"[list_results]: {str(e)}")
 

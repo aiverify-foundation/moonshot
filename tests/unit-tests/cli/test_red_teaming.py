@@ -1,3 +1,7 @@
+import argparse
+from moonshot.integrations.cli.redteam.attack_module import list_attack_modules
+from moonshot.integrations.cli.redteam.context_strategy import list_context_strategies
+from moonshot.integrations.cli.redteam.session import list_sessions
 import pytest
 from io import StringIO 
 from unittest.mock import patch
@@ -27,6 +31,15 @@ def perform_assertion(cli, command_list, expected_output, capsys):
         assert expected_output in captured.out.rstrip()
     else:
         assert expected_output in captured.err.rstrip()
+
+def perform_assertion_function_output(expected_output, returned_results, capsys):
+    if returned_results:
+        assert any(expected_output in returned_result.values() for returned_result in returned_results)
+    else:
+        captured = capsys.readouterr()
+        if captured.out:
+            assert captured.out.rstrip() == expected_output or expected_output in captured.out.rstrip()
+
 
 ut_data_dir = "tests/unit-tests/src/data"
 ut_sample_dir = "tests/unit-tests/common/samples"    
@@ -389,18 +402,155 @@ class TestRedTeamingCLI:
     def test_clear_prompt_template(self, cli, command_list, expected_output, capsys):
         perform_assertion(cli, command_list, expected_output, capsys)        
 
-    # # # ------------------------------------------------------------------------------
-    # # # Listing of files
-    # # # ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # Listing of files
+    # ------------------------------------------------------------------------------
 
-    # # #     def test_list_attack_modules(self, cli, command_list, expected_output, capsys):
-    # # #         pass
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_attack_modules"],
+                "charswap_attack"
+            ),
+            # Success: Find with results
+            (
+                ["list_attack_modules -f homoglyph"],
+                "homoglyph_attack"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_attack_modules -f \"RandomArg\""],
+                "No attack modules containing keyword found."
+            ),
+            # Failure: List with unknown flag
+            (
+                ["list_attack_modules -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_attack_modules(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
 
-    # # #     def list_context_strategies(self, cli, command_list, expected_output, capsys)::
-    # # #         pass
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-attack-module", "No attack modules containing keyword found."),
 
-    # # #     def list_sessions(self, cli, command_list, expected_output, capsys)::
-    # # #         pass
+            # Success: results returned
+            ("sample", "sample_attack_module"),
+        ]
+    )
+    def test_list_attack_modules_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_attack_modules(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_context_strategies"],
+                "add_previous_prompt"
+            ),
+            # Success: Find with results
+            (
+                ["list_context_strategies -f \"add previous\""],
+                "add_previous_prompt"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_context_strategies -f \"RandomArg\""],
+                "No context strategies containing keyword found."
+            ),
+            # Failure: Lists with unknown flag
+            (
+                ["list_context_strategies -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_context_strategies(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-context-strategy", "No context strategies containing keyword found."),
+
+            # Success: results found
+            ("previous prompt", "add_previous_prompt"),
+        ]
+    )
+    def test_list_context_strategies_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_context_strategies(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 "list_sessions"],
+                f"{test_session_id}"
+            ),
+            # Success: Find with results
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 "list_sessions -f unit-test"],
+                f"{test_session_id}"
+            ),            
+            # Success: Optional args with no results found
+            (
+                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+                 "list_sessions -f \"RandomArg\""],
+                "No sessions containing keyword found."
+            ),
+            # Failure: List with unknown flag
+            (
+                ["list_sessions -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_sessions(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results found
+            ("no-such-session", "No sessions containing keyword found."),
+
+
+            # # Success: results found (Unable to test without running commands to create session)
+            # ("test-session", f"{test_session_id}"),
+        ]
+    )
+    def test_list_sessions_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_sessions(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
 
 
     

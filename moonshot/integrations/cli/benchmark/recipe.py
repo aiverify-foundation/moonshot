@@ -75,7 +75,7 @@ def add_recipe(args) -> None:
         print(f"[add_recipe]: {str(e)}")
 
 
-def list_recipes(args) -> None:
+def list_recipes(args) -> list | None:
     """
     List all available recipes.
 
@@ -88,7 +88,7 @@ def list_recipes(args) -> None:
         find (str): Optional field to find recipe(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Recipe or None if there is no result.
     """
     try:
         recipes_list = api_get_all_recipe()
@@ -97,10 +97,13 @@ def list_recipes(args) -> None:
             filtered_recipes_list = find_keyword(keyword, recipes_list)
             if filtered_recipes_list:
                 display_recipes(filtered_recipes_list)
+                return filtered_recipes_list
             else:
                 print("No recipes containing keyword found.")
+                return None
         else:
             display_recipes(recipes_list)
+            return recipes_list
     except Exception as e:
         print(f"[list_recipes]: {str(e)}")
 

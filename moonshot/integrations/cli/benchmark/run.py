@@ -15,7 +15,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_runs(args) -> None:
+def list_runs(args) -> list | None:
     """
     List all runs.
 
@@ -29,7 +29,7 @@ def list_runs(args) -> None:
         find (str): Optional field to find run(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Run or None if there is no result.
     """
     try:
         runner_run_info = api_get_all_run()
@@ -38,10 +38,13 @@ def list_runs(args) -> None:
             filtered_runs_list = find_keyword(keyword, runner_run_info)
             if filtered_runs_list:
                 display_runs(filtered_runs_list)
+                return filtered_runs_list
             else:
                 print("No runs containing keyword found.")
+                return None
         else:
             display_runs(runner_run_info)
+            return runner_run_info
     except Exception as e:
         print(f"[list_runs]: {str(e)}")
 

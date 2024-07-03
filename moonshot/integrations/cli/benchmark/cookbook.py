@@ -56,7 +56,7 @@ def add_cookbook(args) -> None:
         print(f"[add_cookbook]: {str(e)}")
 
 
-def list_cookbooks(args) -> None:
+def list_cookbooks(args) -> list | None:
     """
     List all available cookbooks.
 
@@ -69,7 +69,7 @@ def list_cookbooks(args) -> None:
         find (str): Optional field to find cookbook(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Cookbook or None if there is no result.
     """
     try:
         cookbooks_list = api_get_all_cookbook()
@@ -78,10 +78,13 @@ def list_cookbooks(args) -> None:
             filtered_cookbooks_list = find_keyword(keyword, cookbooks_list)
             if filtered_cookbooks_list:
                 display_cookbooks(filtered_cookbooks_list)
+                return filtered_cookbooks_list
             else:
                 print("No cookbooks containing keyword found.")
+                return None
         else:
             display_cookbooks(cookbooks_list)
+            return cookbooks_list
     except Exception as e:
         print(f"[list_cookbooks]: {str(e)}")
 

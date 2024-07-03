@@ -16,7 +16,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_datasets(args) -> None:
+def list_datasets(args) -> list | None:
     """
     List all available datasets.
 
@@ -29,7 +29,7 @@ def list_datasets(args) -> None:
         find (str): Optional field to find dataset(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Dataset or None if there is no result.
     """
     try:
         print("Listing datasets may take a while...")
@@ -39,10 +39,13 @@ def list_datasets(args) -> None:
             filtered_datasets_list = find_keyword(keyword, datasets_list)
             if filtered_datasets_list:
                 display_datasets(filtered_datasets_list)
+                return filtered_datasets_list
             else:
                 print("No datasets containing keyword found.")
+                return None
         else:
             display_datasets(datasets_list)
+            return datasets_list
     except Exception as e:
         print(f"[list_datasets]: {str(e)}")
 

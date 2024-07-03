@@ -105,7 +105,7 @@ def end_session() -> None:
     active_session.clear()
 
 
-def list_sessions(args) -> None:
+def list_sessions(args) -> list | None:
     """
     Retrieves and displays the list of sessions.
 
@@ -117,7 +117,7 @@ def list_sessions(args) -> None:
         find (str): Optional field to find session(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Session or None if there is no result.
     """
     try:
         session_metadata_list = api_get_all_session_metadata()
@@ -129,10 +129,14 @@ def list_sessions(args) -> None:
             )
             if filtered_session_metadata_list:
                 display_sessions(filtered_session_metadata_list)
+                return filtered_session_metadata_list
             else:
                 print("No sessions containing keyword found.")
+                return None
         else:
             display_sessions(session_metadata_list)
+            return session_metadata_list
+
     except Exception as e:
         print(f"[list_sessions]: {str(e)}")
 
@@ -241,7 +245,7 @@ def manual_red_teaming(user_prompt: str) -> None:
         runner.close()
         _reload_session(active_session["session_id"])
     except Exception as e:
-        print(f"[manual_red_teaming]: str({e})")
+        print(f"[manual_red_teaming]: ({str(e)})")
 
 
 def run_attack_module(args):

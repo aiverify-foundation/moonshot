@@ -8,7 +8,7 @@ from moonshot.src.utils.find_feature import find_keyword
 console = Console()
 
 
-def list_attack_modules(args) -> None:
+def list_attack_modules(args) -> list | None:
     """
     Retrieves and prints the metadata of all attack modules.
 
@@ -17,7 +17,7 @@ def list_attack_modules(args) -> None:
         find (str): Optional field to find attack module(s) with a keyword.
 
     Returns:
-        None
+         list | None: A list of AttackModule or None if there is no result.
     """
     try:
         print("Listing attack modules may take a while...")
@@ -30,10 +30,13 @@ def list_attack_modules(args) -> None:
             )
             if filtered_attack_modules_list:
                 display_attack_modules(filtered_attack_modules_list)
+                return filtered_attack_modules_list
             else:
                 print("No attack modules containing keyword found.")
+                return None
         else:
             display_attack_modules(attack_module_metadata_list)
+            return attack_module_metadata_list
     except Exception as e:
         print(f"[list_attack_modules]: {str(e)}")
 

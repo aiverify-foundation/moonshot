@@ -1,0 +1,20 @@
+{
+  "bertscore": {
+    "id": "bertscore",
+    "name": "BertScore",
+    "description": "BertScore uses Bert to check for the similarity in embedding between two sentences.",
+    "hash": "02e3cbd907ddcb46"
+  },
+  "bleuscore": {
+    "id": "bleuscore",
+    "name": "BleuScore",
+    "description": "Bleuscore uses Bleu to return the various rouge scores.",
+    "hash": "d1724537a6ce059f"
+  },
+  "exactstrmatch": {
+    "id": "exactstrmatch",
+    "name": "ExactStrMatch",
+    "description": "ExactStrMatch will compare the output from language model with a single target or multiple expected target.",
+    "hash": "c7183938ecde97cb"
+  }
+}

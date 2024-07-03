@@ -58,7 +58,7 @@ def add_endpoint(args) -> None:
         print(f"[add_endpoint]: {str(e)}")
 
 
-def list_endpoints(args) -> None:
+def list_endpoints(args) -> list | None:
     """
     List all endpoints.
 
@@ -70,7 +70,7 @@ def list_endpoints(args) -> None:
         find (str): Optional field to find endpoint(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of ConnectorEndpoint or None if there is no result.
     """
     try:
         endpoints_list = api_get_all_endpoint()
@@ -79,15 +79,18 @@ def list_endpoints(args) -> None:
             filtered_endpoints_list = find_keyword(keyword, endpoints_list)
             if filtered_endpoints_list:
                 display_endpoints(filtered_endpoints_list)
+                return filtered_endpoints_list
             else:
                 print("No endpoints containing keyword found.")
+                return None
         else:
             display_endpoints(endpoints_list)
+            return endpoints_list
     except Exception as e:
         print(f"[list_endpoints]: {str(e)}")
 
 
-def list_connector_types(args) -> None:
+def list_connector_types(args) -> list | None:
     """
     List all connector types.
 
@@ -99,7 +102,7 @@ def list_connector_types(args) -> None:
         find (str): Optional field to find connector type(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Connector or None if there is no result.
     """
     try:
         connector_type_list = api_get_all_connector_type()
@@ -108,10 +111,13 @@ def list_connector_types(args) -> None:
             filtered_connector_type_list = find_keyword(keyword, connector_type_list)
             if filtered_connector_type_list:
                 display_connector_types(filtered_connector_type_list)
+                return filtered_connector_type_list
             else:
-                print("No connector types containing keyword found.")
+                print("No connectors containing keyword found.")
+                return None
         else:
             display_connector_types(connector_type_list)
+            return connector_type_list
     except Exception as e:
         print(f"[list_connector_types]: {str(e)}")
 

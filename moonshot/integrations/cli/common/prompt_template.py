@@ -11,7 +11,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_prompt_templates(args) -> None:
+def list_prompt_templates(args) -> list | None:
     """
     List all prompt templates available.
 
@@ -20,7 +20,7 @@ def list_prompt_templates(args) -> None:
         find (str): Optional field to find prompt template(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of PromptTemplate or None if there is no result.
     """
     try:
         prompt_templates_list = api_get_all_prompt_template_detail()
@@ -31,12 +31,16 @@ def list_prompt_templates(args) -> None:
             )
             if filtered_prompt_templates_list:
                 display_prompt_templates(filtered_prompt_templates_list)
+                return filtered_prompt_templates_list
             else:
                 print("No prompt templates containing keyword found.")
+                return None
         else:
             display_prompt_templates(prompt_templates_list)
+            return prompt_templates_list
     except Exception as e:
         print(f"[list_prompt_templates]: {str(e)}")
+        return None
 
 
 def delete_prompt_template(args) -> None:

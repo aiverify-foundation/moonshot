@@ -53,7 +53,7 @@ def use_context_strategy(args: argparse.Namespace) -> None:
         )
 
 
-def list_context_strategies(args) -> None:
+def list_context_strategies(args) -> list | None:
     """
     List all context strategies available.
 
@@ -62,21 +62,27 @@ def list_context_strategies(args) -> None:
         find (str): Optional field to find context strategies with a keyword.
 
     Returns:
-        None
+        list | None: A list of ContextStrategy or None if there is no result.
     """
-    context_strategy_metadata_list = api_get_all_context_strategy_metadata()
-    keyword = args.find.lower() if args.find else ""
+    try:
+        context_strategy_metadata_list = api_get_all_context_strategy_metadata()
+        keyword = args.find.lower() if args.find else ""
 
-    if keyword:
-        filtered_attack_modules_list = find_keyword(
-            keyword, context_strategy_metadata_list
-        )
-        if filtered_attack_modules_list:
-            display_context_strategies(filtered_attack_modules_list)
+        if keyword:
+            filtered_context_strategies_list = find_keyword(
+                keyword, context_strategy_metadata_list
+            )
+            if filtered_context_strategies_list:
+                display_context_strategies(filtered_context_strategies_list)
+                return filtered_context_strategies_list
+            else:
+                print("No context strategies containing keyword found.")
+                return None
         else:
-            print("No context strategies containing keyword found.")
-    else:
-        display_context_strategies(context_strategy_metadata_list)
+            display_context_strategies(context_strategy_metadata_list)
+            return context_strategy_metadata_list
+    except Exception as e:
+        print(f"[list_context_strategies]: {str(e)}")
 
 
 def clear_context_strategy() -> None:
