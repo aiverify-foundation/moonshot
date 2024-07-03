@@ -82,10 +82,10 @@ class Bookmark:
         Returns:
             bool: True if the bookmark was added successfully, False otherwise.
         """
-        if bookmark.bookmark_time is None:
-            bookmark.bookmark_time = (
-                datetime.now().replace(microsecond=0).isoformat(" ")
-            )
+        bookmark.bookmark_time = (
+            datetime.now().replace(microsecond=0).isoformat(" ")
+        )
+        
         data = (
             bookmark.name,
             bookmark.prompt,

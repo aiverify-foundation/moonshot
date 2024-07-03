@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BookmarkArguments(BaseModel):
     id: int = 0
-    name: str
-    prompt: str
-    response: str
+    name: str = Field(min_length=1)
+    prompt: str = Field(min_length=1)
+    response: str = Field(min_length=1)
     context_strategy: str
     prompt_template: str
     attack_module: str

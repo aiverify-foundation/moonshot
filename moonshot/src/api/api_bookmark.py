@@ -15,9 +15,9 @@ def api_insert_bookmark(
     name: str,
     prompt: str,
     response: str,
-    context_strategy: str,
-    prompt_template: str,
-    attack_module: str,
+    context_strategy: str = "",
+    prompt_template: str = "",
+    attack_module: str = "",
 ) -> dict:
     """
     Inserts a new bookmark into the database.
