@@ -24,7 +24,7 @@ class SQLite(DBInterface):
         """
         try:
             self.sqlite_conn = sqlite3.connect(self.db_path)
-            # print(f"Established connection to database ({self.db_path})")
+            print(f"Established connection to database ({self.db_path})")
             return True
 
         except sqlite3.Error as sqlite3_error:
@@ -191,6 +191,55 @@ class SQLite(DBInterface):
 
             except sqlite3.Error as sqlite3_error:
                 print(f"Error updating record into database - {str(sqlite3_error)}")
+
+    def delete_record_by_id(self, record_id: int, delete_record_sql: str) -> None:
+        """
+        Deletes a record from the SQLite database using the provided SQL query and record ID.
+
+        This method attempts to delete a record from the SQLite database using the provided SQL query and record ID.
+        If the connection to the SQLite database is established, it executes the SQL query with the record ID.
+        If an error occurs during the record deletion process, it prints an error message with the details of the
+        SQLite error.
+
+        Args:
+            record_id (int): The ID of the record to be deleted.
+            delete_record_sql (str): The SQL query to delete a record by ID.
+
+        Returns:
+            None
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(delete_record_sql, (record_id,))
+                    self.sqlite_conn.commit()
+            except sqlite3.Error as sqlite3_error:
+                print(f"Error deleting record from database - {str(sqlite3_error)}")
+
+    def delete_records_in_table(self, delete_record_sql: str) -> None:
+        """
+        Deletes all records from a table in the SQLite database using the provided SQL query.
+
+        This method attempts to delete all records from a specific table in the SQLite database using the provided SQL query.
+        If the connection to the SQLite database is established, it executes the SQL query to delete the records.
+        If an error occurs during the deletion process, it prints an error message with the details of the SQLite error.
+
+        Args:
+            delete_record_sql (str): The SQL query to delete all records from a table.
+
+        Returns:
+            None
+        """
+        if self.sqlite_conn:
+            try:
+                with self.sqlite_conn:
+                    cursor = self.sqlite_conn.cursor()
+                    cursor.execute(delete_record_sql)
+                    self.sqlite_conn.commit()
+            except sqlite3.Error as sqlite3_error:
+                print(f"Error deleting records from database - {str(sqlite3_error)}")
+
 
     def check_database_table_exists(self, table_name: str) -> bool | None:
         """
