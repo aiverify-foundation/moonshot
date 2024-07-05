@@ -82,7 +82,7 @@ class Runner:
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
-                EnvVariables.DATABASES.name, runner_id, "db"
+                EnvVariables.DATABASES.name, Path(runner_args.database_file).stem, "db"
             )
             runner_args.progress_callback_func = progress_callback_func
             return cls(runner_args)
@@ -114,6 +114,14 @@ class Runner:
         """
         try:
             runner_id = slugify(runner_args.name, lowercase=True)
+            runner_info = {
+                "name": runner_args.name,
+                "database_file": Storage.get_filepath(
+                    EnvVariables.DATABASES.name, runner_id, "db", True
+                ),
+                "endpoints": runner_args.endpoints,
+                "description": runner_args.description,
+            }
 
             # Check if runner file exists. If it exists, raise an error.
             if Storage.is_object_exists(EnvVariables.RUNNERS.name, runner_id, "json"):
@@ -129,32 +137,24 @@ class Runner:
                         f"[Runner] Connector endpoint {endpoint} does not exist."
                     )
 
-            runner_info = {
-                "id": runner_id,
-                "name": runner_args.name,
-                "endpoints": runner_args.endpoints,
-                "database_file": Storage.get_filepath(
-                    EnvVariables.DATABASES.name, runner_id, "db", True
-                ),
-                "progress_callback_func": runner_args.progress_callback_func,
-                "description": runner_args.description,
-            }
-            runner_args = RunnerArguments(**runner_info)
-            runner_args.database_instance = Storage.create_database_connection(
-                EnvVariables.DATABASES.name, runner_id, "db"
-            )
-
             # Create runner file
             Storage.create_object(
-                EnvVariables.RUNNERS.name, runner_id, runner_args.to_dict(), "json"
+                EnvVariables.RUNNERS.name, runner_id, runner_info, "json"
             )
+
+            # Add additional attributes (id, database instance and update progress_callback_func)
+            runner_info["id"] = runner_id
+            runner_info["database_instance"] = Storage.create_database_connection(
+                EnvVariables.DATABASES.name, runner_id, "db"
+            )
+            runner_info["progress_callback_func"] = runner_args.progress_callback_func
 
             # Create runner cache table
             Storage.create_database_table(
-                runner_args.database_instance, Runner.sql_create_runner_cache_table
+                runner_info["database_instance"], Runner.sql_create_runner_cache_table
             )
 
-            return cls(runner_args)
+            return cls(RunnerArguments(**runner_info))
 
         except Exception as e:
             print(f"[Runner] Failed to create runner: {str(e)}")
@@ -179,16 +179,39 @@ class Runner:
             Exception: If an error occurs during the data retrieval or any other operation within the method.
         """
         try:
-            if runner_id:
-                return RunnerArguments(
-                    **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
-                )
-            else:
-                raise RuntimeError("Runner ID is empty")
+            if not runner_id:
+                raise RuntimeError("Runner ID is empty.")
+
+            runner_details = Runner._read_runner(runner_id)
+            if not runner_details:
+                raise RuntimeError(f"Runner with ID '{runner_id}' does not exist.")
+
+            return RunnerArguments(**runner_details)
 
         except Exception as e:
             print(f"[Runner] Failed to read runner: {str(e)}")
             raise e
+
+    @staticmethod
+    def _read_runner(runner_id: str) -> dict:
+        """
+        Retrieves the runner's information from a JSON file.
+
+        This internal method is designed to fetch the details of a specific runner by its ID. It searches for the
+        corresponding JSON file within the directory specified by `EnvVariables.RUNNERS`. The method returns a
+        dictionary containing the runner's information.
+
+        Args:
+            runner_id (str): The unique identifier of the runner whose information is being retrieved.
+
+        Returns:
+            dict: A dictionary with the runner's information.
+        """
+        runner_info = {"id": runner_id}
+        runner_info.update(
+            Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
+        )
+        return runner_info
 
     @staticmethod
     @validate_call
@@ -245,11 +268,7 @@ class Runner:
                 if "__" in runner:
                     continue
 
-                runner_info = RunnerArguments(
-                    **Storage.read_object(
-                        EnvVariables.RUNNERS.name, Path(runner).stem, "json"
-                    )
-                )
+                runner_info = RunnerArguments(**Runner._read_runner(Path(runner).stem))
                 retn_runners.append(runner_info)
                 retn_runners_ids.append(runner_info.id)
 
