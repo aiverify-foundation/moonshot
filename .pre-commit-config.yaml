@@ -18,3 +18,7 @@ repos:
       - id: flake8
         name: flake8 - Python linting
         exclude: ^tests
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
