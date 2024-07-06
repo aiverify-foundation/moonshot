@@ -10,13 +10,18 @@ from rich.table import Table
 from moonshot.api import (
     api_create_runner,
     api_create_session,
+    api_delete_bookmark,
     api_delete_session,
+    api_export_bookmarks,
+    api_get_all_bookmarks,
     api_get_all_chats_from_session,
     api_get_all_session_metadata,
+    api_insert_bookmark,
     api_load_runner,
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.src.api.api_bookmark import api_get_bookmark_by_id
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
@@ -151,16 +156,20 @@ def update_chat_display() -> None:
         # Prepare for table display
         table = Table(expand=True, show_lines=True, header_style="bold")
         table_list = []
+        active_session["list_of_endpoint_chats"] = list_of_endpoint_chats
+
         for endpoint, endpoint_chats in list_of_endpoint_chats.items():
             table.add_column(endpoint, justify="center")
             new_table = Table(expand=True)
+            new_table.add_column("ID", justify="left", ratio=1, min_width=5)
             new_table.add_column(
-                "Prepared Prompts", justify="left", style="cyan", width=50
+                "Prepared Prompts", justify="left", style="cyan", ratio=7
             )
-            new_table.add_column("Prompt/Response", justify="left", width=50)
+            new_table.add_column("Prompt/Response", justify="left", ratio=7)
 
             for chat_with_details in endpoint_chats:
                 new_table.add_row(
+                    str(chat_with_details["chat_record_id"]),
                     chat_with_details["prepared_prompt"],
                     (
                         f"[magenta]{chat_with_details['prompt']}[/magenta] \n"
@@ -182,6 +191,180 @@ def update_chat_display() -> None:
 
     else:
         console.print("[red]There are no active session.[/red]")
+
+
+def bookmark_prompt(args) -> None:
+    global active_session
+
+    if active_session:
+        endpoint = args.endpoint
+        prompt_id = args.prompt_id
+        bookmark_name = args.bookmark_name
+        try:
+            list_of_target_endpoint_chat = active_session.get(
+                "list_of_endpoint_chats", None
+            )
+            target_endpoint_chats = list_of_target_endpoint_chat.get(endpoint, None)
+            target_endpoint_chat_record = {}
+            if not target_endpoint_chats:
+                print(
+                    "Incorrect endpoint. Please select a valid endpoint in this session."
+                )
+                return
+            for endpoint_chat in target_endpoint_chats:
+                if endpoint_chat["chat_record_id"] == prompt_id:
+                    # found the prompt to bookmark
+                    target_endpoint_chat_record = endpoint_chat
+                    break
+            if target_endpoint_chat_record:
+                bookmark_message = api_insert_bookmark(
+                    bookmark_name,
+                    target_endpoint_chat_record["prompt"],
+                    target_endpoint_chat_record["predicted_result"],
+                    target_endpoint_chat_record["context_strategy"],
+                    target_endpoint_chat_record["prompt_template"],
+                    target_endpoint_chat_record["attack_module"],
+                )
+                print("[bookmark_prompt]:", bookmark_message["error_message"])
+            else:
+                print(
+                    f"Unable to find prompt ID in the of prompts for endpoint {endpoint}. Please select a valid ID."
+                )
+        except Exception as e:
+            print(f"[bookmark_prompt]: str({e})")
+    else:
+        print("There is no active session. Activate a session to bookmark a prompt.")
+        return
+
+
+def delete_bookmark(args) -> None:
+    """
+    Delete a bookmark.
+
+    This function deletes a cookbook with the specified identifier. It prompts the user for confirmation before
+    proceeding with the deletion. If the user confirms, it calls the api_delete_bookmark function from the moonshot.api
+    module to delete the bookmark. If the deletion is successful, it prints a confirmation message.
+
+    If an exception occurs, it prints an error message.
+
+    Args:
+        args: A namespace object from argparse. It should have the following attribute:
+            bookmark_id (int): The identifier of the bookmark to delete.
+
+    Returns:
+        None
+    """
+    # Confirm with the user before deleting a bookmark
+    # TODO: to decide if we wanna use name to identify bookmark instead as names as unique
+    confirmation = console.input(
+        "[bold red]Are you sure you want to delete the bookmark (y/N)? [/]"
+    )
+    if confirmation.lower() != "y":
+        console.print("[bold yellow]Bookmark deletion cancelled.[/]")
+        return
+    try:
+        bookmark_message = api_delete_bookmark(args.bookmark_id)
+        print("[delete_bookmark]:", bookmark_message["error_message"])
+    except Exception as e:
+        print(f"[delete_bookmark]: {str(e)}")
+
+
+def list_bookmarks() -> None:
+    """
+    List all available bookmarks.
+
+    This function retrieves all available bookmarks by calling the api_get_all_bookmarks function from the
+    moonshot.api module.
+    It then displays the retrieved bookmarks using the display_bookmarks function.
+
+    Returns:
+        None
+    """
+    try:
+        bookmarks_list = api_get_all_bookmarks()
+        display_bookmarks(bookmarks_list)
+    except Exception as e:
+        print(f"[list_bookmarks]: {str(e)}")
+
+
+def display_bookmarks(bookmarks_list) -> None:
+    """
+    Display the list of bookmarks in a tabular format.
+
+    This function takes a list of bookmarks dictionaries and displays each bookmark's details in a table.
+    The table includes the bookmark ID, name, prompt, responses, context strategy, prompt template, attack module and
+    bookmark time. If the list is empty, it prints a message indicating that no bookmarks are found.
+
+    Args:
+        bookmarks_list (list): A list of dictionaries, where each dictionary contains the details of a bookmark.
+    """
+    if bookmarks_list:
+        table = Table(
+            title="Bookmark List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("ID.", justify="left", ratio=1)
+        table.add_column("Name", justify="left", ratio=2)
+        table.add_column("Prompt", justify="left", ratio=5)
+        table.add_column("Response", justify="left", ratio=5)
+        table.add_column("Context Strategy", justify="left", ratio=2)
+        table.add_column("Prompt Template", justify="left", ratio=2)
+        table.add_column("Attack Module", justify="left", ratio=2)
+        table.add_column("Bookmark Time", justify="left", ratio=2)
+        if bookmarks_list:
+            for index, bookmark in enumerate(bookmarks_list, 1):
+                (
+                    id,
+                    name,
+                    prompt,
+                    response,
+                    context_strategy,
+                    prompt_template,
+                    attack_module,
+                    bookmark_time,
+                ) = bookmark.values()
+                table.add_section()
+                table.add_row(
+                    str(id),
+                    name,
+                    prompt,
+                    response,
+                    context_strategy,
+                    prompt_template,
+                    attack_module,
+                    bookmark_time,
+                )
+            console.print(table)
+        else:
+            console.print("[red]There are no bookmarks found.[/red]")
+
+
+def view_bookmark(args) -> None:
+    """
+    Displays the details of a specific bookmark by its ID.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing the bookmark ID.
+    """
+
+    try:
+        bookmark_info = api_get_bookmark_by_id(args.bookmark_id)
+        display_bookmarks([bookmark_info])
+    except Exception as e:
+        print(f"[view_bookmark]: {str(e)}")
+
+
+def export_bookmarks(args) -> None:
+    """
+    Exports all bookmarks to a JSON file.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing the name of the export file.
+    """
+    try:
+        api_export_bookmarks(write_file=True, export_file_name=args.bookmark_list_name)
+        print("Bookmarks exported successfully.")
+    except Exception as e:
+        print(f"[export_bookmarks]: {str(e)}")
 
 
 def manual_red_teaming(user_prompt: str) -> None:
@@ -464,4 +647,65 @@ delete_session_args = cmd2.Cmd2ArgumentParser(
 
 delete_session_args.add_argument(
     "session", type=str, help="The runner ID of the session to delete"
+)
+
+
+# Add bookmark prompt arguments
+add_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+    description="Bookmark a prompt",
+    epilog="Example:\n bookmark_prompt openai-connector 2 my-bookmarked-prompt",
+)
+
+add_bookmark_prompt_args.add_argument(
+    "endpoint",
+    type=str,
+    help="Endpoint which the prompt was sent to.",
+)
+
+add_bookmark_prompt_args.add_argument(
+    "prompt_id",
+    type=int,
+    help="ID of the prompt (the leftmost column)",
+)
+
+add_bookmark_prompt_args.add_argument(
+    "bookmark_name",
+    type=str,
+    help="Name of the bookmark",
+)
+
+# Delete bookmark prompt arguments
+delete_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+    description="Delete a bookmark",
+    epilog="Example:\n delete_bookmark 2",
+)
+
+delete_bookmark_prompt_args.add_argument(
+    "bookmark_id",
+    type=int,
+    help="ID of the bookmark",
+)
+
+# View bookmark prompt arguments
+view_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+    description="View a bookmark",
+    epilog="Example:\n view_bookmark 2",
+)
+
+view_bookmark_prompt_args.add_argument(
+    "bookmark_id",
+    type=int,
+    help="ID of the bookmark",
+)
+
+# Export bookmarks arguments
+export_bookmarks_args = cmd2.Cmd2ArgumentParser(
+    description="Exports bookmarks as a JSON file",
+    epilog='Example:\n export_bookmarks "my list of exported bookmarks"',
+)
+
+export_bookmarks_args.add_argument(
+    "bookmark_list_name",
+    type=str,
+    help="Name of the bookmark",
 )
