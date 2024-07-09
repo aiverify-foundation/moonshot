@@ -21,8 +21,7 @@ class BookmarkService(BaseService):
             prompt_template=bookmark_data.prompt_template,
             attack_module=bookmark_data.attack_module,
         )
-        if not result["success"]:
-            raise Exception(result["message"], "insert_bookmark", "InsertBookmarkError")
+
         return result
 
     @exception_handler
@@ -68,7 +67,6 @@ class BookmarkService(BaseService):
                 result["message"], "delete_bookmarks", "DeleteBookmarkError"
             )
 
-        print(result)
         return result
 
     @exception_handler
