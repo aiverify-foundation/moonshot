@@ -18,6 +18,7 @@ def api_insert_bookmark(
     context_strategy: str,
     prompt_template: str,
     attack_module: str,
+    metric: str,
 ) -> dict:
     """
     Inserts a new bookmark into the database.
@@ -42,6 +43,7 @@ def api_insert_bookmark(
         context_strategy=context_strategy,
         prompt_template=prompt_template,
         attack_module=attack_module,
+        metric=metric,
         bookmark_time="",  # bookmark_time will be set to current time in add_bookmark method
     )
     return get_bookmark_instance().add_bookmark(bookmark_args)

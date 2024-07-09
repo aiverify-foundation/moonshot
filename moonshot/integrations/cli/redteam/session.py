@@ -16,12 +16,16 @@ from moonshot.api import (
     api_get_all_bookmarks,
     api_get_all_chats_from_session,
     api_get_all_session_metadata,
+    api_get_bookmark_by_id,
     api_insert_bookmark,
     api_load_runner,
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
-from moonshot.src.api.api_bookmark import api_get_bookmark_by_id
+from moonshot.src.api.api_session import (
+    api_update_context_strategy,
+    api_update_prompt_template,
+)
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
@@ -194,13 +198,29 @@ def update_chat_display() -> None:
 
 
 def bookmark_prompt(args) -> None:
+    """
+    Bookmarks a specific prompt in the active session.
+
+    This function retrieves a specific chat record from the active session based on the provided endpoint and prompt ID.
+    If the chat record is found, it inserts a bookmark with the specified name and the details of the chat record.
+    If the chat record is not found, it prints an error message.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing:
+            - endpoint (str): The endpoint to which the prompt was sent.
+            - prompt_id (int): The ID of the prompt (the leftmost column).
+            - bookmark_name (str): The name of the bookmark to be created.
+
+    If there is no active session, a message is printed to the console and the function returns.
+    """
     global active_session
 
     if active_session:
-        endpoint = args.endpoint
-        prompt_id = args.prompt_id
-        bookmark_name = args.bookmark_name
         try:
+            endpoint = args.endpoint
+            prompt_id = args.prompt_id
+            bookmark_name = args.bookmark_name
+
             list_of_target_endpoint_chat = active_session.get(
                 "list_of_endpoint_chats", None
             )
@@ -216,6 +236,7 @@ def bookmark_prompt(args) -> None:
                     # found the prompt to bookmark
                     target_endpoint_chat_record = endpoint_chat
                     break
+
             if target_endpoint_chat_record:
                 bookmark_message = api_insert_bookmark(
                     bookmark_name,
@@ -224,16 +245,80 @@ def bookmark_prompt(args) -> None:
                     target_endpoint_chat_record["context_strategy"],
                     target_endpoint_chat_record["prompt_template"],
                     target_endpoint_chat_record["attack_module"],
+                    target_endpoint_chat_record["metric"],
                 )
-                print("[bookmark_prompt]:", bookmark_message["error_message"])
+                print("[bookmark_prompt]:", bookmark_message["message"])
             else:
                 print(
                     f"Unable to find prompt ID in the of prompts for endpoint {endpoint}. Please select a valid ID."
                 )
         except Exception as e:
-            print(f"[bookmark_prompt]: str({e})")
+            print(f"[bookmark_prompt]: ({str(e)})")
     else:
         print("There is no active session. Activate a session to bookmark a prompt.")
+        return
+
+
+def use_bookmark(args) -> None:
+    """
+    Updates the current session with the details from a specified bookmark.
+
+    This function retrieves the details of a bookmark by its ID and updates the active session's context strategy
+    and prompt template with the bookmark's details. If the bookmark includes an attack module, it crafts a CLI
+    command for the user to copy and paste. Otherwise, it provides the bookmarked prompt for manual red teaming.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing:
+            - bookmark_id (str): The ID of the bookmark to use.
+
+    If there is no active session, a message is printed to the console and the function returns.
+    """
+    global active_session
+    if active_session:
+        try:
+            bookmark_id = args.bookmark_id
+            bookmark_details = api_get_bookmark_by_id(bookmark_id)
+            if bookmark_details:
+                bookmarked_prompt = bookmark_details["prompt"]
+                bookmarked_pt = bookmark_details["prompt_template"]
+                bookmarked_cs = bookmark_details["context_strategy"]
+                bookmark_console_msg = (
+                    "[bold yellow]Updated session with bookmarked context strategy:[/]"
+                    f" {bookmarked_pt} [bold yellow]and prompt template:[/]"
+                    f" {bookmarked_cs}."
+                )
+                console.print(bookmark_console_msg)
+                api_update_prompt_template(
+                    active_session["session_id"], bookmark_details["prompt_template"]
+                )
+                api_update_context_strategy(
+                    active_session["session_id"], bookmark_details["context_strategy"]
+                )
+                active_session["prompt_template"] = bookmark_details["prompt_template"]
+                active_session["context_strategy"] = bookmark_details[
+                    "context_strategy"
+                ]
+
+                # automated redteaming: craft CLI command for user to copy and paste
+                if bookmark_details["attack_module"]:
+                    attack_module = bookmark_details["attack_module"]
+                    run_attack_module_cmd = (
+                        f'run_attack_module {attack_module} "{bookmarked_prompt}"'
+                    )
+                    console.print(
+                        f"[bold yellow]Copy this command and paste it below:[/] {run_attack_module_cmd}"
+                    )
+
+                # manual redteaming: return prompt for user to copy and paste
+                else:
+                    console.print(
+                        f"[bold yellow]Copy this prompt and paste it below: [/]{bookmarked_prompt}"
+                    )
+                return
+        except Exception as e:
+            print(f"[use_bookmark]: {str(e)}")
+    else:
+        print("There is no active session. Activate a session to use a bookmark.")
         return
 
 
@@ -302,40 +387,42 @@ def display_bookmarks(bookmarks_list) -> None:
         table = Table(
             title="Bookmark List", show_lines=True, expand=True, header_style="bold"
         )
-        table.add_column("ID.", justify="left", ratio=1)
-        table.add_column("Name", justify="left", ratio=2)
-        table.add_column("Prompt", justify="left", ratio=5)
-        table.add_column("Response", justify="left", ratio=5)
-        table.add_column("Context Strategy", justify="left", ratio=2)
-        table.add_column("Prompt Template", justify="left", ratio=2)
-        table.add_column("Attack Module", justify="left", ratio=2)
-        table.add_column("Bookmark Time", justify="left", ratio=2)
-        if bookmarks_list:
-            for index, bookmark in enumerate(bookmarks_list, 1):
-                (
-                    id,
-                    name,
-                    prompt,
-                    response,
-                    context_strategy,
-                    prompt_template,
-                    attack_module,
-                    bookmark_time,
-                ) = bookmark.values()
-                table.add_section()
-                table.add_row(
-                    str(id),
-                    name,
-                    prompt,
-                    response,
-                    context_strategy,
-                    prompt_template,
-                    attack_module,
-                    bookmark_time,
-                )
-            console.print(table)
-        else:
-            console.print("[red]There are no bookmarks found.[/red]")
+        table.add_column("ID.", justify="left", width=5)
+        table.add_column("Name", justify="left", width=20)
+        table.add_column("Prompt", justify="left", width=50)
+        table.add_column("Response", justify="left", width=50)
+        table.add_column("Context Strategy", justify="left", width=20)
+        table.add_column("Prompt Template", justify="left", width=20)
+        table.add_column("Attack Module", justify="left", width=20)
+        table.add_column("Metric", justify="left", width=20)
+        table.add_column("Bookmark Time", justify="left", width=20)
+        for index, bookmark in enumerate(bookmarks_list, 1):
+            (
+                id,
+                name,
+                prompt,
+                response,
+                context_strategy,
+                prompt_template,
+                attack_module,
+                metric,
+                bookmark_time,
+            ) = bookmark.values()
+            table.add_section()
+            table.add_row(
+                str(id),
+                name,
+                prompt,
+                response,
+                context_strategy,
+                prompt_template,
+                attack_module,
+                metric,
+                bookmark_time,
+            )
+        console.print(table)
+    else:
+        console.print("[red]There are no bookmarks found.[/red]")
 
 
 def view_bookmark(args) -> None:
@@ -443,15 +530,25 @@ def run_attack_module(args):
         attack_module_id = args.attack_module_id
         prompt = args.prompt
         system_prompt = args.system_prompt if args.system_prompt else ""
-        context_strategy = args.context_strategy or []
-        prompt_template = [args.prompt_template] if args.prompt_template else []
-        metric = [args.metric] if args.metric else []
+        # context strategy and prompt template should come from the session instead of the command
+        prompt_template = (
+            [active_session["prompt_template"]]
+            if active_session["prompt_template"]
+            else []
+        )
+        context_strategy = (
+            active_session["context_strategy"]
+            if active_session["context_strategy"]
+            else []
+        )
+
         num_of_prev_prompts = (
-            args.num_of_prev_prompts
-            if args.num_of_prev_prompts
+            active_session["cs_num_of_prev_prompts"]
+            if active_session["context_strategy"]
             else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
         )
 
+        metric = [args.metric] if args.metric else []
         if context_strategy:
             context_strategy_info = [
                 {
@@ -590,7 +687,7 @@ automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
         'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
-        '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
+        # '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
     ),
 )
 
@@ -673,6 +770,19 @@ add_bookmark_prompt_args.add_argument(
     type=str,
     help="Name of the bookmark",
 )
+
+# Use bookmark prompt arguments
+use_bookmark_args = cmd2.Cmd2ArgumentParser(
+    description="Sets a session configuration with a bookmark",
+    epilog="Example:\n use_bookmark my_bookmark",
+)
+
+use_bookmark_args.add_argument(
+    "bookmark_id",
+    type=str,
+    help="Name of the bookmark",
+)
+
 
 # Delete bookmark prompt arguments
 delete_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(

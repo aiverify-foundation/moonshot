@@ -20,11 +20,11 @@ def use_prompt_template(args: argparse.Namespace) -> None:
 
     # Check if current session exists
     if active_session:
-        active_session["prompt_template"] = new_prompt_template_name
         try:
             api_update_prompt_template(
                 active_session["session_id"], new_prompt_template_name
             )
+            active_session["prompt_template"] = new_prompt_template_name
             print(
                 f"Updated session: {active_session['session_id']}. "
                 f"Prompt Template: {active_session['prompt_template']}."
