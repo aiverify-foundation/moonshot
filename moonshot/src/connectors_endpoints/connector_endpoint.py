@@ -8,6 +8,10 @@ from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class ConnectorEndpoint:
@@ -53,7 +57,7 @@ class ConnectorEndpoint:
             return ep_id
 
         except Exception as e:
-            print(f"Failed to create endpoint: {str(e)}")
+            logger.error(f"Failed to create endpoint: {str(e)}")
             raise e
 
     @staticmethod
@@ -88,7 +92,7 @@ class ConnectorEndpoint:
             return ConnectorEndpointArguments(**endpoint_details)
 
         except Exception as e:
-            print(f"Failed reading endpoint: {str(e)}")
+            logger.error(f"Failed to read endpoint: {str(e)}")
             raise e
 
     @staticmethod
@@ -156,7 +160,7 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            print(f"Failed to update endpoint: {str(e)}")
+            logger.error(f"Failed to update endpoint: {str(e)}")
             raise e
 
     @staticmethod
@@ -183,7 +187,7 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            print(f"Failed to delete endpoint: {str(e)}")
+            logger.error(f"Failed to delete endpoint: {str(e)}")
             raise e
 
     @staticmethod
@@ -219,5 +223,5 @@ class ConnectorEndpoint:
             return retn_eps_ids, retn_eps
 
         except Exception as e:
-            print(f"Failed to get available endpoints: {str(e)}")
+            logger.error(f"Failed to get available endpoints: {str(e)}")
             raise e

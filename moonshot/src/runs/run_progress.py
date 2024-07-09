@@ -4,6 +4,10 @@ from typing import Callable
 from moonshot.src.runs.run_arguments import RunArguments
 from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class RunProgress:
@@ -40,7 +44,7 @@ class RunProgress:
             error_message (str): The error message to be logged and recorded.
         """
         # Update error message
-        print(error_message)
+        logger.error(error_message)
         self.run_arguments.error_messages.append(error_message)
 
         # Update progress status
@@ -108,7 +112,7 @@ class RunProgress:
                 RunProgress.sql_update_run_record,
             )
         else:
-            print(
+            logger.warning(
                 "[RunProgress] Failed to update run progress: db_instance is not initialised."
             )
 

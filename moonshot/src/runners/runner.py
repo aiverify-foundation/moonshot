@@ -13,6 +13,10 @@ from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Runner:
@@ -88,7 +92,7 @@ class Runner:
             return cls(runner_args)
 
         except Exception as e:
-            print(f"[Runner] Failed to load runner: {str(e)}")
+            logger.error(f"[Runner] Failed to load runner: {str(e)}")
             raise e
 
     @classmethod
@@ -157,7 +161,7 @@ class Runner:
             return cls(RunnerArguments(**runner_info))
 
         except Exception as e:
-            print(f"[Runner] Failed to create runner: {str(e)}")
+            logger.error(f"[Runner] Failed to create runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -189,7 +193,7 @@ class Runner:
             return RunnerArguments(**runner_details)
 
         except Exception as e:
-            print(f"[Runner] Failed to read runner: {str(e)}")
+            logger.error(f"[Runner] Failed to read runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -239,7 +243,7 @@ class Runner:
             return True
 
         except Exception as e:
-            print(f"[Runner] Failed to delete runner: {str(e)}")
+            logger.error(f"[Runner] Failed to delete runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -275,7 +279,7 @@ class Runner:
             return retn_runners_ids, retn_runners
 
         except Exception as e:
-            print(f"[Runner] Failed to get available runners: {str(e)}")
+            logger.error(f"[Runner] Failed to get available runners: {str(e)}")
             raise e
 
     def close(self) -> None:
@@ -304,7 +308,7 @@ class Runner:
         """
         async with self.current_operation_lock:
             if self.current_operation:
-                print(f"[Runner] {self.id} - Cancelling current operation...")
+                logger.warning(f"[Runner] {self.id} - Cancelling current operation...")
                 self.current_operation.cancel()
                 self.current_operation = None  # Reset the current operation
 
@@ -347,7 +351,7 @@ class Runner:
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark recipe test run
-            print(f"[Runner] {self.id} - Running benchmark recipe run...")
+            logger.info(f"[Runner] {self.id} - Running benchmark recipe run...")
             self.current_operation = Run(
                 self.id,
                 RunnerType.BENCHMARK,
@@ -373,7 +377,9 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark recipe run completed and reset.")
+            logger.info(
+                f"[Runner] {self.id} - Benchmark recipe run completed and reset."
+            )
 
     async def run_cookbooks(
         self,
@@ -415,7 +421,7 @@ class Runner:
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark cookbook test run
-            print(f"[Runner] {self.id} - Running benchmark cookbook run...")
+            logger.info(f"[Runner] {self.id} - Running benchmark cookbook run...")
             self.current_operation = Run(
                 self.id,
                 RunnerType.BENCHMARK,
@@ -441,7 +447,9 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+            logger.info(
+                f"[Runner] {self.id} - Benchmark cookbook run completed and reset."
+            )
 
     async def run_red_teaming(
         self,
@@ -469,7 +477,7 @@ class Runner:
             Exception: If any error occurs during the setup or execution of the red teaming session.
         """
         async with self.current_operation_lock:  # Acquire the lock
-            print(f"[Runner] {self.id} - Running red teaming session...")
+            logger.info(f"[Runner] {self.id} - Running red teaming session...")
             self.current_operation = Session(
                 self.id,
                 RunnerType.REDTEAM,
@@ -490,6 +498,6 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Red teaming run completed.")
+            logger.info(f"[Runner] {self.id} - Red teaming run completed.")
 
         return red_teaming_results
