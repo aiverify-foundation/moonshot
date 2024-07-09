@@ -148,10 +148,10 @@ class Bookmark:
                 return BookmarkArguments.from_tuple_to_dict(bookmark_info)
             else:
                 raise RuntimeError(
-                    f"[Bookmark] No record found for bookmark_id {bookmark_id}"
+                    f"[Bookmark] No record found for bookmark ID {bookmark_id}"
                 )
         else:
-            raise RuntimeError(f"[Bookmark] Invalid bookmark_id: {bookmark_id}")
+            raise RuntimeError(f"[Bookmark] Invalid bookmark ID: {bookmark_id}")
 
     def delete_bookmark(self, bookmark_id: int) -> dict:
         """
@@ -170,7 +170,7 @@ class Bookmark:
                 error_message = f"Failed to delete bookmark record: {e}"
                 return {"success": False, "message": error_message}
         else:
-            error_message = f"[Bookmark] Invalid bookmark_id: {bookmark_id}"
+            error_message = f"[Bookmark] Invalid bookmark ID: {bookmark_id}"
             return {"success": False, "message": error_message}
 
     def delete_all_bookmark(self) -> dict:
