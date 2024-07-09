@@ -11,6 +11,7 @@ class BookmarkArguments(BaseModel):
     context_strategy: str
     prompt_template: str
     attack_module: str
+    metric: str
     bookmark_time: str
 
     @classmethod
@@ -32,5 +33,6 @@ class BookmarkArguments(BaseModel):
             "context_strategy": values[4],
             "prompt_template": values[5],
             "attack_module": values[6],
-            "bookmark_time": values[7],
+            "metric": values[7],
+            "bookmark_time": values[8],
         }

@@ -32,14 +32,16 @@ class Bookmark:
         context_strategy TEXT,
         prompt_template TEXT,
         attack_module TEXT,
+        metric TEXT,
         bookmark_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
     """
 
     sql_insert_bookmark_record = """
         INSERT INTO bookmark (
-        name, prompt, response, context_strategy, prompt_template, attack_module, bookmark_time)
-        VALUES (?,?,?,?,?,?,?);
+        name, prompt, response, context_strategy, prompt_template, attack_module,
+        metric, bookmark_time)
+        VALUES (?,?,?,?,?,?,?,?);
     """
 
     sql_select_bookmarks_record = """
@@ -91,6 +93,7 @@ class Bookmark:
             bookmark.context_strategy,
             bookmark.prompt_template,
             bookmark.attack_module,
+            bookmark.metric,
             bookmark.bookmark_time,
         )
         try:
