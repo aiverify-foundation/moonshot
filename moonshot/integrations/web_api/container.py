@@ -56,6 +56,11 @@ class Container(containers.DeclarativeContainer):
                 "log_file_max_size": 5242880,
                 "log_file_backup_count": 3,
             },
+            "temp_folder": str(
+                    importlib.resources.files("moonshot").joinpath(
+                        "integrations/web_api/temp"
+                    )
+                ),
         }
     )
 

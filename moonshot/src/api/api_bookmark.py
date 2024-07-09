@@ -57,17 +57,17 @@ def api_get_all_bookmarks() -> list[dict]:
     return get_bookmark_instance().get_all_bookmarks()
 
 
-def api_get_bookmark_by_id(bookmark_id: int) -> dict:
+def api_get_bookmark(bookmark_name: str) -> dict:
     """
-    Retrieves the details of a specific bookmark by its ID.
+    Retrieves the details of a specific bookmark by its name.
 
     Args:
-        bookmark_id (int): The ID of the bookmark to retrieve.
+        bookmark_name (int): The name of the bookmark to retrieve.
 
     Returns:
         dict: The bookmark details corresponding to the provided ID.
     """
-    return get_bookmark_instance().get_bookmark_by_id(bookmark_id)
+    return get_bookmark_instance().get_bookmark(bookmark_name)
 
 
 def api_delete_bookmark(bookmark_id: int) -> dict:
@@ -86,18 +86,16 @@ def api_delete_all_bookmark() -> dict:
     """
     return get_bookmark_instance().delete_all_bookmark()
 
-
 def api_export_bookmarks(
-    write_file: bool = False, export_file_name: str = "bookmarks"
-) -> list[dict]:
+    export_file_name: str = "bookmarks"
+) -> str:
     """
-    Exports bookmarks to a specified file or external storage if write_file is True.
+    Exports bookmarks to a specified file.
 
     Args:
         export_file_name (str): The name of the file to export the bookmarks to.
-        write_file (bool): A flag indicating whether to write the bookmarks to a file.
 
     Returns:
-        list[dict]: A list of bookmarks if write_file is False, otherwise the result of the write operation.
+        str: The filepath of where the file is written.
     """
-    return get_bookmark_instance().export_bookmarks(write_file, export_file_name)
+    return get_bookmark_instance().export_bookmarks(export_file_name)

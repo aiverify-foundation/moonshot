@@ -88,7 +88,7 @@ from moonshot.src.api.api_session import (
 )
 from moonshot.src.api.api_bookmark import (
     api_get_all_bookmarks,
-    api_get_bookmark_by_id,
+    api_get_bookmark,
     api_insert_bookmark,
     api_delete_bookmark,
     api_delete_all_bookmark,
@@ -161,7 +161,7 @@ __all__ = [
     "api_update_prompt_template",
     "api_update_system_prompt",
     "api_get_all_bookmarks",
-    "api_get_bookmark_by_id",
+    "api_get_bookmark",
     "api_insert_bookmark",
     "api_delete_bookmark",
     "api_delete_all_bookmark",

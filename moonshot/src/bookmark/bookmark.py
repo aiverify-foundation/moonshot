@@ -47,7 +47,7 @@ class Bookmark:
     """
 
     sql_select_bookmark_record = """
-        SELECT * FROM bookmark WHERE id = ? ;
+        SELECT * FROM bookmark WHERE name = ? ;
     """
 
     sql_delete_bookmark_record = """
@@ -82,10 +82,8 @@ class Bookmark:
         Returns:
             bool: True if the bookmark was added successfully, False otherwise.
         """
-        bookmark.bookmark_time = (
-            datetime.now().replace(microsecond=0).isoformat(" ")
-        )
-        
+        bookmark.bookmark_time = datetime.now().replace(microsecond=0).isoformat(" ")
+
         data = (
             bookmark.name,
             bookmark.prompt,
@@ -127,12 +125,12 @@ class Bookmark:
             list_of_bookmarks = []
         return list_of_bookmarks
 
-    def get_bookmark_by_id(self, bookmark_id: int) -> dict:
+    def get_bookmark(self, bookmark_name: str) -> dict:
         """
-        Retrieve a bookmark by its unique ID.
+        Retrieve a bookmark by its unique name.
 
         Args:
-            bookmark_id (int): The unique identifier for the bookmark.
+            bookmark_name (int): The unique name for the bookmark.
 
         Returns:
             dict: The bookmark information as a dictionary.
@@ -140,18 +138,18 @@ class Bookmark:
         Raises:
             RuntimeError: If the bookmark cannot be found.
         """
-        if bookmark_id is not None:
+        if bookmark_name is not None:
             bookmark_info = Storage.read_database_record(
-                self.db_instance, (bookmark_id,), Bookmark.sql_select_bookmark_record
+                self.db_instance, (bookmark_name,), Bookmark.sql_select_bookmark_record
             )
             if bookmark_info is not None:
                 return BookmarkArguments.from_tuple_to_dict(bookmark_info)
             else:
                 raise RuntimeError(
-                    f"[Bookmark] No record found for bookmark ID {bookmark_id}"
+                    f"[Bookmark] No record found for bookmark name {bookmark_name}"
                 )
         else:
-            raise RuntimeError(f"[Bookmark] Invalid bookmark ID: {bookmark_id}")
+            raise RuntimeError(f"[Bookmark] Invalid bookmark name: {bookmark_name}")
 
     def delete_bookmark(self, bookmark_id: int) -> dict:
         """
@@ -189,18 +187,19 @@ class Bookmark:
             error_message = f"Failed to delete all bookmark records: {e}"
             return {"success": False, "message": error_message}
 
-    def export_bookmarks(
-        self, write_file: bool = False, export_file_name: str = "bookmarks"
-    ) -> list[dict]:
+    def export_bookmarks(self, export_file_name: str = "bookmarks") -> str:
         """
-        Export all bookmarks to a JSON file or external storage.
+        Export all bookmarks to a JSON file.
+
+        This method retrieves all bookmarks from the database, converts them to a JSON format,
+        and writes them to a file in the 'moonshot-data/bookmark' directory with the provided file name.
 
         Args:
-            export_file_name (str): The name of the file to export the bookmarks to.
-            write_file (bool): Whether to write the bookmarks to a file.
+            export_file_name (str): The base name of the file to export the bookmarks to.
+                                    The '.json' extension will be appended to this base name.
 
         Returns:
-            list[dict]: A list of all bookmarks as dictionaries.
+            str: The path to the exported JSON file containing the bookmarks.
         """
         list_of_bookmarks_tuples = Storage.read_database_records(
             self.db_instance,
@@ -212,15 +211,17 @@ class Bookmark:
             for bookmark_tuple in list_of_bookmarks_tuples
         ]
 
-        if write_file:
-            Storage.create_object(
-                EnvVariables.BOOKMARK.name,
-                export_file_name,
-                {"bookmarks": bookmarks_json},
-                "json",
-            )
+        # Write json file to moonshot-data
+        file_path = f"../moonshot-data/bookmark/{export_file_name}.json"
 
-        return bookmarks_json
+        Storage.create_object(
+            EnvVariables.BOOKMARK.name,
+            export_file_name,
+            {"bookmarks": bookmarks_json},
+            "json",
+        )
+
+        return file_path
 
     def close(self) -> None:
         """

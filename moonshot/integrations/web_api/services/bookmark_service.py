@@ -2,6 +2,7 @@ from .... import api as moonshot_api
 from ..schemas.bookmark_create_dto import BookmarkCreateDTO, BookmarkPydanticModel
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
+from .utils.file_manager import copy_file
 
 
 class BookmarkService(BaseService):
@@ -70,9 +71,7 @@ class BookmarkService(BaseService):
         return result
 
     @exception_handler
-    def export_bookmarks(
-        self, write_file: bool = False, export_file_name: str = "bookmarks"
-    ) -> list[dict]:
+    def export_bookmarks(self, export_file_name: str = "bookmarks") -> str:
         """
         Exports bookmarks to a file or returns them as a list of dictionaries.
 
@@ -83,4 +82,7 @@ class BookmarkService(BaseService):
         Returns:
             list[dict]: A list of bookmarks as dictionaries.
         """
-        return moonshot_api.api_export_bookmarks(write_file, export_file_name)
+
+        new_file_path = moonshot_api.api_export_bookmarks(export_file_name)
+
+        return copy_file(new_file_path)

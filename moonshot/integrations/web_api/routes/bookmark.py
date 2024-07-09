@@ -133,3 +133,40 @@ def delete_bookmark(
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete bookmark: {e.msg}"
             )
+
+
+@router.post(
+    "/api/v1/bookmarks/export", response_description="Exporting Bookmark to JSON file"
+)
+@inject
+def export_bookbookmarks(
+    export_file_name: Optional[str] = Query(
+        "bookmarks", description="Name of the exported file"
+    ),
+    bookmark_service: BookmarkService = Depends(Provide[Container.bookmark_service]),
+) -> str:
+    """
+    Export bookmarks to a JSON file with a given file name.
+
+    Args:
+        export_file_name: The name of the file to export the bookmarks to.z
+        bookmark_service: The service responsible for bookmark operations.
+
+    Returns:
+        A string with the path to the exported file or an error message.
+    """
+    try:
+        return bookmark_service.export_bookmarks(export_file_name)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to export bookmark: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to export bookmark: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to export bookmark: {e.msg}"
+            )
