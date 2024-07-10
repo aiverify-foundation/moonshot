@@ -22,7 +22,7 @@ class Storage:
         obj_info: dict,
         obj_extension: str,
         obj_mod_type: str = "jsonio",
-    ) -> bool:
+    ) -> str:
         """
         Writes the object information to a file.
 
@@ -32,6 +32,9 @@ class Storage:
             obj_info (dict): A dictionary containing the object information.
             obj_extension (str): The file extension (e.g., 'json', 'py').
             obj_mod_type (str, optional): The module type for object serialization. Defaults to 'jsonio'.
+
+        Returns:
+            str: A filepath string of the object that has just been created.
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
@@ -45,7 +48,12 @@ class Storage:
                 Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
             if obj_mod_instance and callable(obj_mod_instance):
-                return obj_mod_instance(obj_filepath).create_file(obj_info)
+                try:
+                    obj_mod_instance(obj_filepath).create_file(obj_info)
+                    return obj_filepath
+                except Exception as e:
+                    return f"Error: {str(e)}"
+
             else:
                 raise RuntimeError(
                     f"Unable to get defined object module instance - {obj_mod_instance}"
