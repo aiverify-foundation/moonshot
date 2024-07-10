@@ -72,14 +72,14 @@ def api_get_bookmark(bookmark_name: str) -> dict:
     return get_bookmark_instance().get_bookmark(bookmark_name)
 
 
-def api_delete_bookmark(bookmark_id: int) -> dict:
+def api_delete_bookmark(bookmark_name: str) -> dict:
     """
-    Removes a bookmark from the database using its ID.
+    Removes a bookmark from the database using its name.
 
     Args:
-        bookmark_id (int): The ID of the bookmark to be removed.
+        bookmark_name (str): The name of the bookmark to be removed.
     """
-    return get_bookmark_instance().delete_bookmark(bookmark_id)
+    return get_bookmark_instance().delete_bookmark(bookmark_name)
 
 
 def api_delete_all_bookmark() -> dict:

@@ -52,10 +52,6 @@ class Bookmark:
         SELECT * FROM bookmark WHERE name = ? ;
     """
 
-    sql_delete_bookmark_record = """
-        DELETE FROM bookmark WHERE id = ?;
-    """
-
     sql_delete_bookmark_records = """
         DELETE FROM bookmark;
     """
@@ -154,24 +150,30 @@ class Bookmark:
         else:
             raise RuntimeError(f"[Bookmark] Invalid bookmark name: {bookmark_name}")
 
-    def delete_bookmark(self, bookmark_id: int) -> dict:
+    def delete_bookmark(self, bookmark_name: str) -> dict:
         """
-        Delete a bookmark by its unique ID.
+        Delete a bookmark by its unique name.
 
         Args:
-            bookmark_id (int): The unique identifier for the bookmark to be deleted.
+            bookmark_name (str): The unique name of the bookmark to be deleted.
+
+        Returns:
+            dict: A dictionary with 'success' status and 'message' containing an error message if failed.
         """
-        if bookmark_id is not None:
+        if bookmark_name is not None:
             try:
-                Storage.delete_database_record_by_id(
-                    self.db_instance, bookmark_id, Bookmark.sql_delete_bookmark_record
+                sql_delete_bookmark_record = f"""
+                    DELETE FROM bookmark WHERE name = '{bookmark_name}';
+                """
+                Storage.delete_database_record_in_table(
+                    self.db_instance, sql_delete_bookmark_record
                 )
                 return {"success": True, "message": "Bookmark record deleted."}
             except Exception as e:
                 error_message = f"Failed to delete bookmark record: {e}"
                 return {"success": False, "message": error_message}
         else:
-            error_message = f"[Bookmark] Invalid bookmark ID: {bookmark_id}"
+            error_message = f"[Bookmark] Invalid bookmark ID: {bookmark_name}"
             return {"success": False, "message": error_message}
 
     def delete_all_bookmark(self) -> dict:
