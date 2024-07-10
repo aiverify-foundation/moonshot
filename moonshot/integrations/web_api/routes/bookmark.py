@@ -33,8 +33,8 @@ def insert_bookmark(
         HTTPException: An error occurred while inserting the bookmark.
     """
     try:
-        bookmark_service.insert_bookmark(bookmark_data)
-        return {"message": "Bookmark added successfully"}
+        result = bookmark_service.insert_bookmark(bookmark_data)
+        return result
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
@@ -52,29 +52,29 @@ def insert_bookmark(
 
 @router.get(
     "/api/v1/bookmarks",
-    response_description="List of all bookmarks or a specific bookmark by ID",
+    response_description="List of all bookmarks or a specific bookmark by name",
 )
 @inject
 def get_all_bookmarks(
-    id: Optional[int] = Query(None, description="ID of the bookmark to query"),
+    name: Optional[str] = Query(None, description="Name of the bookmark to query"),
     bookmark_service: BookmarkService = Depends(Provide[Container.bookmark_service]),
 ) -> list[BookmarkPydanticModel]:
     """
-    Retrieve all bookmarks or a specific bookmark by ID from the database.
+    Retrieve all bookmarks or a specific bookmark by name from the database.
 
     Args:
-        id: The ID of the bookmark to retrieve. If None, all bookmarks are retrieved.
+        name: The name of the bookmark to retrieve. If None, all bookmarks are retrieved.
         bookmark_service: The service responsible for bookmark operations.
 
     Returns:
-        A list of bookmarks or a single bookmark if an ID is provided.
+        A list of bookmarks or a single bookmark if a name is provided.
 
     Raises:
         HTTPException: An error occurred while retrieving bookmarks.
     """
     try:
         return bookmark_service.get_all_bookmarks(
-            id=id,
+            name=name,
         )
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -97,16 +97,19 @@ def get_all_bookmarks(
 @inject
 def delete_bookmark(
     all: bool = Query(False, description="Flag to delete all bookmarks"),
-    id: Optional[int] = Query(None, description="ID of the bookmark to delete"),
+    name: Optional[str] = Query(None, description="Name of the bookmark to delete"),
     bookmark_service: BookmarkService = Depends(Provide[Container.bookmark_service]),
 ) -> dict:
     """
-    Delete a specific bookmark or all bookmarks from the database.
+    Delete a specific bookmark by name or all bookmarks from the database.
 
     Args:
         all: A flag indicating whether to delete all bookmarks.
-        id: The ID of the bookmark to delete.
+        name: The name of the bookmark to delete. If 'all' is False and 'name' is None, no bookmark will be deleted.
         bookmark_service: The service responsible for bookmark operations.
+
+    Returns:
+        A dictionary with a message indicating successful deletion or an error message.
 
     Raises:
         HTTPException: An error occurred while deleting the bookmark(s).
@@ -114,11 +117,11 @@ def delete_bookmark(
     try:
         if all:
             return bookmark_service.delete_bookmarks(all=True)
-        elif id is not None:
-            return bookmark_service.delete_bookmarks(all=False, id=id)
+        elif name is not None:
+            return bookmark_service.delete_bookmarks(all=False, name=name)
         else:
             raise HTTPException(
-                status_code=400, detail="Must specify 'all' or 'id' parameter"
+                status_code=400, detail="Must specify 'all' or 'name' parameter"
             )
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -133,8 +136,6 @@ def delete_bookmark(
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete bookmark: {e.msg}"
             )
-
-
 @router.post(
     "/api/v1/bookmarks/export", response_description="Exporting Bookmark to JSON file"
 )

@@ -21,12 +21,13 @@ class BookmarkService(BaseService):
             context_strategy=bookmark_data.context_strategy,
             prompt_template=bookmark_data.prompt_template,
             attack_module=bookmark_data.attack_module,
+            metric=bookmark_data.metric,
         )
 
         return result
 
     @exception_handler
-    def get_all_bookmarks(self, id: int | None = None) -> list[BookmarkPydanticModel]:
+    def get_all_bookmarks(self, name: str | None = None) -> list[BookmarkPydanticModel]:
         """
         Retrieves all bookmarks or a specific bookmark by its ID.
 
@@ -38,8 +39,8 @@ class BookmarkService(BaseService):
         """
         retn_bookmark: list[BookmarkPydanticModel] = []
 
-        if id:
-            bookmarks = [moonshot_api.api_get_bookmark_by_id(id)]
+        if name:
+            bookmarks = [moonshot_api.api_get_bookmark(name)]
         else:
             bookmarks = moonshot_api.api_get_all_bookmarks()
 
@@ -48,7 +49,7 @@ class BookmarkService(BaseService):
         return retn_bookmark
 
     @exception_handler
-    def delete_bookmarks(self, all: bool = False, id: int | None = None) -> dict:
+    def delete_bookmarks(self, all: bool = False, name: str | None = None) -> dict:
         """
         Deletes bookmarks from the system either by ID or all bookmarks if specified.
 
@@ -58,8 +59,8 @@ class BookmarkService(BaseService):
         """
         if all:
             result = moonshot_api.api_delete_all_bookmark()
-        elif id is not None:
-            result = moonshot_api.api_delete_bookmark(id)
+        elif name is not None:
+            result = moonshot_api.api_delete_bookmark(name)
         else:
             raise ValueError("Either 'all' must be True or 'id' must be provided.")
 
