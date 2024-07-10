@@ -88,9 +88,8 @@ def api_delete_all_bookmark() -> dict:
     """
     return get_bookmark_instance().delete_all_bookmark()
 
-def api_export_bookmarks(
-    export_file_name: str = "bookmarks"
-) -> str:
+
+def api_export_bookmarks(export_file_name: str = "bookmarks") -> str:
     """
     Exports bookmarks to a specified file.
 

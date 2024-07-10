@@ -36,6 +36,7 @@ from moonshot.integrations.cli.redteam.session import (
     new_session,
     new_session_args,
     run_attack_module,
+    show_chats,
     use_bookmark,
     use_bookmark_args,
     use_session,
@@ -56,6 +57,9 @@ class RedTeamCommandSet(cmd2.CommandSet):
 
     def do_end_session(self, _: cmd2.Statement) -> None:
         end_session()
+
+    def do_show_chats(self, _: cmd2.Statement) -> None:
+        show_chats()
 
     def do_list_sessions(self, _: cmd2.Statement) -> None:
         list_sessions()

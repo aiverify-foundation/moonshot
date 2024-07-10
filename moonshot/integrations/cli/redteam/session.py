@@ -16,7 +16,7 @@ from moonshot.api import (
     api_get_all_bookmarks,
     api_get_all_chats_from_session,
     api_get_all_session_metadata,
-    api_get_bookmark_by_id,
+    api_get_bookmark,
     api_insert_bookmark,
     api_load_runner,
     api_load_session,
@@ -32,12 +32,6 @@ console = Console()
 
 
 def new_session(args) -> None:
-    """
-    Creates a new session based on the provided arguments.
-
-    Args:
-        args (Namespace): The arguments passed to the function.
-    """
     global active_session
 
     runner_id = args.runner_id
@@ -103,6 +97,19 @@ def use_session(args) -> None:
         update_chat_display()
     except Exception as e:
         print(f"[use_session]: {str(e)}")
+
+
+def show_chats() -> None:
+    """
+    Shows the chat table in a session so that users don't have to restart a session to view the chat table
+    """
+    global active_session
+
+    if not active_session:
+        print("There is no active session. Activate a session to show a chat table.")
+        return
+
+    update_chat_display()
 
 
 def end_session() -> None:
@@ -269,15 +276,15 @@ def use_bookmark(args) -> None:
 
     Args:
         args (Namespace): The arguments passed to the function, containing:
-            - bookmark_id (str): The ID of the bookmark to use.
+            - bookmark_name (str): The ID of the bookmark to use.
 
     If there is no active session, a message is printed to the console and the function returns.
     """
     global active_session
     if active_session:
         try:
-            bookmark_id = args.bookmark_id
-            bookmark_details = api_get_bookmark_by_id(bookmark_id)
+            bookmark_name = args.bookmark_name
+            bookmark_details = api_get_bookmark(bookmark_name)
             if bookmark_details:
                 bookmarked_prompt = bookmark_details["prompt"]
                 bookmarked_pt = bookmark_details["prompt_template"]
@@ -334,13 +341,12 @@ def delete_bookmark(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            bookmark_id (int): The identifier of the bookmark to delete.
+            bookmark_name (str): The identifier of the bookmark to delete.
 
     Returns:
         None
     """
     # Confirm with the user before deleting a bookmark
-    # TODO: to decide if we wanna use name to identify bookmark instead as names as unique
     confirmation = console.input(
         "[bold red]Are you sure you want to delete the bookmark (y/N)? [/]"
     )
@@ -348,8 +354,8 @@ def delete_bookmark(args) -> None:
         console.print("[bold yellow]Bookmark deletion cancelled.[/]")
         return
     try:
-        bookmark_message = api_delete_bookmark(args.bookmark_id)
-        print("[delete_bookmark]:", bookmark_message["error_message"])
+        bookmark_message = api_delete_bookmark(args.bookmark_name)
+        print("[delete_bookmark]:", bookmark_message["message"])
     except Exception as e:
         print(f"[delete_bookmark]: {str(e)}")
 
@@ -396,9 +402,9 @@ def display_bookmarks(bookmarks_list) -> None:
         table.add_column("Attack Module", justify="left", width=20)
         table.add_column("Metric", justify="left", width=20)
         table.add_column("Bookmark Time", justify="left", width=20)
-        for index, bookmark in enumerate(bookmarks_list, 1):
+        for idx, bookmark in enumerate(bookmarks_list, 1):
             (
-                id,
+                index,
                 name,
                 prompt,
                 response,
@@ -410,7 +416,7 @@ def display_bookmarks(bookmarks_list) -> None:
             ) = bookmark.values()
             table.add_section()
             table.add_row(
-                str(id),
+                str(idx),
                 name,
                 prompt,
                 response,
@@ -434,7 +440,7 @@ def view_bookmark(args) -> None:
     """
 
     try:
-        bookmark_info = api_get_bookmark_by_id(args.bookmark_id)
+        bookmark_info = api_get_bookmark(args.bookmark_name)
         display_bookmarks([bookmark_info])
     except Exception as e:
         print(f"[view_bookmark]: {str(e)}")
@@ -448,8 +454,8 @@ def export_bookmarks(args) -> None:
         args (Namespace): The arguments passed to the function, containing the name of the export file.
     """
     try:
-        api_export_bookmarks(write_file=True, export_file_name=args.bookmark_list_name)
-        print("Bookmarks exported successfully.")
+        file_path = api_export_bookmarks(export_file_name=args.bookmark_list_name)
+        print(f"Bookmarks exported successfully. Written to: {file_path}")
     except Exception as e:
         print(f"[export_bookmarks]: {str(e)}")
 
@@ -687,7 +693,6 @@ automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
         'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
-        # '-c "add_previous_prompt" -p "mmlu" -m "bleuscore"'
     ),
 )
 
@@ -778,7 +783,7 @@ use_bookmark_args = cmd2.Cmd2ArgumentParser(
 )
 
 use_bookmark_args.add_argument(
-    "bookmark_id",
+    "bookmark_name",
     type=str,
     help="Name of the bookmark",
 )
@@ -787,25 +792,25 @@ use_bookmark_args.add_argument(
 # Delete bookmark prompt arguments
 delete_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
     description="Delete a bookmark",
-    epilog="Example:\n delete_bookmark 2",
+    epilog="Example:\n delete_bookmark my_bookmarked_prompt",
 )
 
 delete_bookmark_prompt_args.add_argument(
-    "bookmark_id",
-    type=int,
-    help="ID of the bookmark",
+    "bookmark_name",
+    type=str,
+    help="Name of the bookmark",
 )
 
 # View bookmark prompt arguments
 view_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
     description="View a bookmark",
-    epilog="Example:\n view_bookmark 2",
+    epilog="Example:\n view_bookmark my_bookmarked_prompt",
 )
 
 view_bookmark_prompt_args.add_argument(
-    "bookmark_id",
-    type=int,
-    help="ID of the bookmark",
+    "bookmark_name",
+    type=str,
+    help="Name of the bookmark you want to view",
 )
 
 # Export bookmarks arguments
@@ -817,5 +822,5 @@ export_bookmarks_args = cmd2.Cmd2ArgumentParser(
 export_bookmarks_args.add_argument(
     "bookmark_list_name",
     type=str,
-    help="Name of the bookmark",
+    help="Name of the exported bookmarks JSON file you want to save as (without the .json extension)",
 )

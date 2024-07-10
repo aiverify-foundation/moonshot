@@ -152,13 +152,10 @@ class Bookmark:
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
         """
-        Delete a bookmark by its unique name.
+        Delete a bookmark by its unique ID.
 
         Args:
-            bookmark_name (str): The unique name of the bookmark to be deleted.
-
-        Returns:
-            dict: A dictionary with 'success' status and 'message' containing an error message if failed.
+            bookmark_id (int): The unique identifier for the bookmark to be deleted.
         """
         if bookmark_name is not None:
             try:
@@ -173,7 +170,7 @@ class Bookmark:
                 error_message = f"Failed to delete bookmark record: {e}"
                 return {"success": False, "message": error_message}
         else:
-            error_message = f"[Bookmark] Invalid bookmark ID: {bookmark_name}"
+            error_message = f"[Bookmark] Invalid bookmark name: {bookmark_name}"
             return {"success": False, "message": error_message}
 
     def delete_all_bookmark(self) -> dict:
