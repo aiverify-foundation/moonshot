@@ -152,10 +152,10 @@ class Bookmark:
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
         """
-        Delete a bookmark by its unique ID.
+        Delete a bookmark by its unique name.
 
         Args:
-            bookmark_id (int): The unique identifier for the bookmark to be deleted.
+            bookmark_name (str): The unique name for the bookmark to be deleted.
         """
         if bookmark_name is not None:
             try:

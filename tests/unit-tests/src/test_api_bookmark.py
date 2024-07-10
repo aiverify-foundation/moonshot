@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from unittest.mock import patch, MagicMock
 
 from moonshot.api import (
-    api_get_bookmark_by_id,
+    api_get_bookmark,
     api_export_bookmarks,
     api_delete_bookmark,
     api_insert_bookmark,
@@ -534,84 +534,53 @@ class TestCollectionApiBookmark:
 
         # Assert that the returned bookmarks match the expected bookmarks
         assert actual_bookmarks == expected_bookmarks, "The returned bookmarks do not match the expected bookmarks."
+@pytest.mark.parametrize(
+    "bookmark_name, expected_dict",
+    [
+        # Valid case
+        (
+            "my bookmark 1",
+            {
+                "expected_result": {
+                    'id': 1, 'name': 'my bookmark 1',
+                    'prompt': 'Your prompt',
+                    'response': 'Your response',
+                    'context_strategy': 'Your context strategy',
+                    'prompt_template': 'Your prompt template',
+                    'attack_module': 'Your attack module',
+                    'bookmark_time': '2024-07-03 21:05:58'
+                }
+            }
+        ),
+        # Invalid bookmark_name cases
+        (None, {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: None"}),
+        ("", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: "}),
+        ("-1", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: -1"}),
+        ("999", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] No record found for bookmark_name 999"}),
+    ],
+)
+@patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
+def test_api_get_bookmark(self, mock_get_instance, bookmark_name, expected_dict):
+    # Mock the Bookmark instance and its methods
+    mock_instance = MagicMock()
+    mock_get_instance.return_value = mock_instance
 
-    # ------------------------------------------------------------------------------
-    # Test api_get_bookmark_by_id functionality
-    # ------------------------------------------------------------------------------
-    @pytest.mark.parametrize(
-        "bookmark_id, expected_dict",
-        [
-            # Valid case
-            (
-                1,
-                {
-                    "expected_result": {
-                        'id': 1, 'name': 'my bookmark 1',
-                        'prompt': 'Your prompt',
-                        'response': 'Your response',
-                        'context_strategy': 'Your context strategy',
-                        'prompt_template': 'Your prompt template',
-                        'attack_module': 'Your attack module',
-                        'bookmark_time': '2024-07-03 21:05:58'
-                    }
-                }
-            ),
-            # Invalid bookmark_id (None)
-            (
-                None,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: None"
-                }
-            ),
-            # Invalid bookmark_id (empty string)
-            (
-                "",
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: "
-                }
-            ),
-            # Invalid bookmark_id (negative number)
-            (
-                -1,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: -1"
-                }
-            ),
-            # Bookmark not found
-            (
-                999,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] No record found for bookmark_id 999"
-                }
-            ),
-        ],
-    )
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_get_bookmark_by_id(self, mock_get_instance, bookmark_id, expected_dict):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-
-        if "expected_exception" in expected_dict:
-            # Configure the mock to raise an exception when get_bookmark_by_id is called
-            mock_instance.get_bookmark_by_id.side_effect = expected_dict["expected_exception"](expected_dict["expected_message"])
-            # Call the API function and assert that the expected exception is raised
-            with pytest.raises(expected_dict["expected_exception"]) as exc_info:
-                api_get_bookmark_by_id(bookmark_id)
-            # Assert that the exception message matches the expected message
-            assert str(exc_info.value) == expected_dict["expected_message"], "The expected exception message was not raised."
-        else:
-            # Configure the mock to return the expected bookmark
-            mock_instance.get_bookmark_by_id.return_value = expected_dict["expected_result"]
-            # Call the API function and get the response
-            response = api_get_bookmark_by_id(bookmark_id)
-            # Assert that the response matches the expected bookmark
-            assert response == expected_dict["expected_result"], "The returned bookmark does not match the expected bookmark."
-
+    if "expected_exception" in expected_dict:
+        # Configure the mock to raise an exception when get_bookmark_by_name is called
+        mock_instance.get_bookmark_by_name.side_effect = expected_dict["expected_exception"](expected_dict["expected_message"])
+        # Call the API function and assert that the expected exception is raised
+        with pytest.raises(expected_dict["expected_exception"]) as exc_info:
+            api_get_bookmark(bookmark_name)
+        # Assert that the exception message matches the expected message
+        assert str(exc_info.value) == expected_dict["expected_message"], "The expected exception message was not raised."
+    else:
+        # Configure the mock to return the expected bookmark
+        mock_instance.get_bookbookmarks_by_name.return_value = expected_dict["expected_result"]
+        # Call the API function and get the response
+        response = api_get_bookmark(bookmark_name)
+        # Assert that the response matches the expected bookmark
+        assert response == expected_dict["expected_result"], "The returned bookmark does not match the expected bookmark."
+    
     # ------------------------------------------------------------------------------
     # Test api_get_delete_all_bookmark functionality
     # ------------------------------------------------------------------------------
@@ -635,7 +604,7 @@ class TestCollectionApiBookmark:
     # Test api_delete_bookmark functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "bookmark_id, expected_dict",
+        "bookmark_name, expected_dict",
         [
             # Valid case
             (
@@ -652,28 +621,28 @@ class TestCollectionApiBookmark:
                     }
                 }
             ),
-            # Invalid bookmark_id (None)
+            # Invalid bookmark_name (None)
             (
                 None,
                 {
                     "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: None"
+                    "expected_message": "[Bookmark] Invalid bookmark_name: None"
                 }
             ),
-            # Invalid bookmark_id (empty string)
+            # Invalid bookmark_name (empty string)
             (
                 "",
                 {
                     "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: "
+                    "expected_message": "[Bookmark] Invalid bookmark_name: "
                 }
             ),
-            # Invalid bookmark_id (negative number)
+            # Invalid bookmark_name (negative number)
             (
                 -1,
                 {
                     "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_id: -1"
+                    "expected_message": "[Bookmark] Invalid bookmark_name: -1"
                 }
             ),
             # Bookmark not found
@@ -681,13 +650,13 @@ class TestCollectionApiBookmark:
                 999,
                 {
                     "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] No record found for bookmark_id 999"
+                    "expected_message": "[Bookmark] No record found for bookmark_name 999"
                 }
             ),
         ],
     )
     @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_delete_bookmark(self, mock_get_instance, bookmark_id, expected_dict):
+    def test_api_delete_bookmark(self, mock_get_instance, bookmark_name, expected_dict):
         # Mock the Bookmark instance and its methods
         mock_instance = MagicMock()
         mock_get_instance.return_value = mock_instance
@@ -702,14 +671,14 @@ class TestCollectionApiBookmark:
             mock_instance.delete_bookmark.side_effect = expected_exception(expected_message)
             # Call the API function and assert that the expected exception is raised
             with pytest.raises(expected_exception) as exc_info:
-                api_delete_bookmark(bookmark_id)
+                api_delete_bookmark(bookmark_name)
             # Assert that the exception message matches the expected message
             assert str(exc_info.value) == expected_message, "The expected exception message was not raised."
         else:
             # Configure the mock to return the expected result
             mock_instance.delete_bookmark.return_value = expected_result
             # Call the API function and get the response
-            response = api_delete_bookmark(bookmark_id)
+            response = api_delete_bookmark(bookmark_name)
             # Assert that the response matches the expected result
             assert response == expected_result, "The returned result does not match the expected result."
 
@@ -717,40 +686,20 @@ class TestCollectionApiBookmark:
     # Test api_export_bookmark functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "write_file, export_file_name, expected_output",
+        "export_file_name, expected_output",
         [
-            # Test case no value is given
-            (
-                None, None,
-                [
-                    {'id':  1, 'name': 'my bookmark 1', 'prompt': 'Your prompt', 'response': 'Your response', 'context_strategy': 'Your context strategy', 'prompt_template': 'Your prompt template', 'attack_module': '', 'bookmark_time': '2024-07-04 15:53:23'}
-                ]
-            ),
-            # Test case when write_file is False
-            (
-                False, None,
-                [
-                    {'id':  1, 'name': 'my bookmark 1', 'prompt': 'Your prompt', 'response': 'Your response', 'context_strategy': 'Your context strategy', 'prompt_template': 'Your prompt template', 'attack_module': '', 'bookmark_time': '2024-07-04 15:53:23'}
-                ]
-            ),
-            # Test case when write_file is True
-            (
-                True, "custom_filename",
-                [
-                    {'id': 1, 'name': 'my bookmark 1', 'prompt': 'Your prompt', 'response': 'Your response', 'context_strategy': 'Your context strategy', 'prompt_template': 'Your prompt template', 'attack_module': '', 'bookmark_time': '2024-07-04 15:53:23'}
-                ]
-            )
+            ("bookmark", "../moonshot-data/bookmark/bookmarks.json")
         ]
     )
     @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_export_bookmarks(self, mock_get_instance, write_file, export_file_name, expected_output):
+    def test_api_export_bookmarks(self, mock_get_instance, export_file_name, expected_output):
         # Mock the Bookmark instance and its methods
         mock_instance = MagicMock()
         mock_get_instance.return_value = mock_instance
         mock_instance.export_bookmarks.return_value = expected_output
 
         # Call the API function
-        actual_output = api_export_bookmarks(write_file, export_file_name)
+        actual_output = api_export_bookmarks(export_file_name)
 
         # Assert that the returned output matches the expected output
         assert actual_output == expected_output, "The returned output from api_export_bookmarks does not match the expected output."
