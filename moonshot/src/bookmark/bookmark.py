@@ -28,6 +28,7 @@ class Bookmark:
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         prompt TEXT NOT NULL,
+        prepared_prompt TEXT NOT NULL,
         response TEXT NOT NULL,
         context_strategy TEXT,
         prompt_template TEXT,
@@ -39,9 +40,9 @@ class Bookmark:
 
     sql_insert_bookmark_record = """
         INSERT INTO bookmark (
-        name, prompt, response, context_strategy, prompt_template, attack_module,
+        name, prompt, prepared_prompt, response, context_strategy, prompt_template, attack_module,
         metric, bookmark_time)
-        VALUES (?,?,?,?,?,?,?,?);
+        VALUES (?,?,?,?,?,?,?,?,?);
     """
 
     sql_select_bookmarks_record = """
@@ -85,6 +86,7 @@ class Bookmark:
         data = (
             bookmark.name,
             bookmark.prompt,
+            bookmark.prepared_prompt,
             bookmark.response,
             bookmark.context_strategy,
             bookmark.prompt_template,

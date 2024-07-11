@@ -22,10 +22,6 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
-from moonshot.src.api.api_session import (
-    api_update_context_strategy,
-    api_update_prompt_template,
-)
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
@@ -248,6 +244,7 @@ def bookmark_prompt(args) -> None:
                 bookmark_message = api_insert_bookmark(
                     bookmark_name,
                     target_endpoint_chat_record["prompt"],
+                    target_endpoint_chat_record["prepared_prompt"],
                     target_endpoint_chat_record["predicted_result"],
                     target_endpoint_chat_record["context_strategy"],
                     target_endpoint_chat_record["prompt_template"],
@@ -286,25 +283,7 @@ def use_bookmark(args) -> None:
             bookmark_name = args.bookmark_name
             bookmark_details = api_get_bookmark(bookmark_name)
             if bookmark_details:
-                bookmarked_prompt = bookmark_details["prompt"]
-                bookmarked_pt = bookmark_details["prompt_template"]
-                bookmarked_cs = bookmark_details["context_strategy"]
-                bookmark_console_msg = (
-                    "[bold yellow]Updated session with bookmarked context strategy:[/]"
-                    f" {bookmarked_pt} [bold yellow]and prompt template:[/]"
-                    f" {bookmarked_cs}."
-                )
-                console.print(bookmark_console_msg)
-                api_update_prompt_template(
-                    active_session["session_id"], bookmark_details["prompt_template"]
-                )
-                api_update_context_strategy(
-                    active_session["session_id"], bookmark_details["context_strategy"]
-                )
-                active_session["prompt_template"] = bookmark_details["prompt_template"]
-                active_session["context_strategy"] = bookmark_details[
-                    "context_strategy"
-                ]
+                bookmarked_prompt = bookmark_details["prepared_prompt"]
 
                 # automated redteaming: craft CLI command for user to copy and paste
                 if bookmark_details["attack_module"]:
@@ -395,18 +374,15 @@ def display_bookmarks(bookmarks_list) -> None:
         )
         table.add_column("ID.", justify="left", width=5)
         table.add_column("Name", justify="left", width=20)
-        table.add_column("Prompt", justify="left", width=50)
-        table.add_column("Response", justify="left", width=50)
-        table.add_column("Context Strategy", justify="left", width=20)
-        table.add_column("Prompt Template", justify="left", width=20)
-        table.add_column("Attack Module", justify="left", width=20)
-        table.add_column("Metric", justify="left", width=20)
+        table.add_column("Prepared Prompt", justify="left", width=50)
+        table.add_column("Predicted Response", justify="left", width=50)
         table.add_column("Bookmark Time", justify="left", width=20)
         for idx, bookmark in enumerate(bookmarks_list, 1):
             (
                 index,
                 name,
                 prompt,
+                prepared_prompt,
                 response,
                 context_strategy,
                 prompt_template,
@@ -418,12 +394,8 @@ def display_bookmarks(bookmarks_list) -> None:
             table.add_row(
                 str(idx),
                 name,
-                prompt,
+                prepared_prompt,
                 response,
-                context_strategy,
-                prompt_template,
-                attack_module,
-                metric,
                 bookmark_time,
             )
         console.print(table)
