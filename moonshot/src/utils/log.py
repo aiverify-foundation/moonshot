@@ -18,6 +18,8 @@ def configure_logger(name: str):
     Returns:
         logging.Logger: The configured logger with the specified name.
     """
+    log_extension = ".log"
+
     # Read environment variable
     log_filename = os.getenv("MS_LOG_NAME", "moonshot").lower()
     log_level = os.getenv("MS_LOG_LEVEL", "INFO").upper()
@@ -28,7 +30,19 @@ def configure_logger(name: str):
         "%(asctime)s [%(levelname)s][%(filename)s::%(funcName)s(%(lineno)d)] %(message)s"
     )
 
-    # Create a logger
+    # Check name is valid
+    if not name or not isinstance(name, str) or name is None:
+        name = Path(__file__).stem
+
+    # Check log level is valid
+    valid_log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    if log_level not in valid_log_levels:
+        log_level = "INFO"
+
+    # Check log filename is valid
+    if not log_filename or not isinstance(log_filename, str) or log_filename is None:
+        log_filename = "moonshot"
+
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
     logger.propagate = False
@@ -41,7 +55,7 @@ def configure_logger(name: str):
 
     # Create a file handler if required
     if log_write_to_file:
-        file_path = Path(".") / log_filename  # Use Path to create the file path
+        file_path = Path(".").joinpath(log_filename).with_suffix(log_extension)
         file_handler = logging.FileHandler(
             str(file_path)
         )  # Convert Path object to string

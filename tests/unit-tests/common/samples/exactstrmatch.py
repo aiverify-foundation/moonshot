@@ -1,12 +1,8 @@
-import logging
 from pathlib import Path
 from typing import Any
 
 from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 
 class ExactStrMatch(MetricInterface):
@@ -19,7 +15,6 @@ class ExactStrMatch(MetricInterface):
         )
         self.metric_config = self.get_metrics_configuration(self.id)
 
-    @timeit
     def get_metadata(self) -> dict | None:
         """
         Retrieves and returns the metadata of the ExactStrMatch class.

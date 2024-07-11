@@ -377,9 +377,7 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            logger.info(
-                f"[Runner] {self.id} - Benchmark recipe run completed and reset."
-            )
+            logger.info(f"[Runner] {self.id} - Benchmark recipe run completed.")
 
     async def run_cookbooks(
         self,
@@ -447,9 +445,7 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            logger.info(
-                f"[Runner] {self.id} - Benchmark cookbook run completed and reset."
-            )
+            logger.info(f"[Runner] {self.id} - Benchmark cookbook run completed.")
 
     async def run_red_teaming(
         self,

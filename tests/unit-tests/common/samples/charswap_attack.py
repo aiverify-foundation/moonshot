@@ -2,24 +2,14 @@ import math
 import random
 import string
 
+from moonshot.src.redteaming.attack.attack_module import AttackModule
+from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
+from moonshot.src.utils.log import configure_logger
 from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from moonshot.src.redteaming.attack.attack_module import AttackModule
-from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
-
-
-def get_n_random(low: int, high: int, n: int) -> list:
-    """
-    Util function to generate random indices.
-    Words of these indices after word tokenization will be subjected to perturbation.
-    """
-    result = []
-    try:
-        result = random.sample(range(low, high), n)
-    except ValueError:
-        print(f"Sample size of {n} exceeds population size of {high - low}")
-    return result
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class CharSwapGenerator(AttackModule):
@@ -28,10 +18,9 @@ class CharSwapGenerator(AttackModule):
         super().__init__(am_id, am_arguments)
         self.name = "Character Swap Attack"
         self.description = (
-            "About this attack module:\nThis module creates perturbations through swapping characters "
-            "for words that contains more than 3 characters.\nParameters:\n1. MAX_ITERATIONS - Number "
-            "of prompts that should be sent to the target. [Default: 10]\n2. word_swap_ratio -"
-            "Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n"
+            "This module tests for adversarial textual robustness. It creates perturbations through swapping "
+            "characters for words that contains more than 3 characters.\nParameters:\n1. MAX_ITERATIONS - Number "
+            "of prompts that should be sent to the target. [Default: 10]"
         )
 
     def get_metadata(self) -> dict:
@@ -51,6 +40,20 @@ class CharSwapGenerator(AttackModule):
             "description": self.description if hasattr(self, "description") else "",
         }
 
+    def get_n_random(self, low: int, high: int, n: int) -> list:
+        """
+        Util function to generate random indices.
+        Words of these indices after word tokenization will be subjected to perturbation.
+        """
+        result = []
+        try:
+            result = random.sample(range(low, high), n)
+        except ValueError:
+            logger.debug(
+                f"[CharSwapGenerator] Sample size of {n} exceeds population size of {high - low}"
+            )
+        return result
+
     async def execute(self):
         """
         Asynchronously executes the attack module.
@@ -60,7 +63,6 @@ class CharSwapGenerator(AttackModule):
         Language Learning Model (LLM) and sends the processed dataset as a prompt to the LLM.
         """
         self.load_modules()
-
         return await self.perform_attack_manually()
 
     async def perform_attack_manually(self) -> list:
@@ -84,7 +86,7 @@ class CharSwapGenerator(AttackModule):
         num_perturb_words = math.ceil(word_list_len * word_swap_ratio)
         for attempt in range(MAX_ITERATION):
             # get random indices of words to undergo swapping algo
-            random_words_idx = get_n_random(0, word_list_len, num_perturb_words)
+            random_words_idx = self.get_n_random(0, word_list_len, num_perturb_words)
             for idx in random_words_idx:
                 if word_list[idx] not in string.punctuation and len(word_list[idx]) > 3:
                     idx1 = random.randint(1, len(word_list[idx]) - 2)
@@ -100,8 +102,8 @@ class CharSwapGenerator(AttackModule):
             word_list = word_tokenize(self.prompt)
         for res in result_list:
             for x in res:
-                print(x.prompt)
-                print(x.predicted_results)
-                print()
-
+                logger.debug(f"[CharSwapGenerator] Prompt: {x.prompt}")
+                logger.debug(
+                    f"[CharSwapGenerator] Predicted Results: {x.predicted_results}\n"
+                )
         return result_list
