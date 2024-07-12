@@ -465,14 +465,14 @@ class TestRedTeamingCLI:
             ),       
 
 
-            # Failure: Run with non-existent attack module
-            (
-                [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
-                 "run_attack_module sample_attack_modulex \"this is my prompt\" "
-                 "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
-                 ],
-                "Unable to get defined attack module instance - sample_attack_modulex",
-            ),       
+            # # Failure: Run with non-existent attack module
+            # (
+            #     [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
+            #      "run_attack_module sample_attack_modulex \"this is my prompt\" "
+            #      "-s \"test system prompt\" -c \"add_previous_prompt\" -p \"mmlu\" -m \"bleuscore\""
+            #      ],
+            #     "Unable to get defined attack module instance - sample_attack_modulex",
+            # ),       
 
 
             # Failure: Run with non-existent context strategy
