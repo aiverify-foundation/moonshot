@@ -39,7 +39,7 @@ class TestCollectionApiBookmark:
 
         run_data_files = [
             "tests/unit-tests/src/data/bookmarks/bookmark.db",
-            "tests/unit-tests/src/data/bookmarks/bookmarks.json",
+            "tests/unit-tests/src/data/bookmarks/bookmark.json",
         ]
         for run_data_file in run_data_files:
             if os.path.exists(run_data_file):
