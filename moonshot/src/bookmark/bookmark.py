@@ -23,6 +23,22 @@ class Bookmark:
             cls._instance.__init_instance(db_name)
         return cls._instance
 
+    @classmethod
+    def get_instance(cls, db_name="bookmark"):
+        """
+        Get the singleton instance of the Bookmark class.
+
+        Args:
+            db_name (str): The name of the database.
+
+        Returns:
+            Bookmark: The singleton instance of the Bookmark class.
+        """
+        if cls._instance is None:
+            cls._instance = super(Bookmark, cls).__new__(cls)
+            cls._instance.__init_instance(db_name)
+        return cls._instance
+
     sql_create_bookmark_table = """
         CREATE TABLE IF NOT EXISTS bookmark (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -216,7 +232,9 @@ class Bookmark:
         ]
 
         # Write json file to moonshot-data
-        file_path = f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
+        file_path = (
+            f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
+        )
 
         Storage.create_object(
             EnvVariables.BOOKMARKS.name,

@@ -1,15 +1,6 @@
 from moonshot.src.bookmark.bookmark import Bookmark
 from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
 
-_bookmark_instance = None
-
-
-def get_bookmark_instance():
-    global _bookmark_instance
-    if _bookmark_instance is None:
-        _bookmark_instance = Bookmark()
-    return _bookmark_instance
-
 
 def api_insert_bookmark(
     name: str,
@@ -48,7 +39,7 @@ def api_insert_bookmark(
         metric=metric,
         bookmark_time="",  # bookmark_time will be set to current time in add_bookmark method
     )
-    return get_bookmark_instance().add_bookmark(bookmark_args)
+    return Bookmark.get_instance().add_bookmark(bookmark_args)
 
 
 def api_get_all_bookmarks() -> list[dict]:
@@ -58,7 +49,7 @@ def api_get_all_bookmarks() -> list[dict]:
     Returns:
         list[dict]: A list of bookmarks, each represented as a dictionary.
     """
-    return get_bookmark_instance().get_all_bookmarks()
+    return Bookmark.get_instance().get_all_bookmarks()
 
 
 def api_get_bookmark(bookmark_name: str) -> dict:
@@ -71,7 +62,7 @@ def api_get_bookmark(bookmark_name: str) -> dict:
     Returns:
         dict: The bookmark details corresponding to the provided ID.
     """
-    return get_bookmark_instance().get_bookmark(bookmark_name)
+    return Bookmark.get_instance().get_bookmark(bookmark_name)
 
 
 def api_delete_bookmark(bookmark_name: str) -> dict:
@@ -81,14 +72,14 @@ def api_delete_bookmark(bookmark_name: str) -> dict:
     Args:
         bookmark_name (str): The name of the bookmark to be removed.
     """
-    return get_bookmark_instance().delete_bookmark(bookmark_name)
+    return Bookmark.get_instance().delete_bookmark(bookmark_name)
 
 
 def api_delete_all_bookmark() -> dict:
     """
     Removes all bookmarks from the database.
     """
-    return get_bookmark_instance().delete_all_bookmark()
+    return Bookmark.get_instance().delete_all_bookmark()
 
 
 def api_export_bookmarks(export_file_name: str = "bookmarks") -> str:
@@ -101,4 +92,4 @@ def api_export_bookmarks(export_file_name: str = "bookmarks") -> str:
     Returns:
         str: The filepath of where the file is written.
     """
-    return get_bookmark_instance().export_bookmarks(export_file_name)
+    return Bookmark.get_instance().export_bookmarks(export_file_name)
