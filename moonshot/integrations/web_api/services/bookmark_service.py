@@ -17,6 +17,7 @@ class BookmarkService(BaseService):
         result = moonshot_api.api_insert_bookmark(
             name=bookmark_data.name,
             prompt=bookmark_data.prompt,
+            prepared_prompt=bookmark_data.prepared_prompt,
             response=bookmark_data.response,
             context_strategy=bookmark_data.context_strategy,
             prompt_template=bookmark_data.prompt_template,

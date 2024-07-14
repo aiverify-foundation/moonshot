@@ -216,7 +216,7 @@ class Bookmark:
         ]
 
         # Write json file to moonshot-data
-        file_path = f"../moonshot-data/bookmark/{export_file_name}.json"
+        file_path = f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
 
         Storage.create_object(
             EnvVariables.BOOKMARKS.name,
