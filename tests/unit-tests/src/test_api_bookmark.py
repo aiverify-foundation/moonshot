@@ -23,22 +23,23 @@ class TestCollectionApiBookmark:
         # Initialize environment variables and copy sample files for testing
         api_set_environment_variables(
             {
-                "BOOKMARK": "tests/unit-tests/src/data/bookmark/",
+                "BOOKMARKS": "tests/unit-tests/src/data/bookmarks/",
                 "DATABASES": "tests/unit-tests/src/data/databases/",
                 "DATABASES_MODULES": "tests/unit-tests/src/data/databases-modules/",
                 "IO_MODULES": "tests/unit-tests/src/data/io-modules/",
             }
         )
-
+    
         shutil.copyfile(
             "tests/unit-tests/common/samples/bookmark.db",
-            "tests/unit-tests/src/data/bookmark/bookmark.db",
+            "tests/unit-tests/src/data/bookmarks/bookmark.db",
         )
 
         yield
 
         run_data_files = [
-            "tests/unit-tests/src/data/bookmark/bookmark.db",
+            "tests/unit-tests/src/data/bookmarks/bookmark.db",
+            "tests/unit-tests/src/data/bookmarks/bookmarks.json",
         ]
         for run_data_file in run_data_files:
             if os.path.exists(run_data_file):
@@ -68,6 +69,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark A",
                     "prompt": "Prompt A",
                     "response": "Response A",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": "Strategy A",
                     "prompt_template": "Template A",
                     "attack_module": "Module A"
@@ -80,6 +82,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark B",
                     "prompt": "Prompt B",
                     "response": "Response B",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": "Strategy B",
                     "prompt_template": "Template B",
                 },
@@ -91,6 +94,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark C",
                     "prompt": "Prompt C",
                     "response": "Response C",
+                    "prepared_prompt": "Prepared Prompt",
                     "prompt_template": "Template C",
                     "attack_module": "Module C"
                 },
@@ -102,6 +106,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark D",
                     "prompt": "Prompt D",
                     "response": "Response D",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": "Strategy D",
                     "attack_module": "Module D"
                 },
@@ -113,6 +118,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark E",
                     "prompt": "Prompt E",
                     "response": "Response E",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {"expected_output": True},
             ),
@@ -122,6 +128,7 @@ class TestCollectionApiBookmark:
                     "name": None,
                     "prompt": "Prompt F",
                     "response": "Response F",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -134,6 +141,7 @@ class TestCollectionApiBookmark:
                     "name": "",
                     "prompt": "Prompt G",
                     "response": "Response G",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -146,6 +154,7 @@ class TestCollectionApiBookmark:
                     "name": [],
                     "prompt": "Prompt H",
                     "response": "Response H",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -158,6 +167,7 @@ class TestCollectionApiBookmark:
                     "name": {},
                     "prompt": "Prompt I",
                     "response": "Response I",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -170,6 +180,7 @@ class TestCollectionApiBookmark:
                     "name": 123,
                     "prompt": "Prompt J",
                     "response": "Response J",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -183,6 +194,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark K",
                     "prompt": None,
                     "response": "Response K",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -195,6 +207,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark L",
                     "prompt": "",
                     "response": "Response L",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -207,6 +220,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark M",
                     "prompt": [],
                     "response": "Response M",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -219,6 +233,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark N",
                     "prompt": {},
                     "response": "Response N",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -231,6 +246,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark O",
                     "prompt": 123,
                     "response": "Response O",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -244,6 +260,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark P",
                     "prompt": None,
                     "response": "Response P",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -256,6 +273,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark Q",
                     "prompt": "",
                     "response": "Response Q",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -268,6 +286,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark R",
                     "prompt": [],
                     "response": "Response R",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -280,6 +299,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark S",
                     "prompt": {},
                     "response": "Response S",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -292,6 +312,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark T",
                     "prompt": 123,
                     "response": "Response T",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -306,6 +327,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark U",
                     "prompt": "Prompt U",
                     "response": None,
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -318,6 +340,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark V",
                     "prompt": "Prompt V",
                     "response": "",
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -330,6 +353,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark W",
                     "prompt": "Prompt W",
                     "response": [],
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -342,6 +366,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark X",
                     "prompt": "Prompt X",
                     "response": {},
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -354,6 +379,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark Y",
                     "prompt": "Prompt Y",
                     "response": 123,
+                    "prepared_prompt": "Prepared Prompt",
                 },
                 {
                     "expected_output": False,
@@ -366,6 +392,7 @@ class TestCollectionApiBookmark:
                 {
                     "name": "Bookmark Z",
                     "prompt": "Prompt Z",
+                    "prepared_prompt": "Prepared Prompt",
                     "response": "Response Z",
                     "attack_module": 123
                 },
@@ -380,6 +407,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AA",
                     "prompt": "Prompt AA",
                     "response": "Response AA",
+                    "prepared_prompt": "Prepared Prompt",
                     "attack_module": []
                 },
                 {
@@ -393,6 +421,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AB",
                     "prompt": "Prompt AB",
                     "response": "Response AB",
+                    "prepared_prompt": "Prepared Prompt",
                     "attack_module": {}
                 },
                 {
@@ -407,6 +436,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark Z",
                     "prompt": "Prompt Z",
                     "response": "Response Z",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": 123
                 },
                 {
@@ -420,6 +450,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AA",
                     "prompt": "Prompt AA",
                     "response": "Response AA",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": []
                 },
                 {
@@ -433,6 +464,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AB",
                     "prompt": "Prompt AB",
                     "response": "Response AB",
+                    "prepared_prompt": "Prepared Prompt",
                     "context_strategy": {}
                 },
                 {
@@ -447,6 +479,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark Z",
                     "prompt": "Prompt Z",
                     "response": "Response Z",
+                    "prepared_prompt": "Prepared Prompt",
                     "prompt_template": 123
                 },
                 {
@@ -460,6 +493,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AA",
                     "prompt": "Prompt AA",
                     "response": "Response AA",
+                    "prepared_prompt": "Prepared Prompt",
                     "prompt_template": []
                 },
                 {
@@ -473,6 +507,7 @@ class TestCollectionApiBookmark:
                     "name": "Bookmark AB",
                     "prompt": "Prompt AB",
                     "response": "Response AB",
+                    "prepared_prompt": "Prepared Prompt",
                     "prompt_template": {}
                 },
                 {
@@ -483,19 +518,7 @@ class TestCollectionApiBookmark:
             ),
         ]
     )
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_insert_bookmark(self, mock_get_instance, input_args, expected_dict):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-
-        # Configure the mock to return success or failure based on expected_dict
-        if expected_dict["expected_output"]:
-            mock_instance.add_bookmark.return_value = {"success": True}
-        else:
-            # Pass the exception class itself, not an instance of the class
-            mock_instance.add_bookmark.side_effect = expected_dict["expected_exception"]
-
+    def test_api_insert_bookmark(self, input_args, expected_dict):
         # Call the API function to insert a bookmark
         if expected_dict["expected_output"]:
             # Assert successful bookmark insertion
@@ -506,99 +529,82 @@ class TestCollectionApiBookmark:
             with pytest.raises(expected_dict["expected_exception"]) as exc_info:
                 api_insert_bookmark(**input_args)
 
+
     # ------------------------------------------------------------------------------
     # Test api_get_all_bookmarks functionality
     # ------------------------------------------------------------------------------
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_get_all_bookmark(self, mock_get_instance):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-        
+    def test_api_get_all_bookmark(self):
         # Set up the expected return value for get_all_bookmarks
         expected_bookmarks = [
             {
-                'id': 1, 'name': 'my bookmark 1',
-                'prompt': 'Your prompt',
-                'response': 'Your response',
-                'context_strategy': 'Your context strategy',
-                'prompt_template': 'Your prompt template',
-                'attack_module': 'Your attack module',
-                'bookmark_time': '2024-07-03 21:05:58'
+                'id': 1, 
+                'name': 'Test Bookmark',
+                'prompt': 'Test Prompt',
+                "prepared_prompt": "Test Prepared Prompt",
+                'response': 'Test Response',
+                'context_strategy': '',
+                'prompt_template': '',
+                'attack_module': '',
+                'metric': '',
+                'bookmark_time': '2024-07-14 22:26:51'
             }
         ]
-        mock_instance.get_all_bookmarks.return_value = expected_bookmarks
 
         # Call the API function
         actual_bookmarks = api_get_all_bookmarks()
-
         # Assert that the returned bookmarks match the expected bookmarks
         assert actual_bookmarks == expected_bookmarks, "The returned bookmarks do not match the expected bookmarks."
-@pytest.mark.parametrize(
-    "bookmark_name, expected_dict",
+
+    @pytest.mark.parametrize(
+        "bookmark_name, expected_dict",
     [
         # Valid case
         (
-            "my bookmark 1",
+            "Test Bookmark",
             {
                 "expected_result": {
-                    'id': 1, 'name': 'my bookmark 1',
-                    'prompt': 'Your prompt',
-                    'response': 'Your response',
-                    'context_strategy': 'Your context strategy',
-                    'prompt_template': 'Your prompt template',
-                    'attack_module': 'Your attack module',
-                    'bookmark_time': '2024-07-03 21:05:58'
+                    'id': 1, 
+                    'name': 'Test Bookmark',
+                    'prompt': 'Test Prompt',
+                    "prepared_prompt": "Test Prepared Prompt",
+                    'response': 'Test Response',
+                    'context_strategy': '',
+                    'prompt_template': '',
+                    'attack_module': '',
+                    'metric': '',
+                    'bookmark_time': '2024-07-14 22:26:51'
                 }
             }
         ),
-        # Invalid bookmark_name cases
-        (None, {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: None"}),
-        ("", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: "}),
-        ("-1", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] Invalid bookmark_name: -1"}),
-        ("999", {"expected_exception": RuntimeError, "expected_message": "[Bookmark] No record found for bookmark_name 999"}),
     ],
 )
-@patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-def test_api_get_bookmark(self, mock_get_instance, bookmark_name, expected_dict):
-    # Mock the Bookmark instance and its methods
-    mock_instance = MagicMock()
-    mock_get_instance.return_value = mock_instance
-
-    if "expected_exception" in expected_dict:
-        # Configure the mock to raise an exception when get_bookmark_by_name is called
-        mock_instance.get_bookmark_by_name.side_effect = expected_dict["expected_exception"](expected_dict["expected_message"])
-        # Call the API function and assert that the expected exception is raised
-        with pytest.raises(expected_dict["expected_exception"]) as exc_info:
-            api_get_bookmark(bookmark_name)
-        # Assert that the exception message matches the expected message
-        assert str(exc_info.value) == expected_dict["expected_message"], "The expected exception message was not raised."
-    else:
-        # Configure the mock to return the expected bookmark
-        mock_instance.get_bookbookmarks_by_name.return_value = expected_dict["expected_result"]
-        # Call the API function and get the response
-        response = api_get_bookmark(bookmark_name)
-        # Assert that the response matches the expected bookmark
-        assert response == expected_dict["expected_result"], "The returned bookmark does not match the expected bookmark."
+    def test_api_get_bookmark(self, bookmark_name, expected_dict):
+        if "expected_exception" in expected_dict:
+            # Call the API function and assert that the expected exception is raised
+            with pytest.raises(expected_dict["expected_exception"]) as exc_info:
+                api_get_bookmark(bookmark_name)
+            # Assert that the exception message matches the expected message
+            assert str(exc_info.value) == expected_dict["expected_message"], "The expected exception message was not raised."
+        else:
+            # Call the API function and get the response
+            response = api_get_bookmark(bookmark_name)
+            # Assert that the response matches the expected bookmark
+            assert response == expected_dict["expected_result"], "The returned bookmark does not match the expected bookmark."
     
+
     # ------------------------------------------------------------------------------
     # Test api_get_delete_all_bookmark functionality
     # ------------------------------------------------------------------------------
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_delete_all_bookmark(self, mock_get_instance):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-        
+    def test_api_delete_all_bookmark(self):
         # Set up the expected return value for delete_all_bookmark
         expected_response = {'success': True, 'message': 'All bookmark records deleted.'}
-        mock_instance.delete_all_bookmark.return_value = expected_response
 
         # Call the API function
         delete_response = api_delete_all_bookmark()
 
         # Assert that the response matches the expected response
         assert delete_response == expected_response, "The response from delete_all_bookmark does not match the expected response."
+
 
     # ------------------------------------------------------------------------------
     # Test api_delete_bookmark functionality
@@ -608,75 +614,28 @@ def test_api_get_bookmark(self, mock_get_instance, bookmark_name, expected_dict)
         [
             # Valid case
             (
-                1,
+                "Test Bookmark",
                 {
                     "expected_result": {
-                        'id': 1, 'name': 'my bookmark 1',
-                        'prompt': 'Your prompt',
-                        'response': 'Your response',
-                        'context_strategy': 'Your context strategy',
-                        'prompt_template': 'Your prompt template',
-                        'attack_module': 'Your attack module',
-                        'bookmark_time': '2024-07-03 21:05:58'
+                        'success': True, 'message': 'Bookmark record deleted.'
                     }
                 }
-            ),
-            # Invalid bookmark_name (None)
-            (
-                None,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_name: None"
-                }
-            ),
-            # Invalid bookmark_name (empty string)
-            (
-                "",
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_name: "
-                }
-            ),
-            # Invalid bookmark_name (negative number)
-            (
-                -1,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] Invalid bookmark_name: -1"
-                }
-            ),
-            # Bookmark not found
-            (
-                999,
-                {
-                    "expected_exception": RuntimeError,
-                    "expected_message": "[Bookmark] No record found for bookmark_name 999"
-                }
-            ),
+            )
         ],
     )
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_delete_bookmark(self, mock_get_instance, bookmark_name, expected_dict):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-
+    def test_api_delete_bookmark(self, bookmark_name, expected_dict):
         # Extract variables from expected_dict
         expected_exception = expected_dict.get("expected_exception")
         expected_message = expected_dict.get("expected_message")
         expected_result = expected_dict.get("expected_result")
 
         if expected_exception:
-            # Configure the mock to raise an exception when delete_bookmark is called
-            mock_instance.delete_bookmark.side_effect = expected_exception(expected_message)
             # Call the API function and assert that the expected exception is raised
             with pytest.raises(expected_exception) as exc_info:
                 api_delete_bookmark(bookmark_name)
             # Assert that the exception message matches the expected message
             assert str(exc_info.value) == expected_message, "The expected exception message was not raised."
         else:
-            # Configure the mock to return the expected result
-            mock_instance.delete_bookmark.return_value = expected_result
             # Call the API function and get the response
             response = api_delete_bookmark(bookmark_name)
             # Assert that the response matches the expected result
@@ -688,18 +647,12 @@ def test_api_get_bookmark(self, mock_get_instance, bookmark_name, expected_dict)
     @pytest.mark.parametrize(
         "export_file_name, expected_output",
         [
-            ("bookmark", "../moonshot-data/bookmark/bookmarks.json")
+            ("bookmark", "../moonshot-data/generated-outputs/bookmarks/bookmark.json")
         ]
     )
-    @patch('moonshot.src.api.api_bookmark.get_bookmark_instance')
-    def test_api_export_bookmarks(self, mock_get_instance, export_file_name, expected_output):
-        # Mock the Bookmark instance and its methods
-        mock_instance = MagicMock()
-        mock_get_instance.return_value = mock_instance
-        mock_instance.export_bookmarks.return_value = expected_output
-
+    def test_api_export_bookmarks(self, export_file_name, expected_output):
         # Call the API function
         actual_output = api_export_bookmarks(export_file_name)
-
+        print(actual_output)
         # Assert that the returned output matches the expected output
         assert actual_output == expected_output, "The returned output from api_export_bookmarks does not match the expected output."
