@@ -65,7 +65,7 @@ class Bookmark:
             db_name (str): The name of the database.
         """
         self.db_instance = Storage.create_database_connection(
-            EnvVariables.BOOKMARK.name, db_name, "db"
+            EnvVariables.BOOKMARKS.name, db_name, "db"
         )
         Storage.create_database_table(
             self.db_instance, Bookmark.sql_create_bookmark_table
@@ -219,7 +219,7 @@ class Bookmark:
         file_path = f"../moonshot-data/bookmark/{export_file_name}.json"
 
         Storage.create_object(
-            EnvVariables.BOOKMARK.name,
+            EnvVariables.BOOKMARKS.name,
             export_file_name,
             {"bookmarks": bookmarks_json},
             "json",
