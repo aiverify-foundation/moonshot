@@ -83,6 +83,7 @@ nav:
       - (CLI) CLI Command List: user_guide/cli/cli_command_list.md
   - API Reference:
     - Moonshot Library:
+        - Bookmark API: api_reference/api_bookmark.md
         - Connector Endpoint API: api_reference/api_connector_endpoint.md
         - Connector API: api_reference/api_connector.md
         - Context Strategy API: api_reference/api_context_strategy.md
