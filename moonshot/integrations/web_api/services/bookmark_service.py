@@ -30,10 +30,10 @@ class BookmarkService(BaseService):
     @exception_handler
     def get_all_bookmarks(self, name: str | None = None) -> list[BookmarkPydanticModel]:
         """
-        Retrieves all bookmarks or a specific bookmark by its ID.
+        Retrieves all bookmarks or a specific bookmark by its name.
 
         Args:
-            id (int | None, optional): The ID of the bookmark to retrieve. If None, all bookmarks are retrieved.
+            name (str | None, optional): The name of the bookmark to retrieve. If None, all bookmarks are retrieved.
 
         Returns:
             list[BookmarkPydanticModel]: A list of bookmark models.
@@ -52,11 +52,11 @@ class BookmarkService(BaseService):
     @exception_handler
     def delete_bookmarks(self, all: bool = False, name: str | None = None) -> dict:
         """
-        Deletes bookmarks from the system either by ID or all bookmarks if specified.
+        Deletes a single bookmark by its name or all bookmarks if the 'all' flag is set to True.
 
         Args:
             all (bool, optional): If True, all bookmarks will be deleted. Defaults to False.
-            id (int | None, optional): The ID of the bookmark to delete.
+            name (str | None, optional): The name of the bookmark to delete. If 'all' is False, 'name' must be provided.
         """
         if all:
             result = moonshot_api.api_delete_all_bookmark()

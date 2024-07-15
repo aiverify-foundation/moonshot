@@ -537,7 +537,6 @@ class TestCollectionApiBookmark:
         # Set up the expected return value for get_all_bookmarks
         expected_bookmarks = [
             {
-                'id': 1, 
                 'name': 'Test Bookmark',
                 'prompt': 'Test Prompt',
                 "prepared_prompt": "Test Prepared Prompt",
@@ -563,7 +562,6 @@ class TestCollectionApiBookmark:
             "Test Bookmark",
             {
                 "expected_result": {
-                    'id': 1, 
                     'name': 'Test Bookmark',
                     'prompt': 'Test Prompt',
                     "prepared_prompt": "Test Prepared Prompt",

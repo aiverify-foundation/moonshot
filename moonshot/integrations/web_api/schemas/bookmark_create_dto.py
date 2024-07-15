@@ -6,7 +6,6 @@ from moonshot.src.bookmark.bookmark_arguments import (
 
 
 class BookmarkCreateDTO(BookmarkPydanticModel):
-    id: Optional[int] = None
     prompt_template: Optional[str] = ""
     context_strategy: Optional[str] = ""
     attack_module: Optional[str] = ""
