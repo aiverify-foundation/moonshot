@@ -1,5 +1,4 @@
 {
-    "id": "arc",
     "name": "ARC",
     "description": "To measure model's ability in answering genuine grade-school level, multiple-choice science questions on the easy and challenge sets. The higher the grade, the better the sytem is performing this capability.",
     "tags": [],

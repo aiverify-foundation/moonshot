@@ -501,6 +501,7 @@ def manual_red_teaming(user_prompt: str) -> None:
     if not active_session:
         print("There is no active session. Activate a session to start red teaming.")
         return
+
     prompt_template = (
         [active_session["prompt_template"]] if active_session["prompt_template"] else []
     )
@@ -563,21 +564,32 @@ def run_attack_module(args):
         prompt = args.prompt
         system_prompt = args.system_prompt if args.system_prompt else ""
         # context strategy and prompt template should come from the session instead of the command
+
         prompt_template = (
-            [active_session["prompt_template"]]
+            [args.prompt_template]
+            if args.prompt_template
+            else [active_session["prompt_template"]]
             if active_session["prompt_template"]
             else []
         )
         context_strategy = (
-            active_session["context_strategy"]
+            args.context_strategy
+            if args.context_strategy
+            else active_session["context_strategy"]
             if active_session["context_strategy"]
             else []
         )
 
         num_of_prev_prompts = (
-            active_session["cs_num_of_prev_prompts"]
+            [args.cs_num_of_prev_prompts]
+            if args.context_strategy
+            else [active_session["cs_num_of_prev_prompts"]]
             if active_session["context_strategy"]
             else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        )
+
+        optional_arguments = (
+            literal_eval(args.optional_args) if args.optional_args else {}
         )
 
         metric = [args.metric] if args.metric else []
@@ -600,8 +612,10 @@ def run_attack_module(args):
                 "context_strategy_info": context_strategy_info,
                 "prompt_template_ids": prompt_template,
                 "metric_ids": metric,
+                "optional_params": optional_arguments,
             }
         ]
+
         runner_args = {}
         runner_args["attack_strategies"] = attack_strategy
 
@@ -718,7 +732,7 @@ new_session_args.add_argument(
 automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
-        'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
+        'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" -m bleuscore'
     ),
 )
 
@@ -742,23 +756,30 @@ automated_rt_session_args.add_argument(
     "-c",
     "--context_strategy",
     type=str,
-    help="Name of the context strategy module to be used.",
+    help=(
+        "Name of the context strategy module to be used. If this is set, it will overwrite the context strategy"
+        " set in the session while running this attack module."
+    ),
     nargs="?",
 )
 
 automated_rt_session_args.add_argument(
     "-n",
-    "--num_of_prev_prompts",
+    "--cs_num_of_prev_prompts",
     type=str,
-    help="The number of previous prompts to use with the context strategy.",
+    help=(
+        "The number of previous prompts to use with the context strategy. If this is set, it will overwrite the"
+        " number of previous promtps set in the session while running this attack module."
+    ),
     nargs="?",
 )
 
 automated_rt_session_args.add_argument(
     "-p",
-    "--prompt-template",
+    "--prompt_template",
     type=str,
-    help="Name of the prompt template to be used.",
+    help="Name of the prompt template to be used. If this is set, it will overwrite the prompt template set in"
+    " the session while running this attack module.",
     nargs="?",
 )
 
@@ -766,6 +787,13 @@ automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
 )
 
+automated_rt_session_args.add_argument(
+    "-o",
+    "--optional_args",
+    type=str,
+    help="Optional parameters to input into the red teaming module.",
+    nargs="?",
+)
 
 # Delete session arguments
 delete_session_args = cmd2.Cmd2ArgumentParser(

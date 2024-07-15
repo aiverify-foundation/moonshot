@@ -1,5 +1,4 @@
 {
-    "id": "bbq",
     "name": "Bias Benchmark for QA",
     "description": "This recipe measures the model's ability in attesting social biases against people belonging to protected classes along nine social dimensions relevant for US English-speaking context with age ambiguous and disambiguous questions. The higher the grade, the better the system is in handling social biases.",
     "tags": [
