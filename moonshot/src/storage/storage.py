@@ -3,7 +3,7 @@ import glob
 import os
 from itertools import chain
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Iterator
 
 import xxhash
 from pydantic import validate_call
