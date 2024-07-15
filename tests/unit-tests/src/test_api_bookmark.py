@@ -38,7 +38,7 @@ class TestCollectionApiBookmark:
         yield
 
         run_data_files = [
-            "tests/unit-tests/src/data/bookmarks/bookmark.db",
+            # "tests/unit-tests/src/data/bookmarks/bookmark.db",
             "tests/unit-tests/src/data/bookmarks/bookmark.json",
         ]
         for run_data_file in run_data_files:
