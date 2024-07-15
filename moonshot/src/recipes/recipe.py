@@ -64,12 +64,7 @@ class Recipe:
         """
         try:
             rec_id = slugify(rec_args.name, lowercase=True)
-            # check if the recipe exists
-            if Storage.is_object_exists(EnvVariables.RECIPES.name, rec_id, "json"):
-                raise RuntimeError(f"Recipe with ID '{rec_id}' already exists.")
-
             rec_info = {
-                "id": rec_id,
                 "name": rec_args.name,
                 "description": rec_args.description,
                 "tags": rec_args.tags,
@@ -80,6 +75,10 @@ class Recipe:
                 "attack_modules": rec_args.attack_modules,
                 "grading_scale": rec_args.grading_scale,
             }
+
+            # check if the recipe exists
+            if Storage.is_object_exists(EnvVariables.RECIPES.name, rec_id, "json"):
+                raise RuntimeError(f"Recipe with ID '{rec_id}' already exists.")
 
             Recipe.check_file_exists(
                 EnvVariables.PROMPT_TEMPLATES.name,
@@ -128,10 +127,14 @@ class Recipe:
             Exception: If there is an issue reading the file or during any other part of the process.
         """
         try:
-            if rec_id:
-                return RecipeArguments(**Recipe._read_recipe(rec_id, {}))
-            else:
-                raise RuntimeError("Recipe ID is empty")
+            if not rec_id:
+                raise RuntimeError("Recipe ID is empty.")
+
+            recipe_details = Recipe._read_recipe(rec_id, {})
+            if not recipe_details:
+                raise RuntimeError(f"Recipe with ID '{rec_id}' does not exist.")
+
+            return RecipeArguments(**recipe_details)
 
         except Exception as e:
             print(f"Failed to read recipe: {str(e)}")
@@ -171,9 +174,12 @@ class Recipe:
         Raises:
             RuntimeError: If the recipe file cannot be read or does not exist.
         """
-        obj_results = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
-        if not obj_results:
+        obj_results = {"id": rec_id}
+        recipe_info = Storage.read_object(EnvVariables.RECIPES.name, rec_id, "json")
+        if not recipe_info:
             raise RuntimeError(f"Unable to get results for {rec_id}.")
+        else:
+            obj_results.update(recipe_info)
 
         # Calculate statistics for the recipe and update the results dictionary with them
         stats = {
@@ -203,25 +209,28 @@ class Recipe:
     @staticmethod
     def update(rec_args: RecipeArguments) -> bool:
         """
-        Updates the recipe information based on the provided RecipeArguments.
+        Updates the recipe information in the storage based on the provided RecipeArguments object.
 
-        This method takes RecipeArguments, converts it to a dictionary, and writes the updated
-        recipe information to the storage. If the operation is successful, it returns True.
-        If an exception occurs, it prints an error message and re-raises the exception.
+        This method processes an instance of RecipeArguments, transforming it into a dictionary format. It ensures
+        that certain required files exist before proceeding to update the recipe information in the storage system.
+        Upon successful update, it returns True. If any error is encountered during the process, the error message is
+        logged, and the exception is propagated upwards.
 
         Args:
-            rec_args (RecipeArguments): The recipe arguments containing updated values.
+            rec_args (RecipeArguments): An object containing the updated recipe information.
 
         Returns:
-            bool: True if the recipe was successfully updated.
+            bool: Indicates whether the recipe update was successful (True) or not (False).
 
         Raises:
-            Exception: If an error occurs during the update process.
+            Exception: Propagates any exceptions that occur during the update process.
         """
         try:
-            # Convert the recipe arguments to a dictionary
+            # Transform RecipeArguments into a dictionary, excluding the 'id' field
             rec_info = rec_args.to_dict()
+            rec_info.pop("id", None)  # The 'id' is derived and should not be written
 
+            # Verify existence of related files in storage
             Recipe.check_file_exists(
                 EnvVariables.PROMPT_TEMPLATES.name,
                 rec_args.prompt_templates,
@@ -241,7 +250,7 @@ class Recipe:
                 "py",
             )
 
-            # Write the updated recipe information to the file
+            # Persist the updated recipe information to storage
             Storage.create_object(
                 EnvVariables.RECIPES.name, rec_args.id, rec_info, "json"
             )

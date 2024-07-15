@@ -550,7 +550,7 @@ class TestCollectionApiRunner:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Runner ID is empty",
+                    "expected_error_message": "Runner ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),

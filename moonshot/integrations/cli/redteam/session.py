@@ -588,10 +588,8 @@ def run_attack_module(args):
             else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
         )
 
-        num_of_prev_prompts = (
-            active_session["cs_num_of_prev_prompts"]
-            if active_session["context_strategy"]
-            else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        optional_arguments = (
+            literal_eval(args.optional_args) if args.optional_args else {}
         )
 
         metric = [args.metric] if args.metric else []
@@ -614,6 +612,7 @@ def run_attack_module(args):
                 "context_strategy_info": context_strategy_info,
                 "prompt_template_ids": prompt_template,
                 "metric_ids": metric,
+                "optional_params": optional_arguments,
             }
         ]
 
@@ -788,6 +787,13 @@ automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
 )
 
+automated_rt_session_args.add_argument(
+    "-o",
+    "--optional_args",
+    type=str,
+    help="Optional parameters to input into the red teaming module.",
+    nargs="?",
+)
 
 # Delete session arguments
 delete_session_args = cmd2.Cmd2ArgumentParser(

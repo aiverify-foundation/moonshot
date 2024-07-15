@@ -1,5 +1,4 @@
 {
-    "id": "analogical-similarity",
     "name": "Analogical Similarity",
     "description": "This recipe measures the model’s ability in discriminating between different degrees of analogical similarity in two given episodes. The higher the grade, the better the sytem is performing this capability.",
     "tags": [],

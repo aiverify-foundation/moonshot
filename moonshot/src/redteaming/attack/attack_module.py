@@ -40,7 +40,7 @@ class AttackModule:
             self.db_instance = am_arguments.db_instance
             self.red_teaming_progress = am_arguments.red_teaming_progress
             self.cancel_event = am_arguments.cancel_event
-            self.params = am_arguments.params
+            self.optional_params = am_arguments.optional_params
 
     @classmethod
     def load(

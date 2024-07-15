@@ -14,27 +14,29 @@ class ConnectorEndpoint:
     @staticmethod
     def create(ep_args: ConnectorEndpointArguments) -> str:
         """
-        Creates a new connector endpoint.
+        Creates a new connector endpoint and stores its details as a JSON object.
 
-        This method takes a ConnectorEndpointArguments object as input, generates a unique slugified ID based on the
-        endpoint's name, and then creates a new endpoint with the provided details. The endpoint information is stored
-        as a JSON object in the directory specified by `EnvVariables.CONNECTORS_ENDPOINTS`. If the operation is
-        successful, the unique ID of the new endpoint is returned. If any error arises during the process, an exception
-        is raised and the error message is logged.
+        This method accepts a ConnectorEndpointArguments object, generates a unique slugified ID from the endpoint's
+        name, and stores the endpoint's details in a JSON file within a specified directory.
+
+        The directory path is determined by the `EnvVariables.CONNECTORS_ENDPOINTS` environment variable.
+        Upon successful creation, the method returns the unique ID of the endpoint.
+        If an error occurs during the creation process, the method raises an exception and logs the error message.
 
         Args:
-            ep_args (ConnectorEndpointArguments): An object containing the details of the endpoint to be created.
+            ep_args (ConnectorEndpointArguments): The details of the endpoint to be created,
+            encapsulated in a ConnectorEndpointArguments object.
 
         Returns:
-            str: The unique ID of the newly created endpoint.
+            str: The unique ID of the newly created endpoint, derived from slugifying the endpoint's name.
 
         Raises:
-            Exception: If there's an error during the endpoint creation process.
+            Exception: If an error occurs during the creation process, including issues with storing the endpoint's
+            details.
         """
         try:
             ep_id = slugify(ep_args.name, lowercase=True)
             ep_info = {
-                "id": ep_id,
                 "name": ep_args.name,
                 "connector_type": ep_args.connector_type,
                 "uri": ep_args.uri,
@@ -58,52 +60,56 @@ class ConnectorEndpoint:
     @validate_call
     def read(ep_id: str) -> ConnectorEndpointArguments:
         """
-        Fetches the details of a given endpoint.
+        Retrieves the details of a specified endpoint by its ID.
 
-        This method takes an endpoint ID as input, finds the corresponding JSON file in the directory
-        specified by `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a ConnectorEndpointArguments object
-        that contains the endpoint's details. If any error arises during the process, an exception is raised and the
-        error message is logged.
+        This method searches for the endpoint's corresponding JSON file within the directory defined by the
+        `EnvVariables.CONNECTORS_ENDPOINTS` environment variable. It then constructs and returns a
+        ConnectorEndpointArguments object populated with the endpoint's details. If the endpoint ID is not found or
+        any other error occurs, an exception is raised with an appropriate error message.
 
         Args:
-            ep_id (str): The unique ID of the endpoint to be fetched.
+            ep_id (str): The unique identifier of the endpoint whose details are to be retrieved.
 
         Returns:
-            ConnectorEndpointArguments: An object encapsulating the details of the fetched endpoint.
+            ConnectorEndpointArguments: An instance filled with the endpoint's details.
 
         Raises:
-            Exception: If there's an error during the file reading process or any other operation within the method.
+            RuntimeError: If the endpoint ID is empty or the specified endpoint does not exist.
+            Exception: For any issues encountered during the file reading or data parsing process.
         """
         try:
-            if ep_id:
-                return ConnectorEndpointArguments(
-                    **ConnectorEndpoint._read_endpoint(ep_id)
-                )
-            else:
-                raise RuntimeError("Connector Endpoint ID is empty")
+            if not ep_id:
+                raise RuntimeError("Connector Endpoint ID is empty.")
+
+            endpoint_details = ConnectorEndpoint._read_endpoint(ep_id)
+            if not endpoint_details:
+                raise RuntimeError(f"Endpoint with ID '{ep_id}' does not exist.")
+
+            return ConnectorEndpointArguments(**endpoint_details)
 
         except Exception as e:
-            print(f"Failed to read endpoint: {str(e)}")
+            print(f"Failed reading endpoint: {str(e)}")
             raise e
 
     @staticmethod
     def _read_endpoint(ep_id: str) -> dict:
         """
-        Reads the endpoint information from a JSON file and adds the creation datetime.
+        Retrieves the endpoint's information from a JSON file, including its creation datetime.
 
-        This method accepts an endpoint ID as an argument, locates the corresponding JSON file in the directory
-        defined by `EnvironmentVars.CONNECTORS_ENDPOINTS`, and returns a dictionary that encapsulates the endpoint's
-        details along with its creation datetime. If any error occurs during the process, it is handled by the calling
-        method.
+        This internal method is designed to fetch the details of a specific endpoint by its ID. It searches for the
+        corresponding JSON file within the directory specified by `EnvVariables.CONNECTORS_ENDPOINTS`. The method
+        returns a dictionary containing the endpoint's information, enriched with the creation datetime. Errors
+        encountered during this process are managed by the method that invokes this one.
 
         Args:
-            ep_id (str): The unique identifier of the endpoint to be retrieved.
+            ep_id (str): The unique identifier of the endpoint whose information is being retrieved.
 
         Returns:
-            dict: A dictionary containing the details of the retrieved endpoint along with its creation datetime.
+            dict: A dictionary with the endpoint's information, including its creation datetime.
         """
-        connector_endpoint_info = Storage.read_object(
-            EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json"
+        connector_endpoint_info = {"id": ep_id}
+        connector_endpoint_info.update(
+            Storage.read_object(EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json")
         )
         creation_datetime = Storage.get_creation_datetime(
             EnvVariables.CONNECTORS_ENDPOINTS.name, ep_id, "json"
@@ -116,28 +122,34 @@ class ConnectorEndpoint:
     @staticmethod
     def update(ep_args: ConnectorEndpointArguments) -> bool:
         """
-        Updates the endpoint information based on the provided arguments.
+        Updates the endpoint information in the storage based on the provided ConnectorEndpointArguments object.
 
-        This method takes a ConnectorEndpointArguments object, converts it to a dictionary, and removes the
-        'created_date' key if it exists. It then writes the updated information to the corresponding JSON file
-        in the directory specified by `EnvVariables.CONNECTORS_ENDPOINTS`.
+        This method serializes the provided ConnectorEndpointArguments object into a dictionary, excluding the 'id' and
+        'created_date' keys. It then persists the updated information to the corresponding JSON file within the
+        directory defined by `EnvVariables.CONNECTORS_ENDPOINTS`.
+
+        This operation ensures that the endpoint's mutable attributes are updated according to the provided arguments.
 
         Args:
-            ep_args (ConnectorEndpointArguments): An object containing the updated details of the endpoint.
+            ep_args (ConnectorEndpointArguments): The object encapsulating the updated attributes of the endpoint.
 
         Returns:
-            bool: True if the update operation was successful.
+            bool: Indicates whether the update operation was successful. Returns True if the update was successfully
+            persisted to the storage; otherwise, an exception is raised.
 
         Raises:
-            Exception: If there's an error during the update process.
+            Exception: Signifies a failure in the update process, potentially due to issues with data serialization or
+            storage access.
         """
         try:
-            # Convert the endpoint arguments to a dictionary
-            # Remove created_date if it exists
+            # Serialize the ConnectorEndpointArguments object to a dictionary and remove derived properties
             ep_info = ep_args.to_dict()
-            ep_info.pop("created_date", None)
+            ep_info.pop("id", None)  # The 'id' is derived and should not be written
+            ep_info.pop(
+                "created_date", None
+            )  # The 'created_date' is derived and should not be written
 
-            # Write the updated endpoint information to the file
+            # Write the updated endpoint information to the storage
             Storage.create_object(
                 EnvVariables.CONNECTORS_ENDPOINTS.name, ep_args.id, ep_info, "json"
             )
