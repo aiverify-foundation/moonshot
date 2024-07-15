@@ -292,13 +292,13 @@ def use_bookmark(args) -> None:
                         f'run_attack_module {attack_module} "{bookmarked_prompt}"'
                     )
                     console.print(
-                        f"[bold yellow]Copy this command and paste it below:[/] {run_attack_module_cmd}"
+                        f"[bold yellow]Copy this command and paste it below:[/]\n{run_attack_module_cmd}\n"
                     )
 
                 # manual redteaming: return prompt for user to copy and paste
                 else:
                     console.print(
-                        f"[bold yellow]Copy this prompt and paste it below: [/]{bookmarked_prompt}"
+                        f"[bold yellow]Copy this prompt and paste it below: [/]\n{bookmarked_prompt}\n"
                     )
                 return
         except Exception as e:
@@ -379,7 +379,6 @@ def display_bookmarks(bookmarks_list) -> None:
         table.add_column("Bookmark Time", justify="left", width=20)
         for idx, bookmark in enumerate(bookmarks_list, 1):
             (
-                index,
                 name,
                 prompt,
                 prepared_prompt,
@@ -444,7 +443,6 @@ def display_bookmark(bookmark_info: dict) -> None:
         table.add_column("Metric", justify="left", width=5)
         table.add_column("Bookmark Time", justify="left", width=5)
         (
-            index,
             name,
             prompt,
             prepared_prompt,
