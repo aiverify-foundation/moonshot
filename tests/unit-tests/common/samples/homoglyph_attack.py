@@ -1,9 +1,12 @@
 import homoglyphs as hg
+from moonshot.src.redteaming.attack.attack_module import AttackModule
+from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
+from moonshot.src.utils.log import configure_logger
 from nltk import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from moonshot.src.redteaming.attack.attack_module import AttackModule
-from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class HomoglyphGenerator(AttackModule):
@@ -12,9 +15,9 @@ class HomoglyphGenerator(AttackModule):
         super().__init__(am_id, am_arguments)
         self.name = "Homoglyph Attack"
         self.description = (
-            "About this attack module:\nHomoglyphs are alternative words for words comprising of ASCII "
-            "characters.\nExample of a homoglyph fool -> fooI\nThis module purturbs the prompt with all "
-            "available homoglyphs for each word present.\nParameters:\n1. MAX_ITERATIONS - Maximum "
+            "This module tests for adversarial textual robustness. Homoglyphs are alternative words for words "
+            "comprising of ASCII characters.\nExample of a homoglyph fool -> fooI\nThis module purturbs the prompt "
+            "with all available homoglyphs for each word present.\nParameters:\n1. MAX_ITERATIONS - Maximum "
             "number of prompts that should be sent to the target. [Default: 20]"
         )
 
@@ -72,8 +75,8 @@ class HomoglyphGenerator(AttackModule):
             try:
                 hglyphs = homoglyphs.to_ascii(word_list[idx])
             except UnicodeDecodeError:
-                print(
-                    f"The word {word_list[idx]} does not contain ASCII characters. Skipping..."
+                logger.error(
+                    f"[HomoglyphGenerator] The word {word_list[idx]} does not contain ASCII characters. Skipping..."
                 )
             if len(hglyphs) > 1:
                 for i in hglyphs:
@@ -86,8 +89,8 @@ class HomoglyphGenerator(AttackModule):
                         break
         for res in result_list:
             for x in res:
-                print(x.prompt)
-                print(x.predicted_results)
-                print()
-
+                logger.debug(f"[HomoglyphGenerator] Prompt: {x.prompt}")
+                logger.debug(
+                    f"[HomoglyphGenerator] Predicted Results: {x.predicted_results}\n"
+                )
         return result_list

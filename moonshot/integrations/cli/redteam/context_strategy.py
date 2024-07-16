@@ -33,12 +33,12 @@ def use_context_strategy(args: argparse.Namespace) -> None:
 
     # Check if current session exists. If it does, update context strategy and number of previous prompts
     if active_session:
-        active_session["context_strategy"] = new_context_strategy_name
-        active_session["cs_num_of_prev_prompts"] = num_of_prev_prompts
         try:
             api_update_context_strategy(
                 active_session["session_id"], new_context_strategy_name
             )
+            active_session["context_strategy"] = new_context_strategy_name
+            active_session["cs_num_of_prev_prompts"] = num_of_prev_prompts
             print(
                 f"Updated session: {active_session['session_id']}. "
                 f"Context Strategy: {active_session['context_strategy']}."

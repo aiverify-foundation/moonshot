@@ -8,6 +8,10 @@ from slugify import slugify
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Cookbook:
@@ -31,8 +35,7 @@ class Cookbook:
         Returns:
             Cookbook: An instance of the Cookbook class populated with the loaded cookbook information.
         """
-        cb_info = Storage.read_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
-        return cls(CookbookArguments(**cb_info))
+        return cls(Cookbook.read(cb_id))
 
     @staticmethod
     def create(cb_args: CookbookArguments) -> str:
@@ -58,6 +61,11 @@ class Cookbook:
         """
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
+            cb_info = {
+                "name": cb_args.name,
+                "description": cb_args.description,
+                "recipes": cb_args.recipes,
+            }
 
             # check if the cookbook exists
             if Storage.is_object_exists(EnvVariables.COOKBOOKS.name, cb_id, "json"):
@@ -70,55 +78,70 @@ class Cookbook:
                 ):
                     raise RuntimeError(f"{recipe} recipe does not exist.")
 
-            cb_info = {
-                "id": cb_id,
-                "name": cb_args.name,
-                "description": cb_args.description,
-                "recipes": cb_args.recipes,
-            }
-
             # Write as json output
             Storage.create_object(EnvVariables.COOKBOOKS.name, cb_id, cb_info, "json")
             return cb_id
 
         except Exception as e:
-            print(f"Failed to create cookbook: {str(e)}")
+            logger.error(f"Failed to create cookbook: {str(e)}")
             raise e
 
     @staticmethod
     @validate_call
     def read(cb_id: str) -> CookbookArguments:
         """
-        Retrieves the details of a specified cookbook.
+        Fetches and returns the details of a specified cookbook by its ID.
 
-        This method accepts a cookbook ID as an argument, locates the corresponding JSON file in the directory
-        defined by `EnvironmentVars.COOKBOOKS`, and returns a CookbookArguments object that encapsulates the cookbook's
-        details. If any error occurs during the process, an exception is raised and the error message is logged.
+        This method takes a cookbook ID, searches for its corresponding JSON file in the directory set by
+        `EnvironmentVars.COOKBOOKS`, and constructs a CookbookArguments object with the cookbook's details.
+
+        If the process encounters any issues, such as the file not existing or being inaccessible, it logs the error
+        and raises an exception.
 
         Args:
-            cb_id (str): The unique identifier of the cookbook to be retrieved.
+            cb_id (str): The unique identifier of the cookbook to fetch.
 
         Returns:
-            CookbookArguments: An object encapsulating the details of the retrieved cookbook.
+            CookbookArguments: An instance filled with the cookbook's details.
 
         Raises:
-            Exception: If there's an error during the file reading process or any other operation within the method.
+            RuntimeError: If the cookbook ID is empty or the specified cookbook does not exist.
+            Exception: For any issues encountered during the file reading or data parsing process.
         """
         try:
             if not cb_id:
-                raise RuntimeError("Cookbook ID is empty")
+                raise RuntimeError("Cookbook ID is empty.")
 
-            obj_results = Storage.read_object(
-                EnvVariables.COOKBOOKS.name, cb_id, "json"
-            )
-            if obj_results:
-                return CookbookArguments(**obj_results)
-            else:
-                raise RuntimeError(f"Unable to get results for {cb_id}.")
+            cookbook_details = Cookbook._read_cookbook(cb_id)
+            if not cookbook_details:
+                raise RuntimeError(f"Cookbook with ID '{cb_id}' does not exist.")
+
+            return CookbookArguments(**cookbook_details)
 
         except Exception as e:
-            print(f"Failed to read cookbook: {str(e)}")
-            raise e
+            logger.error(f"Failed to read cookbook: {str(e)}")
+            raise
+
+    @staticmethod
+    def _read_cookbook(cb_id: str) -> dict:
+        """
+        Retrieves the cookbook's information from a JSON file.
+
+        This internal method is designed to fetch the details of a specific cookbook by its ID. It searches for the
+        corresponding JSON file within the directory specified by `EnvVariables.COOKBOOKS`. The method returns a
+        dictionary containing the cookbook's information.
+
+        Args:
+            cb_id (str): The unique identifier of the cookbook whose information is being retrieved.
+
+        Returns:
+            dict: A dictionary with the cookbook's information.
+        """
+        cookbook_info = {"id": cb_id}
+        cookbook_info.update(
+            Storage.read_object(EnvVariables.COOKBOOKS.name, cb_id, "json")
+        )
+        return cookbook_info
 
     @staticmethod
     def update(cb_args: CookbookArguments) -> bool:
@@ -145,17 +168,18 @@ class Cookbook:
                 ):
                     raise RuntimeError(f"{recipe} recipe does not exist.")
 
-            # Convert the cookbook arguments to a dictionary
+            # Serialize the CookbookArguments object to a dictionary and remove derived properties
             cb_info = cb_args.to_dict()
+            cb_info.pop("id", None)  # The 'id' is derived and should not be written
 
-            # Write the updated cookbook information to the file
+            # Write the updated cookbook information to the storage
             Storage.create_object(
                 EnvVariables.COOKBOOKS.name, cb_args.id, cb_info, "json"
             )
             return True
 
         except Exception as e:
-            print(f"Failed to update cookbook: {str(e)}")
+            logger.error(f"Failed to update cookbook: {str(e)}")
             raise e
 
     @staticmethod
@@ -181,7 +205,7 @@ class Cookbook:
             return True
 
         except Exception as e:
-            print(f"Failed to delete cookbook: {str(e)}")
+            logger.error(f"Failed to delete cookbook: {str(e)}")
             raise e
 
     @staticmethod
@@ -210,16 +234,12 @@ class Cookbook:
                 if "__" in cb:
                     continue
 
-                cb_info = CookbookArguments(
-                    **Storage.read_object(
-                        EnvVariables.COOKBOOKS.name, Path(cb).stem, "json"
-                    )
-                )
+                cb_info = CookbookArguments(**Cookbook._read_cookbook(Path(cb).stem))
                 retn_cbs.append(cb_info)
                 retn_cbs_ids.append(cb_info.id)
 
             return retn_cbs_ids, retn_cbs
 
         except Exception as e:
-            print(f"Failed to get available cookbooks: {str(e)}")
+            logger.error(f"Failed to get available cookbooks: {str(e)}")
             raise e

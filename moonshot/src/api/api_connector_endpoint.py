@@ -98,7 +98,7 @@ def api_update_endpoint(ep_id: str, **kwargs) -> bool:
         existing_endpoint = ConnectorEndpoint.read(ep_id)
     except Exception:
         raise RuntimeError(
-            f"[api_connector_endpoint]: Endpoint with ID '{ep_id}' does not exist"
+            f"[api_update_endpoint]: Endpoint with ID '{ep_id}' does not exist"
         )
 
     # Update the fields of the existing endpoint with the provided kwargs

@@ -6,6 +6,10 @@ from pydantic import validate_call
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Result:
@@ -35,7 +39,7 @@ class Result:
                 raise RuntimeError("Result ID is empty")
 
         except Exception as e:
-            print(f"Failed to read result: {str(e)}")
+            logger.error(f"Failed to read result: {str(e)}")
             raise e
 
     @staticmethod
@@ -85,7 +89,7 @@ class Result:
             return True
 
         except Exception as e:
-            print(f"Failed to delete result: {str(e)}")
+            logger.error(f"Failed to delete result: {str(e)}")
             raise e
 
     @staticmethod
@@ -115,5 +119,5 @@ class Result:
             return retn_results_ids, retn_results
 
         except Exception as e:
-            print(f"Failed to get available results: {str(e)}")
+            logger.error(f"Failed to get available results: {str(e)}")
             raise e

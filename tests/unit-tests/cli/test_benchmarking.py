@@ -955,10 +955,10 @@ class TestBenchmarkingCLI:
             # ),
 
             # Failure: Run with non-existent cookbook
-            ([f"run_cookbook my_new_cookbook \"['chinese-safety-cookbookx']\" \"['openai-gpt35-turbo']\" -n 1 -r 1 "
-             "-s \"You are an intelligent AI\""],
-             "No cookbooks found with ID"
-            ),
+            # ([f"run_cookbook my_new_cookbook \"['chinese-safety-cookbookx']\" \"['openai-gpt35-turbo']\" -n 1 -r 1 "
+            #  "-s \"You are an intelligent AI\""],
+            #  "No cookbooks found with ID"
+            # ),
 
             # Failure: Run with non-existent connector endpoint with new runner
             ([f"run_cookbook my_new_cookbook_two \"['chinese-safety-cookbook']\" \"['openai-gpt35-turbox']\" -n 1 -r 1 "

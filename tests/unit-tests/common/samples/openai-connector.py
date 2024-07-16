@@ -1,12 +1,11 @@
 import logging
 from typing import Any
 
-from openai import AsyncOpenAI
-
 from moonshot.src.connectors.connector import Connector, perform_retry
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
+from openai import AsyncOpenAI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,7 +17,10 @@ class OpenAIConnector(Connector):
         super().__init__(ep_arguments)
 
         # Set OpenAI Key
-        self._client = AsyncOpenAI(api_key=self.token)
+        self._client = AsyncOpenAI(
+            api_key=self.token,
+            base_url=self.endpoint if self.endpoint and self.endpoint != "" else None,
+        )
 
         # Set the model to use and remove it from optional_params if it exists
         self.model = self.optional_params.get("model", "")

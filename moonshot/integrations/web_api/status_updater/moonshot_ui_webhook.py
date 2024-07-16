@@ -60,7 +60,6 @@ class MoonshotUIWebhook(
         logger = logging.getLogger()
         logger.debug(json.dumps(progress_data, indent=2))
         self.auto_red_team_test_state.update_progress_status(progress_data)
-        print("Calling Auto Red Team Callback")
         try:
             response = requests.post(self.art_url, json=progress_data)
             response.raise_for_status()
