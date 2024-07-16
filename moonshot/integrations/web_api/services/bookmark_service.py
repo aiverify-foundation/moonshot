@@ -17,29 +17,31 @@ class BookmarkService(BaseService):
         result = moonshot_api.api_insert_bookmark(
             name=bookmark_data.name,
             prompt=bookmark_data.prompt,
+            prepared_prompt=bookmark_data.prepared_prompt,
             response=bookmark_data.response,
             context_strategy=bookmark_data.context_strategy,
             prompt_template=bookmark_data.prompt_template,
             attack_module=bookmark_data.attack_module,
+            metric=bookmark_data.metric,
         )
 
         return result
 
     @exception_handler
-    def get_all_bookmarks(self, id: int | None = None) -> list[BookmarkPydanticModel]:
+    def get_all_bookmarks(self, name: str | None = None) -> list[BookmarkPydanticModel]:
         """
-        Retrieves all bookmarks or a specific bookmark by its ID.
+        Retrieves all bookmarks or a specific bookmark by its name.
 
         Args:
-            id (int | None, optional): The ID of the bookmark to retrieve. If None, all bookmarks are retrieved.
+            name (str | None, optional): The name of the bookmark to retrieve. If None, all bookmarks are retrieved.
 
         Returns:
             list[BookmarkPydanticModel]: A list of bookmark models.
         """
         retn_bookmark: list[BookmarkPydanticModel] = []
 
-        if id:
-            bookmarks = [moonshot_api.api_get_bookmark_by_id(id)]
+        if name:
+            bookmarks = [moonshot_api.api_get_bookmark(name)]
         else:
             bookmarks = moonshot_api.api_get_all_bookmarks()
 
@@ -48,18 +50,18 @@ class BookmarkService(BaseService):
         return retn_bookmark
 
     @exception_handler
-    def delete_bookmarks(self, all: bool = False, id: int | None = None) -> dict:
+    def delete_bookmarks(self, all: bool = False, name: str | None = None) -> dict:
         """
-        Deletes bookmarks from the system either by ID or all bookmarks if specified.
+        Deletes a single bookmark by its name or all bookmarks if the 'all' flag is set to True.
 
         Args:
             all (bool, optional): If True, all bookmarks will be deleted. Defaults to False.
-            id (int | None, optional): The ID of the bookmark to delete.
+            name (str | None, optional): The name of the bookmark to delete. If 'all' is False, 'name' must be provided.
         """
         if all:
             result = moonshot_api.api_delete_all_bookmark()
-        elif id is not None:
-            result = moonshot_api.api_delete_bookmark(id)
+        elif name is not None:
+            result = moonshot_api.api_delete_bookmark(name)
         else:
             raise ValueError("Either 'all' must be True or 'id' must be provided.")
 

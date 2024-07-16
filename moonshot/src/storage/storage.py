@@ -3,7 +3,7 @@ import glob
 import os
 from itertools import chain
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Iterator
 
 import xxhash
 from pydantic import validate_call
@@ -488,38 +488,15 @@ class Storage:
             raise RuntimeError("Database instance is not initialised.")
 
     @staticmethod
-    def delete_database_record_by_id(
-        database_instance: DBInterface, record_id: Any, sql_delete_record: str
-    ) -> None:
-        """
-        Deletes a record from the database by an identifier.
-
-        This method is used to delete a record from the database using its unique identifier.
-        If the database instance is not initialised, it raises a RuntimeError.
-        Otherwise, it calls the delete_record method of the database instance.
-
-        Args:
-            database_instance (DBInterface): The database accessor instance.
-            record_id (Any): The unique identifier of the record to be deleted. It can an ID or a unique name.
-            sql_delete_record (str): The SQL query to delete a record.
-
-        Returns:
-            None
-        """
-        if database_instance:
-            database_instance.delete_record_by_id(record_id, sql_delete_record)
-        else:
-            raise RuntimeError("Database instance is not initialised.")
-
-    @staticmethod
     def delete_database_record_in_table(
         database_instance: DBInterface, sql_delete_record: str
     ) -> None:
         """
         Deletes records from a table in the database based on a SQL condition.
 
-        This method is used to delete records from a specific table in the database that meet the condition specified
-        in the SQL delete statement. If the database instance is not initialised, it raises a RuntimeError.
+        This method is used to delete records from a specific table in the database
+            that meet the condition specified in the SQL delete statement.
+        If the database instance is not initialised, it raises a RuntimeError.
         Otherwise, it calls the delete_records_in_table method of the database instance with the provided SQL query.
 
         Args:

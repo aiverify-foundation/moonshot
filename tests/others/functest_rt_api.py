@@ -189,11 +189,14 @@ def test_art_and_cancel():
                     "num_of_prev_prompts": 1
                     }],
                 "prompt_template_ids": ["mmlu"],
-                "metric_ids": ["bleuscore"] 
+                "metric_ids": ["bleuscore"],
+                "optional_params": {"max_number_of_iteration": 1, 
+                           "sample_param_field": "hello world"}
                 },
             ],
             "chat_batch_size": 5
         }
+
         # Run the recipes in a background task
         run_task = asyncio.create_task(runner.run_red_teaming(art_arguments))
 

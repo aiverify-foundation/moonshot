@@ -22,16 +22,24 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
-from moonshot.src.api.api_session import (
-    api_update_context_strategy,
-    api_update_prompt_template,
-)
 from moonshot.src.redteaming.session.session import Session
 
 console = Console()
 
 
 def new_session(args) -> None:
+    """
+    Creates a new red teaming session or loads an existing one.
+
+    This function either creates a new runner and session or loads an existing runner based on the provided arguments.
+    It updates the global active_session with the session metadata and displays the chat history.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing:
+            - runner_id (str): The ID of the runner.
+            - context_strategy (str, optional): The context strategy to be used.
+            - prompt_template (str, optional): The prompt template to be used.
+            - endpoints (str, optional): The list of endpoints for the runner."""
     global active_session
 
     runner_id = args.runner_id
@@ -55,7 +63,7 @@ def new_session(args) -> None:
         api_create_session(
             runner.id, runner.database_instance, runner.endpoints, runner_args
         )
-        session_metadata = api_load_session(runner_id)
+        session_metadata = api_load_session(runner.id)
         if session_metadata:
             active_session.update(session_metadata)
             if active_session["context_strategy"]:
@@ -99,7 +107,7 @@ def use_session(args) -> None:
         print(f"[use_session]: {str(e)}")
 
 
-def show_chats() -> None:
+def show_prompts() -> None:
     """
     Shows the chat table in a session so that users don't have to restart a session to view the chat table
     """
@@ -204,7 +212,7 @@ def update_chat_display() -> None:
         console.print("[red]There are no active session.[/red]")
 
 
-def bookmark_prompt(args) -> None:
+def add_bookmark(args) -> None:
     """
     Bookmarks a specific prompt in the active session.
 
@@ -248,6 +256,7 @@ def bookmark_prompt(args) -> None:
                 bookmark_message = api_insert_bookmark(
                     bookmark_name,
                     target_endpoint_chat_record["prompt"],
+                    target_endpoint_chat_record["prepared_prompt"],
                     target_endpoint_chat_record["predicted_result"],
                     target_endpoint_chat_record["context_strategy"],
                     target_endpoint_chat_record["prompt_template"],
@@ -286,25 +295,7 @@ def use_bookmark(args) -> None:
             bookmark_name = args.bookmark_name
             bookmark_details = api_get_bookmark(bookmark_name)
             if bookmark_details:
-                bookmarked_prompt = bookmark_details["prompt"]
-                bookmarked_pt = bookmark_details["prompt_template"]
-                bookmarked_cs = bookmark_details["context_strategy"]
-                bookmark_console_msg = (
-                    "[bold yellow]Updated session with bookmarked context strategy:[/]"
-                    f" {bookmarked_pt} [bold yellow]and prompt template:[/]"
-                    f" {bookmarked_cs}."
-                )
-                console.print(bookmark_console_msg)
-                api_update_prompt_template(
-                    active_session["session_id"], bookmark_details["prompt_template"]
-                )
-                api_update_context_strategy(
-                    active_session["session_id"], bookmark_details["context_strategy"]
-                )
-                active_session["prompt_template"] = bookmark_details["prompt_template"]
-                active_session["context_strategy"] = bookmark_details[
-                    "context_strategy"
-                ]
+                bookmarked_prompt = bookmark_details["prepared_prompt"]
 
                 # automated redteaming: craft CLI command for user to copy and paste
                 if bookmark_details["attack_module"]:
@@ -313,13 +304,13 @@ def use_bookmark(args) -> None:
                         f'run_attack_module {attack_module} "{bookmarked_prompt}"'
                     )
                     console.print(
-                        f"[bold yellow]Copy this command and paste it below:[/] {run_attack_module_cmd}"
+                        f"[bold yellow]Copy this command and paste it below:[/]\n{run_attack_module_cmd}\n"
                     )
 
                 # manual redteaming: return prompt for user to copy and paste
                 else:
                     console.print(
-                        f"[bold yellow]Copy this prompt and paste it below: [/]{bookmarked_prompt}"
+                        f"[bold yellow]Copy this prompt and paste it below: [/]\n{bookmarked_prompt}\n"
                     )
                 return
         except Exception as e:
@@ -383,8 +374,8 @@ def display_bookmarks(bookmarks_list) -> None:
     Display the list of bookmarks in a tabular format.
 
     This function takes a list of bookmarks dictionaries and displays each bookmark's details in a table.
-    The table includes the bookmark ID, name, prompt, responses, context strategy, prompt template, attack module and
-    bookmark time. If the list is empty, it prints a message indicating that no bookmarks are found.
+    The table includes an autogenerated index, name, prepared prompt, response and bookmark time.
+    If the list is empty, it prints a message indicating that no bookmarks are found.
 
     Args:
         bookmarks_list (list): A list of dictionaries, where each dictionary contains the details of a bookmark.
@@ -395,18 +386,14 @@ def display_bookmarks(bookmarks_list) -> None:
         )
         table.add_column("ID.", justify="left", width=5)
         table.add_column("Name", justify="left", width=20)
-        table.add_column("Prompt", justify="left", width=50)
-        table.add_column("Response", justify="left", width=50)
-        table.add_column("Context Strategy", justify="left", width=20)
-        table.add_column("Prompt Template", justify="left", width=20)
-        table.add_column("Attack Module", justify="left", width=20)
-        table.add_column("Metric", justify="left", width=20)
+        table.add_column("Prepared Prompt", justify="left", width=50)
+        table.add_column("Predicted Response", justify="left", width=50)
         table.add_column("Bookmark Time", justify="left", width=20)
         for idx, bookmark in enumerate(bookmarks_list, 1):
             (
-                index,
                 name,
                 prompt,
+                prepared_prompt,
                 response,
                 context_strategy,
                 prompt_template,
@@ -418,12 +405,8 @@ def display_bookmarks(bookmarks_list) -> None:
             table.add_row(
                 str(idx),
                 name,
-                prompt,
+                prepared_prompt,
                 response,
-                context_strategy,
-                prompt_template,
-                attack_module,
-                metric,
                 bookmark_time,
             )
         console.print(table)
@@ -441,9 +424,62 @@ def view_bookmark(args) -> None:
 
     try:
         bookmark_info = api_get_bookmark(args.bookmark_name)
-        display_bookmarks([bookmark_info])
+        display_bookmark(bookmark_info)
     except Exception as e:
         print(f"[view_bookmark]: {str(e)}")
+
+
+def display_bookmark(bookmark_info: dict) -> None:
+    """
+    Display the filtered bookmark in a tabular format.
+
+    This function takes a list of bookmarks dictionaries and displays the target bookmark's details in a table.
+    The table includes the bookmark name, prompt, prepared prompt, response, context strategy, prompt template,
+    attack module, metric and bookmark time. If the list is empty, it prints a message indicating that no bookmarks
+    are found.
+
+    Args:
+        bookmark_info (dict): A dictionary which contains the details of a bookmark.
+    """
+    if bookmark_info:
+        table = Table(
+            title="Bookmark List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("Name", justify="left", width=10)
+        table.add_column("Prompt", justify="left", width=30)
+        table.add_column("Prepared Prompt", justify="left", width=30)
+        table.add_column("Predicted Response", justify="left", width=30)
+        table.add_column("Context Strategy", justify="left", width=5)
+        table.add_column("Prompt Template", justify="left", width=5)
+        table.add_column("Attack Module", justify="left", width=5)
+        table.add_column("Metric", justify="left", width=5)
+        table.add_column("Bookmark Time", justify="left", width=5)
+        (
+            name,
+            prompt,
+            prepared_prompt,
+            response,
+            context_strategy,
+            prompt_template,
+            attack_module,
+            metric,
+            bookmark_time,
+        ) = bookmark_info.values()
+        table.add_section()
+        table.add_row(
+            name,
+            prompt,
+            prepared_prompt,
+            response,
+            context_strategy,
+            prompt_template,
+            attack_module,
+            metric,
+            bookmark_time,
+        )
+        console.print(table)
+    else:
+        console.print("[red]There are no bookmarks found.[/red]")
 
 
 def export_bookmarks(args) -> None:
@@ -475,6 +511,7 @@ def manual_red_teaming(user_prompt: str) -> None:
     if not active_session:
         print("There is no active session. Activate a session to start red teaming.")
         return
+
     prompt_template = (
         [active_session["prompt_template"]] if active_session["prompt_template"] else []
     )
@@ -537,21 +574,30 @@ def run_attack_module(args):
         prompt = args.prompt
         system_prompt = args.system_prompt if args.system_prompt else ""
         # context strategy and prompt template should come from the session instead of the command
-        prompt_template = (
-            [active_session["prompt_template"]]
-            if active_session["prompt_template"]
-            else []
-        )
-        context_strategy = (
-            active_session["context_strategy"]
-            if active_session["context_strategy"]
-            else []
-        )
 
-        num_of_prev_prompts = (
-            active_session["cs_num_of_prev_prompts"]
-            if active_session["context_strategy"]
-            else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        if args.prompt_template:
+            prompt_template = [args.prompt_template]
+        elif active_session["prompt_template"]:
+            prompt_template = [args.prompt_template]
+        else:
+            prompt_template = []
+
+        if args.context_strategy:
+            context_strategy = args.context_strategy
+            num_of_prev_prompts = (
+                args.cs_num_of_prev_prompts
+                if args.cs_num_of_prev_prompts
+                else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+            )
+        elif active_session["context_strategy"]:
+            context_strategy = active_session["context_strategy"]
+            num_of_prev_prompts = active_session["cs_num_of_prev_prompts"]
+        else:
+            context_strategy = []
+            num_of_prev_prompts = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+
+        optional_arguments = (
+            literal_eval(args.optional_args) if args.optional_args else {}
         )
 
         metric = [args.metric] if args.metric else []
@@ -574,8 +620,10 @@ def run_attack_module(args):
                 "context_strategy_info": context_strategy_info,
                 "prompt_template_ids": prompt_template,
                 "metric_ids": metric,
+                "optional_params": optional_arguments,
             }
         ]
+
         runner_args = {}
         runner_args["attack_strategies"] = attack_strategy
 
@@ -692,7 +740,7 @@ new_session_args.add_argument(
 automated_rt_session_args = cmd2.Cmd2ArgumentParser(
     description="Runs automated red teaming in the current session.",
     epilog=(
-        'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" '
+        'Example:\n run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" -m bleuscore'
     ),
 )
 
@@ -716,23 +764,30 @@ automated_rt_session_args.add_argument(
     "-c",
     "--context_strategy",
     type=str,
-    help="Name of the context strategy module to be used.",
+    help=(
+        "Name of the context strategy module to be used. If this is set, it will overwrite the context strategy"
+        " set in the session while running this attack module."
+    ),
     nargs="?",
 )
 
 automated_rt_session_args.add_argument(
     "-n",
-    "--num_of_prev_prompts",
+    "--cs_num_of_prev_prompts",
     type=str,
-    help="The number of previous prompts to use with the context strategy.",
+    help=(
+        "The number of previous prompts to use with the context strategy. If this is set, it will overwrite the"
+        " number of previous promtps set in the session while running this attack module."
+    ),
     nargs="?",
 )
 
 automated_rt_session_args.add_argument(
     "-p",
-    "--prompt-template",
+    "--prompt_template",
     type=str,
-    help="Name of the prompt template to be used.",
+    help="Name of the prompt template to be used. If this is set, it will overwrite the prompt template set in"
+    " the session while running this attack module.",
     nargs="?",
 )
 
@@ -740,6 +795,13 @@ automated_rt_session_args.add_argument(
     "-m", "--metric", type=str, help="Name of the metric module to be used.", nargs="?"
 )
 
+automated_rt_session_args.add_argument(
+    "-o",
+    "--optional_args",
+    type=str,
+    help="Optional parameters to input into the red teaming module.",
+    nargs="?",
+)
 
 # Delete session arguments
 delete_session_args = cmd2.Cmd2ArgumentParser(
@@ -752,33 +814,33 @@ delete_session_args.add_argument(
 )
 
 
-# Add bookmark prompt arguments
-add_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# Add bookmark arguments
+add_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="Bookmark a prompt",
-    epilog="Example:\n bookmark_prompt openai-connector 2 my-bookmarked-prompt",
+    epilog="Example:\n add_bookmark openai-connector 2 my-bookmarked-prompt",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "endpoint",
     type=str,
     help="Endpoint which the prompt was sent to.",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "prompt_id",
     type=int,
     help="ID of the prompt (the leftmost column)",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark",
 )
 
-# Use bookmark prompt arguments
+# Use bookmark arguments
 use_bookmark_args = cmd2.Cmd2ArgumentParser(
-    description="Sets a session configuration with a bookmark",
+    description="Use a bookmarked prompt",
     epilog="Example:\n use_bookmark my_bookmark",
 )
 
@@ -789,25 +851,25 @@ use_bookmark_args.add_argument(
 )
 
 
-# Delete bookmark prompt arguments
-delete_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# Delete bookmark arguments
+delete_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="Delete a bookmark",
     epilog="Example:\n delete_bookmark my_bookmarked_prompt",
 )
 
-delete_bookmark_prompt_args.add_argument(
+delete_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark",
 )
 
-# View bookmark prompt arguments
-view_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# View bookmark arguments
+view_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="View a bookmark",
     epilog="Example:\n view_bookmark my_bookmarked_prompt",
 )
 
-view_bookmark_prompt_args.add_argument(
+view_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark you want to view",
@@ -816,7 +878,7 @@ view_bookmark_prompt_args.add_argument(
 # Export bookmarks arguments
 export_bookmarks_args = cmd2.Cmd2ArgumentParser(
     description="Exports bookmarks as a JSON file",
-    epilog='Example:\n export_bookmarks "my list of exported bookmarks"',
+    epilog='Example:\n export_bookmarks "my_list_of_exported_bookmarks"',
 )
 
 export_bookmarks_args.add_argument(

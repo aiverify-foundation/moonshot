@@ -23,11 +23,28 @@ class Bookmark:
             cls._instance.__init_instance(db_name)
         return cls._instance
 
+    @classmethod
+    def get_instance(cls, db_name="bookmark"):
+        """
+        Get the singleton instance of the Bookmark class.
+
+        Args:
+            db_name (str): The name of the database.
+
+        Returns:
+            Bookmark: The singleton instance of the Bookmark class.
+        """
+        if cls._instance is None:
+            cls._instance = super(Bookmark, cls).__new__(cls)
+            cls._instance.__init_instance(db_name)
+        return cls._instance
+
     sql_create_bookmark_table = """
         CREATE TABLE IF NOT EXISTS bookmark (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         prompt TEXT NOT NULL,
+        prepared_prompt TEXT NOT NULL,
         response TEXT NOT NULL,
         context_strategy TEXT,
         prompt_template TEXT,
@@ -39,9 +56,9 @@ class Bookmark:
 
     sql_insert_bookmark_record = """
         INSERT INTO bookmark (
-        name, prompt, response, context_strategy, prompt_template, attack_module,
+        name, prompt, prepared_prompt, response, context_strategy, prompt_template, attack_module,
         metric, bookmark_time)
-        VALUES (?,?,?,?,?,?,?,?);
+        VALUES (?,?,?,?,?,?,?,?,?);
     """
 
     sql_select_bookmarks_record = """
@@ -50,14 +67,6 @@ class Bookmark:
 
     sql_select_bookmark_record = """
         SELECT * FROM bookmark WHERE name = ? ;
-    """
-
-    sql_delete_bookmark_record = """
-        DELETE FROM bookmark WHERE id = ?;
-    """
-
-    sql_delete_bookmark_record_by_name = """
-        DELETE FROM bookmark WHERE name = ?;
     """
 
     sql_delete_bookmark_records = """
@@ -72,7 +81,7 @@ class Bookmark:
             db_name (str): The name of the database.
         """
         self.db_instance = Storage.create_database_connection(
-            EnvVariables.BOOKMARK.name, db_name, "db"
+            EnvVariables.BOOKMARKS.name, db_name, "db"
         )
         Storage.create_database_table(
             self.db_instance, Bookmark.sql_create_bookmark_table
@@ -93,6 +102,7 @@ class Bookmark:
         data = (
             bookmark.name,
             bookmark.prompt,
+            bookmark.prepared_prompt,
             bookmark.response,
             bookmark.context_strategy,
             bookmark.prompt_template,
@@ -160,17 +170,18 @@ class Bookmark:
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
         """
-        Delete a bookmark by its name.
+        Delete a bookmark by its unique name.
 
         Args:
-            bookmark_name (str): The name of the bookmark to be deleted.
+            bookmark_name (str): The unique name for the bookmark to be deleted.
         """
         if bookmark_name is not None:
             try:
-                Storage.delete_database_record_by_id(
-                    self.db_instance,
-                    bookmark_name,
-                    Bookmark.sql_delete_bookmark_record_by_name,
+                sql_delete_bookmark_record = f"""
+                    DELETE FROM bookmark WHERE name = '{bookmark_name}';
+                """
+                Storage.delete_database_record_in_table(
+                    self.db_instance, sql_delete_bookmark_record
                 )
                 return {"success": True, "message": "Bookmark record deleted."}
             except Exception as e:
@@ -221,10 +232,12 @@ class Bookmark:
         ]
 
         # Write json file to moonshot-data
-        file_path = f"../moonshot-data/bookmark/{export_file_name}.json"
+        file_path = (
+            f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
+        )
 
         Storage.create_object(
-            EnvVariables.BOOKMARK.name,
+            EnvVariables.BOOKMARKS.name,
             export_file_name,
             {"bookmarks": bookmarks_json},
             "json",

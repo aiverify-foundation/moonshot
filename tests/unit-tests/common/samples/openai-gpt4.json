@@ -1,5 +1,4 @@
 {
-  "id": "openai-gpt4",
   "name": "OpenAI GPT4",
   "connector_type": "openai-connector",
   "uri": "",
