@@ -35,7 +35,7 @@ def configure_logger(name: str):
         name = Path(__file__).stem
 
     # Check log level is valid
-    valid_log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    valid_log_levels = ["DEBUG", "INFO", "WARNING", "ERROR"]
     if log_level not in valid_log_levels:
         log_level = "INFO"
 

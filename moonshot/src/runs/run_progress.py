@@ -113,7 +113,7 @@ class RunProgress:
             )
         else:
             logger.warning(
-                "[RunProgress] Failed to update run progress: db_instance is not initialised."
+                "[RunProgress] Failed to update run progress: database instance is not initialised."
             )
 
         # If a callback function is provided, call it with the updated run arguments
