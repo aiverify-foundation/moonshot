@@ -8,7 +8,7 @@ MOCK_STRATEGY_METADATA = [
     {
         "id": "add_previous_prompt",
         "name": "Add Previous Prompt",
-        "description": "This is a sample context strategy that adds in previous prompts to the current prompt."
+        "description": "This is a sample context strategy that adds in previous prompts to the current prompt. [Default: 5]"
     },
     {
         "id": "summarize_previous_prompt",

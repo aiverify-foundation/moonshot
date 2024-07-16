@@ -5,6 +5,10 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class BenchmarkingResult:
@@ -51,13 +55,13 @@ class BenchmarkingResult:
                 runner_results.results,
                 "json",
             )
-            print(
+            logger.info(
                 f"[BenchmarkingResult] Generate results took {(time.perf_counter() - start_time):.4f}s"
             )
             return runner_results
 
         except Exception as e:
-            print(
+            logger.info(
                 f"[BenchmarkingResult] Generate results took {(time.perf_counter() - start_time):.4f}s"
             )
             raise RuntimeError(
