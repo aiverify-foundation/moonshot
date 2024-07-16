@@ -231,12 +231,7 @@ class Bookmark:
             for bookmark_tuple in list_of_bookmarks_tuples
         ]
 
-        # Write json file to moonshot-data
-        file_path = (
-            f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
-        )
-
-        Storage.create_object(
+        file_path = Storage.create_object(
             EnvVariables.BOOKMARKS.name,
             export_file_name,
             {"bookmarks": bookmarks_json},
