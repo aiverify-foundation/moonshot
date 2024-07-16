@@ -584,16 +584,16 @@ def run_attack_module(args):
 
         if args.context_strategy:
             context_strategy = args.context_strategy
+            num_of_prev_prompts = (
+                args.cs_num_of_prev_prompts
+                if args.cs_num_of_prev_prompts
+                else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+            )
         elif active_session["context_strategy"]:
-            context_strategy = ["context_strategy"]
+            context_strategy = active_session["context_strategy"]
+            num_of_prev_prompts = active_session["cs_num_of_prev_prompts"]
         else:
             context_strategy = []
-
-        if args.context_strategy:
-            num_of_prev_prompts = args.cs_num_of_prev_prompts
-        elif active_session["context_strategy"]:
-            num_of_prev_prompts = ["cs_num_of_prev_prompts"]
-        else:
             num_of_prev_prompts = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
 
         optional_arguments = (
