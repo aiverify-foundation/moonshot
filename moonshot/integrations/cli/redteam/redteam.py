@@ -36,7 +36,7 @@ from moonshot.integrations.cli.redteam.session import (
     new_session,
     new_session_args,
     run_attack_module,
-    show_chats,
+    show_prompts,
     use_bookmark,
     use_bookmark_args,
     use_session,
@@ -57,9 +57,6 @@ class RedTeamCommandSet(cmd2.CommandSet):
 
     def do_end_session(self, _: cmd2.Statement) -> None:
         end_session()
-
-    def do_show_chats(self, _: cmd2.Statement) -> None:
-        show_chats()
 
     def do_list_sessions(self, _: cmd2.Statement) -> None:
         list_sessions()
@@ -126,3 +123,6 @@ class RedTeamCommandSet(cmd2.CommandSet):
     @cmd2.with_argparser(export_bookmarks_args)
     def do_export_bookmarks(self, args: argparse.Namespace) -> None:
         export_bookmarks(args)
+
+    def do_show_prompts(self, _: cmd2.Statement) -> None:
+        show_prompts()

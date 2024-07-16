@@ -107,7 +107,7 @@ def use_session(args) -> None:
         print(f"[use_session]: {str(e)}")
 
 
-def show_chats() -> None:
+def show_prompts() -> None:
     """
     Shows the chat table in a session so that users don't have to restart a session to view the chat table
     """
