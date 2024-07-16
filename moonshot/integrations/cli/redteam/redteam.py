@@ -34,6 +34,7 @@ from moonshot.integrations.cli.redteam.session import (
     export_bookmarks,
     export_bookmarks_args,
     list_bookmarks,
+    list_bookmarks_args,
     list_sessions,
     list_sessions_args,
     new_session,
@@ -119,8 +120,9 @@ class RedTeamCommandSet(cmd2.CommandSet):
     def do_delete_bookmark(self, args: argparse.Namespace) -> None:
         delete_bookmark(args)
 
-    def do_list_bookmarks(self, _: cmd2.Statement) -> None:
-        list_bookmarks()
+    @cmd2.with_argparser(list_bookmarks_args)
+    def do_list_bookmarks(self, args: argparse.Namespace) -> None:
+        list_bookmarks(args)
 
     @cmd2.with_argparser(view_bookmark_args)
     def do_view_bookmark(self, args: argparse.Namespace) -> None:
