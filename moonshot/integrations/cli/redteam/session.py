@@ -28,6 +28,18 @@ console = Console()
 
 
 def new_session(args) -> None:
+    """
+    Creates a new red teaming session or loads an existing one.
+
+    This function either creates a new runner and session or loads an existing runner based on the provided arguments.
+    It updates the global active_session with the session metadata and displays the chat history.
+
+    Args:
+        args (Namespace): The arguments passed to the function, containing:
+            - runner_id (str): The ID of the runner.
+            - context_strategy (str, optional): The context strategy to be used.
+            - prompt_template (str, optional): The prompt template to be used.
+            - endpoints (str, optional): The list of endpoints for the runner."""
     global active_session
 
     runner_id = args.runner_id
@@ -200,7 +212,7 @@ def update_chat_display() -> None:
         console.print("[red]There are no active session.[/red]")
 
 
-def bookmark_prompt(args) -> None:
+def add_bookmark(args) -> None:
     """
     Bookmarks a specific prompt in the active session.
 
@@ -563,28 +575,26 @@ def run_attack_module(args):
         system_prompt = args.system_prompt if args.system_prompt else ""
         # context strategy and prompt template should come from the session instead of the command
 
-        prompt_template = (
-            [args.prompt_template]
-            if args.prompt_template
-            else [active_session["prompt_template"]]
-            if active_session["prompt_template"]
-            else []
-        )
-        context_strategy = (
-            args.context_strategy
-            if args.context_strategy
-            else active_session["context_strategy"]
-            if active_session["context_strategy"]
-            else []
-        )
+        if args.prompt_template:
+            prompt_template = [args.prompt_template]
+        elif active_session["prompt_template"]:
+            prompt_template = [args.prompt_template]
+        else:
+            prompt_template = []
 
-        num_of_prev_prompts = (
-            [args.cs_num_of_prev_prompts]
-            if args.context_strategy
-            else [active_session["cs_num_of_prev_prompts"]]
-            if active_session["context_strategy"]
-            else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-        )
+        if args.context_strategy:
+            context_strategy = args.context_strategy
+        elif active_session["context_strategy"]:
+            context_strategy = ["context_strategy"]
+        else:
+            context_strategy = []
+
+        if args.context_strategy:
+            num_of_prev_prompts = args.cs_num_of_prev_prompts
+        elif active_session["context_strategy"]:
+            num_of_prev_prompts = ["cs_num_of_prev_prompts"]
+        else:
+            num_of_prev_prompts = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
 
         optional_arguments = (
             literal_eval(args.optional_args) if args.optional_args else {}
@@ -804,33 +814,33 @@ delete_session_args.add_argument(
 )
 
 
-# Add bookmark prompt arguments
-add_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# Add bookmark arguments
+add_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="Bookmark a prompt",
-    epilog="Example:\n bookmark_prompt openai-connector 2 my-bookmarked-prompt",
+    epilog="Example:\n add_bookmark openai-connector 2 my-bookmarked-prompt",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "endpoint",
     type=str,
     help="Endpoint which the prompt was sent to.",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "prompt_id",
     type=int,
     help="ID of the prompt (the leftmost column)",
 )
 
-add_bookmark_prompt_args.add_argument(
+add_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark",
 )
 
-# Use bookmark prompt arguments
+# Use bookmark arguments
 use_bookmark_args = cmd2.Cmd2ArgumentParser(
-    description="Sets a session configuration with a bookmark",
+    description="Use a bookmarked prompt",
     epilog="Example:\n use_bookmark my_bookmark",
 )
 
@@ -841,25 +851,25 @@ use_bookmark_args.add_argument(
 )
 
 
-# Delete bookmark prompt arguments
-delete_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# Delete bookmark arguments
+delete_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="Delete a bookmark",
     epilog="Example:\n delete_bookmark my_bookmarked_prompt",
 )
 
-delete_bookmark_prompt_args.add_argument(
+delete_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark",
 )
 
-# View bookmark prompt arguments
-view_bookmark_prompt_args = cmd2.Cmd2ArgumentParser(
+# View bookmark arguments
+view_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="View a bookmark",
     epilog="Example:\n view_bookmark my_bookmarked_prompt",
 )
 
-view_bookmark_prompt_args.add_argument(
+view_bookmark_args.add_argument(
     "bookmark_name",
     type=str,
     help="Name of the bookmark you want to view",
@@ -868,7 +878,7 @@ view_bookmark_prompt_args.add_argument(
 # Export bookmarks arguments
 export_bookmarks_args = cmd2.Cmd2ArgumentParser(
     description="Exports bookmarks as a JSON file",
-    epilog='Example:\n export_bookmarks "my list of exported bookmarks"',
+    epilog='Example:\n export_bookmarks "my_list_of_exported_bookmarks"',
 )
 
 export_bookmarks_args.add_argument(

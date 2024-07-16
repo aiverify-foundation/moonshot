@@ -21,11 +21,11 @@ from moonshot.integrations.cli.redteam.prompt_template import (
     use_prompt_template_args,
 )
 from moonshot.integrations.cli.redteam.session import (
-    add_bookmark_prompt_args,
+    add_bookmark,
+    add_bookmark_args,
     automated_rt_session_args,
-    bookmark_prompt,
     delete_bookmark,
-    delete_bookmark_prompt_args,
+    delete_bookmark_args,
     delete_session,
     delete_session_args,
     end_session,
@@ -42,7 +42,7 @@ from moonshot.integrations.cli.redteam.session import (
     use_session,
     use_session_args,
     view_bookmark,
-    view_bookmark_prompt_args,
+    view_bookmark_args,
 )
 
 
@@ -104,22 +104,22 @@ class RedTeamCommandSet(cmd2.CommandSet):
     def do_delete_attack_module(self, args: argparse.Namespace) -> None:
         delete_attack_module(args)
 
-    @cmd2.with_argparser(add_bookmark_prompt_args)
-    def do_bookmark_prompt(self, args: argparse.Namespace) -> None:
-        bookmark_prompt(args)
+    @cmd2.with_argparser(add_bookmark_args)
+    def do_add_bookmark(self, args: argparse.Namespace) -> None:
+        add_bookmark(args)
 
     @cmd2.with_argparser(use_bookmark_args)
     def do_use_bookmark(self, args: argparse.Namespace) -> None:
         use_bookmark(args)
 
-    @cmd2.with_argparser(delete_bookmark_prompt_args)
+    @cmd2.with_argparser(delete_bookmark_args)
     def do_delete_bookmark(self, args: argparse.Namespace) -> None:
         delete_bookmark(args)
 
     def do_list_bookmarks(self, _: cmd2.Statement) -> None:
         list_bookmarks()
 
-    @cmd2.with_argparser(view_bookmark_prompt_args)
+    @cmd2.with_argparser(view_bookmark_args)
     def do_view_bookmark(self, args: argparse.Namespace) -> None:
         view_bookmark(args)
 
