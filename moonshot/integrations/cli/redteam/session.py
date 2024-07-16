@@ -52,7 +52,7 @@ def new_session(args) -> None:
         api_create_session(
             runner.id, runner.database_instance, runner.endpoints, runner_args
         )
-        session_metadata = api_load_session(runner_id)
+        session_metadata = api_load_session(runner.id)
         if session_metadata:
             active_session.update(session_metadata)
             if active_session["context_strategy"]:
