@@ -480,6 +480,30 @@ class Storage:
             raise RuntimeError("Database instance is not initialised.")
 
     @staticmethod
+    def delete_database_record_in_table(
+        database_instance: DBInterface, sql_delete_record: str
+    ) -> None:
+        """
+        Deletes records from a table in the database based on a SQL condition.
+
+        This method is used to delete records from a specific table in the database
+            that meet the condition specified in the SQL delete statement.
+        If the database instance is not initialised, it raises a RuntimeError.
+        Otherwise, it calls the delete_records_in_table method of the database instance with the provided SQL query.
+
+        Args:
+            database_instance (DBInterface): The database accessor instance.
+            sql_delete_record (str): The SQL query to delete records from a table.
+
+        Returns:
+            None
+        """
+        if database_instance:
+            database_instance.delete_records_in_table(sql_delete_record)
+        else:
+            raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
     def check_database_table_exists(
         database_instance: DBInterface, table_name: str
     ) -> bool | None:

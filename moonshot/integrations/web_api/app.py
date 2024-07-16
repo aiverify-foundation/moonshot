@@ -14,12 +14,13 @@ from .routes import (
     attack_modules,
     benchmark,
     benchmark_result,
+    bookmark,
+    context_strategy,
     cookbook,
     dataset,
     endpoint,
     metric,
     prompt_template,
-    context_strategy,
     recipe,
     runner,
 )
@@ -66,13 +67,11 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
 
     app_kwargs["swagger_ui_parameters"] = {
         "defaultModelsExpandDepth": -1,
-        "docExpansion": None
-        }
+        "docExpansion": None,
+    }
 
     app: CustomFastAPI = CustomFastAPI(
-        title="Project Moonshot",
-        version="0.4.1",
-        **app_kwargs
+        title="Project Moonshot", version="0.4.1", **app_kwargs
     )
 
     if cfg.cors.enabled():
@@ -104,6 +103,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     app.include_router(runner.router)
     app.include_router(dataset.router)
     app.include_router(attack_modules.router)
+    app.include_router(bookmark.router)
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(

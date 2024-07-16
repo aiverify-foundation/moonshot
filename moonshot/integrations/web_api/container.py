@@ -9,6 +9,7 @@ from .services.benchmark_result_service import BenchmarkResultService
 from .services.benchmark_test_manager import BenchmarkTestManager
 from .services.benchmark_test_state import BenchmarkTestState
 from .services.benchmarking_service import BenchmarkingService
+from .services.bookmark_service import BookmarkService
 from .services.context_strategy_service import ContextStrategyService
 from .services.cookbook_service import CookbookService
 from .services.dataset_service import DatasetService
@@ -55,6 +56,11 @@ class Container(containers.DeclarativeContainer):
                 "log_file_max_size": 5242880,
                 "log_file_backup_count": 3,
             },
+            "temp_folder": str(
+                    importlib.resources.files("moonshot").joinpath(
+                        "integrations/web_api/temp"
+                    )
+                ),
         }
     )
 
@@ -97,9 +103,9 @@ class Container(containers.DeclarativeContainer):
     prompt_template_service: providers.Singleton[
         PromptTemplateService
     ] = providers.Singleton(PromptTemplateService)
-    context_strategy_service: providers.Singleton[ContextStrategyService] = providers.Singleton(
+    context_strategy_service: providers.Singleton[
         ContextStrategyService
-    )
+    ] = providers.Singleton(ContextStrategyService)
     benchmarking_service: providers.Singleton[
         BenchmarkingService
     ] = providers.Singleton(
@@ -127,6 +133,9 @@ class Container(containers.DeclarativeContainer):
     am_service: providers.Singleton[AttackModuleService] = providers.Singleton(
         AttackModuleService,
     )
+    bookmark_service: providers.Singleton[BookmarkService] = providers.Singleton(
+        BookmarkService,
+    )
     wiring_config = containers.WiringConfiguration(
         modules=[
             ".routes.redteam",
@@ -141,6 +150,7 @@ class Container(containers.DeclarativeContainer):
             ".routes.runner",
             ".routes.dataset",
             ".routes.attack_modules",
+            ".routes.bookmark",
             ".services.benchmarking_service",
         ]
     )
