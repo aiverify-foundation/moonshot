@@ -40,7 +40,6 @@ def list_prompt_templates(args) -> list | None:
             return prompt_templates_list
     except Exception as e:
         print(f"[list_prompt_templates]: {str(e)}")
-        return None
 
 
 def delete_prompt_template(args) -> None:
