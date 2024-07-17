@@ -23,7 +23,6 @@ def list_attack_modules(args) -> list | None:
         print("Listing attack modules may take a while...")
         attack_module_metadata_list = api_get_all_attack_module_metadata()
         keyword = args.find.lower() if args.find else ""
-
         if keyword:
             filtered_attack_modules_list = find_keyword(
                 keyword, attack_module_metadata_list
