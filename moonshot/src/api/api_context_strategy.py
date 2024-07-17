@@ -40,7 +40,7 @@ def api_delete_context_strategy(cs_id: str) -> bool:
     return ContextStrategy.delete(cs_id)
 
 
-def api_get_all_context_strategy_metadata() -> list:
+def api_get_all_context_strategy_metadata() -> list[dict]:
     """
     Retrieves metadata for all context strategy modules.
 
@@ -48,7 +48,7 @@ def api_get_all_context_strategy_metadata() -> list:
     returns a list of metadata dictionaries.
 
     Returns:
-        list: A list of attack module metadata.
+        list[dict]: A list of dictionaries, each representing the details of a context strategy metadata.
     """
 
     return [

@@ -1,0 +1,20 @@
+{
+  "charswap_attack": {
+    "id": "charswap_attack",
+    "name": "Character Swap Attack",
+    "description": "About this attack module:\nThis module creates perturbations through swapping characters for words that contains more than 3 characters.\nParameters:\n1. MAX_ITERATIONS - Number of prompts that should be sent to the target. [Default: 10]\n2. word_swap_ratio -Percentage of words in a prompt that should be perturbed. [Default: 0.2]\n",
+    "hash": "eaf122a1f1d3e8f1"
+  },
+  "homoglyph_attack": {
+    "id": "homoglyph_attack",
+    "name": "Homoglyph Attack",
+    "description": "About this attack module:\nHomoglyphs are alternative words for words comprising of ASCII characters.\nExample of a homoglyph fool -> fooI\nThis module purturbs the prompt with all available homoglyphs for each word present.\nParameters:\n1. MAX_ITERATIONS - Maximum number of prompts that should be sent to the target. [Default: 20]",
+    "hash": "ebf9b3be7f24ebd0"
+  },
+  "sample_attack_module": {
+    "id": "sample_attack_module",
+    "name": "Sample Attack Module",
+    "description": "This is a sample attack module.",
+    "hash": "55a617c2440cc174"
+  }
+}

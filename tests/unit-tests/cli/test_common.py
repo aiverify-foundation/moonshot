@@ -1,3 +1,6 @@
+import argparse
+from moonshot.integrations.cli.common.connectors import list_connector_types, list_endpoints
+from moonshot.integrations.cli.common.prompt_template import list_prompt_templates
 import pytest
 from io import StringIO 
 from unittest.mock import patch
@@ -28,6 +31,14 @@ def perform_assertion(cli, command_list, expected_output, capsys):
     else:
         assert expected_output in captured.err.rstrip()
 
+def perform_assertion_function_output(expected_output, returned_results, capsys):
+    if returned_results:
+        assert any(expected_output in returned_result.values() for returned_result in returned_results)
+    else:
+        captured = capsys.readouterr()
+        if captured.out:
+            assert captured.out.rstrip() == expected_output or expected_output in captured.out.rstrip()
+
 ut_data_dir = "tests/unit-tests/src/data"
 ut_sample_dir = "tests/unit-tests/common/samples"    
 
@@ -48,6 +59,7 @@ class TestRedTeamingCLI:
                 "DATABASES": f"{ut_data_dir}/databases/",
                 "DATABASES_MODULES": f"{ut_data_dir}/databases-modules/",
                 "CONNECTORS_ENDPOINTS": f"{ut_data_dir}/connectors-endpoints/",
+                "CONNECTORS": f"{ut_data_dir}/connectors/",
                 "IO_MODULES": f"{ut_data_dir}/io-modules/",
                 "ATTACK_MODULES": f"{ut_data_dir}/attack-modules/",
                 "CONTEXT_STRATEGY": f"{ut_data_dir}/context-strategy/",
@@ -92,8 +104,8 @@ class TestRedTeamingCLI:
 
         # Copy prompt templates
         shutil.copyfile(
-            f"{ut_sample_dir}/analogical-similarity.json",
-            f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
+            f"{ut_sample_dir}/answer-template.json",
+            f"{ut_data_dir}/prompt-templates/answer-template.json",
         )
         shutil.copyfile(
             f"{ut_sample_dir}/mmlu.json",
@@ -110,6 +122,26 @@ class TestRedTeamingCLI:
             f"{ut_data_dir}/attack-modules/homoglyph_attack.py",
         )        
 
+        # Copy connectors
+        shutil.copyfile(
+            f"{ut_sample_dir}/claude2-connector.py",
+            f"{ut_data_dir}/connectors/claude2-connector.py",
+        )
+        shutil.copyfile(
+            f"{ut_sample_dir}/huggingface-connector.py",
+            f"{ut_data_dir}/connectors/huggingface-connector.py",
+        )
+
+        # Copy endpoints
+        shutil.copyfile(
+            f"{ut_sample_dir}/openai-gpt35-turbo.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
+        )        
+        shutil.copyfile(
+            f"{ut_sample_dir}/openai-gpt4.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
+        )
+
         # Setup complete, proceed with tests
         yield
 
@@ -120,10 +152,14 @@ class TestRedTeamingCLI:
             f"{ut_data_dir}/datasets/bbq-lite-age-ambiguous.json",
             f"{ut_data_dir}/metrics/bertscore.py",
             f"{ut_data_dir}/metrics/bleuscore.py",
-            f"{ut_data_dir}/prompt-templates/analogical-similarity.json",
+            f"{ut_data_dir}/prompt-templates/answer-template.json",
             f"{ut_data_dir}/prompt-templates/mmlu.json",
             f"{ut_data_dir}/attack-modules/charswap_attack.py",
             f"{ut_data_dir}/attack-modules/homoglyph_attack.py",
+            f"{ut_data_dir}/connectors/claude2-connector.py",
+            f"{ut_data_dir}/connectors/huggingface-connector.py",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt35-turbo.json",
+            f"{ut_data_dir}/connectors-endpoints/openai-gpt4.json",
         ]
 
         #files generated from unit tests
@@ -215,17 +251,160 @@ class TestRedTeamingCLI:
     def test_add_endpoint(self, cli, command_list, expected_output, capsys):
         perform_assertion(cli, command_list, expected_output, capsys)
 
-    # # ------------------------------------------------------------------------------
-    # # Listing and viewing data
-    # # ------------------------------------------------------------------------------
-    # def test_list_connector_types(self, cli, command_list, expected_output, capsys):
-    #     perform_assertion(cli, command_list, expected_output, capsys)
+    # ------------------------------------------------------------------------------
+    # Listing and viewing data
+    # ------------------------------------------------------------------------------
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_connector_types"],
+                "claude2"
+            ),
 
-    # def test_list_endpoints(self, cli, command_list, expected_output, capsys):
-    #     perform_assertion(cli, command_list, expected_output, capsys)
+            # Success: Find with results
+            (
+                ["list_connector_types -f hugging"],
+                "huggingface"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_connector_types -f \"RandomArg\""],
+                "No connectors containing keyword found."
+            ),
 
-    # def test_list_prompt_templates(self, cli, command_list, expected_output, capsys):
-    #     perform_assertion(cli, command_list, expected_output, capsys)
+            # Failure: List with unknown flag
+            (
+                ["list_connector_types -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_connectors(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-connector", "No connectors containing keyword found."),
+
+            # Success: results returned
+            ("face", "huggingface-connector"),
+        ]
+    )
+    def test_list_connectors_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_connector_types(args)
+        if returned_results:
+            assert expected_output in returned_results
+        else:
+            captured = capsys.readouterr()
+            if captured.out:
+                assert captured.out.rstrip() == expected_output or expected_output in captured.out.rstrip()    
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_endpoints"],
+                "gpt-4"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_endpoints -f gpt35"],
+                "gpt-3.5-turbo"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_endpoints -f \"RandomArg\""],
+                "No endpoints containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_endpoints -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_endpoints(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-endpoint", "No endpoints containing keyword found."),
+
+            # Success: results returned
+            ("3.5", "openai-gpt35-turbo"),
+        ]
+    )
+    def test_list_endpoints_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_endpoints(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_prompt_templates"],
+                "mmlu"
+            ),
+            # Success: Find with results
+            (
+                ["list_prompt_templates -f answer"],
+                "answer-template"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_prompt_templates -f \"RandomArg\""],
+                "No prompt templates containing keyword found."
+            ),
+            # Failure: List with unknown flag
+            (
+                ["list_prompt_templates -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_prompt_templates(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-prompt-template", "No prompt templates containing keyword found."),
+
+            # Success: results returned
+            ("mmlu", "mmlu"),
+        ]
+    )
+    def test_list_prompt_templates_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_prompt_templates(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+
 
     # def test_view_endpoint(self, cli, command_list, expected_output, capsys):
     #     perform_assertion(cli, command_list, expected_output, capsys)

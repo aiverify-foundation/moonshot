@@ -1,3 +1,7 @@
+from moonshot.integrations.cli.benchmark.datasets import list_datasets
+from moonshot.integrations.cli.benchmark.metrics import list_metrics
+from moonshot.integrations.cli.benchmark.result import list_results
+from moonshot.integrations.cli.benchmark.run import list_runs
 import pytest
 from io import StringIO 
 from unittest.mock import patch
@@ -5,6 +9,10 @@ from moonshot.integrations.cli.cli import CommandLineInterface
 from moonshot.api import api_set_environment_variables
 import shutil
 import os
+import argparse
+
+from moonshot.integrations.cli.benchmark.recipe import list_recipes
+from moonshot.integrations.cli.benchmark.cookbook import list_cookbooks
 
 
 @pytest.fixture
@@ -28,19 +36,21 @@ def perform_assertion(cli, command_list, expected_output, capsys):
     else:
         assert expected_output in captured.err.rstrip()
 
+def perform_assertion_function_output(expected_output, returned_results, capsys):
+    if returned_results:
+        assert any(expected_output in returned_result.values() for returned_result in returned_results)
+    else:
+        captured = capsys.readouterr()
+        if captured.out:
+            assert captured.out.rstrip() == expected_output or expected_output in captured.out.rstrip()    
+
+
 ut_data_dir = "tests/unit-tests/src/data"
 ut_sample_dir = "tests/unit-tests/common/samples"
 
 class TestBenchmarkingCLI:
     @pytest.fixture(autouse=True)
     def init(self):
-        # list_of_directories = ["attack-modules", "connectors-endpoints", "context-strategies", "cookbooks", 
-        #                        "databases", "databases-modules", "datasets", "io-modules", "metrics",
-        #                        "prompt-templates", "recipes", "runners"]
-        
-        # for dir_name in list_of_directories:
-        #     os.makedirs(f"{ut_data_dir}/{dir_name}/", exist_ok=True)
-
         # Set environment variables for result paths
         api_set_environment_variables(
             {
@@ -68,6 +78,11 @@ class TestBenchmarkingCLI:
         shutil.copyfile(
             f"{ut_sample_dir}/chinese-safety-cookbook.json",
             f"{ut_data_dir}/cookbooks/chinese-safety-cookbook.json",
+        )
+
+        shutil.copyfile(
+            f"{ut_sample_dir}/tamil-language-cookbook.json",
+            f"{ut_data_dir}/cookbooks/tamil-language-cookbook.json",
         )
 
         # Copy recipes
@@ -159,6 +174,30 @@ class TestBenchmarkingCLI:
             f"{ut_data_dir}/results-modules/benchmarking-result.py",
         )        
 
+        # Copy first sample runner
+        shutil.copyfile(
+            f"{ut_sample_dir}/my-new-recipe-runner.json",
+            f"{ut_data_dir}/runners/my-new-recipe-runner.json",
+        )
+        
+        shutil.copyfile(
+            f"{ut_sample_dir}/my-new-recipe-runner.db",
+            f"{ut_data_dir}/databases/my-new-recipe-runner.db",
+        )
+
+        # Copy first sample result
+        shutil.copyfile(
+            f"{ut_sample_dir}/my-new-recipe-runner-result.json",
+            f"{ut_data_dir}/results/my-new-recipe-runner-result.json",
+        )
+
+        # Copy second sample result
+        shutil.copyfile(
+            f"{ut_sample_dir}/sample-result.json",
+            f"{ut_data_dir}/results/sample-result.json",
+        )
+
+
         # Setup complete, proceed with tests
         yield
 
@@ -182,6 +221,12 @@ class TestBenchmarkingCLI:
             f"{ut_data_dir}/metrics/exactstrmatch.py",
             f"{ut_data_dir}/prompt-templates/mcq-template.json",
             f"{ut_data_dir}/datasets/arc-challenge.json",
+            f"{ut_data_dir}/runners/my-new-recipe-runner.json",
+            f"{ut_data_dir}/databases/my-new-recipe-runner.db",
+            f"{ut_data_dir}/runners/my-runner.json",
+            f"{ut_data_dir}/databases/my-runner.db",
+            f"{ut_data_dir}/results/my-new-recipe-runner-result.json",
+            f"{ut_data_dir}/results/sample-result.json",
         ]
 
         #files generated from unit tests
@@ -197,8 +242,6 @@ class TestBenchmarkingCLI:
             f"{ut_data_dir}/runners/my-unit-test-cookbook.json",
             f"{ut_data_dir}/runners/my-unit-test-recipe.json",
             f"{ut_data_dir}/recipes/my-unit-test-recipe.json",
-            
-            
         ])
         for benchmarking_file in benchmarking_files:
             if os.path.exists(benchmarking_file):
@@ -461,26 +504,212 @@ class TestBenchmarkingCLI:
     # def test_view_recipe(self, cli, command_list, expected_output, capsys):
     #     perform_assertion(cli, command_list, expected_output, capsys)
     
-    # def test_list_recipes(self, cli, command):
-    # pass
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_recipes"],
+                "bbq"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_recipes -f bbq"],
+                "bbq"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_recipes -f \"RandomArg\""],
+                "No recipes containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_recipes -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_recipes(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("wrong_recipes", "No recipes containing keyword found."),
+
+            # Success: results returned
+            ("bbq", "bbq"),
+        ]
+    )
+    def test_list_recipes_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_recipes(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
 
     # def test_view_cookbook(self, cli):
     # pass
 
-    # def test_list_cookbooks(self, cli):
-    # pass
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_cookbooks"],
+                "chinese-safety-cookbook"
+            ),
 
+            # Success: Find with results
+            (
+                ["list_cookbooks -f tamil"],
+                "tamil-language-cookbook"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_cookbooks -f \"RandomArg\""],
+                "No cookbooks containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_cookbooks -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_cookbooks(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-cookbook", "No cookbooks containing keyword found."),
+
+            # Success: results returned
+            ("chinese", "chinese-safety-cookbook"),
+        ]
+    )
+    def test_list_cookbooks_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_cookbooks(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+        
     # def test_view_dataset(self, cli):
     # pass
 
-    # def test_list_datasets(self, cli):
-    # pass
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_datasets"],
+                "arc-easy"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_datasets -f bbq"],
+                "bbq-lite-age-disamb"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_datasets -f \"RandomArg\""],
+                "No datasets containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_datasets -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_datasets(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-dataset", "No datasets containing keyword found."),
+
+            # Success: results returned
+            ("arc", "arc-easy"),
+        ]
+    )
+    def test_list_datasets_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_datasets(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
 
     # def test_view_metric(self, cli):
     # pass
 
-    # def test_list_metrics(self, cli):
-    # pass
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_metrics"],
+                "bleuscore"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_metrics -f bertscore"],
+                "bertscore"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_metrics -f \"RandomArg\""],
+                "No metrics containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_metrics -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_metrics(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-metrics", "No metrics containing keyword found."),
+
+            # Success: results returned
+            ("bert", "bertscore"),
+        ]
+    )
+    def test_list_metrics_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_metrics(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
 
     # ------------------------------------------------------------------------------
     # Updating of files
@@ -757,20 +986,131 @@ class TestBenchmarkingCLI:
     #     def test_view_result(self, cli):
     #         pass
 
-    #     def test_list_results(self, cli):
-    #         pass
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_results"],
+                "my-new-recipe-runner-result"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_results -f sample-result"],
+                "sample-result"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_results -f \"RandomArg\""],
+                "No results containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_results -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_results(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-result", "No results containing keyword found."),
+
+            # # Success: results returned 
+            # ("my-new-recipe-runner", "my-new-recipe-runner-result"),
+        ]
+    )
+    def test_list_results_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_results(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
 
     #     def test_view_run(self, cli):
     #         pass
 
-    #     def test_list_runs(self, cli):
-    #         pass
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_runs"],
+                "my-new-recipe-runner"
+            ),
+
+            # Success: Find with results
+            (
+                ["list_runs -f my-new-recipe-runner"],
+                "my-new-recipe-runner"
+            ),            
+            # Success: Optional args with no results found
+            (
+                ["list_runs -f \"RandomArg\""],
+                "No runs containing keyword found."
+            ),
+
+            # Failure: List with unknown flag
+            (
+                ["list_runs -x test"],
+                err_unrecognised_arg
+            ),
+        ]
+    )
+    def test_list_runs(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)
+
+    @pytest.mark.parametrize(
+        "function_args, expected_output",
+        [
+            # Success: no results
+            ("no-such-run", "No runs containing keyword found."),
+
+            # # Success: results returned
+            # ("my-new-recipe-runner", "my-new-recipe-runner"),
+        ]
+    )
+    def test_list_runs_output(self, function_args, expected_output, capsys):
+        # additional function to test listing as the list command is hard to assert in CLI
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--find", type=str, nargs="?")
+        args = parser.parse_args(['--find', function_args])
+
+        returned_results = list_runs(args)
+        perform_assertion_function_output(expected_output, returned_results, capsys)
+            
 
     #     def test_view_runner(self, cli):
     #         pass
-        
-    #     def test_list_runners(self, cli):
-    #         pass
+    
+
+    @pytest.mark.parametrize(
+        "command_list, expected_output",
+        [
+            # Success: No optional args
+            (
+                ["list_runners"],
+                "my-new-recipe-runner"
+            ),
+
+            # # Success: List runs with unknown flag will not have an error
+            # because list_runners does not take in an arg (find will be implemented soon)
+            (
+                ["list_runners -x test"],
+                "my-new-recipe-runner"
+            ),           
+        ]
+    )
+    def test_list_runners(self, cli, command_list, expected_output, capsys):
+        perform_assertion(cli, command_list, expected_output, capsys)  
 
 
     # # ------------------------------------------------------------------------------
