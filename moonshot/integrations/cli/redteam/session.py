@@ -146,7 +146,6 @@ def list_sessions(args) -> list | None:
     try:
         session_metadata_list = api_get_all_session_metadata()
         keyword = args.find.lower() if args.find else ""
-
         if keyword:
             filtered_session_metadata_list = find_keyword(
                 keyword, session_metadata_list
@@ -160,7 +159,6 @@ def list_sessions(args) -> list | None:
         else:
             display_sessions(session_metadata_list)
             return session_metadata_list
-
     except Exception as e:
         print(f"[list_sessions]: {str(e)}")
 
@@ -378,10 +376,8 @@ def list_bookmarks(args) -> list | None:
     try:
         bookmarks_list = api_get_all_bookmarks()
         keyword = args.find.lower() if args.find else ""
-
         if keyword:
             filtered_bookmarks_list = find_keyword(keyword, bookmarks_list)
-
             if filtered_bookmarks_list:
                 display_bookmarks(filtered_bookmarks_list)
                 return filtered_bookmarks_list
@@ -391,7 +387,6 @@ def list_bookmarks(args) -> list | None:
         else:
             display_bookmarks(bookmarks_list)
             return bookmarks_list
-
     except Exception as e:
         print(f"[list_bookmarks]: {str(e)}")
 

@@ -67,7 +67,6 @@ def list_context_strategies(args) -> list | None:
     try:
         context_strategy_metadata_list = api_get_all_context_strategy_metadata()
         keyword = args.find.lower() if args.find else ""
-
         if keyword:
             filtered_context_strategies_list = find_keyword(
                 keyword, context_strategy_metadata_list
