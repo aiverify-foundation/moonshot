@@ -1,5 +1,5 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
 from ..schemas.dataset_create_dto import DatasetCreateDTO
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Datasets"])
 @inject
 def create_dataset(
     dataset_data: DatasetCreateDTO,
-    method: str,
+    method: str = Query(..., description="The method to use for creating the dataset. Supported methods are 'hf' and 'csv'."),
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
 ) -> str:
     """

@@ -27,7 +27,6 @@ class DatasetService(BaseService):
             method=method,
             **dataset_data.params
         )
-        print(new_ds_path)
         return copy_file(new_ds_path)
 
     @exception_handler

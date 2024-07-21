@@ -3,6 +3,7 @@ from unittest.mock import patch, Mock
 from moonshot.integrations.web_api.services.dataset_service import DatasetService
 from moonshot.integrations.web_api.services.utils.exceptions_handler import ServiceException
 from moonshot.integrations.web_api.schemas.dataset_response_dto import DatasetResponseDTO
+from moonshot.integrations.web_api.schemas.dataset_create_dto import DatasetCreateDTO
 
 # Mock data for successful API calls
 MOCK_DATASETS = [
@@ -22,6 +23,30 @@ MOCK_DATASETS = [
     }
 ]
 MOCK_DATASET_NAMES = ['squad-shifts-tnf', 'advglue']
+
+MOCK_DATASET_CREATE_DTO_HF = DatasetCreateDTO(
+    name="New De Dataset 2",
+    description="This dataset is created from postman in hf",
+    license="",
+    reference="",
+    params={
+        "dataset_name": "cais/mmlu",
+        "dataset_config": "college_biology",
+        "split": "test",
+        "input_col": ["question", "choices"],
+        "target_col": "answer"
+    }
+)
+
+MOCK_DATASET_CREATE_DTO_CSV = DatasetCreateDTO(
+    name="New Dataset",
+    description="This dataset is created from postman",
+    license="norman license",
+    reference="reference.com",
+    params={
+        "csv_file_path": "/Users/normanchia/LocalDocs/your_dataset.csv"
+    }
+)
 
 # Exception scenarios to test
 exception_scenarios = [
@@ -97,3 +122,51 @@ def test_delete_dataset_exceptions(mock_moonshot_api, exception, error_code, dat
         dataset_service.delete_dataset('1')
     assert exc_info.value.error_code == error_code
     mock_moonshot_api.api_delete_dataset.assert_called_once_with('1')
+
+@patch('moonshot.integrations.web_api.services.dataset_service.moonshot_api')
+@patch('moonshot.integrations.web_api.services.dataset_service.copy_file')
+def test_create_dataset_success_hf(mock_copy_file, mock_moonshot_api, dataset_service):
+    """
+    Test case for successful creation of a dataset using the 'hf' method.
+    """
+    mock_moonshot_api.api_create_datasets.return_value = "/path/to/new/dataset"
+    mock_copy_file.return_value = "Dataset created successfully"
+    
+    result = dataset_service.create_dataset(MOCK_DATASET_CREATE_DTO_HF, "hf")
+    
+    assert result == "Dataset created successfully"
+    mock_moonshot_api.api_create_datasets.assert_called_once_with(
+        name="New De Dataset 2",
+        description="This dataset is created from postman in hf",
+        reference="",
+        license="",
+        method="hf",
+        dataset_name="cais/mmlu",
+        dataset_config="college_biology",
+        split="test",
+        input_col=["question", "choices"],
+        target_col="answer"
+    )
+    mock_copy_file.assert_called_once_with("/path/to/new/dataset")
+
+@patch('moonshot.integrations.web_api.services.dataset_service.moonshot_api')
+@patch('moonshot.integrations.web_api.services.dataset_service.copy_file')
+def test_create_dataset_success_csv(mock_copy_file, mock_moonshot_api, dataset_service):
+    """
+    Test case for successful creation of a dataset using the 'csv' method.
+    """
+    mock_moonshot_api.api_create_datasets.return_value = "/path/to/new/dataset"
+    mock_copy_file.return_value = "Dataset created successfully"
+    
+    result = dataset_service.create_dataset(MOCK_DATASET_CREATE_DTO_CSV, "csv")
+    
+    assert result == "Dataset created successfully"
+    mock_moonshot_api.api_create_datasets.assert_called_once_with(
+        name="New Dataset",
+        description="This dataset is created from postman",
+        reference="reference.com",
+        license="norman license",
+        method="csv",
+        csv_file_path="/Users/normanchia/LocalDocs/your_dataset.csv"
+    )
+    mock_copy_file.assert_called_once_with("/path/to/new/dataset")
