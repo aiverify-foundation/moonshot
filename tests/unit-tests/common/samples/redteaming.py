@@ -19,8 +19,11 @@ from moonshot.src.redteaming.session.session import SessionMetadata
 from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
 from pydantic import BaseModel
 
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class RedTeaming:
@@ -86,10 +89,10 @@ class RedTeaming:
         self.cancel_event = cancel_event
 
         if self.red_teaming_type == RedTeamingType.AUTOMATED:
-            print("[Red Teaming] Starting automated red teaming...")
+            logger.info("[Red teaming] Starting automated red teaming...")
             await self.run_automated_red_teaming()
         elif self.red_teaming_type == RedTeamingType.MANUAL:
-            print("[Red Teaming] Starting manual red teaming...")
+            logger.info("[Red teaming] Starting manual red teaming...")
             return await self.run_manual_red_teaming()
         else:
             raise RuntimeError("[Session] Unable to determine red teaming type.")
@@ -108,51 +111,60 @@ class RedTeaming:
         # ------------------------------------------------------------------------------
         # Part 1: Load attack module
         # ------------------------------------------------------------------------------
-        print("[Red teaming] Part 1: Loading All Attack Module(s)...")
+        logger.debug("[Red teaming] Part 1: Loading All Attack Module(s)...")
         loaded_attack_modules = []
-        # load red teaming modules
-        for attack_strategy_args in self.runner_args.get("attack_strategies", None):
-            # load attack module with arguments
-            attack_module_attack_arguments = AttackModuleArguments(
-                connector_ids=self.session_metadata.endpoints
-                if self.session_metadata.endpoints
-                else [],
-                prompt_templates=attack_strategy_args.get(
-                    "prompt_template_ids", []
-                ),
-                prompt=attack_strategy_args.get("prompt", ""),
-                system_prompt=attack_strategy_args.get("system_prompt", ""),
-                metric_ids=attack_strategy_args["metric_ids"]
-                if "metric_ids" in attack_strategy_args
-                else [],
-                context_strategy_info=attack_strategy_args["context_strategy_info"]
-                if "context_strategy_info" in attack_strategy_args
-                else [],
-                db_instance=self.database_instance,
-                chat_batch_size=self.runner_args.get(
-                    "chat_batch_size", RedTeamingProgress.DEFAULT_CHAT_BATCH_SIZE
-                ),
-                red_teaming_progress=self.red_teaming_progress,
-                cancel_event=self.cancel_event,
+        try:
+            # load red teaming modules
+            for attack_strategy_args in self.runner_args.get("attack_strategies", None):
+                # load attack module with arguments
+                attack_module_attack_arguments = AttackModuleArguments(
+                    connector_ids=self.session_metadata.endpoints
+                    if self.session_metadata.endpoints
+                    else [],
+                    prompt_templates=attack_strategy_args.get(
+                        "prompt_template_ids", []
+                    ),
+                    prompt=attack_strategy_args.get("prompt", ""),
+                    system_prompt=attack_strategy_args.get("system_prompt", ""),
+                    metric_ids=attack_strategy_args["metric_ids"]
+                    if "metric_ids" in attack_strategy_args
+                    else [],
+                    context_strategy_info=attack_strategy_args["context_strategy_info"]
+                    if "context_strategy_info" in attack_strategy_args
+                    else [],
+                    db_instance=self.database_instance,
+                    chat_batch_size=self.runner_args.get(
+                        "chat_batch_size", RedTeamingProgress.DEFAULT_CHAT_BATCH_SIZE
+                    ),
+                    red_teaming_progress=self.red_teaming_progress,
+                    cancel_event=self.cancel_event,
+                    optional_params=attack_strategy_args.get("optional_params", {}),
+                )
+                loaded_attack_module = AttackModule.load(
+                    am_id=attack_strategy_args.get("attack_module_id"),
+                    am_arguments=attack_module_attack_arguments,
+                )
+                loaded_attack_modules.append(loaded_attack_module)
+
+        except Exception as e:
+            logger.error(
+                f"[Red teaming] Unable to load attack modules in attack strategy: {str(e)}"
             )
-            loaded_attack_module = AttackModule.load(
-                am_id=attack_strategy_args.get("attack_module_id"),
-                am_arguments=attack_module_attack_arguments,
-            )
-            loaded_attack_modules.append(loaded_attack_module)
 
         # ------------------------------------------------------------------------------
         # Part 2: Run attack module(s)
         # ------------------------------------------------------------------------------
-        print("[Red teaming] Part 2: Running Attack Module(s)...")
+        logger.debug("[Red teaming] Part 2: Running Attack Module(s)...")
 
         responses_from_attack_module = []
         for attack_module in loaded_attack_modules:
-            print(f"[Red teaming] Starting to run attack module [{attack_module.name}]")
+            logger.info(
+                f"[Red teaming] Starting to run attack module [{attack_module.name}]"
+            )
             start_time = time.perf_counter()
 
             attack_module_response = await attack_module.execute()
-            print(
+            logger.info(
                 f"[Red teaming] Running attack module [{attack_module.name}] took "
                 f"{(time.perf_counter() - start_time):.4f}s"
             )
@@ -192,15 +204,16 @@ class RedTeaming:
         for target_llm_connector in self.connector_instances:
             gen_prompts_generator = self._generate_prompts(target_llm_connector.id)
             gen_results_generator = self._generate_predictions(
-                gen_prompts_generator, target_llm_connector,
+                gen_prompts_generator,
+                target_llm_connector,
             )
             generator_list.append(gen_results_generator)
 
         for generator in generator_list:
             async for result in generator:
                 self.red_teaming_progress.update_red_teaming_chats(
-                result.to_dict(), RunStatus.RUNNING
-        )         
+                    result.to_dict(), RunStatus.RUNNING
+                )
         self.red_teaming_progress.status = RunStatus.COMPLETED
         return self.red_teaming_progress.get_dict()
 

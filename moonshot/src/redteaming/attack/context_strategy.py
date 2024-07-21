@@ -6,6 +6,10 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class ContextStrategy:
@@ -84,7 +88,7 @@ class ContextStrategy:
             return True
 
         except Exception as e:
-            print(f"Failed to delete context strategy: {str(e)}")
+            logger.error(f"Failed to delete context strategy: {str(e)}")
             raise e
 
     @staticmethod
@@ -125,7 +129,7 @@ class ContextStrategy:
             context_strategy_instance = context_strategy_instance(context_strategy_name)
             return context_strategy_instance.add_in_context(user_prompt, list_of_chats)
         else:
-            print(
+            logger.error(
                 "Cannot load context strategy. Make sure the name of the context strategy is correct."
             )
             return ""

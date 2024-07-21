@@ -9,6 +9,7 @@ from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
 )
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -16,7 +17,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_results() -> None:
+def list_results(args) -> list | None:
     """
     List all available results.
 
@@ -24,12 +25,27 @@ def list_results() -> None:
     moonshot.api module. It then creates a table with the result id and name. If there are no results, it prints a
     message indicating that no results were found.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find result(s) with a keyword.
+
     Returns:
-        None
+        list | None: A list of Result or None if there is no result.
     """
     try:
         results_list = api_get_all_result()
-        display_results(results_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_results_list = find_keyword(keyword, results_list)
+            if filtered_results_list:
+                display_results(filtered_results_list)
+                return filtered_results_list
+            else:
+                print("No results containing keyword found.")
+                return None
+        else:
+            display_results(results_list)
+            return results_list
     except Exception as e:
         print(f"[list_results]: {str(e)}")
 
@@ -214,3 +230,17 @@ delete_result_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n delete_result my-new-cookbook-runner",
 )
 delete_result_args.add_argument("result", type=str, help="Name of the result")
+
+# List result arguments
+list_results_args = cmd2.Cmd2ArgumentParser(
+    description="List all results.",
+    epilog='Example:\n list_results -f "my-runner"',
+)
+
+list_results_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find result(s) with keyword",
+    nargs="?",
+)

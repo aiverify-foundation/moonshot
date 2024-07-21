@@ -87,6 +87,14 @@ from moonshot.src.api.api_session import (
     api_update_prompt_template,
     api_update_system_prompt,
 )
+from moonshot.src.api.api_bookmark import (
+    api_get_all_bookmarks,
+    api_get_bookmark,
+    api_insert_bookmark,
+    api_delete_bookmark,
+    api_delete_all_bookmark,
+    api_export_bookmarks,
+)
 
 __all__ = [
     "api_create_connector_from_endpoint",
@@ -153,5 +161,11 @@ __all__ = [
     "api_update_metric",
     "api_update_prompt_template",
     "api_update_system_prompt",
+    "api_get_all_bookmarks",
+    "api_get_bookmark",
+    "api_insert_bookmark",
+    "api_delete_bookmark",
+    "api_delete_all_bookmark",
+    "api_export_bookmarks",
     "api_create_datasets"
 ]

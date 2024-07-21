@@ -7,6 +7,7 @@ from dotenv import dotenv_values, load_dotenv
 from .app import create_app
 from .container import Container
 from .logging_conf import configure_app_logging, create_uvicorn_log_config
+from .services.utils.file_manager import create_temp_dir
 from .types.types import UvicornRunArgs
 
 
@@ -20,6 +21,7 @@ def start_app():
     else:
         container.config.from_yaml(f"{config_file}", required=True)
 
+    create_temp_dir(container.config.temp_folder())
     configure_app_logging(container.config)
     logging.info(f"Environment: {container.config.app_environment()}")
     ENABLE_SSL = container.config.ssl.enabled()

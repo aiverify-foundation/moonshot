@@ -356,7 +356,7 @@ class TestCollectionApiCookbook:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Cookbook ID is empty",
+                    "expected_error_message": "Cookbook ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),
@@ -526,7 +526,7 @@ class TestCollectionApiCookbook:
                 [""],
                 {
                     "expected_output": False,
-                    "expected_error_message": "Cookbook ID is empty",
+                    "expected_error_message": "Cookbook ID is empty.",
                     "expected_exception": "RuntimeError",
                 },
             ),

@@ -13,6 +13,7 @@ from moonshot.api import (
     api_read_endpoint,
     api_update_endpoint,
 )
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -57,36 +58,66 @@ def add_endpoint(args) -> None:
         print(f"[add_endpoint]: {str(e)}")
 
 
-def list_endpoints() -> None:
+def list_endpoints(args) -> list | None:
     """
     List all endpoints.
 
     This function retrieves all endpoints by calling the api_get_all_endpoint function from the
     moonshot.api module. It then displays the endpoints using the display_endpoints function.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find endpoint(s) with a keyword.
+
     Returns:
-        None
+        list | None: A list of ConnectorEndpoint or None if there is no result.
     """
     try:
-        endpoint_list = api_get_all_endpoint()
-        display_endpoints(endpoint_list)
+        endpoints_list = api_get_all_endpoint()
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_endpoints_list = find_keyword(keyword, endpoints_list)
+            if filtered_endpoints_list:
+                display_endpoints(filtered_endpoints_list)
+                return filtered_endpoints_list
+            else:
+                print("No endpoints containing keyword found.")
+                return None
+        else:
+            display_endpoints(endpoints_list)
+            return endpoints_list
     except Exception as e:
         print(f"[list_endpoints]: {str(e)}")
 
 
-def list_connector_types() -> None:
+def list_connector_types(args) -> list | None:
     """
     List all connector types.
 
     This function retrieves all connector types by calling the api_get_all_connector_type function from the
     moonshot.api module. It then displays the connector types using the display_connector_types function.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find connector type(s) with a keyword.
+
     Returns:
-        None
+        list | None: A list of Connector or None if there is no result.
     """
     try:
         connector_type_list = api_get_all_connector_type()
-        display_connector_types(connector_type_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_connector_type_list = find_keyword(keyword, connector_type_list)
+            if filtered_connector_type_list:
+                display_connector_types(filtered_connector_type_list)
+                return filtered_connector_type_list
+            else:
+                print("No connectors containing keyword found.")
+                return None
+        else:
+            display_connector_types(connector_type_list)
+            return connector_type_list
     except Exception as e:
         print(f"[list_connector_types]: {str(e)}")
 
@@ -170,7 +201,7 @@ def delete_endpoint(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_connector_types(connector_types):
+def display_connector_types(connector_types: list) -> None:
     """
     Display a list of connector types.
 
@@ -305,7 +336,11 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
         "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
     ),
 )
-update_endpoint_args.add_argument("endpoint", type=str, help="ID of the endpoint. This field is not editable via CLI after creation.")
+update_endpoint_args.add_argument(
+    "endpoint",
+    type=str,
+    help="ID of the endpoint. This field is not editable via CLI after creation.",
+)
 update_endpoint_args.add_argument(
     "update_kwargs", type=str, help="Update endpoint key/value"
 )
@@ -323,3 +358,32 @@ delete_endpoint_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n delete_endpoint openai-gpt4",
 )
 delete_endpoint_args.add_argument("endpoint", type=str, help="ID of the endpoint")
+
+# List endpoint arguments
+list_endpoints_args = cmd2.Cmd2ArgumentParser(
+    description="List all endpoints.",
+    epilog='Example:\n list_endpoints -f "gpt"',
+)
+
+list_endpoints_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find endpoint(s) with keyword",
+    nargs="?",
+)
+
+
+# List connector types arguments
+list_connector_types_args = cmd2.Cmd2ArgumentParser(
+    description="List all connector types.",
+    epilog='Example:\n list_connector_types -f "openai"',
+)
+
+list_connector_types_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find connector type(s) with keyword",
+    nargs="?",
+)

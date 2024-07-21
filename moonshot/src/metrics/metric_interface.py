@@ -3,7 +3,11 @@ from typing import Any
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
 from moonshot.src.utils.timeit import timeit
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class MetricInterface:
@@ -75,8 +79,10 @@ class MetricInterface:
             return obj_results.get(met_id, {})
 
         except Exception as e:
-            print(f"[MetricInterface] Failed to read metrics configuration: {str(e)}")
-            print("Attempting to create empty metrics configuration...")
+            logger.warning(
+                f"[MetricInterface] Failed to read metrics configuration: {str(e)}"
+            )
+            logger.info("Attempting to create empty metrics configuration...")
             try:
                 Storage.create_object(
                     obj_type=EnvVariables.METRICS.name,
