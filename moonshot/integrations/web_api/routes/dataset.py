@@ -16,7 +16,7 @@ def create_dataset(
     dataset_data: DatasetCreateDTO,
     method: str,
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
-):
+) -> str:
     """
     Create a new dataset using the specified method.
 
@@ -35,8 +35,7 @@ def create_dataset(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        dataset_service.create_dataset(dataset_data, method)
-        return {"message": "Dataset created successfully"}
+        return dataset_service.create_dataset(dataset_data, method)
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(

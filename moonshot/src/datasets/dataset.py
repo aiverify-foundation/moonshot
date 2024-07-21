@@ -80,7 +80,12 @@ class Dataset:
 
             # Write as JSON output
             Storage.create_object(EnvVariables.DATASETS.name, ds_id, ds_info, "json")
-            return ds_id
+            
+            # TODO get filepath from storage.
+            file_path = (
+                f"../moonshot-data/datasets/{ds_id}.json"
+            )
+            return file_path
 
         except Exception as e:
             print(f"Failed to create dataset: {str(e)}")
