@@ -1,14 +1,9 @@
-import logging
 from pathlib import Path
 from typing import Any
 
 import bert_score
-
 from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 
 class BertScore(MetricInterface):

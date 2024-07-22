@@ -8,6 +8,7 @@ from moonshot.integrations.cli.benchmark.cookbook import (
     delete_cookbook,
     delete_cookbook_args,
     list_cookbooks,
+    list_cookbooks_args,
     run_cookbook,
     run_cookbook_args,
     update_cookbook,
@@ -19,6 +20,7 @@ from moonshot.integrations.cli.benchmark.datasets import (
     delete_dataset,
     delete_dataset_args,
     list_datasets,
+    list_datasets_args,
     view_dataset,
     view_dataset_args,
 )
@@ -26,6 +28,7 @@ from moonshot.integrations.cli.benchmark.metrics import (
     delete_metric,
     delete_metric_args,
     list_metrics,
+    list_metrics_args,
     view_metric,
     view_metric_args,
 )
@@ -35,6 +38,7 @@ from moonshot.integrations.cli.benchmark.recipe import (
     delete_recipe,
     delete_recipe_args,
     list_recipes,
+    list_recipes_args,
     run_recipe,
     run_recipe_args,
     update_recipe,
@@ -46,10 +50,16 @@ from moonshot.integrations.cli.benchmark.result import (
     delete_result,
     delete_result_args,
     list_results,
+    list_results_args,
     view_result,
     view_result_args,
 )
-from moonshot.integrations.cli.benchmark.run import list_runs, view_run, view_run_args
+from moonshot.integrations.cli.benchmark.run import (
+    list_runs,
+    list_runs_args,
+    view_run,
+    view_run_args,
+)
 from moonshot.integrations.cli.benchmark.runner import (
     delete_runner,
     delete_runner_args,
@@ -68,26 +78,32 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     # List contents
     # ------------------------------------------------------------------------------
 
-    def do_list_cookbooks(self, _: cmd2.Statement) -> None:
-        list_cookbooks()
+    @cmd2.with_argparser(list_cookbooks_args)
+    def do_list_cookbooks(self, args: argparse.Namespace) -> None:
+        list_cookbooks(args)
 
-    def do_list_recipes(self, _: cmd2.Statement) -> None:
-        list_recipes()
+    @cmd2.with_argparser(list_recipes_args)
+    def do_list_recipes(self, args: argparse.Namespace) -> None:
+        list_recipes(args)
 
-    def do_list_results(self, _: cmd2.Statement) -> None:
-        list_results()
+    @cmd2.with_argparser(list_results_args)
+    def do_list_results(self, args: argparse.Namespace) -> None:
+        list_results(args)
 
     def do_list_runners(self, _: cmd2.Statement) -> None:
         list_runners()
 
-    def do_list_runs(self, _: cmd2.Statement) -> None:
-        list_runs()
+    @cmd2.with_argparser(list_runs_args)
+    def do_list_runs(self, args: argparse.Namespace) -> None:
+        list_runs(args)
 
-    def do_list_metrics(self, _: cmd2.Statement) -> None:
-        list_metrics()
+    @cmd2.with_argparser(list_metrics_args)
+    def do_list_metrics(self, args: argparse.Namespace) -> None:
+        list_metrics(args)
 
-    def do_list_datasets(self, _: cmd2.Statement) -> None:
-        list_datasets()
+    @cmd2.with_argparser(list_datasets_args)
+    def do_list_datasets(self, args: argparse.Namespace) -> None:
+        list_datasets(args)
 
     # ------------------------------------------------------------------------------
     # Add contents

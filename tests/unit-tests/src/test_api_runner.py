@@ -60,7 +60,6 @@ class TestCollectionApiRunner:
             "tests/unit-tests/src/data/runners/none.json",
             "tests/unit-tests/src/data/databases/none.db",
             "tests/unit-tests/src/data/connectors-endpoints/openai-gpt4.json",
-            
         ]
         for run_data_file in run_data_files:
             if os.path.exists(run_data_file):

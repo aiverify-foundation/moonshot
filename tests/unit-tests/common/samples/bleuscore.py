@@ -1,15 +1,10 @@
-import logging
-from pathlib import Path
 import statistics
+from pathlib import Path
 from typing import Any
-
-from nltk.translate.bleu_score import sentence_bleu
 
 from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from nltk.translate.bleu_score import sentence_bleu
 
 
 class BleuScore(MetricInterface):

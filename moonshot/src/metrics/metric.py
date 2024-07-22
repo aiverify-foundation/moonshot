@@ -8,6 +8,10 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Metric:
@@ -64,7 +68,7 @@ class Metric:
             return True
 
         except Exception as e:
-            print(f"Failed to delete metric: {str(e)}")
+            logger.error(f"Failed to delete metric: {str(e)}")
             raise e
 
     @staticmethod
@@ -90,7 +94,7 @@ class Metric:
             )
             return cache_info if cache_info else {}
         except Exception:
-            print(
+            logger.error(
                 f"No previous cache information because {Metric.cache_name} is not found."
             )
             return {}
@@ -111,7 +115,7 @@ class Metric:
                 obj_extension=Metric.cache_extension,
             )
         except Exception as e:
-            print(f"Failed to write cache information: {str(e)}")
+            logger.error(f"Failed to write cache information: {str(e)}")
             raise e
 
     @staticmethod
@@ -154,7 +158,7 @@ class Metric:
             return retn_mets_ids, retn_mets
 
         except Exception as e:
-            print(f"Failed to get available metrics: {str(e)}")
+            logger.error(f"Failed to get available metrics: {str(e)}")
             raise e
 
     @staticmethod

@@ -52,7 +52,6 @@ class TestCollectionApiRecipe:
             "tests/unit-tests/src/data/metrics/exactstrmatch.py",
         )
 
-        
         # Setup complete, proceed with tests
         yield
 
