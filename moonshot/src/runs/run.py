@@ -13,6 +13,10 @@ from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Run:
@@ -164,7 +168,7 @@ class Run:
         Returns:
             None
         """
-        print("[Run] Cancelling run...")
+        logger.warning("[Run] Cancelling run...")
         self.cancel_event.set()
 
     async def run(self) -> ResultArguments | None:
@@ -184,7 +188,7 @@ class Run:
         # ------------------------------------------------------------------------------
         # Part 0: Initialise
         # ------------------------------------------------------------------------------
-        print("[Run] Part 0: Initialising run...")
+        logger.debug("[Run] Part 0: Initialising run...")
         start_time = time.perf_counter()
         try:
             # Initialise the run
@@ -219,20 +223,20 @@ class Run:
             self.run_progress.notify_error(error_message)
 
         finally:
-            print(
+            logger.debug(
                 f"[Run] Initialise run took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 1: Get asyncio running loop
         # ------------------------------------------------------------------------------
-        print("[Run] Part 1: Loading asyncio running loop...")
+        logger.debug("[Run] Part 1: Loading asyncio running loop...")
         loop = asyncio.get_running_loop()
 
         # ------------------------------------------------------------------------------
         # Part 2: Load runner and result processing module
         # ------------------------------------------------------------------------------
-        print("[Run] Part 2: Loading modules...")
+        logger.debug("[Run] Part 2: Loading modules...")
         start_time = time.perf_counter()
         runner_module_instance = None
         result_module_instance = None
@@ -246,14 +250,14 @@ class Run:
         except Exception as e:
             self.run_progress.notify_error(f"[Run] Module loading error: {e}")
         finally:
-            print(
+            logger.debug(
                 f"[Run] Module loading took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 3: Run runner processing module
         # ------------------------------------------------------------------------------
-        print("[Run] Part 3: Running runner processing module...")
+        logger.debug("[Run] Part 3: Running runner processing module...")
         start_time = time.perf_counter()
         runner_results = None
         try:
@@ -274,14 +278,14 @@ class Run:
             self.run_progress.notify_error(error_message)
 
         finally:
-            print(
+            logger.debug(
                 f"[Run] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 4: Run result processing module
         # ------------------------------------------------------------------------------
-        print("[Run] Part 4: Running result processing module...")
+        logger.debug("[Run] Part 4: Running result processing module...")
         start_time = time.perf_counter()
         updated_runner_results = None
         try:
@@ -301,14 +305,14 @@ class Run:
             self.run_progress.notify_error(error_message)
 
         finally:
-            print(
+            logger.debug(
                 f"[Run] Running result processing module took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 5: Wrap up run
         # ------------------------------------------------------------------------------
-        print("[Run] Part 5: Wrap up run...")
+        logger.debug("[Run] Part 5: Wrap up run...")
         return updated_runner_results
 
     def _load_module(self, arg_key: str, env_var: str):

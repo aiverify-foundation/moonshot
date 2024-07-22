@@ -23,6 +23,7 @@ from moonshot.api import (
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
 from moonshot.src.redteaming.session.session import Session
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -128,33 +129,38 @@ def end_session() -> None:
     active_session.clear()
 
 
-def list_sessions() -> None:
+def list_sessions(args) -> list | None:
     """
     Retrieves and displays the list of sessions.
 
     This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
     If no sessions are found, a message is printed to the console.
+
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find session(s) with a keyword.
+
+    Returns:
+        list | None: A list of Session or None if there is no result.
     """
-    session_metadata_list = api_get_all_session_metadata()
-    if session_metadata_list:
-        table = Table(
-            title="Session List", show_lines=True, expand=True, header_style="bold"
-        )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Session ID", justify="left", width=20)
-        table.add_column("Contains", justify="left", width=78)
-
-        for session_index, session_data in enumerate(session_metadata_list, 1):
-            session_id = session_data.get("session_id", "")
-            endpoints = ", ".join(session_data.get("endpoints", []))
-            created_datetime = session_data.get("created_datetime", "")
-
-            session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
-            contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
-            table.add_row(str(session_index), session_info, contains_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no sessions found.[/red]", style="bold")
+    try:
+        session_metadata_list = api_get_all_session_metadata()
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_session_metadata_list = find_keyword(
+                keyword, session_metadata_list
+            )
+            if filtered_session_metadata_list:
+                display_sessions(filtered_session_metadata_list)
+                return filtered_session_metadata_list
+            else:
+                print("No sessions containing keyword found.")
+                return None
+        else:
+            display_sessions(session_metadata_list)
+            return session_metadata_list
+    except Exception as e:
+        print(f"[list_sessions]: {str(e)}")
 
 
 def update_chat_display() -> None:
@@ -351,20 +357,36 @@ def delete_bookmark(args) -> None:
         print(f"[delete_bookmark]: {str(e)}")
 
 
-def list_bookmarks() -> None:
+def list_bookmarks(args) -> list | None:
     """
     List all available bookmarks.
 
     This function retrieves all available bookmarks by calling the api_get_all_bookmarks function from the
     moonshot.api module.
     It then displays the retrieved bookmarks using the display_bookmarks function.
+    If no bookmarks are found, a message is printed to the console.
+
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find bookmark(s) with a keyword.
 
     Returns:
-        None
+        list | None: A list of Bookmark or None if there is no result.
     """
     try:
         bookmarks_list = api_get_all_bookmarks()
-        display_bookmarks(bookmarks_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_bookmarks_list = find_keyword(keyword, bookmarks_list)
+            if filtered_bookmarks_list:
+                display_bookmarks(filtered_bookmarks_list)
+                return filtered_bookmarks_list
+            else:
+                print("No bookmarks containing keyword found.")
+                return None
+        else:
+            display_bookmarks(bookmarks_list)
+            return bookmarks_list
     except Exception as e:
         print(f"[list_bookmarks]: {str(e)}")
 
@@ -550,7 +572,7 @@ def manual_red_teaming(user_prompt: str) -> None:
         runner.close()
         _reload_session(active_session["session_id"])
     except Exception as e:
-        print(f"[manual_red_teaming]: str({e})")
+        print(f"[manual_red_teaming]: ({str(e)})")
 
 
 def run_attack_module(args):
@@ -679,6 +701,41 @@ def delete_session(args) -> None:
         print("[delete_session]: Session deleted.")
     except Exception as e:
         print(f"[delete_session]: {str(e)}")
+
+
+def display_sessions(sessions: list) -> None:
+    """
+    Display a list of sessions.
+
+    This function takes a list of sessions and displays them in a table format. If the list is empty, it prints a
+    message indicating that no sessions were found.
+
+    Args:
+        sessions (list): A list of sessions.
+
+    Returns:
+        None
+    """
+
+    if sessions:
+        table = Table(
+            title="Session List", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("No.", justify="left", width=2)
+        table.add_column("Session ID", justify="left", width=20)
+        table.add_column("Contains", justify="left", width=78)
+
+        for session_index, session_data in enumerate(sessions, 1):
+            session_id = session_data.get("session_id", "")
+            endpoints = ", ".join(session_data.get("endpoints", []))
+            created_datetime = session_data.get("created_datetime", "")
+
+            session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
+            contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
+            table.add_row(str(session_index), session_info, contains_info)
+        console.print(table)
+    else:
+        console.print("[red]There are no sessions found.[/red]", style="bold")
 
 
 # use session arguments
@@ -814,6 +871,21 @@ delete_session_args.add_argument(
 )
 
 
+# List sessions arguments
+list_sessions_args = cmd2.Cmd2ArgumentParser(
+    description="List all sessions.",
+    epilog='Example:\n list_sessions -f "my-sessions"',
+)
+
+list_sessions_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find session(s) with keyword",
+    nargs="?",
+)
+
+
 # Add bookmark arguments
 add_bookmark_args = cmd2.Cmd2ArgumentParser(
     description="Bookmark a prompt",
@@ -885,4 +957,19 @@ export_bookmarks_args.add_argument(
     "bookmark_list_name",
     type=str,
     help="Name of the exported bookmarks JSON file you want to save as (without the .json extension)",
+)
+
+
+# List bookmarks arguments
+list_bookmarks_args = cmd2.Cmd2ArgumentParser(
+    description="List all bookmarks.",
+    epilog="Example:\n list_bookmarks -f my_bookmark",
+)
+
+list_bookmarks_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find bookmark(s) with keyword",
+    nargs="?",
 )

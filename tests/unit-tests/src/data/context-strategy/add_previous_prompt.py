@@ -1,7 +1,12 @@
+import logging
+
 from moonshot.src.redteaming.context_strategy.context_strategy_interface import (
     ContextStrategyInterface,
 )
 from moonshot.src.utils.timeit import timeit
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class SampleContextStrategy(ContextStrategyInterface):
@@ -14,7 +19,7 @@ class SampleContextStrategy(ContextStrategyInterface):
     def __init__(self, cs_id: str):
         self.id = cs_id
         self.name = "Add Previous Prompt"
-        self.description = "This is a sample context strategy that adds in previous prompts to the current prompt. [Default: 5]"  # noqa: E501
+        self.description = "This is a sample context strategy that adds in previous prompts to the current prompt."
 
     @timeit
     def get_metadata(self) -> dict | None:

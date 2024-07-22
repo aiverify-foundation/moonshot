@@ -18,6 +18,10 @@ from moonshot.src.redteaming.attack.context_strategy import ContextStrategy
 from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class AttackModule:
@@ -173,7 +177,7 @@ class AttackModule:
             for generator in generator_list:
                 async for result in generator:
                     if self.cancel_event.is_set():
-                        print(
+                        logger.warning(
                             "[Red Teaming] Cancellation flag is set. Cancelling task..."
                         )
                         break
@@ -197,7 +201,9 @@ class AttackModule:
         for prepared_prompt in list_of_prompts:
             for target_llm_connector in self.connector_instances:
                 if self.cancel_event.is_set():
-                    print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                    logger.warning(
+                        "[Red Teaming] Cancellation flag is set. Cancelling task..."
+                    )
                     break
 
                 if self.red_teaming_progress:
@@ -256,7 +262,9 @@ class AttackModule:
         consolidated_responses = []
         for prepared_prompt in list_of_prompts:
             if self.cancel_event.is_set():
-                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                logger.warning(
+                    "[Red Teaming] Cancellation flag is set. Cancelling task..."
+                )
                 break
 
             if self.red_teaming_progress:
@@ -344,7 +352,9 @@ class AttackModule:
         """
         async for prompt_info in gen_prompts_generator:
             if self.cancel_event.is_set():
-                print("[Red Teaming] Cancellation flag is set. Cancelling task...")
+                logger.warning(
+                    "[Red Teaming] Cancellation flag is set. Cancelling task..."
+                )
                 break
             new_prompt_info = RedTeamingPromptArguments(
                 conn_id=prompt_info.conn_id,
@@ -415,7 +425,7 @@ class AttackModule:
             )
             return cache_info if cache_info else {}
         except Exception as e:
-            print(f"No previous cache information: {str(e)}")
+            logger.error(f"No previous cache information: {str(e)}")
             return {}
 
     @staticmethod
@@ -434,7 +444,7 @@ class AttackModule:
                 obj_extension=AttackModule.cache_extension,
             )
         except Exception as e:
-            print(f"Failed to write cache information: {str(e)}")
+            logger.error(f"Failed to write cache information: {str(e)}")
             raise e
 
     @staticmethod
@@ -479,7 +489,7 @@ class AttackModule:
             return retn_am_ids, retn_ams
 
         except Exception as e:
-            print(f"Failed to get available attack modules: {str(e)}")
+            logger.error(f"Failed to get available attack modules: {str(e)}")
             raise e
 
     @staticmethod
@@ -542,7 +552,7 @@ class AttackModule:
             return True
 
         except Exception as e:
-            print(f"Failed to delete attack module: {str(e)}")
+            logger.error(f"Failed to delete attack module: {str(e)}")
             raise e
 
 

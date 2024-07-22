@@ -7,11 +7,11 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     ([{
         "id": "add_previous_prompt",
         "name": "Add Previous Prompt",
-        "description": "This is a sample context strategy that adds in previous prompts to the current prompt."
+        "description": "This is a sample context strategy that adds in previous prompts to the current prompt. [Default: 5]"
     }], None, 200, [{
         "id": "add_previous_prompt",
         "name": "Add Previous Prompt",
-        "description": "This is a sample context strategy that adds in previous prompts to the current prompt."
+        "description": "This is a sample context strategy that adds in previous prompts to the current prompt. [Default: 5]"
     }]),
     ([], None, 200, []),
     # Exception cases

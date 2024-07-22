@@ -9,6 +9,10 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Recipe:
@@ -104,7 +108,7 @@ class Recipe:
             return rec_id
 
         except Exception as e:
-            print(f"Failed to create recipe: {str(e)}")
+            logger.error(f"Failed to create recipe: {str(e)}")
             raise e
 
     @staticmethod
@@ -137,7 +141,7 @@ class Recipe:
             return RecipeArguments(**recipe_details)
 
         except Exception as e:
-            print(f"Failed to read recipe: {str(e)}")
+            logger.error(f"Failed to read recipe: {str(e)}")
             raise e
 
     @staticmethod
@@ -257,7 +261,7 @@ class Recipe:
             return True
 
         except Exception as e:
-            print(f"Failed to update recipe: {str(e)}")
+            logger.error(f"Failed to update recipe: {str(e)}")
             raise e
 
     @staticmethod
@@ -284,7 +288,7 @@ class Recipe:
             return True
 
         except Exception as e:
-            print(f"Failed to delete recipe: {str(e)}")
+            logger.error(f"Failed to delete recipe: {str(e)}")
             raise e
 
     @staticmethod
@@ -323,7 +327,7 @@ class Recipe:
             return retn_recs_ids, retn_recs
 
         except Exception as e:
-            print(f"Failed to get available recipes: {str(e)}")
+            logger.error(f"Failed to get available recipes: {str(e)}")
             raise e
 
     @staticmethod

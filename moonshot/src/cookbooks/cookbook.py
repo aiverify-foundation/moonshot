@@ -8,6 +8,10 @@ from slugify import slugify
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Cookbook:
@@ -79,7 +83,7 @@ class Cookbook:
             return cb_id
 
         except Exception as e:
-            print(f"Failed to create cookbook: {str(e)}")
+            logger.error(f"Failed to create cookbook: {str(e)}")
             raise e
 
     @staticmethod
@@ -115,7 +119,7 @@ class Cookbook:
             return CookbookArguments(**cookbook_details)
 
         except Exception as e:
-            print(f"Failed reading cookbook: {str(e)}")
+            logger.error(f"Failed to read cookbook: {str(e)}")
             raise
 
     @staticmethod
@@ -175,7 +179,7 @@ class Cookbook:
             return True
 
         except Exception as e:
-            print(f"Failed to update cookbook: {str(e)}")
+            logger.error(f"Failed to update cookbook: {str(e)}")
             raise e
 
     @staticmethod
@@ -201,7 +205,7 @@ class Cookbook:
             return True
 
         except Exception as e:
-            print(f"Failed to delete cookbook: {str(e)}")
+            logger.error(f"Failed to delete cookbook: {str(e)}")
             raise e
 
     @staticmethod
@@ -237,5 +241,5 @@ class Cookbook:
             return retn_cbs_ids, retn_cbs
 
         except Exception as e:
-            print(f"Failed to get available cookbooks: {str(e)}")
+            logger.error(f"Failed to get available cookbooks: {str(e)}")
             raise e

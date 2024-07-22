@@ -3,6 +3,7 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_metric, api_get_all_metric, api_get_all_metric_name
+from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -10,7 +11,7 @@ console = Console()
 # ------------------------------------------------------------------------------
 # CLI Functions
 # ------------------------------------------------------------------------------
-def list_metrics() -> None:
+def list_metrics(args) -> list | None:
     """
     List all available metrics.
 
@@ -18,13 +19,28 @@ def list_metrics() -> None:
     moonshot.api module. It then displays the metrics using the display_metrics function. If an exception occurs,
     it prints an error message.
 
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find metric(s) with a keyword.
+
     Returns:
-        None
+        list | None: A list of Metric or None if there is no result.
     """
     try:
         print("Listing metrics may take a while...")
         metrics_list = api_get_all_metric()
-        display_metrics(metrics_list)
+        keyword = args.find.lower() if args.find else ""
+        if keyword:
+            filtered_metrics_list = find_keyword(keyword, metrics_list)
+            if filtered_metrics_list:
+                display_metrics(filtered_metrics_list)
+                return filtered_metrics_list
+            else:
+                print("No metrics containing keyword found.")
+                return None
+        else:
+            display_metrics(metrics_list)
+            return metrics_list
     except Exception as e:
         print(f"[list_metrics]: {str(e)}")
 
@@ -139,3 +155,17 @@ delete_metric_args = cmd2.Cmd2ArgumentParser(
     epilog="Example:\n delete_metric my-new-metric",
 )
 delete_metric_args.add_argument("metric", type=str, help="Name of the metric")
+
+# List metric arguments
+list_metrics_args = cmd2.Cmd2ArgumentParser(
+    description="List all metrics.",
+    epilog='Example:\n list_metrics -f "exact"',
+)
+
+list_metrics_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find metric(s) with keyword",
+    nargs="?",
+)

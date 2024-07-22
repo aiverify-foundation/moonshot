@@ -115,7 +115,7 @@ def api_get_available_session_info() -> tuple[list, list]:
     return runner_ids, session_metadata_list
 
 
-def api_get_all_session_metadata() -> list:
+def api_get_all_session_metadata() -> list[dict]:
     """
     Retrieves metadata for all sessions.
 
