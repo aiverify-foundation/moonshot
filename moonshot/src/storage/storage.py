@@ -52,7 +52,7 @@ class Storage:
                     obj_mod_instance(obj_filepath).create_file(obj_info)
                     return obj_filepath
                 except Exception as e:
-                    return f"Error: {str(e)}"
+                    raise e
 
             else:
                 raise RuntimeError(

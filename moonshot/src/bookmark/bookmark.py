@@ -230,15 +230,16 @@ class Bookmark:
             BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
             for bookmark_tuple in list_of_bookmarks_tuples
         ]
-
-        file_path = Storage.create_object(
-            EnvVariables.BOOKMARKS.name,
-            export_file_name,
-            {"bookmarks": bookmarks_json},
-            "json",
-        )
-
-        return file_path
+        try:
+            file_path = Storage.create_object(
+                EnvVariables.BOOKMARKS.name,
+                export_file_name,
+                {"bookmarks": bookmarks_json},
+                "json",
+            )
+            return file_path
+        except Exception as e:
+            raise e
 
     def close(self) -> None:
         """
