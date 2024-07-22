@@ -17,6 +17,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
                     'context_strategy': 'Your context strategy',
                     'prompt_template': 'Your prompt template',
                     'attack_module': 'Your attack module',
+                    'metric': '',
                     'bookmark_time': '2024-07-03 21:05:58'
                 }
             ],
@@ -24,13 +25,14 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             200,
             [
                 {
-                    'id': 1, 'name': 'my bookmark 1',
+                    'name': 'my bookmark 1',
                     'prompt': 'Your prompt',
-                    "prepared_prompt": "Your Prepared prompt",
+                    'prepared_prompt': 'Your Prepared prompt',
                     'response': 'Your response',
                     'context_strategy': 'Your context strategy',
                     'prompt_template': 'Your prompt template',
                     'attack_module': 'Your attack module',
+                    'metric': '',
                     'bookmark_time': '2024-07-03 21:05:58'
                 }
             ]
@@ -70,7 +72,7 @@ def test_get_all_bookmarks(test_client, mock_bookmark_service, bookmark_id, mock
 
     # Make the GET request to the API
     response = test_client.get(f"/api/v1/bookmarks?id={bookmark_id}" if bookmark_id else "/api/v1/bookmarks")
-
+    print(response.json())
     # Assert the status code and response match the expected values
     assert response.status_code == expected_status
     assert response.json() == expected_response
@@ -89,7 +91,15 @@ def test_get_all_bookmarks(test_client, mock_bookmark_service, bookmark_id, mock
         },
         None,
         200,
-        {"message": "Bookmark added successfully"}
+        {
+            "name": "Bookmark 1",
+            "prompt": "How to test?",
+            "prepared_prompt": "Your Prepared prompt",
+            "response": "Using pytest",
+            "context_strategy": "Strategy A",
+            "prompt_template": "Template A",
+            "attack_module": "Module A"
+        }
     ),
     # Validation error scenario
     (
@@ -173,7 +183,7 @@ def test_insert_bookmark(test_client, mock_bookmark_service, bookmark_data, exce
             None,
             None,
             400,
-            {"detail": "Must specify 'all' or 'id' parameter"}
+            {"detail": "Must specify 'all' or 'name' parameter"}
         ),
         # FileNotFound exception
         (
@@ -189,7 +199,7 @@ def test_insert_bookmark(test_client, mock_bookmark_service, bookmark_data, exce
             None,
             ServiceException("Invalid bookmark ID", "delete_bookmark", "ValidationError"),
             400,
-            {"detail": "Must specify 'all' or 'id' parameter"}
+            {"detail": "Must specify 'all' or 'name' parameter"}
         ),
         # Generic exception
         (
@@ -201,7 +211,7 @@ def test_insert_bookmark(test_client, mock_bookmark_service, bookmark_data, exce
         ),
     ]
 )
-def test_delete_bookmark(test_client, mock_bookmark_service, delete_all, bookmark_id, exception, expected_status, expected_response):
+def test_delete_bookmark(test_client, mock_bookmark_service, delete_all, bookmark_name, exception, expected_status, expected_response):
     # Setup the mock service based on the exception parameter
     if exception:
         mock_bookmark_service.delete_bookmarks.side_effect = exception
@@ -210,13 +220,11 @@ def test_delete_bookmark(test_client, mock_bookmark_service, delete_all, bookmar
 
     # Build the query string based on the parameters
     query_string = f"?all={delete_all}"
-    if bookmark_id is not None:
-        query_string += f"&name={bookmark_id}"
+    if bookmark_name is not None:
+        query_string += f"&name={bookmark_name}"
 
     # Make the DELETE request to the API
     response = test_client.delete(f"/api/v1/bookmarks{query_string}")
-    print(response.json())
-    print(expected_response)
     # Assert the status code and response match the expected values
     assert response.status_code == expected_status
     assert response.json() == expected_response    
