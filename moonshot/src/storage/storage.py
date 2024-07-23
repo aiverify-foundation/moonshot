@@ -53,7 +53,6 @@ class Storage:
                     return obj_filepath
                 except Exception as e:
                     raise e
-
             else:
                 raise RuntimeError(
                     f"Unable to get defined object module instance - {obj_mod_instance}"
