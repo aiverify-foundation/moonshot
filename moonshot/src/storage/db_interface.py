@@ -101,6 +101,20 @@ class DBInterface:
         pass
 
     @abstractmethod
+    def delete_records_in_table(self, delete_record_sql: str) -> None:
+        """
+        This method is used to delete all records from a specified table in the database. The details of the operation
+        are implementation specific and should be provided by the concrete class that inherits from this abstract class.
+
+        Args:
+            delete_record_sql (str): The SQL query to delete all records from a table.
+
+        Returns:
+            None
+        """
+        pass
+
+    @abstractmethod
     def check_database_table_exists(self, table_name: str) -> bool:
         """
         This method is used to check if a table exists in the database.

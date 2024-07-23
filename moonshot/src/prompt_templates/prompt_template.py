@@ -4,6 +4,10 @@ from jinja2 import Template
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class PromptTemplate:
@@ -79,7 +83,7 @@ class PromptTemplate:
             return True
 
         except Exception as e:
-            print(f"Failed to delete prompt template: {str(e)}")
+            logger.error(f"Failed to delete prompt template: {str(e)}")
             raise e
 
     @staticmethod

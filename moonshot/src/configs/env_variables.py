@@ -2,11 +2,17 @@ import importlib.resources
 from enum import Enum
 from pathlib import Path
 
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
+
 __app_name__ = "moonshot"
 
 
 class EnvVariables(Enum):
     ATTACK_MODULES = "ATTACK_MODULES"
+    BOOKMARKS = "BOOKMARKS"
     CONNECTORS = "CONNECTORS"
     CONNECTORS_ENDPOINTS = "CONNECTORS_ENDPOINTS"
     CONTEXT_STRATEGY = "CONTEXT_STRATEGY"
@@ -30,6 +36,10 @@ class EnvironmentVars:
     ATTACK_MODULES = [
         env_vars.get(EnvVariables.ATTACK_MODULES.value),
         str(importlib.resources.files(__app_name__).joinpath("data/attack-modules")),
+    ]
+    BOOKMARKS = [
+        env_vars.get(EnvVariables.BOOKMARKS.value),
+        str(importlib.resources.files(__app_name__).joinpath("data/generated-outputs/bookmarks")),
     ]
     CONNECTORS = [
         env_vars.get(EnvVariables.CONNECTORS.value),
@@ -133,14 +143,14 @@ class EnvironmentVars:
                 if given_path.exists():
                     EnvironmentVars.__dict__[key][0] = str(given_path)
                 else:
-                    print(
+                    logger.warning(
                         f"Unable to set {key}. The provided path {given_path} does not exist. ",
                         "The stock set will be used.",
                     )
             else:
                 unset_keys.append(key)
         if unset_keys:
-            print(
+            logger.warning(
                 f"Unable to retrieve the following environment variables: {unset_keys}. The stock set will be used."
             )
 

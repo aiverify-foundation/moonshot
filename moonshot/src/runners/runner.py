@@ -13,6 +13,10 @@ from moonshot.src.runners.runner_arguments import RunnerArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run import Run
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Runner:
@@ -82,13 +86,13 @@ class Runner:
                 )
             runner_args = Runner.read(runner_id)
             runner_args.database_instance = Storage.create_database_connection(
-                EnvVariables.DATABASES.name, runner_id, "db"
+                EnvVariables.DATABASES.name, Path(runner_args.database_file).stem, "db"
             )
             runner_args.progress_callback_func = progress_callback_func
             return cls(runner_args)
 
         except Exception as e:
-            print(f"[Runner] Failed to load runner: {str(e)}")
+            logger.error(f"[Runner] Failed to load runner: {str(e)}")
             raise e
 
     @classmethod
@@ -114,6 +118,14 @@ class Runner:
         """
         try:
             runner_id = slugify(runner_args.name, lowercase=True)
+            runner_info = {
+                "name": runner_args.name,
+                "database_file": Storage.get_filepath(
+                    EnvVariables.DATABASES.name, runner_id, "db", True
+                ),
+                "endpoints": runner_args.endpoints,
+                "description": runner_args.description,
+            }
 
             # Check if runner file exists. If it exists, raise an error.
             if Storage.is_object_exists(EnvVariables.RUNNERS.name, runner_id, "json"):
@@ -129,35 +141,27 @@ class Runner:
                         f"[Runner] Connector endpoint {endpoint} does not exist."
                     )
 
-            runner_info = {
-                "id": runner_id,
-                "name": runner_args.name,
-                "endpoints": runner_args.endpoints,
-                "database_file": Storage.get_filepath(
-                    EnvVariables.DATABASES.name, runner_id, "db", True
-                ),
-                "progress_callback_func": runner_args.progress_callback_func,
-                "description": runner_args.description,
-            }
-            runner_args = RunnerArguments(**runner_info)
-            runner_args.database_instance = Storage.create_database_connection(
-                EnvVariables.DATABASES.name, runner_id, "db"
-            )
-
             # Create runner file
             Storage.create_object(
-                EnvVariables.RUNNERS.name, runner_id, runner_args.to_dict(), "json"
+                EnvVariables.RUNNERS.name, runner_id, runner_info, "json"
             )
+
+            # Add additional attributes (id, database instance and update progress_callback_func)
+            runner_info["id"] = runner_id
+            runner_info["database_instance"] = Storage.create_database_connection(
+                EnvVariables.DATABASES.name, runner_id, "db"
+            )
+            runner_info["progress_callback_func"] = runner_args.progress_callback_func
 
             # Create runner cache table
             Storage.create_database_table(
-                runner_args.database_instance, Runner.sql_create_runner_cache_table
+                runner_info["database_instance"], Runner.sql_create_runner_cache_table
             )
 
-            return cls(runner_args)
+            return cls(RunnerArguments(**runner_info))
 
         except Exception as e:
-            print(f"[Runner] Failed to create runner: {str(e)}")
+            logger.error(f"[Runner] Failed to create runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -179,16 +183,39 @@ class Runner:
             Exception: If an error occurs during the data retrieval or any other operation within the method.
         """
         try:
-            if runner_id:
-                return RunnerArguments(
-                    **Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
-                )
-            else:
-                raise RuntimeError("Runner ID is empty")
+            if not runner_id:
+                raise RuntimeError("Runner ID is empty.")
+
+            runner_details = Runner._read_runner(runner_id)
+            if not runner_details:
+                raise RuntimeError(f"Runner with ID '{runner_id}' does not exist.")
+
+            return RunnerArguments(**runner_details)
 
         except Exception as e:
-            print(f"[Runner] Failed to read runner: {str(e)}")
+            logger.error(f"[Runner] Failed to read runner: {str(e)}")
             raise e
+
+    @staticmethod
+    def _read_runner(runner_id: str) -> dict:
+        """
+        Retrieves the runner's information from a JSON file.
+
+        This internal method is designed to fetch the details of a specific runner by its ID. It searches for the
+        corresponding JSON file within the directory specified by `EnvVariables.RUNNERS`. The method returns a
+        dictionary containing the runner's information.
+
+        Args:
+            runner_id (str): The unique identifier of the runner whose information is being retrieved.
+
+        Returns:
+            dict: A dictionary with the runner's information.
+        """
+        runner_info = {"id": runner_id}
+        runner_info.update(
+            Storage.read_object(EnvVariables.RUNNERS.name, runner_id, "json")
+        )
+        return runner_info
 
     @staticmethod
     @validate_call
@@ -216,7 +243,7 @@ class Runner:
             return True
 
         except Exception as e:
-            print(f"[Runner] Failed to delete runner: {str(e)}")
+            logger.error(f"[Runner] Failed to delete runner: {str(e)}")
             raise e
 
     @staticmethod
@@ -245,18 +272,14 @@ class Runner:
                 if "__" in runner:
                     continue
 
-                runner_info = RunnerArguments(
-                    **Storage.read_object(
-                        EnvVariables.RUNNERS.name, Path(runner).stem, "json"
-                    )
-                )
+                runner_info = RunnerArguments(**Runner._read_runner(Path(runner).stem))
                 retn_runners.append(runner_info)
                 retn_runners_ids.append(runner_info.id)
 
             return retn_runners_ids, retn_runners
 
         except Exception as e:
-            print(f"[Runner] Failed to get available runners: {str(e)}")
+            logger.error(f"[Runner] Failed to get available runners: {str(e)}")
             raise e
 
     def close(self) -> None:
@@ -285,7 +308,7 @@ class Runner:
         """
         async with self.current_operation_lock:
             if self.current_operation:
-                print(f"[Runner] {self.id} - Cancelling current operation...")
+                logger.warning(f"[Runner] {self.id} - Cancelling current operation...")
                 self.current_operation.cancel()
                 self.current_operation = None  # Reset the current operation
 
@@ -328,7 +351,7 @@ class Runner:
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark recipe test run
-            print(f"[Runner] {self.id} - Running benchmark recipe run...")
+            logger.info(f"[Runner] {self.id} - Running benchmark recipe run...")
             self.current_operation = Run(
                 self.id,
                 RunnerType.BENCHMARK,
@@ -354,7 +377,7 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark recipe run completed and reset.")
+            logger.info(f"[Runner] {self.id} - Benchmark recipe run completed.")
 
     async def run_cookbooks(
         self,
@@ -396,7 +419,7 @@ class Runner:
         """
         async with self.current_operation_lock:  # Acquire the lock
             # Create new benchmark cookbook test run
-            print(f"[Runner] {self.id} - Running benchmark cookbook run...")
+            logger.info(f"[Runner] {self.id} - Running benchmark cookbook run...")
             self.current_operation = Run(
                 self.id,
                 RunnerType.BENCHMARK,
@@ -422,7 +445,7 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Benchmark cookbook run completed and reset.")
+            logger.info(f"[Runner] {self.id} - Benchmark cookbook run completed.")
 
     async def run_red_teaming(
         self,
@@ -450,7 +473,7 @@ class Runner:
             Exception: If any error occurs during the setup or execution of the red teaming session.
         """
         async with self.current_operation_lock:  # Acquire the lock
-            print(f"[Runner] {self.id} - Running red teaming session...")
+            logger.info(f"[Runner] {self.id} - Running red teaming session...")
             self.current_operation = Session(
                 self.id,
                 RunnerType.REDTEAM,
@@ -471,6 +494,6 @@ class Runner:
         # After completion, reset current_operation to None within the lock
         async with self.current_operation_lock:
             self.current_operation = None
-            print(f"[Runner] {self.id} - Red teaming run completed.")
+            logger.info(f"[Runner] {self.id} - Red teaming run completed.")
 
         return red_teaming_results

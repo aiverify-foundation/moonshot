@@ -1,24 +1,19 @@
-import logging
 import statistics
+from pathlib import Path
 from typing import Any
-
-from nltk.translate.bleu_score import sentence_bleu
 
 from moonshot.src.metrics.metric_interface import MetricInterface
 from moonshot.src.utils.timeit import timeit
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from nltk.translate.bleu_score import sentence_bleu
 
 
 class BleuScore(MetricInterface):
     def __init__(self):
-        self.id = "bleuscore"
+        self.id = Path(__file__).stem
         self.name = "BleuScore"
         self.description = "Bleuscore uses Bleu to return the various rouge scores."
         self.metric_config = self.get_metrics_configuration(self.id)
 
-    @timeit
     def get_metadata(self) -> dict | None:
         """
         Retrieves and returns the metadata of the BleuScore class.

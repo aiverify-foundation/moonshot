@@ -17,6 +17,10 @@ from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class SessionMetadata:
@@ -283,13 +287,13 @@ class Session:
 
             # check if the session metadata record already exists
             if session_metadata_records:
-                print("[Session] Session already exists.")
+                logger.info("[Session] Session already exists.")
                 self.session_metadata = SessionMetadata.from_tuple(
                     session_metadata_records[0]
                 )
             # create a new record if session metadata does not exist
             else:
-                print("[Session] Creating new session.")
+                logger.info("[Session] Creating new session.")
 
                 # create chat history table for each endpoint
 
@@ -379,13 +383,13 @@ class Session:
         # ------------------------------------------------------------------------------
         # Part 1: Get asyncio running loop
         # ------------------------------------------------------------------------------
-        print("[Session] Part 1: Loading asyncio running loop...")
+        logger.debug("[Session] Part 1: Loading asyncio running loop...")
         loop = asyncio.get_running_loop()
 
         # ------------------------------------------------------------------------------
         # Part 2: Load runner processing module
         # ------------------------------------------------------------------------------
-        print("[Session] Part 2: Loading runner processing module...")
+        logger.debug("[Session] Part 2: Loading runner processing module...")
         start_time = time.perf_counter()
         runner_module_instance = None
         try:
@@ -414,20 +418,20 @@ class Session:
                 )
 
         except Exception as e:
-            print(
+            logger.error(
                 f"[Session] Failed to load runner processing module in Part 2 due to error: {str(e)}"
             )
             raise e
 
         finally:
-            print(
+            logger.debug(
                 f"[Session] Loading runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 3: Run runner processing module
         # ------------------------------------------------------------------------------
-        print("[Session] Part 3: Running runner processing module...")
+        logger.debug("[Session] Part 3: Running runner processing module...")
         start_time = time.perf_counter()
         runner_results = {}
 
@@ -446,7 +450,7 @@ class Session:
                 raise RuntimeError("Failed to initialise runner module instance.")
 
         except Exception as e:
-            print(
+            logger.error(
                 f"[Session] Failed to run runner processing module in Part 3 due to error: {str(e)}"
             )
             raise e
@@ -455,14 +459,14 @@ class Session:
             self.red_teaming_progress.status = RunStatus.COMPLETED
             if self.check_redteaming_type() == RedTeamingType.AUTOMATED:
                 self.red_teaming_progress.notify_progress()
-            print(
+            logger.debug(
                 f"[Session] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
             )
 
         # ------------------------------------------------------------------------------
         # Part 4: Wrap up run
         # ------------------------------------------------------------------------------
-        print("[Session] Part 4: Wrap up run...")
+        logger.debug("[Session] Part 4: Wrap up run...")
         return runner_results
 
     def cancel(self) -> None:
@@ -476,7 +480,7 @@ class Session:
         Returns:
             None
         """
-        print("[Session] Cancelling automated red teaming...")
+        logger.warning("[Session] Cancelling automated red teaming...")
         self.cancel_event.set()
 
     def check_redteaming_type(self) -> RedTeamingType:

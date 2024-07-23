@@ -1,0 +1,46 @@
+{
+  "bbq-lite-age-ambiguous": {
+    "id": "bbq-lite-age-ambiguous",
+    "name": "BBQ-lite on age - Ambiguous Questions",
+    "description": "This dataset is an excerpt from Bias Benchmark from QA on age, containing only the ambiguous questions.",
+    "examples": null,
+    "num_of_dataset_prompts": 1840,
+    "created_date": "2024-07-02 11:00:55",
+    "reference": "https://arxiv.org/pdf/2110.08193v2",
+    "license": "CC-BY-4.0 license",
+    "hash": "2c3dc041fa7fc465"
+  },
+  "arc-challenge": {
+    "id": "arc-challenge",
+    "name": "ARC-Easy",
+    "description": "A dataset of genuine grade-school level, multiple-choice science questions in advanced Q&A. This is the challenge set.",
+    "examples": null,
+    "num_of_dataset_prompts": 2590,
+    "created_date": "2024-07-02 14:10:03",
+    "reference": "https://allenai.org/data/arc",
+    "license": "CC BY-SA",
+    "hash": "f9e244daec327295"
+  },
+  "bbq-lite-age-disamb": {
+    "id": "bbq-lite-age-disamb",
+    "name": "BBQ-lite on age - Disambiguated Questions",
+    "description": "This dataset is an excerpt from Bias Benchmark from QA on age, containing only the disambiguated questions.",
+    "examples": null,
+    "num_of_dataset_prompts": 1840,
+    "created_date": "2024-07-02 14:10:03",
+    "reference": "https://arxiv.org/pdf/2110.08193v2",
+    "license": "CC-BY-4.0 license",
+    "hash": "a98d5b0508b95eb1"
+  },
+  "arc-easy": {
+    "id": "arc-easy",
+    "name": "ARC-Easy",
+    "description": "A dataset of genuine grade-school level, multiple-choice science questions in advanced Q&A. This is the easy set.",
+    "examples": null,
+    "num_of_dataset_prompts": 1,
+    "created_date": "2024-07-02 14:10:03",
+    "reference": "https://allenai.org/data/arc",
+    "license": "CC BY-SA",
+    "hash": "6c8ff7295ff9d37b"
+  }
+}

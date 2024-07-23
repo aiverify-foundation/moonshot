@@ -22,7 +22,7 @@ class Storage:
         obj_info: dict,
         obj_extension: str,
         obj_mod_type: str = "jsonio",
-    ) -> bool:
+    ) -> str:
         """
         Writes the object information to a file.
 
@@ -32,6 +32,9 @@ class Storage:
             obj_info (dict): A dictionary containing the object information.
             obj_extension (str): The file extension (e.g., 'json', 'py').
             obj_mod_type (str, optional): The module type for object serialization. Defaults to 'jsonio'.
+
+        Returns:
+            str: A filepath string of the object that has just been created.
         """
         if not hasattr(EnvironmentVars, obj_type):
             raise RuntimeError(
@@ -45,7 +48,11 @@ class Storage:
                 Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
             )
             if obj_mod_instance and callable(obj_mod_instance):
-                return obj_mod_instance(obj_filepath).create_file(obj_info)
+                try:
+                    obj_mod_instance(obj_filepath).create_file(obj_info)
+                    return obj_filepath
+                except Exception as e:
+                    raise e
             else:
                 raise RuntimeError(
                     f"Unable to get defined object module instance - {obj_mod_instance}"
@@ -476,6 +483,30 @@ class Storage:
         """
         if database_instance:
             database_instance.update_record(data, sql_update_record)
+        else:
+            raise RuntimeError("Database instance is not initialised.")
+
+    @staticmethod
+    def delete_database_record_in_table(
+        database_instance: DBInterface, sql_delete_record: str
+    ) -> None:
+        """
+        Deletes records from a table in the database based on a SQL condition.
+
+        This method is used to delete records from a specific table in the database
+            that meet the condition specified in the SQL delete statement.
+        If the database instance is not initialised, it raises a RuntimeError.
+        Otherwise, it calls the delete_records_in_table method of the database instance with the provided SQL query.
+
+        Args:
+            database_instance (DBInterface): The database accessor instance.
+            sql_delete_record (str): The SQL query to delete records from a table.
+
+        Returns:
+            None
+        """
+        if database_instance:
+            database_instance.delete_records_in_table(sql_delete_record)
         else:
             raise RuntimeError("Database instance is not initialised.")
 

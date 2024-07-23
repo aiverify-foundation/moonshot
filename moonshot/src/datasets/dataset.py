@@ -7,6 +7,10 @@ from pydantic import validate_call
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Dataset:
@@ -40,7 +44,7 @@ class Dataset:
                 raise RuntimeError("Dataset ID is empty")
 
         except Exception as e:
-            print(f"Failed to read dataset: {str(e)}")
+            logger.error(f"Failed to read dataset: {str(e)}")
             raise e
 
     @staticmethod
@@ -111,7 +115,7 @@ class Dataset:
             return True
 
         except Exception as e:
-            print(f"Failed to delete dataset: {str(e)}")
+            logger.error(f"Failed to delete dataset: {str(e)}")
             raise e
 
     @staticmethod
@@ -137,7 +141,7 @@ class Dataset:
             )
             return cache_info if cache_info else {}
         except Exception as e:
-            print(f"Failed to retrieve cache information: {str(e)}")
+            logger.error(f"Failed to retrieve cache information: {str(e)}")
             return {}
 
     @staticmethod
@@ -156,7 +160,7 @@ class Dataset:
                 obj_extension=Dataset.cache_extension,
             )
         except Exception as e:
-            print(f"Failed to write cache information: {str(e)}")
+            logger.error(f"Failed to write cache information: {str(e)}")
             raise e
 
     @staticmethod
@@ -215,7 +219,7 @@ class Dataset:
             return retn_datasets_ids, retn_datasets
 
         except Exception as e:
-            print(f"Failed to get available datasets: {str(e)}")
+            logger.error(f"Failed to get available datasets: {str(e)}")
             raise e
 
     @staticmethod

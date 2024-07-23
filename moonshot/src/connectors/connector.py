@@ -15,6 +15,10 @@ from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 def perform_retry(func):
@@ -42,13 +46,15 @@ def perform_retry(func):
                 try:
                     return await func(self, *args, **kwargs)
                 except Exception as exc:
-                    print(f"Operation failed. {str(exc)} - Retrying...")
+                    logger.warning(f"Operation failed. {str(exc)} - Retrying...")
 
                 # Perform retry
                 retry_count += 1
                 if retry_count <= self.retries_times:
                     delay = base_delay * (2**retry_count)
-                    print(f"Attempt {retry_count}, Retrying in {delay} seconds...")
+                    logger.warning(
+                        f"Attempt {retry_count}, Retrying in {delay} seconds..."
+                    )
                     await sleep(delay)
             # Raise an exception
             raise ConnectionError("Failed to get response.")
@@ -228,7 +234,7 @@ class Connector:
             return Connector.load(ep_args)
 
         except Exception as e:
-            print(f"Failed to create connector: {str(e)}")
+            logger.error(f"Failed to create connector: {str(e)}")
             raise e
 
     @staticmethod
@@ -255,7 +261,7 @@ class Connector:
             ]
 
         except Exception as e:
-            print(f"Failed to get available connectors: {str(e)}")
+            logger.error(f"Failed to get available connectors: {str(e)}")
             raise e
 
     @staticmethod
@@ -292,14 +298,16 @@ class Connector:
             Exception: If there is an error during prediction.
         """
         try:
-            print(f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]")
+            logger.info(
+                f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]"
+            )
 
             start_time = time.perf_counter()
             generated_prompt.predicted_results = await connector.get_response(
                 generated_prompt.prompt
             )
             generated_prompt.duration = time.perf_counter() - start_time
-            print(
+            logger.debug(
                 f"[Prompt {generated_prompt.prompt_index}] took {generated_prompt.duration:.4f}s"
             )
 
@@ -311,7 +319,7 @@ class Connector:
             return generated_prompt
 
         except Exception as e:
-            print(f"Failed to get prediction: {str(e)}")
+            logger.error(f"Failed to get prediction: {str(e)}")
             raise e
 
     def set_system_prompt(self, system_prompt: str) -> None:
