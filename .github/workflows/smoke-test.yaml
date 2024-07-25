@@ -108,7 +108,8 @@ jobs:
       run: |
         cd moonshot-ui
         npm ci
-        npm run build
+        # npm run build
+        cd ../
         ls
         cd ../
         ls
