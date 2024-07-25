@@ -109,7 +109,9 @@ jobs:
         cd moonshot-ui
         npm ci
         npm run build
+        ls
         cd ../
+        ls
         source venv/bin/activate
         python -m moonshot web &
 
