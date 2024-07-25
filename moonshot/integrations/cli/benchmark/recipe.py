@@ -37,8 +37,7 @@ def add_recipe(args) -> None:
 
     Args:
         args (argparse.Namespace): The arguments provided to the command line interface.
-        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics, attack_modules,
-        and grading_scale.
+        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics and grading_scale.
 
     Returns:
         None
@@ -54,9 +53,6 @@ def add_recipe(args) -> None:
             literal_eval(args.prompt_templates) if args.prompt_templates else []
         )
         metrics = literal_eval(args.metrics)
-        attack_modules = (
-            literal_eval(args.attack_modules) if args.attack_modules else []
-        )
         grading_scale = literal_eval(args.grading_scale) if args.grading_scale else {}
 
         new_recipe_id = api_create_recipe(
@@ -67,7 +63,6 @@ def add_recipe(args) -> None:
             datasets,
             prompt_templates,
             metrics,
-            attack_modules,
             grading_scale,
         )
         print(f"[add_recipe]: Recipe ({new_recipe_id}) created.")
@@ -340,7 +335,6 @@ def display_recipes(recipes_list: list) -> None:
                 datasets,
                 prompt_templates,
                 metrics,
-                attack_strategies,
                 grading_scale,
                 stats,
             ) = recipe.values()
@@ -352,9 +346,6 @@ def display_recipes(recipes_list: list) -> None:
                 "Prompt Templates", prompt_templates
             )
             metrics_info = display_view_list_format("Metrics", metrics)
-            attack_strategies_info = display_view_list_format(
-                "Attack Strategies", attack_strategies
-            )
             grading_scale_info = display_view_grading_scale_format(
                 "Grading Scale", grading_scale
             )
@@ -364,7 +355,9 @@ def display_recipes(recipes_list: list) -> None:
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
                 f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
             )
-            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
+            contains_info = (
+                f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n"
+            )
 
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)
@@ -499,7 +492,6 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     "\"['bertscore','bleuscore']\" "
     "-p \"['analogical-similarity','mmlu']\" "
     "-t \"['tag1','tag2']\" "
-    "-a \"['charswap_attack']\" "
     "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")
@@ -528,13 +520,6 @@ add_recipe_args.add_argument(
     "metrics", type=str, help="List of metrics to be included in the new recipe"
 )
 add_recipe_args.add_argument(
-    "-a",
-    "--attack_modules",
-    type=str,
-    help="List of attack modules to be included in the new recipe",
-    nargs="?",
-)
-add_recipe_args.add_argument(
     "-g",
     "--grading_scale",
     type=str,
@@ -553,7 +538,6 @@ update_recipe_args = cmd2.Cmd2ArgumentParser(
     "  datasets: A list of datasets used in the recipe. \n"
     "  prompt_templates: A list of prompt templates for the recipe. \n"
     "  metrics: A list of metrics to evaluate the recipe. \n"
-    "  attack_modules: A list of attack modules used in the recipe.\n"
     "  grading_scale: A list of grading scale used in the recipe. \n\n"
     "Example command:\n"
     "  update_recipe my-new-recipe \"[('name', 'My Updated Recipe'), ('tags', ['fairness', 'bbq'])]\" ",
