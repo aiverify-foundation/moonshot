@@ -3,6 +3,10 @@ from datetime import datetime
 from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.storage.storage import Storage
+from moonshot.src.utils.log import configure_logger
+
+# Create a logger for this module
+logger = configure_logger(__name__)
 
 
 class Bookmark:
@@ -226,24 +230,24 @@ class Bookmark:
             Bookmark.sql_select_bookmarks_record,
         )
 
-        bookmarks_json = [
-            BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
-            for bookmark_tuple in list_of_bookmarks_tuples
-        ]
+        if list_of_bookmarks_tuples is not None:
+            bookmarks_json = [
+                BookmarkArguments.from_tuple_to_dict(bookmark_tuple)
+                for bookmark_tuple in list_of_bookmarks_tuples
+            ]
+        else:
+            bookmarks_json = []
 
-        # Write json file to moonshot-data
-        file_path = (
-            f"../moonshot-data/generated-outputs/bookmarks/{export_file_name}.json"
-        )
-
-        Storage.create_object(
-            EnvVariables.BOOKMARKS.name,
-            export_file_name,
-            {"bookmarks": bookmarks_json},
-            "json",
-        )
-
-        return file_path
+        try:
+            return Storage.create_object(
+                EnvVariables.BOOKMARKS.name,
+                export_file_name,
+                {"bookmarks": bookmarks_json},
+                "json",
+            )
+        except Exception as e:
+            logger.error(f"Failed to export bookmarks - {str(e)}.")
+            raise e
 
     def close(self) -> None:
         """
