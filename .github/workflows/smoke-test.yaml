@@ -110,8 +110,7 @@ jobs:
         npm ci
         # npm run build
         cd ../
-        ls
-        cd ../
+        pwd
         ls
         source venv/bin/activate
         python -m moonshot web &
