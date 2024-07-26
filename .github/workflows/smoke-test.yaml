@@ -121,8 +121,6 @@ jobs:
 
     - name: Run Smoke Test
       run: |
-         pwd
-         ls
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
