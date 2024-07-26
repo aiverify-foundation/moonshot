@@ -13,7 +13,7 @@ from moonshot.api import (
     api_read_endpoint,
     api_update_endpoint,
 )
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -68,6 +68,7 @@ def list_endpoints(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find endpoint(s) with a keyword.
+        pagination (str): Optional field to paginate endpoints.
 
     Returns:
         list | None: A list of ConnectorEndpoint or None if there is no result.
@@ -75,17 +76,17 @@ def list_endpoints(args) -> list | None:
     try:
         endpoints_list = api_get_all_endpoint()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_endpoints_list = find_keyword(keyword, endpoints_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if endpoints_list:
+            filtered_endpoints_list = filter_data(endpoints_list, keyword, pagination)
             if filtered_endpoints_list:
                 display_endpoints(filtered_endpoints_list)
                 return filtered_endpoints_list
-            else:
-                print("No endpoints containing keyword found.")
-                return None
-        else:
-            display_endpoints(endpoints_list)
-            return endpoints_list
+
+        console.print("[red]There are no endpoints found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_endpoints]: {str(e)}")
 
@@ -100,6 +101,7 @@ def list_connector_types(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find connector type(s) with a keyword.
+        pagination (str): Optional field to paginate connector types.
 
     Returns:
         list | None: A list of Connector or None if there is no result.
@@ -107,17 +109,19 @@ def list_connector_types(args) -> list | None:
     try:
         connector_type_list = api_get_all_connector_type()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_connector_type_list = find_keyword(keyword, connector_type_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if connector_type_list:
+            filtered_connector_type_list = filter_data(
+                connector_type_list, keyword, pagination
+            )
             if filtered_connector_type_list:
                 display_connector_types(filtered_connector_type_list)
                 return filtered_connector_type_list
-            else:
-                print("No connectors containing keyword found.")
-                return None
-        else:
-            display_connector_types(connector_type_list)
-            return connector_type_list
+
+        console.print("[red]There are no connector types found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_connector_types]: {str(e)}")
 
@@ -214,21 +218,19 @@ def display_connector_types(connector_types: list) -> None:
     Returns:
         None
     """
-    if connector_types:
-        table = Table(
-            title="List of Connector Types",
-            show_lines=True,
-            expand=True,
-            header_style="bold",
-        )
-        table.add_column("No.", width=2)
-        table.add_column("Connector Type", justify="left", width=78)
-        for connector_id, connector_type in enumerate(connector_types, 1):
-            table.add_section()
-            table.add_row(str(connector_id), connector_type)
-        console.print(table)
-    else:
-        console.print("[red]There are no connector types found.[/red]")
+    table = Table(
+        title="List of Connector Types",
+        show_lines=True,
+        expand=True,
+        header_style="bold",
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Connector Type", justify="left", width=78)
+
+    for idx, connector_type in enumerate(connector_types, 1):
+        table.add_section()
+        table.add_row(str(idx), connector_type)
+    console.print(table)
 
 
 def display_endpoints(endpoints_list):
@@ -245,52 +247,51 @@ def display_endpoints(endpoints_list):
     Returns:
         None
     """
-    if endpoints_list:
-        table = Table(
-            title="List of Connector Endpoints",
-            show_lines=True,
-            expand=True,
-            header_style="bold",
-        )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Id", justify="left", width=10)
-        table.add_column("Name", justify="left", width=10)
-        table.add_column("Connector Type", justify="left", width=10)
-        table.add_column("Uri", justify="left", width=10)
-        table.add_column("Token", justify="left", width=10)
-        table.add_column("Max Calls Per Second", justify="left", width=5)
-        table.add_column("Max concurrency", justify="left", width=5)
-        table.add_column("Params", justify="left", width=30)
-        table.add_column("Created Date", justify="left", width=8)
+    table = Table(
+        title="List of Connector Endpoints",
+        show_lines=True,
+        expand=True,
+        header_style="bold",
+    )
+    table.add_column("No.", justify="left", width=2)
+    table.add_column("Id", justify="left", width=10)
+    table.add_column("Name", justify="left", width=10)
+    table.add_column("Connector Type", justify="left", width=10)
+    table.add_column("Uri", justify="left", width=10)
+    table.add_column("Token", justify="left", width=10)
+    table.add_column("Max Calls Per Second", justify="left", width=5)
+    table.add_column("Max concurrency", justify="left", width=5)
+    table.add_column("Params", justify="left", width=30)
+    table.add_column("Created Date", justify="left", width=8)
 
-        for endpoint_id, endpoint in enumerate(endpoints_list, 1):
-            (
-                id,
-                name,
-                connector_type,
-                uri,
-                token,
-                max_calls_per_second,
-                max_concurrency,
-                params,
-                created_date,
-            ) = endpoint.values()
-            table.add_section()
-            table.add_row(
-                str(endpoint_id),
-                id,
-                name,
-                connector_type,
-                uri,
-                token,
-                str(max_calls_per_second),
-                str(max_concurrency),
-                escape(str(params)),
-                created_date,
-            )
-        console.print(table)
-    else:
-        console.print("[red]There are no endpoints found.[/red]")
+    for idx, endpoint in enumerate(endpoints_list, 1):
+        (
+            id,
+            name,
+            connector_type,
+            uri,
+            token,
+            max_calls_per_second,
+            max_concurrency,
+            params,
+            created_date,
+            *other_args,
+        ) = endpoint.values()
+        table.add_section()
+        idx = endpoint.get("idx", idx)
+        table.add_row(
+            str(idx),
+            id,
+            name,
+            connector_type,
+            uri,
+            token,
+            str(max_calls_per_second),
+            str(max_concurrency),
+            escape(str(params)),
+            created_date,
+        )
+    console.print(table)
 
 
 # ------------------------------------------------------------------------------
@@ -373,6 +374,13 @@ list_endpoints_args.add_argument(
     nargs="?",
 )
 
+list_endpoints_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate endpoint(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
+    nargs="?",
+)
 
 # List connector types arguments
 list_connector_types_args = cmd2.Cmd2ArgumentParser(
@@ -385,5 +393,13 @@ list_connector_types_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find connector type(s) with keyword",
+    nargs="?",
+)
+
+list_connector_types_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate connector type(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

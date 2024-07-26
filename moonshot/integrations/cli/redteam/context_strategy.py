@@ -1,4 +1,5 @@
 import argparse
+from ast import literal_eval
 
 import cmd2
 from rich.console import Console
@@ -10,8 +11,8 @@ from moonshot.api import (
     api_update_context_strategy,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.utils.process_data import filter_data
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -60,6 +61,7 @@ def list_context_strategies(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find context strategies with a keyword.
+        pagination (str): Optional field to paginate context strategies.
 
     Returns:
         list | None: A list of ContextStrategy or None if there is no result.
@@ -67,19 +69,19 @@ def list_context_strategies(args) -> list | None:
     try:
         context_strategy_metadata_list = api_get_all_context_strategy_metadata()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_context_strategies_list = find_keyword(
-                keyword, context_strategy_metadata_list
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if context_strategy_metadata_list:
+            filtered_context_strategies_list = filter_data(
+                context_strategy_metadata_list, keyword, pagination
             )
             if filtered_context_strategies_list:
                 display_context_strategies(filtered_context_strategies_list)
                 return filtered_context_strategies_list
-            else:
-                print("No context strategies containing keyword found.")
-                return None
-        else:
-            display_context_strategies(context_strategy_metadata_list)
-            return context_strategy_metadata_list
+
+        console.print("[red]There are no context strategies found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_context_strategies]: {str(e)}")
 
@@ -137,25 +139,21 @@ def display_context_strategies(context_strategies: list) -> None:
     Returns:
         None
     """
-    if context_strategies:
-        table = Table(
-            title="Context Strategy List",
-            show_lines=True,
-            expand=True,
-            header_style="bold",
-        )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Context Strategy Information", justify="left", width=98)
-        for context_strategy_index, context_strategy_data in enumerate(
-            context_strategies, 1
-        ):
-            context_strategy_data_str = ""
-            for k, v in context_strategy_data.items():
+    table = Table(
+        title="Context Strategy List",
+        show_lines=True,
+        expand=True,
+        header_style="bold",
+    )
+    table.add_column("No.", justify="left", width=2)
+    table.add_column("Context Strategy Information", justify="left", width=98)
+    for idx, context_strategy_data in enumerate(context_strategies, 1):
+        context_strategy_data_str = ""
+        for k, v in context_strategy_data.items():
+            if k != "idx":
                 context_strategy_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
-            table.add_row(str(context_strategy_index), context_strategy_data_str)
-        console.print(table)
-    else:
-        console.print("[red]There are no context strategies found.[/red]", style="bold")
+        table.add_row(str(idx), context_strategy_data_str)
+    console.print(table)
 
 
 # Use context strategy arguments
@@ -197,5 +195,13 @@ list_context_strategies_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find context strategies with keyword",
+    nargs="?",
+)
+
+list_context_strategies_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate context strategies(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

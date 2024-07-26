@@ -23,7 +23,7 @@ from moonshot.integrations.cli.benchmark.recipe import (
     display_view_statistics_format,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -67,24 +67,26 @@ def list_cookbooks(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find cookbook(s) with a keyword.
+        pagination (str): Optional field to paginate cookbooks.
 
     Returns:
         list | None: A list of Cookbook or None if there is no result.
     """
+
     try:
         cookbooks_list = api_get_all_cookbook()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_cookbooks_list = find_keyword(keyword, cookbooks_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if cookbooks_list:
+            filtered_cookbooks_list = filter_data(cookbooks_list, keyword, pagination)
             if filtered_cookbooks_list:
                 display_cookbooks(filtered_cookbooks_list)
                 return filtered_cookbooks_list
-            else:
-                print("No cookbooks containing keyword found.")
-                return None
-        else:
-            display_cookbooks(cookbooks_list)
-            return cookbooks_list
+
+        console.print("[red]There are no recipes found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_cookbooks]: {str(e)}")
 
@@ -247,22 +249,20 @@ def display_cookbooks(cookbooks_list):
     Args:
         cookbooks_list (list): A list of dictionaries, where each dictionary contains the details of a cookbook.
     """
-    if cookbooks_list:
-        table = Table(
-            title="List of Cookbooks", show_lines=True, expand=True, header_style="bold"
-        )
-        table.add_column("No.", width=2)
-        table.add_column("Cookbook", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20, overflow="fold")
-        for cookbook_id, cookbook in enumerate(cookbooks_list, 1):
-            id, name, description, recipes = cookbook.values()
-            cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
-            recipes_info = display_view_list_format("Recipes", recipes)
-            table.add_section()
-            table.add_row(str(cookbook_id), cookbook_info, recipes_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no cookbooks found.[/red]")
+    table = Table(
+        title="List of Cookbooks", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Cookbook", justify="left", width=78)
+    table.add_column("Contains", justify="left", width=20, overflow="fold")
+    for idx, cookbook in enumerate(cookbooks_list, 1):
+        id, name, description, recipes, *other_args = cookbook.values()
+        idx = cookbook.get("idx", idx)
+        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        recipes_info = display_view_list_format("Recipes", recipes)
+        table.add_section()
+        table.add_row(str(idx), cookbook_info, recipes_info)
+    console.print(table)
 
 
 def display_view_cookbook(cookbook_info):
@@ -571,5 +571,13 @@ list_cookbooks_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find cookbook(s) with keyword",
+    nargs="?",
+)
+
+list_cookbooks_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate cookbook(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

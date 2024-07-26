@@ -22,8 +22,8 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.utils.process_data import filter_data
 from moonshot.src.redteaming.session.session import Session
-from moonshot.src.utils.find_feature import find_keyword
 
 console = Console()
 
@@ -131,34 +131,36 @@ def end_session() -> None:
 
 def list_sessions(args) -> list | None:
     """
-    Retrieves and displays the list of sessions.
+        Retrieves and displays the list of sessions.
 
-    This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
-    If no sessions are found, a message is printed to the console.
+        This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
+        If no sessions are found, a message is printed to the console.
+    telegram
 
-    Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find session(s) with a keyword.
+        Args:
+            args: A namespace object from argparse. It should have an optional attribute:
+            find (str): Optional field to find session(s) with a keyword.
+            pagination (str): Optional field to paginate sessions.
 
-    Returns:
-        list | None: A list of Session or None if there is no result.
+        Returns:
+            list | None: A list of Session or None if there is no result.
     """
     try:
         session_metadata_list = api_get_all_session_metadata()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_session_metadata_list = find_keyword(
-                keyword, session_metadata_list
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if session_metadata_list:
+            filtered_session_metadata_list = filter_data(
+                session_metadata_list, keyword, pagination
             )
             if filtered_session_metadata_list:
                 display_sessions(filtered_session_metadata_list)
                 return filtered_session_metadata_list
-            else:
-                print("No sessions containing keyword found.")
-                return None
-        else:
-            display_sessions(session_metadata_list)
-            return session_metadata_list
+
+        console.print("[red]There are no sessions found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_sessions]: {str(e)}")
 
@@ -369,6 +371,7 @@ def list_bookmarks(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find bookmark(s) with a keyword.
+        pagination (str): Optional field to paginate bookmarks.
 
     Returns:
         list | None: A list of Bookmark or None if there is no result.
@@ -376,17 +379,17 @@ def list_bookmarks(args) -> list | None:
     try:
         bookmarks_list = api_get_all_bookmarks()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_bookmarks_list = find_keyword(keyword, bookmarks_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if bookmarks_list:
+            filtered_bookmarks_list = filter_data(bookmarks_list, keyword, pagination)
             if filtered_bookmarks_list:
                 display_bookmarks(filtered_bookmarks_list)
                 return filtered_bookmarks_list
-            else:
-                print("No bookmarks containing keyword found.")
-                return None
-        else:
-            display_bookmarks(bookmarks_list)
-            return bookmarks_list
+
+        console.print("[red]There are no bookmarks found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_bookmarks]: {str(e)}")
 
@@ -402,38 +405,39 @@ def display_bookmarks(bookmarks_list) -> None:
     Args:
         bookmarks_list (list): A list of dictionaries, where each dictionary contains the details of a bookmark.
     """
-    if bookmarks_list:
-        table = Table(
-            title="Bookmark List", show_lines=True, expand=True, header_style="bold"
+
+    table = Table(
+        title="Bookmark List", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("ID.", justify="left", width=5)
+    table.add_column("Name", justify="left", width=20)
+    table.add_column("Prepared Prompt", justify="left", width=50)
+    table.add_column("Predicted Response", justify="left", width=50)
+    table.add_column("Bookmark Time", justify="left", width=20)
+    for idx, bookmark in enumerate(bookmarks_list, 1):
+        (
+            name,
+            prompt,
+            prepared_prompt,
+            response,
+            context_strategy,
+            prompt_template,
+            attack_module,
+            metric,
+            bookmark_time,
+            *other_args,
+        ) = bookmark.values()
+        idx = bookmark.get("idx", idx)
+
+        table.add_section()
+        table.add_row(
+            str(idx),
+            name,
+            prepared_prompt,
+            response,
+            bookmark_time,
         )
-        table.add_column("ID.", justify="left", width=5)
-        table.add_column("Name", justify="left", width=20)
-        table.add_column("Prepared Prompt", justify="left", width=50)
-        table.add_column("Predicted Response", justify="left", width=50)
-        table.add_column("Bookmark Time", justify="left", width=20)
-        for idx, bookmark in enumerate(bookmarks_list, 1):
-            (
-                name,
-                prompt,
-                prepared_prompt,
-                response,
-                context_strategy,
-                prompt_template,
-                attack_module,
-                metric,
-                bookmark_time,
-            ) = bookmark.values()
-            table.add_section()
-            table.add_row(
-                str(idx),
-                name,
-                prepared_prompt,
-                response,
-                bookmark_time,
-            )
-        console.print(table)
-    else:
-        console.print("[red]There are no bookmarks found.[/red]")
+    console.print(table)
 
 
 def view_bookmark(args) -> None:
@@ -717,25 +721,32 @@ def display_sessions(sessions: list) -> None:
         None
     """
 
-    if sessions:
-        table = Table(
-            title="Session List", show_lines=True, expand=True, header_style="bold"
-        )
-        table.add_column("No.", justify="left", width=2)
-        table.add_column("Session ID", justify="left", width=20)
-        table.add_column("Contains", justify="left", width=78)
+    table = Table(
+        title="Session List", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", justify="left", width=2)
+    table.add_column("Session ID", justify="left", width=20)
+    table.add_column("Contains", justify="left", width=78)
 
-        for session_index, session_data in enumerate(sessions, 1):
-            session_id = session_data.get("session_id", "")
-            endpoints = ", ".join(session_data.get("endpoints", []))
-            created_datetime = session_data.get("created_datetime", "")
-
-            session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
-            contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
-            table.add_row(str(session_index), session_info, contains_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no sessions found.[/red]", style="bold")
+    for idx, session_data in enumerate(sessions, 1):
+        (
+            session_id,
+            endpoints,
+            created_epoch,
+            created_datetime,
+            prompt_template,
+            context_strategy,
+            cs_num_of_prev_prompts,
+            attack_module,
+            metric,
+            system_prompt,
+            *other_args,
+        ) = session_data.values()
+        idx = session_data.get("idx", idx)
+        session_info = f"[red]id: {session_id}[/red]\n\nCreated: {created_datetime}"
+        contains_info = f"[blue]Endpoints:[/blue] {endpoints}\n\n"
+        table.add_row(str(idx), session_info, contains_info)
+    console.print(table)
 
 
 # use session arguments
@@ -885,6 +896,13 @@ list_sessions_args.add_argument(
     nargs="?",
 )
 
+list_sessions_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate session(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
+    nargs="?",
+)
 
 # Add bookmark arguments
 add_bookmark_args = cmd2.Cmd2ArgumentParser(
@@ -971,5 +989,13 @@ list_bookmarks_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find bookmark(s) with keyword",
+    nargs="?",
+)
+
+list_bookmarks_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate bookmark(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

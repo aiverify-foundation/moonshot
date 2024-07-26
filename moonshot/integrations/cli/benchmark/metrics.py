@@ -1,9 +1,11 @@
+from ast import literal_eval
+
 import cmd2
 from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_metric, api_get_all_metric, api_get_all_metric_name
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -22,25 +24,26 @@ def list_metrics(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find metric(s) with a keyword.
+        pagination (str): Optional field to paginate metrics.
 
     Returns:
         list | None: A list of Metric or None if there is no result.
     """
+
     try:
         print("Listing metrics may take a while...")
         metrics_list = api_get_all_metric()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_metrics_list = find_keyword(keyword, metrics_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if metrics_list:
+            filtered_metrics_list = filter_data(metrics_list, keyword, pagination)
             if filtered_metrics_list:
                 display_metrics(filtered_metrics_list)
                 return filtered_metrics_list
-            else:
-                print("No metrics containing keyword found.")
-                return None
-        else:
-            display_metrics(metrics_list)
-            return metrics_list
+
+        console.print("[red]There are no metrics found.[/red]")
+        return None
     except Exception as e:
         print(f"[list_metrics]: {str(e)}")
 
@@ -120,21 +123,19 @@ def display_metrics(metrics_list: list):
     Returns:
         None
     """
-    if metrics_list:
-        table = Table(
-            title="List of Metrics", show_lines=True, expand=True, header_style="bold"
-        )
-        table.add_column("No.", width=2)
-        table.add_column("Metric", justify="left", width=78)
-        for metric_no, metric in enumerate(metrics_list, 1):
-            id, name, description = metric.values()
-            result_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+    table = Table(
+        title="List of Metrics", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Metric", justify="left", width=78)
+    for idx, metric in enumerate(metrics_list, 1):
+        id, name, description, *other_args = metric.values()
+        idx = metric.get("idx", idx)
+        result_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
 
-            table.add_section()
-            table.add_row(str(metric_no), result_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no metrics found.[/red]")
+        table.add_section()
+        table.add_row(str(idx), result_info)
+    console.print(table)
 
 
 # ------------------------------------------------------------------------------
@@ -167,5 +168,13 @@ list_metrics_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find metric(s) with keyword",
+    nargs="?",
+)
+
+list_metrics_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate metric(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

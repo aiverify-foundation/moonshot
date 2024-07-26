@@ -1,3 +1,5 @@
+from ast import literal_eval
+
 import cmd2
 from rich.console import Console
 from rich.table import Table
@@ -8,7 +10,7 @@ from moonshot.api import (
     api_get_all_datasets_name,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_str_format
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -27,6 +29,7 @@ def list_datasets(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find dataset(s) with a keyword.
+        pagination (str): Optional field to paginate datasets.
 
     Returns:
         list | None: A list of Dataset or None if there is no result.
@@ -35,17 +38,16 @@ def list_datasets(args) -> list | None:
         print("Listing datasets may take a while...")
         datasets_list = api_get_all_datasets()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_datasets_list = find_keyword(keyword, datasets_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if datasets_list:
+            filtered_datasets_list = filter_data(datasets_list, keyword, pagination)
             if filtered_datasets_list:
                 display_datasets(filtered_datasets_list)
                 return filtered_datasets_list
-            else:
-                print("No datasets containing keyword found.")
-                return None
-        else:
-            display_datasets(datasets_list)
-            return datasets_list
+
+        console.print("[red]There are no datasets found.[/red]")
+        return None
     except Exception as e:
         print(f"[list_datasets]: {str(e)}")
 
@@ -125,39 +127,38 @@ def display_datasets(datasets_list: list):
     Returns:
         None
     """
-    if datasets_list:
-        table = Table(
-            title="List of Datasets", show_lines=True, expand=True, header_style="bold"
+    table = Table(
+        title="List of Datasets", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Dataset", justify="left", width=78)
+    for idx, dataset in enumerate(datasets_list, 1):
+        (
+            id,
+            name,
+            description,
+            _,
+            num_of_dataset_prompts,
+            created_date,
+            reference,
+            license,
+            *other_args,
+        ) = dataset.values()
+
+        idx = dataset.get("idx", idx)
+        prompt_info = display_view_str_format("Prompts", num_of_dataset_prompts)
+        created_date_info = display_view_str_format("Created Date", created_date)
+        license_info = display_view_str_format("License", license)
+        reference_info = display_view_str_format("Reference", reference)
+
+        dataset_info = (
+            f"[red]{id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
+            f"{prompt_info}\n\n{created_date_info}\n\n{license_info}\n\n{reference_info}"
         )
-        table.add_column("No.", width=2)
-        table.add_column("Dataset", justify="left", width=78)
-        for dataset_no, dataset in enumerate(datasets_list, 1):
-            (
-                id,
-                name,
-                description,
-                _,
-                num_of_dataset_prompts,
-                created_date,
-                reference,
-                license,
-            ) = dataset.values()
 
-            prompt_info = display_view_str_format("Prompts", num_of_dataset_prompts)
-            created_date_info = display_view_str_format("Created Date", created_date)
-            license_info = display_view_str_format("License", license)
-            reference_info = display_view_str_format("Reference", reference)
-
-            dataset_info = (
-                f"[red]{id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
-                f"{prompt_info}\n\n{created_date_info}\n\n{license_info}\n\n{reference_info}"
-            )
-
-            table.add_section()
-            table.add_row(str(dataset_no), dataset_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no datasets found.[/red]")
+        table.add_section()
+        table.add_row(str(idx), dataset_info)
+    console.print(table)
 
 
 # ------------------------------------------------------------------------------
@@ -190,5 +191,13 @@ list_datasets_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find dataset(s) with keyword",
+    nargs="?",
+)
+
+list_datasets_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate dataset(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )

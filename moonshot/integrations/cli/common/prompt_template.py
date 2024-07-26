@@ -1,9 +1,11 @@
+from ast import literal_eval
+
 import cmd2
 from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_prompt_template, api_get_all_prompt_template_detail
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -18,6 +20,7 @@ def list_prompt_templates(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find prompt template(s) with a keyword.
+        pagination (str): Optional field to paginate prompt templates.
 
     Returns:
         list | None: A list of PromptTemplate or None if there is no result.
@@ -25,19 +28,19 @@ def list_prompt_templates(args) -> list | None:
     try:
         prompt_templates_list = api_get_all_prompt_template_detail()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_prompt_templates_list = find_keyword(
-                keyword, prompt_templates_list
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if prompt_templates_list:
+            filtered_prompt_templates_list = filter_data(
+                prompt_templates_list, keyword, pagination
             )
             if filtered_prompt_templates_list:
                 display_prompt_templates(filtered_prompt_templates_list)
                 return filtered_prompt_templates_list
-            else:
-                print("No prompt templates containing keyword found.")
-                return None
-        else:
-            display_prompt_templates(prompt_templates_list)
-            return prompt_templates_list
+
+        console.print("[red]There are no prompt templates found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_prompt_templates]: {str(e)}")
 
@@ -87,21 +90,13 @@ def display_prompt_templates(prompt_templates) -> None:
     table.add_column("No.", width=2)
     table.add_column("Prompt Template", justify="left", width=50)
     table.add_column("Contains", justify="left", width=48, overflow="fold")
-    if prompt_templates:
-        for prompt_index, prompt_template in enumerate(prompt_templates, 1):
-            (
-                id,
-                name,
-                description,
-                contents,
-            ) = prompt_template.values()
-
-            prompt_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
-            table.add_section()
-            table.add_row(str(prompt_index), prompt_info, contents)
-        console.print(table)
-    else:
-        console.print("[red]There are no prompt templates found.[/red]")
+    for idx, prompt_template in enumerate(prompt_templates, 1):
+        (id, name, description, contents, *other_args) = prompt_template.values()
+        idx = prompt_template.get("idx", idx)
+        prompt_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        table.add_section()
+        table.add_row(str(idx), prompt_info, contents)
+    console.print(table)
 
 
 # Delete prompt template arguments
@@ -125,5 +120,13 @@ list_prompt_templates_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find prompt template(s) with keyword",
+    nargs="?",
+)
+
+list_prompt_templates_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate prompt template(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )
