@@ -54,6 +54,9 @@ jobs:
       with:
           repository: aiverify-foundation/moonshot-data
           ref: ${{ inputs.moonshot_branch }}
+          run: |
+            pwd
+            ls
     
     - name: Setup Python 3.11
       uses: actions/setup-python@v4
@@ -62,6 +65,8 @@ jobs:
     
     - name: Setup Moonshot
       run: |
+        pwd
+        ls
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
@@ -73,6 +78,9 @@ jobs:
          repository: aiverify-foundation/moonshot-data
          ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
          path: moonshot-data
+         run: |
+           pwd
+           ls
 
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -81,9 +89,14 @@ jobs:
          repository: aiverify-foundation/moonshot-data
          ref: ${{ inputs.moonshot_data_branch }}
          path: moonshot-data
+         run: |
+           pwd
+           ls
 
     - name: Setup Moonshot Data
       run: |
+        ls
+        pwd
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
@@ -95,6 +108,9 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ vars.MOONSHOT_UI_BRANCH }}
         path: moonshot-ui
+        run: |
+          pwd
+          ls
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
