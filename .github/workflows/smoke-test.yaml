@@ -81,9 +81,6 @@ jobs:
          repository: aiverify-foundation/moonshot-data
          ref: ${{ inputs.moonshot_data_branch }}
          path: moonshot-data
-         run: |
-           pwd
-           ls
 
     - name: Setup Moonshot Data
       run: |
@@ -114,10 +111,6 @@ jobs:
         cd moonshot-ui
         npm ci
         npm run build
-        cd ../
-        pwd
-        ls
-        source venv/bin/activate
         npm run start &
 
     - name: Checkout Smoke Test 
@@ -128,6 +121,8 @@ jobs:
 
     - name: Run Smoke Test
       run: |
+         pwd
+         ls
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
