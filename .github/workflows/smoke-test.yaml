@@ -41,22 +41,19 @@ jobs:
 
     steps:
 
-    # - name: Checkout Moonshot (Pull Request)
-    #   if: github.event_name == 'pull_request'
-    #   uses: actions/checkout@v4
-    #   with:
-    #       repository: ${{ github.event.pull_request.head.repo.full_name }}
-    #       ref: ${{ github.event.pull_request.head.ref }}
+    - name: Checkout Moonshot (Pull Request)
+      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v4
+      with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
-    # - name: Checkout Moonshot (Workflow Dispatch)
-    #   if: github.event_name == 'workflow_dispatch'
-    #   uses: actions/checkout@v4
-    #   with:
-    #       repository: aiverify-foundation/moonshot-data
-    #       ref: ${{ inputs.moonshot_branch }}
-    #       run: |
-    #         pwd
-    #         ls
+    - name: Checkout Moonshot (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: ${{ inputs.moonshot_branch }}
     
     - name: Setup Python 3.11
       uses: actions/setup-python@v4
@@ -65,11 +62,6 @@ jobs:
     
     - name: Setup Moonshot
       run: |
-        pwd
-        cd ../
-        pwd
-        ls
-        
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
