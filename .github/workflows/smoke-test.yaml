@@ -87,14 +87,11 @@ jobs:
 
     - name: Setup Moonshot Data
       run: |
-        ls
-        pwd
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
         cd ../
-        pwd
-        python
+        python -m moonshot web-api &
 
     - name: Checkout Moonshot UI (Pull Request)
       if: github.event_name == 'pull_request'
@@ -116,7 +113,7 @@ jobs:
       run: |
         cd moonshot-ui
         npm ci
-        # npm run build
+        npm run build
         cd ../
         pwd
         ls
