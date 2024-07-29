@@ -81,7 +81,7 @@ def list_recipes(args) -> list | None:
 
     This function retrieves all available recipes by calling the api_get_all_recipe function from the
     moonshot.api module.
-    It then displays the retrieved recipes using the display_recipes function.
+    It then displays the retrieved recipes using the _display_recipes function.
 
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
@@ -100,7 +100,7 @@ def list_recipes(args) -> list | None:
         if recipes_list:
             filtered_recipes_list = filter_data(recipes_list, keyword, pagination)
             if filtered_recipes_list:
-                display_recipes(filtered_recipes_list)
+                _display_recipes(filtered_recipes_list)
                 return filtered_recipes_list
 
         console.print("[red]There are no recipes found.[/red]")
@@ -127,7 +127,7 @@ def view_recipe(args) -> None:
     """
     try:
         recipe_info = api_read_recipe(args.recipe)
-        display_recipes([recipe_info])
+        _display_recipes([recipe_info])
     except Exception as e:
         print(f"[view_recipe]: {str(e)}")
 
@@ -313,7 +313,7 @@ def display_view_statistics_format(title: str, stats: dict) -> str:
         return f"[blue]{title}[/blue]: nil"
 
 
-def display_recipes(recipes_list: list) -> None:
+def _display_recipes(recipes_list: list) -> None:
     """
     Display the list of recipes in a tabular format.
 

@@ -62,7 +62,7 @@ def list_cookbooks(args) -> list | None:
 
     This function retrieves all available cookbooks by calling the api_get_all_cookbook function from the
     moonshot.api module.
-    It then displays the retrieved cookbooks using the display_cookbooks function.
+    It then displays the retrieved cookbooks using the _display_cookbooks function.
 
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
@@ -81,10 +81,10 @@ def list_cookbooks(args) -> list | None:
         if cookbooks_list:
             filtered_cookbooks_list = filter_data(cookbooks_list, keyword, pagination)
             if filtered_cookbooks_list:
-                display_cookbooks(filtered_cookbooks_list)
+                _display_cookbooks(filtered_cookbooks_list)
                 return filtered_cookbooks_list
 
-        console.print("[red]There are no recipes found.[/red]")
+        console.print("[red]There are no cookbooks found.[/red]")
         return None
 
     except Exception as e:
@@ -238,7 +238,7 @@ def delete_cookbook(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_cookbooks(cookbooks_list):
+def _display_cookbooks(cookbooks_list):
     """
     Display the list of cookbooks in a tabular format.
 

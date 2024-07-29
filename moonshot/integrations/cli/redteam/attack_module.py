@@ -36,7 +36,7 @@ def list_attack_modules(args) -> list | None:
                 attack_module_metadata_list, keyword, pagination
             )
             if filtered_attack_modules_list:
-                display_attack_modules(filtered_attack_modules_list)
+                _display_attack_modules(filtered_attack_modules_list)
                 return filtered_attack_modules_list
 
         console.print("[red]There are no attack modules found.[/red]")
@@ -71,7 +71,7 @@ def delete_attack_module(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_attack_modules(attack_modules: list) -> None:
+def _display_attack_modules(attack_modules: list) -> None:
     """
     Display a list of attack modules.
 

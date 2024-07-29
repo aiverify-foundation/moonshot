@@ -63,7 +63,7 @@ def list_endpoints(args) -> list | None:
     List all endpoints.
 
     This function retrieves all endpoints by calling the api_get_all_endpoint function from the
-    moonshot.api module. It then displays the endpoints using the display_endpoints function.
+    moonshot.api module. It then displays the endpoints using the _display_endpoints function.
 
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
@@ -81,7 +81,7 @@ def list_endpoints(args) -> list | None:
         if endpoints_list:
             filtered_endpoints_list = filter_data(endpoints_list, keyword, pagination)
             if filtered_endpoints_list:
-                display_endpoints(filtered_endpoints_list)
+                _display_endpoints(filtered_endpoints_list)
                 return filtered_endpoints_list
 
         console.print("[red]There are no endpoints found.[/red]")
@@ -96,7 +96,7 @@ def list_connector_types(args) -> list | None:
     List all connector types.
 
     This function retrieves all connector types by calling the api_get_all_connector_type function from the
-    moonshot.api module. It then displays the connector types using the display_connector_types function.
+    moonshot.api module. It then displays the connector types using the _display_connector_types function.
 
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
@@ -116,7 +116,7 @@ def list_connector_types(args) -> list | None:
                 connector_type_list, keyword, pagination
             )
             if filtered_connector_type_list:
-                display_connector_types(filtered_connector_type_list)
+                _display_connector_types(filtered_connector_type_list)
                 return filtered_connector_type_list
 
         console.print("[red]There are no connector types found.[/red]")
@@ -132,7 +132,7 @@ def view_endpoint(args) -> None:
 
     This function retrieves a specific endpoint by calling the api_read_endpoint function from the
     moonshot.api module using the endpoint name provided in the args. It then displays the endpoint
-    information using the display_endpoints function.
+    information using the _display_endpoints function.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -143,7 +143,7 @@ def view_endpoint(args) -> None:
     """
     try:
         endpoint_info = api_read_endpoint(args.endpoint)
-        display_endpoints([endpoint_info])
+        _display_endpoints([endpoint_info])
     except Exception as e:
         print(f"[view_endpoint]: {str(e)}")
 
@@ -205,7 +205,7 @@ def delete_endpoint(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_connector_types(connector_types: list) -> None:
+def _display_connector_types(connector_types: list) -> None:
     """
     Display a list of connector types.
 
@@ -233,7 +233,7 @@ def display_connector_types(connector_types: list) -> None:
     console.print(table)
 
 
-def display_endpoints(endpoints_list):
+def _display_endpoints(endpoints_list):
     """
     Display a list of endpoints.
 

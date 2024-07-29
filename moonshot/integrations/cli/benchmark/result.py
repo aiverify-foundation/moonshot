@@ -44,7 +44,7 @@ def list_results(args) -> list | None:
         if results_list:
             filtered_results_list = filter_data(results_list, keyword, pagination)
             if filtered_results_list:
-                display_results(filtered_results_list)
+                _display_results(filtered_results_list)
                 return filtered_results_list
 
         console.print("[red]There are no results found.[/red]")
@@ -115,7 +115,7 @@ def delete_result(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_results(results_list):
+def _display_results(results_list):
     """
     Display a list of results.
 

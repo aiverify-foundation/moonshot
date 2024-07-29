@@ -76,7 +76,7 @@ def list_context_strategies(args) -> list | None:
                 context_strategy_metadata_list, keyword, pagination
             )
             if filtered_context_strategies_list:
-                display_context_strategies(filtered_context_strategies_list)
+                _display_context_strategies(filtered_context_strategies_list)
                 return filtered_context_strategies_list
 
         console.print("[red]There are no context strategies found.[/red]")
@@ -126,7 +126,7 @@ def delete_context_strategy(args) -> None:
         print(f"[delete_context_strategy]: {str(e)}")
 
 
-def display_context_strategies(context_strategies: list) -> None:
+def _display_context_strategies(context_strategies: list) -> None:
     """
     Display a list of context strategies.
 

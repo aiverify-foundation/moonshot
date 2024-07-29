@@ -35,7 +35,7 @@ def list_prompt_templates(args) -> list | None:
                 prompt_templates_list, keyword, pagination
             )
             if filtered_prompt_templates_list:
-                display_prompt_templates(filtered_prompt_templates_list)
+                _display_prompt_templates(filtered_prompt_templates_list)
                 return filtered_prompt_templates_list
 
         console.print("[red]There are no prompt templates found.[/red]")
@@ -70,7 +70,7 @@ def delete_prompt_template(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_prompt_templates(prompt_templates) -> None:
+def _display_prompt_templates(prompt_templates) -> None:
     """
     Display the list of prompt templates in a formatted table.
 

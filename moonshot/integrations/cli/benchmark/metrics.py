@@ -18,7 +18,7 @@ def list_metrics(args) -> list | None:
     List all available metrics.
 
     This function retrieves all available metrics by calling the api_get_all_metric function from the
-    moonshot.api module. It then displays the metrics using the display_metrics function. If an exception occurs,
+    moonshot.api module. It then displays the metrics using the _display_metrics function. If an exception occurs,
     it prints an error message.
 
     Args:
@@ -39,7 +39,7 @@ def list_metrics(args) -> list | None:
         if metrics_list:
             filtered_metrics_list = filter_data(metrics_list, keyword, pagination)
             if filtered_metrics_list:
-                display_metrics(filtered_metrics_list)
+                _display_metrics(filtered_metrics_list)
                 return filtered_metrics_list
 
         console.print("[red]There are no metrics found.[/red]")
@@ -54,7 +54,7 @@ def view_metric(args) -> None:
 
     This function retrieves all available metrics and their names by calling the api_get_all_metric and
     api_get_all_metric_name functions. It then finds the metric with the name specified in args.metric_filename
-    and displays it using the display_metrics function. If an exception occurs, it prints an error message.
+    and displays it using the _display_metrics function. If an exception occurs, it prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -70,8 +70,8 @@ def view_metric(args) -> None:
 
         # Find the index of the metric with the name args.metric_filename
         metric_index = metrics_name_list.index(args.metric_filename)
-        # Pass the corresponding metric from metrics_list to display_metrics
-        display_metrics([metrics_list[metric_index]])
+        # Pass the corresponding metric from metrics_list to _display_metrics
+        _display_metrics([metrics_list[metric_index]])
 
     except Exception as e:
         print(f"[view_metric]: {str(e)}")
@@ -110,7 +110,7 @@ def delete_metric(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_metrics(metrics_list: list):
+def _display_metrics(metrics_list: list):
     """
     Displays a list of metrics in a table format.
 

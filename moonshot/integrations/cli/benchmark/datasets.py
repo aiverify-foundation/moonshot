@@ -23,7 +23,7 @@ def list_datasets(args) -> list | None:
     List all available datasets.
 
     This function retrieves all available datasets by calling the api_get_all_datasets function from the
-    moonshot.api module. It then displays the datasets using the display_datasets function. If an exception occurs,
+    moonshot.api module. It then displays the datasets using the _display_datasets function. If an exception occurs,
     it prints an error message.
 
     Args:
@@ -43,7 +43,7 @@ def list_datasets(args) -> list | None:
         if datasets_list:
             filtered_datasets_list = filter_data(datasets_list, keyword, pagination)
             if filtered_datasets_list:
-                display_datasets(filtered_datasets_list)
+                _display_datasets(filtered_datasets_list)
                 return filtered_datasets_list
 
         console.print("[red]There are no datasets found.[/red]")
@@ -58,7 +58,7 @@ def view_dataset(args) -> None:
 
     This function retrieves all available datasets and their names by calling the api_get_all_datasets and
     api_get_all_datasets_name functions. It then finds the dataset with the name specified in args.dataset_filename
-    and displays it using the display_datasets function. If an exception occurs, it prints an error message.
+    and displays it using the _display_datasets function. If an exception occurs, it prints an error message.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -74,8 +74,8 @@ def view_dataset(args) -> None:
 
         # Find the index of the dataset with the name args.dataset_filename
         dataset_index = datasets_name_list.index(args.dataset_filename)
-        # Pass the corresponding dataset from datasets_list to display_datasets
-        display_datasets([datasets_list[dataset_index]])
+        # Pass the corresponding dataset from datasets_list to _display_datasets
+        _display_datasets([datasets_list[dataset_index]])
 
     except Exception as e:
         print(f"[view_dataset]: {str(e)}")
@@ -114,7 +114,7 @@ def delete_dataset(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_datasets(datasets_list: list):
+def _display_datasets(datasets_list: list):
     """
     Displays a list of datasets in a table format.
 

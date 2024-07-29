@@ -22,7 +22,7 @@ def list_runs(args) -> list | None:
     List all runs.
 
     This function retrieves all available runs by calling the api_get_all_run function from the
-    moonshot.api module. It then calls the display_runs function to present the retrieved run information
+    moonshot.api module. It then calls the _display_runs function to present the retrieved run information
     in a user-friendly format on the command line interface. If an exception occurs during the retrieval
     or display process, it prints an error message.
 
@@ -43,7 +43,7 @@ def list_runs(args) -> list | None:
         if runner_run_info:
             filtered_runs_list = filter_data(runner_run_info, keyword, pagination)
             if filtered_runs_list:
-                display_runs(filtered_runs_list)
+                _display_runs(filtered_runs_list)
                 return filtered_runs_list
 
         console.print("[red]There are no runs found.[/red]")
@@ -58,7 +58,7 @@ def view_run(args) -> None:
     View the details of a specific run.
 
     This function retrieves and displays information about a specific run associated with a runner. It uses the runner
-    identifier provided in the arguments to fetch the data and then calls the display_runs function to present it in a
+    identifier provided in the arguments to fetch the data and then calls the _display_runs function to present it in a
     user-friendly format.
 
     Args:
@@ -70,7 +70,7 @@ def view_run(args) -> None:
     """
     try:
         runner_run_info = api_get_all_run(args.runner_id)
-        display_runs(runner_run_info)
+        _display_runs(runner_run_info)
     except Exception as e:
         print(f"[view_run]: {str(e)}")
 
@@ -78,7 +78,7 @@ def view_run(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_runs(runs_list: list):
+def _display_runs(runs_list: list):
     """
     Display a list of runs in a table format.
 
