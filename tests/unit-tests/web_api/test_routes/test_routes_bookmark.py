@@ -72,7 +72,6 @@ def test_get_all_bookmarks(test_client, mock_bookmark_service, bookmark_id, mock
 
     # Make the GET request to the API
     response = test_client.get(f"/api/v1/bookmarks?id={bookmark_id}" if bookmark_id else "/api/v1/bookmarks")
-    print(response.json())
     # Assert the status code and response match the expected values
     assert response.status_code == expected_status
     assert response.json() == expected_response
