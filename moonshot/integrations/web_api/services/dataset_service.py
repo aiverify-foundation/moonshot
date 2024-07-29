@@ -5,9 +5,10 @@ from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 from .utils.file_manager import copy_file
 
+
 class DatasetService(BaseService):
     @exception_handler
-    def create_dataset(self, dataset_data: DatasetCreateDTO, method: str)-> str:
+    def create_dataset(self, dataset_data: DatasetCreateDTO, method: str) -> str:
         """
         Create a dataset using the specified method.
 
@@ -25,7 +26,7 @@ class DatasetService(BaseService):
             reference=dataset_data.reference,
             license=dataset_data.license,
             method=method,
-            **dataset_data.params
+            **dataset_data.params,
         )
         return copy_file(new_ds_path)
 

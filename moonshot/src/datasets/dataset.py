@@ -79,7 +79,9 @@ class Dataset:
             }
 
             # Write as JSON output
-            file_path = Storage.create_object(EnvVariables.DATASETS.name, ds_id, ds_info, "json")
+            file_path = Storage.create_object(
+                EnvVariables.DATASETS.name, ds_id, ds_info, "json"
+            )
             print(file_path)
             return file_path
 

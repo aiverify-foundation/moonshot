@@ -14,7 +14,10 @@ router = APIRouter(tags=["Datasets"])
 @inject
 def create_dataset(
     dataset_data: DatasetCreateDTO,
-    method: str = Query(..., description="The method to use for creating the dataset. Supported methods are 'hf' and 'csv'."),
+    method: str = Query(
+        ...,
+        description="The method to use for creating the dataset. Supported methods are 'hf' and 'csv'.",
+    ),
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
 ) -> str:
     """
