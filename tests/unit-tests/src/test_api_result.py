@@ -53,7 +53,7 @@ class TestCollectionApiResult:
                 {
                     "expected_output": {
                         "metadata": {
-                            "id": "my-new-recipe-runner",
+                            "id": "my-new-recipe-runner-result",
                             "start_time": "2024-05-21 23:19:58",
                             "end_time": "2024-05-21 23:20:01",
                             "duration": 2,
@@ -268,7 +268,7 @@ class TestCollectionApiResult:
                     "expected_output": [
                         {
                             "metadata": {
-                                "id": "my-new-recipe-runner",
+                                "id": "my-new-recipe-runner-result",
                                 "start_time": "2024-05-21 23:19:58",
                                 "end_time": "2024-05-21 23:20:01",
                                 "duration": 2,
@@ -645,7 +645,7 @@ class TestCollectionApiResult:
         expected_results = [
             {
                 "metadata": {
-                    "id": "my-new-recipe-runner",
+                    "id": "my-new-recipe-runner-result",
                     "start_time": "2024-05-21 23:19:58",
                     "end_time": "2024-05-21 23:20:01",
                     "duration": 2,

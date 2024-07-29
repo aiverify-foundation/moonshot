@@ -25,7 +25,6 @@ class Recipe:
         self.datasets = rec_args.datasets
         self.prompt_templates = rec_args.prompt_templates
         self.metrics = rec_args.metrics
-        self.attack_modules = rec_args.attack_modules
         self.grading_scale = rec_args.grading_scale
         self.stats = rec_args.stats
 
@@ -76,7 +75,6 @@ class Recipe:
                 "datasets": rec_args.datasets,
                 "prompt_templates": rec_args.prompt_templates,
                 "metrics": rec_args.metrics,
-                "attack_modules": rec_args.attack_modules,
                 "grading_scale": rec_args.grading_scale,
             }
 
@@ -95,12 +93,6 @@ class Recipe:
             )
             Recipe.check_file_exists(
                 EnvVariables.METRICS.name, rec_args.metrics, "Metric", "py"
-            )
-            Recipe.check_file_exists(
-                EnvVariables.ATTACK_MODULES.name,
-                rec_args.attack_modules,
-                "Attack Module",
-                "py",
             )
 
             # Write as json output
@@ -191,7 +183,6 @@ class Recipe:
             "num_of_datasets": len(obj_results["datasets"]),
             "num_of_prompt_templates": len(obj_results["prompt_templates"]),
             "num_of_metrics": len(obj_results["metrics"]),
-            "num_of_attack_modules": len(obj_results["attack_modules"]),
             "num_of_datasets_prompts": {},
         }
 
@@ -246,12 +237,6 @@ class Recipe:
             )
             Recipe.check_file_exists(
                 EnvVariables.METRICS.name, rec_args.metrics, "Metric", "py"
-            )
-            Recipe.check_file_exists(
-                EnvVariables.ATTACK_MODULES.name,
-                rec_args.attack_modules,
-                "Attack Module",
-                "py",
             )
 
             # Persist the updated recipe information to storage

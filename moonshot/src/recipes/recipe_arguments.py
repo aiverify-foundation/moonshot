@@ -27,9 +27,6 @@ class RecipeArguments(BaseModel):
     # metrics (list): The list of metrics in the recipe.
     metrics: list[str] = Field(min_length=1)
 
-    # attack_modules (list): The list of attack modules in the recipe.
-    attack_modules: list[str]
-
     # grading_scale (dict): A dictionary where keys are grading categories and values are lists of grading scale.
     grading_scale: dict[str, list[int]]
 
@@ -105,7 +102,6 @@ class RecipeArguments(BaseModel):
             "datasets": self.datasets,
             "prompt_templates": self.prompt_templates,
             "metrics": self.metrics,
-            "attack_modules": self.attack_modules,
             "grading_scale": self.grading_scale,
             "stats": self.stats,
         }

@@ -89,7 +89,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe"},
@@ -103,7 +102,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe-1"},
@@ -117,7 +115,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-rec-ipe-1-23"},
@@ -131,7 +128,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -148,7 +144,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe"},
@@ -162,7 +157,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": [],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe"},
@@ -176,7 +170,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe"},
@@ -190,7 +183,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {"expected_output": True, "expected_id": "my-new-recipe"},
@@ -205,7 +197,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -224,7 +215,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -242,7 +232,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -260,7 +249,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -278,7 +266,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -297,7 +284,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -316,7 +302,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -335,7 +320,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -354,7 +338,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -374,7 +357,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -393,7 +375,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -412,7 +393,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -432,7 +412,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -451,7 +430,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -470,7 +448,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -490,7 +467,6 @@ class TestCollectionApiRecipe:
                     "datasets": {},
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -509,7 +485,6 @@ class TestCollectionApiRecipe:
                     "datasets": None,
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -528,7 +503,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy", 123],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -547,7 +521,6 @@ class TestCollectionApiRecipe:
                     "datasets": [],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -567,7 +540,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": {},
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -586,7 +558,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": None,
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -605,7 +576,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity", 123],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -625,7 +595,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": {},
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -644,7 +613,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": None,
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -663,7 +631,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch", 123],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
@@ -682,52 +649,12 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": [],
-                    "attack_modules": [],
                     "grading_scale": {},
                 },
                 {
                     "expected_output": False,
                     "expected_id": "my-new-recipe",
                     "expected_error_message": "List should have at least 1 item after validation, not 0",
-                    "expected_exception": "ValidationError",
-                },
-            ),
-            # Invalid cases for attack_modules
-            (
-                {
-                    "name": "my-new-recipe",
-                    "description": "My new Recipe!",
-                    "tags": ["food"],
-                    "categories": ["fairness"],
-                    "datasets": ["arc-easy"],
-                    "prompt_templates": ["analogical-similarity"],
-                    "metrics": ["exactstrmatch"],
-                    "attack_modules": None,
-                    "grading_scale": {},
-                },
-                {
-                    "expected_output": False,
-                    "expected_id": "my-new-recipe",
-                    "expected_error_message": "Input should be a valid list",
-                    "expected_exception": "ValidationError",
-                },
-            ),
-            (
-                {
-                    "name": "my-new-recipe",
-                    "description": "My new Recipe!",
-                    "tags": ["food"],
-                    "categories": ["fairness"],
-                    "datasets": ["arc-easy"],
-                    "prompt_templates": ["analogical-similarity"],
-                    "metrics": ["exactstrmatch"],
-                    "attack_modules": "None",
-                    "grading_scale": {},
-                },
-                {
-                    "expected_output": False,
-                    "expected_id": "my-new-recipe",
-                    "expected_error_message": "Input should be a valid list",
                     "expected_exception": "ValidationError",
                 },
             ),
@@ -741,7 +668,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": None,
                 },
                 {
@@ -760,7 +686,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": "None",
                 },
                 {
@@ -779,7 +704,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": [],
                 },
                 {
@@ -798,7 +722,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": "",
                 },
                 {
@@ -817,7 +740,6 @@ class TestCollectionApiRecipe:
                     "datasets": ["arc-easy"],
                     "prompt_templates": ["analogical-similarity"],
                     "metrics": ["exactstrmatch"],
-                    "attack_modules": [],
                     "grading_scale": "None",
                 },
                 {
@@ -856,7 +778,6 @@ class TestCollectionApiRecipe:
                     input_args["datasets"],
                     input_args["prompt_templates"],
                     input_args["metrics"],
-                    input_args["attack_modules"],
                     input_args["grading_scale"],
                 )
                 == expected_dict["expected_id"]
@@ -873,7 +794,6 @@ class TestCollectionApiRecipe:
                         input_args["datasets"],
                         input_args["prompt_templates"],
                         input_args["metrics"],
-                        input_args["attack_modules"],
                         input_args["grading_scale"],
                     )
                 assert e.value.args[0] == expected_dict["expected_error_message"]
@@ -888,7 +808,6 @@ class TestCollectionApiRecipe:
                         input_args["datasets"],
                         input_args["prompt_templates"],
                         input_args["metrics"],
-                        input_args["attack_modules"],
                         input_args["grading_scale"],
                     )
                 assert len(e.value.errors()) == 1
@@ -920,7 +839,6 @@ class TestCollectionApiRecipe:
                         "datasets": ["arc-easy"],
                         "prompt_templates": ["mcq-template"],
                         "metrics": ["exactstrmatch"],
-                        "attack_modules": [],
                         "grading_scale": {
                             "A": [80, 100],
                             "B": [60, 79],
@@ -933,7 +851,6 @@ class TestCollectionApiRecipe:
                             "num_of_datasets": 1,
                             "num_of_prompt_templates": 1,
                             "num_of_metrics": 1,
-                            "num_of_attack_modules": 0,
                             "num_of_datasets_prompts": {"arc-easy": 1},
                         },
                     }
@@ -1053,7 +970,6 @@ class TestCollectionApiRecipe:
                             "datasets": ["arc-easy"],
                             "prompt_templates": ["mcq-template"],
                             "metrics": ["exactstrmatch"],
-                            "attack_modules": [],
                             "grading_scale": {
                                 "A": [80, 100],
                                 "B": [60, 79],
@@ -1066,7 +982,6 @@ class TestCollectionApiRecipe:
                                 "num_of_datasets": 1,
                                 "num_of_prompt_templates": 1,
                                 "num_of_metrics": 1,
-                                "num_of_attack_modules": 0,
                                 "num_of_datasets_prompts": {"arc-easy": 1},
                             },
                         }
@@ -1534,7 +1449,6 @@ class TestCollectionApiRecipe:
                 "datasets": ["arc-easy"],
                 "prompt_templates": ["mcq-template"],
                 "metrics": ["exactstrmatch"],
-                "attack_modules": [],
                 "grading_scale": {
                     "A": [80, 100],
                     "B": [60, 79],
@@ -1547,7 +1461,6 @@ class TestCollectionApiRecipe:
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 0,
                     "num_of_datasets_prompts": {"arc-easy": 1},
                 },
             }
