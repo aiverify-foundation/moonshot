@@ -35,6 +35,7 @@ def ms_lib_env_file(data_repo_name):
     env_content_data = f"""
     # For Data
     ATTACK_MODULES="./{data_repo_name}/attack-modules"
+    BOOKMARKS="./{data_repo_name}/generated-outputs/bookmarks"
     CONNECTORS="./{data_repo_name}/connectors"
     CONNECTORS_ENDPOINTS="./{data_repo_name}/connectors-endpoints"
     CONTEXT_STRATEGY="./{data_repo_name}/context-strategy"
