@@ -600,7 +600,7 @@ def run_attack_module(args):
         if args.prompt_template:
             prompt_template = [args.prompt_template]
         elif active_session["prompt_template"]:
-            prompt_template = [args.prompt_template]
+            prompt_template = [active_session["prompt_template"]]
         else:
             prompt_template = []
 
