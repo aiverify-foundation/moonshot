@@ -82,7 +82,6 @@ class Dataset:
             file_path = Storage.create_object(
                 EnvVariables.DATASETS.name, ds_id, ds_info, "json"
             )
-            print(file_path)
             return file_path
 
         except Exception as e:

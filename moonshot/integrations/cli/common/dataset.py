@@ -8,8 +8,23 @@ from moonshot.api import (
 )
 
 console = Console()
-
 def add_dataset(args) -> None:
+    """
+    Create a new dataset using the provided arguments and log the result.
+
+    This function attempts to create a new dataset by calling the `api_create_datasets`
+    function with the necessary parameters extracted from `args`. If successful, it logs
+    the creation of the dataset with its ID. If an exception occurs, it logs the error.
+
+    Args:
+        args: An argparse.Namespace object containing the following attributes:
+            - name (str): Name of the new dataset.
+            - description (str): Description of the new dataset.
+            - reference (str): Reference URL for the new dataset.
+            - license (str): License type for the new dataset.
+            - method (str): Method to convert the new dataset ('hf' or 'csv').
+            - params (dict): Additional parameters for dataset creation.
+    """
     try:
         new_dataset_id = api_create_datasets(
             args.name,

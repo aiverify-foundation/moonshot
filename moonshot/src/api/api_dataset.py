@@ -63,6 +63,7 @@ def api_create_datasets(
         description (str): A brief description of the new dataset.
         reference (str): A reference link for the new dataset.
         license (str): The license of the new dataset.
+        method (str): The method to create new dataset. (csv/hf)
         kwargs: Additional keyword arguments for the Dataset's create method.
 
     Returns:
