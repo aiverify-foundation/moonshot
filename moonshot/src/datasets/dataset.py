@@ -85,7 +85,7 @@ class Dataset:
             return file_path
 
         except Exception as e:
-            print(f"Failed to create dataset: {str(e)}")
+            logger.error(f"Failed to create dataset: {str(e)}")
             raise e
 
     @staticmethod
