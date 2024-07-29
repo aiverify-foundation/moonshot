@@ -349,18 +349,18 @@ class TestBenchmarkingCLI:
                 "Prompt Template mmlux does not exist."
             ),
 
-            # # Failure: Add with incorrect parameter type for lists
-            # (
-            #     ["add_recipe 'My unit test recipe' "
-            #     "'hello world description?!' "
-            #     "\"['category1','category2']\" "
-            #     "\"['bbq-lite-age-ambiguous']\" "
-            #     "\"['bertscore','bleuscore']\" " 
-            #     "-p \"['analogical-similarity','mmlu']\" "
-            #     "-t \"['tag1','tag2']\" "
-            #     "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
-            #     "[add_recipe]: 1 validation error for api_create_recipe"              
-            # ),
+            # Failure: Add with incorrect parameter type for lists
+            (
+                ["add_recipe 'My unit test recipe' "
+                "'hello world description?!' "
+                "\"['category1','category2']\" "
+                "\"['bbq-lite-age-ambiguous']\" "
+                "\"['bertscore','bleuscore']\" " 
+                "-p \"['analogical-similarity','mmlu']\" "
+                "-t \"'tag1'\" "
+                "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" "],
+                "[add_recipe]: 1 validation error for api_create_recipe"              
+            ),
 
             # Failure: Add with unknown flag           
             (
