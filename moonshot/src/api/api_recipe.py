@@ -16,7 +16,6 @@ def api_create_recipe(
     datasets: list[str],
     prompt_templates: list[str],
     metrics: list[str],
-    attack_modules: list[str],
     grading_scale: dict[str, list[int]],
 ) -> str:
     """
@@ -34,7 +33,6 @@ def api_create_recipe(
         datasets (list[str]): A list of datasets used in the recipe.
         prompt_templates (list[str]): A list of prompt templates for the recipe.
         metrics (list[str]): A list of metrics to evaluate the recipe.
-        attack_modules (list[str]): A list of attack modules used in the recipe.
         grading_scale (dict[str, list[int]]): A grading scale dictionary where the key is the grade and the
         value is a list of integers representing the scale.
 
@@ -50,7 +48,6 @@ def api_create_recipe(
         datasets=datasets,
         prompt_templates=prompt_templates,
         metrics=metrics,
-        attack_modules=attack_modules,
         grading_scale=grading_scale,
     )
     return Recipe.create(rec_args)
