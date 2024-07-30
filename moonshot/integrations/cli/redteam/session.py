@@ -131,19 +131,18 @@ def end_session() -> None:
 
 def list_sessions(args) -> list | None:
     """
-        Retrieves and displays the list of sessions.
+    Retrieves and displays the list of sessions.
 
-        This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
-        If no sessions are found, a message is printed to the console.
-    telegram
+    This function retrieves the metadata in dict for all sessions and displays them in a tabular format.
+    If no sessions are found, a message is printed to the console.
 
-        Args:
-            args: A namespace object from argparse. It should have an optional attribute:
-            find (str): Optional field to find session(s) with a keyword.
-            pagination (str): Optional field to paginate sessions.
+    Args:
+        args: A namespace object from argparse. It should have an optional attribute:
+        find (str): Optional field to find session(s) with a keyword.
+        pagination (str): Optional field to paginate sessions.
 
-        Returns:
-            list | None: A list of Session or None if there is no result.
+    Returns:
+        list | None: A list of Session or None if there is no result.
     """
     try:
         session_metadata_list = api_get_all_session_metadata()
@@ -155,7 +154,7 @@ def list_sessions(args) -> list | None:
                 session_metadata_list, keyword, pagination
             )
             if filtered_session_metadata_list:
-                display_sessions(filtered_session_metadata_list)
+                _display_sessions(filtered_session_metadata_list)
                 return filtered_session_metadata_list
 
         console.print("[red]There are no sessions found.[/red]")
@@ -365,7 +364,7 @@ def list_bookmarks(args) -> list | None:
 
     This function retrieves all available bookmarks by calling the api_get_all_bookmarks function from the
     moonshot.api module.
-    It then displays the retrieved bookmarks using the display_bookmarks function.
+    It then displays the retrieved bookmarks using the _display_bookmarks function.
     If no bookmarks are found, a message is printed to the console.
 
     Args:
@@ -384,7 +383,7 @@ def list_bookmarks(args) -> list | None:
         if bookmarks_list:
             filtered_bookmarks_list = filter_data(bookmarks_list, keyword, pagination)
             if filtered_bookmarks_list:
-                display_bookmarks(filtered_bookmarks_list)
+                _display_bookmarks(filtered_bookmarks_list)
                 return filtered_bookmarks_list
 
         console.print("[red]There are no bookmarks found.[/red]")
@@ -394,7 +393,7 @@ def list_bookmarks(args) -> list | None:
         print(f"[list_bookmarks]: {str(e)}")
 
 
-def display_bookmarks(bookmarks_list) -> None:
+def _display_bookmarks(bookmarks_list) -> None:
     """
     Display the list of bookmarks in a tabular format.
 
@@ -450,12 +449,12 @@ def view_bookmark(args) -> None:
 
     try:
         bookmark_info = api_get_bookmark(args.bookmark_name)
-        display_bookmark(bookmark_info)
+        _display_bookmark(bookmark_info)
     except Exception as e:
         print(f"[view_bookmark]: {str(e)}")
 
 
-def display_bookmark(bookmark_info: dict) -> None:
+def _display_bookmark(bookmark_info: dict) -> None:
     """
     Display the filtered bookmark in a tabular format.
 
@@ -707,7 +706,7 @@ def delete_session(args) -> None:
         print(f"[delete_session]: {str(e)}")
 
 
-def display_sessions(sessions: list) -> None:
+def _display_sessions(sessions: list) -> None:
     """
     Display a list of sessions.
 
