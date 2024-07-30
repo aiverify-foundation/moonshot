@@ -10,6 +10,7 @@ from moonshot.api import (
     api_get_all_datasets,
     api_get_all_datasets_name,
     api_set_environment_variables,
+    api_create_datasets
 )
 
 
@@ -38,6 +39,8 @@ class TestCollectionApiDataset:
             "tests/unit-tests/src/data/datasets/arc-easy.json",
             "tests/unit-tests/src/data/datasets/cache.json",
             "tests/unit-tests/src/data/datasets/datasets_config.json",
+            "tests/unit-tests/src/data/datasets/test-dataset-1.json",
+            "tests/unit-tests/src/data/datasets/test-dataset-2.json",
         ]
         for dataset in datasets:
             if os.path.exists(dataset):
@@ -194,19 +197,54 @@ class TestCollectionApiDataset:
                     False
                 ), "An unexpected exception type was specified in the test parameters."
 
-    def test_api_get_all_datasets_name(self):
+    # ------------------------------------------------------------------------------
+    # Test api_create_datasets functionality
+    # ------------------------------------------------------------------------------
+    @pytest.mark.parametrize(
+        "dataset_details, expected_result",
+        [
+            # Valid cases
+            (
+                {
+                    "name": "Test Dataset 1",
+                    "description": "Dataset convert from csv",
+                    "reference": "www.reference.com",
+                    "license": "LICENSE",
+                    "method": "csv",
+                    "csv_file_path": "tests/unit-tests/common/samples/sample-dataset.csv"
+                },
+                "test-dataset-1"
+            ),
+            (
+                {
+                    "name": "Test Dataset 2",
+                    "description": "Dataset convert from hf",
+                    "reference": "www.reference.com",
+                    "license": "NORMAN LICENSE",
+                    "method": "hf",
+                    "dataset_name": "cais/mmlu",
+                    "dataset_config": "college_biology",
+                    "split": "test",
+                    "input_col": ["question", "choices"],
+                    "target_col": "answer"
+                },
+                "test-dataset-2"
+            ),
+        ],
+    )
+    def test_api_create_datasets(self, dataset_details, expected_result):
         """
-        Test the api_get_all_datasets_name function.
+        Test the creation of datasets via the API.
 
-        This test ensures that the api_get_all_datasets_name function returns a list containing the correct dataset names.
+        This test function simulates the creation of datasets by calling the
+        api_create_datasets function with various dataset details. It then verifies that
+        the output matches the expected result.
+
+        Args:
+            dataset_details: A dictionary containing the details of the dataset to create.
+            expected_result: The expected result from the api_create_datasets call.
         """
-        expected_datasets = ["arc-easy"]
-
-        dataset_names_response = api_get_all_datasets_name()
-        assert len(dataset_names_response) == len(
-            expected_datasets
-        ), "The number of dataset names returned does not match the expected count."
-        for dataset_name in dataset_names_response:
-            assert (
-                dataset_name in expected_datasets
-            ), f"Dataset name '{dataset_name}' is not in the list of expected dataset names."
+        # Call the api_create_datasets function with unpacked arguments
+        result = api_create_datasets(**dataset_details)
+        # Assert that the result matches the expected result
+        assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."

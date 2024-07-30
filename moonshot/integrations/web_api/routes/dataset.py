@@ -1,12 +1,57 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..container import Container
+from ..schemas.dataset_create_dto import DatasetCreateDTO
 from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.dataset_service import DatasetService
 from ..services.utils.exceptions_handler import ServiceException
 
 router = APIRouter(tags=["Datasets"])
+
+
+@router.post("/api/v1/datasets")
+@inject
+def create_dataset(
+    dataset_data: DatasetCreateDTO,
+    method: str = Query(
+        ...,
+        description="The method to use for creating the dataset. Supported methods are 'hf' and 'csv'.",
+    ),
+    dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
+) -> str:
+    """
+    Create a new dataset using the specified method.
+
+    Args:
+        dataset_data (DatasetCreateDTO): The data required to create the dataset.
+        method (str): The method to use for creating the dataset. Supported methods are "hf" and "csv".
+        dataset_service (DatasetService, optional): The service responsible for creating the dataset.
+        Defaults to Depends(Provide[Container.dataset_service]).
+
+    Returns:
+        dict: A message indicating the dataset was created successfully.
+
+    Raises:
+        HTTPException: An error with status code 404 if the dataset file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
+    try:
+        return dataset_service.create_dataset(dataset_data, method)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to retrieve datasets: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to retrieve datasets: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to retrieve datasets: {e.msg}"
+            )
 
 
 @router.get("/api/v1/datasets")
