@@ -13,7 +13,6 @@ class RecipeCreateDTO(RecipePydanticModel):
     datasets: list[str] = Field(..., min_length=1)
     metrics: list[str] = Field(..., min_length=1)
     prompt_templates: Optional[list[str]] = None
-    attack_modules: Optional[list[str]] = None
     grading_scale: Optional[dict[str, list[int]]] = None
     stats: Optional[dict] = None
 
@@ -27,6 +26,5 @@ class RecipeUpdateDTO(RecipePydanticModel):
     datasets: Optional[list[str]] = None
     prompt_templates: Optional[list[str]] = None
     metrics: Optional[list[str]] = None
-    attack_modules: Optional[list[str]] = None
     grading_scale: Optional[dict[str, list[int]]] = None
     stats: Optional[dict] = None
