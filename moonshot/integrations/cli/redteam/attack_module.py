@@ -1,13 +1,18 @@
+from ast import literal_eval
+
 import cmd2
 from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_attack_module, api_get_all_attack_module_metadata
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
 
+# ------------------------------------------------------------------------------
+# CLI Functions
+# ------------------------------------------------------------------------------
 def list_attack_modules(args) -> list | None:
     """
     Retrieves and prints the metadata of all attack modules.
@@ -15,6 +20,7 @@ def list_attack_modules(args) -> list | None:
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find attack module(s) with a keyword.
+        pagination (str): Optional field to paginate attack modules.
 
     Returns:
          list | None: A list of AttackModule or None if there is no result.
@@ -23,19 +29,19 @@ def list_attack_modules(args) -> list | None:
         print("Listing attack modules may take a while...")
         attack_module_metadata_list = api_get_all_attack_module_metadata()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_attack_modules_list = find_keyword(
-                keyword, attack_module_metadata_list
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if attack_module_metadata_list:
+            filtered_attack_modules_list = filter_data(
+                attack_module_metadata_list, keyword, pagination
             )
             if filtered_attack_modules_list:
-                display_attack_modules(filtered_attack_modules_list)
+                _display_attack_modules(filtered_attack_modules_list)
                 return filtered_attack_modules_list
-            else:
-                print("No attack modules containing keyword found.")
-                return None
-        else:
-            display_attack_modules(attack_module_metadata_list)
-            return attack_module_metadata_list
+
+        console.print("[red]There are no attack modules found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_attack_modules]: {str(e)}")
 
@@ -62,7 +68,10 @@ def delete_attack_module(args) -> None:
         print(f"[delete_attack_module]: {str(e)}")
 
 
-def display_attack_modules(attack_modules: list) -> None:
+# ------------------------------------------------------------------------------
+# Helper functions: Display on cli
+# ------------------------------------------------------------------------------
+def _display_attack_modules(attack_modules: list) -> None:
     """
     Display a list of attack modules.
 
@@ -75,25 +84,23 @@ def display_attack_modules(attack_modules: list) -> None:
     Returns:
         None
     """
-    if attack_modules:
-        table = Table(
-            title="Attack Module List",
-            show_lines=True,
-            expand=True,
-            header_style="bold",
-        )
-        table.add_column("No.", width=2)
-        table.add_column("Details", justify="left", width=98)
+    table = Table(
+        title="Attack Module List",
+        show_lines=True,
+        expand=True,
+        header_style="bold",
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Details", justify="left", width=98)
 
-        for attack_module_index, attack_module_data in enumerate(attack_modules, 1):
-            attack_module_data_str = ""
-            for k, v in attack_module_data.items():
+    for idx, attack_module_data in enumerate(attack_modules, 1):
+        attack_module_data_str = ""
+        for k, v in attack_module_data.items():
+            if k != "idx":
                 attack_module_data_str += f"[blue]{k.capitalize()}:[/blue] {v}\n\n"
-            table.add_row(str(attack_module_index), attack_module_data_str)
-
-        console.print(table)
-    else:
-        console.print("[red]There are no attack modules found.[/red]", style="bold")
+        idx = attack_module_data.get("idx", idx)
+        table.add_row(str(idx), attack_module_data_str)
+    console.print(table)
 
 
 # Delete attack module arguments
@@ -117,5 +124,13 @@ list_attack_modules_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find attack module(s) with keyword",
+    nargs="?",
+)
+
+list_attack_modules_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate attack module(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )
