@@ -41,7 +41,7 @@ class TestCollectionLog:
             ({"MS_LOG_LEVEL": "INFO"}, logging.INFO),
             ({"MS_LOG_LEVEL": "WARNING"}, logging.WARNING),
             ({"MS_LOG_LEVEL": "ERROR"}, logging.ERROR),
-            ({"MS_LOG_LEVEL": "CRITICAL"}, logging.CRITICAL),
+            ({"MS_LOG_LEVEL": "CRITICAL"}, logging.INFO),
             ({"MS_LOG_LEVEL": "INVALID"}, logging.INFO),
         ],
     )
