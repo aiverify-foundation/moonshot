@@ -213,7 +213,7 @@ class TestCollectionApiDataset:
                     "method": "csv",
                     "csv_file_path": "tests/unit-tests/common/samples/sample-dataset.csv"
                 },
-                "test-dataset-1"
+                "tests/unit-tests/src/data/datasets/test-dataset-1.json"
             ),
             (
                 {
@@ -228,7 +228,7 @@ class TestCollectionApiDataset:
                     "input_col": ["question", "choices"],
                     "target_col": "answer"
                 },
-                "test-dataset-2"
+                "tests/unit-tests/src/data/datasets/test-dataset-2.json"
             ),
         ],
     )

@@ -502,7 +502,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_recipes -f \"RandomArg\""],
-                "No recipes containing keyword found."
+                "There are no recipes found."
             ),
 
             # Failure: List with unknown flag
@@ -519,7 +519,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("wrong_recipes", "No recipes containing keyword found."),
+            ("wrong_recipes", "There are no recipes found."),
 
             # Success: results returned
             ("bbq", "bbq"),
@@ -529,6 +529,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_recipes(args)
@@ -554,7 +555,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_cookbooks -f \"RandomArg\""],
-                "No cookbooks containing keyword found."
+                "There are no cookbooks found."
             ),
 
             # Failure: List with unknown flag
@@ -571,7 +572,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-cookbook", "No cookbooks containing keyword found."),
+            ("no-such-cookbook", "There are no cookbooks found."),
 
             # Success: results returned
             ("chinese", "chinese-safety-cookbook"),
@@ -581,6 +582,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_cookbooks(args)
@@ -606,7 +608,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_datasets -f \"RandomArg\""],
-                "No datasets containing keyword found."
+                "There are no datasets found."
             ),
 
             # Failure: List with unknown flag
@@ -623,7 +625,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-dataset", "No datasets containing keyword found."),
+            ("no-such-dataset", "There are no datasets found."),
 
             # Success: results returned
             ("arc", "arc-easy"),
@@ -633,6 +635,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_datasets(args)
@@ -659,7 +662,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_metrics -f \"RandomArg\""],
-                "No metrics containing keyword found."
+                "There are no metrics found."
             ),
 
             # Failure: List with unknown flag
@@ -676,7 +679,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-metrics", "No metrics containing keyword found."),
+            ("no-such-metrics", "There are no metrics found."),
 
             # Success: results returned
             ("bert", "bertscore"),
@@ -686,6 +689,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_metrics(args)
@@ -966,7 +970,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_results -f \"RandomArg\""],
-                "No results containing keyword found."
+                "There are no results found."
             ),
 
             # Failure: List with unknown flag
@@ -983,7 +987,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-result", "No results containing keyword found."),
+            ("no-such-result", "There are no results found."),
 
             # # Success: results returned 
             # ("my-new-recipe-runner", "my-new-recipe-runner-result"),
@@ -993,6 +997,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_results(args)
@@ -1018,7 +1023,7 @@ class TestBenchmarkingCLI:
             # Success: Optional args with no results found
             (
                 ["list_runs -f \"RandomArg\""],
-                "No runs containing keyword found."
+                "There are no runs found."
             ),
 
             # Failure: List with unknown flag
@@ -1035,7 +1040,7 @@ class TestBenchmarkingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-run", "No runs containing keyword found."),
+            ("no-such-run", "There are no runs found."),
 
             # # Success: results returned
             # ("my-new-recipe-runner", "my-new-recipe-runner"),
@@ -1045,6 +1050,7 @@ class TestBenchmarkingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_runs(args)

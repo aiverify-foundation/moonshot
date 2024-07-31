@@ -271,7 +271,7 @@ class TestRedTeamingCLI:
             # Success: Optional args with no results found
             (
                 ["list_connector_types -f \"RandomArg\""],
-                "No connectors containing keyword found."
+                "There are no connector types found."
             ),
 
             # Failure: List with unknown flag
@@ -288,7 +288,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-connector", "No connectors containing keyword found."),
+            ("no-such-connector", "There are no connector types found."),
 
             # Success: results returned
             ("face", "huggingface-connector"),
@@ -298,6 +298,7 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_connector_types(args)
@@ -325,7 +326,7 @@ class TestRedTeamingCLI:
             # Success: Optional args with no results found
             (
                 ["list_endpoints -f \"RandomArg\""],
-                "No endpoints containing keyword found."
+                "There are no endpoints found."
             ),
 
             # Failure: List with unknown flag
@@ -342,7 +343,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-endpoint", "No endpoints containing keyword found."),
+            ("no-such-endpoint", "There are no endpoints found."),
 
             # Success: results returned
             ("3.5", "openai-gpt35-turbo"),
@@ -352,6 +353,7 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_endpoints(args)
@@ -374,7 +376,7 @@ class TestRedTeamingCLI:
             # Success: Optional args with no results found
             (
                 ["list_prompt_templates -f \"RandomArg\""],
-                "No prompt templates containing keyword found."
+                "There are no prompt templates found."
             ),
             # Failure: List with unknown flag
             (
@@ -390,7 +392,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-prompt-template", "No prompt templates containing keyword found."),
+            ("no-such-prompt-template", "There are no prompt templates found."),
 
             # Success: results returned
             ("mmlu", "mmlu"),
@@ -400,6 +402,7 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_prompt_templates(args)

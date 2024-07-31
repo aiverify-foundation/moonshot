@@ -336,7 +336,6 @@ def _display_recipes(recipes_list: list) -> None:
             datasets,
             prompt_templates,
             metrics,
-            attack_strategies,
             grading_scale,
             stats,
             *other_args,
@@ -349,9 +348,6 @@ def _display_recipes(recipes_list: list) -> None:
             "Prompt Templates", prompt_templates
         )
         metrics_info = display_view_list_format("Metrics", metrics)
-        attack_strategies_info = display_view_list_format(
-            "Attack Strategies", attack_strategies
-        )
         grading_scale_info = display_view_grading_scale_format(
             "Grading Scale", grading_scale
         )
@@ -361,7 +357,7 @@ def _display_recipes(recipes_list: list) -> None:
             f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
             f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
         )
-        contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
+        contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}"
 
         table.add_section()
         table.add_row(str(idx), recipe_info, contains_info)
