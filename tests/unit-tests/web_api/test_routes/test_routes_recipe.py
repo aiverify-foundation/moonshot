@@ -14,7 +14,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         None,
         200,
@@ -68,7 +67,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         None,
         200,
@@ -83,7 +81,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         None,
         200,
@@ -98,7 +95,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         None,
         200,
@@ -113,22 +109,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "categories": ["category1"],
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
-            "attack_modules": ["module1"],
-        },
-        None,
-        200,
-        {"message": "Recipe created successfully"}
-    ),
-    # Missing 'attack_modules'
-    (
-        {
-            "name": "Test Recipe",
-            "description": "A test recipe description",
-            "tags": ["tag1", "tag2"],
-            "categories": ["category1"],
-            "datasets": ["dataset1"],
-            "metrics": ["metric1"],
-            "prompt_templates": ["template1"],
         },
         None,
         200,
@@ -151,7 +131,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         ServiceException("A file not found error occurred", "create_recipe", "FileNotFound"),
         404, None
@@ -165,7 +144,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         ServiceException("A validation error occurred", "create_recipe", "ValidationError"),
         400, None
@@ -179,7 +157,6 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "datasets": ["dataset1"],
             "metrics": ["metric1"],
             "prompt_templates": ["template1"],
-            "attack_modules": ["module1"],
         },
         ServiceException("An unexpected error occurred", "create_recipe", "UnknownError"),
         500, None
@@ -214,14 +191,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -237,14 +212,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset2"],
                 "metrics": ["metric2"],
                 "prompt_templates": ["template2"],
-                "attack_modules": ["module2"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset2": 41665
                     }
@@ -264,14 +237,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -287,14 +258,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset2"],
                 "metrics": ["metric2"],
                 "prompt_templates": ["template2"],
-                "attack_modules": ["module2"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset2": 41665
                     }
@@ -316,14 +285,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -339,14 +306,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset3"],
                 "metrics": ["metric3"],
                 "prompt_templates": ["template3"],
-                "attack_modules": ["module3"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset3": 41665
                     }
@@ -366,14 +331,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -389,14 +352,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset3"],
                 "metrics": ["metric3"],
                 "prompt_templates": ["template3"],
-                "attack_modules": ["module3"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset3": 41665
                     }
@@ -418,14 +379,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -441,14 +400,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset4"],
                 "metrics": ["metric4"],
                 "prompt_templates": ["template4"],
-                "attack_modules": ["module4"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset4": 41665
                     }
@@ -468,14 +425,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset1"],
                 "metrics": ["metric1"],
                 "prompt_templates": ["template1"],
-                "attack_modules": ["module1"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset1": 41665
                     }
@@ -491,14 +446,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset4"],
                 "metrics": ["metric4"],
                 "prompt_templates": ["template4"],
-                "attack_modules": ["module4"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset4": 41665
                     }
@@ -520,14 +473,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset2"],
                 "metrics": ["metric2"],
                 "prompt_templates": ["template2"],
-                "attack_modules": ["module2"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset2": 41665
                     }
@@ -543,14 +494,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset5"],
                 "metrics": ["metric5"],
                 "prompt_templates": ["template5"],
-                "attack_modules": ["module5"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset5": 41665
                     }
@@ -570,14 +519,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset2"],
                 "metrics": ["metric2"],
                 "prompt_templates": ["template2"],
-                "attack_modules": ["module2"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 2,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset2": 41665
                     }
@@ -593,14 +540,12 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                 "datasets": ["dataset5"],
                 "metrics": ["metric5"],
                 "prompt_templates": ["template5"],
-                "attack_modules": ["module5"],
                 "grading_scale": {},
                 "stats": {
                     "num_of_tags": 1,
                     "num_of_datasets": 1,
                     "num_of_prompt_templates": 1,
                     "num_of_metrics": 1,
-                    "num_of_attack_modules": 1,
                     "num_of_datasets_prompts": {
                         "dataset5": 41665
                     }

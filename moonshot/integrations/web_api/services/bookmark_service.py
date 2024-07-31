@@ -52,18 +52,22 @@ class BookmarkService(BaseService):
     @exception_handler
     def delete_bookmarks(self, all: bool = False, name: str | None = None) -> dict:
         """
-        Deletes a single bookmark by its name or all bookmarks if the 'all' flag is set to True.
+        Deletes a single bookmark by its name or all bookmarks if the 'all' flag is set to True and returns
+        a boolean indicating the success of the operation.
 
         Args:
             all (bool, optional): If True, all bookmarks will be deleted. Defaults to False.
             name (str | None, optional): The name of the bookmark to delete. If 'all' is False, 'name' must be provided.
+
+        Returns:
+            dict: True if the deletion was successful, False otherwise.
         """
         if all:
             result = moonshot_api.api_delete_all_bookmark()
         elif name is not None:
             result = moonshot_api.api_delete_bookmark(name)
         else:
-            raise ValueError("Either 'all' must be True or 'id' must be provided.")
+            raise ValueError("Either 'all' must be True or 'name' must be provided.")
 
         if not result["success"]:
             raise Exception(

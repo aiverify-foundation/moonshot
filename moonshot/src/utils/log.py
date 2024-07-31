@@ -47,14 +47,20 @@ def configure_logger(name: str):
     logger.setLevel(log_level)
     logger.propagate = False
 
-    # Create a console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(log_level)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
+    # Check if there is already a stream handler
+    if not any(
+        isinstance(handler, logging.StreamHandler) for handler in logger.handlers
+    ):
+        # Create a console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(log_level)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
     # Create a file handler if required
-    if log_write_to_file:
+    if log_write_to_file and not any(
+        isinstance(handler, logging.FileHandler) for handler in logger.handlers
+    ):
         file_path = Path(".").joinpath(log_filename).with_suffix(log_extension)
         file_handler = logging.FileHandler(
             str(file_path)

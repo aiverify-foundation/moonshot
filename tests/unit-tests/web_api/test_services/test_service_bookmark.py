@@ -11,20 +11,24 @@ MOCK_BOOKMARKS = [
         "id": 1,
         "name": "Bookmark 1",
         "prompt": "Prompt 1",
+        "prepared_prompt": "Prepared Prompt",
         "response": "Response 1",
         "context_strategy": "Strategy 1",
         "prompt_template": "Template 1",
         "attack_module": "Module 1",
+        "metric": "Metric",
         "bookmark_time": "2024-0704 15:00:00"
     },
     {
         "id": 2,
         "name": "Bookmark 2",
         "prompt": "Prompt 2",
+        "prepared_prompt": "Prepared Prompt",
         "response": "Response 2",
         "context_strategy": "Strategy 2",
         "prompt_template": "Template 2",
         "attack_module": "Module 2",
+        "metric": "Metric",
         "bookmark_time": "2024-0704 15:00:00"
     }
 ]
@@ -32,10 +36,12 @@ MOCK_BOOKMARKS = [
 MOCK_BOOKMARK_CREATE_DTO = BookmarkCreateDTO(
     name="New Bookmark",
     prompt="New Prompt",
+    prepared_prompt="Prepared Prompt",
     response="New Response",
     context_strategy="New Strategy",
     prompt_template="New Template",
-    attack_module="New Module"
+    attack_module="New Module",
+    metric= "Metric"
 )
 
 # Exception scenarios to test
@@ -91,12 +97,12 @@ def test_insert_bookmark_exceptions(mock_moonshot_api, exception, error_code, bo
     assert exc_info.value.error_code == error_code
 
 @patch('moonshot.integrations.web_api.services.bookmark_service.moonshot_api')
-def test_delete_bookmark_by_id_success(mock_moonshot_api, bookmark_service):
+def test_delete_bookmark_success(mock_moonshot_api, bookmark_service):
     """
     Test case for successful deletion of a single bookmark by ID.
     """
     mock_moonshot_api.api_delete_bookmark.return_value = {"success": True}
-    result = bookmark_service.delete_bookmarks(all=False, id=1)
+    result = bookmark_service.delete_bookmarks(all=False, name="bookmark")
     assert result == {"success": True}
 
 @patch('moonshot.integrations.web_api.services.bookmark_service.moonshot_api')
@@ -113,12 +119,11 @@ def test_delete_bookmarks_no_params(mock_moonshot_api, bookmark_service):
     """
     Test case for deletion attempt without specifying 'all' or 'id'.
     """
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(ServiceException):
         bookmark_service.delete_bookmarks()
-    assert str(exc_info.value) == "Either 'all' must be True or 'id' must be provided."
 
 @pytest.mark.parametrize("exception, error_code", [
-       (ServiceException("UnexpectedError", "delete_bookmarks", "UnknownError"), "UnknownError"),
+       (ServiceException("UnexpectedError", "delete_bookmarks", "UnexpectedError"), "UnexpectedError"),
 ])
 @patch('moonshot.integrations.web_api.services.bookmark_service.moonshot_api')
 def test_delete_bookmarks_exceptions(mock_moonshot_api, exception, error_code, bookmark_service):

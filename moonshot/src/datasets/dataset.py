@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
+from datasets import load_dataset
 from pydantic import validate_call
+from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
@@ -16,6 +19,119 @@ logger = configure_logger(__name__)
 class Dataset:
     cache_name = "cache"
     cache_extension = "json"
+
+    @staticmethod
+    @validate_call
+    def create(ds_args: DatasetArguments, method: str, **kwargs) -> str:
+        """
+        Creates a new dataset based on the provided arguments and method.
+
+        This method generates a unique dataset ID using the dataset name,
+        checks if a dataset with the same ID already exists, and then
+        creates the dataset using the specified method (either 'csv' or
+        'hf'). The dataset information is then stored as a JSON object.
+
+        Args:
+            ds_args (DatasetArguments): The arguments containing dataset
+                details such as name, description, reference, and license.
+            method (str): The method to create the dataset. It can be either
+                'csv' or 'hf'.
+            **kwargs: Additional keyword arguments required for the specified
+                method.
+                - For 'csv' method: 'csv_file_path' (str): The file path to
+                    the CSV file.
+                - For 'hf' method: 'dataset_name' (str): The name of the
+                    Hugging Face dataset.
+                    'dataset_config' (str): The configuration of the Hugging
+                    Face dataset.
+                    'split' (str): The split of the dataset to load.
+                    'input_col' (list[str]): The list of input columns.
+                    'target_col' (str): The target column.
+
+        Returns:
+            str: The unique ID of the created dataset.
+
+        Raises:
+            RuntimeError: If a dataset with the same ID already exists.
+            Exception: If any other error occurs during the dataset creation
+                process.
+        """
+        try:
+            ds_id = slugify(ds_args.name, lowercase=True)
+
+            # Check if the dataset exists
+            if Storage.is_object_exists(EnvVariables.DATASETS.name, ds_id, "json"):
+                raise RuntimeError(f"Dataset with ID '{ds_id}' already exists.")
+
+            examples = [{}]
+            if method == "csv":
+                examples = Dataset._convert_csv(kwargs["csv_file_path"])
+            elif method == "hf":
+                examples = Dataset._download_hf(kwargs)
+
+            ds_info = {
+                "id": ds_id,
+                "name": ds_args.name,
+                "description": ds_args.description,
+                "reference": ds_args.reference,
+                "license": ds_args.license,
+                "examples": examples,
+            }
+
+            # Write as JSON output
+            file_path = Storage.create_object(
+                EnvVariables.DATASETS.name, ds_id, ds_info, "json"
+            )
+            return file_path
+
+        except Exception as e:
+            logger.error(f"Failed to create dataset: {str(e)}")
+            raise e
+
+    @staticmethod
+    def _convert_csv(csv_file: str) -> list[dict]:
+        """
+        Converts a CSV file to a list of dictionaries.
+
+        This method reads a CSV file and converts its contents into a list of dictionaries,
+        where each dictionary represents a row in the CSV file.
+
+        Args:
+            csv_file (str): The file path to the CSV file.
+
+        Returns:
+            list[dict]: A list of dictionaries representing the CSV data.
+        """
+        df = pd.read_csv(csv_file)
+        data = df.to_dict("records")
+        return data
+
+    @staticmethod
+    def _download_hf(hf_args) -> list[dict]:
+        """
+        Downloads a dataset from Hugging Face and converts it to a list of dictionaries.
+
+        This method loads a dataset from Hugging Face based on the provided arguments and converts
+        its contents into a list of dictionaries, where each dictionary contains 'input' and 'target' keys.
+
+        Args:
+            hf_args (dict): A dictionary containing the following keys:
+                - 'dataset_name' (str): The name of the Hugging Face dataset.
+                - 'dataset_config' (str): The configuration of the Hugging Face dataset.
+                - 'split' (str): The split of the dataset to load.
+                - 'input_col' (list[str]): The list of input columns.
+                - 'target_col' (str): The target column.
+
+        Returns:
+            list[dict]: A list of dictionaries representing the dataset.
+        """
+        dataset = load_dataset(hf_args["dataset_name"], hf_args["dataset_config"])
+        data = []
+        for example in dataset[hf_args["split"]]:
+            input_data = " ".join([str(example[col]) for col in hf_args["input_col"]])
+            target_data = str(example[hf_args["target_col"]])
+            data.append({"input": input_data, "target": target_data})
+        return data
 
     @staticmethod
     @validate_call
