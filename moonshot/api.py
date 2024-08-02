@@ -29,6 +29,7 @@ from moonshot.src.api.api_dataset import (
     api_delete_dataset,
     api_get_all_datasets,
     api_get_all_datasets_name,
+    api_create_datasets
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
@@ -115,6 +116,7 @@ __all__ = [
     "api_read_cookbook",
     "api_read_cookbooks",
     "api_update_cookbook",
+    "api_create_datasets",
     "api_delete_dataset",
     "api_get_all_datasets",
     "api_get_all_datasets_name",

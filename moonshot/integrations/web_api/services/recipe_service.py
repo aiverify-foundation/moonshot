@@ -24,7 +24,6 @@ class RecipeService(BaseService):
             datasets=recipe_data.datasets,
             prompt_templates=recipe_data.prompt_templates,
             metrics=recipe_data.metrics,
-            attack_modules=recipe_data.attack_modules,
             grading_scale=recipe_data.grading_scale,
         )
 

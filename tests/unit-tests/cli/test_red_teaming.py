@@ -422,7 +422,7 @@ class TestRedTeamingCLI:
             # Success: Optional args with no results found
             (
                 ["list_attack_modules -f \"RandomArg\""],
-                "No attack modules containing keyword found."
+                "There are no attack modules found."
             ),
             # Failure: List with unknown flag
             (
@@ -438,7 +438,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-attack-module", "No attack modules containing keyword found."),
+            ("no-such-attack-module", "There are no attack modules found."),
 
             # Success: results returned
             ("sample", "sample_attack_module"),
@@ -448,6 +448,7 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_attack_modules(args)
@@ -469,7 +470,7 @@ class TestRedTeamingCLI:
             # Success: Optional args with no results found
             (
                 ["list_context_strategies -f \"RandomArg\""],
-                "No context strategies containing keyword found."
+                "There are no context strategies found."
             ),
             # Failure: Lists with unknown flag
             (
@@ -485,7 +486,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results
-            ("no-such-context-strategy", "No context strategies containing keyword found."),
+            ("no-such-context-strategy", "There are no context strategies found."),
 
             # Success: results found
             ("previous prompt", "add_previous_prompt"),
@@ -495,6 +496,7 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
 
         returned_results = list_context_strategies(args)
@@ -520,7 +522,7 @@ class TestRedTeamingCLI:
             (
                 [f"new_session {test_session_id} -e \"['openai-gpt4']\"",
                  "list_sessions -f \"RandomArg\""],
-                "No sessions containing keyword found."
+                "There are no sessions found."
             ),
             # Failure: List with unknown flag
             (
@@ -536,7 +538,7 @@ class TestRedTeamingCLI:
         "function_args, expected_output",
         [
             # Success: no results found
-            ("no-such-session", "No sessions containing keyword found."),
+            ("no-such-session", "There are no sessions found."),
 
 
             # # Success: results found (Unable to test without running commands to create session)
@@ -547,8 +549,8 @@ class TestRedTeamingCLI:
         # additional function to test listing as the list command is hard to assert in CLI
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--find", type=str, nargs="?")
+        parser.add_argument("-p", "--pagination", type=str, nargs="?")
         args = parser.parse_args(['--find', function_args])
-
         returned_results = list_sessions(args)
         perform_assertion_function_output(expected_output, returned_results, capsys)
 

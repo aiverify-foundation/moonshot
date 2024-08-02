@@ -16,7 +16,6 @@ MOCK_RECIPES = [
         "datasets": ["realtimeqa-past"],
         "prompt_templates": [],
         "metrics": ["exactstrmatch"],
-        "attack_modules": [],
         "grading_scale": {},
         "stats": {
             "num_of_datasets_prompts": {"realtimeqa-past": 50}
@@ -35,7 +34,6 @@ MOCK_RECIPE_CREATE_DTO = RecipeCreateDTO(
     datasets=["realtimeqa-past"],
     prompt_templates=[],
     metrics=["exactstrmatch"],
-    attack_modules=[],
     grading_scale={}
 )
 
@@ -47,7 +45,6 @@ MOCK_RECIPE_UPDATE_DTO = RecipeUpdateDTO(
     datasets=["realtimeqa-past-updated"],
     prompt_templates=[],
     metrics=["updatedexactstrmatch"],
-    attack_modules=[],
     grading_scale={}
 )
 
@@ -119,7 +116,6 @@ def test_create_recipe_success(mock_moonshot_api, recipe_service):
         datasets=MOCK_RECIPE_CREATE_DTO.datasets,
         prompt_templates=MOCK_RECIPE_CREATE_DTO.prompt_templates,
         metrics=MOCK_RECIPE_CREATE_DTO.metrics,
-        attack_modules=MOCK_RECIPE_CREATE_DTO.attack_modules,
         grading_scale=MOCK_RECIPE_CREATE_DTO.grading_scale
     )
 

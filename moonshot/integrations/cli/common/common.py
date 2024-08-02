@@ -2,6 +2,10 @@ import argparse
 
 import cmd2
 
+from moonshot.integrations.cli.common.dataset import (
+    add_dataset,
+    add_dataset_args
+)
 from moonshot.integrations.cli.common.connectors import (
     add_endpoint,
     add_endpoint_args,
@@ -56,6 +60,10 @@ class CommonCommandSet(cmd2.CommandSet):
     def do_add_endpoint(self, args: argparse.Namespace) -> None:
         add_endpoint(args)
 
+    @cmd2.with_argparser(add_dataset_args)
+    def do_add_dataset(self, args:argparse.Namespace) -> None:
+        add_dataset(args)
+        
     # ------------------------------------------------------------------------------
     # Delete contents
     # ------------------------------------------------------------------------------

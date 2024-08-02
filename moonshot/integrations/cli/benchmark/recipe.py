@@ -18,7 +18,7 @@ from moonshot.api import (
     api_update_recipe,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
-from moonshot.src.utils.find_feature import find_keyword
+from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
 
@@ -37,8 +37,7 @@ def add_recipe(args) -> None:
 
     Args:
         args (argparse.Namespace): The arguments provided to the command line interface.
-        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics, attack_modules,
-        and grading_scale.
+        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics and grading_scale.
 
     Returns:
         None
@@ -54,9 +53,6 @@ def add_recipe(args) -> None:
             literal_eval(args.prompt_templates) if args.prompt_templates else []
         )
         metrics = literal_eval(args.metrics)
-        attack_modules = (
-            literal_eval(args.attack_modules) if args.attack_modules else []
-        )
         grading_scale = literal_eval(args.grading_scale) if args.grading_scale else {}
 
         new_recipe_id = api_create_recipe(
@@ -67,7 +63,6 @@ def add_recipe(args) -> None:
             datasets,
             prompt_templates,
             metrics,
-            attack_modules,
             grading_scale,
         )
         print(f"[add_recipe]: Recipe ({new_recipe_id}) created.")
@@ -81,29 +76,31 @@ def list_recipes(args) -> list | None:
 
     This function retrieves all available recipes by calling the api_get_all_recipe function from the
     moonshot.api module.
-    It then displays the retrieved recipes using the display_recipes function.
+    It then displays the retrieved recipes using the _display_recipes function.
 
     Args:
         args: A namespace object from argparse. It should have an optional attribute:
         find (str): Optional field to find recipe(s) with a keyword.
+        pagination (str): Optional field to paginate recipes.
 
     Returns:
         list | None: A list of Recipe or None if there is no result.
     """
+
     try:
         recipes_list = api_get_all_recipe()
         keyword = args.find.lower() if args.find else ""
-        if keyword:
-            filtered_recipes_list = find_keyword(keyword, recipes_list)
+        pagination = literal_eval(args.pagination) if args.pagination else ()
+
+        if recipes_list:
+            filtered_recipes_list = filter_data(recipes_list, keyword, pagination)
             if filtered_recipes_list:
-                display_recipes(filtered_recipes_list)
+                _display_recipes(filtered_recipes_list)
                 return filtered_recipes_list
-            else:
-                print("No recipes containing keyword found.")
-                return None
-        else:
-            display_recipes(recipes_list)
-            return recipes_list
+
+        console.print("[red]There are no recipes found.[/red]")
+        return None
+
     except Exception as e:
         print(f"[list_recipes]: {str(e)}")
 
@@ -125,7 +122,7 @@ def view_recipe(args) -> None:
     """
     try:
         recipe_info = api_read_recipe(args.recipe)
-        display_recipes([recipe_info])
+        _display_recipes([recipe_info])
     except Exception as e:
         print(f"[view_recipe]: {str(e)}")
 
@@ -311,7 +308,7 @@ def display_view_statistics_format(title: str, stats: dict) -> str:
         return f"[blue]{title}[/blue]: nil"
 
 
-def display_recipes(recipes_list: list) -> None:
+def _display_recipes(recipes_list: list) -> None:
     """
     Display the list of recipes in a tabular format.
 
@@ -323,54 +320,48 @@ def display_recipes(recipes_list: list) -> None:
     Args:
         recipes_list (list): A list of dictionaries, where each dictionary contains the details of a recipe.
     """
-    if recipes_list:
-        table = Table(
-            title="List of Recipes", show_lines=True, expand=True, header_style="bold"
+    table = Table(
+        title="List of Recipes", show_lines=True, expand=True, header_style="bold"
+    )
+    table.add_column("No.", width=2)
+    table.add_column("Recipe", justify="left", width=78)
+    table.add_column("Contains", justify="left", width=20, overflow="fold")
+    for idx, recipe in enumerate(recipes_list, 1):
+        (
+            id,
+            name,
+            description,
+            tags,
+            categories,
+            datasets,
+            prompt_templates,
+            metrics,
+            grading_scale,
+            stats,
+            *other_args,
+        ) = recipe.values()
+        idx = recipe.get("idx", idx)
+        tags_info = display_view_list_format("Tags", tags)
+        categories_info = display_view_list_format("Categories", categories)
+        datasets_info = display_view_list_format("Datasets", datasets)
+        prompt_templates_info = display_view_list_format(
+            "Prompt Templates", prompt_templates
         )
-        table.add_column("No.", width=2)
-        table.add_column("Recipe", justify="left", width=78)
-        table.add_column("Contains", justify="left", width=20, overflow="fold")
-        for recipe_id, recipe in enumerate(recipes_list, 1):
-            (
-                id,
-                name,
-                description,
-                tags,
-                categories,
-                datasets,
-                prompt_templates,
-                metrics,
-                attack_strategies,
-                grading_scale,
-                stats,
-            ) = recipe.values()
+        metrics_info = display_view_list_format("Metrics", metrics)
+        grading_scale_info = display_view_grading_scale_format(
+            "Grading Scale", grading_scale
+        )
+        stats_info = display_view_statistics_format("Statistics", stats)
 
-            tags_info = display_view_list_format("Tags", tags)
-            categories_info = display_view_list_format("Categories", categories)
-            datasets_info = display_view_list_format("Datasets", datasets)
-            prompt_templates_info = display_view_list_format(
-                "Prompt Templates", prompt_templates
-            )
-            metrics_info = display_view_list_format("Metrics", metrics)
-            attack_strategies_info = display_view_list_format(
-                "Attack Strategies", attack_strategies
-            )
-            grading_scale_info = display_view_grading_scale_format(
-                "Grading Scale", grading_scale
-            )
-            stats_info = display_view_statistics_format("Statistics", stats)
+        recipe_info = (
+            f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
+            f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
+        )
+        contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}"
 
-            recipe_info = (
-                f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
-                f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
-            )
-            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
-
-            table.add_section()
-            table.add_row(str(recipe_id), recipe_info, contains_info)
-        console.print(table)
-    else:
-        console.print("[red]There are no recipes found.[/red]")
+        table.add_section()
+        table.add_row(str(idx), recipe_info, contains_info)
+    console.print(table)
 
 
 def show_recipe_results(recipes, endpoints, recipe_results, duration):
@@ -499,7 +490,6 @@ add_recipe_args = cmd2.Cmd2ArgumentParser(
     "\"['bertscore','bleuscore']\" "
     "-p \"['analogical-similarity','mmlu']\" "
     "-t \"['tag1','tag2']\" "
-    "-a \"['charswap_attack']\" "
     "-g \"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}\" ",
 )
 add_recipe_args.add_argument("name", type=str, help="Name of the new recipe")
@@ -528,13 +518,6 @@ add_recipe_args.add_argument(
     "metrics", type=str, help="List of metrics to be included in the new recipe"
 )
 add_recipe_args.add_argument(
-    "-a",
-    "--attack_modules",
-    type=str,
-    help="List of attack modules to be included in the new recipe",
-    nargs="?",
-)
-add_recipe_args.add_argument(
     "-g",
     "--grading_scale",
     type=str,
@@ -553,7 +536,6 @@ update_recipe_args = cmd2.Cmd2ArgumentParser(
     "  datasets: A list of datasets used in the recipe. \n"
     "  prompt_templates: A list of prompt templates for the recipe. \n"
     "  metrics: A list of metrics to evaluate the recipe. \n"
-    "  attack_modules: A list of attack modules used in the recipe.\n"
     "  grading_scale: A list of grading scale used in the recipe. \n\n"
     "Example command:\n"
     "  update_recipe my-new-recipe \"[('name', 'My Updated Recipe'), ('tags', ['fairness', 'bbq'])]\" ",
@@ -624,5 +606,13 @@ list_recipes_args.add_argument(
     "--find",
     type=str,
     help="Optional field to find recipe(s) with keyword",
+    nargs="?",
+)
+
+list_recipes_args.add_argument(
+    "-p",
+    "--pagination",
+    type=str,
+    help="Optional tuple to paginate recipes(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
     nargs="?",
 )
