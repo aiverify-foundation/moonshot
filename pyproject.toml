@@ -23,6 +23,8 @@ dependencies = [
     "python-dotenv==1.0.1",
     "ijson==3.2.3",
     "jinja2==3.1.4",
+    "datasets==2.20.0",
+    "pandas==2.2.2",
     "pydantic==2.7.1",
     "pyparsing==3.1.2",
     "xxhash==3.4.1"
@@ -105,8 +107,6 @@ python-slugify = "8.0.4"
 python-dotenv = "1.0.1"
 ijson = "3.2.3"
 jinja2 = "3.1.4"
-datasets = "2.19.1"
-pandas = "2.2.2"
 pydantic = "2.7.2"
 pyparsing = "3.1.2"
 xxhash = "3.4.1"
@@ -116,6 +116,8 @@ uvicorn = "0.30.0"
 dependency-injector = "4.41.0"
 cmd2 = "2.4.3"
 rich = "13.7.1"
+pandas = "2.2.2"
+datasets = "2.20.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
