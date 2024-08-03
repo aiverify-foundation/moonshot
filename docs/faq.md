@@ -40,7 +40,7 @@ Some of the functions may not work as expected. We suggest users to reinstall Mo
 
 ## Using Moonshot
 
-### My tests are all completed with errors! I can't view any report!
+### My tests are all completed with errors! I cannot view any report!
 
 Some benchmark tests and attack modules require connector endpoints to be configured beforehand. You may encounter this type of error:
 
@@ -64,20 +64,8 @@ If you do not have tokens for Llama Guard via Together AI,
 3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
-### I can't delete my runner in the CLI on Windows.
 
-We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
-
-```
-moonshot > delete_runner new-recipe
-Are you sure you want to delete the runner (y/N)? y
-[Runner] Failed to delete runner: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
-[delete_runner]: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
-```
-
-We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
-
-### I can't save my token for the connector endpoint!
+### I cannot save my token for the connector endpoint!
 
 We acknowledge a potential issue with saving tokens via the UI. As a workaround, you can directly access the JSON file of your endpoint. This file is located in the `moonshot-data/connector-endpoints` directory, which was created during the installation process.
 
@@ -101,6 +89,36 @@ Open your preferred code editor, locate the `token` field, and replace `ADD_API_
 
 Please refresh the page.
 
-### I am unable to install PyTorch
+
+### Issues related to MacOS
+####  I am unable to install PyTorch
 
 If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
+
+
+### Issues related to Windows
+#### I am having issues installing some Tensorflow Python packages
+
+At the time of writing, there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
+
+![windows-installation-error-tensorflow](./res/faq/windows-installation-error-tensorflow.png)
+
+You can try the following:
+
+1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
+2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
+3. The issue should be resolved.
+
+
+### I cannot delete my runner in the CLI on Windows.
+
+We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
+
+```
+moonshot > delete_runner new-recipe
+Are you sure you want to delete the runner (y/N)? y
+[Runner] Failed to delete runner: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
+[delete_runner]: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
+```
+
+We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
