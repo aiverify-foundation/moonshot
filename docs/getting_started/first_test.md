@@ -35,6 +35,13 @@ This will direct you to a wizard that will guide you through the testing process
 
 Once you have completed the selection, click on the arrow to proceed to the next step. In this step, you will see the total number of prompts in this set of tests. Click on the arrow again to advance to the next step.
 
+!!! warning
+    <b>Important information before running your benchmark:</b>
+
+    Certain benchmarks may require metrics that connect to a particular model (i.e. MLCommons cookbooks and recipes like [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json) use the metric [llamaguardannotator](https://github.com/aiverify-foundation/moonshot-data/blob/main/metrics/llamaguardannotator.py), which requires the API token of [together-llama-guard-7b-assistant endpoint](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)).
+
+    Refer to this [list for the requirements](../faq.md#requirements).
+
 ![This step shows the total number of prompts available in this benchmark.](getting_started/3.png)
 
 Connect to your AI system. Click "Edit" for one of the OpenAI models, such as OpenAI GPT-3.5 Turbo.
@@ -89,6 +96,13 @@ Select one or more endpoints to red team on this screen. Click the arrow to proc
 In this screen, you have the option to select one of the attack modules to automatically red team your model. For the purposes of this guide, we will skip this step. Click "Skip for now".
 
 ![alt text](getting_started/13.png)
+
+!!! warning
+    <b>Important information before running red teaming:</b>
+
+    Certain attack modules may require connection to certain model endpoints. (i.e. [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) requires the endpoint [openai-gpt4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json) and you will need an API token to connect to this endpoint.
+
+    Refer to this [list for the requirements](../faq.md#requirements).
 
 Enter a name and type a description in this screen, then click "Start".
 

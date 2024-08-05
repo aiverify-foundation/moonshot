@@ -46,14 +46,21 @@ Some benchmark tests and attack modules require connector endpoints to be config
 
 ![](./getting_started/getting_started/8.png)
 
-Some examples are:
+####Requirements
+This is the full list of requirements for the following tests:
 
-| Test | Model Required | Name of the Endpoint |
-| --- | ---| --- |
-| MLCommons AI Safety Benchmarks v0.5 (Cookbook) | Meta LlamaGuard | Together Llama Guard 7B Assistant | 
-| Singapore Safety (Recipe) | Meta LlamaGuard | Together Llama Guard 7B Assistant | 
-| Malicious Question Generator (Attack Module) | OpenAI GPT4 | OpenAI GPT4 | 
-| Violent Durian (Attack Module) | OpenAI GPT4 | OpenAI GPT4 |
+| Test | Type | Model Required | Name of the Endpoint | Configuration Required
+| --- | ---| --- | --- | --- |
+| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook |Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) | API Token - `token` field
+| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe |Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [Bias - Occupation](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/bias-occupation.json) | Recipe |OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| [Chinese Linguistics & Cognition Challenge](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/clcc.json) | Recipe | Flageval Flag Judge | [Flageval Flag Judge](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/flageval-flagjudge.json) | -
+| [Malicious Question Generator](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/malicious_question_generator.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+
+You can also check out the [metric configuration JSON](https://github.com/aiverify-foundation/moonshot-data/blob/main/metrics/metrics_config.json) to see if a cookbook or recipe uses any of these metrics.
+
 
 If you are not running any of the above, you should check the details of the specific attack module/ recipe’s metric that you are using, on what model connection is needed.
 
@@ -110,7 +117,7 @@ You can try the following:
 3. The issue should be resolved.
 
 
-### I cannot delete my runner in the CLI on Windows.
+#### I cannot delete my runner in the CLI on Windows.
 
 We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
 
