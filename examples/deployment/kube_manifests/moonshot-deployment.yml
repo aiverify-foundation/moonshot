@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moonshot-ui-deployment
+  namespace: moonshot
+  labels:
+    app.kubernetes.io/name: moonshot-ui
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: moonshot-ui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: moonshot-ui
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: moonshot-ui
+          image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.4
+          args:
+            - "/bin/sh"
+            - "-c"
+            - "cd /app/moonshot && python -m moonshot web"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 2048Mi
+            requests:
+              cpu: 500m
+              memory: 1024Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+                drop:
+                  ["ALL"]
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moonshot-ui-service
+  namespace: moonshot
+  labels:
+    app.kubernetes.io/name: moonshot-ui
+spec:
+  selector:
+    app.kubernetes.io/name: moonshot-ui
+  ports:
+    - name: ms-ui-http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

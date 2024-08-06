@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moonshot-ui-ingress
+  namespace: moonshot
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: ingress-grp-1
+    alb.ingress.kubernetes.io/load-balancer-name: alb-aiss-plfm-dev-eks-wb
+    external-dns.alpha.kubernetes.io/target: alb-aiss-plfm-dev-wb-pub-748097713.ap-southeast-1.elb.amazonaws.com
+spec:
+  ingressClassName: alb
+  rules:
+    - host: moonshot.eks-wb.aipo-imda.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: moonshot-ui-service
+                port:
+                  name: ms-ui-http
