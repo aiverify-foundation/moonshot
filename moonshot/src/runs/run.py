@@ -20,6 +20,7 @@ logger = configure_logger(__name__)
 
 
 class Run:
+    sql_table_name = "run_table"
     sql_create_run_table = """
         CREATE TABLE IF NOT EXISTS run_table (
         run_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -146,6 +147,12 @@ class Run:
         """
         if not database_instance:
             raise RuntimeError("[Run] Database instance not provided.")
+
+        # Check that the table exists
+        if not Storage.check_database_table_exists(
+            database_instance, Run.sql_table_name
+        ):
+            return []
 
         all_run_arguments_info = Storage.read_database_records(
             database_instance,
