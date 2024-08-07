@@ -64,8 +64,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
           pip install -r requirements.txt
           pip install pytest pytest-mock pytest-html pytest-json pytest-cov coverage anybadge
           pip install flake8 flake8-html
