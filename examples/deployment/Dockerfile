@@ -8,27 +8,30 @@ RUN apt-get update && apt-get -y upgrade && \
 
 # python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip && \
-    #pip3 install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "aiverify-moonshot-eks[all]==0.1.0" && \
-    #pip3 install --no-cache-dir "aiverify-moonshot[all]" && \
     pip3 install --no-cache-dir h5py
 
-# install moonshot-data and moonshot-ui
-# RUN python -m moonshot -i moonshot-data -i moonshot-ui
+# Create moonshot user
+ARG USER=moonshot
+RUN groupadd -g 1000 $USER
+RUN useradd -u 1000 -g 1000 -ms /bin/bash $USER
 
-# temporary clone moonshot and install from source
+# copy installation script
 WORKDIR /app
-COPY . .
-RUN git clone -b ms-353 https://github.com/aiverify-foundation/moonshot.git && \
-    cd moonshot && \
-    pip3 install --no-cache-dir -r requirements.txt
-RUN cd moonshot && \
-    python -m moonshot -i moonshot-data -i moonshot-ui
-RUN cp ms-env.env moonshot/.env && \
-    cp ms-ui-env.env moonshot/moonshot-ui/.env
+COPY run_installation_script.sh .
+
+# set executable rights to the installation script
+RUN chmod +x /app/run_installation_script.sh
+
+# Change owner
+RUN chown -R 1000:1000 /app
 
 # expose the port the app runs on
 EXPOSE 3000
 
-# run cmd
-CMD ["sh", "-c", "cd /app/moonshot && python -m moonshot web"]
+# Run containers with non-root user
+USER $USER
 
+WORKDIR /app
+
+# Ensure the script is executable and runs correctly
+CMD ["sh", "-c", "./run_installation_script.sh"]

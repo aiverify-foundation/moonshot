@@ -206,7 +206,7 @@ def main():
 
     if args.mode == "help":
         parser.print_help()
-        sys.exit(0)
+        sys.exit(1)
 
     api_set_environment_variables(dotenv_values(args.env))
 
@@ -233,7 +233,7 @@ def main():
         pass
     else:
         parser.print_help()
-        sys.exit(0)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

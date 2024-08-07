@@ -22,13 +22,16 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: moonshot-ui
           image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.4
           args:
             - "/bin/sh"
             - "-c"
-            - "cd /app/moonshot && python -m moonshot web"
+            - "./run_installation_script.sh"
           resources:
             limits:
               cpu: 1000m
