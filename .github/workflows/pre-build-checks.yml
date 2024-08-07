@@ -1,0 +1,126 @@
+# Pre-build Checks (for moonshot)
+# 1. Unit tests with code coverage (pytest)
+# 2. Code quality analysis (flake8)
+# 3. Dependency analysis (vulnerabilities)
+# 4. Dependency analysis (undesirable licenses)
+# 5. Deploy reports generated from the above to GitHub Pages
+
+name: Pre-Build Checks
+
+on:
+  # Runs when a pull request to main is being assigned
+  pull_request:
+    types: [ assigned, synchronize ]
+    branches:
+      - 'dev_main'
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'dev_main'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+
+  pre-build-checks:
+    # Run only when PR is assigned, even on subsequent commits (i.e. synchronize)
+    if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+
+      - name: Set Branch Variable (pull_request)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+
+      - name: Set Branch Variable (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+          cache-dependency-path: moonshot
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH }}
+          submodules: recursive
+
+      # Install dependencies
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install pytest pytest-mock pytest-html pytest-json pytest-cov coverage anybadge
+          pip install flake8 flake8-html
+
+      # Unit Tests & Coverage
+      - name: Unit tests with coverage
+        if: ${{ ! cancelled() }}
+        timeout-minutes: 30
+        run: |
+          bash ci/run-test.sh
+
+      # Code Quality analysis - flake8
+      - name: Code quality analysis - flake8
+        if: ${{ ! cancelled() }}
+        run: |
+          bash ci/run-flake8.sh
+
+      # pip-audit
+      - name: Dependency analysis - vulnerabilities & licenses
+        if: ${{ ! cancelled() }}
+        run: |
+          bash ci/run-pip-audit.sh
+
+      ### Publish reports to ci dashboard ###
+#
+#      - name: Checkout dashboard
+#        if: ${{ github.event.pull_request.head.repo.full_name == github.repository && always() }}
+#        uses: actions/checkout@v3
+#        with:
+#          repository: aiverify-foundation/ci-dashboard
+#          token: ${{ secrets.CHECKOUT_TOKEN }}
+#          ref: main
+#          path: check-results
+#
+#      - name: Push results to dashboard
+#        if: ${{ github.event.pull_request.head.repo.full_name == github.repository && always() }}
+#        working-directory: ${{ github.workspace }}/check-results
+#        run: |
+#          set +e
+#          find ../ -type f -name ".gitignore" -exec rm {} +
+#          [ -d "docs/pre-build/moonshot" ] && rm -rf docs/pre-build/moonshot
+#          mkdir -p docs/pre-build/moonshot
+#          mv ../htmlcov docs/pre-build/moonshot/
+#          mv ../flake8-report docs/pre-build/moonshot/
+#          mv ../assets docs/pre-build/moonshot/
+#          mv ../*.svg docs/pre-build/moonshot/
+#          mv ../*.html docs/pre-build/moonshot/
+#          mv ../*.md docs/pre-build/moonshot/
+#          mv ../*.txt docs/pre-build/moonshot/
+#          git add docs/pre-build/moonshot
+#          git config user.name "moonshot"
+#          git config user.email "moonshot@imda.gov.sg"
+#          git commit -m "feat(portal) actions publish moonshot pre-build reports to dashboard"
+#          git push
+#          set -e
+
