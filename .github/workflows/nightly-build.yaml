@@ -37,4 +37,4 @@ jobs:
       - name: S3 test
         run: |
           aws s3 ls ${{ vars.AWS_S3_PATH }}
-          echo "🍏 This job's status is ${{ job.status }}."
+          echo "This job's status is ${{ job.status }}."
