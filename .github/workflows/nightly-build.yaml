@@ -72,6 +72,8 @@ jobs:
           aws ssm wait command-executed \
             --command-id "$command_id" \
             --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+            --max-attempts 120 \
+            --wait-timeout 10
           status=$(aws ssm list-command-invocations \
             --command-id "$command_id" \
             --details \

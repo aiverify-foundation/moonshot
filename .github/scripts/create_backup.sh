@@ -4,6 +4,12 @@
 BACKUP_DIR=~/moonshot/backups
 MAX_BACKUPS=5
 
+# Check if the moonshot directory exists
+if [ ! -d ~/moonshot/moonshot ]; then
+  echo "Skip backup: ~/moonshot/moonshot dir does not exist."
+  exit 0
+fi
+
 # Create the backup directory if it doesn't exist
 mkdir -p $BACKUP_DIR
 
