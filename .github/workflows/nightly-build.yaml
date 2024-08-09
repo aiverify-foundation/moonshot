@@ -59,3 +59,22 @@ jobs:
             --query "CommandInvocations[0].Status" \
             --output text)
           echo "Command status: $status"
+
+      - name: Install moonshot
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Install moonshot" \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh\""]' \
+            --query "Command.CommandId" \
+            --output text)
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+          status=$(aws ssm list-command-invocations \
+            --command-id "$command_id" \
+            --details \
+            --query "CommandInvocations[0].Status" \
+            --output text)
+          echo "Command status: $status"
