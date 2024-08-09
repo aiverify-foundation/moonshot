@@ -47,7 +47,7 @@ jobs:
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Backup current install" \
-            --parameters 'commands=["sudo su - ubuntu -c \"~/scripts/create_backup.sh\""]' \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/create_backup.sh\""]' \
             --query "Command.CommandId" \
             --output text)
           aws ssm wait command-executed \
