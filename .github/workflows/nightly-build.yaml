@@ -43,8 +43,21 @@ jobs:
 
       - name: Backup current deploy
         run: |
-          aws ssm send-command \
+          command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Backup current deploy" \
-            --parameters 'commands=["sudo su - ubuntu", "mv moonshot moonshot-bak", "mkdir moonshot"]'
+            --parameters 'commands=["sudo su - ubuntu -c \"mv moonshot moonshot-bak && mkdir moonshot\""]' \
+            --query "Command.CommandId" \
+            --output text)
+        # Wait for the command to complete
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+        # Check the final status of the command
+          status=$(aws ssm list-command-invocations \
+            --command-id "$command_id" \
+            --details \
+            --query "CommandInvocations[0].Status" \
+            --output text)
+          echo "Command status: $status"
