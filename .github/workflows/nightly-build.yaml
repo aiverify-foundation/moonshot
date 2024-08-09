@@ -50,11 +50,9 @@ jobs:
             --parameters 'commands=["sudo su - ubuntu -c \"mv moonshot moonshot-bak && mkdir moonshot\""]' \
             --query "Command.CommandId" \
             --output text)
-        # Wait for the command to complete
           aws ssm wait command-executed \
             --command-id "$command_id" \
             --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
-        # Check the final status of the command
           status=$(aws ssm list-command-invocations \
             --command-id "$command_id" \
             --details \
