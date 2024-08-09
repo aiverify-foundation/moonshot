@@ -38,3 +38,13 @@ jobs:
         run: |
           aws s3 ls ${{ vars.AWS_S3_PATH }}
           echo "This job's status is ${{ job.status }}."
+
+      # Deploy moonshot
+
+      - name: Backup current deploy
+        run: |
+          aws ssm send-command \
+            --instance-ids "${{ var.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Backup current deploy" \
+            --parameters 'commands=["sudo su - ubuntu", "mv moonshot moonshot-bak", "mkdir moonshot"]'
