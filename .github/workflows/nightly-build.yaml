@@ -62,6 +62,7 @@ jobs:
 
       - name: Install moonshot
         run: |
+          timeout-minutes: 30
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
