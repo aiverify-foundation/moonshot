@@ -70,14 +70,52 @@ jobs:
             --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh\""]' \
             --query "Command.CommandId" \
             --output text)
-          aws ssm wait command-executed \
-            --command-id "$command_id" \
-            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
-            --max-attempts 100 \
-            --delay 60
-          status=$(aws ssm list-command-invocations \
-            --command-id "$command_id" \
-            --details \
-            --query "CommandInvocations[0].Status" \
-            --output text)
-          echo "Command status: $status"
+      
+          max_attempts=100
+          delay=60
+          attempts=0
+      
+          while [ $attempts -lt $max_attempts ]; do
+            status=$(aws ssm list-command-invocations \
+              --command-id "$command_id" \
+              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+      
+            if [ "$status" == "Success" ]; then
+              echo "Command status: $status"
+              exit 0
+            elif [ "$status" == "InProgress" ]; then
+              echo "Command status: $status, waiting..."
+              sleep $delay
+              attempts=$((attempts + 1))
+            else
+              echo "Command status: $status"
+              exit 1
+            fi
+          done
+      
+          echo "Max attempts reached, exiting."
+          exit 1
+
+#      - name: Install moonshot
+#        timeout-minutes: 30
+#        run: |
+#          command_id=$(aws ssm send-command \
+#            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+#            --document-name "AWS-RunShellScript" \
+#            --comment "Install moonshot" \
+#            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh\""]' \
+#            --query "Command.CommandId" \
+#            --output text)
+#          aws ssm wait command-executed \
+#            --command-id "$command_id" \
+#            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+#            --max-attempts 100 \
+#            --delay 60
+#          status=$(aws ssm list-command-invocations \
+#            --command-id "$command_id" \
+#            --details \
+#            --query "CommandInvocations[0].Status" \
+#            --output text)
+#          echo "Command status: $status"
