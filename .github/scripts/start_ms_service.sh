@@ -2,6 +2,6 @@
 
 cd ~/moonshot/moonshot
 
-source /home/ubuntu/venv/bin/activate
+source venv/bin/activate
 python -m moonshot web
 

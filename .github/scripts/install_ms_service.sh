@@ -12,6 +12,7 @@ git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot.
 cd moonshot
 git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-data.git
 git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-ui.git
+cp ~/scripts/.env .
 
 python3 -m venv venv
 source venv/bin/activate

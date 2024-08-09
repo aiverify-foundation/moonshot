@@ -34,10 +34,10 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ap-southeast-1
 
-      - name: S3 test
-        run: |
-          aws s3 ls ${{ vars.AWS_S3_PATH }}
-          echo "This job's status is ${{ job.status }}."
+#      - name: S3 test
+#        run: |
+#          aws s3 ls ${{ vars.AWS_S3_PATH }}
+#          echo "This job's status is ${{ job.status }}."
 
       # Deploy moonshot
 
@@ -67,21 +67,19 @@ jobs:
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Install moonshot" \
-            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh\""]' \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh ${{ inputs.branch_to_test }}\""]' \
             --query "Command.CommandId" \
             --output text)
       
-          max_attempts=100
+          max_attempts=20
           delay=60
           attempts=0
-      
           while [ $attempts -lt $max_attempts ]; do
             status=$(aws ssm list-command-invocations \
               --command-id "$command_id" \
               --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
               --query "CommandInvocations[0].Status" \
               --output text)
-      
             if [ "$status" == "Success" ]; then
               echo "Command status: $status"
               exit 0
@@ -94,28 +92,24 @@ jobs:
               exit 1
             fi
           done
-      
           echo "Max attempts reached, exiting."
           exit 1
 
-#      - name: Install moonshot
-#        timeout-minutes: 30
-#        run: |
-#          command_id=$(aws ssm send-command \
-#            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
-#            --document-name "AWS-RunShellScript" \
-#            --comment "Install moonshot" \
-#            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh\""]' \
-#            --query "Command.CommandId" \
-#            --output text)
-#          aws ssm wait command-executed \
-#            --command-id "$command_id" \
-#            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
-#            --max-attempts 100 \
-#            --delay 60
-#          status=$(aws ssm list-command-invocations \
-#            --command-id "$command_id" \
-#            --details \
-#            --query "CommandInvocations[0].Status" \
-#            --output text)
-#          echo "Command status: $status"
+      - name: Start moonshot web
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Start moonshot web" \
+            --parameters 'commands=["sudo systemctl restart moonshot-service"]' \
+            --query "Command.CommandId" \
+            --output text)
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+          status=$(aws ssm list-command-invocations \
+            --command-id "$command_id" \
+            --details \
+            --query "CommandInvocations[0].Status" \
+            --output text)
+          echo "Command status: $status"
