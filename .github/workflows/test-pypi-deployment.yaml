@@ -8,11 +8,11 @@ on:
     inputs:
       test_release_tag:
         description: 'Moonshot Release Tag'
-        required: true
+        # required: true
         type: string
       branch:
         description: 'Branch Name'
-        required: true
+        # required: true
         type: string
 
 # Allow one concurrent deployment
