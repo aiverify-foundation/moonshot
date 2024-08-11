@@ -53,7 +53,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/aiverify-moonshot-test
+      url: https://test.pypi.org/p/aiverify-moonshot
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
