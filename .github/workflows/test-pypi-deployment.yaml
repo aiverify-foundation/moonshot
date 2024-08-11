@@ -1,0 +1,58 @@
+# Test PyPi
+name: Test PyPi Deployment
+
+on:
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      test_release_tag:
+        description: 'Moonshot Release Tag'
+        required: true
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  pypi-deployment:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+
+    - name: Checkout Moonshot
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: main
+
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
+    
+    - name: Setup Build & Twine
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        python3 -m pip install --upgrade build
+        python3 -m pip install --upgrade twine
+
+    - name: Build & Deploy Package to Test PyPi
+      run: |
+        python -m build
+        python -m twine upload --repository testpypi dist/* -${{ secrets.TEST_PYPI_TOKEN }}
+
+    - name: Test Package
+      run: |
+        cd ../
+        mkdir test & cd test
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "aiverify-moonshot==${{ inputs.test_release_tag }}"
+        python -m moonshot -i moonshot-data -i moonshot-ui
+        python -m moonshot web & 
