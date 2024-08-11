@@ -119,9 +119,16 @@ jobs:
           repository: aiverify-foundation/moonshot-smoke-testing
           path: moonshot-smoke-testing
 
-    - name: Run Smoke Test
+    - name: Run Smoke Test UI
       run: |
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         npx playwright test tests/main-page.spec.ts
+         npx playwright test tests/smoke.spec.ts
+         cd ../
+
+    # - name: Run Smoke Test CLI
+    #   run: |
+    #      pwd
+    #      cd tests/smoke-test
+    #      pytest
