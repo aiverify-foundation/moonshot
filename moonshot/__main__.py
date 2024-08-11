@@ -91,80 +91,117 @@ def moonshot_data_installation():
     folder_name = repo.split("/")[-1].replace(".git", "")
 
     # Check if the directory already exists
-    if not os.path.exists(folder_name):
-        logger.info(f"Cloning {repo}")
-        # Clone the repository
-        run_subprocess(["git", "clone", repo], check=True)
+    if os.path.exists(folder_name):
+        logger.warning(f"Directory {folder_name} already exists.")
+        user_input = input(
+            f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+        ).strip()
+        if user_input == "Y":
+            logger.info(f"Removing directory {folder_name}.")
+            # Remove the existing directory
+            run_subprocess(["rm", "-rf", folder_name], check=True)
+        else:
+            logger.info("Exiting function without removing the directory.")
+            return
 
-        # Create .env to point to installed folder
-        ms_lib_env_file(folder_name)
+    logger.info(f"Cloning {repo}")
+    # Clone the repository
+    run_subprocess(["git", "clone", repo], check=True)
 
-        # Change directory to the folder
-        os.chdir(folder_name)
+    # Create .env to point to installed folder
+    ms_lib_env_file(folder_name)
 
-        logger.info(f"Installing requirements for {folder_name}")
-        # Install the requirements if they exist
-        if os.path.exists("requirements.txt"):
-            run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
-            import nltk
+    # Change directory to the folder
+    os.chdir(folder_name)
 
-            nltk.download("punkt")
-            nltk.download("stopwords")
-            nltk.download("averaged_perceptron_tagger")
-            nltk.download("universal_tagset")
+    logger.info(f"Installing requirements for {folder_name}")
+    # Install the requirements if they exist
+    if os.path.exists("requirements.txt"):
+        run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
+        import nltk
 
-        # Change back to the base directory
-        os.chdir("..")
+        nltk.download("punkt")
+        nltk.download("stopwords")
+        nltk.download("averaged_perceptron_tagger")
+        nltk.download("universal_tagset")
 
-    else:
-        logger.warning(f"Directory {folder_name} already exists, skipping clone.")
+    # Change back to the base directory
+    os.chdir("..")
+
+
+def check_node():
+    """
+    Check if Node.js is installed on the user's machine.
+    """
+    try:
+        result = subprocess.run(
+            ["node", "--version"], capture_output=True, text=True, check=True
+        )
+        node_version = result.stdout.strip()
+        logger.info(f"Node.js is installed. Version: {node_version}")
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        logger.error("Node.js is not installed. Please install Node.js to proceed.")
+        return False
 
 
 def moonshot_ui_installation():
+    if not check_node():
+        logger.error("Node.js is not installed. Please install Node.js to proceed.")
+        return
+
     # Code for moonshot-ui installation
     repo = "https://github.com/aiverify-foundation/moonshot-ui.git"
     folder_name = repo.split("/")[-1].replace(".git", "")
 
     # Check if the directory already exists
-    if not os.path.exists(folder_name):
-        logger.info(f"Cloning {repo}")
-        # Clone the repository
-        run_subprocess(["git", "clone", repo], check=True)
+    if os.path.exists(folder_name):
+        logger.warning(f"Directory {folder_name} already exists.")
+        user_input = input(
+            f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+        ).strip()
+        if user_input == "Y":
+            logger.info(f"Removing directory {folder_name}.")
+            # Remove the existing directory
+            run_subprocess(["rm", "-rf", folder_name], check=True)
+        else:
+            logger.info("Exiting function without removing the directory.")
+            return
 
-        # Change directory to the folder
-        os.chdir(folder_name)
+    logger.info(f"Cloning {repo}")
+    # Clone the repository
+    run_subprocess(["git", "clone", repo], check=True)
 
-        logger.info(f"Installing requirements for {folder_name}")
-        # Install the requirements if they exist
-        if os.path.exists("package.json"):
-            run_subprocess(["npm", "install"], check=True)
-            run_subprocess(["npm", "run", "build"], check=True)
+    # Change directory to the folder
+    os.chdir(folder_name)
 
-        # Change back to the base directory
-        os.chdir("..")
+    logger.info(f"Installing requirements for {folder_name}")
+    # Install the requirements if they exist
+    if os.path.exists("package.json"):
+        run_subprocess(["npm", "install"], check=True)
+        run_subprocess(["npm", "run", "build"], check=True)
 
-        # Create .env for ui
-        ms_ui_env_file(folder_name)
-    else:
-        logger.warning(
-            f"Directory {folder_name} already exists, skipping installation."
-        )
+    # Change back to the base directory
+    os.chdir("..")
+
+    # Create .env for ui
+    ms_ui_env_file(folder_name)
 
 
-def run_moonshot_ui_dev():
+def run_moonshot_ui():
     """
     To start a thread to run the Moonshot UI
     """
     base_directory = os.getcwd()
-    ui_dev_dir = os.path.join(base_directory, "moonshot-ui")
+    ui_dir = os.path.join(base_directory, "moonshot-ui")
 
-    if not os.path.exists(ui_dev_dir):
+    if not os.path.exists(ui_dir):
         logger.error(
             "moonshot-ui does not exist. Please run with '-i moonshot-ui' to install moonshot-ui first."
         )
         sys.exit(1)
     # ms_ui_env_file(ui_dev_dir)
-    run_subprocess(["npm", "start"], cwd=ui_dev_dir)
+    run_subprocess(["npm", "start"], cwd=ui_dir)
 
 
 def main():
@@ -216,7 +253,7 @@ def main():
         web_api.start_app()
     elif args.mode == "web":
         # Create and start the UI dev server thread
-        ui_thread = threading.Thread(target=run_moonshot_ui_dev)
+        ui_thread = threading.Thread(target=run_moonshot_ui)
         ui_thread.start()
         ui_thread.join(timeout=0.1)  # Wait briefly for the thread to become alive
         if not ui_thread.is_alive():
