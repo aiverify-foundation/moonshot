@@ -269,7 +269,6 @@ def main():
         # Handle CLI mode here, possibly also with additional arguments
         pass
     else:
-        parser.print_help()
         sys.exit(1)
 
 
