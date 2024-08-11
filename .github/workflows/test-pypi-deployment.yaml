@@ -44,6 +44,7 @@ jobs:
 
     - name: Build & Deploy Package to Test PyPi
       run: |
+        source venv/bin/activate
         python -m build
         python -m twine upload --repository testpypi dist/* -${{ secrets.TEST_PYPI_TOKEN }}
 
