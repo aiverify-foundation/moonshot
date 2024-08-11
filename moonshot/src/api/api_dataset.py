@@ -8,6 +8,22 @@ from moonshot.src.datasets.dataset_arguments import DatasetArguments
 # Datasets APIs
 # ------------------------------------------------------------------------------
 @validate_call
+def api_read_dataset(ds_id: str) -> dict:
+    """
+    Reads a dataset identified by its unique dataset ID and returns its contents as a dictionary.
+
+    Args:
+        ds_id (str): The unique identifier for the dataset to be read.
+
+    Returns:
+        dict: A dictionary representing the dataset's contents.
+
+    Raises:
+        Exception: If the dataset cannot be read or does not exist.
+    """
+    return Dataset.read(ds_id).to_dict()
+
+@validate_call
 def api_delete_dataset(ds_id: str) -> bool:
     """
     Deletes a dataset identified by its unique dataset ID.
@@ -48,7 +64,7 @@ def api_get_all_datasets_name() -> list[str]:
 
 
 def api_create_datasets(
-    name: str, description: str, reference: str, license: str, method: str, **kwargs
+    name: str, description: str, reference: str, license: str, examples: list|None, method: str, **kwargs
 ) -> str:
     """
     This function creates a new dataset.
@@ -75,7 +91,7 @@ def api_create_datasets(
         description=description,
         reference=reference,
         license=license,
-        examples=None,
+        examples=None
     )
 
-    return Dataset.create(ds_args, method, **kwargs)
+    return Dataset.create(ds_args, examples, method, **kwargs)

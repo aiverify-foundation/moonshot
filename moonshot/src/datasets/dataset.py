@@ -22,7 +22,7 @@ class Dataset:
 
     @staticmethod
     @validate_call
-    def create(ds_args: DatasetArguments, method: str, **kwargs) -> str:
+    def create(ds_args: DatasetArguments, examples, method: str, **kwargs) -> str:
         """
         Creates a new dataset based on the provided arguments and method.
 
@@ -49,7 +49,6 @@ class Dataset:
                     'target_col' (str): The target column.
 
         Returns:
-            str: The unique ID of the created dataset.
 
         Raises:
             RuntimeError: If a dataset with the same ID already exists.
@@ -63,11 +62,12 @@ class Dataset:
             if Storage.is_object_exists(EnvVariables.DATASETS.name, ds_id, "json"):
                 raise RuntimeError(f"Dataset with ID '{ds_id}' already exists.")
 
-            examples = [{}]
             if method == "csv":
                 examples = Dataset._convert_csv(kwargs["csv_file_path"])
             elif method == "hf":
                 examples = Dataset._download_hf(kwargs)
+            else:
+                examples = examples
 
             ds_info = {
                 "id": ds_id,
