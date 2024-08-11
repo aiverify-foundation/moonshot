@@ -21,45 +21,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  pypi-deployment:
-
+  build:
+    name: Build distribution 📦
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
-
-    - name: Checkout Moonshot
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-          repository: aiverify-foundation/moonshot
-          ref: ${{ inputs.branch }}
-
-    - name: Setup Python 3.11
-      uses: actions/setup-python@v4
+        python-version: "3.11"
+    - name: Install pypa/build
+      run: >-
+        python3 -m
+        pip install
+        build
+        --user
+    - name: Build a binary wheel and a source tarball
+      run: python3 -m build
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v3
       with:
-          python-version: '3.11'
-    
-    - name: Setup Build & Twine
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        python -m pip install --upgrade build
-        python -m pip install --upgrade twine
+        name: python-package-distributions
+        path: dist/
 
-    - name: Build & Deploy Package to Test PyPi
-      env: 
-        TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-      run: |
-        source venv/bin/activate
-        python -m build
-        python -m twine upload --repository testpypi dist/* -"$TEST_PYPI_TOKEN"
+  publish-to-testpypi:
+    name: Publish Python 🐍 distribution 📦 to TestPyPI
+    needs:
+    - build
+    runs-on: ubuntu-latest
 
-    - name: Test Package
-      run: |
-        cd ../
-        mkdir test & cd test
-        python3 -m venv venv
-        source venv/bin/activate
-        pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "aiverify-moonshot==${{ inputs.test_release_tag }}"
-        python -m moonshot -i moonshot-data -i moonshot-ui
-        python -m moonshot web & 
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/aiverify-moonshot-test
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v3
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution 📦 to TestPyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
