@@ -39,8 +39,8 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
-        python3 -m pip install --upgrade build
-        python3 -m pip install --upgrade twine
+        python -m pip install --upgrade build
+        python -m pip install --upgrade twine
 
     - name: Build & Deploy Package to Test PyPi
       run: |
