@@ -239,7 +239,6 @@ class TestCollectionApiDataset:
 
         # Call the api_create_datasets function with unpacked arguments
         result = api_convert_dataset(name, description, reference, license, csv_file_path)
-        print(result)
         # Assert that the result matches the expected result
         assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."
 
