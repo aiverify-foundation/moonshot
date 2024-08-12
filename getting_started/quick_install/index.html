@@ -203,6 +203,13 @@
 </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#setting-up-logging">
+<span class="md-ellipsis">
+      Setting up Logging
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#specifying-custom-environment-file">
 <span class="md-ellipsis">
       Specifying Custom Environment File
@@ -596,6 +603,13 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="../../api_reference/api_bookmark/">
+<span class="md-ellipsis">
+    Bookmark API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../../api_reference/api_connector_endpoint/">
 <span class="md-ellipsis">
     Connector Endpoint API
@@ -826,6 +840,10 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>$ python -m moonshot web
 </span></code></pre></div>
 <p>Lastly, access Moonshot UI using a browser (<code>http://localhost:3000</code>).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the dependency for moonshot-data. Please refer to this <a href="../../faq/#i-am-unable-to-install-pytorch">FAQ</a> for a potential solution.</p>
+</div>
 <h2 id="extra-resources">Extra Resources</h2>
 <h3 id="setting-up-virtual-environment">Setting up Virtual Environment</h3>
 <p>It is recommended to create a new Python virtual environment in your working directory before proceeding with installation. To do so, enter working directory and proceed with following steps:</p>
@@ -848,9 +866,90 @@
 </div>
 </div>
 </input></input></input></div>
+<h3 id="setting-up-logging">Setting up Logging</h3>
+<p>By default, the moonshot library uses a logger to write logs with its severity to <code>moonshot.log</code>.</p>
+<p>There are multiple severity levels that we are currently using:</p>
+<table>
+<thead>
+<tr>
+<th>Logging Severity</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>debug</td>
+<td>Used for detailed debugging information, helpful during development.</td>
+</tr>
+<tr>
+<td>info</td>
+<td>General information about system operation, useful for system monitoring.</td>
+</tr>
+<tr>
+<td>warning</td>
+<td>Indicates a potential issue that should be looked into but is not immediately critical.</td>
+</tr>
+<tr>
+<td>error</td>
+<td>Reports a failure within the system, requiring immediate attention.</td>
+</tr>
+</tbody>
+</table>
+<p>Additionally, you can customize the logging behavior through environment variables:</p>
+<table>
+<thead>
+<tr>
+<th>Environment Variable</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MS_LOG_NAME</td>
+<td>The name of the log file.</td>
+<td><code>moonshot.log</code></td>
+</tr>
+<tr>
+<td>MS_LOG_LEVEL</td>
+<td>The minimum logging severity to capture. Can be one of <code>debug</code>, <code>info</code>, <code>warning</code>, or <code>error</code>.</td>
+<td><code>info</code></td>
+</tr>
+<tr>
+<td>MS_LOG_TO_FILE</td>
+<td>Whether to write logs to a file (<code>true</code>) or to standard output (<code>false</code>).</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>To customize the logging behavior of Moonshot through environment variables, you can export them in your terminal.<br/>
+This allows you to override the default logging configurations. Here's how you can set them:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>export MS_LOG_NAME=moonshot
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>export MS_LOG_LEVEL=debug
+</span><span id="__span-6-3"><a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>export MS_LOG_TO_FILE=true
+</span></code></pre></div>
+After exporting these variables, any subsequent runs of the Moonshot application will adhere to these logging settings 
+until the terminal session ends or the variables are unset.</p>
+<p>The logging format is designed to provide a clear and concise overview of each log entry, structured as follows:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>%(asctime)s [%(levelname)s][%(filename)s::%(funcName)s(%(lineno)d)] %(message)s
+</span></code></pre></div>
+This format includes:</p>
+<ul>
+<li>timestamp (<code>%(asctime)s</code>)</li>
+<li>severity level (<code>%(levelname)s</code>)</li>
+<li>filename (<code>%(filename)s</code>)</li>
+<li>function name (<code>%(funcName)s</code>)</li>
+<li>line number (<code>%(lineno)d</code>)</li>
+<li>log message (<code>%(message)s</code>)</li>
+</ul>
+<p>For example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>2023-04-01 12:00:00 [INFO][module.py::main(10)] Application started successfully.
+</span></code></pre></div>
+This detailed format ensures that logs are not only easily readable but also provide in-depth information for
+debugging and monitoring purposes.</p>
 <h3 id="specifying-custom-environment-file">Specifying Custom Environment File</h3>
 <p>If you have a custom '<b>.env</b>' file, specify the path to the file as follows:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>python -m moonshot -e /path/to/your/.env
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a>python -m moonshot -e /path/to/your/.env
 </span></code></pre></div></p>
 </article>
 </div>

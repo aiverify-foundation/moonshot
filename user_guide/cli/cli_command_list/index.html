@@ -6,7 +6,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="../add_your_own_tests/" rel="prev"/>
-<link href="../../../api_reference/api_connector_endpoint/" rel="next"/>
+<link href="../../../api_reference/api_bookmark/" rel="next"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
 <title>(CLI) CLI Command List - Moonshot</title>
@@ -22,7 +22,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#list-of-cli-commands">
+<a class="md-skip" href="#1-list-of-cli-commands">
           Skip to content
         </a>
 </div>
@@ -543,6 +543,13 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="../../../api_reference/api_bookmark/">
+<span class="md-ellipsis">
+    Bookmark API
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../../../api_reference/api_connector_endpoint/">
 <span class="md-ellipsis">
     Connector Endpoint API
@@ -733,7 +740,7 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="list-of-cli-commands">List of CLI Commands</h1>
+<h1 id="1-list-of-cli-commands">1. List of CLI Commands</h1>
 <p>This page is mainly for users who are most interested in using the CLI to perform benchmark tests and run red teaming. We have prepared the list of commands you can run in the CLI so users can have a rough sense of what can be done in the CLI.</p>
 <table>
 <thead>
@@ -748,6 +755,11 @@
 <td>add_cookbook<br/><sub><code>add_cookbook 'My new cookbook' 'I am cookbook description' "['analogical-similarity','auto-categorisation']"</code></sub></td>
 <td>Add a new cookbook. The 'name' argument will be slugified to create a unique identifier.</td>
 <td><table><tr><td>name (str)</td><td>Name of the new cookbook<br/><sub>example: <code>'My new cookbook'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new cookbook<br/><sub>example: <code>'I am cookbook description'</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to be included in the new cookbook (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"['analogical-similarity','auto-categorisation']"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_bookmarks<br/><sub><code>list_bookmarks</code></sub></td>
+<td>List all available bookmarks.</td>
+<td>-</td>
 </tr>
 <tr>
 <td>list_cookbooks<br/><sub><code>list_cookbooks</code></sub></td>
@@ -770,9 +782,9 @@
 <td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>run_cookbook<br/><sub><code>run_cookbook 'my new cookbook runner' "['chinese-safety-cookbook']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
-<td>Run a cookbook.</td>
-<td><table><tr><td>name (str)</td><td>Name of cookbook runner<br/><sub>example: <code>'my new cookbook runner'</code></sub></td></tr><tr><td>cookbooks (str)</td><td>List of cookbooks to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['chinese-safety-cookbook']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
+<td>run_cookbook<br/><sub><code>run_cookbook 'my new cookbook runner' "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
+<td>Execute a cookbook with the specified parameters.</td>
+<td><table><tr><td>name (str)</td><td>Name of cookbook runner<br/><sub>example: <code>my new cookbook runner</code></sub></td></tr><tr><td>cookbooks (str)</td><td>List of cookbooks to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq','mmlu']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
 </tr>
 <tr>
 <td>list_datasets<br/><sub><code>list_datasets</code></sub></td>
@@ -975,14 +987,44 @@
 <td>-</td>
 </tr>
 <tr>
-<td>run_attack_module<br/><sub><code>run_attack_module sample_attack_module 'this is my prompt' -s 'test system prompt' -c 'add_previous_prompt' -p 'mmlu' -m 'bleuscore'</code></sub></td>
+<td>show_prompts<br/><sub><code>show_prompts</code></sub></td>
+<td>Display all prompts.</td>
+<td>-</td>
+</tr>
+<tr>
+<td>run_attack_module<br/><sub><code>run_attack_module sample_attack_module 'this is my prompt' -s 'test system prompt' -m 'bleuscore'</code></sub></td>
 <td>Runs automated red teaming in the current session.</td>
-<td><table><tr><td>attack_module_id (str)</td><td>ID of the attack module.<br/><sub>example: <code>sample_attack_module</code></sub></td></tr><tr><td>prompt (str)</td><td>Prompt to be used for the attack.<br/><sub>example: <code>'this is my prompt'</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to be used for the attack. If not specified, the default system prompt will be used.<br/><sub>example: <code>'test system prompt'</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context strategy module to be used.<br/><sub>example: <code>'add_previous_prompt'</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used.<br/><sub>example: <code>mmlu</code></sub></td></tr><tr><td>-m, --metric (str)</td><td>Name of the metric module to be used.<br/><sub>example: <code>bleuscore</code></sub></td></tr></table></td>
+<td><table><tr><td>attack_module_id (str)</td><td>ID of the attack module.<br/><sub>example: <code>sample_attack_module</code></sub></td></tr><tr><td>prompt (str)</td><td>Prompt to be used for the attack.<br/><sub>example: <code>'this is my prompt'</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to be used for the attack. If not specified, the default system prompt will be used.<br/><sub>example: <code>'test system prompt'</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context strategy module to be used. If this is set, it will overwrite the context strategy set in the session while running this attack module.<br/><sub>example: <code>'add_previous_prompt'</code></sub></td></tr><tr><td>-n, --cs_num_of_prev_prompts (str)</td><td>The number of previous prompts to use with the context strategy. If this is set, it will overwrite the number of previous prompts set in the session while running this attack module.<br/><sub>example: <code>5</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used. If this is set, it will overwrite the prompt template set in the session while running this attack module.<br/><sub>example: <code>mmlu</code></sub></td></tr><tr><td>-m, --metric (str)</td><td>Name of the metric module to be used.<br/><sub>example: <code>bleuscore</code></sub></td></tr><tr><td>-o, --optional_args (str)</td><td>Optional parameters to input into the red teaming module.<br/><sub>example: <code>{'param1': 'value1'}</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_session<br/><sub><code>delete_session my-test-runner</code></sub></td>
 <td>Delete a session</td>
 <td><table><tr><td>session (str)</td><td>The runner ID of the session to delete<br/><sub>example: <code>my-test-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>add_bookmark<br/><sub><code>add_bookmark openai-connector 2 my-bookmarked-prompt</code></sub></td>
+<td>Bookmark a prompt</td>
+<td><table><tr><td>endpoint (str)</td><td>Endpoint which the prompt was sent to<br/><sub>example: <code>openai-connector</code></sub></td></tr><tr><td>prompt_id (int)</td><td>ID of the prompt (the leftmost column)<br/><sub>example: <code>2</code></sub></td></tr><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my-bookmarked-prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_bookmark<br/><sub><code>use_bookmark my_bookmark</code></sub></td>
+<td>Use a bookmarked prompt</td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my_bookmark</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_bookmark<br/><sub><code>delete_bookmark my_bookmarked_prompt</code></sub></td>
+<td>Delete a bookmark</td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_bookmark<br/><sub><code>view_bookmark my_bookmarked_prompt</code></sub></td>
+<td>View a bookmark</td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark you want to view<br/><sub>example: <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>export_bookmarks<br/><sub><code>export_bookmarks "my list of exported bookmarks"</code></sub></td>
+<td>Exports bookmarks as a JSON file</td>
+<td><table><tr><td>bookmark_list_name (str)</td><td>Name of the exported bookmarks JSON file you want to save as (without the .json extension)<br/><sub>example: <code>my list of exported bookmarks</code></sub></td></tr></table></td>
 </tr>
 </tbody>
 </table>
@@ -1010,13 +1052,13 @@
               </div>
 </div>
 </a>
-<a aria-label="Next: Connector Endpoint API" class="md-footer__link md-footer__link--next" href="../../../api_reference/api_connector_endpoint/">
+<a aria-label="Next: Bookmark API" class="md-footer__link md-footer__link--next" href="../../../api_reference/api_bookmark/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                Connector Endpoint API
+                Bookmark API
               </div>
 </div>
 <div class="md-footer__button md-icon">
