@@ -62,7 +62,7 @@ jobs:
     
     - name: Setup Moonshot
       env: 
-        ENVIRONMENT_VARS = ${{ vars.ENVIRONMENT_VARS }}
+        ENVIRONMENT_VARS = "${{ vars.ENVIRONMENT_VARS }}"
       run: |
         python -m venv venv
         source venv/bin/activate
