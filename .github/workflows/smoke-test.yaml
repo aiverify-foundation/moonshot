@@ -120,8 +120,12 @@ jobs:
           path: moonshot-smoke-testing
 
     - name: Run Smoke Test
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
       run: |
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         npx playwright test tests/smoke.spec.ts
+         URI="$URI" TOKEN="$TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke.spec.ts
