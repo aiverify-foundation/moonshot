@@ -130,4 +130,4 @@ jobs:
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         URI="$URI" TOKEN="$TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke-test.spec.ts --project=chromium
+         URI="$URI" TOKEN="$TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke-test.spec.ts
