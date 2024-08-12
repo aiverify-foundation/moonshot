@@ -61,10 +61,14 @@ jobs:
           python-version: '3.11'
     
     - name: Setup Moonshot
+      env: 
+        ENVIRONMENT_VARS = ${{ vars.ENVIRONMENT_VARS }}
       run: |
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
+        touch .env
+        echo "$ENVIRONMENT_VARS" >> .env
 
     - name: Checkout Moonshot Data (Pull Request)
       if: github.event_name == 'pull_request'
