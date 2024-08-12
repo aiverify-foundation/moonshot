@@ -52,7 +52,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
       with:
-          repository: aiverify-foundation/moonshot-data
+          repository: aiverify-foundation/moonshot
           ref: ${{ inputs.moonshot_branch }}
     
     - name: Setup Python 3.11
