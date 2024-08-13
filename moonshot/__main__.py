@@ -1,11 +1,11 @@
 import argparse
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import threading
 import warnings
-import shutil
 
 from dotenv import dotenv_values
 
@@ -94,13 +94,17 @@ def moonshot_data_installation():
     # Check if the directory already exists
     if os.path.exists(folder_name):
         logger.warning(f"Directory {folder_name} already exists.")
-        user_input = input(
-            f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-        ).strip().lower()
+        user_input = (
+            input(
+                f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+            )
+            .strip()
+            .lower()
+        )
         if user_input == "y":
             logger.info(f"Removing directory {folder_name}.")
             # Remove the existing directory
-            shutil.rmtree(folder_name)        
+            shutil.rmtree(folder_name)
         else:
             logger.info("Exiting function without removing the directory.")
             return
@@ -158,13 +162,17 @@ def moonshot_ui_installation():
     # Check if the directory already exists
     if os.path.exists(folder_name):
         logger.warning(f"Directory {folder_name} already exists.")
-        user_input = input(
-            f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-        ).strip().lower()
+        user_input = (
+            input(
+                f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+            )
+            .strip()
+            .lower()
+        )
         if user_input == "y":
             logger.info(f"Removing directory {folder_name}.")
             # Remove the existing directory
-            shutil.rmtree(folder_name)        
+            shutil.rmtree(folder_name)
         else:
             logger.info("Exiting function without removing the directory.")
             return
