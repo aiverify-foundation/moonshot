@@ -5,6 +5,7 @@ import subprocess
 import sys
 import threading
 import warnings
+import shutil
 
 from dotenv import dotenv_values
 
@@ -95,11 +96,11 @@ def moonshot_data_installation():
         logger.warning(f"Directory {folder_name} already exists.")
         user_input = input(
             f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-        ).strip()
-        if user_input == "Y":
+        ).strip().lower()
+        if user_input == "y":
             logger.info(f"Removing directory {folder_name}.")
             # Remove the existing directory
-            run_subprocess(["rm", "-rf", folder_name], check=True)
+            shutil.rmtree(folder_name)        
         else:
             logger.info("Exiting function without removing the directory.")
             return
@@ -129,7 +130,7 @@ def moonshot_data_installation():
     os.chdir("..")
 
 
-def check_node():
+def check_node() -> bool:
     """
     Check if Node.js is installed on the user's machine.
     """
@@ -159,11 +160,11 @@ def moonshot_ui_installation():
         logger.warning(f"Directory {folder_name} already exists.")
         user_input = input(
             f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-        ).strip()
-        if user_input == "Y":
+        ).strip().lower()
+        if user_input == "y":
             logger.info(f"Removing directory {folder_name}.")
             # Remove the existing directory
-            run_subprocess(["rm", "-rf", folder_name], check=True)
+            shutil.rmtree(folder_name)        
         else:
             logger.info("Exiting function without removing the directory.")
             return
@@ -269,7 +270,7 @@ def main():
         # Handle CLI mode here, possibly also with additional arguments
         pass
     else:
-        sys.exit(1)
+        sys.exit(0)
 
 
 if __name__ == "__main__":
