@@ -113,3 +113,50 @@ jobs:
             --query "CommandInvocations[0].Status" \
             --output text)
           echo "Command status: $status"
+
+      - name: Run smoke test
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Run smoke test" \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh\""]' \
+            --query "Command.CommandId" \
+            --output text)
+      
+          max_attempts=20
+          delay=60
+          attempts=0
+      
+          while [ $attempts -lt $max_attempts ]; do
+            status=$(aws ssm list-command-invocations \
+              --command-id "$command_id" \
+              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+      
+            if [ "$status" == "Success" ] || [ "$status" == "Failed" ]; then
+              output=$(aws ssm get-command-invocation \
+                --command-id "$command_id" \
+                --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+                --query "StandardOutputContent" \
+                --output text)
+              echo "Smoke test output: $output"
+              echo "Command status: $status"
+              if [ "$status" == "Success" ]; then
+                exit 0
+              else
+                exit 1
+              fi
+            elif [ "$status" == "InProgress" ]; then
+              echo "Command status: $status, waiting..."
+              sleep $delay
+              attempts=$((attempts + 1))
+            else
+              echo "Unexpected command status: $status"
+              exit 1
+            fi
+          done
+      
+          echo "Max attempts reached, exiting."
+          exit 1
