@@ -1,5 +1,6 @@
+from typing import Iterator
+
 from pydantic import BaseModel
-from pyparsing import Iterator
 
 
 class DatasetArguments(BaseModel):
@@ -16,7 +17,7 @@ class DatasetArguments(BaseModel):
     description: str
 
     # examples (Iterator[dict] | None): Generator of examples from the dataset, where each example is a dictionary.
-    examples: Iterator[dict] | None
+    examples: Iterator[dict] | None | list
 
     # num_of_dataset_prompts (int): The number of dataset prompts, automatically calculated
     num_of_dataset_prompts: int = 0

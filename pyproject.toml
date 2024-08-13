@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.4.1"
+version = "0.4.4.2"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -21,18 +21,20 @@ classifiers = [
 dependencies = [
     "python-slugify==8.0.4",
     "python-dotenv==1.0.1",
-    "ijson==3.2.3",
+    "ijson==3.3.0",
     "jinja2==3.1.4",
-    "pydantic==2.7.1",
+    "datasets==2.20.0",
+    "pandas==2.2.2",
+    "pydantic==2.8.2",
     "pyparsing==3.1.2",
     "xxhash==3.4.1"
 ]
 
 [project.optional-dependencies]
 web-api = [
-    "typing-extensions==4.12.0",
-    "fastapi==0.110.3",
-    "uvicorn==0.29.0",
+    "typing-extensions==4.12.2",
+    "fastapi==0.112.0",
+    "uvicorn==0.30.5",
     "dependency-injector==4.41.0",
 ]
 cli = [
@@ -94,7 +96,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.4.1"
+version = "0.4.4.2"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -103,28 +105,30 @@ readme = "README.md"
 python = ">=3.11,<3.12"
 python-slugify = "8.0.4"
 python-dotenv = "1.0.1"
-ijson = "3.2.3"
+ijson = "3.3.0"
 jinja2 = "3.1.4"
-pydantic = "2.7.2"
+pydantic = "2.8.2"
 pyparsing = "3.1.2"
 xxhash = "3.4.1"
-typing-extensions = "4.12.0"
-fastapi = "0.110.3"
-uvicorn = "0.30.0"
+typing-extensions = "4.12.2"
+fastapi = "0.112.0"
+uvicorn = "0.30.5"
 dependency-injector = "4.41.0"
 cmd2 = "2.4.3"
 rich = "13.7.1"
+pandas = "2.2.2"
+datasets = "2.20.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
+black = "^24.8.0"
 isort = "^5.13.2"
-pre-commit = "^3.7.1"
-pytest = "^8.3.1"
+pre-commit = "^3.8.0"
+pytest = "^8.3.2"
 coverage = "^7.6.0"
 pytest-mock = "^3.14.0"
 flake8 = "^7.1.0"
 poetry-plugin-export = "^1.8.0"
-pyinstrument = "^4.6.2"
+pyinstrument = "^4.7.1"
 anybadge = "^1.14.0"
 pytest-cov = "^5.0.0"
 pytest-html = "^4.1.1"

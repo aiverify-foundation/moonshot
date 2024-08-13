@@ -22,33 +22,21 @@ class Dataset:
 
     @staticmethod
     @validate_call
-    def create(ds_args: DatasetArguments, examples, method: str, **kwargs) -> str:
+    def create(ds_args: DatasetArguments) -> str:
         """
         Creates a new dataset based on the provided arguments and method.
 
         This method generates a unique dataset ID using the dataset name,
         checks if a dataset with the same ID already exists, and then
-        creates the dataset using the specified method (either 'csv' or
-        'hf'). The dataset information is then stored as a JSON object.
+        creates the dataset using the specified method. The dataset information
+        is then stored as a JSON object.
 
         Args:
             ds_args (DatasetArguments): The arguments containing dataset
-                details such as name, description, reference, and license.
-            method (str): The method to create the dataset. It can be either
-                'csv' or 'hf'.
-            **kwargs: Additional keyword arguments required for the specified
-                method.
-                - For 'csv' method: 'csv_file_path' (str): The file path to
-                    the CSV file.
-                - For 'hf' method: 'dataset_name' (str): The name of the
-                    Hugging Face dataset.
-                    'dataset_config' (str): The configuration of the Hugging
-                    Face dataset.
-                    'split' (str): The split of the dataset to load.
-                    'input_col' (list[str]): The list of input columns.
-                    'target_col' (str): The target column.
+                details such as name, description, reference, license, and examples.
 
         Returns:
+            str: The file path of the created dataset JSON object.
 
         Raises:
             RuntimeError: If a dataset with the same ID already exists.
@@ -62,20 +50,13 @@ class Dataset:
             if Storage.is_object_exists(EnvVariables.DATASETS.name, ds_id, "json"):
                 raise RuntimeError(f"Dataset with ID '{ds_id}' already exists.")
 
-            if method == "csv":
-                examples = Dataset._convert_csv(kwargs["csv_file_path"])
-            elif method == "hf":
-                examples = Dataset._download_hf(kwargs)
-            else:
-                examples = examples
-
             ds_info = {
                 "id": ds_id,
                 "name": ds_args.name,
                 "description": ds_args.description,
                 "reference": ds_args.reference,
                 "license": ds_args.license,
-                "examples": examples,
+                "examples": ds_args.examples,  # Convert iterator to list
             }
 
             # Write as JSON output
@@ -89,7 +70,8 @@ class Dataset:
             raise e
 
     @staticmethod
-    def _convert_csv(csv_file: str) -> list[dict]:
+    @validate_call
+    def convert_data(csv_file_path: str) -> list[dict]:
         """
         Converts a CSV file to a list of dictionaries.
 
@@ -97,17 +79,18 @@ class Dataset:
         where each dictionary represents a row in the CSV file.
 
         Args:
-            csv_file (str): The file path to the CSV file.
+            csv_file_path (str): The file path to the CSV file.
 
         Returns:
             list[dict]: A list of dictionaries representing the CSV data.
         """
-        df = pd.read_csv(csv_file)
-        data = df.to_dict("records")
-        return data
+        df = pd.read_csv(csv_file_path)
+        examples = df.to_dict("records")
+        return examples
 
     @staticmethod
-    def _download_hf(hf_args) -> list[dict]:
+    @validate_call
+    def download_hf(**hf_args) -> list[dict]:
         """
         Downloads a dataset from Hugging Face and converts it to a list of dictionaries.
 
@@ -125,13 +108,17 @@ class Dataset:
         Returns:
             list[dict]: A list of dictionaries representing the dataset.
         """
-        dataset = load_dataset(hf_args["dataset_name"], hf_args["dataset_config"])
-        data = []
-        for example in dataset[hf_args["split"]]:
+
+        dataset = load_dataset(
+            hf_args["dataset_name"], hf_args["dataset_config"], split=hf_args["split"]
+        )
+
+        examples = []
+        for example in dataset:
             input_data = " ".join([str(example[col]) for col in hf_args["input_col"]])
             target_data = str(example[hf_args["target_col"]])
-            data.append({"input": input_data, "target": target_data})
-        return data
+            examples.append({"input": input_data, "target": target_data})
+        return examples
 
     @staticmethod
     @validate_call
