@@ -6,6 +6,7 @@ import subprocess
 import sys
 import threading
 import warnings
+from typing import Any
 
 from dotenv import dotenv_values
 
@@ -20,7 +21,7 @@ Run the Moonshot application
 """
 
 
-def run_subprocess(*args, **kwargs):
+def run_subprocess(*args: Any, **kwargs: Any) -> subprocess.CompletedProcess:
     """
     Run a subprocess with the option to use shell=True on Windows.
     """
@@ -29,7 +30,7 @@ def run_subprocess(*args, **kwargs):
     return subprocess.run(*args, **kwargs)
 
 
-def ms_lib_env_file(data_repo_name):
+def ms_lib_env_file(data_repo_name: str) -> None:
     """
     Writes the env file to be used for moonshot library
     """
@@ -71,7 +72,7 @@ def ms_lib_env_file(data_repo_name):
         env_file.write(combined_content.strip())
 
 
-def ms_ui_env_file(ui_repo):
+def ms_ui_env_file(ui_repo: str) -> None:
     """
     Write the env file to be used with moonshot ui
     """
@@ -84,7 +85,8 @@ def ms_ui_env_file(ui_repo):
     with open(os.path.join(ui_repo, ".env"), "w") as env_file:
         env_file.write(env_content.strip())
 
-def download_nltk_resources():
+
+def download_nltk_resources() -> None:
     """
     Download and verify necessary NLTK resources.
 
@@ -97,12 +99,14 @@ def download_nltk_resources():
         "punkt",
         "stopwords",
     ]
-    
+
     for resource in resources:
         try:
             nltk.download(resource)
             # Check if the resource is available
-            nltk.data.find(f'tokenizers/{resource}') if resource == "punkt" else nltk.data.find(f'corpora/{resource}')
+            nltk.data.find(
+                f"tokenizers/{resource}"
+            ) if resource == "punkt" else nltk.data.find(f"corpora/{resource}")
             logger.info(f"Successfully downloaded and verified {resource}")
         except LookupError:
             logger.warning(f"Failed to download {resource}")
@@ -111,7 +115,8 @@ def download_nltk_resources():
             logger.warning(f"An error occurred while downloading {resource}: {e}")
             raise
 
-def moonshot_data_installation():
+
+def moonshot_data_installation() -> None:
     # Code for moonshot-data installation
     logger.info("Installing Moonshot Data from GitHub")
     repo = "https://github.com/aiverify-foundation/moonshot-data.git"
@@ -171,7 +176,7 @@ def check_node() -> bool:
         return False
 
 
-def moonshot_ui_installation():
+def moonshot_ui_installation() -> None:
     if not check_node():
         logger.error("Node.js is not installed. Please install Node.js to proceed.")
         return
@@ -218,7 +223,7 @@ def moonshot_ui_installation():
     ms_ui_env_file(folder_name)
 
 
-def run_moonshot_ui():
+def run_moonshot_ui() -> None:
     """
     To start a thread to run the Moonshot UI
     """
@@ -234,7 +239,7 @@ def run_moonshot_ui():
     run_subprocess(["npm", "start"], cwd=ui_dir)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Run the Moonshot application")
     parser.add_argument(
         "mode",
@@ -273,7 +278,7 @@ def main():
 
     if args.mode == "help":
         parser.print_help()
-        sys.exit(1)
+        sys.exit(0)
 
     api_set_environment_variables(dotenv_values(args.env))
 
