@@ -84,6 +84,32 @@ def ms_ui_env_file(ui_repo):
     with open(os.path.join(ui_repo, ".env"), "w") as env_file:
         env_file.write(env_content.strip())
 
+def download_nltk_resources():
+    """
+    Download and verify necessary NLTK resources.
+
+    This function downloads a predefined list of NLTK resources and verifies their availability.
+    If a resource fails to download or verify, a warning is logged and an exception is raised.
+    """
+    import nltk
+
+    resources = [
+        "punkt",
+        "stopwords",
+    ]
+    
+    for resource in resources:
+        try:
+            nltk.download(resource)
+            # Check if the resource is available
+            nltk.data.find(f'tokenizers/{resource}') if resource == "punkt" else nltk.data.find(f'corpora/{resource}')
+            logger.info(f"Successfully downloaded and verified {resource}")
+        except LookupError:
+            logger.warning(f"Failed to download {resource}")
+            raise
+        except Exception as e:
+            logger.warning(f"An error occurred while downloading {resource}: {e}")
+            raise
 
 def moonshot_data_installation():
     # Code for moonshot-data installation
@@ -123,12 +149,7 @@ def moonshot_data_installation():
     # Install the requirements if they exist
     if os.path.exists("requirements.txt"):
         run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
-        import nltk
-
-        nltk.download("punkt")
-        nltk.download("stopwords")
-        nltk.download("averaged_perceptron_tagger")
-        nltk.download("universal_tagset")
+        download_nltk_resources()
 
     # Change back to the base directory
     os.chdir("..")
