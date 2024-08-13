@@ -1,3 +1,4 @@
+from moonshot.src.api.api_augmentator import api_augment_dataset, api_augment_recipe
 from moonshot.src.api.api_bookmark import (
     api_delete_all_bookmark,
     api_delete_bookmark,
@@ -34,13 +35,13 @@ from moonshot.src.api.api_cookbook import (
     api_update_cookbook,
 )
 from moonshot.src.api.api_dataset import (
-    api_delete_dataset,
-    api_read_dataset,
-    api_create_datasets,
     api_convert_dataset,
+    api_create_datasets,
+    api_delete_dataset,
     api_download_dataset,
     api_get_all_datasets,
     api_get_all_datasets_name,
+    api_read_dataset,
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
@@ -100,6 +101,8 @@ from moonshot.src.api.api_session import (
 )
 
 __all__ = [
+    "api_augment_dataset",
+    "api_augment_recipe",
     "api_create_connector_from_endpoint",
     "api_create_connectors_from_endpoints",
     "api_get_all_connector_type",
