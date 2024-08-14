@@ -52,7 +52,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
       with:
-          repository: aiverify-foundation/moonshot-data
+          repository: aiverify-foundation/moonshot
           ref: ${{ inputs.moonshot_branch }}
     
     - name: Setup Python 3.11
@@ -65,6 +65,8 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
+        touch .env
+        echo "${{ vars.ENVIRONMENT_VARS }}" >> .env
 
     - name: Checkout Moonshot Data (Pull Request)
       if: github.event_name == 'pull_request'
@@ -120,8 +122,12 @@ jobs:
           path: moonshot-smoke-testing
 
     - name: Run Smoke Test
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
       run: |
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         npx playwright test tests/main-page.spec.ts
+         URI="$URI" TOKEN="$TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke-test.spec.ts
