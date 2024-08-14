@@ -9,13 +9,20 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "CodeQL"
+name: "CodeQL (SAST)"
 
 on:
   # push:
   #  branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'dev_main'
+        type: string
   # Trigger every Friday at 10:05pm (14:05 UTC)
   # cron: min hr day-of-mth mth day-of-week
   schedule:

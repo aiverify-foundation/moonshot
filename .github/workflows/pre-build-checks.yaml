@@ -42,7 +42,7 @@ jobs:
       - name: Set branch variable (pull_request)
         if: github.event_name == 'pull_request'
         run: |
-          echo "MS_BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          echo "MS_BRANCH=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_ENV"
           echo "MS_DATA_BRANCH=dev_main" >> "$GITHUB_ENV"
           echo "PR_NUM=#${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
 
