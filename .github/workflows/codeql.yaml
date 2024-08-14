@@ -97,6 +97,13 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
+      id: codeql_analysis
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+
+    - name: Capture step statuses
+      if: ${{ ! cancelled() }}
+      run: |
+        echo "CODEQL_ANALYSIS=${{ steps.codeql_analysis.outcome }}" >> $GITHUB_ENV
+        echo "CodeQL Analysis Status: $CODEQL_ANALYSIS"
