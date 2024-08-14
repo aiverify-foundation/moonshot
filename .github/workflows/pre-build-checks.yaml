@@ -39,50 +39,88 @@ jobs:
 
     steps:
 
-      - name: Set Branch Variable (pull_request)
+      - name: Set branch variable (pull_request)
         if: github.event_name == 'pull_request'
         run: |
           echo "BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
-      - name: Set Branch Variable (workflow_dispatch)
+      - name: Set branch variable (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
 
-      - name: Checkout Code
+      # Checkout moonshot code
+      - name: Checkout code (moonshot)
         uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH }}
           submodules: recursive
 
-      - name: Setup Python 3.11
+      - name: Setup python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install dependencies
+      # Checkout moonshot-data code
+      - name: Checkout code (moonshot-data)
+        uses: actions/checkout@v3
+        with:
+          repository: aiverify-foundation/moonshot-data
+          ref: ${{ env.BRANCH }}
+          submodules: recursive
+          path: moonshot-data
 
+      # Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install -r moonshot-data/requirements.txt
           pip install pytest pytest-mock pytest-html pytest-json pytest-cov coverage httpx anybadge
           pip install flake8 flake8-html
 
-      # Unit Tests & Coverage
+      # Setup .env file
+      - name: Setup env file
+        run: |
+          echo "# For Data
+          ATTACK_MODULES=\"./moonshot-data/attack-modules\"
+          BOOKMARKS=\"./moonshot-data/generated-outputs/bookmarks\"
+          CONNECTORS=\"./moonshot-data/connectors\"
+          CONNECTORS_ENDPOINTS=\"./moonshot-data/connectors-endpoints\"
+          CONTEXT_STRATEGY=\"./moonshot-data/context-strategy\"
+          COOKBOOKS=\"./moonshot-data/cookbooks\"
+          DATABASES=\"./moonshot-data/generated-outputs/databases\"
+          DATABASES_MODULES=\"./moonshot-data/databases-modules\"
+          DATASETS=\"./moonshot-data/datasets\"
+          IO_MODULES=\"./moonshot-data/io-modules\"
+          METRICS=\"./moonshot-data/metrics\"
+          PROMPT_TEMPLATES=\"./moonshot-data/prompt-templates\"
+          RECIPES=\"./moonshot-data/recipes\"
+          RESULTS=\"./moonshot-data/generated-outputs/results\"
+          RESULTS_MODULES=\"./moonshot-data/results-modules\"
+          RUNNERS=\"./moonshot-data/generated-outputs/runners\"
+          RUNNERS_MODULES=\"./moonshot-data/runners-modules\"
+          TOKENIZERS_PARALLELISM=false
+          
+          # For Web API
+          HOST_ADDRESS=127.0.0.1
+          HOST_PORT=5000" > .env
+          cat .env
+
+      # Unit tests & coverage
       - name: Unit tests with coverage
         if: ${{ ! cancelled() }}
         timeout-minutes: 30
         run: |
           bash ci/run-test.sh
 
-      # Code Quality analysis - flake8
-      - name: Code quality analysis - flake8
+      # Code quality analysis (flake8)
+      - name: Code quality analysis (flake8)
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-flake8.sh
 
       # pip-audit
-      - name: Dependency analysis - vulnerabilities & licenses
+      - name: Dependency analysis (vulnerabilities & licenses)
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-pip-audit.sh
