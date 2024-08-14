@@ -6,11 +6,15 @@ from pathlib import Path
 from typing import Iterator
 
 import xxhash
-from pydantic import validate_call
+from pydantic import ConfigDict, validate_call
 
 from moonshot.src.configs.env_variables import EnvironmentVars, EnvVariables
 from moonshot.src.storage.db_interface import DBInterface
 from moonshot.src.utils.import_modules import get_instance
+
+
+class Config:
+    config_dict = ConfigDict(arbitrary_types_allowed=True)
 
 
 class Storage:
@@ -50,6 +54,58 @@ class Storage:
             if obj_mod_instance and callable(obj_mod_instance):
                 try:
                     obj_mod_instance(obj_filepath).create_file(obj_info)
+                    return obj_filepath
+                except Exception as e:
+                    raise e
+            else:
+                raise RuntimeError(
+                    f"Unable to get defined object module instance - {obj_mod_instance}"
+                )
+        else:
+            raise RuntimeError("Unable to create object.")
+
+    @staticmethod
+    @validate_call(config=Config.config_dict)
+    def create_object_with_iterator(
+        obj_type: str,
+        obj_id: str,
+        obj_info: dict,
+        obj_extension: str,
+        obj_mod_type: str = "jsonio",
+        iterator_keys: list[str] | None = None,
+        iterator_data: Iterator[dict] | None = None,
+    ) -> str:
+        """
+        Writes the object information to a file using iterators for specified keys.
+
+        Args:
+            obj_type (str): The type of the object (e.g., 'recipe', 'cookbook').
+            obj_id (str): The ID of the object.
+            obj_info (dict): A dictionary containing the object information.
+            obj_extension (str): The file extension (e.g., 'json', 'py').
+            obj_mod_type (str, optional): The module type for object serialization. Defaults to 'jsonio'.
+            iterator_keys (list[str] | None): A list of keys for which the values will be written using iterators.
+            iterator_data (Iterator[dict] | None): An iterator for the data to be written for the specified keys.
+
+        Returns:
+            str: A filepath string of the object that has just been created.
+        """
+        if not hasattr(EnvironmentVars, obj_type):
+            raise RuntimeError(
+                f"'{obj_type}' is not a recognized EnvironmentVar value."
+            )
+
+        obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
+        if obj_filepath and isinstance(obj_filepath, str):
+            obj_mod_instance = get_instance(
+                obj_mod_type,
+                Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
+            )
+            if obj_mod_instance and callable(obj_mod_instance):
+                try:
+                    obj_mod_instance(obj_filepath).create_file_with_iterator(
+                        obj_info, iterator_keys, iterator_data
+                    )
                     return obj_filepath
                 except Exception as e:
                     raise e

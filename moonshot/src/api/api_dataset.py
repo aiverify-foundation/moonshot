@@ -137,7 +137,6 @@ def api_convert_dataset(
         str: The ID of the newly created dataset.
     """
     examples = Dataset.convert_data(csv_file_path)
-
     ds_args = DatasetArguments(
         id="",
         name=name,
@@ -146,5 +145,4 @@ def api_convert_dataset(
         license=license,
         examples=examples,
     )
-
     return Dataset.create(ds_args)
