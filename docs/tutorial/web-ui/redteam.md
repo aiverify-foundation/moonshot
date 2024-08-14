@@ -25,7 +25,7 @@ This step presents a list of attack modules available for your red teaming. For 
 
 ![Attack modules selection page](./res/run_rt_3.png)
 
-You are now required to complete a form on this page. After filling out the form, initiate a red teaming session by clicking on 'Start'.
+You are now required to complete a form on this page. **Note that the session names should be unique. We use session names to uniquely identify sessions.** After filling out the form, initiate a red teaming session by clicking on 'Start'.
 
 ![Form completion page](./res/run_rt_4.png)
 
