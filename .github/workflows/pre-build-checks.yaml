@@ -43,11 +43,13 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           echo "BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          echo "PR_NUM=#${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
 
       - name: Set branch variable (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+          echo "PR_NUM=#0" >> "$GITHUB_ENV"
 
       # Checkout moonshot code
       - name: Checkout code (moonshot)
@@ -108,6 +110,7 @@ jobs:
 
       # Unit tests & coverage
       - name: Unit tests with coverage
+        id: unit_tests
         if: ${{ ! cancelled() }}
         timeout-minutes: 30
         run: |
@@ -115,12 +118,36 @@ jobs:
 
       # Code quality analysis (flake8)
       - name: Code quality analysis (flake8)
+        id: code_quality
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-flake8.sh
 
       # pip-audit
       - name: Dependency analysis (vulnerabilities & licenses)
+        id: dependency_analysis
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-pip-audit.sh
+
+      - name: Capture step statuses
+        if: ${{ ! cancelled() }}
+        run: |
+          echo "UNIT_TESTS_STATUS=${{ steps.unit_tests.outcome }}" >> $GITHUB_ENV
+          echo "CODE_QUALITY_STATUS=${{ steps.code_quality.outcome }}" >> $GITHUB_ENV
+          echo "DEPENDENCY_ANALYSIS_STATUS=${{ steps.dependency_analysis.outcome }}" >> $GITHUB_ENV
+
+      # Send slack notification
+      - name: Send slack notification
+        if: ${{ ! cancelled() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.PR_NUM }}",
+              "status": "${{ job.status }}",
+              "details": "Unit Tests: ${{ env.UNIT_TESTS_STATUS }}, Code Quality: ${{ env.CODE_QUALITY_STATUS }}, Dependency Analysis: ${{ env.DEPENDENCY_ANALYSIS_STATUS }}",
+              "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
