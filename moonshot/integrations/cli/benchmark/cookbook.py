@@ -27,6 +27,7 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_ADD_COOKBOOK_NAME_VALIDATION,
     ERROR_BENCHMARK_ADD_COOKBOOK_RECIPES_LIST_STR_VALIDATION,
     ERROR_BENCHMARK_ADD_COOKBOOK_RECIPES_VALIDATION,
+    ERROR_BENCHMARK_DELETE_COOKBOOK_COOKBOOK_VALIDATION,
     ERROR_BENCHMARK_LIST_COOKBOOK_FIND_VALIDATION,
     ERROR_BENCHMARK_LIST_COOKBOOK_PAGINATION_VALIDATION,
     ERROR_BENCHMARK_LIST_COOKBOOK_PAGINATION_VALIDATION_1,
@@ -41,6 +42,9 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_RUN_COOKBOOK_RESULT_PROC_MOD_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RUNNER_PROC_MOD_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_SYS_PROMPT_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_COOKBOOK_COOKBOOK_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION_1,
     ERROR_BENCHMARK_VIEW_COOKBOOK_COOKBOOK_VALIDATION,
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
@@ -118,6 +122,10 @@ def list_cookbooks(args) -> list | None:
             pagination (str): Optional field to paginate cookbooks. It should be a string representation of a tuple
                               containing two integers (page number and page size).
 
+    Raises:
+        TypeError: If the 'find' or 'pagination' arguments are not strings or are None.
+        ValueError: If the 'pagination' argument is not a tuple of two integers after evaluation.
+
     Returns:
         list | None: A list of filtered cookbooks or None if there is no result.
     """
@@ -174,6 +182,9 @@ def view_cookbook(args) -> None:
         args: A namespace object from argparse. It should have the following attribute:
             cookbook (str): The ID of the cookbook to view.
 
+    Raises:
+        TypeError: If the 'cookbook' argument is not a string or is None.
+
     Returns:
         None
     """
@@ -209,6 +220,11 @@ def run_cookbook(args) -> None:
             system_prompt (str): The system prompt to use.
             runner_proc_module (str): The runner processing module to use.
             result_proc_module (str): The result processing module to use.
+
+    Raises:
+        TypeError: If any of the required arguments are not of the expected type or are None.
+        ValueError: If the 'cookbooks' or 'endpoints' arguments are not lists of strings after evaluation.
+        RuntimeError: If no results are found after running the cookbooks.
 
     Returns:
         None
@@ -290,7 +306,7 @@ def run_cookbook(args) -> None:
                 args.runner_proc_module,
                 args.result_proc_module,
             )
-            cb_runner.close()
+            await cb_runner.close()
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(run())
@@ -313,8 +329,8 @@ def update_cookbook(args) -> None:
     """
     Update a specific cookbook.
 
-    This function updates a specific cookbook by calling the api_update_cookbook function from the
-    moonshot.api module using the cookbook name and update values provided in the args.
+    This function updates a specific cookbook by calling the api_update_cookbook function using the
+    cookbook name and update values provided in the args.
 
     Args:
         args: A namespace object from argparse. It should have the following attributes:
@@ -322,13 +338,36 @@ def update_cookbook(args) -> None:
             update_values (str): A string representation of a list of tuples. Each tuple contains a key
             and a value to update in the cookbook.
 
+    Raises:
+        ValueError: If the 'cookbook' or 'update_values' arguments are not of the expected type or are None.
+
     Returns:
         None
     """
     try:
+        if (
+            args.cookbook is None
+            or not isinstance(args.cookbook, str)
+            or not args.cookbook
+        ):
+            raise ValueError(ERROR_BENCHMARK_UPDATE_COOKBOOK_COOKBOOK_VALIDATION)
+
         cookbook = args.cookbook
-        update_values = dict(literal_eval(args.update_values))
+        if (
+            args.update_values is None
+            or not isinstance(args.update_values, str)
+            or not args.update_values
+        ):
+            raise ValueError(ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION)
+
+        if literal_eval(args.update_values) and all(
+            isinstance(i, tuple) for i in literal_eval(args.update_values)
+        ):
+            update_values = dict(literal_eval(args.update_values))
+        else:
+            raise ValueError(ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION_1)
         api_update_cookbook(cookbook, **update_values)
+
         print("[update_cookbook]: Cookbook updated.")
     except Exception as e:
         print(f"[update_cookbook]: {str(e)}")
@@ -348,6 +387,9 @@ def delete_cookbook(args) -> None:
         args: A namespace object from argparse. It should have the following attribute:
             cookbook (str): The identifier of the cookbook to delete.
 
+    Raises:
+        ValueError: If the 'cookbook' argument is not a string or is None.
+
     Returns:
         None
     """
@@ -358,7 +400,15 @@ def delete_cookbook(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Cookbook deletion cancelled.[/]")
         return
+
     try:
+        if (
+            args.cookbook is None
+            or not isinstance(args.cookbook, str)
+            or not args.cookbook
+        ):
+            raise ValueError(ERROR_BENCHMARK_DELETE_COOKBOOK_COOKBOOK_VALIDATION)
+
         api_delete_cookbook(args.cookbook)
         print("[delete_cookbook]: Cookbook deleted.")
     except Exception as e:
@@ -378,6 +428,9 @@ def _display_cookbooks(cookbooks_list):
 
     Args:
         cookbooks_list (list): A list of dictionaries, where each dictionary contains the details of a cookbook.
+
+    Returns:
+        None
     """
     table = Table(
         title="List of Cookbooks", show_lines=True, expand=True, header_style="bold"

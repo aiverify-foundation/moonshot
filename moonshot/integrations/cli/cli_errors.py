@@ -53,3 +53,15 @@ ERROR_BENCHMARK_RUN_COOKBOOK_RESULT_PROC_MOD_VALIDATION = (
     "The 'result_proc_module' argument must be a non-empty string and not None."
 )
 ERROR_BENCHMARK_RUN_COOKBOOK_NO_RESULT = "There are no results generated."
+ERROR_BENCHMARK_UPDATE_COOKBOOK_COOKBOOK_VALIDATION = (
+    "The 'cookbook' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION = (
+    "The 'update_values' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION_1 = (
+    "The 'update_values' argument must evaluate to a list of tuples."
+)
+ERROR_BENCHMARK_DELETE_COOKBOOK_COOKBOOK_VALIDATION = (
+    "The 'cookbook' argument must be a non-empty string and not None."
+)
