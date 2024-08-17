@@ -27,20 +27,20 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             # No metrics
             (
@@ -49,62 +49,62 @@ class TestCollectionCliMetrics:
                 [],
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
-                False
+                False,
             ),
             (
                 "bert",
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             (
                 None,
                 "(1, 1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
-                        "idx": 1
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
+                        "idx": 1,
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             (
                 "Metrics",
                 "(1, 1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
-                False
+                False,
             ),
             # Invalid cases for find
             (
@@ -112,84 +112,84 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 99,
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Invalid cases for pagination
             (
@@ -197,224 +197,224 @@ class TestCollectionCliMetrics:
                 "",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 99,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 {},
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 [],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 (),
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 True,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 True,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 "(1, 'a')",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
-                False
+                False,
             ),
             (
                 None,
                 "(1, 2, 3)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
-                False
+                False,
             ),
             (
                 None,
                 "(1, )",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
-                False
+                False,
             ),
             (
                 None,
                 "(0, 1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             (
                 None,
                 "(1, 0)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             (
                 None,
                 "(0, 0)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             (
                 None,
                 "(1, -1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             (
                 None,
                 "(-1, 1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             (
                 None,
                 "(-1, -1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
-                False
+                False,
             ),
             # Exception case
             (
@@ -422,14 +422,14 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: An error has occurred while listing metrics.",
-                False
+                False,
             ),
         ],
     )
@@ -483,87 +483,87 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             (
                 "squad",
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             (
                 None,
                 "(0, 1)",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description',
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                         "idx": 1,
                     }
                 ],
                 "Listing metrics may take a while...",
-                True
+                True,
             ),
             # Case where filtered_response is None
             (
@@ -571,15 +571,15 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 None,
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
-                False
+                False,
             ),
             # Case where filtered_response is an empty list
             (
@@ -587,15 +587,15 @@ class TestCollectionCliMetrics:
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
                 [],
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
-                False
+                False,
             ),
         ],
     )
@@ -636,7 +636,7 @@ class TestCollectionCliMetrics:
             mock_display_metrics.assert_called_once_with(filtered_response)
         else:
             mock_display_metrics.assert_not_called()
-    
+
     # ------------------------------------------------------------------------------
     # Test view_metric functionality
     # ------------------------------------------------------------------------------
@@ -648,135 +648,135 @@ class TestCollectionCliMetrics:
                 "bertscore",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...",
-                True
+                True,
             ),
             # Invalid case: metric_filename is None
             (
                 None,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Invalid case: metric_filename is not a string
             (
                 "",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Exception case: api_get_all_metrics raises an exception
             (
                 "bertscore",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: An error has occurred while reading the metrics.",
-                False
+                False,
             ),
             # Exception case: api_get_all_metric_name raises an exception
             (
                 "bertscore",
                 [
                     {
-                        'id': 'bertscore', 
-                        'name': 'BertScore', 
-                        'description': 'Some description'
+                        "id": "bertscore",
+                        "name": "BertScore",
+                        "description": "Some description",
                     }
                 ],
-                ['bertscore'],
+                ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: An error has occurred while reading the metric names.",
-                False
+                False,
             ),
         ],
     )
@@ -824,63 +824,67 @@ class TestCollectionCliMetrics:
         else:
             mock_display_metrics.assert_not_called()
 
+    # ------------------------------------------------------------------------------
+    # Test delete_metric functionality
+    # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "metric, expected_log, to_be_called",
         [
             # Valid case
-            (
-                "Metric 1",
-                "[delete_metric]: Metric deleted.",
-                True
-            ),
+            ("Metric 1", "[delete_metric]: Metric deleted.", True),
             # Invalid case - metric
             (
                 "",
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 "[delete_metric]: The 'metric' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
-        ]
+        ],
     )
     @patch("moonshot.integrations.cli.benchmark.metrics.api_delete_metric")
-    def test_delete_metric(self, mock_api_delete_metric, capsys, metric, expected_log, to_be_called):
+    def test_delete_metric(
+        self, mock_api_delete_metric, capsys, metric, expected_log, to_be_called
+    ):
         class Args:
             pass
 
         args = Args()
         args.metric = metric
 
-        with patch("moonshot.integrations.cli.benchmark.metrics.console.input", return_value="y"):
-            with patch("moonshot.integrations.cli.benchmark.metrics.console.print") as mock_console_print:
+        with patch(
+            "moonshot.integrations.cli.benchmark.metrics.console.input",
+            return_value="y",
+        ):
+            with patch("moonshot.integrations.cli.benchmark.metrics.console.print"):
                 delete_metric(args)
 
         captured = capsys.readouterr()
@@ -890,38 +894,50 @@ class TestCollectionCliMetrics:
             mock_api_delete_metric.assert_called_once_with(args.metric)
         else:
             mock_api_delete_metric.assert_not_called()
-    
-    @patch('moonshot.integrations.cli.benchmark.metrics.console.input', return_value='y')
-    @patch('moonshot.integrations.cli.benchmark.metrics.api_delete_metric')
+
+    @patch(
+        "moonshot.integrations.cli.benchmark.metrics.console.input", return_value="y"
+    )
+    @patch("moonshot.integrations.cli.benchmark.metrics.api_delete_metric")
     def test_delete_metric_confirm_yes(self, mock_delete, mock_input):
         args = MagicMock()
-        args.metric = 'test_metric_id'
-        
-        delete_metric(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the metric (y/N)? [/]")
-        mock_delete.assert_called_once_with('test_metric_id')
+        args.metric = "test_metric_id"
 
-    @patch('moonshot.integrations.cli.benchmark.metrics.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.benchmark.metrics.api_delete_metric')
+        delete_metric(args)
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the metric (y/N)? [/]"
+        )
+        mock_delete.assert_called_once_with("test_metric_id")
+
+    @patch(
+        "moonshot.integrations.cli.benchmark.metrics.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.benchmark.metrics.api_delete_metric")
     def test_delete_metric_confirm_no(self, mock_delete, mock_input):
         args = MagicMock()
-        args.metric = 'test_metric_id'
-        
+        args.metric = "test_metric_id"
+
         delete_metric(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the metric (y/N)? [/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the metric (y/N)? [/]"
+        )
         mock_delete.assert_not_called()
-    
-    @patch('moonshot.integrations.cli.benchmark.metrics.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.benchmark.metrics.console.print')
-    @patch('moonshot.integrations.cli.benchmark.metrics.api_delete_metric')
+
+    @patch(
+        "moonshot.integrations.cli.benchmark.metrics.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.benchmark.metrics.console.print")
+    @patch("moonshot.integrations.cli.benchmark.metrics.api_delete_metric")
     def test_delete_metric_cancelled_output(self, mock_delete, mock_print, mock_input):
         args = MagicMock()
-        args.metric = 'test_metric_id'
-        
+        args.metric = "test_metric_id"
+
         delete_metric(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the metric (y/N)? [/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the metric (y/N)? [/]"
+        )
         mock_print.assert_called_once_with("[bold yellow]Metric deletion cancelled.[/]")
         mock_delete.assert_not_called()
