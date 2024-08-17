@@ -257,7 +257,7 @@ class TestCollectionCliCookbook:
     # Test list_cookbooks functionality with non-mocked filter-data
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "find, pagination, api_response, expected_output, expected_log",
+        "find, pagination, api_response, expected_output, expected_log, to_be_called",
         [
             # Valid cases
             (
@@ -280,6 +280,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             # No cookbooks
             (
@@ -288,6 +289,7 @@ class TestCollectionCliCookbook:
                 [],
                 None,
                 "There are no cookbooks found.",
+                False
             ),
             (
                 "Cookbook",
@@ -309,6 +311,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             (
                 None,
@@ -331,6 +334,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             (
                 "Cookbook",
@@ -338,120 +342,249 @@ class TestCollectionCliCookbook:
                 [],
                 None,
                 "There are no cookbooks found.",
+                False
             ),
             # Invalid cases for find
             (
                 "",
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 99,
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 {},
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 [],
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 (),
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 True,
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False
             ),
             # Invalid cases for pagination
             (
                 None,
                 "",
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 99,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 {},
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 [],
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 (),
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 True,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 True,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 None,
                 "(1, 'a')",
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False
             ),
             (
                 None,
                 "(1, 2, 3)",
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False
             ),
             (
                 None,
                 "(1, )",
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False
             ),
             (
                 None,
@@ -466,6 +599,7 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             (
                 None,
@@ -480,6 +614,7 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             (
                 None,
@@ -494,6 +629,7 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             (
                 None,
@@ -508,6 +644,7 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             (
                 None,
@@ -522,6 +659,7 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             (
                 None,
@@ -536,14 +674,23 @@ class TestCollectionCliCookbook:
                 ],
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False
             ),
             # Exception case
             (
                 None,
                 None,
-                None,
+                [
+                    {
+                        "id": 1,
+                        "name": "Cookbook 1",
+                        "description": "Desc 1",
+                        "recipes": ["recipe1"],
+                    }
+                ],
                 None,
                 "[list_cookbooks]: An error has occurred while listing cookbooks.",
+                False
             ),
         ],
     )
@@ -558,6 +705,7 @@ class TestCollectionCliCookbook:
         api_response,
         expected_output,
         expected_log,
+        to_be_called,
         capsys,
     ):
         if "error" in expected_log:
@@ -580,7 +728,7 @@ class TestCollectionCliCookbook:
         assert expected_log == captured.out.strip()
         assert result == expected_output
 
-        if api_response and not expected_log:
+        if to_be_called:
             mock_display_cookbooks.assert_called_once_with(api_response)
         else:
             mock_display_cookbooks.assert_not_called()
@@ -589,7 +737,7 @@ class TestCollectionCliCookbook:
     # Test list_cookbooks functionality with mocked filter-data
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "find, pagination, api_response, filtered_response, expected_output, expected_log",
+        "find, pagination, api_response, filtered_response, expected_output, expected_log, to_be_called",
         [
             (
                 None,
@@ -621,6 +769,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             (
                 "Cookbook",
@@ -652,6 +801,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             (
                 None,
@@ -683,6 +833,7 @@ class TestCollectionCliCookbook:
                     }
                 ],
                 "",
+                True
             ),
             # Case where filtered_response is None
             (
@@ -699,6 +850,7 @@ class TestCollectionCliCookbook:
                 None,
                 None,
                 "There are no cookbooks found.",
+                False
             ),
             # Case where filtered_response is an empty list
             (
@@ -715,6 +867,7 @@ class TestCollectionCliCookbook:
                 [],
                 None,
                 "There are no cookbooks found.",
+                False
             ),
         ],
     )
@@ -732,6 +885,7 @@ class TestCollectionCliCookbook:
         filtered_response,
         expected_output,
         expected_log,
+        to_be_called,
         capsys,
     ):
         mock_api_get_all_cookbook.return_value = api_response
@@ -750,7 +904,7 @@ class TestCollectionCliCookbook:
         assert expected_log == captured.out.strip()
         assert result == expected_output
 
-        if filtered_response and not expected_log:
+        if to_be_called:
             mock_display_cookbooks.assert_called_once_with(filtered_response)
         else:
             mock_display_cookbooks.assert_not_called()
@@ -759,7 +913,7 @@ class TestCollectionCliCookbook:
     # Test view_cookbook functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "cookbook_id, api_response, expected_log",
+        "cookbook_id, api_response, expected_log, to_be_called",
         [
             # Valid case
             (
@@ -771,49 +925,58 @@ class TestCollectionCliCookbook:
                     "recipes": ["recipe1"],
                 },
                 "",
+                True
             ),
             # Invalid case: cookbook_id is None
             (
                 None,
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             # Invalid case: cookbook_id is not a string
             (
                 "",
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 123,
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 {},
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 [],
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 (),
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             (
                 True,
                 None,
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False
             ),
             # Exception case: api_read_cookbook raises an exception
             (
                 "1",
                 None,
                 "[view_cookbook]: An error has occurred while reading the cookbook.",
+                False
             ),
         ],
     )
@@ -826,6 +989,7 @@ class TestCollectionCliCookbook:
         cookbook_id,
         api_response,
         expected_log,
+        to_be_called,
         capsys,
     ):
         if "error" in expected_log:
@@ -846,7 +1010,7 @@ class TestCollectionCliCookbook:
         captured = capsys.readouterr()
         assert expected_log == captured.out.strip()
 
-        if api_response and not expected_log:
+        if to_be_called:
             mock_display_view_cookbook.assert_called_once_with(api_response)
         else:
             mock_display_view_cookbook.assert_not_called()

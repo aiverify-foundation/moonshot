@@ -198,6 +198,7 @@ def view_cookbook(args) -> None:
 
         cookbook_info = api_read_cookbook(args.cookbook)
         display_view_cookbook(cookbook_info)
+
     except Exception as e:
         print(f"[view_cookbook]: {str(e)}")
 

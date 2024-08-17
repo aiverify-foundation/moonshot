@@ -65,3 +65,18 @@ ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION_1 = (
 ERROR_BENCHMARK_DELETE_COOKBOOK_COOKBOOK_VALIDATION = (
     "The 'cookbook' argument must be a non-empty string and not None."
 )
+ERROR_BENCHMARK_LIST_DATASETS_FIND_VALIDATION = (
+    "The 'find' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION = (
+    "The 'pagination' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION_1 = (
+    "The 'pagination' argument must be a tuple of two integers."
+)
+ERROR_BENCHMARK_VIEW_DATASET_DATASET_FILENAME_VALIDATION = (
+    "The 'dataset_filename' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_DELETE_DATASET_DATASET_VALIDATION = (
+    "The 'dataset' argument must be a non-empty string and not None."
+)
