@@ -95,3 +95,37 @@ ERROR_BENCHMARK_VIEW_METRIC_METRIC_FILENAME_VALIDATION = (
 ERROR_BENCHMARK_DELETE_METRIC_METRIC_VALIDATION = (
     "The 'metric' argument must be a non-empty string and not None."
 )
+ERROR_BENCHMARK_LIST_RESULTS_FIND_VALIDATION = (
+    "The 'find' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION = (
+    "The 'pagination' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1 = (
+    "The 'pagination' argument must be a tuple of two integers."
+)
+ERROR_BENCHMARK_VIEW_RESULT_RESULT_FILENAME_VALIDATION = (
+    "The 'result_filename' argument must be a non-empty string and not None."
+)
+ERROR_BENCHMARK_VIEW_RESULT_METADATA_VALIDATION = "The 'metadata' argument not found."
+ERROR_BENCHMARK_VIEW_RESULT_METADATA_INVALID_VALIDATION = (
+    "Unable to determine cookbook or recipe."
+)
+ERROR_BENCHMARK_DELETE_RESULT_RESULT_VALIDATION = (
+    "The 'result' argument must be a non-empty string and not None."
+)
+# ERROR_BENCHMARK_LIST_RUNNERS_FIND_VALIDATION = (
+#     "The 'find' argument must be a non-empty string and not None."
+# )
+# ERROR_BENCHMARK_LIST_RUNNERS_PAGINATION_VALIDATION = (
+#     "The 'pagination' argument must be a non-empty string and not None."
+# )
+# ERROR_BENCHMARK_LIST_RUNNERS_PAGINATION_VALIDATION_1 = (
+#     "The 'pagination' argument must be a tuple of two integers."
+# )
+# ERROR_BENCHMARK_VIEW_RUNNER_RUNNER_FILENAME_VALIDATION = (
+#     "The 'runner' argument must be a non-empty string and not None."
+# )
+# ERROR_BENCHMARK_DELETE_RUNNER_RUNNER_VALIDATION = (
+#     "The 'runner' argument must be a non-empty string and not None."
+# )

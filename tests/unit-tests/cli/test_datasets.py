@@ -10,6 +10,32 @@ from moonshot.integrations.cli.benchmark.datasets import (
 
 
 class TestCollectionCliDataset:
+    api_response = [
+        {
+            "id": "squad-shifts-tnf",
+            "name": "squad-shifts-tnf",
+            "description": "Some description",
+            "examples": None,
+            "num_of_dataset_prompts": 48201,
+            "created_date": "2024-05-27 16:48:35",
+            "reference": "Some reference",
+            "license": "",
+        }
+    ]
+    api_response_pagination = [
+        {
+            "id": "squad-shifts-tnf",
+            "name": "squad-shifts-tnf",
+            "description": "Some description",
+            "examples": None,
+            "num_of_dataset_prompts": 48201,
+            "created_date": "2024-05-27 16:48:35",
+            "reference": "Some reference",
+            "license": "",
+            "idx": 1,
+        }
+    ]
+
     @pytest.fixture(autouse=True)
     def init(self):
         # Perform tests
@@ -25,30 +51,8 @@ class TestCollectionCliDataset:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
+                api_response,
                 "Listing datasets may take a while...",
                 True,
             ),
@@ -64,79 +68,23 @@ class TestCollectionCliDataset:
             (
                 "squad",
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
+                api_response,
                 "Listing datasets may take a while...",
                 True,
             ),
             (
                 None,
                 "(1, 1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
                 "Listing datasets may take a while...",
                 True,
             ),
             (
                 "Dataset",
                 "(1, 1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\nThere are no datasets found.",
                 False,
@@ -145,18 +93,7 @@ class TestCollectionCliDataset:
             (
                 "",
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -164,18 +101,7 @@ class TestCollectionCliDataset:
             (
                 99,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -183,18 +109,7 @@ class TestCollectionCliDataset:
             (
                 {},
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -202,18 +117,7 @@ class TestCollectionCliDataset:
             (
                 [],
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -221,18 +125,7 @@ class TestCollectionCliDataset:
             (
                 (),
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -240,18 +133,7 @@ class TestCollectionCliDataset:
             (
                 True,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -260,18 +142,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -279,18 +150,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 99,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -298,18 +158,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 {},
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -317,18 +166,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 [],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -336,18 +174,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 (),
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -355,18 +182,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -374,18 +190,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -393,18 +198,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(1, 'a')",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -412,18 +206,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(1, 2, 3)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -431,18 +214,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(1, )",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -450,18 +222,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -469,18 +230,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(1, 0)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -488,18 +238,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(0, 0)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -507,18 +246,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(1, -1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -526,18 +254,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(-1, 1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -545,18 +262,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 "(-1, -1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -565,18 +271,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing datasets may take a while...\n[list_datasets]: An error has occurred while listing datasets.",
                 False,
@@ -631,132 +326,27 @@ class TestCollectionCliDataset:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing datasets may take a while...",
                 True,
             ),
             (
                 "squad",
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing datasets may take a while...",
                 True,
             ),
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing datasets may take a while...",
                 True,
             ),
@@ -764,18 +354,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 None,
                 None,
                 "Listing datasets may take a while...\nThere are no datasets found.",
@@ -785,18 +364,7 @@ class TestCollectionCliDataset:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 [],
                 None,
                 "Listing datasets may take a while...\nThere are no datasets found.",
@@ -851,18 +419,7 @@ class TestCollectionCliDataset:
             # Valid case
             (
                 "squad-shifts-tnf",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...",
                 True,
@@ -870,18 +427,7 @@ class TestCollectionCliDataset:
             # Invalid case: dataset_filename is None
             (
                 None,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
@@ -889,108 +435,42 @@ class TestCollectionCliDataset:
             # Invalid case: dataset_filename is not a string
             (
                 "",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 123,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 {},
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 [],
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 (),
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 True,
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: The 'dataset_filename' argument must be a non-empty string and not None.",
                 False,
@@ -998,18 +478,7 @@ class TestCollectionCliDataset:
             # Exception case: api_get_all_datasets raises an exception
             (
                 "squad-shifts-tnf",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: An error has occurred while reading the datasets.",
                 False,
@@ -1017,18 +486,7 @@ class TestCollectionCliDataset:
             # Exception case: api_get_all_datasets_name raises an exception
             (
                 "squad-shifts-tnf",
-                [
-                    {
-                        "id": "squad-shifts-tnf",
-                        "name": "squad-shifts-tnf",
-                        "description": "Some description",
-                        "examples": None,
-                        "num_of_dataset_prompts": 48201,
-                        "created_date": "2024-05-27 16:48:35",
-                        "reference": "Some reference",
-                        "license": "",
-                    }
-                ],
+                api_response,
                 ["squad-shifts-tnf"],
                 "Viewing datasets may take a while...\n[view_dataset]: An error has occurred while reading the dataset names.",
                 False,

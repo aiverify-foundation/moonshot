@@ -10,6 +10,22 @@ from moonshot.integrations.cli.benchmark.metrics import (
 
 
 class TestCollectionCliMetrics:
+    api_response = [
+        {
+            "id": "bertscore",
+            "name": "BertScore",
+            "description": "Some description",
+        }
+    ]
+    api_response_pagination = [
+        {
+            "id": "bertscore",
+            "name": "BertScore",
+            "description": "Some description",
+            "idx": 1,
+        }
+    ]
+
     @pytest.fixture(autouse=True)
     def init(self):
         # Perform tests
@@ -25,20 +41,8 @@ class TestCollectionCliMetrics:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
+                api_response,
                 "Listing metrics may take a while...",
                 True,
             ),
@@ -54,54 +58,23 @@ class TestCollectionCliMetrics:
             (
                 "bert",
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
+                api_response,
                 "Listing metrics may take a while...",
                 True,
             ),
             (
                 None,
                 "(1, 1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
                 "Listing metrics may take a while...",
                 True,
             ),
             (
                 "Metrics",
                 "(1, 1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
                 False,
@@ -110,13 +83,7 @@ class TestCollectionCliMetrics:
             (
                 "",
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -124,13 +91,7 @@ class TestCollectionCliMetrics:
             (
                 99,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -138,13 +99,7 @@ class TestCollectionCliMetrics:
             (
                 {},
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -152,13 +107,7 @@ class TestCollectionCliMetrics:
             (
                 [],
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -166,13 +115,7 @@ class TestCollectionCliMetrics:
             (
                 (),
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -180,13 +123,7 @@ class TestCollectionCliMetrics:
             (
                 True,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -195,13 +132,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -209,13 +140,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 99,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -223,13 +148,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 {},
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -237,13 +156,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 [],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -251,13 +164,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 (),
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -265,13 +172,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -279,13 +180,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -293,13 +188,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(1, 'a')",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -307,13 +196,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(1, 2, 3)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -321,13 +204,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(1, )",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -335,13 +212,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -349,13 +220,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(1, 0)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -363,13 +228,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(0, 0)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -377,13 +236,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(1, -1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -391,13 +244,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(-1, 1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -405,13 +252,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 "(-1, -1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -420,13 +261,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 "Listing metrics may take a while...\n[list_metrics]: An error has occurred while listing metrics.",
                 False,
@@ -481,87 +316,27 @@ class TestCollectionCliMetrics:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing metrics may take a while...",
                 True,
             ),
             (
                 "squad",
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing metrics may take a while...",
                 True,
             ),
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "Listing metrics may take a while...",
                 True,
             ),
@@ -569,13 +344,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 None,
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
@@ -585,13 +354,7 @@ class TestCollectionCliMetrics:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 [],
                 None,
                 "Listing metrics may take a while...\nThere are no metrics found.",
@@ -646,13 +409,7 @@ class TestCollectionCliMetrics:
             # Valid case
             (
                 "bertscore",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...",
                 True,
@@ -660,13 +417,7 @@ class TestCollectionCliMetrics:
             # Invalid case: metric_filename is None
             (
                 None,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
@@ -674,78 +425,42 @@ class TestCollectionCliMetrics:
             # Invalid case: metric_filename is not a string
             (
                 "",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 123,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 {},
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 [],
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 (),
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 True,
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: The 'metric_filename' argument must be a non-empty string and not None.",
                 False,
@@ -753,13 +468,7 @@ class TestCollectionCliMetrics:
             # Exception case: api_get_all_metrics raises an exception
             (
                 "bertscore",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: An error has occurred while reading the metrics.",
                 False,
@@ -767,13 +476,7 @@ class TestCollectionCliMetrics:
             # Exception case: api_get_all_metric_name raises an exception
             (
                 "bertscore",
-                [
-                    {
-                        "id": "bertscore",
-                        "name": "BertScore",
-                        "description": "Some description",
-                    }
-                ],
+                api_response,
                 ["bertscore"],
                 "Viewing metrics may take a while...\n[view_metric]: An error has occurred while reading the metric names.",
                 False,

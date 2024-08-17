@@ -7,6 +7,15 @@ from rich.table import Table
 from moonshot.api import api_delete_result, api_get_all_result, api_read_result
 from moonshot.integrations.cli.benchmark.cookbook import show_cookbook_results
 from moonshot.integrations.cli.benchmark.recipe import show_recipe_results
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_DELETE_RESULT_RESULT_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_RESULT_METADATA_INVALID_VALIDATION,
+    ERROR_BENCHMARK_VIEW_RESULT_METADATA_VALIDATION,
+    ERROR_BENCHMARK_VIEW_RESULT_RESULT_FILENAME_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
@@ -37,6 +46,28 @@ def list_results(args) -> list | None:
     """
 
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_RESULTS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         results_list = api_get_all_result()
         keyword = args.find.lower() if args.find else ""
         pagination = literal_eval(args.pagination) if args.pagination else ()
@@ -71,13 +102,24 @@ def view_result(args) -> None:
         None
     """
     try:
+        if (
+            not isinstance(args.result_filename, str)
+            or not args.result_filename
+            or args.result_filename is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_RESULT_FILENAME_VALIDATION)
+
         result_info = api_read_result(args.result_filename)
-        if result_info["metadata"].get("cookbooks"):
-            display_view_cookbook_result(result_info)
-        elif result_info["metadata"].get("recipes"):
-            display_view_recipe_result(result_info)
+        if isinstance(result_info, dict) and "metadata" in result_info:
+            if result_info["metadata"].get("cookbooks"):
+                display_view_cookbook_result(result_info)
+            elif result_info["metadata"].get("recipes"):
+                display_view_recipe_result(result_info)
+            else:
+                raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_METADATA_INVALID_VALIDATION)
         else:
-            print("[view_result]: Unable to determine cookbook or recipe")
+            raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_METADATA_VALIDATION)
+
     except Exception as e:
         print(f"[view_result]: {str(e)}")
 
@@ -105,7 +147,11 @@ def delete_result(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Result deletion cancelled.[/]")
         return
+
     try:
+        if args.result is None or not isinstance(args.result, str) or not args.result:
+            raise ValueError(ERROR_BENCHMARK_DELETE_RESULT_RESULT_VALIDATION)
+
         api_delete_result(args.result)
         print("[delete_result]: Result deleted.")
     except Exception as e:

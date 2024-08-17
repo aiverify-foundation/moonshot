@@ -14,6 +14,24 @@ from moonshot.integrations.cli.benchmark.cookbook import (
 
 
 class TestCollectionCliCookbook:
+    api_response = [
+        {
+            "id": 1,
+            "name": "Cookbook 1",
+            "description": "Desc 1",
+            "recipes": ["recipe1"],
+        }
+    ]
+    api_response_pagination = [
+        {
+            "id": 1,
+            "name": "Cookbook 1",
+            "description": "Desc 1",
+            "recipes": ["recipe1"],
+            "idx": 1,
+        }
+    ]
+
     @pytest.fixture(autouse=True)
     def init(self):
         # Perform tests
@@ -263,22 +281,8 @@ class TestCollectionCliCookbook:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
+                api_response,
                 "",
                 True,
             ),
@@ -287,45 +291,16 @@ class TestCollectionCliCookbook:
             (
                 "Cookbook",
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
+                api_response,
                 "",
                 True,
             ),
             (
                 None,
                 "(1, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
                 "",
                 True,
             ),
@@ -334,14 +309,7 @@ class TestCollectionCliCookbook:
             (
                 "",
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -349,14 +317,7 @@ class TestCollectionCliCookbook:
             (
                 99,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -364,14 +325,7 @@ class TestCollectionCliCookbook:
             (
                 {},
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -379,14 +333,7 @@ class TestCollectionCliCookbook:
             (
                 [],
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -394,14 +341,7 @@ class TestCollectionCliCookbook:
             (
                 (),
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -409,14 +349,7 @@ class TestCollectionCliCookbook:
             (
                 True,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
                 False,
@@ -425,14 +358,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -440,14 +366,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 99,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -455,14 +374,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 {},
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -470,14 +382,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 [],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -485,14 +390,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 (),
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -500,14 +398,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -515,14 +406,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 True,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
                 False,
@@ -530,14 +414,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(1, 'a')",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -545,14 +422,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(1, 2, 3)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -560,14 +430,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(1, )",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
                 False,
@@ -575,14 +438,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -590,14 +446,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(1, 0)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -605,14 +454,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(0, 0)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -620,14 +462,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(1, -1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -635,14 +470,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(-1, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -650,14 +478,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 "(-1, -1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
                 False,
@@ -666,14 +487,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: An error has occurred while listing cookbooks.",
                 False,
@@ -728,96 +542,27 @@ class TestCollectionCliCookbook:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
                 True,
             ),
             (
                 "Cookbook",
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
                 True,
             ),
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
                 True,
             ),
@@ -825,14 +570,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 None,
                 "There are no cookbooks found.",
@@ -842,14 +580,7 @@ class TestCollectionCliCookbook:
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 [],
                 None,
                 "There are no cookbooks found.",
