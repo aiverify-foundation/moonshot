@@ -39,7 +39,11 @@ class EnvironmentVars:
     ]
     BOOKMARKS = [
         env_vars.get(EnvVariables.BOOKMARKS.value),
-        str(importlib.resources.files(__app_name__).joinpath("data/generated-outputs/bookmarks")),
+        str(
+            importlib.resources.files(__app_name__).joinpath(
+                "data/generated-outputs/bookmarks"
+            )
+        ),
     ]
     CONNECTORS = [
         env_vars.get(EnvVariables.CONNECTORS.value),
@@ -144,8 +148,8 @@ class EnvironmentVars:
                     EnvironmentVars.__dict__[key][0] = str(given_path)
                 else:
                     logger.warning(
-                        f"Unable to set {key}. The provided path {given_path} does not exist. ",
-                        "The stock set will be used.",
+                        f"Unable to set {key}. The provided path {given_path} does not exist. "
+                        "The stock set will be used."
                     )
             else:
                 unset_keys.append(key)
