@@ -99,12 +99,6 @@ class TestCollectionCliCookbook:
                 "['recipe1', 'recipe2']",
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
-            (
-                "",
-                "This is a test cookbook.",
-                "['recipe1', 'recipe2']",
-                "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
-            ),
             # Invalid case for description
             (
                 "Test Cookbook",
@@ -647,58 +641,98 @@ class TestCollectionCliCookbook:
             # Invalid case: cookbook_id is None
             (
                 None,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             # Invalid case: cookbook_id is not a string
             (
                 "",
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 123,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 {},
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 [],
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 (),
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             (
                 True,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
             ),
             # Exception case: api_read_cookbook raises an exception
             (
                 "1",
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: An error has occurred while reading the cookbook.",
                 False,
             ),
         ],
     )
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_read_cookbook")
-    @patch("moonshot.integrations.cli.benchmark.cookbook.display_view_cookbook")
+    @patch("moonshot.integrations.cli.benchmark.cookbook._display_view_cookbook")
     def test_view_cookbook(
         self,
         mock_display_view_cookbook,
@@ -1422,7 +1456,7 @@ class TestCollectionCliCookbook:
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_load_runner")
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_create_runner")
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_get_all_run")
-    @patch("moonshot.integrations.cli.benchmark.cookbook.show_cookbook_results")
+    @patch("moonshot.integrations.cli.benchmark.cookbook._show_cookbook_results")
     def test_run_cookbook(
         self,
         mock_show_cookbook_results,

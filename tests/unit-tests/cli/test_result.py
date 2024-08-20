@@ -281,19 +281,19 @@ class TestCollectionCliResult:
                 "There are no results found.",
                 False,
             ),
-            # (
-            #     "my-new-recipe-runner",
-            #     None,
-            #     api_response,
-            #     api_response,
-            #     "",
-            #     True,
-            # ),
+            (
+                "my-new-recipe-runner",
+                None,
+                api_response,
+                api_response,
+                "",
+                True,
+            ),
             (
                 None,
                 "(1, 1)",
                 api_response,
-                api_response,
+                api_response_pagination,
                 "",
                 True,
             ),
@@ -761,8 +761,8 @@ class TestCollectionCliResult:
         ],
     )
     @patch("moonshot.integrations.cli.benchmark.result.api_read_result")
-    @patch("moonshot.integrations.cli.benchmark.result.display_view_recipe_result")
-    @patch("moonshot.integrations.cli.benchmark.result.display_view_cookbook_result")
+    @patch("moonshot.integrations.cli.benchmark.result._display_view_recipe_result")
+    @patch("moonshot.integrations.cli.benchmark.result._display_view_cookbook_result")
     def test_view_result(
         self,
         mock_display_cookbook,

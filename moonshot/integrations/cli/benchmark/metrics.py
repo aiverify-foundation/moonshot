@@ -25,16 +25,16 @@ def list_metrics(args) -> list | None:
     List all available metrics.
 
     This function retrieves all available metrics by calling the api_get_all_metric function from the
-    moonshot.api module. It then displays the metrics using the _display_metrics function. If an exception occurs,
-    it prints an error message.
+    moonshot.api module. It then filters the metrics based on the provided keyword and pagination arguments.
+    If there are no metrics, it prints a message indicating that no metrics were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find metric(s) with a keyword.
-        pagination (str): Optional field to paginate metrics.
+        args: A namespace object from argparse. It should have optional attributes:
+            find (str): Optional field to find metric(s) with a keyword.
+            pagination (str): Optional field to paginate metrics.
 
     Returns:
-        list | None: A list of Metric or None if there is no result.
+        list | None: A list of metrics or None if there are no metrics.
     """
 
     try:

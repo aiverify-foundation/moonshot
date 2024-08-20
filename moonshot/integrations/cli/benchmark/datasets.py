@@ -30,16 +30,16 @@ def list_datasets(args) -> list | None:
     List all available datasets.
 
     This function retrieves all available datasets by calling the api_get_all_datasets function from the
-    moonshot.api module. It then displays the datasets using the _display_datasets function. If an exception occurs,
-    it prints an error message.
+    moonshot.api module. It then filters the datasets based on the provided keyword and pagination arguments.
+    If there are no datasets, it prints a message indicating that no datasets were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find dataset(s) with a keyword.
-        pagination (str): Optional field to paginate datasets.
+        args: A namespace object from argparse. It should have optional attributes:
+            find (str): Optional keyword to filter datasets.
+            pagination (str): Optional tuple to paginate datasets.
 
     Returns:
-        list | None: A list of Dataset or None if there is no result.
+        list | None: A list of datasets or None if there are no datasets.
     """
     try:
         print("Listing datasets may take a while...")
@@ -129,7 +129,7 @@ def delete_dataset(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            dataset_name (str): The name of the dataset to delete.
+            dataset (str): The name of the dataset to delete.
 
     Returns:
         None
