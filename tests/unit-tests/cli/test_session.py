@@ -2,8 +2,10 @@ from ast import literal_eval
 import pytest
 from unittest.mock import patch, MagicMock
 from argparse import Namespace
-from moonshot.integrations.cli.redteam.session import new_session, use_session
-
+from moonshot.integrations.cli.redteam.session import delete_session, list_sessions, new_session, use_session
+from _pytest.assertion import truncate
+truncate.DEFAULT_MAX_LINES = 9999
+truncate.DEFAULT_MAX_CHARS = 9999  
 
 class TestCollectionCliSession:
     @pytest.fixture(autouse=True)
@@ -315,6 +317,11 @@ class TestCollectionCliSession:
         captured = capsys.readouterr()
         assert expected_output in captured.out.strip()
 
+
+    # ------------------------------------------------------------------------------
+    # Use session
+    # ------------------------------------------------------------------------------
+
     @pytest.mark.parametrize(
         "argparse_value, expected_output",
         [
@@ -365,3 +372,513 @@ class TestCollectionCliSession:
         use_session(args)
         captured = capsys.readouterr()
         assert expected_output in captured.out.strip()
+
+    # ------------------------------------------------------------------------------
+    # Delete session
+    # ------------------------------------------------------------------------------
+
+    @pytest.mark.parametrize(
+        "argparse_value, expected_output, to_be_called",
+        [
+            # normal input
+            (
+                {"session": "test_session"},
+                "[delete_session]: Session deleted.",
+                True
+            ),
+            # missing session 
+            (
+                {"not_a_session": "x"},
+                "[delete_session]: Invalid or missing required parameter: session",
+                False
+            ),                                          
+            # empty namespace
+            (
+                {},
+                "[delete_session]: Invalid or missing required parameter: session",
+                False
+            ),            
+            # incorrect session type: int
+            (
+                {"session": 123},
+                "[delete_session]: Invalid type for parameter: session. Expecting type str.",
+                False
+            ),
+            # incorrect session type: list
+            (
+                {"session": ["abc"]},
+                "[delete_session]: Invalid type for parameter: session. Expecting type str.",
+                False
+            ),            
+        ]
+    
+    )
+    @patch('moonshot.integrations.cli.redteam.session.api_delete_session')
+    def test_delete_session(self, mock_api_delete_session, argparse_value, expected_output, to_be_called, capsys):
+        # mock the arguments
+        args = Namespace(session=argparse_value.get("session", None))
+    
+        with patch("moonshot.integrations.cli.redteam.session.console.input", return_value="y"):
+            with patch("moonshot.integrations.cli.redteam.session.console.print"):
+                delete_session(args)
+
+        captured = capsys.readouterr()
+        assert expected_output == captured.out.strip()
+
+        if to_be_called:
+            mock_api_delete_session.assert_called_once_with(args.session)
+        else:
+            mock_api_delete_session.assert_not_called()
+
+    @patch('moonshot.integrations.cli.redteam.session.console.input', return_value='y')
+    @patch('moonshot.integrations.cli.redteam.session.api_delete_session')
+    def test_delete_session_confirm_yes(self, mock_api_delete_session, mock_input):
+        # mock the arguments
+        args = Namespace(session="test_session")
+    
+        delete_session(args)
+
+        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the session (y/N)? [/]")
+        mock_api_delete_session.assert_called_once_with('test_session')
+
+    @patch('moonshot.integrations.cli.redteam.session.console.input', return_value='n')
+    @patch('moonshot.integrations.cli.redteam.session.api_delete_session')
+    def test_delete_session_confirm_no(self, mock_api_delete_session, mock_input):
+        # mock the arguments
+        args = Namespace(session="test_session")
+    
+        delete_session(args)
+
+        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the session (y/N)? [/]")
+        mock_api_delete_session.assert_not_called()
+
+    @patch('moonshot.integrations.cli.redteam.session.console.input', return_value='x')
+    @patch('moonshot.integrations.cli.redteam.session.console.print')
+    @patch('moonshot.integrations.cli.redteam.session.api_delete_session')
+    def test_delete_session_confirm_cancelled(self, mock_api_delete_session, mock_print, mock_input):
+        args = Namespace(session="test_session")
+        
+        delete_session(args)
+        
+        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the session (y/N)? [/]")
+        mock_print.assert_called_once_with("[bold yellow]Session deletion cancelled.[/]")
+        mock_api_delete_session.assert_not_called()
+
+
+    # ------------------------------------------------------------------------------
+    # List sessions
+    # ------------------------------------------------------------------------------
+
+    @pytest.mark.parametrize(
+        "argparse_value, api_response, expected_output, expected_log",
+        [
+            # normal input 
+            (
+                {},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                ""
+            ),
+            # find and returned results
+            (
+                {"find": "my-runner"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                ""
+            ),
+            # find and no returned results
+            (
+                {"find": "my-runnerx"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None
+                ,
+                "There are no sessions found."
+            ),
+            # incorrect find type: int
+            (
+                {"find": 123},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None
+                ,
+                "[list_sessions]: Invalid type for parameter: find. Expecting type str."
+            ),       
+            # incorrect find type: dict
+            (
+                {"find": {"hello": "world"}},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None
+                ,
+                "[list_sessions]: Invalid type for parameter: find. Expecting type str."
+            ),                             
+            # paginate successfully
+            (
+                {"pagination": "(1, 1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': '',
+                        'idx':1
+                    }
+                ],
+                ""
+            ),
+            # paginate with a larger page number than the total number of results
+            (
+                {"pagination": "(5, 1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': '',
+                        'idx':1
+                    }
+                ],
+                ""
+            ),            
+            # incorrect pagination type: int
+            (
+                {"pagination": 123},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: Invalid type for parameter: pagination. Expecting type str."
+            ),   
+            # incorrect pagination type: list
+            (
+                {"pagination": ['123']},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: Invalid type for parameter: pagination. Expecting type str."
+            ),     
+            # incorrect pagination tuple values: negative page number
+            (
+                {"pagination": "(-1,1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: Invalid page number or page size. Page number and page size should start from 1."
+            ),             
+            # incorrect pagination tuple values: negative page size
+            (
+                {"pagination": "(1,-1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: Invalid page number or page size. Page number and page size should start from 1."
+            ),   
+            # incorrect pagination tuple values: 3 tuple values
+            (
+                {"pagination": "(1,2,3)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: The 'pagination' argument must be a tuple of two integers."
+            ),    
+            # incorrect pagination tuple value types: string
+            (
+                {"pagination": "(\"hello\", \"world\")"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "[list_sessions]: The 'pagination' argument must be a tuple of two integers."
+            ),                                                                      
+            # input with find and pagination
+            (
+                {"find": "my-runner", "pagination": "(1, 1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': '',
+                        'idx': 1
+                    }
+                ],
+                ""
+            ),
+            # input with no find results and pagination
+            (
+                {"find": "my-runnerx", "pagination": "(1, 1)"},
+                [
+                    {
+                        'session_id': 'my-runner', 
+                        'endpoints': ['openai-gpt4'], 
+                        'created_epoch': '1723878322.638593', 
+                        'created_datetime': '20240817-150522', 
+                        'prompt_template': '', 
+                        'context_strategy': '', 
+                        'cs_num_of_prev_prompts': 5, 
+                        'attack_module': '', 
+                        'metric': '', 
+                        'system_prompt': ''
+                    }
+                ],
+                None,
+                "There are no sessions found."
+            ),            
+            # # error case
+            # (
+            #     {"find": "error"},
+            #     [],
+            #     [],
+            #     "An error has occurred while listing sessions."
+            # ),
+        ]
+    )
+    @patch("moonshot.integrations.cli.redteam.session.api_get_all_session_metadata")
+    @patch("moonshot.integrations.cli.redteam.session._display_sessions")
+    def test_list_sessions(self, 
+            mock_display_sessions, 
+            mock_api_get_all_session_metadata, 
+            argparse_value, 
+            api_response, 
+            expected_output, 
+            expected_log,
+            capsys):
+
+        args = Namespace(find=argparse_value.get("find"), pagination=argparse_value.get("pagination") )
+
+        if "error" in expected_log:
+            mock_api_get_all_session_metadata.side_effect = Exception(
+                "An error has occurred while listing sessions."
+            )
+        else:
+            mock_api_get_all_session_metadata.return_value = api_response
+        mock_api_get_all_session_metadata.return_value = api_response
+        
+        result = list_sessions(args)
+        captured = capsys.readouterr()
+        assert expected_log == captured.out.strip()
+        assert result == expected_output
+
+        if api_response and not expected_log:
+            mock_display_sessions.assert_called_once_with(api_response)
+        else:
+            mock_display_sessions.assert_not_called()
