@@ -3,7 +3,7 @@
 name: Moonshot Integration Test
 
 on:
-  # Runs on Pull Request
+  # Runs on Pull Request Review
   pull_request_review:
    types: [submitted]
    branches:
