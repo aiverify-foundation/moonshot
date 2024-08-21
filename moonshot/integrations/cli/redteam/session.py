@@ -43,38 +43,69 @@ def new_session(args) -> None:
             - endpoints (str, optional): The list of endpoints for the runner."""
     global active_session
 
-    runner_id = args.runner_id
-    context_strategy = args.context_strategy if args.context_strategy else ""
-    prompt_template = args.prompt_template if args.prompt_template else ""
-    endpoints = literal_eval(args.endpoints) if args.endpoints else []
+    try:
+        required_parameters = [("runner_id", str)]
+        optional_parameters = [("context_strategy", str), ("prompt_template", str)]
+        # Check if required parameters exist in args
+        for param, param_type in required_parameters:
+            param_value = getattr(args, param, None)
+            if not param_value:
+                raise ValueError(f"Invalid or missing required parameter: {param}")
+            if not isinstance(param_value, param_type):
+                raise TypeError(
+                    f"Invalid type for parameter: {param}. Expecting type: {param_type.__name__}."
+                )
 
-    # create new runner and session
-    if endpoints:
-        runner = api_create_runner(runner_id, endpoints)
-    # load existing runner
-    else:
-        runner = api_load_runner(runner_id)
+        # Check the type of optional parameters if they exist
+        for param, param_type in optional_parameters:
+            param_value = getattr(args, param, None)
+            if param_value is not None and not isinstance(param_value, param_type):
+                raise TypeError(
+                    f"Invalid type for parameter: {param}. Expecting type: {param_type.__name__}."
+                )
 
-    runner_args = {}
-    runner_args["context_strategy"] = context_strategy
-    runner_args["prompt_template"] = prompt_template
+        runner_id = args.runner_id
+        context_strategy = args.context_strategy if args.context_strategy else ""
+        prompt_template = args.prompt_template if args.prompt_template else ""
+        endpoints = []
 
-    # create new session in runner
-    if runner.database_instance:
-        api_create_session(
-            runner.id, runner.database_instance, runner.endpoints, runner_args
-        )
-        session_metadata = api_load_session(runner.id)
-        if session_metadata:
-            active_session.update(session_metadata)
-            if active_session["context_strategy"]:
-                active_session[
-                    "cs_num_of_prev_prompts"
-                ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-            print(f"Using session: {active_session['session_id']}")
-            update_chat_display()
+        # Check if literal eval param is correct type after eval
+        if hasattr(args, "endpoints") and args.endpoints:
+            endpoints = literal_eval(args.endpoints)
+            if not isinstance(endpoints, list):
+                raise TypeError(
+                    "Invalid type for parameter: endpoint. Expecting type list."
+                )
+
+        # create new runner and session
+        if endpoints:
+            runner = api_create_runner(runner_id, endpoints)
+        # load existing runner
         else:
-            raise RuntimeError("Unable to use session")
+            runner = api_load_runner(runner_id)
+
+        runner_args = {}
+        runner_args["context_strategy"] = context_strategy
+        runner_args["prompt_template"] = prompt_template
+
+        # create new session in runner
+        if runner.database_instance:
+            api_create_session(
+                runner.id, runner.database_instance, runner.endpoints, runner_args
+            )
+            session_metadata = api_load_session(runner.id)
+            if session_metadata:
+                active_session.update(session_metadata)
+                if active_session["context_strategy"]:
+                    active_session[
+                        "cs_num_of_prev_prompts"
+                    ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+                print(f"[new_session] Using session: {active_session['session_id']}")
+                update_chat_display()
+            else:
+                raise RuntimeError("Unable to use session")
+    except Exception as e:
+        print(f"[new_session]: {str(e)}")
 
 
 def use_session(args) -> None:
@@ -85,10 +116,18 @@ def use_session(args) -> None:
         args (Namespace): The arguments passed to the function.
     """
     global active_session
-    runner_id = args.runner_id
 
     # Load session metadata
     try:
+        if not args.runner_id or args.runner_id is None:
+            raise ValueError("Invalid or missing required parameter: runner_id")
+
+        if not isinstance(args.runner_id, str):
+            raise TypeError(
+                "Invalid type for parameter: runner_id. Expecting type str."
+            )
+
+        runner_id = args.runner_id
         session_metadata = api_load_session(runner_id)
         if not session_metadata:
             print(
@@ -146,6 +185,30 @@ def list_sessions(args) -> list | None:
     """
     try:
         session_metadata_list = api_get_all_session_metadata()
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError("Invalid type for parameter: find. Expecting type str.")
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(
+                    "Invalid type for parameter: pagination. Expecting type str."
+                )
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        "The 'pagination' argument must be a tuple of two integers."
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "The 'pagination' argument must be a tuple of two integers."
+                )
+
         keyword = args.find.lower() if args.find else ""
         pagination = literal_eval(args.pagination) if args.pagination else ()
 
@@ -693,6 +756,7 @@ def delete_session(args) -> None:
                        which is the ID of the session to delete.
     """
     # Confirm with the user before deleting a session
+
     confirmation = console.input(
         "[bold red]Are you sure you want to delete the session (y/N)? [/]"
     )
@@ -700,6 +764,12 @@ def delete_session(args) -> None:
         console.print("[bold yellow]Session deletion cancelled.[/]")
         return
     try:
+        if not args.session or args.session is None:
+            raise ValueError("Invalid or missing required parameter: session")
+
+        if not isinstance(args.session, str):
+            raise TypeError("Invalid type for parameter: session. Expecting type str.")
+
         api_delete_session(args.session)
         print("[delete_session]: Session deleted.")
     except Exception as e:
