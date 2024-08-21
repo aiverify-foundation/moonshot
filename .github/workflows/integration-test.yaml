@@ -34,7 +34,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  smoke-test:
+  integration-test:
 
     runs-on: ubuntu-latest
     timeout-minutes: 20
