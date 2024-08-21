@@ -137,6 +137,8 @@ jobs:
         set -e        
         echo "CODEQL_SUMMARY=$CODEQL_SUMMARY" >> $GITHUB_ENV
         exit $exit_code
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     # Send slack notification
     - name: Send slack notification
