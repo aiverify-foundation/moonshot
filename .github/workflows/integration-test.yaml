@@ -4,7 +4,7 @@ name: Moonshot Integration Test
 
 on:
   # Runs on Pull Request
-  pull_request:
+  pull_request_review:
    types: [submitted]
    branches:
      - 'main'
@@ -41,8 +41,8 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -68,8 +68,8 @@ jobs:
         touch .env
         echo "${{ vars.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot Data (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with: 
          repository: aiverify-foundation/moonshot-data
@@ -90,8 +90,8 @@ jobs:
         cd moonshot-data
         pip install -r requirements.txt
 
-    - name: Checkout Moonshot UI (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot UI (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with:
         repository: aiverify-foundation/moonshot-ui
