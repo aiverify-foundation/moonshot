@@ -16,9 +16,16 @@ On this page, you are prompted to select an endpoint for testing. You have the o
 
 This step presents a list of attack modules available for your red teaming. For the purpose of this tutorial, select 'Skip for now'.
 
+!!! warning
+    <b>Important information before running red teaming:</b>
+
+    Certain attack modules may require connection to certain model endpoints. (i.e. [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) requires the endpoint [openai-gpt4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json) and you will need an API token to connect to this endpoint.
+
+    Refer to this [list for the requirements](../../faq.md#requirements).
+
 ![Attack modules selection page](./res/run_rt_3.png)
 
-You are now required to complete a form on this page. After filling out the form, initiate a red teaming session by clicking on 'Start'.
+You are now required to complete a form on this page. **Note that the session names should be unique. We use session names to uniquely identify sessions.** After filling out the form, initiate a red teaming session by clicking on 'Start'.
 
 ![Form completion page](./res/run_rt_4.png)
 

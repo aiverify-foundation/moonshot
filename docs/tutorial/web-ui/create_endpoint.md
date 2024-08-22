@@ -1,4 +1,4 @@
-In this tutorial, you will learn how to configure and seamlessly connect Moonshot to your AI systems. A connector endpoint is a set of configuration that tells Moonshot how to connect to your AI model.
+In this tutorial, you will learn how to configure and seamlessly connect Moonshot to your AI systems. A connector endpoint is a set of configurations that tells Moonshot how to connect to your AI model.
 
 Let's dive in and start connecting your models.
 
