@@ -174,9 +174,9 @@ jobs:
         with:
           payload: |
             {
-              "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.PR_NUM }}",
+              "workflow": "${{ github.repository }} | ${{ github.workflow }} | ${{ env.PR_NUM }}",
               "status": "${{ job.status }}",
-              "details": "${{ env.UNIT_TESTS_STATUS }}, ${{ env.CODE_COVERAGE_STATUS }}, ${{ env.CODE_QUALITY_STATUS }}, ${{ env.DEPENDENCY_STATUS }}, ${{ env.LICENSE_STATUS }}",
+              "details": "${{ env.UNIT_TESTS_STATUS }} | ${{ env.CODE_COVERAGE_STATUS }} | ${{ env.CODE_QUALITY_STATUS }} | ${{ env.DEPENDENCY_STATUS }} | ${{ env.LICENSE_STATUS }}",
               "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
