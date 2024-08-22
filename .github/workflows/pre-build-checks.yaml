@@ -117,6 +117,15 @@ jobs:
         timeout-minutes: 30
         run: |
           bash ci/run-test.sh
+          source ci/gen_pre_build_summ.sh test
+          test_status=$?
+          source ci/gen_pre_build_summ.sh coverage
+          coverage_status=$?
+          echo "UNIT_TESTS_STATUS=${{ env.UNITTEST_SUMMARY }}" >> $GITHUB_ENV
+          echo "CODE_COVERAGE_STATUS=${{ env.COVERAGE_SUMMARY }}" >> $GITHUB_ENV
+          if [ $test_status -ne 0 ] || [ $coverage_status -ne 0 ]; then
+            exit 1
+          fi
 
       # Code quality analysis (flake8)
       - name: Code quality analysis (flake8)
@@ -124,6 +133,8 @@ jobs:
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-flake8.sh
+          source ci/gen_pre_build_summ.sh lint
+          echo "CODE_QUALITY_STATUS=${{ env.LINT_SUMMARY }}" >> $GITHUB_ENV
 
       # pip-audit
       - name: Dependency analysis (vulnerabilities & licenses)
@@ -131,13 +142,22 @@ jobs:
         if: ${{ ! cancelled() }}
         run: |
           bash ci/run-pip-audit.sh
+          source ci/gen_pre_build_summ.sh dependency
+          dep_status=$?
+          source ci/gen_pre_build_summ.sh license
+          lic_status=$?
+          echo "DEPENDENCY_STATUS=${{ env.DEPENDENCY_SUMMARY }}" >> $GITHUB_ENV
+          echo "LICENSE_STATUS=${{ env.LICENSE_SUMMARY }}" >> $GITHUB_ENV
+          if [ $dep_status -ne 0 ] || [ $lic_status -ne 0 ]; then
+            exit 1
+          fi
 
-      - name: Capture step statuses
-        if: ${{ ! cancelled() }}
-        run: |
-          echo "UNIT_TESTS_STATUS=${{ steps.unit_tests.outcome }}" >> $GITHUB_ENV
-          echo "CODE_QUALITY_STATUS=${{ steps.code_quality.outcome }}" >> $GITHUB_ENV
-          echo "DEPENDENCY_ANALYSIS_STATUS=${{ steps.dependency_analysis.outcome }}" >> $GITHUB_ENV
+#      - name: Capture step statuses
+#        if: ${{ ! cancelled() }}
+#        run: |
+#          echo "UNIT_TESTS_STATUS=${{ steps.unit_tests.outcome }}" >> $GITHUB_ENV
+#          echo "CODE_QUALITY_STATUS=${{ steps.code_quality.outcome }}" >> $GITHUB_ENV
+#          echo "DEPENDENCY_ANALYSIS_STATUS=${{ steps.dependency_analysis.outcome }}" >> $GITHUB_ENV
 
       # Send slack notification
       - name: Send slack notification
@@ -148,7 +168,7 @@ jobs:
             {
               "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.PR_NUM }}",
               "status": "${{ job.status }}",
-              "details": "Unit Tests: ${{ env.UNIT_TESTS_STATUS }}, Code Quality: ${{ env.CODE_QUALITY_STATUS }}, Dependency Analysis: ${{ env.DEPENDENCY_ANALYSIS_STATUS }}",
+              "details": "${{ env.UNIT_TESTS_STATUS }}, ${{ env.CODE_COVERAGE_STATUS }}, ${{ env.CODE_QUALITY_STATUS }}, ${{ env.DEPENDENCY_STATUS }}, ${{ env.LICENSE_STATUS }}",
               "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
