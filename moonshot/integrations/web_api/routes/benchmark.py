@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from ..container import Container
 from ..schemas.benchmark_runner_dto import BenchmarkRunnerDTO
+from ..services.augmentor_service import AugmentorService
 from ..services.benchmark_test_state import BenchmarkTestState
 from ..services.benchmarking_service import BenchmarkingService
 from ..services.utils.exceptions_handler import ServiceException
@@ -19,6 +20,7 @@ async def benchmark_executor(
     benchmarking_service: BenchmarkingService = Depends(
         Provide[Container.benchmarking_service]
     ),
+    augmentor_service: AugmentorService = Depends(Provide[Container.augmentor_service]),
 ) -> dict:
     """
     Execute a benchmark test.
@@ -40,6 +42,13 @@ async def benchmark_executor(
             id = await benchmarking_service.execute_cookbook(data)
             return {"id": id}
         elif type is BenchmarkCollectionType.RECIPE:
+            id = await benchmarking_service.execute_recipe(data)
+            return {"id": id}
+        elif type is BenchmarkCollectionType.AUGMENT:
+            new_recipe_id = augmentor_service.augment_recipe(
+                data.inputs[0], data.attack_module
+            )
+            data.inputs = [new_recipe_id]
             id = await benchmarking_service.execute_recipe(data)
             return {"id": id}
         else:

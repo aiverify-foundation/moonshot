@@ -74,6 +74,7 @@ class UvicornRunArgs(TypedDict, total=False):
 class BenchmarkCollectionType(Enum):
     COOKBOOK = "cookbook"
     RECIPE = "recipe"
+    AUGMENT = "augment"
 
 
 class ResultMetadata(TypedDict):

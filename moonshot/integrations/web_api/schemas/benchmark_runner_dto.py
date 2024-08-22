@@ -11,3 +11,4 @@ class BenchmarkRunnerDTO(BaseModel):
     random_seed: int
     system_prompt: str
     runner_processing_module: str
+    attack_module: str = ""

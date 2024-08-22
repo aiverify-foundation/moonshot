@@ -3,6 +3,7 @@ import importlib.resources
 from dependency_injector import containers, providers
 
 from .services.attack_module_service import AttackModuleService
+from .services.augmentor_service import AugmentorService
 from .services.auto_red_team_test_manager import AutoRedTeamTestManager
 from .services.auto_red_team_test_state import AutoRedTeamTestState
 from .services.benchmark_result_service import BenchmarkResultService
@@ -57,10 +58,10 @@ class Container(containers.DeclarativeContainer):
                 "log_file_backup_count": 3,
             },
             "temp_folder": str(
-                    importlib.resources.files("moonshot").joinpath(
-                        "integrations/web_api/temp"
-                    )
-                ),
+                importlib.resources.files("moonshot").joinpath(
+                    "integrations/web_api/temp"
+                )
+            ),
         }
     )
 
@@ -136,6 +137,9 @@ class Container(containers.DeclarativeContainer):
     bookmark_service: providers.Singleton[BookmarkService] = providers.Singleton(
         BookmarkService,
     )
+    augmentor_service: providers.Singleton[AugmentorService] = providers.Singleton(
+        AugmentorService,
+    )
     wiring_config = containers.WiringConfiguration(
         modules=[
             ".routes.redteam",
@@ -151,6 +155,7 @@ class Container(containers.DeclarativeContainer):
             ".routes.dataset",
             ".routes.attack_modules",
             ".routes.bookmark",
+            ".routes.augmentor",
             ".services.benchmarking_service",
         ]
     )
