@@ -10,6 +10,15 @@
 
 3. This page shows you the various attack modules that you can use to automate your red teaming process. Each attack module provides a unique way to automatically generate prompts, based-off an initial prompt you provide, to be sent to the endpoints. Some of these attack modules require the connection to a helper model e.g., GPT4. 
 
+    !!! NOTE 
+        If you wish to run any of these attack modules, you will need to provide additional API keys: 
+
+            1. Malicious Question Generator (Requires OpenAI’s GPT4) 
+
+            2. Violent Durian (Requires OpenAI’s GPT4) 
+
+        To provide the API keys, go to ‘Model Endpoints’ and click on ‘Edit’ for OpenAI GPT4, provide your API token, and click ‘Save’. (You don’t need to select OpenAI GPT4 in the red teaming session) 
+
     Select one attack module you would like to try out as a start and click the next button, or click on ‘Skip for now’:
     ![Choosing of Attack Modules](./imgs/choose_attack_modules(18).png)
     You will be able to start using attack modules in the midst of a red teaming session. 
@@ -57,14 +66,7 @@ Attack modules are techniques that will enable the automatic generation of adver
 
     ![Select Attack Modules](./imgs/select_attack_module(23).png)
     
-    !!! NOTE 
-        If you wish to run any of these attack modules, you will need to provide additional API keys: 
 
-            1. Malicious Question Generator (Requires OpenAI’s GPT4) 
-
-            2. Violent Durian (Requires OpenAI’s GPT4) 
-
-        To provide the API keys, go to ‘Model Endpoints’ and click on ‘Edit’ for OpenAI GPT4, provide your API token, and click ‘Save’. (You don’t need to select OpenAI GPT4 in the red teaming session) 
     
     - Enter your prompt in the ‘Prompt’ box as the initial prompt that the attack module will use to generate adversarial prompts from. 
     

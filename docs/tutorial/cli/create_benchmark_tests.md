@@ -40,4 +40,4 @@ In this tutorial, you will learn how to create a custom cookbook via our command
 
         ![new cookbook](images/new_cookbook.png)
 
-You can view more information on how creating benchmark tests [here](../../user_guide/cli/add_your_own_tests.md).
+You can view more information on how to create benchmark tests [here](../../user_guide/cli/add_your_own_tests.md).

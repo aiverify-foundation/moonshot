@@ -16,7 +16,9 @@ A set of recommended baseline cookbooks has been pre-selected. Select or deselec
 
 ![Select or deselect cookbooks](./res/run_bm_2.png)
 
-In this step, the total number of prompts that will be executed is displayed. Click on "these cookbooks" to view all the available cookbooks.
+The total number of prompts in the cookbooks selected is displayed. Later on, you can specify the number of prompts per dataset that will be executed. Click on "these cookbooks" to view all the available cookbooks.
+
+
 
 ![View total number of prompts](./res/run_bm_3.png)
 
@@ -33,9 +35,13 @@ Here, you are required to select an endpoint for testing. If needed, you can cre
 ![Select an endpoint](./res/run_bm_6.png)
 
 !!! warning
-    Before proceeding, please ensure that you have your Together Llama Guard 7B Assistant endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
+    <b>Important information before running your benchmark:</b>
 
-On this page, you need to fill out the form. If you wish to test a smaller dataset, replace the value in the "Run a smaller set" field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each dataset, as specified in the recipe. Once you've completed the form, click on "Run" to start the test.
+    Before proceeding, please ensure that you have your [together-llama-guard-7b-assistant endpoint](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
+
+    Refer to this [list for the requirements](../../faq.md#requirements).
+
+On this page, you need to fill out the form. **Note that the benchmark run names should be unique. We use benchmark names to uniquely identify benchmark runs.** If you wish to test a smaller dataset, replace the value in the "Run a smaller set" field. By default, the value is 0, which means the entire cookbook will be run. By entering a value, you can specify the number of prompts to be tested from each dataset, as specified in the recipe. Once you've completed the form, click on "Run" to start the test.
 
 ![Fill out the form and start the test](./res/run_bm_7.png)
 
