@@ -31,6 +31,7 @@ class IOInterface:
         Returns:
             bool: Always returns True to indicate the operation was executed without raising an exception.
         """
+        pass
 
     @abstractmethod
     def read_file(self, filepath: str) -> dict | None:

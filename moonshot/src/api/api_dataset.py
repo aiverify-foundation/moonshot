@@ -102,7 +102,6 @@ def api_download_dataset(
         str: The ID of the newly created dataset.
     """
     examples = Dataset.download_hf(**kwargs)
-
     ds_args = DatasetArguments(
         id="",
         name=name,
@@ -111,7 +110,6 @@ def api_download_dataset(
         license=license,
         examples=examples,
     )
-
     return Dataset.create(ds_args)
 
 

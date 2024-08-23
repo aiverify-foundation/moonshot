@@ -96,25 +96,25 @@ class Storage:
             )
 
         obj_filepath = Storage.get_filepath(obj_type, obj_id, obj_extension, True)
-        if obj_filepath and isinstance(obj_filepath, str):
-            obj_mod_instance = get_instance(
-                obj_mod_type,
-                Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
-            )
-            if obj_mod_instance and callable(obj_mod_instance):
-                try:
-                    obj_mod_instance(obj_filepath).create_file_with_iterator(
-                        obj_info, iterator_keys, iterator_data
-                    )
-                    return obj_filepath
-                except Exception as e:
-                    raise e
-            else:
-                raise RuntimeError(
-                    f"Unable to get defined object module instance - {obj_mod_instance}"
-                )
-        else:
+        if not obj_filepath or not isinstance(obj_filepath, str):
             raise RuntimeError("Unable to create object.")
+
+        obj_mod_instance = get_instance(
+            obj_mod_type,
+            Storage.get_filepath(EnvVariables.IO_MODULES.name, obj_mod_type, "py"),
+        )
+        if not obj_mod_instance or not callable(obj_mod_instance):
+            raise RuntimeError(
+                f"Unable to get defined object module instance - {obj_mod_instance}"
+            )
+
+        try:
+            obj_mod_instance(obj_filepath).create_file_with_iterator(
+                obj_info, iterator_keys, iterator_data
+            )
+            return obj_filepath
+        except Exception as e:
+            raise e
 
     @staticmethod
     @validate_call
