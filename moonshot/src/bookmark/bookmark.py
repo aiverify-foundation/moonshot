@@ -6,18 +6,18 @@ from datetime import datetime
 from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.messages_constants import (
-    BOOKMARK_ADD_BOOKMARK_PREFIX,
+    BOOKMARK_ADD_BOOKMARK_ERROR,
     BOOKMARK_ADD_BOOKMARK_SUCCESS,
     BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR,
-    BOOKMARK_DELETE_ALL_BOOKMARK_PREFIX,
+    BOOKMARK_DELETE_ALL_BOOKMARK_ERROR,
     BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS,
-    BOOKMARK_DELETE_BOOKMARK_PREFIX,
-    BOOKMARK_DELETE_BOOKMARK_PREFIX_1,
+    BOOKMARK_DELETE_BOOKMARK_ERROR,
+    BOOKMARK_DELETE_BOOKMARK_ERROR_1,
     BOOKMARK_DELETE_BOOKMARK_SUCCESS,
-    BOOKMARK_EXPORT_BOOKMARK_PREFIX,
+    BOOKMARK_EXPORT_BOOKMARK_ERROR,
     BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR,
-    BOOKMARK_GET_BOOKMARK_PREFIX,
-    BOOKMARK_GET_BOOKMARK_PREFIX_1,
+    BOOKMARK_GET_BOOKMARK_ERROR,
+    BOOKMARK_GET_BOOKMARK_ERROR_1,
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
@@ -138,8 +138,10 @@ class Bookmark:
             else:
                 raise Exception(BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR)
         except Exception as e:
-            error_message = f"{BOOKMARK_ADD_BOOKMARK_PREFIX} {e}"
-            return {"success": False, "message": error_message}
+            return {
+                "success": False,
+                "message": BOOKMARK_ADD_BOOKMARK_ERROR.format(message=str(e)),
+            }
 
     def get_all_bookmarks(self) -> list[dict]:
         """
@@ -187,9 +189,13 @@ class Bookmark:
             ):
                 return BookmarkArguments.from_tuple_to_dict(bookmark_info)
             else:
-                raise RuntimeError(f"{BOOKMARK_GET_BOOKMARK_PREFIX} {bookmark_name}")
+                raise RuntimeError(
+                    BOOKMARK_GET_BOOKMARK_ERROR.format(message=bookmark_name)
+                )
         else:
-            raise RuntimeError(f"{BOOKMARK_GET_BOOKMARK_PREFIX_1} {bookmark_name}")
+            raise RuntimeError(
+                BOOKMARK_GET_BOOKMARK_ERROR_1.format(message=bookmark_name)
+            )
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
         """
@@ -213,11 +219,17 @@ class Bookmark:
                 )
                 return {"success": True, "message": BOOKMARK_DELETE_BOOKMARK_SUCCESS}
             except Exception as e:
-                error_message = f"{BOOKMARK_DELETE_BOOKMARK_PREFIX} {e}"
-                return {"success": False, "message": error_message}
+                return {
+                    "success": False,
+                    "message": BOOKMARK_DELETE_BOOKMARK_ERROR.format(message=str(e)),
+                }
         else:
-            error_message = f"{BOOKMARK_DELETE_BOOKMARK_PREFIX_1} {bookmark_name}"
-            return {"success": False, "message": error_message}
+            return {
+                "success": False,
+                "message": BOOKMARK_DELETE_BOOKMARK_ERROR_1.format(
+                    message=bookmark_name
+                ),
+            }
 
     def delete_all_bookmark(self) -> dict:
         """
@@ -232,8 +244,10 @@ class Bookmark:
             )
             return {"success": True, "message": BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS}
         except Exception as e:
-            error_message = f"{BOOKMARK_DELETE_ALL_BOOKMARK_PREFIX} {e}"
-            return {"success": False, "message": error_message}
+            return {
+                "success": False,
+                "message": BOOKMARK_DELETE_ALL_BOOKMARK_ERROR.format(message=str(e)),
+            }
 
     def export_bookmarks(self, export_file_name: str = "bookmarks") -> str:
         """
@@ -253,7 +267,9 @@ class Bookmark:
             Exception: If the export file name is invalid or an error occurs during export.
         """
         if not isinstance(export_file_name, str) or not export_file_name:
-            error_message = f"{BOOKMARK_EXPORT_BOOKMARK_PREFIX} {BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR}"
+            error_message = BOOKMARK_EXPORT_BOOKMARK_ERROR.format(
+                message=BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR
+            )
             logger.error(error_message)
             raise Exception(error_message)
 
@@ -282,7 +298,7 @@ class Bookmark:
                 "json",
             )
         except Exception as e:
-            error_message = f"{BOOKMARK_EXPORT_BOOKMARK_PREFIX} {e}"
+            error_message = BOOKMARK_EXPORT_BOOKMARK_ERROR.format(message=str(e))
             logger.error(error_message)
             raise Exception(error_message)
 
