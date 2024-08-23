@@ -123,11 +123,11 @@ jobs:
 
     - name: Run Smoke Test
       env: 
-        URI: ${{ secrets.URI }}
-        TOKEN: ${{ secrets.TOKEN }}
+        AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
+        AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
         ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
       run: |
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         URI="$URI" TOKEN="$TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke-test.spec.ts
+         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test tests/smoke-test.spec.ts
