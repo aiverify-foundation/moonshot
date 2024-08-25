@@ -42,7 +42,60 @@ def add_endpoint(args) -> None:
         None
     """
     try:
-        params_dict = literal_eval(args.params)
+        if not isinstance(args.name, str) or not args.name or args.name is None:
+            raise TypeError(
+                "The 'name' argument must be a non-empty string and not None."
+            )
+
+        if (
+            not isinstance(args.connector_type, str)
+            or not args.connector_type
+            or args.connector_type is None
+        ):
+            raise TypeError(
+                "The 'connector_type' argument must be a non-empty string and not None."
+            )
+
+        if not isinstance(args.uri, str) or not args.uri or args.uri is None:
+            raise TypeError(
+                "The 'uri' argument must be a non-empty string and not None."
+            )
+
+        if not isinstance(args.token, str) or not args.token or args.token is None:
+            raise TypeError(
+                "The 'token' argument must be a non-empty string and not None."
+            )
+
+        if (
+            not isinstance(args.max_calls_per_second, int)
+            or not args.max_calls_per_second
+            or args.max_calls_per_second is None
+            or args.max_calls_per_second < 0
+        ):
+            raise TypeError(
+                "The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
+            )
+
+        if (
+            not isinstance(args.max_concurrency, int)
+            or not args.max_concurrency
+            or args.max_concurrency is None
+            or args.max_calls_per_second < 0
+        ):
+            raise TypeError(
+                "The 'max_concurrency' argument must be a non-empty positive integer and not None."
+            )
+
+        try:
+            params_dict = literal_eval(args.params)
+        except Exception:
+            raise SyntaxError(
+                "The 'params' argument must be a string representation of a dictionary."
+            )
+        if not isinstance(params_dict, dict):
+            raise ValueError(
+                "The 'params' argument must be a string representation of a dictionary."
+            )
 
         new_endpoint_id = api_create_endpoint(
             args.name,
@@ -74,9 +127,36 @@ def list_endpoints(args) -> list | None:
         list | None: A list of ConnectorEndpoint or None if there is no result.
     """
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(
+                    "The 'find' argument must be a non-empty string and not None."
+                )
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(
+                    "The 'pagination' argument must be a non-empty string and not None."
+                )
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        "The 'pagination' argument must be a tuple of two integers."
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "The 'pagination' argument must be a tuple of two integers."
+                )
+        else:
+            pagination = ()
+
         endpoints_list = api_get_all_endpoint()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if endpoints_list:
             filtered_endpoints_list = filter_data(endpoints_list, keyword, pagination)
@@ -107,9 +187,36 @@ def list_connector_types(args) -> list | None:
         list | None: A list of Connector or None if there is no result.
     """
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(
+                    "The 'find' argument must be a non-empty string and not None."
+                )
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(
+                    "The 'pagination' argument must be a non-empty string and not None."
+                )
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        "The 'pagination' argument must be a tuple of two integers."
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "The 'pagination' argument must be a tuple of two integers."
+                )
+        else:
+            pagination = ()
+
         connector_type_list = api_get_all_connector_type()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if connector_type_list:
             filtered_connector_type_list = filter_data(
@@ -142,6 +249,15 @@ def view_endpoint(args) -> None:
         None
     """
     try:
+        if (
+            not isinstance(args.endpoint, str)
+            or not args.endpoint
+            or args.endpoint is None
+        ):
+            raise TypeError(
+                "The 'endpoint' argument must be a non-empty string and not None."
+            )
+
         endpoint_info = api_read_endpoint(args.endpoint)
         _display_endpoints([endpoint_info])
     except Exception as e:
@@ -165,8 +281,33 @@ def update_endpoint(args) -> None:
         None
     """
     try:
+        if (
+            args.endpoint is None
+            or not isinstance(args.endpoint, str)
+            or not args.endpoint
+        ):
+            raise ValueError(
+                "The 'endpoint' argument must be a non-empty string and not None."
+            )
         endpoint = args.endpoint
-        update_values = dict(literal_eval(args.update_kwargs))
+
+        if (
+            args.update_values is None
+            or not isinstance(args.update_values, str)
+            or not args.update_values
+        ):
+            raise ValueError(
+                "The 'update_values' argument must be a non-empty string and not None."
+            )
+
+        if literal_eval(args.update_values) and all(
+            isinstance(i, tuple) for i in literal_eval(args.update_values)
+        ):
+            update_values = dict(literal_eval(args.update_values))
+        else:
+            raise ValueError(
+                "The 'update_values' argument must evaluate to a list of tuples."
+            )
         api_update_endpoint(endpoint, **update_values)
         print("[update_endpoint]: Endpoint updated.")
     except Exception as e:
@@ -196,6 +337,14 @@ def delete_endpoint(args) -> None:
         console.print("[bold yellow]Endpoint deletion cancelled.[/]")
         return
     try:
+        if (
+            args.endpoint is None
+            or not isinstance(args.endpoint, str)
+            or not args.endpoint
+        ):
+            raise ValueError(
+                "The 'endpoint' argument must be a non-empty string and not None."
+            )
         api_delete_endpoint(args.endpoint)
         print("[delete_endpoint]: Endpoint deleted.")
     except Exception as e:
