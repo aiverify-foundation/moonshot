@@ -26,9 +26,36 @@ def list_prompt_templates(args) -> list | None:
         list | None: A list of PromptTemplate or None if there is no result.
     """
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(
+                    "The 'find' argument must be a non-empty string and not None."
+                )
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(
+                    "The 'pagination' argument must be a non-empty string and not None."
+                )
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        "The 'pagination' argument must be a tuple of two integers."
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "The 'pagination' argument must be a tuple of two integers."
+                )
+        else:
+            pagination = ()
+
         prompt_templates_list = api_get_all_prompt_template_detail()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if prompt_templates_list:
             filtered_prompt_templates_list = filter_data(
@@ -61,6 +88,14 @@ def delete_prompt_template(args) -> None:
         console.print("[bold yellow]Prompt template deletion cancelled.[/]")
         return
     try:
+        if (
+            args.prompt_template is None
+            or not isinstance(args.prompt_template, str)
+            or not args.prompt_template
+        ):
+            raise ValueError(
+                "The 'prompt_template' argument must be a non-empty string and not None."
+            )
         api_delete_prompt_template(args.prompt_template)
         print("[delete_prompt_template]: Prompt template deleted.")
     except Exception as e:

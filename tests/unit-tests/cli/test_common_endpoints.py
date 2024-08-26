@@ -477,7 +477,7 @@ class TestCollectionCliConnectors:
                 params_dict = literal_eval(params)
                 if not (isinstance(params_dict, dict)):
                     raise ValueError(
-                        "The 'params_dict' argument must be a dictionary after evaluation."
+                        "The 'params' argument must be a dictionary after evaluation."
                     )
             except Exception:
                 params_dict = None
