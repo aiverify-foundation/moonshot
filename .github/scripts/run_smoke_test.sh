@@ -3,7 +3,10 @@
 # Check if branch name is provided, default to dev_main if not
 BRANCH_NAME=${1:-main}
 
-cd ~/moonshot
+BASE_DIR=~/moonshot
+SCRIPTS_DIR=~/scripts
+
+cd $BASE_DIR
 
 if [ -d "moonshot-smoke-testing" ]; then
   echo "Removing existing moonshot-smoke-testing directory..."
@@ -15,6 +18,7 @@ echo "Cloning moonshot-smoke-testing repo from branch $BRANCH_NAME..."
 git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-smoke-testing.git
 cd moonshot-smoke-testing
 npm ci
+cp $SCRIPTS_DIR/moonshot_test_env .env
 
 # Install Playwright (if needed)
 #sudo npx playwright install-deps
@@ -32,4 +36,3 @@ npm ci
 echo "Running smoke test..."
 npx playwright test tests/smoke-test.spec.ts --reporter=list
 
-#echo "Exit code: $?"

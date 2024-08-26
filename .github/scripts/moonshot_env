@@ -1,0 +1,28 @@
+# .env for moonshot SIT
+
+# For Data
+ATTACK_MODULES="./moonshot-data/attack-modules"
+BOOKMARKS="./moonshot-data/generated-outputs/bookmarks"
+CONNECTORS="./moonshot-data/connectors"
+CONNECTORS_ENDPOINTS="./moonshot-data/connectors-endpoints"
+CONTEXT_STRATEGY="./moonshot-data/context-strategy"
+COOKBOOKS="./moonshot-data/cookbooks"
+DATABASES="./moonshot-data/generated-outputs/databases"
+DATABASES_MODULES="./moonshot-data/databases-modules"
+DATASETS="./moonshot-data/datasets"
+IO_MODULES="./moonshot-data/io-modules"
+METRICS="./moonshot-data/metrics"
+PROMPT_TEMPLATES="./moonshot-data/prompt-templates"
+RECIPES="./moonshot-data/recipes"
+RESULTS="./moonshot-data/generated-outputs/results"
+RESULTS_MODULES="./moonshot-data/results-modules"
+RUNNERS="./moonshot-data/generated-outputs/runners"
+RUNNERS_MODULES="./moonshot-data/runners-modules"
+TOKENIZERS_PARALLELISM = false
+
+# For Web API
+HOST_ADDRESS=127.0.0.1 # The interface the server will bind to
+HOST_PORT=5100
+
+# URI of the Web UI webhook
+MOONSHOT_UI_CALLBACK_URL=http://localhost:3100/api/v1/benchmarks/status
