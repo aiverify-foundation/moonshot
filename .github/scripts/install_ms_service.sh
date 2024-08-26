@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Check if branch name is provided, default to dev_main if not
-BRANCH_NAME=${1:-dev_main}
+# Arguments for branches, default to dev_main if not provided.
+MOONSHOT_BRANCH=${1:-dev_main}
+MOONSHOT_DATA_BRANCH=${2:-dev_main}
+MOONSHOT_UI_BRANCH=${3:-dev_main}
 
 BASE_DIR=~/moonshot
 SCRIPTS_DIR=~/scripts
@@ -19,11 +21,14 @@ fi
 
 cd $BASE_DIR
 
-# Clone the repositories from the specified branch
-git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot.git $MOONSHOT_SIT
+# Clone the repositories from the specified branches
+echo "Cloning moonshot from branch $MOONSHOT_BRANCH"
+echo "Cloning moonshot-data from branch $MOONSHOT_DATA_BRANCH"
+echo "Cloning moonshot-ui from branch $MOONSHOT_UI_BRANCH"
+git clone --branch $MOONSHOT_BRANCH https://github.com/aiverify-foundation/moonshot.git $MOONSHOT_SIT
 cd $MOONSHOT_SIT
-git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-data.git
-git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-ui.git
+git clone --branch $MOONSHOT_DATA_BRANCH https://github.com/aiverify-foundation/moonshot-data.git
+git clone --branch $MOONSHOT_UI_BRANCH https://github.com/aiverify-foundation/moonshot-ui.git
 cp $SCRIPTS_DIR/moonshot_env .env
 
 python3 -m venv venv
