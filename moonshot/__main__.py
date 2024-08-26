@@ -116,7 +116,7 @@ def download_nltk_resources() -> None:
             raise
 
 
-def moonshot_data_installation() -> None:
+def moonshot_data_installation(force_reinstall: bool) -> None:
     # Code for moonshot-data installation
     logger.info("Installing Moonshot Data from GitHub")
     repo = "https://github.com/aiverify-foundation/moonshot-data.git"
@@ -124,21 +124,24 @@ def moonshot_data_installation() -> None:
 
     # Check if the directory already exists
     if os.path.exists(folder_name):
-        logger.warning(f"Directory {folder_name} already exists.")
-        user_input = (
-            input(
-                f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-            )
-            .strip()
-            .lower()
-        )
-        if user_input == "y":
-            logger.info(f"Removing directory {folder_name}.")
-            # Remove the existing directory
+        if force_reinstall:
+            logger.info(f"Removing directory {folder_name} due to --force-reinstall flag.")
             shutil.rmtree(folder_name)
         else:
-            logger.info("Exiting function without removing the directory.")
-            return
+            logger.warning(f"Directory {folder_name} already exists.")
+            user_input = (
+                input(
+                    f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+                )
+                .strip()
+                .lower()
+            )
+            if user_input == "y":
+                logger.info(f"Removing directory {folder_name}.")
+                shutil.rmtree(folder_name)
+            else:
+                logger.info("Exiting function without removing the directory.")
+                return
 
     logger.info(f"Cloning {repo}")
     # Clone the repository
@@ -176,7 +179,7 @@ def check_node() -> bool:
         return False
 
 
-def moonshot_ui_installation() -> None:
+def moonshot_ui_installation(force_reinstall: bool) -> None:
     if not check_node():
         logger.error("Node.js is not installed. Please install Node.js to proceed.")
         return
@@ -187,21 +190,24 @@ def moonshot_ui_installation() -> None:
 
     # Check if the directory already exists
     if os.path.exists(folder_name):
-        logger.warning(f"Directory {folder_name} already exists.")
-        user_input = (
-            input(
-                f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
-            )
-            .strip()
-            .lower()
-        )
-        if user_input == "y":
-            logger.info(f"Removing directory {folder_name}.")
-            # Remove the existing directory
+        if force_reinstall:
+            logger.info(f"Removing directory {folder_name} due to --force-reinstall flag.")
             shutil.rmtree(folder_name)
         else:
-            logger.info("Exiting function without removing the directory.")
-            return
+            logger.warning(f"Directory {folder_name} already exists.")
+            user_input = (
+                input(
+                    f"Directory {folder_name} already exists. Do you want to remove it and reinstall? (Y/n): "
+                )
+                .strip()
+                .lower()
+            )
+            if user_input == "y":
+                logger.info(f"Removing directory {folder_name}.")
+                shutil.rmtree(folder_name)
+            else:
+                logger.info("Exiting function without removing the directory.")
+                return
 
     logger.info(f"Cloning {repo}")
     # Clone the repository
@@ -262,15 +268,20 @@ def main() -> None:
     parser.add_argument(
         "-e", "--env", type=str, help="Path to the .env file", default=".env"
     )
+    parser.add_argument(
+        "--force-reinstall",
+        action="store_true",
+        help="Force reinstallation of modules without user interaction",
+    )
 
     args = parser.parse_args()
 
     # Handle installations based on the -i include arguments
     if "moonshot-data" in args.install:
-        moonshot_data_installation()
+        moonshot_data_installation(args.force_reinstall)
 
     if "moonshot-ui" in args.install:
-        moonshot_ui_installation()
+        moonshot_ui_installation(args.force_reinstall)
 
     # If mode is not specified, skip running any modes
     if args.mode is None:
