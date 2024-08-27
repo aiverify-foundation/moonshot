@@ -1,0 +1,20 @@
+{
+  "name": "test-recipe",
+  "description": "test",
+  "tags": [
+    "test"
+  ],
+  "categories": [
+    "test"
+  ],
+  "datasets": [
+    "small-test-dataset"
+  ],
+  "prompt_templates": [
+    ""
+  ],
+  "metrics": [
+    "exactstrmatch"
+  ],
+  "grading_scale": {}
+}

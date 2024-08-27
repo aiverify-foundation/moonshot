@@ -1,0 +1,14 @@
+{
+  "name": "small-test-dataset",
+  "description": "desc",
+  "reference": "ref",
+  "license": "mit",
+  "examples": [
+    "new prompt 1",
+    "new prompt 2",
+    "new prompt 3",
+    "new prompt 4",
+    "new prompt 5",
+    "new prompt 6"
+  ]
+}

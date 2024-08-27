@@ -20,6 +20,9 @@ class Augmentor:
         Returns:
             str: The ID of the newly created augmented recipe.
         """
+        if not recipe_id or not attack_module_id:
+            raise ValueError("recipe_id and attack_module_id must not be None")
+
         selected_recipe = Recipe.read(recipe_id)
         datasets = selected_recipe.datasets
         augmented_datasets_id = []
