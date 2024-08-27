@@ -11,14 +11,14 @@ class Augmentor:
     @staticmethod
     def augment_recipe(recipe_id: str, attack_module: str) -> str:
         """
-        User will select 1 recipe and 1 attack module
+        Augments a recipe using the specified attack module.
 
-        What to do:
-        Step 1. Get recipe information
-        Step 2. Get all the datasets in that recipe
-        Step 3. Augment the datasets
-        Step 4. Write each new augmented dataset to a new file
-        Step 5. Create new recipe with new set of datasets
+        Args:
+            recipe_id (str): The ID of the recipe to be augmented.
+            attack_module (str): The attack module to use for augmentation.
+
+        Returns:
+            str: The ID of the newly created augmented recipe.
         """
         selected_recipe = Recipe.read(recipe_id)
         datasets = selected_recipe.datasets
@@ -51,21 +51,17 @@ class Augmentor:
     @staticmethod
     def augment_dataset(dataset_id: str, attack_module: str) -> str:
         """
-        Step 1. Get the Datasets
-        Step 2. Get the prompts
-        Step 3. Load attack module
-        Step 4. Generate new prompts
-        Step 5. Write new dataset to file
-        Step 6. Use existing license and references
+        Augments a dataset using the specified attack module.
 
-        Returns the new dataset id
+        Args:
+            dataset_id (str): The ID of the dataset to be augmented.
+            attack_module (str): The attack module to use for augmentation.
+
+        Returns:
+            str: The ID of the newly created augmented dataset.
         """
-
-        # step 1
         dataset = Dataset.read(dataset_id)
         inputs = dataset.examples
-
-        # step 2 call AM
         new_examples = []
         for input in inputs:
             # prompt = input.get("input")
