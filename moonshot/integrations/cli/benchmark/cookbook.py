@@ -19,8 +19,8 @@ from moonshot.api import (
     api_update_cookbook,
 )
 from moonshot.integrations.cli.benchmark.recipe import (
-    display_view_grading_scale_format,
-    display_view_statistics_format,
+    _display_view_grading_scale_format,
+    _display_view_statistics_format,
 )
 from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_ADD_COOKBOOK_DESC_VALIDATION,
@@ -197,7 +197,8 @@ def view_cookbook(args) -> None:
             raise TypeError(ERROR_BENCHMARK_VIEW_COOKBOOK_COOKBOOK_VALIDATION)
 
         cookbook_info = api_read_cookbook(args.cookbook)
-        display_view_cookbook(cookbook_info)
+        _display_view_cookbook(cookbook_info)
+
     except Exception as e:
         print(f"[view_cookbook]: {str(e)}")
 
@@ -315,7 +316,7 @@ def run_cookbook(args) -> None:
         runner_runs = api_get_all_run(cb_runner.id)
         result_info = runner_runs[-1].get("results")
         if result_info:
-            show_cookbook_results(
+            _show_cookbook_results(
                 cookbooks, endpoints, result_info, result_info["metadata"]["duration"]
             )
         else:
@@ -352,7 +353,6 @@ def update_cookbook(args) -> None:
         ):
             raise ValueError(ERROR_BENCHMARK_UPDATE_COOKBOOK_COOKBOOK_VALIDATION)
 
-        cookbook = args.cookbook
         if (
             args.update_values is None
             or not isinstance(args.update_values, str)
@@ -360,6 +360,7 @@ def update_cookbook(args) -> None:
         ):
             raise ValueError(ERROR_BENCHMARK_UPDATE_COOKBOOK_UPDATE_VALUES_VALIDATION)
 
+        cookbook = args.cookbook
         if literal_eval(args.update_values) and all(
             isinstance(i, tuple) for i in literal_eval(args.update_values)
         ):
@@ -448,7 +449,7 @@ def _display_cookbooks(cookbooks_list):
     console.print(table)
 
 
-def display_view_cookbook(cookbook_info):
+def _display_view_cookbook(cookbook_info):
     """
     Display the cookbook information in a formatted table.
 
@@ -496,10 +497,10 @@ def display_view_cookbook(cookbook_info):
             attack_strategies_info = display_view_list_format(
                 "Attack Strategies", attack_strategies
             )
-            grading_scale_info = display_view_grading_scale_format(
+            grading_scale_info = _display_view_grading_scale_format(
                 "Grading Scale", grading_scale
             )
-            stats_info = display_view_statistics_format("Statistics", stats)
+            stats_info = _display_view_statistics_format("Statistics", stats)
 
             recipe_info = (
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
@@ -514,11 +515,11 @@ def display_view_cookbook(cookbook_info):
         console.print("[red]There are no recipes found for the cookbook.[/red]")
 
 
-def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
+def _show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
     """
     Show the results of the cookbook benchmarking.
 
-    This function takes the cookbooks, endpoints, cookbook results, results file, and duration as arguments.
+    This function takes the cookbooks, endpoints, cookbook results, and duration as arguments.
     If there are results, it generates a table with the cookbook results and prints a message indicating
     where the results are saved. If there are no results, it prints a message indicating that no results were found.
     Finally, it prints the duration of the run.
@@ -534,7 +535,7 @@ def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
     """
     if cookbook_results:
         # Display recipe results
-        generate_cookbook_table(cookbooks, endpoints, cookbook_results)
+        _generate_cookbook_table(cookbooks, endpoints, cookbook_results)
     else:
         console.print("[red]There are no results.[/red]")
 
@@ -544,7 +545,7 @@ def show_cookbook_results(cookbooks, endpoints, cookbook_results, duration):
     console.print(run_stats)
 
 
-def generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> None:
+def _generate_cookbook_table(cookbooks: list, endpoints: list, results: dict) -> None:
     """
     Generate and display a table with the cookbook benchmarking results.
 

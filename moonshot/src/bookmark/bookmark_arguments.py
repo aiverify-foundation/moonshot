@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
+from moonshot.src.messages_constants import (
+    BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR,
+)
+
 
 class BookmarkArguments(BaseModel):
     name: str = Field(min_length=1)
@@ -24,7 +28,13 @@ class BookmarkArguments(BaseModel):
 
         Returns:
             dict: A dictionary representing the BookmarkArguments.
+
+        Raises:
+            ValueError: If the number of values in the tuple is less than 10.
         """
+        if len(values) < 10:
+            raise ValueError(BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR)
+
         return {
             "name": values[1],
             "prompt": values[2],

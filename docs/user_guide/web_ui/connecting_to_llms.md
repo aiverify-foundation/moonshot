@@ -27,5 +27,5 @@
 3. Select the endpoints to the AI systems that you wish to run benchmarks on, and click the next button when done. 
 
 
-    Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’. (You don’t need to select Together Llama Guard 7B Assistant for testing) 
+    Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’. (You don’t need to select Together Llama Guard 7B Assistant for testing. This is necessary to run some of the cookbooks like MLCommon's AI Safety Benchmark.) 
     ![Selection of Endpoints](./imgs/selecting_endpoints(10).png)

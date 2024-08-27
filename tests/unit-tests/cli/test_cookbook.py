@@ -14,6 +14,24 @@ from moonshot.integrations.cli.benchmark.cookbook import (
 
 
 class TestCollectionCliCookbook:
+    api_response = [
+        {
+            "id": 1,
+            "name": "Cookbook 1",
+            "description": "Desc 1",
+            "recipes": ["recipe1"],
+        }
+    ]
+    api_response_pagination = [
+        {
+            "id": 1,
+            "name": "Cookbook 1",
+            "description": "Desc 1",
+            "recipes": ["recipe1"],
+            "idx": 1,
+        }
+    ]
+
     @pytest.fixture(autouse=True)
     def init(self):
         # Perform tests
@@ -77,12 +95,6 @@ class TestCollectionCliCookbook:
             ),
             (
                 True,
-                "This is a test cookbook.",
-                "['recipe1', 'recipe2']",
-                "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
-            ),
-            (
-                "",
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
@@ -257,293 +269,222 @@ class TestCollectionCliCookbook:
     # Test list_cookbooks functionality with non-mocked filter-data
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "find, pagination, api_response, expected_output, expected_log",
+        "find, pagination, api_response, expected_output, expected_log, to_be_called",
         [
             # Valid cases
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
+                api_response,
                 "",
+                True,
             ),
             # No cookbooks
-            (
-                None,
-                None,
-                [],
-                None,
-                "There are no cookbooks found.",
-            ),
+            (None, None, [], None, "There are no cookbooks found.", False),
             (
                 "Cookbook",
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
+                api_response,
                 "",
+                True,
             ),
             (
                 None,
                 "(1, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
                 "",
+                True,
             ),
-            (
-                "Cookbook",
-                "(1, 1)",
-                [],
-                None,
-                "There are no cookbooks found.",
-            ),
+            ("Cookbook", "(1, 1)", [], None, "There are no cookbooks found.", False),
             # Invalid cases for find
             (
                 "",
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 99,
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 {},
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 [],
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 (),
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 True,
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'find' argument must be a non-empty string and not None.",
+                False,
             ),
             # Invalid cases for pagination
             (
                 None,
                 "",
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 99,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 {},
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 [],
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 (),
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 True,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 True,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 None,
                 "(1, 'a')",
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False,
             ),
             (
                 None,
                 "(1, 2, 3)",
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False,
             ),
             (
                 None,
                 "(1, )",
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: The 'pagination' argument must be a tuple of two integers.",
+                False,
             ),
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             (
                 None,
                 "(1, 0)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             (
                 None,
                 "(0, 0)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             (
                 None,
                 "(1, -1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             (
                 None,
                 "(-1, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             (
                 None,
                 "(-1, -1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 "[list_cookbooks]: Invalid page number or page size. Page number and page size should start from 1.",
+                False,
             ),
             # Exception case
             (
                 None,
                 None,
-                None,
+                api_response,
                 None,
                 "[list_cookbooks]: An error has occurred while listing cookbooks.",
+                False,
             ),
         ],
     )
@@ -558,6 +499,7 @@ class TestCollectionCliCookbook:
         api_response,
         expected_output,
         expected_log,
+        to_be_called,
         capsys,
     ):
         if "error" in expected_log:
@@ -580,7 +522,7 @@ class TestCollectionCliCookbook:
         assert expected_log == captured.out.strip()
         assert result == expected_output
 
-        if api_response and not expected_log:
+        if to_be_called:
             mock_display_cookbooks.assert_called_once_with(api_response)
         else:
             mock_display_cookbooks.assert_not_called()
@@ -589,132 +531,54 @@ class TestCollectionCliCookbook:
     # Test list_cookbooks functionality with mocked filter-data
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "find, pagination, api_response, filtered_response, expected_output, expected_log",
+        "find, pagination, api_response, filtered_response, expected_output, expected_log, to_be_called",
         [
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
+                True,
             ),
             (
                 "Cookbook",
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
+                True,
             ),
             (
                 None,
                 "(0, 1)",
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                        "idx": 1,
-                    }
-                ],
+                api_response,
+                api_response_pagination,
+                api_response_pagination,
                 "",
+                True,
             ),
             # Case where filtered_response is None
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 None,
                 None,
                 "There are no cookbooks found.",
+                False,
             ),
             # Case where filtered_response is an empty list
             (
                 None,
                 None,
-                [
-                    {
-                        "id": 1,
-                        "name": "Cookbook 1",
-                        "description": "Desc 1",
-                        "recipes": ["recipe1"],
-                    }
-                ],
+                api_response,
                 [],
                 None,
                 "There are no cookbooks found.",
+                False,
             ),
         ],
     )
@@ -732,6 +596,7 @@ class TestCollectionCliCookbook:
         filtered_response,
         expected_output,
         expected_log,
+        to_be_called,
         capsys,
     ):
         mock_api_get_all_cookbook.return_value = api_response
@@ -750,7 +615,7 @@ class TestCollectionCliCookbook:
         assert expected_log == captured.out.strip()
         assert result == expected_output
 
-        if filtered_response and not expected_log:
+        if to_be_called:
             mock_display_cookbooks.assert_called_once_with(filtered_response)
         else:
             mock_display_cookbooks.assert_not_called()
@@ -759,7 +624,7 @@ class TestCollectionCliCookbook:
     # Test view_cookbook functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "cookbook_id, api_response, expected_log",
+        "cookbook_id, api_response, expected_log, to_be_called",
         [
             # Valid case
             (
@@ -771,54 +636,103 @@ class TestCollectionCliCookbook:
                     "recipes": ["recipe1"],
                 },
                 "",
+                True,
             ),
             # Invalid case: cookbook_id is None
             (
                 None,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             # Invalid case: cookbook_id is not a string
             (
                 "",
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 123,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 {},
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 [],
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 (),
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             (
                 True,
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
+                False,
             ),
             # Exception case: api_read_cookbook raises an exception
             (
                 "1",
-                None,
+                {
+                    "id": 1,
+                    "name": "Cookbook 1",
+                    "description": "Desc 1",
+                    "recipes": ["recipe1"],
+                },
                 "[view_cookbook]: An error has occurred while reading the cookbook.",
+                False,
             ),
         ],
     )
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_read_cookbook")
-    @patch("moonshot.integrations.cli.benchmark.cookbook.display_view_cookbook")
+    @patch("moonshot.integrations.cli.benchmark.cookbook._display_view_cookbook")
     def test_view_cookbook(
         self,
         mock_display_view_cookbook,
@@ -826,6 +740,7 @@ class TestCollectionCliCookbook:
         cookbook_id,
         api_response,
         expected_log,
+        to_be_called,
         capsys,
     ):
         if "error" in expected_log:
@@ -846,7 +761,7 @@ class TestCollectionCliCookbook:
         captured = capsys.readouterr()
         assert expected_log == captured.out.strip()
 
-        if api_response and not expected_log:
+        if to_be_called:
             mock_display_view_cookbook.assert_called_once_with(api_response)
         else:
             mock_display_view_cookbook.assert_not_called()
@@ -1541,7 +1456,7 @@ class TestCollectionCliCookbook:
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_load_runner")
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_create_runner")
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_get_all_run")
-    @patch("moonshot.integrations.cli.benchmark.cookbook.show_cookbook_results")
+    @patch("moonshot.integrations.cli.benchmark.cookbook._show_cookbook_results")
     def test_run_cookbook(
         self,
         mock_show_cookbook_results,
@@ -1635,6 +1550,9 @@ class TestCollectionCliCookbook:
         else:
             mock_show_cookbook_results.assert_not_called()
 
+    # ------------------------------------------------------------------------------
+    # Test update_cookbook functionality
+    # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "cookbook, update_values, expected_log, to_be_called",
         [
@@ -1643,117 +1561,125 @@ class TestCollectionCliCookbook:
                 "Cookbook 1",
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: Cookbook updated.",
-                True
+                True,
             ),
             # Invalid case - cookbook
             (
                 "",
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Invalid case - update values
             (
                 "Cookbook 1",
                 "",
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 "['', '']",
                 "[update_cookbook]: The 'update_values' argument must evaluate to a list of tuples.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 "[[], ()]",
                 "[update_cookbook]: The 'update_values' argument must evaluate to a list of tuples.",
-                False
+                False,
             ),
             (
-                "Cookbook 1",  
+                "Cookbook 1",
                 None,
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 123,
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 {},
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 [],
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 (),
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Cookbook 1",
                 True,
                 "[update_cookbook]: The 'update_values' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Test case: API update raises an exception
             (
                 "Cookbook 1",
                 "[('name', 'Updated Cookbook'), ('description', 'Updated description')]",
                 "[update_cookbook]: An error has occurred while updating the cookbook.",
-                True
+                True,
             ),
-        ]
+        ],
     )
-    @patch('moonshot.integrations.cli.benchmark.cookbook.api_update_cookbook')
-    def test_update_cookbook(self, mock_api_update_cookbook, capsys, cookbook, update_values, expected_log, to_be_called):
+    @patch("moonshot.integrations.cli.benchmark.cookbook.api_update_cookbook")
+    def test_update_cookbook(
+        self,
+        mock_api_update_cookbook,
+        capsys,
+        cookbook,
+        update_values,
+        expected_log,
+        to_be_called,
+    ):
         if "error" in expected_log:
             mock_api_update_cookbook.side_effect = Exception(
                 "An error has occurred while updating the cookbook."
@@ -1780,63 +1706,67 @@ class TestCollectionCliCookbook:
         else:
             mock_api_update_cookbook.assert_not_called()
 
+    # ------------------------------------------------------------------------------
+    # Test delete_cookbook functionality
+    # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "cookbook, expected_log, to_be_called",
         [
             # Valid case
-            (
-                "Cookbook 1",
-                "[delete_cookbook]: Cookbook deleted.",
-                True
-            ),
+            ("Cookbook 1", "[delete_cookbook]: Cookbook deleted.", True),
             # Invalid case - cookbook
             (
                 "",
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 "[delete_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
-        ]
+        ],
     )
     @patch("moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook")
-    def test_delete_cookbook(self, mock_api_delete_cookbook, capsys, cookbook, expected_log, to_be_called):
+    def test_delete_cookbook(
+        self, mock_api_delete_cookbook, capsys, cookbook, expected_log, to_be_called
+    ):
         class Args:
             pass
 
         args = Args()
         args.cookbook = cookbook
 
-        with patch("moonshot.integrations.cli.benchmark.cookbook.console.input", return_value="y"):
-            with patch("moonshot.integrations.cli.benchmark.cookbook.console.print") as mock_console_print:
+        with patch(
+            "moonshot.integrations.cli.benchmark.cookbook.console.input",
+            return_value="y",
+        ):
+            with patch("moonshot.integrations.cli.benchmark.cookbook.console.print"):
                 delete_cookbook(args)
 
         captured = capsys.readouterr()
@@ -1847,37 +1777,53 @@ class TestCollectionCliCookbook:
         else:
             mock_api_delete_cookbook.assert_not_called()
 
-    @patch('moonshot.integrations.cli.benchmark.cookbook.console.input', return_value='y')
-    @patch('moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook')
+    @patch(
+        "moonshot.integrations.cli.benchmark.cookbook.console.input", return_value="y"
+    )
+    @patch("moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook")
     def test_delete_cookbook_confirm_yes(self, mock_delete, mock_input):
         args = MagicMock()
-        args.cookbook = 'test_cookbook_id'
-        
-        delete_cookbook(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the cookbook (y/N)? [/]")
-        mock_delete.assert_called_once_with('test_cookbook_id')
+        args.cookbook = "test_cookbook_id"
 
-    @patch('moonshot.integrations.cli.benchmark.cookbook.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook')
+        delete_cookbook(args)
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the cookbook (y/N)? [/]"
+        )
+        mock_delete.assert_called_once_with("test_cookbook_id")
+
+    @patch(
+        "moonshot.integrations.cli.benchmark.cookbook.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook")
     def test_delete_cookbook_confirm_no(self, mock_delete, mock_input):
         args = MagicMock()
-        args.cookbook = 'test_cookbook_id'
-        
+        args.cookbook = "test_cookbook_id"
+
         delete_cookbook(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the cookbook (y/N)? [/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the cookbook (y/N)? [/]"
+        )
         mock_delete.assert_not_called()
-    
-    @patch('moonshot.integrations.cli.benchmark.cookbook.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.benchmark.cookbook.console.print')
-    @patch('moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook')
-    def test_delete_cookbook_cancelled_output(self, mock_delete, mock_print, mock_input):
+
+    @patch(
+        "moonshot.integrations.cli.benchmark.cookbook.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.benchmark.cookbook.console.print")
+    @patch("moonshot.integrations.cli.benchmark.cookbook.api_delete_cookbook")
+    def test_delete_cookbook_cancelled_output(
+        self, mock_delete, mock_print, mock_input
+    ):
         args = MagicMock()
-        args.cookbook = 'test_cookbook_id'
-        
+        args.cookbook = "test_cookbook_id"
+
         delete_cookbook(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the cookbook (y/N)? [/]")
-        mock_print.assert_called_once_with("[bold yellow]Cookbook deletion cancelled.[/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the cookbook (y/N)? [/]"
+        )
+        mock_print.assert_called_once_with(
+            "[bold yellow]Cookbook deletion cancelled.[/]"
+        )
         mock_delete.assert_not_called()
