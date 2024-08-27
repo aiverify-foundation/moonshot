@@ -51,7 +51,6 @@ class Dataset:
                 raise RuntimeError(f"Dataset with ID '{ds_id}' already exists.")
 
             ds_info = {
-                "id": ds_id,
                 "name": ds_args.name,
                 "description": ds_args.description,
                 "reference": ds_args.reference,
