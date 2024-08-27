@@ -3,11 +3,11 @@
 name: Moonshot Smoke Test
 
 on:
-  # Runs on Pull Request
-  pull_request:
-  #  types: [submitted]
-  #  branches:
-  #    - 'main'
+  # Runs on Pull Request Review
+  pull_request_review:
+   types: [submitted]
+   branches:
+     - 'dev_main'
 
   # Run this workflow manually from Actions tab
   workflow_dispatch:
@@ -15,17 +15,17 @@ on:
       moonshot_branch:
         description: 'Moonshot Branch / Tag Name'
         required: true
-        default: 'main'
+        default: 'dev_main'
         type: string
       moonshot_data_branch:
         description: 'Moonshot Data Branch / Tag Name'
         required: true
-        default: 'main'
+        default: 'dev_main'
         type: string
       moonshot_ui_branch:
         description: 'Moonshot UI Branch / Tag Name'
         required: true
-        default: 'main'
+        default: 'dev_main'
         type: string
 
 # Allow one concurrent deployment
@@ -41,8 +41,8 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -52,7 +52,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
       with:
-          repository: aiverify-foundation/moonshot-data
+          repository: aiverify-foundation/moonshot
           ref: ${{ inputs.moonshot_branch }}
     
     - name: Setup Python 3.11
@@ -65,9 +65,11 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
+        touch .env
+        echo "${{ vars.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot Data (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with: 
          repository: aiverify-foundation/moonshot-data
@@ -88,8 +90,8 @@ jobs:
         cd moonshot-data
         pip install -r requirements.txt
 
-    - name: Checkout Moonshot UI (Pull Request)
-      if: github.event_name == 'pull_request'
+    - name: Checkout Moonshot UI (Pull Request Review)
+      if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
       with:
         repository: aiverify-foundation/moonshot-ui
@@ -120,8 +122,14 @@ jobs:
           path: moonshot-smoke-testing
 
     - name: Run Smoke Test
+      env: 
+        AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
+        AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
+        ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
+        MOONSHOT_URL: ${{ vars.MOONSHOT_URL }}
+        MOONSHOT_PORT_NUMBER: ${{ vars.MOONSHOT_PORT_NUMBER }}
       run: |
          cd moonshot-smoke-testing
          npm ci
          npx playwright install --with-deps
-         npx playwright test tests/main-page.spec.ts
+         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" npx playwright test tests/smoke-test.spec.ts

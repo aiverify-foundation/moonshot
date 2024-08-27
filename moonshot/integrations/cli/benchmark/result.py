@@ -5,8 +5,17 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_result, api_get_all_result, api_read_result
-from moonshot.integrations.cli.benchmark.cookbook import show_cookbook_results
-from moonshot.integrations.cli.benchmark.recipe import show_recipe_results
+from moonshot.integrations.cli.benchmark.cookbook import _show_cookbook_results
+from moonshot.integrations.cli.benchmark.recipe import _show_recipe_results
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_DELETE_RESULT_RESULT_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_RESULT_METADATA_INVALID_VALIDATION,
+    ERROR_BENCHMARK_VIEW_RESULT_METADATA_VALIDATION,
+    ERROR_BENCHMARK_VIEW_RESULT_RESULT_FILENAME_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
@@ -23,23 +32,44 @@ def list_results(args) -> list | None:
     """
     List all available results.
 
-    This function retrieves all available results by calling the api_get_all_result_name function from the
-    moonshot.api module. It then creates a table with the result id and name. If there are no results, it prints a
-    message indicating that no results were found.
+    This function retrieves all available results by calling the api_get_all_result function from the
+    moonshot.api module. It then filters the results based on the provided keyword and pagination arguments.
+    If there are no results, it prints a message indicating that no results were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find result(s) with a keyword.
-        pagination (str): Optional field to paginate results.
+        args (argparse.Namespace): The arguments provided to the command line interface.
+            find (str): Optional field to find result(s) with a keyword.
+            pagination (str): Optional field to paginate results.
 
     Returns:
-        list | None: A list of Result or None if there is no result.
+        list | None: A list of results or None if there are no results.
     """
 
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_RESULTS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_RESULTS_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         results_list = api_get_all_result()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if results_list:
             filtered_results_list = filter_data(results_list, keyword, pagination)
@@ -52,6 +82,7 @@ def list_results(args) -> list | None:
 
     except Exception as e:
         print(f"[list_results]: {str(e)}")
+        return None
 
 
 def view_result(args) -> None:
@@ -60,24 +91,34 @@ def view_result(args) -> None:
 
     This function retrieves a specific result by calling the api_read_result function from the
     moonshot.api module using the result filename provided in the args.
-    It then checks if the result filename starts with "cookbook". If it does, it displays the result using the
-    display_view_cookbook_result function. Otherwise, it uses the display_view_recipe_result function.
+    It then checks the metadata of the result to determine whether to display it as a cookbook or recipe result.
 
     Args:
-        args: A namespace object from argparse. It should have the following attribute:
+        args (argparse.Namespace): The arguments provided to the command line interface.
             result_filename (str): The filename of the result to view.
 
     Returns:
         None
     """
     try:
+        if (
+            not isinstance(args.result_filename, str)
+            or not args.result_filename
+            or args.result_filename is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_RESULT_FILENAME_VALIDATION)
+
         result_info = api_read_result(args.result_filename)
-        if result_info["metadata"].get("cookbooks"):
-            display_view_cookbook_result(result_info)
-        elif result_info["metadata"].get("recipes"):
-            display_view_recipe_result(result_info)
+        if isinstance(result_info, dict) and "metadata" in result_info:
+            if result_info["metadata"].get("cookbooks"):
+                _display_view_cookbook_result(result_info)
+            elif result_info["metadata"].get("recipes"):
+                _display_view_recipe_result(result_info)
+            else:
+                raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_METADATA_INVALID_VALIDATION)
         else:
-            print("[view_result]: Unable to determine cookbook or recipe")
+            raise TypeError(ERROR_BENCHMARK_VIEW_RESULT_METADATA_VALIDATION)
+
     except Exception as e:
         print(f"[view_result]: {str(e)}")
 
@@ -92,7 +133,7 @@ def delete_result(args) -> None:
     prints an error message.
 
     Args:
-        args: A namespace object from argparse. It should have the following attribute:
+        args (argparse.Namespace): The arguments provided to the command line interface.
             result (str): The identifier of the result to delete.
 
     Returns:
@@ -105,7 +146,11 @@ def delete_result(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Result deletion cancelled.[/]")
         return
+
     try:
+        if args.result is None or not isinstance(args.result, str) or not args.result:
+            raise ValueError(ERROR_BENCHMARK_DELETE_RESULT_RESULT_VALIDATION)
+
         api_delete_result(args.result)
         print("[delete_result]: Result deleted.")
     except Exception as e:
@@ -123,7 +168,7 @@ def _display_results(results_list):
     message indicating that no results were found.
 
     Args:
-        results_list (list): A list of results. Each result is a dictionary with keys 'id' and 'name'.
+        results_list (list): A list of results. Each result is a dictionary with keys 'id' and 'metadata'.
 
     Returns:
         None
@@ -170,13 +215,12 @@ def _display_results(results_list):
     console.print(table)
 
 
-def display_view_recipe_result(result_info):
+def _display_view_recipe_result(result_info):
     """
     Display the recipe result.
 
-    This function takes the result file and result info as arguments. It converts the result info into a dictionary
-    using the convert_string_tuples_in_dict function. It then retrieves the recipes, endpoints, and duration from the
-    converted result info. Finally, it calls the show_recipe_results function from the
+    This function takes the result info as an argument. It retrieves the recipes, endpoints, and duration from the
+    result info. Finally, it calls the show_recipe_results function from the
     moonshot.integrations.cli.benchmark.recipe module to display the recipe results.
 
     Args:
@@ -188,16 +232,15 @@ def display_view_recipe_result(result_info):
     recipes = result_info["metadata"]["recipes"]
     endpoints = result_info["metadata"]["endpoints"]
     duration = result_info["metadata"]["duration"]
-    show_recipe_results(recipes, endpoints, result_info, duration)
+    _show_recipe_results(recipes, endpoints, result_info, duration)
 
 
-def display_view_cookbook_result(result_info):
+def _display_view_cookbook_result(result_info):
     """
     Display the cookbook result.
 
-    This function takes the result file and result info as arguments. It converts the result info into a dictionary
-    using the convert_string_tuples_in_dict function. It then retrieves the cookbooks, endpoints, and duration from the
-    converted result info. Finally, it calls the show_cookbook_results function from the
+    This function takes the result info as an argument. It retrieves the cookbooks, endpoints, and duration from the
+    result info. Finally, it calls the show_cookbook_results function from the
     moonshot.integrations.cli.benchmark.cookbook module to display the cookbook results.
 
     Args:
@@ -209,7 +252,7 @@ def display_view_cookbook_result(result_info):
     cookbooks = result_info["metadata"]["cookbooks"]
     endpoints = result_info["metadata"]["endpoints"]
     duration = result_info["metadata"]["duration"]
-    show_cookbook_results(cookbooks, endpoints, result_info, duration)
+    _show_cookbook_results(cookbooks, endpoints, result_info, duration)
 
 
 # ------------------------------------------------------------------------------

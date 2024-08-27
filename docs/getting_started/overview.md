@@ -18,7 +18,7 @@ Moonshot offers a range of benchmarks to measure your LLM application's performa
 
 Red teaming is the adversarial prompting of LLM applications to induce them to behave in a manner incongruent with their design. This process is crucial to identify vulnerabilities in AI systems.
 
-Moonshot simplifies the process of red teaming by providing an easy to use interface that allows for the simulataneous probing of multiple LLM applications, and equipping you with red teaming utilities like prompt templates, context strategies and attack modules.
+Moonshot simplifies the process of red teaming by providing an easy to use interface that allows for the simultaneous probing of multiple LLM applications, and equipping you with red teaming utilities like prompt templates, context strategies and attack modules.
 
 #### Automated Red Teaming
 

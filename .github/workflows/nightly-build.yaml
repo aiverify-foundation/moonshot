@@ -1,0 +1,173 @@
+
+name: Nightly Build
+
+on:
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      branch_moonshot:
+        description: 'moonshot branch or tag'
+        required: true
+        default: 'dev_main'
+        type: string
+      branch_moonshot_data:
+        description: 'moonshot-data branch or tag'
+        required: true
+        default: 'dev_main'
+        type: string
+      branch_moonshot_ui:
+        description: 'moonshot-ui branch or tag'
+        required: true
+        default: 'dev_main'
+        type: string
+
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+
+  nightly-build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ap-southeast-1
+
+#      - name: S3 test
+#        run: |
+#          aws s3 ls ${{ vars.AWS_S3_PATH }}
+#          echo "This job's status is ${{ job.status }}."
+
+      # Deploy moonshot
+
+      - name: Backup current install
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Backup current install" \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/create_backup.sh\""]' \
+            --query "Command.CommandId" \
+            --output text)
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+          status=$(aws ssm list-command-invocations \
+            --command-id "$command_id" \
+            --details \
+            --query "CommandInvocations[0].Status" \
+            --output text)
+          echo "Command status: $status"
+
+      - name: Install moonshot
+        timeout-minutes: 30
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Install moonshot" \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh ${{ inputs.branch_moonshot }} ${{ inputs.branch_moonshot_data }} ${{ inputs.branch_moonshot_ui }}\""]' \
+            --query "Command.CommandId" \
+            --output text)
+      
+          max_attempts=20
+          delay=60
+          attempts=0
+          while [ $attempts -lt $max_attempts ]; do
+            status=$(aws ssm list-command-invocations \
+              --command-id "$command_id" \
+              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+            if [ "$status" == "Success" ]; then
+              echo "Command status: $status"
+              exit 0
+            elif [ "$status" == "InProgress" ]; then
+              echo "Command status: $status, waiting..."
+              sleep $delay
+              attempts=$((attempts + 1))
+            else
+              echo "Command status: $status"
+              exit 1
+            fi
+          done
+          echo "Max attempts reached, exiting."
+          exit 1
+
+      - name: Start moonshot web
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Start moonshot web" \
+            --parameters 'commands=["sudo systemctl restart moonshot-service"]' \
+            --query "Command.CommandId" \
+            --output text)
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}"
+          status=$(aws ssm list-command-invocations \
+            --command-id "$command_id" \
+            --details \
+            --query "CommandInvocations[0].Status" \
+            --output text)
+          echo "Command status: $status"
+
+      - name: Run smoke test
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Run smoke test" \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh\""]' \
+            --query "Command.CommandId" \
+            --output text)
+      
+          max_attempts=20
+          delay=60
+          attempts=0
+      
+          while [ $attempts -lt $max_attempts ]; do
+            status=$(aws ssm list-command-invocations \
+              --command-id "$command_id" \
+              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+      
+            if [ "$status" == "Success" ] || [ "$status" == "Failed" ]; then
+              output=$(aws ssm get-command-invocation \
+                --command-id "$command_id" \
+                --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+                --query "StandardOutputContent" \
+                --output text)
+              echo "Smoke test output: $output"
+              echo "Command status: $status"
+              if [ "$status" == "Success" ]; then
+                exit 0
+              else
+                exit 1
+              fi
+            elif [ "$status" == "InProgress" ]; then
+              echo "Command status: $status, waiting..."
+              sleep $delay
+              attempts=$((attempts + 1))
+            else
+              echo "Unexpected command status: $status"
+              exit 1
+            fi
+          done
+      
+          echo "Max attempts reached, exiting."
+          exit 1

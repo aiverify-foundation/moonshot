@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.4.4.2"
+version = "0.4.5"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -23,11 +23,12 @@ dependencies = [
     "python-dotenv==1.0.1",
     "ijson==3.3.0",
     "jinja2==3.1.4",
-    "datasets==2.20.0",
-    "pandas==2.2.2",
     "pydantic==2.8.2",
     "pyparsing==3.1.2",
-    "xxhash==3.4.1"
+    "xxhash==3.4.1",
+    "datasets==2.20.0",
+    "pandas==2.2.2",
+    "numpy==1.26.4"
 ]
 
 [project.optional-dependencies]
@@ -96,7 +97,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.4.4.2"
+version = "0.4.5"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -110,14 +111,15 @@ jinja2 = "3.1.4"
 pydantic = "2.8.2"
 pyparsing = "3.1.2"
 xxhash = "3.4.1"
+datasets = "2.20.0"
+pandas = "2.2.2"
+numpy = "1.26.4"
 typing-extensions = "4.12.2"
 fastapi = "0.112.0"
 uvicorn = "0.30.5"
 dependency-injector = "4.41.0"
 cmd2 = "2.4.3"
 rich = "13.7.1"
-pandas = "2.2.2"
-datasets = "2.20.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
