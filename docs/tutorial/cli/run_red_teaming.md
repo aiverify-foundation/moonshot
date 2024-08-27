@@ -32,6 +32,13 @@ Continuing from Step 3, you can type a prompt and it will be sent to the LLM:
 
 Continuing from Step 3 or manual red teaming, you can choose to run an attack module to perform automated red teaming. 
 
+!!! warning
+    <b>Important information before running red teaming:</b>
+
+    Certain attack modules may require connection to certain model endpoints. (i.e. [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) requires the endpoint [openai-gpt4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json) and you will need an API token to connect to this endpoint.
+
+    Refer to this [list for the requirements](../../faq.md#requirements).
+
 - To find out more about the required fields to run an attack module:
         
         run_attack_module -h

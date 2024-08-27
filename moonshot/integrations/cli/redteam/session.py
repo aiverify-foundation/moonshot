@@ -844,7 +844,7 @@ automated_rt_session_args.add_argument(
     type=str,
     help=(
         "The number of previous prompts to use with the context strategy. If this is set, it will overwrite the"
-        " number of previous promtps set in the session while running this attack module."
+        " number of previous prompts set in the session while running this attack module."
     ),
     nargs="?",
 )

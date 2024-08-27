@@ -30,6 +30,6 @@ npm ci
 ##         libgbml
 
 echo "Running smoke test..."
-npx playwright test tests/main-page.spec.ts --reporter=list
+npx playwright test tests/smoke-test.spec.ts --reporter=list
 
 #echo "Exit code: $?"
