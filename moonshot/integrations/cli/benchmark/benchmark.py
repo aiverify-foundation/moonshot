@@ -2,6 +2,13 @@ import argparse
 
 import cmd2
 
+from moonshot.integrations.cli.benchmark.augmentator import (
+    augment_dataset,
+    augment_dataset_args,
+    augment_recipe,
+    augment_recipe_args
+)
+
 from moonshot.integrations.cli.benchmark.cookbook import (
     add_cookbook,
     add_cookbook_args,
@@ -169,6 +176,13 @@ class BenchmarkCommandSet(cmd2.CommandSet):
     def do_run_recipe(self, args: argparse.Namespace) -> None:
         run_recipe(args)
 
+    @cmd2.with_argparser(augment_recipe_args)
+    def do_augment_recipe(self, args: argparse.Namespace) -> None:
+        augment_recipe(args)
+    
+    @cmd2.with_argparser(augment_dataset_args)
+    def do_augment_dataset(self, args: argparse.Namespace) -> None:
+        augment_dataset(args)
     # ------------------------------------------------------------------------------
     # View contents
     # ------------------------------------------------------------------------------
