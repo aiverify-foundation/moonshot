@@ -22,6 +22,23 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION,
+    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION_1,
+    ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_FIND_VALIDATION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1,
+    ERROR_RED_TEAMING_NEW_SESSION_ENDPOINTS_VALIDATION,
+    ERROR_RED_TEAMING_NEW_SESSION_FAILED_TO_USE_SESSION,
+    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION,
+    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1,
+    ERROR_RED_TEAMING_SHOW_PROMPTS_NO_ACTIVE_SESSION_VALIDATION,
+    ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION,
+    ERROR_RED_TEAMING_USE_SESSION_NO_SESSION_METADATA_VALIDATION,
+    ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_TYPE_VALIDATION,
+    ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_VALIDATION,
+)
 from moonshot.integrations.cli.utils.process_data import filter_data
 from moonshot.src.redteaming.session.session import Session
 
@@ -50,10 +67,14 @@ def new_session(args) -> None:
         for param, param_type in required_parameters:
             param_value = getattr(args, param, None)
             if not param_value:
-                raise ValueError(f"Invalid or missing required parameter: {param}")
+                raise ValueError(
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION.format(param=param)
+                )
             if not isinstance(param_value, param_type):
                 raise TypeError(
-                    f"Invalid type for parameter: {param}. Expecting type: {param_type.__name__}."
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1.format(
+                        param=param, param_type=param_type.__name__
+                    )
                 )
 
         # Check the type of optional parameters if they exist
@@ -61,7 +82,9 @@ def new_session(args) -> None:
             param_value = getattr(args, param, None)
             if param_value is not None and not isinstance(param_value, param_type):
                 raise TypeError(
-                    f"Invalid type for parameter: {param}. Expecting type: {param_type.__name__}."
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1.format(
+                        param=param, param_type=param_type.__name__
+                    )
                 )
 
         runner_id = args.runner_id
@@ -73,9 +96,7 @@ def new_session(args) -> None:
         if hasattr(args, "endpoints") and args.endpoints:
             endpoints = literal_eval(args.endpoints)
             if not isinstance(endpoints, list):
-                raise TypeError(
-                    "Invalid type for parameter: endpoint. Expecting type list."
-                )
+                raise TypeError(ERROR_RED_TEAMING_NEW_SESSION_ENDPOINTS_VALIDATION)
 
         # create new runner and session
         if endpoints:
@@ -103,7 +124,7 @@ def new_session(args) -> None:
                 print(f"[new_session] Using session: {active_session['session_id']}")
                 update_chat_display()
             else:
-                raise RuntimeError("Unable to use session")
+                raise RuntimeError(ERROR_RED_TEAMING_NEW_SESSION_FAILED_TO_USE_SESSION)
     except Exception as e:
         print(f"[new_session]: {str(e)}")
 
@@ -120,19 +141,15 @@ def use_session(args) -> None:
     # Load session metadata
     try:
         if not args.runner_id or args.runner_id is None:
-            raise ValueError("Invalid or missing required parameter: runner_id")
+            raise ValueError(ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_VALIDATION)
 
         if not isinstance(args.runner_id, str):
-            raise TypeError(
-                "Invalid type for parameter: runner_id. Expecting type str."
-            )
+            raise TypeError(ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_TYPE_VALIDATION)
 
         runner_id = args.runner_id
         session_metadata = api_load_session(runner_id)
         if not session_metadata:
-            print(
-                "[Session] Cannot find a session with the existing Runner ID. Please try again."
-            )
+            print(ERROR_RED_TEAMING_USE_SESSION_NO_SESSION_METADATA_VALIDATION)
             return
 
         # Set the current session
@@ -154,7 +171,7 @@ def show_prompts() -> None:
     global active_session
 
     if not active_session:
-        print("There is no active session. Activate a session to show a chat table.")
+        print(ERROR_RED_TEAMING_SHOW_PROMPTS_NO_ACTIVE_SESSION_VALIDATION)
         return
 
     update_chat_display()
@@ -187,13 +204,11 @@ def list_sessions(args) -> list | None:
         session_metadata_list = api_get_all_session_metadata()
         if args.find is not None:
             if not isinstance(args.find, str) or not args.find:
-                raise TypeError("Invalid type for parameter: find. Expecting type str.")
+                raise TypeError(ERROR_RED_TEAMING_LIST_SESSIONS_FIND_VALIDATION)
 
         if args.pagination is not None:
             if not isinstance(args.pagination, str) or not args.pagination:
-                raise TypeError(
-                    "Invalid type for parameter: pagination. Expecting type str."
-                )
+                raise TypeError(ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION)
             try:
                 pagination = literal_eval(args.pagination)
                 if not (
@@ -202,11 +217,11 @@ def list_sessions(args) -> list | None:
                     and all(isinstance(i, int) for i in pagination)
                 ):
                     raise ValueError(
-                        "The 'pagination' argument must be a tuple of two integers."
+                        ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1
                     )
             except (ValueError, SyntaxError):
                 raise ValueError(
-                    "The 'pagination' argument must be a tuple of two integers."
+                    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1
                 )
 
         keyword = args.find.lower() if args.find else ""
@@ -222,7 +237,6 @@ def list_sessions(args) -> list | None:
 
         console.print("[red]There are no sessions found.[/red]")
         return None
-
     except Exception as e:
         print(f"[list_sessions]: {str(e)}")
 
@@ -277,7 +291,6 @@ def update_chat_display() -> None:
             title_align="left",
         )
         console.print(panel)
-
     else:
         console.print("[red]There are no active session.[/red]")
 
@@ -312,9 +325,7 @@ def add_bookmark(args) -> None:
             target_endpoint_chats = list_of_target_endpoint_chat.get(endpoint, None)
             target_endpoint_chat_record = {}
             if not target_endpoint_chats:
-                print(
-                    "Incorrect endpoint. Please select a valid endpoint in this session."
-                )
+                print(ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION)
                 return
             for endpoint_chat in target_endpoint_chats:
                 if endpoint_chat["chat_record_id"] == prompt_id:
@@ -336,12 +347,14 @@ def add_bookmark(args) -> None:
                 print("[bookmark_prompt]:", bookmark_message["message"])
             else:
                 print(
-                    f"Unable to find prompt ID in the of prompts for endpoint {endpoint}. Please select a valid ID."
+                    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION_1.format(
+                        endpoint=endpoint
+                    )
                 )
         except Exception as e:
             print(f"[bookmark_prompt]: ({str(e)})")
     else:
-        print("There is no active session. Activate a session to bookmark a prompt.")
+        print(ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION)
         return
 
 
@@ -386,7 +399,7 @@ def use_bookmark(args) -> None:
         except Exception as e:
             print(f"[use_bookmark]: {str(e)}")
     else:
-        print("There is no active session. Activate a session to use a bookmark.")
+        print(ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION)
         return
 
 

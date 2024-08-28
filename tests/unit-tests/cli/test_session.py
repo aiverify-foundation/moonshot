@@ -29,7 +29,6 @@ class TestCollectionCliSession:
                 },
                 "[new_session] Using session: test_runner"
             ),
-            
             # incorrect runner_id type
             (
                 {
@@ -40,7 +39,6 @@ class TestCollectionCliSession:
                 },
                 "[new_session]: Invalid type for parameter: runner_id. Expecting type: str."
             ),     
-
             # incorrect context_strategy type
             (
                 {
@@ -69,7 +67,7 @@ class TestCollectionCliSession:
                 "prompt_template": "mmlu",
                 "endpoints": "123"
                 },
-                "[new_session]: Invalid type for parameter: endpoint. Expecting type list."
+                "[new_session]: Invalid type for parameter: endpoints. Expecting type list."
             ),
             # missing required argument: runner_id
             (
@@ -212,8 +210,7 @@ class TestCollectionCliSession:
                 "prompt_template": "mmlu",
                 },
                 "[new_session]: Invalid type for parameter: runner_id. Expecting type: str."
-            ),     
-
+            ),  
             # incorrect context_strategy type
             (
                 {
@@ -321,7 +318,6 @@ class TestCollectionCliSession:
     # ------------------------------------------------------------------------------
     # Use session
     # ------------------------------------------------------------------------------
-
     @pytest.mark.parametrize(
         "argparse_value, expected_output",
         [
@@ -353,7 +349,6 @@ class TestCollectionCliSession:
         # mock the arguments
         args = Namespace(runner_id=argparse_value.get("runner_id"))
 
-
         valid_session_metadata = {
             'session_id': 'test_runner',
             'context_strategy': 'add_previous_prompt',
@@ -376,7 +371,6 @@ class TestCollectionCliSession:
     # ------------------------------------------------------------------------------
     # Delete session
     # ------------------------------------------------------------------------------
-
     @pytest.mark.parametrize(
         "argparse_value, expected_output, to_be_called",
         [
@@ -468,7 +462,6 @@ class TestCollectionCliSession:
     # ------------------------------------------------------------------------------
     # List sessions
     # ------------------------------------------------------------------------------
-
     @pytest.mark.parametrize(
         "argparse_value, api_response, expected_output, expected_log",
         [

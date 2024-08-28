@@ -4,6 +4,14 @@ import cmd2
 from rich.console import Console
 
 from moonshot.api import api_create_datasets
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_COMMON_ADD_DATASET_DESC_VALIDATION,
+    ERROR_COMMON_ADD_DATASET_LICENSE_VALIDATION,
+    ERROR_COMMON_ADD_DATASET_METHOD_VALIDATION,
+    ERROR_COMMON_ADD_DATASET_NAME_VALIDATION,
+    ERROR_COMMON_ADD_DATASET_PARAMS_VALIDATION,
+    ERROR_COMMON_ADD_DATASET_REFERENCE_VALIDATION,
+)
 
 console = Console()
 
@@ -27,36 +35,28 @@ def add_dataset(args) -> None:
     """
     try:
         if not isinstance(args.name, str) or not args.name or args.name is None:
-            raise TypeError(
-                "The 'name' argument must be a non-empty string and not None."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_NAME_VALIDATION)
 
         if (
             not isinstance(args.description, str)
             or not args.description
             or args.description is None
         ):
-            raise TypeError(
-                "The 'description' argument must be a non-empty string and not None."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_DESC_VALIDATION)
 
         if (
             not isinstance(args.reference, str)
             or not args.reference
             or args.reference is None
         ):
-            raise TypeError(
-                "The 'reference' argument must be a non-empty string and not None."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_REFERENCE_VALIDATION)
 
         if (
             not isinstance(args.license, str)
             or not args.license
             or args.license is None
         ):
-            raise TypeError(
-                "The 'license' argument must be a non-empty string and not None."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_LICENSE_VALIDATION)
 
         if (
             not isinstance(args.method, str)
@@ -64,14 +64,10 @@ def add_dataset(args) -> None:
             or args.method is None
             or args.method.lower() not in ["hf", "csv"]
         ):
-            raise TypeError(
-                "The 'method' argument must be a non-empty string and not None. It must be either 'hf' or 'csv'."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_METHOD_VALIDATION)
 
         if not isinstance(args.params, dict) or not args.params or args.params is None:
-            raise TypeError(
-                "The 'params' argument must be a non-empty dictionary and not None."
-            )
+            raise TypeError(ERROR_COMMON_ADD_DATASET_PARAMS_VALIDATION)
 
         new_dataset_id = api_create_datasets(
             args.name,
@@ -85,9 +81,8 @@ def add_dataset(args) -> None:
     except Exception as e:
         print(f"[add_dataset]: {str(e)}")
 
-        # ------------------------------------------------------------------------------
 
-
+# ------------------------------------------------------------------------------
 # Cmd2 Arguments Parsers
 # ------------------------------------------------------------------------------
 # Add dataset arguments
