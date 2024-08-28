@@ -1,10 +1,17 @@
 #!/bin/bash
 
-# Check if branch name is provided, default to dev_main if not
-BRANCH_NAME=${1:-main}
+AZURE_OPENAI_API_KEY=$1
+AZURE_OPENAI_ENDPOINT=$2
+TEST_BRANCH_NAME=${3:-main}
 
 BASE_DIR=~/moonshot
 SCRIPTS_DIR=~/scripts
+
+# Export the env variables for smoke test to use
+export AZURE_OPENAI_TOKEN=$AZURE_OPENAI_API_KEY
+export AZURE_OPENAI_URI=$AZURE_OPENAI_ENDPOINT
+export MOONSHOT_URL="http://127.0.0.1"
+export MOONSHOT_PORT_NUMBER="3100"
 
 cd $BASE_DIR
 
@@ -15,7 +22,7 @@ fi
 
 # Clone the smoke test repo from the specified branch
 echo "Cloning moonshot-smoke-testing repo from branch $BRANCH_NAME..."
-git clone --branch $BRANCH_NAME https://github.com/aiverify-foundation/moonshot-smoke-testing.git
+git clone --branch $TEST_BRANCH_NAME https://github.com/aiverify-foundation/moonshot-smoke-testing.git
 cd moonshot-smoke-testing
 npm ci
 cp $SCRIPTS_DIR/moonshot_test_env .env
