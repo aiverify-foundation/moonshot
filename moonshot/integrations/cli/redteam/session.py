@@ -302,14 +302,35 @@ def add_bookmark(args) -> None:
 
     if active_session:
         try:
-            endpoint = args.endpoint
-            prompt_id = args.prompt_id
-            bookmark_name = args.bookmark_name
+            if (
+                not isinstance(args.endpoint, str)
+                or not args.endpoint
+                or args.endpoint is None
+            ):
+                raise TypeError(
+                    "The 'endpoint' argument must be a non-empty string and not None."
+                )
+            if (
+                not isinstance(args.prompt_id, int)
+                or not args.prompt_id
+                or args.prompt_id is None
+            ):
+                raise TypeError("The 'prompt_id' argument must be an integer.")
+            if (
+                not isinstance(args.bookmark_name, str)
+                or not args.bookmark_name
+                or args.bookmark_name is None
+            ):
+                raise TypeError(
+                    "The 'bookmark_name' argument must be a non-empty string and not None."
+                )
 
             list_of_target_endpoint_chat = active_session.get(
                 "list_of_endpoint_chats", None
             )
-            target_endpoint_chats = list_of_target_endpoint_chat.get(endpoint, None)
+            target_endpoint_chats = list_of_target_endpoint_chat.get(
+                args.endpoint, None
+            )
             target_endpoint_chat_record = {}
             if not target_endpoint_chats:
                 print(
@@ -317,14 +338,14 @@ def add_bookmark(args) -> None:
                 )
                 return
             for endpoint_chat in target_endpoint_chats:
-                if endpoint_chat["chat_record_id"] == prompt_id:
+                if endpoint_chat["chat_record_id"] == args.prompt_id:
                     # found the prompt to bookmark
                     target_endpoint_chat_record = endpoint_chat
                     break
 
             if target_endpoint_chat_record:
                 bookmark_message = api_insert_bookmark(
-                    bookmark_name,
+                    args.bookmark_name,
                     target_endpoint_chat_record["prompt"],
                     target_endpoint_chat_record["prepared_prompt"],
                     target_endpoint_chat_record["predicted_result"],
@@ -336,7 +357,7 @@ def add_bookmark(args) -> None:
                 print("[bookmark_prompt]:", bookmark_message["message"])
             else:
                 print(
-                    f"Unable to find prompt ID in the of prompts for endpoint {endpoint}. Please select a valid ID."
+                    f"Unable to find prompt ID in the of prompts for endpoint {args.endpoint}. Please select a valid ID."  # noqa: E501
                 )
         except Exception as e:
             print(f"[bookmark_prompt]: ({str(e)})")
@@ -362,11 +383,18 @@ def use_bookmark(args) -> None:
     global active_session
     if active_session:
         try:
+            if (
+                not isinstance(args.bookmark_name, str)
+                or not args.bookmark_name
+                or args.bookmark_name is None
+            ):
+                raise TypeError(
+                    "The 'bookmark_name' argument must be a non-empty string and not None."
+                )
             bookmark_name = args.bookmark_name
             bookmark_details = api_get_bookmark(bookmark_name)
             if bookmark_details:
                 bookmarked_prompt = bookmark_details["prepared_prompt"]
-
                 # automated redteaming: craft CLI command for user to copy and paste
                 if bookmark_details["attack_module"]:
                     attack_module = bookmark_details["attack_module"]
@@ -407,6 +435,7 @@ def delete_bookmark(args) -> None:
     Returns:
         None
     """
+
     # Confirm with the user before deleting a bookmark
     confirmation = console.input(
         "[bold red]Are you sure you want to delete the bookmark (y/N)? [/]"
@@ -414,7 +443,17 @@ def delete_bookmark(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Bookmark deletion cancelled.[/]")
         return
+
     try:
+        if (
+            args.bookmark_name is None
+            or not isinstance(args.bookmark_name, str)
+            or not args.bookmark_name
+        ):
+            raise ValueError(
+                "The 'bookmark_name' argument must be a non-empty string and not None."
+            )
+
         bookmark_message = api_delete_bookmark(args.bookmark_name)
         print("[delete_bookmark]:", bookmark_message["message"])
     except Exception as e:
@@ -658,42 +697,102 @@ def run_attack_module(args):
         print("There is no active session. Activate a session to start red teaming.")
         return
     try:
-        attack_module_id = args.attack_module_id
-        prompt = args.prompt
-        system_prompt = args.system_prompt if args.system_prompt else ""
-        # context strategy and prompt template should come from the session instead of the command
+        # Initialize variables
+        attack_module_id = None
+        prompt = None
+        system_prompt = ""
+        prompt_template = []
+        context_strategy = []
+        cs_num_of_prev_prompts = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+        metric = []
+        optional_arguments = {}
 
-        if args.prompt_template:
-            prompt_template = [args.prompt_template]
+        # Validate and set attack_module_id
+        if (
+            not isinstance(args.attack_module_id, str)
+            or not args.attack_module_id
+            or args.attack_module_id is None
+        ):
+            raise TypeError(
+                "The 'attack_module_id' argument must be a non-empty string and not None."
+            )
+        else:
+            attack_module_id = args.attack_module_id
+
+        # Validate and set prompt
+        if not isinstance(args.prompt, str) or not args.prompt or args.prompt is None:
+            raise TypeError(
+                "The 'prompt' argument must be a non-empty string and not None."
+            )
+        else:
+            prompt = args.prompt
+
+        # Validate and set system_prompt
+        if hasattr(args, "system_prompt") and args.system_prompt is not None:
+            if not isinstance(args.system_prompt, str) or not args.system_prompt:
+                raise TypeError(
+                    "The 'system_prompt' argument must be a non-empty string."
+                )
+            else:
+                system_prompt = args.system_prompt
+
+        # Validate and set prompt_template
+        if hasattr(args, "prompt_template") and args.prompt_template is not None:
+            if not isinstance(args.prompt_template, str) or not args.prompt_template:
+                raise TypeError(
+                    "The 'prompt_template' argument must be a non-empty string."
+                )
+            else:
+                prompt_template = [args.prompt_template]
         elif active_session["prompt_template"]:
             prompt_template = [active_session["prompt_template"]]
-        else:
-            prompt_template = []
 
-        if args.context_strategy:
-            context_strategy = args.context_strategy
-            num_of_prev_prompts = (
-                args.cs_num_of_prev_prompts
-                if args.cs_num_of_prev_prompts
-                else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-            )
+        # Validate and set context_strategy
+        if hasattr(args, "context_strategy") and args.context_strategy is not None:
+            if not isinstance(args.context_strategy, str) or not args.context_strategy:
+                raise TypeError(
+                    "The 'context_strategy' argument must be a non-empty string."
+                )
+            else:
+                context_strategy = args.context_strategy
+                cs_num_of_prev_prompts = (
+                    args.cs_num_of_prev_prompts
+                    if args.cs_num_of_prev_prompts
+                    else Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+                )
         elif active_session["context_strategy"]:
             context_strategy = active_session["context_strategy"]
-            num_of_prev_prompts = active_session["cs_num_of_prev_prompts"]
-        else:
-            context_strategy = []
-            num_of_prev_prompts = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+            cs_num_of_prev_prompts = active_session["cs_num_of_prev_prompts"]
 
-        optional_arguments = (
-            literal_eval(args.optional_args) if args.optional_args else {}
-        )
+        # Validate and set metric
+        if hasattr(args, "metric") and args.metric is not None:
+            if not isinstance(args.metric, str) or not args.metric:
+                raise TypeError("The 'metric' argument must be a non-empty string.")
+            else:
+                metric = [args.metric]
 
-        metric = [args.metric] if args.metric else []
+        # Validate and set optional_arguments
+        if hasattr(args, "optional_arguments") and args.optional_arguments is not None:
+            if (
+                not isinstance(args.optional_arguments, str)
+                or not args.optional_arguments
+            ):
+                raise TypeError(
+                    "The 'optional_arguments' argument must be a non-empty string."
+                )
+            else:
+                optional_arguments = (
+                    literal_eval(args.optional_arguments)
+                    if args.optional_arguments
+                    else {}
+                )
+
+        # Form context_strategy_info
         if context_strategy:
             context_strategy_info = [
                 {
                     "context_strategy_id": context_strategy,
-                    "num_of_prev_prompts": num_of_prev_prompts,
+                    "num_of_prev_prompts": cs_num_of_prev_prompts,
                 }
             ]
         else:
