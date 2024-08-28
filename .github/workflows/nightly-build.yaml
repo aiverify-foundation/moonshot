@@ -152,6 +152,7 @@ jobs:
                 --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
                 --query "StandardOutputContent" \
                 --output text)
+              echo "SMOKE_TEST_STATUS=$output" >> $GITHUB_ENV
               echo "Smoke test output: $output"
               echo "Command status: $status"
               if [ "$status" == "Success" ]; then
@@ -171,3 +172,18 @@ jobs:
       
           echo "Max attempts reached, exiting."
           exit 1
+
+      # Send slack notification
+      - name: Send slack notification
+        if: ${{ ! cancelled() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "workflow": "${{ github.repository }} | ${{ github.workflow }}",
+              "status": "${{ job.status }}",
+              "details": "${{ env.SMOKE_TEST_STATUS }}",
+              "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
