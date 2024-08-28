@@ -185,7 +185,7 @@ class Bookmark:
             if (
                 bookmark_info is not None
                 and isinstance(bookmark_info, tuple)
-                and all(isinstance(item, str) for item in bookmark_info)
+                and all(isinstance(item, (str, int)) for item in bookmark_info)
             ):
                 return BookmarkArguments.from_tuple_to_dict(bookmark_info)
             else:
