@@ -116,13 +116,15 @@ jobs:
         if: ${{ ! cancelled() }}
         timeout-minutes: 30
         run: |
+          set +e
           bash ci/run-test.sh
           source ci/gen_pre_build_summ.sh test
           test_status=$?
           source ci/gen_pre_build_summ.sh coverage
           coverage_status=$?
-          echo "UNIT_TESTS_STATUS=${{ env.UNITTEST_SUMMARY }}" >> $GITHUB_ENV
-          echo "CODE_COVERAGE_STATUS=${{ env.COVERAGE_SUMMARY }}" >> $GITHUB_ENV
+          echo "UNIT_TESTS_STATUS=$UNITTEST_SUMMARY" >> $GITHUB_ENV
+          echo "CODE_COVERAGE_STATUS=$COVERAGE_SUMMARY" >> $GITHUB_ENV
+          set -e
           if [ $test_status -ne 0 ] || [ $coverage_status -ne 0 ]; then
             exit 1
           fi
@@ -132,22 +134,28 @@ jobs:
         id: code_quality
         if: ${{ ! cancelled() }}
         run: |
+          set +e
           bash ci/run-flake8.sh
           source ci/gen_pre_build_summ.sh lint
-          echo "CODE_QUALITY_STATUS=${{ env.LINT_SUMMARY }}" >> $GITHUB_ENV
+          lint_status=$?
+          echo "CODE_QUALITY_STATUS=$LINT_SUMMARY" >> $GITHUB_ENV
+          set -e
+          exit $lint_status
 
       # pip-audit
       - name: Dependency analysis (vulnerabilities & licenses)
         id: dependency_analysis
         if: ${{ ! cancelled() }}
         run: |
+          set +e
           bash ci/run-pip-audit.sh
           source ci/gen_pre_build_summ.sh dependency
           dep_status=$?
           source ci/gen_pre_build_summ.sh license
           lic_status=$?
-          echo "DEPENDENCY_STATUS=${{ env.DEPENDENCY_SUMMARY }}" >> $GITHUB_ENV
-          echo "LICENSE_STATUS=${{ env.LICENSE_SUMMARY }}" >> $GITHUB_ENV
+          echo "DEPENDENCY_STATUS=$DEPENDENCY_SUMMARY" >> $GITHUB_ENV
+          echo "LICENSE_STATUS=$LICENSE_SUMMARY" >> $GITHUB_ENV
+          set -e
           if [ $dep_status -ne 0 ] || [ $lic_status -ne 0 ]; then
             exit 1
           fi
@@ -166,9 +174,9 @@ jobs:
         with:
           payload: |
             {
-              "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.PR_NUM }}",
+              "workflow": "${{ github.repository }} | ${{ github.workflow }} | ${{ env.PR_NUM }}",
               "status": "${{ job.status }}",
-              "details": "${{ env.UNIT_TESTS_STATUS }}, ${{ env.CODE_COVERAGE_STATUS }}, ${{ env.CODE_QUALITY_STATUS }}, ${{ env.DEPENDENCY_STATUS }}, ${{ env.LICENSE_STATUS }}",
+              "details": "${{ env.UNIT_TESTS_STATUS }} | ${{ env.CODE_COVERAGE_STATUS }} | ${{ env.CODE_QUALITY_STATUS }} | ${{ env.DEPENDENCY_STATUS }} | ${{ env.LICENSE_STATUS }}",
               "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:

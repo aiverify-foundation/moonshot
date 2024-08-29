@@ -5,15 +5,6 @@ on:
 
   # Run this workflow manually from Actions tab
   workflow_dispatch:
-    inputs:
-      test_release_tag:
-        description: 'Moonshot Release Tag'
-        # required: true
-        type: string
-      branch:
-        description: 'Branch Name'
-        # required: true
-        type: string
 
 # Allow one concurrent deployment
 concurrency:

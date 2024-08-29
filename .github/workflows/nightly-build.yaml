@@ -6,11 +6,22 @@ on:
   # Run this workflow manually from Actions tab
   workflow_dispatch:
     inputs:
-      branch_to_test:
-        description: 'Branch or tag to build'
+      branch_moonshot:
+        description: 'moonshot branch or tag'
         required: true
         default: 'dev_main'
         type: string
+      branch_moonshot_data:
+        description: 'moonshot-data branch or tag'
+        required: true
+        default: 'dev_main'
+        type: string
+      branch_moonshot_ui:
+        description: 'moonshot-ui branch or tag'
+        required: true
+        default: 'dev_main'
+        type: string
+
 
 # Allow one concurrent deployment
 concurrency:
@@ -67,7 +78,7 @@ jobs:
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Install moonshot" \
-            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh ${{ inputs.branch_to_test }}\""]' \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh ${{ inputs.branch_moonshot }} ${{ inputs.branch_moonshot_data }} ${{ inputs.branch_moonshot_ui }}\""]' \
             --query "Command.CommandId" \
             --output text)
       
