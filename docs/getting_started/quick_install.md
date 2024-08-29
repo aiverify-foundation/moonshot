@@ -11,6 +11,15 @@ This project <span style="color:red;">strictly</span> requires Python <span styl
 | npm                                        | v10.8.0 or above               |
 | git                                        |                |
 
+## Official Operating System(OS) Supported for Moonshot
+These are the official OS we support for Moonshot. There may be some dependencies required for each OS.
+
+  -  Windows Subsystem for Linux (WSL) - Ubuntu 22.04 LTS
+     -  Some Debian developer packages - `python3.11-dev` and `build-essential`  
+  -  macOS Sonoma
+
+    Do reach out to us if you encounter issues installing or if you notice other missing dependencies while doing the installation.
+
 ## Install Moonshot
 Run the following command in a virtual environment of your choice:
 

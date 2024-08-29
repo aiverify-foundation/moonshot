@@ -102,8 +102,15 @@ Please refresh the page.
 
 If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
 
+### Issues related to WSL (running on Ubuntu 22.04)
+#### I am having issues installing pip requirements and there is a `Failed building wheel for pylcs` error.
 
-### Issues related to Windows
+You may need to other dependencies for building Python packages:
+  
+  - Some Debian developer packages - `python3.11-dev` and `build-essential`
+
+
+### Issues related to Windows (We do not officially support Windows)
 #### I am having issues installing some Tensorflow Python packages
 
 At the time of writing, there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
@@ -115,7 +122,6 @@ You can try the following:
 1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
 2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
 3. The issue should be resolved.
-
 
 #### I cannot delete my runner in the CLI on Windows.
 
