@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.4.5"
+version = "0.4.6"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
