@@ -2,7 +2,8 @@
 
 AZURE_OPENAI_API_KEY=$1
 AZURE_OPENAI_ENDPOINT=$2
-TEST_BRANCH_NAME=${3:-main}
+ADDITIONAL_PARAMETERS=$3
+TEST_BRANCH_NAME=${4:-main}
 
 BASE_DIR=~/moonshot
 SCRIPTS_DIR=~/scripts
@@ -12,13 +13,7 @@ export AZURE_OPENAI_TOKEN=$AZURE_OPENAI_API_KEY
 export AZURE_OPENAI_URI=$AZURE_OPENAI_ENDPOINT
 export MOONSHOT_URL="http://127.0.0.1"
 export MOONSHOT_PORT_NUMBER="3100"
-export ADDITIONAL_PARAMETERS='{
-  "timeout": 300,
-  "allow_retries": true,
-  "num_of_retries": 3,
-  "temperature": 0.5,
-  "model": "gpt-4o"
-}'
+export ADDITIONAL_PARAMETERS=$ADDITIONAL_PARAMETERS
 
 echo $ADDITIONAL_PARAMETERS
 
