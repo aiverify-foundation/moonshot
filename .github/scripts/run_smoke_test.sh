@@ -41,5 +41,4 @@ cp $SCRIPTS_DIR/moonshot_test_env .env
 ##         libgbml
 
 echo "Running smoke test..."
-npx playwright test tests/smoke-test.spec.ts --reporter=list
-
+AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" npx playwright test tests/smoke-test.spec.ts --reporter=list
