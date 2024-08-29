@@ -20,6 +20,8 @@ export ADDITIONAL_PARAMETERS='{
   "model": "gpt-4o"
 }'
 
+echo $ADDITIONAL_PARAMETERS
+
 cd $BASE_DIR
 
 if [ -d "moonshot-smoke-testing" ]; then
