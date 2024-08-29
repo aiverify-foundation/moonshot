@@ -17,6 +17,11 @@ from moonshot.integrations.web_api.services.session_service import SessionServic
 from moonshot.integrations.web_api.services.context_strategy_service import ContextStrategyService
 from moonshot.integrations.web_api.services.benchmark_test_state import BenchmarkTestState
 from moonshot.integrations.web_api.services.bookmark_service import BookmarkService
+from moonshot.integrations.web_api.services.augmentor_service import AugmentorService
+
+@pytest.fixture(scope="module")
+def mock_augmentor_service():
+    return Mock(spec=AugmentorService)
 
 @pytest.fixture(scope="module")
 def mock_bm_test_state():
@@ -90,6 +95,7 @@ def test_client(
     mock_session_service,
     mock_cs_service,
     mock_bookmark_service,
+    mock_augmentor_service,
     ):
     test_container = Container()
     test_container.config.from_default() 
@@ -108,7 +114,8 @@ def test_client(
     test_container.cookbook_service.override(mock_cookbook_service)
     test_container.metric_service.override(mock_metric_service)
     test_container.bookmark_service.override(mock_bookmark_service)
-    
+    test_container.augmentor_service.override(mock_augmentor_service)
+
     # Wire the container
     test_container.wire(modules=["moonshot.integrations.web_api.routes"])
 

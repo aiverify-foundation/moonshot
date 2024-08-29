@@ -17,7 +17,7 @@ class AugmentorService(BaseService):
             str: The ID of the newly created augmented recipe.
         """
         new_recipe_id = moonshot_api.api_augment_recipe(
-            recipe_id=recipe_id, attack_module=attack_module_id
+            recipe_id=recipe_id, attack_module_id=attack_module_id
         )
 
         return new_recipe_id
@@ -35,7 +35,7 @@ class AugmentorService(BaseService):
             str: The ID of the newly created augmented dataset.
         """
         new_dataset_id = moonshot_api.api_augment_dataset(
-            dataset_id=dataset_id, attack_module=attack_module_id
+            dataset_id=dataset_id, attack_module_id=attack_module_id
         )
         return new_dataset_id
 
