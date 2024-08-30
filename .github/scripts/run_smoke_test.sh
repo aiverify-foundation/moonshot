@@ -49,3 +49,5 @@ cp $SCRIPTS_DIR/moonshot_test_env .env
 
 echo "Running smoke test..."
 npx playwright test tests/smoke-test.spec.ts --reporter=list
+
+#echo "Exit code: $?"
