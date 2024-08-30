@@ -131,7 +131,7 @@ jobs:
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Run smoke test" \
-            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh ${{ secrets.AZURE_OPENAI_TOKEN }} ${{ secrets.AZURE_OPENAI_URI }}\""]' \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh ${{ secrets.AZURE_OPENAI_TOKEN }} ${{ secrets.AZURE_OPENAI_URI }} \""]' \
             --query "Command.CommandId" \
             --output text)
       

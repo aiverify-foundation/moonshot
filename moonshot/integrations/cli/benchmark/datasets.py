@@ -9,6 +9,13 @@ from moonshot.api import (
     api_get_all_datasets,
     api_get_all_datasets_name,
 )
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_DELETE_DATASET_DATASET_VALIDATION,
+    ERROR_BENCHMARK_LIST_DATASETS_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_DATASET_DATASET_FILENAME_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import display_view_str_format
 from moonshot.integrations.cli.utils.process_data import filter_data
 
@@ -23,22 +30,43 @@ def list_datasets(args) -> list | None:
     List all available datasets.
 
     This function retrieves all available datasets by calling the api_get_all_datasets function from the
-    moonshot.api module. It then displays the datasets using the _display_datasets function. If an exception occurs,
-    it prints an error message.
+    moonshot.api module. It then filters the datasets based on the provided keyword and pagination arguments.
+    If there are no datasets, it prints a message indicating that no datasets were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find dataset(s) with a keyword.
-        pagination (str): Optional field to paginate datasets.
+        args: A namespace object from argparse. It should have optional attributes:
+            find (str): Optional keyword to filter datasets.
+            pagination (str): Optional tuple to paginate datasets.
 
     Returns:
-        list | None: A list of Dataset or None if there is no result.
+        list | None: A list of datasets or None if there are no datasets.
     """
     try:
         print("Listing datasets may take a while...")
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_DATASETS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         datasets_list = api_get_all_datasets()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if datasets_list:
             filtered_datasets_list = filter_data(datasets_list, keyword, pagination)
@@ -48,8 +76,10 @@ def list_datasets(args) -> list | None:
 
         console.print("[red]There are no datasets found.[/red]")
         return None
+
     except Exception as e:
         print(f"[list_datasets]: {str(e)}")
+        return None
 
 
 def view_dataset(args) -> None:
@@ -69,6 +99,13 @@ def view_dataset(args) -> None:
     """
     try:
         print("Viewing datasets may take a while...")
+        if (
+            not isinstance(args.dataset_filename, str)
+            or not args.dataset_filename
+            or args.dataset_filename is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_VIEW_DATASET_DATASET_FILENAME_VALIDATION)
+
         datasets_list = api_get_all_datasets()
         datasets_name_list = api_get_all_datasets_name()
 
@@ -92,7 +129,7 @@ def delete_dataset(args) -> None:
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
-            dataset_name (str): The name of the dataset to delete.
+            dataset (str): The name of the dataset to delete.
 
     Returns:
         None
@@ -104,7 +141,15 @@ def delete_dataset(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Dataset deletion cancelled.[/]")
         return
+
     try:
+        if (
+            args.dataset is None
+            or not isinstance(args.dataset, str)
+            or not args.dataset
+        ):
+            raise ValueError(ERROR_BENCHMARK_DELETE_DATASET_DATASET_VALIDATION)
+
         api_delete_dataset(args.dataset)
         print("[delete_dataset]: Dataset deleted.")
     except Exception as e:

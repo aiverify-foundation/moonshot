@@ -33,7 +33,7 @@ Once you have your connector endpoint, we can start choosing the test we want to
 
     You should see a help example:
         
-        run_cookbook "my new cookbook runner" "['chinese-safety-cookbook']" "['my-openai-connector']" -n 1 -r 2 -s "This is a customised system prompt"
+        run_cookbook "my new cookbook runner" "['chinese-safety-cookbook']" "['openai-gpt35-turbo']" -n 1 -r 1 -s "You are an intelligent AI"
     
     The fields are as follows for this example:
 
@@ -48,9 +48,7 @@ Once you have your connector endpoint, we can start choosing the test we want to
 
     > **_TIP:_**  You can run more than one cookbook and endpoint by adding them into the list( i.e. `"['chinese-safety-cookbook','common-risk-easy']"`)
 
-3. Enter the following command to run the example cookbook. You should see a table of results from your run:
-
-        run_cookbook my-new-cookbook-runner
+3. Enter the help example above to run a cookbook. You should see a table of results from your run:
         
     ![cookbook run results](cli_images/cookbook_run.png)
 
@@ -73,7 +71,7 @@ You can choose to run a recipe instead of a cookbook as well.
 
     You should see a help example:
     
-        run_recipe "my new recipe runner" "['auto-categorisation','winobias']" "['my-openai-connector']" -n 1 -r 2 -s "You are an intelligent AI"
+        run_recipe "my new recipe runner" "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s "You are an intelligent AI" 
 
     The fields are as follows for this example:
 
@@ -87,10 +85,7 @@ You can choose to run a recipe instead of a cookbook as well.
     - Result processing module (Optional. The module refers to the chosen module responsible for generating the final results from the raw data. If there are alternative modules available, they can be specified here. Defaults to use [benchmarking result module](https://github.com/aiverify-foundation/moonshot-data/blob/main/results-modules/benchmarking-result.py).)
 
 
-3. Enter the following command to run the example recipe. You should see a table of results from your run:
-
-        run_recipe my-new-recipe-runner
-        
+3. Enter the help example above to run a recipe. You should see a table of results from your run:
 
     ![recipe run results](cli_images/recipe_run.png)
 
@@ -120,7 +115,7 @@ After running a recipe or cookbook, you view the results and summary of the runs
 ![view run](cli_images/view_run.png)
 
 
-### View Other Benchamarking Related Things
+### View Other Benchmarking Related Things
 You can also see some of the things we have for benchmarking (i.e. recipes):
 
 - List all recipes or cookbooks:

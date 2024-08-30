@@ -22,6 +22,23 @@ from moonshot.api import (
     api_load_session,
 )
 from moonshot.integrations.cli.active_session_cfg import active_session
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION,
+    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION_1,
+    ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_FIND_VALIDATION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION,
+    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1,
+    ERROR_RED_TEAMING_NEW_SESSION_ENDPOINTS_VALIDATION,
+    ERROR_RED_TEAMING_NEW_SESSION_FAILED_TO_USE_SESSION,
+    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION,
+    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1,
+    ERROR_RED_TEAMING_SHOW_PROMPTS_NO_ACTIVE_SESSION_VALIDATION,
+    ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION,
+    ERROR_RED_TEAMING_USE_SESSION_NO_SESSION_METADATA_VALIDATION,
+    ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_TYPE_VALIDATION,
+    ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_VALIDATION,
+)
 from moonshot.integrations.cli.utils.process_data import filter_data
 from moonshot.src.redteaming.session.session import Session
 
@@ -43,38 +60,73 @@ def new_session(args) -> None:
             - endpoints (str, optional): The list of endpoints for the runner."""
     global active_session
 
-    runner_id = args.runner_id
-    context_strategy = args.context_strategy if args.context_strategy else ""
-    prompt_template = args.prompt_template if args.prompt_template else ""
-    endpoints = literal_eval(args.endpoints) if args.endpoints else []
+    try:
+        required_parameters = [("runner_id", str)]
+        optional_parameters = [("context_strategy", str), ("prompt_template", str)]
+        # Check if required parameters exist in args
+        for param, param_type in required_parameters:
+            param_value = getattr(args, param, None)
+            if not param_value:
+                raise ValueError(
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION.format(param=param)
+                )
+            if not isinstance(param_value, param_type):
+                raise TypeError(
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1.format(
+                        param=param, param_type=param_type.__name__
+                    )
+                )
 
-    # create new runner and session
-    if endpoints:
-        runner = api_create_runner(runner_id, endpoints)
-    # load existing runner
-    else:
-        runner = api_load_runner(runner_id)
+        # Check the type of optional parameters if they exist
+        for param, param_type in optional_parameters:
+            param_value = getattr(args, param, None)
+            if param_value is not None and not isinstance(param_value, param_type):
+                raise TypeError(
+                    ERROR_RED_TEAMING_NEW_SESSION_PARAMS_VALIDATION_1.format(
+                        param=param, param_type=param_type.__name__
+                    )
+                )
 
-    runner_args = {}
-    runner_args["context_strategy"] = context_strategy
-    runner_args["prompt_template"] = prompt_template
+        runner_id = args.runner_id
+        context_strategy = args.context_strategy if args.context_strategy else ""
+        prompt_template = args.prompt_template if args.prompt_template else ""
+        endpoints = []
 
-    # create new session in runner
-    if runner.database_instance:
-        api_create_session(
-            runner.id, runner.database_instance, runner.endpoints, runner_args
-        )
-        session_metadata = api_load_session(runner.id)
-        if session_metadata:
-            active_session.update(session_metadata)
-            if active_session["context_strategy"]:
-                active_session[
-                    "cs_num_of_prev_prompts"
-                ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
-            print(f"Using session: {active_session['session_id']}")
-            update_chat_display()
+        # Check if literal eval param is correct type after eval
+        if hasattr(args, "endpoints") and args.endpoints:
+            endpoints = literal_eval(args.endpoints)
+            if not isinstance(endpoints, list):
+                raise TypeError(ERROR_RED_TEAMING_NEW_SESSION_ENDPOINTS_VALIDATION)
+
+        # create new runner and session
+        if endpoints:
+            runner = api_create_runner(runner_id, endpoints)
+        # load existing runner
         else:
-            raise RuntimeError("Unable to use session")
+            runner = api_load_runner(runner_id)
+
+        runner_args = {}
+        runner_args["context_strategy"] = context_strategy
+        runner_args["prompt_template"] = prompt_template
+
+        # create new session in runner
+        if runner.database_instance:
+            api_create_session(
+                runner.id, runner.database_instance, runner.endpoints, runner_args
+            )
+            session_metadata = api_load_session(runner.id)
+            if session_metadata:
+                active_session.update(session_metadata)
+                if active_session["context_strategy"]:
+                    active_session[
+                        "cs_num_of_prev_prompts"
+                    ] = Session.DEFAULT_CONTEXT_STRATEGY_PROMPT
+                print(f"[new_session] Using session: {active_session['session_id']}")
+                update_chat_display()
+            else:
+                raise RuntimeError(ERROR_RED_TEAMING_NEW_SESSION_FAILED_TO_USE_SESSION)
+    except Exception as e:
+        print(f"[new_session]: {str(e)}")
 
 
 def use_session(args) -> None:
@@ -85,15 +137,19 @@ def use_session(args) -> None:
         args (Namespace): The arguments passed to the function.
     """
     global active_session
-    runner_id = args.runner_id
 
     # Load session metadata
     try:
+        if not args.runner_id or args.runner_id is None:
+            raise ValueError(ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_VALIDATION)
+
+        if not isinstance(args.runner_id, str):
+            raise TypeError(ERROR_RED_TEAMING_USE_SESSION_RUNNER_ID_TYPE_VALIDATION)
+
+        runner_id = args.runner_id
         session_metadata = api_load_session(runner_id)
         if not session_metadata:
-            print(
-                "[Session] Cannot find a session with the existing Runner ID. Please try again."
-            )
+            print(ERROR_RED_TEAMING_USE_SESSION_NO_SESSION_METADATA_VALIDATION)
             return
 
         # Set the current session
@@ -115,7 +171,7 @@ def show_prompts() -> None:
     global active_session
 
     if not active_session:
-        print("There is no active session. Activate a session to show a chat table.")
+        print(ERROR_RED_TEAMING_SHOW_PROMPTS_NO_ACTIVE_SESSION_VALIDATION)
         return
 
     update_chat_display()
@@ -146,6 +202,28 @@ def list_sessions(args) -> list | None:
     """
     try:
         session_metadata_list = api_get_all_session_metadata()
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_RED_TEAMING_LIST_SESSIONS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    ERROR_RED_TEAMING_LIST_SESSIONS_PAGINATION_VALIDATION_1
+                )
+
         keyword = args.find.lower() if args.find else ""
         pagination = literal_eval(args.pagination) if args.pagination else ()
 
@@ -159,7 +237,6 @@ def list_sessions(args) -> list | None:
 
         console.print("[red]There are no sessions found.[/red]")
         return None
-
     except Exception as e:
         print(f"[list_sessions]: {str(e)}")
 
@@ -214,7 +291,6 @@ def update_chat_display() -> None:
             title_align="left",
         )
         console.print(panel)
-
     else:
         console.print("[red]There are no active session.[/red]")
 
@@ -249,9 +325,7 @@ def add_bookmark(args) -> None:
             target_endpoint_chats = list_of_target_endpoint_chat.get(endpoint, None)
             target_endpoint_chat_record = {}
             if not target_endpoint_chats:
-                print(
-                    "Incorrect endpoint. Please select a valid endpoint in this session."
-                )
+                print(ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION)
                 return
             for endpoint_chat in target_endpoint_chats:
                 if endpoint_chat["chat_record_id"] == prompt_id:
@@ -273,12 +347,14 @@ def add_bookmark(args) -> None:
                 print("[bookmark_prompt]:", bookmark_message["message"])
             else:
                 print(
-                    f"Unable to find prompt ID in the of prompts for endpoint {endpoint}. Please select a valid ID."
+                    ERROR_RED_TEAMING_ADD_BOOKMARK_ENDPOINT_VALIDATION_1.format(
+                        endpoint=endpoint
+                    )
                 )
         except Exception as e:
             print(f"[bookmark_prompt]: ({str(e)})")
     else:
-        print("There is no active session. Activate a session to bookmark a prompt.")
+        print(ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION)
         return
 
 
@@ -323,7 +399,7 @@ def use_bookmark(args) -> None:
         except Exception as e:
             print(f"[use_bookmark]: {str(e)}")
     else:
-        print("There is no active session. Activate a session to use a bookmark.")
+        print(ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION)
         return
 
 
@@ -693,6 +769,7 @@ def delete_session(args) -> None:
                        which is the ID of the session to delete.
     """
     # Confirm with the user before deleting a session
+
     confirmation = console.input(
         "[bold red]Are you sure you want to delete the session (y/N)? [/]"
     )
@@ -700,6 +777,12 @@ def delete_session(args) -> None:
         console.print("[bold yellow]Session deletion cancelled.[/]")
         return
     try:
+        if not args.session or args.session is None:
+            raise ValueError("Invalid or missing required parameter: session")
+
+        if not isinstance(args.session, str):
+            raise TypeError("Invalid type for parameter: session. Expecting type str.")
+
         api_delete_session(args.session)
         print("[delete_session]: Session deleted.")
     except Exception as e:
@@ -844,7 +927,7 @@ automated_rt_session_args.add_argument(
     type=str,
     help=(
         "The number of previous prompts to use with the context strategy. If this is set, it will overwrite the"
-        " number of previous promtps set in the session while running this attack module."
+        " number of previous prompts set in the session while running this attack module."
     ),
     nargs="?",
 )
