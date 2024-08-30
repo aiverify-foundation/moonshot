@@ -26,14 +26,19 @@ Upon navigating to the webpage, you will be greeted with our main screen. To sta
 
 ![The main page of Moonshot UI](getting_started/1.png)
 
-This will direct you to a wizard that will guide you through the testing process. In the first step, select the tests you would like to run on your model. By default, three baseline tests are selected.
+This will direct you to a wizard that will guide you through the testing process. In the first step, select the tests you would like to run on your model. By default, three baseline tests are selected. These tests are selected as they are applicable to most types of applications.
 
-!!! note
-    We will be testing a model from OpenAI in this guide. You will need to prepare an OpenAI API token.
 
 ![This step guides the user in selecting a set of benchmarks.](getting_started/2.png)
 
 Once you have completed the selection, click on the arrow to proceed to the next step. In this step, you will see the total number of prompts in this set of tests. Click on the arrow again to advance to the next step.
+
+!!! warning
+    <b>Important information before running your benchmark:</b>
+
+    Certain benchmarks may require metrics that connect to a particular model (i.e. MLCommons cookbooks and recipes like [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json) use the metric [llamaguardannotator](https://github.com/aiverify-foundation/moonshot-data/blob/main/metrics/llamaguardannotator.py), which requires the API token of [together-llama-guard-7b-assistant endpoint](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)).
+
+    Refer to this [list for the requirements](../faq.md#requirements).
 
 ![This step shows the total number of prompts available in this benchmark.](getting_started/3.png)
 
@@ -41,7 +46,7 @@ Connect to your AI system. Click "Edit" for one of the OpenAI models, such as Op
 
 ![alt text](getting_started/4.png)
 
-Enter your API token on this screen, then click "Save". Repeat this step for "Together Llama Guard 7B Assistant."
+Enter your API token on this screen, then click "Save". Repeat this step for "Together Llama Guard 7B Assistant”. Enter the API token that you obtained from TogetherAI to set up the "Together Llama Guard 7B Assistant" endpoint.
 
 !!! note
     Some cookbooks use another LLM to evaluate the response. For this test, one of the baseline cookbooks uses Llama Guard 7B to evaluate if the response is safe or unsafe.
@@ -50,7 +55,7 @@ Enter your API token on this screen, then click "Save". Repeat this step for "To
 
 You will return to the screen to select the endpoint. Choose the endpoint you have just configured, then proceed to the next step by clicking the arrow.
 
-Finally, enter the name and description for this test. Set the number of prompts to "1" and click "Run."
+Finally, enter the name and description for this test. Set the number of prompts to "1" and click "Run."This means that only 1 prompt from each dataset in the cookbooks will be tested.
 
 ![alt text](getting_started/6.png)
 
@@ -89,6 +94,13 @@ Select one or more endpoints to red team on this screen. Click the arrow to proc
 In this screen, you have the option to select one of the attack modules to automatically red team your model. For the purposes of this guide, we will skip this step. Click "Skip for now".
 
 ![alt text](getting_started/13.png)
+
+!!! warning
+    <b>Important information before running red teaming:</b>
+
+    Certain attack modules may require connection to certain model endpoints. (i.e. [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) requires the endpoint [openai-gpt4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json) and you will need an API token to connect to this endpoint.
+
+    Refer to this [list for the requirements](../faq.md#requirements).
 
 Enter a name and type a description in this screen, then click "Start".
 

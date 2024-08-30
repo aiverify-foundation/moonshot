@@ -6,7 +6,7 @@
     | Name        |Description   | Example          |
     |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
     | **Name** (Required)     | A unique name for you to identify this benchmark run by| `GPT4 vs Claude on safety benchmarks`  |
-    | **Description** | Describe the purpose and scopte of this benchmark run. | Comparing GPT4 and Claude to determine which model is safer as a chatbot |
+    | **Description** | Describe the purpose and scope of this benchmark run. | Comparing GPT4 and Claude to determine which model is safer as a chatbot |
     | **Run a smaller set** | The number of prompts per dataset, as specified in the recipe, to be run. Indicating 0 will run the full set. <br> <span style="font-size: 12px"><i>* Before running the full recommended set, you may want to run a smaller number of prompts from each recipe to do a sanity check.</i><span> | 5 |
 
 2. Click ‘Run’ to start running the benchmarks. 

@@ -40,20 +40,27 @@ Some of the functions may not work as expected. We suggest users to reinstall Mo
 
 ## Using Moonshot
 
-### My tests are all completed with errors! I can't view any report!
+### My tests are all completed with errors! I cannot view any report!
 
 Some benchmark tests and attack modules require connector endpoints to be configured beforehand. You may encounter this type of error:
 
 ![](./getting_started/getting_started/8.png)
 
-Some examples are:
+####Requirements
+This is the full list of requirements for the following tests:
 
-| Test | Model Required | Name of the Endpoint |
-| --- | ---| --- |
-| MLCommons AI Safety Benchmarks v0.5 (Cookbook) | Meta LlamaGuard | Together Llama Guard 7B Assistant | 
-| Singapore Safety (Recipe) | Meta LlamaGuard | Together Llama Guard 7B Assistant | 
-| Malicious Question Generator (Attack Module) | OpenAI GPT4 | OpenAI GPT4 | 
-| Violent Durian (Attack Module) | OpenAI GPT4 | OpenAI GPT4 |
+| Test | Type | Model Required | Name of the Endpoint | Configuration Required
+| --- | ---| --- | --- | --- |
+| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) | API Token - `token` field
+| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [Bias - Occupation](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/bias-occupation.json) | Recipe | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| [Chinese Linguistics & Cognition Challenge](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/clcc.json) | Recipe | Flageval Flag Judge | [Flageval Flag Judge](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/flageval-flagjudge.json) | -
+| [Malicious Question Generator](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/malicious_question_generator.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+
+You can also check out the [metric configuration JSON](https://github.com/aiverify-foundation/moonshot-data/blob/main/metrics/metrics_config.json) to see if a cookbook or recipe uses any of these metrics.
+
 
 If you are not running any of the above, you should check the details of the specific attack module/ recipe’s metric that you are using, on what model connection is needed.
 
@@ -64,20 +71,8 @@ If you do not have tokens for Llama Guard via Together AI,
 3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
-### I can't delete my runner in the CLI on Windows.
 
-We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
-
-```
-moonshot > delete_runner new-recipe
-Are you sure you want to delete the runner (y/N)? y
-[Runner] Failed to delete runner: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
-[delete_runner]: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
-```
-
-We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
-
-### I can't save my token for the connector endpoint!
+### I cannot save my token for the connector endpoint!
 
 We acknowledge a potential issue with saving tokens via the UI. As a workaround, you can directly access the JSON file of your endpoint. This file is located in the `moonshot-data/connector-endpoints` directory, which was created during the installation process.
 
@@ -101,6 +96,36 @@ Open your preferred code editor, locate the `token` field, and replace `ADD_API_
 
 Please refresh the page.
 
-### I am unable to install PyTorch
+
+### Issues related to MacOS
+####  I am unable to install PyTorch
 
 If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
+
+
+### Issues related to Windows
+#### I am having issues installing some Tensorflow Python packages
+
+At the time of writing, there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
+
+![windows-installation-error-tensorflow](./res/faq/windows-installation-error-tensorflow.png)
+
+You can try the following:
+
+1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
+2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
+3. The issue should be resolved.
+
+
+#### I cannot delete my runner in the CLI on Windows.
+
+We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
+
+```
+moonshot > delete_runner new-recipe
+Are you sure you want to delete the runner (y/N)? y
+[Runner] Failed to delete runner: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
+[delete_runner]: [WinError 32] The process cannot access the file because it is being used by another process: 'moonshot-data-test\\generated-outputs\\databases\\new-recipe.db'
+```
+
+We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
