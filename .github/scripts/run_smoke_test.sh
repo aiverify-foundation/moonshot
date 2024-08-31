@@ -25,7 +25,10 @@ echo "Cloning moonshot-smoke-testing repo from branch $BRANCH_NAME..."
 git clone --branch $TEST_BRANCH_NAME https://github.com/aiverify-foundation/moonshot-smoke-testing.git
 cd moonshot-smoke-testing
 npm ci
+
 cp $SCRIPTS_DIR/moonshot_test_env .env
+echo "Created .env"
+cat .env
 
 # Install Playwright (if needed)
 #sudo npx playwright install-deps
@@ -40,6 +43,6 @@ cp $SCRIPTS_DIR/moonshot_test_env .env
 ##         libxrandr2\
 ##         libgbml
 
-echo "Running smoke test..."
+echo "Running smoke test on moonshot at $MOONSHOT_URL:$MOONSHOT_PORT_NUMBER..."
 npx playwright test tests/smoke-test.spec.ts --reporter=list
 
