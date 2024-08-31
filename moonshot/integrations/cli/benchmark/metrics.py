@@ -5,6 +5,13 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_metric, api_get_all_metric, api_get_all_metric_name
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_DELETE_METRIC_METRIC_VALIDATION,
+    ERROR_BENCHMARK_LIST_METRICS_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_METRICS_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_METRICS_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_METRIC_METRIC_FILENAME_VALIDATION,
+)
 from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
@@ -18,23 +25,44 @@ def list_metrics(args) -> list | None:
     List all available metrics.
 
     This function retrieves all available metrics by calling the api_get_all_metric function from the
-    moonshot.api module. It then displays the metrics using the _display_metrics function. If an exception occurs,
-    it prints an error message.
+    moonshot.api module. It then filters the metrics based on the provided keyword and pagination arguments.
+    If there are no metrics, it prints a message indicating that no metrics were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find metric(s) with a keyword.
-        pagination (str): Optional field to paginate metrics.
+        args: A namespace object from argparse. It should have optional attributes:
+            find (str): Optional field to find metric(s) with a keyword.
+            pagination (str): Optional field to paginate metrics.
 
     Returns:
-        list | None: A list of Metric or None if there is no result.
+        list | None: A list of metrics or None if there are no metrics.
     """
 
     try:
         print("Listing metrics may take a while...")
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_METRICS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_METRICS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_BENCHMARK_LIST_METRICS_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_METRICS_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         metrics_list = api_get_all_metric()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if metrics_list:
             filtered_metrics_list = filter_data(metrics_list, keyword, pagination)
@@ -44,8 +72,10 @@ def list_metrics(args) -> list | None:
 
         console.print("[red]There are no metrics found.[/red]")
         return None
+
     except Exception as e:
         print(f"[list_metrics]: {str(e)}")
+        return None
 
 
 def view_metric(args) -> None:
@@ -65,6 +95,13 @@ def view_metric(args) -> None:
     """
     try:
         print("Viewing metrics may take a while...")
+        if (
+            not isinstance(args.metric_filename, str)
+            or not args.metric_filename
+            or args.metric_filename is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_VIEW_METRIC_METRIC_FILENAME_VALIDATION)
+
         metrics_list = api_get_all_metric()
         metrics_name_list = api_get_all_metric_name()
 
@@ -100,7 +137,11 @@ def delete_metric(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Metric deletion cancelled.[/]")
         return
+
     try:
+        if args.metric is None or not isinstance(args.metric, str) or not args.metric:
+            raise ValueError(ERROR_BENCHMARK_DELETE_METRIC_METRIC_VALIDATION)
+
         api_delete_metric(args.metric)
         print("[delete_metric]: Metric deleted.")
     except Exception as e:

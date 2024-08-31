@@ -12,6 +12,13 @@ export AZURE_OPENAI_TOKEN=$AZURE_OPENAI_API_KEY
 export AZURE_OPENAI_URI=$AZURE_OPENAI_ENDPOINT
 export MOONSHOT_URL="http://127.0.0.1"
 export MOONSHOT_PORT_NUMBER="3100"
+export ADDITIONAL_PARAMETERS="{
+  'timeout': 300,
+  'allow_retries': true,
+  'num_of_retries': 3,
+  'temperature': 0.5,
+  'model': 'gpt-4o'
+}"
 
 cd $BASE_DIR
 
@@ -46,3 +53,4 @@ cat .env
 echo "Running smoke test on moonshot at $MOONSHOT_URL:$MOONSHOT_PORT_NUMBER..."
 npx playwright test tests/smoke-test.spec.ts --reporter=list
 
+#echo "Exit code: $?"

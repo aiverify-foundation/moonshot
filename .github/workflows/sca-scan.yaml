@@ -27,7 +27,7 @@ jobs:
     steps:
 
     - name: Checkout Code (Pull_Request)
-      # if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v3
       with:
           ref: ${{ github.event.pull_request.head.ref }}
@@ -41,7 +41,7 @@ jobs:
           ref: ${{ inputs.branch_to_test }}
 
     - name: Set Branch Variable (Pull_Request)
-      # if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request'
       run: |
           echo "BRANCH=branch" >> "$GITHUB_ENV"
 
@@ -55,7 +55,17 @@ jobs:
       with:
         python-version: "3.11"
 
-    - name: Install & Scan MOONSHOT
+    - name: Install & Scan MOONSHOT (Pull_Request)
+      if: github.event_name == 'pull_request'
+      run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.blackduck.scan.mode=RAPID
+          cd ../
+
+    - name: Install & Scan MOONSHOT (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
       run: |
           python -m venv venv
           source venv/bin/activate

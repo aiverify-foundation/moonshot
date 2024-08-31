@@ -10,6 +10,10 @@ from moonshot.api import (
     api_load_session,
     api_read_runner,
 )
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_DELETE_RUNNER_RUNNER_VALIDATION,
+    ERROR_BENCHMARK_VIEW_RUNNER_RUNNER_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
@@ -25,9 +29,9 @@ def list_runners() -> None:
     """
     List all runners.
 
-    This function retrieves and displays information about all runners, including their associated runs and session
-    information. It fetches the data using the api_get_all_runner, api_get_all_run, and api_get_available_session_info
-    functions, then calls the display_runners function to present it in a user-friendly format.
+    Retrieves and displays information about all runners, including their associated runs and session
+    information. Fetches the data using the api_get_all_runner, api_get_all_run, and api_get_available_session_info
+    functions, then calls the _display_runners function to present it in a user-friendly format.
 
     Returns:
         None
@@ -36,7 +40,7 @@ def list_runners() -> None:
         runner_info = api_get_all_runner()
         runner_run_info = api_get_all_run()
         _, runner_session_info = api_get_available_session_info()
-        display_runners(runner_info, runner_run_info, runner_session_info)
+        _display_runners(runner_info, runner_run_info, runner_session_info)
     except Exception as e:
         print(f"[list_runners]: {str(e)}")
 
@@ -45,22 +49,25 @@ def view_runner(args) -> None:
     """
     View a specific runner.
 
-    This function retrieves and displays information about a specific runner, including its associated runs and session
-    information. It uses the runner identifier provided in the arguments to fetch the data and then calls the
-    display_runners function to present it in a user-friendly format.
+    Retrieves and displays information about a specific runner, including its associated runs and session
+    information. Uses the runner identifier provided in the arguments to fetch the data and then calls the
+    _display_runners function to present it in a user-friendly format.
 
     Args:
-        args: A namespace object from argparse. It should have the following attribute:
+        args (argparse.Namespace): A namespace object from argparse. It should have the following attribute:
             runner (str): The identifier of the runner to view.
 
     Returns:
         None
     """
     try:
+        if not isinstance(args.runner, str) or not args.runner or args.runner is None:
+            raise TypeError(ERROR_BENCHMARK_VIEW_RUNNER_RUNNER_VALIDATION)
+
         runner_info = api_read_runner(args.runner)
         runner_run_info = api_get_all_run(args.runner)
         runner_session_info = api_load_session(args.runner)
-        display_runners([runner_info], runner_run_info, [runner_session_info])
+        _display_runners([runner_info], runner_run_info, [runner_session_info])
     except Exception as e:
         print(f"[view_runner]: {str(e)}")
 
@@ -69,13 +76,13 @@ def delete_runner(args) -> None:
     """
     Delete a runner.
 
-    This function deletes a runner with the specified identifier. It prompts the user for confirmation before proceeding
+    Deletes a runner with the specified identifier. Prompts the user for confirmation before proceeding
     with the deletion. If the user confirms, it calls the api_delete_runner function from the moonshot.api module to
     delete the runner. If the deletion is successful, it prints a confirmation message. If an exception occurs, it
     prints an error message.
 
     Args:
-        args: A namespace object from argparse. It should have the following attribute:
+        args (argparse.Namespace): A namespace object from argparse. It should have the following attribute:
             runner (str): The identifier of the runner to delete.
 
     Returns:
@@ -88,7 +95,11 @@ def delete_runner(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Runner deletion cancelled.[/]")
         return
+
     try:
+        if args.runner is None or not isinstance(args.runner, str) or not args.runner:
+            raise ValueError(ERROR_BENCHMARK_DELETE_RUNNER_RUNNER_VALIDATION)
+
         api_delete_runner(args.runner)
         print("[delete_runner]: Runner deleted.")
     except Exception as e:
@@ -98,24 +109,22 @@ def delete_runner(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_runners(
+def _display_runners(
     runner_list: list, runner_run_info_list: list, runner_session_info_list: list
 ) -> None:
     """
     Display runners in a table format.
 
-    This function takes lists of runner information, run information, and session information, then displays them in a
+    Takes lists of runner information, run information, and session information, then displays them in a
     table format on the command line interface. Each runner is listed with details such as the runner's ID, name,
     description, number of runs, number of sessions, database file, and endpoints.
 
     Args:
-        runner_list: A list of dictionaries, where each dictionary contains information about a runner.
-
-        runner_run_info_list: A list of dictionaries, where each dictionary contains information about a run
-        associated with a runner.
-
-        runner_session_info_list: A list of dictionaries, where each dictionary contains information about a session
-        associated with a runner.
+        runner_list (list): A list of dictionaries, where each dictionary contains information about a runner.
+        runner_run_info_list (list): A list of dictionaries, where each dictionary contains information about a run
+            associated with a runner.
+        runner_session_info_list (list): A list of dictionaries, where each dictionary contains information about a
+            session associated with a runner.
 
     Returns:
         None

@@ -5,6 +5,12 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_prompt_template, api_get_all_prompt_template_detail
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_COMMON_DELETE_PROMPT_TEMPLATE_PROMPT_TEMPLATE_VALIDATION,
+    ERROR_COMMON_LIST_CONNECTOR_TYPES_PAGINATION_VALIDATION,
+    ERROR_COMMON_LIST_CONNECTOR_TYPES_PAGINATION_VALIDATION_1,
+    ERROR_COMMON_LIST_PROMPT_TEMPLATES_FIND_VALIDATION,
+)
 from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
@@ -26,9 +32,32 @@ def list_prompt_templates(args) -> list | None:
         list | None: A list of PromptTemplate or None if there is no result.
     """
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_COMMON_LIST_PROMPT_TEMPLATES_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_COMMON_LIST_CONNECTOR_TYPES_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_COMMON_LIST_CONNECTOR_TYPES_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    ERROR_COMMON_LIST_CONNECTOR_TYPES_PAGINATION_VALIDATION_1
+                )
+        else:
+            pagination = ()
+
         prompt_templates_list = api_get_all_prompt_template_detail()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if prompt_templates_list:
             filtered_prompt_templates_list = filter_data(
@@ -40,7 +69,6 @@ def list_prompt_templates(args) -> list | None:
 
         console.print("[red]There are no prompt templates found.[/red]")
         return None
-
     except Exception as e:
         print(f"[list_prompt_templates]: {str(e)}")
 
@@ -61,6 +89,14 @@ def delete_prompt_template(args) -> None:
         console.print("[bold yellow]Prompt template deletion cancelled.[/]")
         return
     try:
+        if (
+            args.prompt_template is None
+            or not isinstance(args.prompt_template, str)
+            or not args.prompt_template
+        ):
+            raise ValueError(
+                ERROR_COMMON_DELETE_PROMPT_TEMPLATE_PROMPT_TEMPLATE_VALIDATION
+            )
         api_delete_prompt_template(args.prompt_template)
         print("[delete_prompt_template]: Prompt template deleted.")
     except Exception as e:
