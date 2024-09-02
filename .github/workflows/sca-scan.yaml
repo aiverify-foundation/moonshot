@@ -23,6 +23,8 @@ jobs:
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
 
     steps:
 
@@ -99,7 +101,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-          gh pr create --title "[Testing] Update License for ${{ github.event.pull_request.head.repo.full_name }}" --body "This PR updates adds License File for ${{ github.event.pull_request.head.repo.full_name }}" --base main --head notices
+          gh pr create --title "[Testing] Update License for '${{ github.event.pull_request.head.repo.full_name }}'" --body "This PR updates adds License File for '${{ github.event.pull_request.head.repo.full_name }}'" --base main --head notices
       shell: bash
 
     # - name: Merge PR (Workflow_Dispatch)
