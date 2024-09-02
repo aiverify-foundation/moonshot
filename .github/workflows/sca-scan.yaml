@@ -85,7 +85,7 @@ jobs:
     - name: Switch to branch (Workflow_Dispatch)
       if: github.event_name == 'workflow_dispatch'
       run: |
-          git checkout notices
+          git checkout -B notices
       shell: bash
 
     - name: Commit Notice File (Workflow_Dispatch)
