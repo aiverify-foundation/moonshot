@@ -465,7 +465,7 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
         "  params: Extra arguments for the endpoint\n\n"
         "Example:\n"
         "  update_endpoint openai-gpt4 \"[('name', 'my-special-openai-endpoint'), "
-        "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
+        "('uri', 'my-uri-loc'), ('token', 'my-token-here'), ('params', {'hello': 'world'})]\""
     ),
 )
 update_endpoint_args.add_argument(
