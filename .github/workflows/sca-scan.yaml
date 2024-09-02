@@ -81,7 +81,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
 
     - name: Configure GIT
       run: |
@@ -96,7 +95,6 @@ jobs:
 
     - name: Write to file
       run: |
-          ls
           git add .
           git commit -m "Update Notices"
           git push -f -u origin HEAD
