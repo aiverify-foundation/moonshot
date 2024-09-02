@@ -73,40 +73,37 @@ jobs:
           bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.notices.report=true --detect.notices.report.path=.
           ls
 
-  push-license:
-    if: github.event_name == 'workflow_dispatch'
-    needs:
-    - software-composition-analysis
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - name: Configure GIT
+    - name: Configure GIT (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
       run: |
           git config --global user.email "${{ github.actor }}"
           git config --global user.name "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
       shell: bash
 
-    - name: Switch to branch
+    - name: Switch to branch (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
       run: |
           git checkout -b notices
       shell: bash
 
-    - name: Write to file
+    - name: Commit Notice File (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
       run: |
           git add .
           git commit -m "Update Notices"
           git push -f -u origin HEAD
       shell: bash
 
-    - name: Create PR
+    - name: Create PR (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
           gh pr create --title "[Testing] Update License for ${{ github.event.pull_request.head.repo.full_name }}" --body "This PR updates adds License File for ${{ github.event.pull_request.head.repo.full_name }}" --base main --head notices
       shell: bash
 
-    # - name: Merge PR
+    # - name: Merge PR (Workflow_Dispatch)
+    #   if: github.event_name == 'workflow_dispatch'
     #   env:
     #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #   run: |
