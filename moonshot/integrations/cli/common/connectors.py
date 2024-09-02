@@ -280,19 +280,19 @@ def update_endpoint(args) -> None:
         endpoint = args.endpoint
 
         if (
-            args.update_values is None
-            or not isinstance(args.update_values, str)
-            or not args.update_values
+            args.update_kwargs is None
+            or not isinstance(args.update_kwargs, str)
+            or not args.update_kwargs
         ):
             raise ValueError(ERROR_COMMON_UPDATE_ENDPOINT_VALUES_VALIDATION)
 
-        if literal_eval(args.update_values) and all(
-            isinstance(i, tuple) for i in literal_eval(args.update_values)
+        if literal_eval(args.update_kwargs) and all(
+            isinstance(i, tuple) for i in literal_eval(args.update_kwargs)
         ):
-            update_values = dict(literal_eval(args.update_values))
+            update_kwargs = dict(literal_eval(args.update_kwargs))
         else:
             raise ValueError(ERROR_COMMON_UPDATE_ENDPOINT_VALUES_VALIDATION_1)
-        api_update_endpoint(endpoint, **update_values)
+        api_update_endpoint(endpoint, **update_kwargs)
         print("[update_endpoint]: Endpoint updated.")
     except Exception as e:
         print(f"[update_endpoint]: {str(e)}")
@@ -465,7 +465,7 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
         "  params: Extra arguments for the endpoint\n\n"
         "Example:\n"
         "  update_endpoint openai-gpt4 \"[('name', 'my-special-openai-endpoint'), "
-        "('uri', 'my-uri-loc'), ('token', 'my-token-here')]\""
+        "('uri', 'my-uri-loc'), ('token', 'my-token-here'), ('params', {'hello': 'world'})]\""
     ),
 )
 update_endpoint_args.add_argument(
