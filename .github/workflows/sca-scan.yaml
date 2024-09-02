@@ -108,5 +108,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
           pr_number=$(gh pr list --state open --limit 1 --json number --jq '.[0].number')
-          gh pr merge $pr_number --merge
+          gh pr merge $pr_number --merge --admin
       shell: bash
