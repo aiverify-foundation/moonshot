@@ -28,7 +28,7 @@ jobs:
 
     - name: Checkout Code (Pull_Request)
       if: github.event_name == 'pull_request'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -36,7 +36,7 @@ jobs:
 
     - name: Checkout Code (Workflow_Dispatch)
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           ref: ${{ inputs.branch_to_test }}
 
@@ -70,5 +70,49 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
-          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.notices.report=true --detect.notices.report.path=.
+          ls
           cd ../
+
+  push-license:
+    if: github.event_name == 'workflow_dispatch'
+    needs:
+    - software-composition-analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure GIT
+      run: |
+          git config --global user.email "${{ github.actor }}"
+          git config --global user.name "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      shell: bash
+
+    - name: Switch to branch
+      run: |
+          git checkout -b notices
+      shell: bash
+
+    - name: Write to file
+      run: |
+          ls
+          git add .
+          git commit -m "Update Notices"
+          git push -f -u origin HEAD
+      shell: bash
+
+    - name: Create PR
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          gh pr create --title "[Testing] Update License for ${{ github.event.pull_request.head.repo.full_name }}" --body "This PR updates adds License File for ${{ github.event.pull_request.head.repo.full_name }}" --base main --head notices
+      shell: bash
+
+    # - name: Merge PR
+    #   env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #       pr_number=$(gh pr list --state open --limit 1 --json number --jq '.[0].number')
+    #       gh pr merge $pr_number --merge
+    #   shell: bash
