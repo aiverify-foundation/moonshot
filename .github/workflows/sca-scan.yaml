@@ -101,14 +101,14 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-          gh pr create --title "[Testing] Update License for '${{ github.event.pull_request.head.repo.full_name }}'" --body "This PR updates adds License File for '${{ github.event.pull_request.head.repo.full_name }}'" --base main --head notices
+          gh pr create --title "Update License for $GITHUB_REPOSITORY" --body "This PR updates adds License File for $GITHUB_REPOSITORY" --base main --head notices
       shell: bash
 
-    # - name: Merge PR (Workflow_Dispatch)
-    #   if: github.event_name == 'workflow_dispatch'
-    #   env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: |
-    #       pr_number=$(gh pr list --state open --limit 1 --json number --jq '.[0].number')
-    #       gh pr merge $pr_number --merge
-    #   shell: bash
+    - name: Merge PR (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          pr_number=$(gh pr list --state open --limit 1 --json number --jq '.[0].number')
+          gh pr merge $pr_number --merge
+      shell: bash
