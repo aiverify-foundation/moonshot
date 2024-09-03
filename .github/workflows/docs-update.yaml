@@ -49,7 +49,31 @@ jobs:
         run: |
           pip install mkdocs mkdocs-material mkdocstrings mkdocstrings-python mkdocs-swagger-ui-tag
 
-      - name: Deploy docs to GitHub Pages
+      - name: Build docs
         run: |
-          mkdocs gh-deploy
+          mkdocs build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  deploy:
+    needs: docs-update
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
