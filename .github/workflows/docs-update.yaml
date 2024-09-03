@@ -48,7 +48,7 @@ jobs:
       # Install dependencies
       - name: Install mkdocs
         run: |
-          pip install mkdocs mkdocs-material mkdocstrings
+          pip install mkdocs mkdocs-material mkdocstrings mkdocstrings-python mkdocs-swagger-ui-tag
 
       - name: Deploy docs to GitHub Pages
         run: |
