@@ -1,0 +1,56 @@
+name: "Documentation Update"
+
+on:
+#  push:
+#    branches: [ "docs" ]
+
+  workflow_dispatch:
+    inputs:
+      docs_branch:
+        description: 'Docs branch'
+        required: true
+        default: 'docs'
+        type: string
+
+  workflow_call:
+    inputs:
+      docs_branch:
+        description: 'Docs branch'
+        required: true
+        default: 'docs'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+
+  docs-update:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: docs
+          submodules: recursive
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install dependencies
+      - name: Install mkdocs
+        run: |
+          pip install -r requirements.txt
+
+      - name: Deploy docs to GitHub Pages
+        run: |
+          mkdocs gh-deploy
+
