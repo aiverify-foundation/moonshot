@@ -1,4 +1,4 @@
-name: "SAST - CodeQL"
+name: "Documentation Update"
 
 on:
   push:
