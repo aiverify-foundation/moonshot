@@ -8,21 +8,21 @@
 <link href="../add_your_own_tests/" rel="prev"/>
 <link href="../../../api_reference/api_bookmark/" rel="next"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.6.0, mkdocs-material-9.5.25" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.34" name="generator"/>
 <title>(CLI) CLI Command List - Moonshot</title>
-<link href="../../../assets/stylesheets/main.6543a935.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/main.35f28582.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
 <link href="../../../assets/_mkdocstrings.css" rel="stylesheet"/>
-<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#1-list-of-cli-commands">
+<a class="md-skip" href="#list-of-cli-commands">
           Skip to content
         </a>
 </div>
@@ -31,10 +31,10 @@
 <header class="md-header md-header--shadow" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
 <a aria-label="Moonshot" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Moonshot">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
 </label>
 <div class="md-header__title" data-md-component="header-title">
 <div class="md-header__ellipsis">
@@ -52,9 +52,9 @@
 </div>
 </div>
 </div>
-<script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
 <label class="md-header__button md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
 </label>
 <div class="md-search" data-md-component="search" role="dialog">
 <label class="md-search__overlay" for="__search"></label>
@@ -62,17 +62,17 @@
 <form class="md-search__form" name="search">
 <input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
 <label class="md-search__icon md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </label>
 <nav aria-label="Search" class="md-search__options">
 <button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
 </button>
 </nav>
 </form>
 <div class="md-search__output">
-<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
 <div class="md-search-result" data-md-component="search-result">
 <div class="md-search-result__meta">
             Initializing search
@@ -86,7 +86,7 @@
 <div class="md-header__source">
 <a class="md-source" data-md-component="source" href="https://github.com/aiverify-foundation/moonshot" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     GitHub
@@ -104,14 +104,14 @@
 <nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--integrated" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
 <a aria-label="Moonshot" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Moonshot">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
 </a>
     Moonshot
   </label>
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/aiverify-foundation/moonshot" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
 </div>
 <div class="md-source__repository">
     GitHub
@@ -740,8 +740,7 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="1-list-of-cli-commands">1. List of CLI Commands</h1>
-<p>This page is mainly for users who are most interested in using the CLI to perform benchmark tests and run red teaming. We have prepared the list of commands you can run in the CLI so users can have a rough sense of what can be done in the CLI.</p>
+<h1 id="list-of-cli-commands">List of CLI Commands</h1>
 <table>
 <thead>
 <tr>
@@ -754,62 +753,22 @@
 <tr>
 <td>add_cookbook<br/><sub><code>add_cookbook 'My new cookbook' 'I am cookbook description' "['analogical-similarity','auto-categorisation']"</code></sub></td>
 <td>Add a new cookbook. The 'name' argument will be slugified to create a unique identifier.</td>
-<td><table><tr><td>name (str)</td><td>Name of the new cookbook<br/><sub>example: <code>'My new cookbook'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new cookbook<br/><sub>example: <code>'I am cookbook description'</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to be included in the new cookbook (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"['analogical-similarity','auto-categorisation']"</code></sub></td></tr></table></td>
+<td><table><tr><td>name (str)</td><td>Name of the new cookbook<br/><sub>example:  <code>'My new cookbook'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new cookbook<br/><sub>example:  <code>I am cookbook description'</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to be included in the new cookbook<br/><sub>example:  <code>"['analogical-similarity','auto-categorisation']"</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>list_bookmarks<br/><sub><code>list_bookmarks</code></sub></td>
-<td>List all available bookmarks.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>list_cookbooks<br/><sub><code>list_cookbooks</code></sub></td>
-<td>List all available cookbooks.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>update_cookbook<br/><sub><code>update_cookbook my-new-cookbook "[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td>
-<td>Update a cookbook.</td>
-<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr><tr><td>update_values (str)</td><td>List of tuples of (key,value) to update in the cookbook (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>view_cookbook<br/><sub><code>view_cookbook my-new-cookbook</code></sub></td>
-<td>View a cookbook.</td>
-<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr></table></td>
+<td>add_recipe<br/><sub><code>add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td>
+<td>Add a new recipe. The 'name' argument will be slugified to create a unique identifier.</td>
+<td><table><tr><td>name (str)</td><td>Name of the new recipe<br/><sub>example:  <code>'My new recipe'</code> </sub></td></tr><tr><td>description (str)</td><td>Description of the new recipe<br/><sub>example:  <code>'I am recipe description'</code></sub></td></tr><tr><td>categories (str) </td><td>List of categories to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example:  <code>"['category1','category2']"</code></sub></td></tr><tr><td>-t, --tags (str)</td><td>List of tags to be included in the new recipe<br/><sub>example:  <code>"['tag1','tag2']"</code></sub></td></tr><tr><td>datasets (str)</td><td>The dataset to be used<br/><sub>example:  <code>"['bbq-lite-age-ambiguous']"</code></sub></td></tr><tr><td>-p, --prompt_templates (str)</td><td>List of prompt templates to be included in the new recipe<br/><sub>example:  <code>"['analogical-similarity','mmlu']"</code></sub></td></tr><tr><td>metrics (str)</td><td>List of metrics to be included in the new recipe<br/><sub>example:  <code>"['bertscore','bleuscore']"</code></sub></td></tr><tr><td>-g, --grading_scale (str)</td><td>Dict of grading scale for the metric to be included in the new recipe<br/><sub>example:  <code>"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_cookbook<br/><sub><code>delete_cookbook my-new-cookbook</code></sub></td>
 <td>Delete a cookbook.</td>
-<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example: <code>my-new-cookbook</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>run_cookbook<br/><sub><code>run_cookbook 'my new cookbook runner' "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
-<td>Execute a cookbook with the specified parameters.</td>
-<td><table><tr><td>name (str)</td><td>Name of cookbook runner<br/><sub>example: <code>my new cookbook runner</code></sub></td></tr><tr><td>cookbooks (str)</td><td>List of cookbooks to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq','mmlu']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_datasets<br/><sub><code>list_datasets</code></sub></td>
-<td>List all available datasets.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>view_dataset<br/><sub><code>view_dataset bbq-lite-age-ambiguous</code></sub></td>
-<td>View a dataset file.</td>
-<td><table><tr><td>dataset_filename (str)</td><td>Name of the dataset file<br/><sub>example: <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example:  <code>my-new-cookbook</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_dataset<br/><sub><code>delete_dataset bbq-lite-age-ambiguous</code></sub></td>
 <td>Delete a dataset.</td>
-<td><table><tr><td>dataset (str)</td><td>Name of the dataset<br/><sub>example: <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_metrics<br/><sub><code>list_metrics</code></sub></td>
-<td>List all available metrics.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>view_metric<br/><sub><code>view_metric my-new-metric</code></sub></td>
-<td>View a metric file.</td>
-<td><table><tr><td>metric_filename (str)</td><td>Name of the metric file<br/><sub>example: <code>my-new-metric</code></sub></td></tr></table></td>
+<td><table><tr><td>dataset (str)</td><td>Name of the dataset<br/><sub>example:  <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_metric<br/><sub><code>delete_metric my-new-metric</code></sub></td>
@@ -817,59 +776,44 @@
 <td><table><tr><td>metric (str)</td><td>Name of the metric<br/><sub>example: <code>my-new-metric</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>add_recipe<br/><sub><code>add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -a "['charswap_attack']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td>
-<td>Add a new recipe. The 'name' argument will be slugified to create a unique identifier.</td>
-<td><table><tr><td>name (str)</td><td>Name of the new recipe<br/><sub>example: <code>'My new recipe'</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new recipe<br/><sub>example: <code>'I am recipe description'</code></sub></td></tr><tr><td>categories (str)</td><td>List of categories to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['category1','category2']"</code></sub></td></tr><tr><td>datasets (str)</td><td>The dataset to be used (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq-lite-age-ambiguous']"</code></sub></td></tr><tr><td>metrics (str)</td><td>List of metrics to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bertscore','bleuscore']"</code></sub></td></tr><tr><td>-p, --prompt_templates (str)</td><td>List of prompt templates to be included in the new recipe (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['analogical-similarity','mmlu']"</code></sub></td></tr><tr><td>-t, --tags (str)</td><td>List of tags to be included in the new recipe<br/><sub>example: <code>"['tag1','tag2']"</code></sub></td></tr><tr><td>-a, --attack_modules (str)</td><td>List of attack modules to be included in the new recipe (currently in string format). It will be converted into a list in the backend. * We currently only support running 1 attack module<br/><sub>example: <code>"['charswap_attack']"</code></sub></td></tr><tr><td>-g, --grading_scale (str)</td><td>Dict of grading scale for the metric to be included in the new recipe<br/><sub>example: <code>"{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_recipes<br/><sub><code>list_recipes</code></sub></td>
-<td>List all available recipes.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>view_recipe<br/><sub><code>view_recipe my-new-recipe</code></sub></td>
-<td>View a recipe.</td>
-<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>run_recipe<br/><sub><code>run_recipe 'my new recipe runner' "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s 'You are an intelligent AI'</code></sub></td>
-<td>Execute a recipe with the specified parameters.</td>
-<td><table><tr><td>name (str)</td><td>Name of recipe runner<br/><sub>example: <code>my new recipe runner</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['bbq','mmlu']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example: <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example: <code>'You are an intelligent AI'</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module<br/><sub>None</sub></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/><sub>None</sub></td></tr></table></td>
-</tr>
-<tr>
-<td>update_recipe<br/><sub><code>update_recipe my-new-recipe "[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code></sub></td>
-<td>Update a recipe.</td>
-<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr><tr><td>update_values (str)</td><td>List of tuples of (key,value) to update in the recipe (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code></sub></td></tr></table></td>
-</tr>
-<tr>
 <td>delete_recipe<br/><sub><code>delete_recipe my-new-recipe</code></sub></td>
 <td>Delete a recipe.</td>
-<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example: <code>my-new-recipe</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_results<br/><sub><code>list_results</code></sub></td>
-<td>List all available results.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>view_result<br/><sub><code>view_result my-new-cookbook-runner</code></sub></td>
-<td>View a result file.</td>
-<td><table><tr><td>result_filename (str)</td><td>Name of the result file<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example:  <code>my-new-recipe</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_result<br/><sub><code>delete_result my-new-cookbook-runner</code></sub></td>
 <td>Delete a result.</td>
-<td><table><tr><td>result (str)</td><td>Name of the result<br/><sub>example: ``</sub></td></tr></table></td>
+<td><table><tr><td>result (str)</td><td>Name of the result<br/><sub>example:  <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>list_runs<br/><sub><code>list_runs</code></sub></td>
-<td>List all runs.</td>
-<td>-</td>
+<td>delete_runner<br/><sub><code>delete_runner my-new-cookbook-runner</code></sub></td>
+<td>Delete a runner.</td>
+<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example:  <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>view_run<br/><sub><code>view_run my-new-cookbook-runner</code></sub></td>
-<td>View the details of a specific run.</td>
-<td><table><tr><td>runner_id (str)</td><td>Name of the runner<br/><sub>example: ``</sub></td></tr></table></td>
+<td>list_cookbooks<br/><sub><code>list_cookbooks -f "risk"</code></sub></td>
+<td>List all cookbooks.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find cookbook(s) with keyword<br/><sub>example:  <code>risk</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate cookbook(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_datasets<br/><sub><code>list_datasets -f "bbq"</code></sub></td>
+<td>List all datasets.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find dataset(s) with keyword<br/><sub>example:  <code>bbq</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate dataset(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_metrics<br/><sub><code>list_metrics -f "exact"</code></sub></td>
+<td>List all metrics.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find metric(s) with keyword<br/><sub>example:  <code>"exact"</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate metric(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_recipes<br/><sub><code>list_recipes -f "mmlu"</code></sub></td>
+<td>List all recipes.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find recipe(s) with keyword<br/><sub>example:  <code>mmlu</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate recipes(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_results<br/><sub><code>list_results -f "my-runner"</code></sub></td>
+<td>List all results.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find result(s) with keyword<br/><sub>example:  <code>my-runner</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate result(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>list_runners<br/><sub><code>list_runners</code></sub></td>
@@ -877,154 +821,194 @@
 <td>-</td>
 </tr>
 <tr>
-<td>view_runner<br/><sub><code>view_runner my-new-cookbook-runner</code></sub></td>
-<td>View a runner.</td>
-<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+<td>list_runs<br/><sub><code>list_runs -f "my-run"</code></sub></td>
+<td>List all runs.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find run(s) with keyword<br/><sub>example:  <code>my-run</code> </sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate run(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>delete_runner<br/><sub><code>delete_runner my-new-cookbook-runner</code></sub></td>
-<td>Delete a runner.</td>
-<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example: <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+<td>run_cookbook<br/><sub><code>run_cookbook "my new cookbook runner" "['chinese-safety-cookbook']" "['openai-gpt35-turbo']" -n 1 -r 1 -s "You are an intelligent AI"</code></sub></td>
+<td>Run a cookbook.</td>
+<td><table><tr><td>name (str)</td><td>Name of cookbook runner<br/><sub>example:  <code>"my new cookbook runner"</code></sub></td></tr><tr><td>cookbooks (str)</td><td>List of cookbooks to run<br/><sub>example:  <code>"['chinese-safety-cookbook']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run<br/><sub>example:  <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example:  <code>"You are an intelligent AI"</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module <br/></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/></td></tr></table></td>
+</tr>
+<tr>
+<td>run_recipe<br/><sub><code>run_recipe "my new recipe runner" "['bbq','mmlu']" "['openai-gpt35-turbo']" -n 1 -r 1 -s "You are an intelligent AI"</code></sub></td>
+<td>Run a recipe.</td>
+<td><table><tr><td>name (str)</td><td>Name of recipe runner<br/><sub>example:  <code>"my new recipe runner"</code></sub></td></tr><tr><td>recipes (str)</td><td>List of recipes to run<br/><sub>example:  <code>"['bbq','mmlu']"</code></sub></td></tr><tr><td>endpoints (str)</td><td>List of endpoints to run<br/><sub>example:  <code>"['openai-gpt35-turbo']"</code></sub></td></tr><tr><td>-n, --num_of_prompts (int)</td><td>Number of prompts to run<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>-r, --random_seed (int)</td><td>Random seed number<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to use<br/><sub>example:  <code>"You are an intelligent AI"</code></sub></td></tr><tr><td>-l, --runner_proc_module (str)</td><td>Runner processing module to use. Defaults to use the <code>benchmarking</code> module <br/></td></tr><tr><td>-o, --result_proc_module (str)</td><td>Result processing module to use. Defaults to use the <code>benchmarking-result</code> module<br/></td></tr></table></td>
+</tr>
+<tr>
+<td>update_cookbook<br/><sub><code>update_cookbook my-new-cookbook "[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td>
+<td>Update a cookbook.</td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example:  <code>my-new-cookbook</code></sub></td></tr><tr><td>update_values (str)</td><td>Update cookbook key/value<br/><sub>example:  <code>"[('name', 'Updated Cookbook Name'), ('description', 'Updated description'), ('recipes', ['analogical-similarity'])]"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>update_recipe<br/><sub><code>update_recipe my-new-recipe "[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code> </sub></td>
+<td>Update a recipe.</td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example:  <code>my-new-recipe</code></sub></td></tr><tr><td>update_values (str)</td><td>Update recipe key/value<br/><sub>example:  <code>"[('name', 'Updated Recipe Name'), ('tags', ['fairness', 'bbq'])]"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_cookbook<br/><sub><code>view_cookbook my-new-cookbook</code></sub></td>
+<td>View a cookbook.</td>
+<td><table><tr><td>cookbook (str)</td><td>Id of the cookbook<br/><sub>example:  <code>my-new-cookbook</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_dataset<br/><sub><code>view_dataset bbq-lite-age-ambiguous</code></sub></td>
+<td>View a dataset file.</td>
+<td><table><tr><td>dataset_filename (str)</td><td>Name of the dataset file<br/><sub>example:  <code>bbq-lite-age-ambiguous</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_metric<br/><sub><code>view_metric my-new-metric</code></sub></td>
+<td>View a metric file.</td>
+<td><table><tr><td>metric_filename (str)</td><td>Name of the metric file<br/><sub>example:  <code>my-new-metric</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_recipe<br/><sub><code>view_recipe my-new-recipe</code></sub></td>
+<td>View a recipe.</td>
+<td><table><tr><td>recipe (str)</td><td>Id of the recipe<br/><sub>example:  <code>my-new-recipe</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_result<br/><sub><code>view_result my-new-cookbook-runner</code></sub></td>
+<td>View a result file.</td>
+<td><table><tr><td>result_filename (str)</td><td>Name of the result file<br/><sub>example:  <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_run<br/><sub><code>view_run my-new-cookbook-runner</code></sub></td>
+<td>View a runner runs.</td>
+<td><table><tr><td>runner_id (str)</td><td>Name of the runner<br/><sub>example:  <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>view_runner<br/><sub><code>view_runner my-new-cookbook-runner</code></sub></td>
+<td>View a runner.</td>
+<td><table><tr><td>runner (str)</td><td>Name of the runner<br/><sub>example:  <code>my-new-cookbook-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>add_dataset<br/><sub><code>add_dataset 'dataset-name' 'A brief description' 'http://reference.com' 'MIT' 'csv' "{'csv_file_path': '/path/to/your/file.csv'}"</code><br/><code>add_dataset 'dataset-name' 'A brief description' 'http://reference.com' 'MIT' 'hf' "{'dataset_name': 'cais/mmlu', 'dataset_config': 'college_biology', 'split': 'test', 'input_col': ['question','choices'], 'target_col': 'answer'}"</code></sub></td>
+<td>Add a new dataset. The 'name' argument will be slugified to create a unique identifier.</td>
+<td><table><tr><td>name (str)</td><td>Name of the new dataset<br/><sub>example:  <code>dataset-name</code></sub></td></tr><tr><td>description (str)</td><td>Description of the new dataset<br/><sub>example:  <code>'A brief description'</code></sub></td></tr><tr><td>reference (str)</td><td>Reference of the new dataset<br/><sub>example:  <code>'http://reference.com'</code></sub></td></tr><tr><td>license (str)</td><td>License of the new dataset<br/><sub>example:  <code>'MIT'</code></sub></td></tr><tr><td>method (str)</td><td>Method to convert the new dataset. Choose either 'hf' or 'csv'.<br/><sub>example:  <code>hf</code></sub></td></tr><tr><td>params (literal_eval)</td><td>Params of the new dataset in dictionary format.  <br/>For 'csv' method: <sub><code>"{'csv_file_path': '/path/to/your/file.csv'}"</code></sub><br/> For 'hf' method: <sub><code>"{'dataset_name': 'cais_mmlu', 'dataset_config': 'college_biology', 'split': 'test', 'input_col': ['questions','choices'], 'target_col': 'answer'}"</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>add_endpoint<br/><sub><code>add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' MY_URI ADD_YOUR_TOKEN_HERE 1 1 "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"</code></sub></td>
 <td>Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.</td>
-<td><table><tr><td>connector_type (str)</td><td>Type of connection for the endpoint<br/><sub>example: <code>openai-connector</code></sub></td></tr><tr><td>name (str)</td><td>Name of the new endpoint<br/><sub>example: <code>'OpenAI GPT3.5 Turbo 1106'</code></sub></td></tr><tr><td>uri (str)</td><td>URI of the new endpoint<br/><sub>example: <code>MY_URI</code></sub></td></tr><tr><td>token (str)</td><td>Token of the new endpoint<br/><sub>example: <code>MY_URI ADD_YOUR_TOKEN_HERE</code></sub></td></tr><tr><td>max_calls_per_second (int)</td><td>Max calls per second of the new endpoint<br/><sub>example: <code>1</code></sub></td></tr><tr><td>max_concurrency (int)</td><td>Max concurrency of the new endpoint<br/><sub>example: <code>1</code></sub></td></tr><tr><td>params (str)</td><td>Params of the new endpoint<br/><sub>example: <code>"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"</code></sub></td></tr></table></td>
+<td><table><tr><td>connector_type (str)</td><td>Type of connection for the endpoint<br/><sub>example:  <code>openai-connector</code></sub></td></tr><tr><td>name (str)</td><td>Name of the new endpoint<br/><sub>example:  <code>'OpenAI GPT3.5 Turbo 1106'</code></sub></td></tr><tr><td>uri (str)</td><td>URI of the new endpoint<br/><sub>example:  <code>MY_URI</code></sub></td></tr><tr><td>token (str)</td><td>Token of the new endpoint<br/><sub>example:  <code>ADD_YOUR_TOKEN_HERE</code></sub></td></tr><tr><td>max_calls_per_second (int)</td><td>Max calls per second of the new endpoint<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>max_concurrency (int)</td><td>Max concurrency of the new endpoint<br/><sub>example:  <code>1</code></sub></td></tr><tr><td>params (str)</td><td>Params of the new endpoint<br/><sub>example:  <code>"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_endpoint<br/><sub><code>delete_endpoint openai-gpt4</code></sub></td>
+<td>Delete an endpoint.</td>
+<td><table><tr><td>endpoint (str)</td><td>ID of the endpoint<br/><sub>example:  <code>openai-gpt4</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_prompt_template<br/><sub><code>delete_prompt_template squad-shifts</code></sub></td>
+<td>Delete a prompt template.</td>
+<td><table><tr><td>prompt_template (str)</td><td>The ID of the prompt template to delete<br/><sub>example:  <code>squad-shifts</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_connector_types<br/><sub><code>list_connector_types -f "openai"</code></sub></td>
+<td>List all connector types.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find connector type(s) with keyword<br/><sub>example:  <code>openai</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate connector type(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_endpoints<br/><sub><code>list_endpoints -f "gpt"</code></sub></td>
+<td>List all endpoints.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find endpoint(s) with keyword<br/><sub>example:  <code>gpt</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate endpoint(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_prompt_templates<br/><sub><code>list_prompt_templates -f "toxicity"</code></sub></td>
+<td>List all prompt templates.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find prompt template(s) with keyword<br/><sub>example:  <code>toxicity</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate prompt template(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>update_endpoint<br/><sub><code>update_endpoint openai-gpt4 "[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"</code></sub></td>
 <td>Update an endpoint.</td>
-<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr><tr><td>update_kwargs (str)</td><td>List of tuples of (key,value) to update in the endpoint (currently in string format). It will be converted into a list in the backend.<br/><sub>example: <code>"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"</code></sub></td></tr></table></td>
+<td><table><tr><td>endpoint (str)</td><td>ID of the endpoint. This field is not editable via CLI after creation.<br/><sub>example:  <code>openai-gpt4</code></sub></td></tr><tr><td>update_kwargs (str)</td><td>Update endpoint key/value<br/><sub>example:  <code>"[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>view_endpoint<br/><sub><code>view_endpoint openai-gpt4</code></sub></td>
 <td>View an endpoint.</td>
-<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>delete_endpoint<br/><sub><code>delete_endpoint openai-gpt4</code></sub></td>
-<td>Delete a recipe.</td>
-<td><table><tr><td>endpoint (str)</td><td>Name of the endpoint<br/><sub>example: <code>openai-gpt4</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_connector_types<br/><sub><code>list_connector_types</code></sub></td>
-<td>List all connector types.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>list_endpoints<br/><sub><code>list_endpoints</code></sub></td>
-<td>List all endpoints.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>list_prompt_templates<br/><sub><code>list_prompt_templates</code></sub></td>
-<td>List all prompt templates available.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>delete_prompt_template<br/><sub><code>delete_prompt_template squad-shifts</code></sub></td>
-<td><code>Delete a prompt template.</code></td>
-<td><table><tr><td>prompt_template (str)</td><td>The ID of the prompt template to delete<br/><sub>example: <code>squad-shifts</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_attack_modules<br/><sub><code>list_attack_modules</code></sub></td>
-<td>List all available attack modules.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>delete_attack_module<br/><sub><code>delete_attack_module sample_attack_module</code></sub></td>
-<td>Delete an attack module.</td>
-<td><table><tr><td>attack_module (str)</td><td>The ID of the attack module to delete<br/><sub>example: <code>sample_attack_module</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>list_context_strategies<br/><sub><code>list_context_strategies</code></sub></td>
-<td>List all available context strategies.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>use_context_strategy<br/><sub><code>use_context_strategy my_strategy_one -n 8</code></sub></td>
-<td>Use a context strategy.</td>
-<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to use<br/><sub>example: <code>my_strategy_one</code></sub></td></tr><tr><td>-n, --num_of_prev_prompts (int)</td><td>The number of previous prompts to use with the context strategy<br/><sub>example: <code>8</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>clear_context_strategy<br/><sub><code>clear_context_strategy</code></sub></td>
-<td>Resets the context in a session.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>delete_context_strategy<br/><sub><code>delete_context_strategy add_previous_prompt</code></sub></td>
-<td>Deletes a context strategy after confirming with the user.</td>
-<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to delete<br/><sub>example: <code>add_previous_prompt</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>use_prompt_template<br/><sub><code>use_prompt_template 'analogical-similarity'</code></sub></td>
-<td>Use a prompt template by specifying its name while user is in a session.</td>
-<td><table><tr><td>prompt_template (str)</td><td>Name of the prompt template<br/><sub>example: <code>'analogical-similarity'</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>clear_prompt_template<br/><sub><code>clear_prompt_template</code></sub></td>
-<td>Resets the prompt template in a session.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>new_session<br/><sub><code>new_session my-runner -e "['openai-gpt4']" -c add_previous_prompt -p mmlu</code></sub></td>
-<td>Creates a new session based on the provided arguments.</td>
-<td><table><tr><td>runner_id (str)</td><td>ID of the runner. Creates a new runner if runner does not exist.<br/><sub>example: <code>my-runner</code></sub></td></tr><tr><td>endpoints (list)</td><td>List of endpoint(s) for the runner that is only compulsory for creating a new runner (currently in string format). It will be converted into a list in the backend<br/><sub>example: <code>"['openai-gpt4']"</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context_strategy to be used - indicate context strategy here if you wish to use with the selected attack.<br/><sub>example: <code>add_previous_prompt</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used - indicate prompt template here if you wish to use with the selected attack.<br/><sub>example: <code>mmlu</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>use_session<br/><sub><code>use_session runner_id</code></sub></td>
-<td>Resumes a session by specifying its runner ID and updates the active session.</td>
-<td><table><tr><td>runner_id (str)</td><td>The ID of the runner<br/><sub>example: <code>runner_id</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>end_session<br/><sub><code>end_session</code></sub></td>
-<td>Ends the current session by clearing active_session variable.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>list_sessions<br/><sub><code>list_sessions</code></sub></td>
-<td>Retrieves and displays the list of sessions.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>show_prompts<br/><sub><code>show_prompts</code></sub></td>
-<td>Display all prompts.</td>
-<td>-</td>
-</tr>
-<tr>
-<td>run_attack_module<br/><sub><code>run_attack_module sample_attack_module 'this is my prompt' -s 'test system prompt' -m 'bleuscore'</code></sub></td>
-<td>Runs automated red teaming in the current session.</td>
-<td><table><tr><td>attack_module_id (str)</td><td>ID of the attack module.<br/><sub>example: <code>sample_attack_module</code></sub></td></tr><tr><td>prompt (str)</td><td>Prompt to be used for the attack.<br/><sub>example: <code>'this is my prompt'</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to be used for the attack. If not specified, the default system prompt will be used.<br/><sub>example: <code>'test system prompt'</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context strategy module to be used. If this is set, it will overwrite the context strategy set in the session while running this attack module.<br/><sub>example: <code>'add_previous_prompt'</code></sub></td></tr><tr><td>-n, --cs_num_of_prev_prompts (str)</td><td>The number of previous prompts to use with the context strategy. If this is set, it will overwrite the number of previous prompts set in the session while running this attack module.<br/><sub>example: <code>5</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used. If this is set, it will overwrite the prompt template set in the session while running this attack module.<br/><sub>example: <code>mmlu</code></sub></td></tr><tr><td>-m, --metric (str)</td><td>Name of the metric module to be used.<br/><sub>example: <code>bleuscore</code></sub></td></tr><tr><td>-o, --optional_args (str)</td><td>Optional parameters to input into the red teaming module.<br/><sub>example: <code>{'param1': 'value1'}</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>delete_session<br/><sub><code>delete_session my-test-runner</code></sub></td>
-<td>Delete a session</td>
-<td><table><tr><td>session (str)</td><td>The runner ID of the session to delete<br/><sub>example: <code>my-test-runner</code></sub></td></tr></table></td>
+<td><table><tr><td>endpoint (str)</td><td>ID of the endpoint<br/><sub>example:  <code>openai-gpt4</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>add_bookmark<br/><sub><code>add_bookmark openai-connector 2 my-bookmarked-prompt</code></sub></td>
 <td>Bookmark a prompt</td>
-<td><table><tr><td>endpoint (str)</td><td>Endpoint which the prompt was sent to<br/><sub>example: <code>openai-connector</code></sub></td></tr><tr><td>prompt_id (int)</td><td>ID of the prompt (the leftmost column)<br/><sub>example: <code>2</code></sub></td></tr><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my-bookmarked-prompt</code></sub></td></tr></table></td>
+<td><table><tr><td>endpoint (str)</td><td>Endpoint which the prompt was sent to.<br/><sub>example:  <code>openai-connector</code></sub></td></tr><tr><td>prompt_id (int)</td><td>ID of the prompt (the leftmost column)<br/><sub>example:  <code>2</code></sub></td></tr><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example:  <code>my-bookmarked-prompt</code></sub></td></tr></table></td>
 </tr>
 <tr>
-<td>use_bookmark<br/><sub><code>use_bookmark my_bookmark</code></sub></td>
-<td>Use a bookmarked prompt</td>
-<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my_bookmark</code></sub></td></tr></table></td>
+<td>delete_attack_module<br/><sub><code>delete_attack_module sample_attack_module</code></sub></td>
+<td>Delete an attack module.</td>
+<td><table><tr><td>attack_module (str)</td><td>The ID of the attack module to delete<br/><sub>example:  <code>sample_attack_module</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>delete_bookmark<br/><sub><code>delete_bookmark my_bookmarked_prompt</code></sub></td>
 <td>Delete a bookmark</td>
-<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example: <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example:  <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_context_strategy<br/><sub><code>delete_context_strategy add_previous_prompt</code></sub></td>
+<td>Delete a context strategy.</td>
+<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to delete<br/><sub>example:  <code>add_previous_prompt</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>delete_session<br/><sub><code>delete_session my-test-runner</code></sub></td>
+<td>Delete a session</td>
+<td><table><tr><td>session (str)</td><td>The runner ID of the session to delete<br/><sub>example:  <code>my-test-runner</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>export_bookmarks<br/><sub><code>export_bookmarks "my_list_of_exported_bookmarks"</code></sub></td>
+<td>Exports bookmarks as a JSON file</td>
+<td><table><tr><td>bookmark_list_name (str)</td><td>Name of the exported bookmarks JSON file you want to save as (without the .json extension)<br/><sub>example:  <code>my_list_of_exported_bookmarks</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_attack_modules<br/><sub><code>list_attack_modules -f "text"</code></sub></td>
+<td>List all attack modules.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find attack module(s) with keyword<br/><sub>example:  <code>text</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate attack module(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_bookmarks<br/><sub><code>list_bookmarks -f my_bookmark</code></sub></td>
+<td>List all bookmarks.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find bookmark(s) with keyword<br/><sub>example:  <code>my_bookmark</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate bookmark(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_context_strategies<br/><sub><code>list_context_strategies -f "previous_prompt"</code></sub></td>
+<td>List all context strategies.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find context strategies with keyword<br/><sub>example:  <code>previous_prompt</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate context strategies(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>list_sessions<br/><sub><code>list_sessions -f "my-sessions"</code></sub></td>
+<td>List all sessions.</td>
+<td><table><tr><td>-f, --find (str)</td><td>Optional field to find session(s) with keyword<br/><sub>example:  <code>my-sessions</code></sub></td></tr><tr><td>-p, --pagination (str)</td><td>Optional tuple to paginate session(s). E.g. (2,10) returns 2nd page with 10 items in each page.<br/><sub>example:  <code>(2,10)</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>new_session<br/><sub><code>new_session my-runner -e "['openai-gpt4']" -c add_previous_prompt -p mmlu</code></sub></td>
+<td>Creates a new red teaming session.</td>
+<td><table><tr><td>runner_id (str)</td><td>ID of the runner. Creates a new runner if runner does not exist.<br/><sub>example:  <code>my-runner</code></sub></td></tr><tr><td>-e, --endpoints (str)</td><td>List of endpoint(s) for the runner that is only compulsory for creating a new runner.<br/><sub>example:  <code>"['openai-gpt4']"</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context_strategy to be used - indicate context strategy here if you wish to use with the selected attack.<br/><sub>example:  <code>add_previous_prompt</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used - indicate prompt template here if you wish to use with the selected attack.<br/><sub>example:  <code>mmlu</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>Automated red teaming<br/><sub><code>run_attack_module sample_attack_module "this is my prompt" -s "test system prompt" -m bleuscore</code></sub></td>
+<td>Runs automated red teaming in the current session.</td>
+<td><table><tr><td>attack_module_id (str)</td><td>ID of the attack module.<br/><sub>example:  <code>sample_attack_module</code></sub></td></tr><tr><td>prompt (str)</td><td>Prompt to be used for the attack.<br/><sub>example:  <code>"this is my prompt"</code></sub></td></tr><tr><td>-s, --system_prompt (str)</td><td>System Prompt to be used for the attack. If not specified, the default system prompt will be used.<br/><sub>example:  <code>"test system prompt"</code></sub></td></tr><tr><td>-c, --context_strategy (str)</td><td>Name of the context strategy module to be used. If this is set, it will overwrite the context strategy set in the session while running this attack module.<br/><sub>example:  <code>add_previous_prompt</code></sub></td></tr><tr><td>-n, --cs_num_of_prev_prompts (str)</td><td>The number of previous prompts to use with the context strategy. If this is set, it will overwrite the number of previous prompts set in the session while running this attack module.<br/><sub>example:  <code>5</code></sub></td></tr><tr><td>-p, --prompt_template (str)</td><td>Name of the prompt template to be used. If this is set, it will overwrite the prompt template set in the session while running this attack module.<br/><sub>example:  <code>mmlu</code></sub></td></tr><tr><td>-m, --metric (str)</td><td>Name of the metric module to be used.<br/><sub>example:  <code>bleuscore</code></sub></td></tr><tr><td>-o, --optional_args (str)</td><td>Optional parameters to input into the red teaming module.<br/><sub>example:  <code>"{'my_attack_module_custom_field': 1.0}"</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_bookmark<br/><sub><code>use_bookmark my_bookmark</code></sub></td>
+<td>Use a bookmarked prompt</td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark<br/><sub>example:  <code>my_bookmark</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_context_strategy<br/><sub><code>use_context_strategy my_strategy_one</code></sub></td>
+<td>Use a context strategy.</td>
+<td><table><tr><td>context_strategy (str)</td><td>The ID of the context strategy to use<br/><sub>example:  <code>my_strategy_one</code></sub></td></tr><tr><td>-n, --num_of_prev_prompts (int)</td><td>The number of previous prompts to use with the context strategy<br/><sub>example:  <code>6</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_prompt_template<br/><sub><code>use_prompt_template 'analogical-similarity'</code></sub></td>
+<td>Use a prompt template.</td>
+<td><table><tr><td>prompt_template (str)</td><td>Name of the prompt template<br/><sub>example:  <code>analogical-similarity</code></sub></td></tr></table></td>
+</tr>
+<tr>
+<td>use_session<br/><sub><code>use_session 'my-runner'</code></sub></td>
+<td>Use an existing red teaming session by specifying the runner ID.</td>
+<td><table><tr><td>runner_id (str)</td><td>The ID of the runner which contains the session you want to use.<br/><sub>example:  <code>my-runner</code></sub></td></tr></table></td>
 </tr>
 <tr>
 <td>view_bookmark<br/><sub><code>view_bookmark my_bookmarked_prompt</code></sub></td>
 <td>View a bookmark</td>
-<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark you want to view<br/><sub>example: <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
-</tr>
-<tr>
-<td>export_bookmarks<br/><sub><code>export_bookmarks "my list of exported bookmarks"</code></sub></td>
-<td>Exports bookmarks as a JSON file</td>
-<td><table><tr><td>bookmark_list_name (str)</td><td>Name of the exported bookmarks JSON file you want to save as (without the .json extension)<br/><sub>example: <code>my list of exported bookmarks</code></sub></td></tr></table></td>
+<td><table><tr><td>bookmark_name (str)</td><td>Name of the bookmark you want to view<br/><sub>example:  <code>my_bookmarked_prompt</code></sub></td></tr></table></td>
 </tr>
 </tbody>
 </table>
@@ -1033,7 +1017,7 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
 </div>
 <button class="md-top md-icon" data-md-component="top" hidden="" type="button">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
   Back to top
 </button>
 </main>
@@ -1041,7 +1025,7 @@
 <nav aria-label="Footer" class="md-footer__inner md-grid">
 <a aria-label="Previous: (CLI) Adding Your Own Tests" class="md-footer__link md-footer__link--prev" href="../add_your_own_tests/">
 <div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </div>
 <div class="md-footer__title">
 <span class="md-footer__direction">
@@ -1062,7 +1046,7 @@
               </div>
 </div>
 <div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
 </div>
 </a>
 </nav>
@@ -1083,8 +1067,8 @@
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "navigation.top", "toc.integrate", "toc.follow"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-<script src="../../../assets/javascripts/bundle.081f42fc.min.js"></script>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "navigation.top", "toc.integrate", "toc.follow"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
 <script>document$.subscribe(() => {
             window.update_swagger_ui_iframe_height = function (id) {
                 var iFrameID = document.getElementById(id);
