@@ -136,7 +136,8 @@ jobs:
         TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
         TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
       run: |
-          pwd
+          cd moonshot-integration-testing/ui-integration-testing
+          ls
           pip install trcli
           trcli -y \
             -h https://imdabtg.testrail.io/ \
