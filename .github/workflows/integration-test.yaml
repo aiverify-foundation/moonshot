@@ -127,6 +127,7 @@ jobs:
         ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
       run: |
          cd moonshot-integration-testing/ui-integration-testing
+         mkdir test-results
          npm ci
          npx playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test
