@@ -392,10 +392,10 @@ ERROR_COMMON_UPDATE_ENDPOINT_ENDPOINT_VALIDATION = (
     "The 'endpoint' argument must be a non-empty string and not None."
 )
 ERROR_COMMON_UPDATE_ENDPOINT_VALUES_VALIDATION = (
-    "The 'update_values' argument must be a non-empty string and not None."
+    "The 'update_kwargs' argument must be a non-empty string and not None."
 )
 ERROR_COMMON_UPDATE_ENDPOINT_VALUES_VALIDATION_1 = (
-    "The 'update_values' argument must evaluate to a list of tuples."
+    "The 'update_kwargs' argument must evaluate to a list of tuples."
 )
 
 # ------------------------------------------------------------------------------

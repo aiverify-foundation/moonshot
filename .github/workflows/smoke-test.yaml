@@ -66,7 +66,7 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
         touch .env
-        echo "${{ vars.ENVIRONMENT_VARS }}" >> .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
     - name: Checkout Moonshot Data (Pull Request Review)
       if: github.event_name == 'pull_request_review'
@@ -125,9 +125,9 @@ jobs:
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
-        ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
-        MOONSHOT_URL: ${{ vars.MOONSHOT_URL }}
-        MOONSHOT_PORT_NUMBER: ${{ vars.MOONSHOT_PORT_NUMBER }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
+        MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
       run: |
          cd moonshot-smoke-testing
          npm ci

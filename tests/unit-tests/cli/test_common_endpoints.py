@@ -1193,7 +1193,7 @@ class TestCollectionCliConnectors:
     # Update Endpoint 
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "endpoint, update_values, expected_log, to_be_called",
+        "endpoint, update_kwargs, expected_log, to_be_called",
         [
             # Valid case - Full update
             (
@@ -1249,55 +1249,55 @@ class TestCollectionCliConnectors:
             (
                 "Endpoint 1",
                 "['', '']",
-                "[update_endpoint]: The 'update_values' argument must evaluate to a list of tuples.",
+                "[update_endpoint]: The 'update_kwargs' argument must evaluate to a list of tuples.",
                 False
             ),
             (
                 "Endpoint 1",
                 "[[], ()]",
-                "[update_endpoint]: The 'update_values' argument must evaluate to a list of tuples.",
+                "[update_endpoint]: The 'update_kwargs' argument must evaluate to a list of tuples.",
                 False
             ),
             (
                 "Endpoint 1",
                 "",
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),            
             (
                 "Endpoint 1",  
                 None,
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             (
                 "Endpoint 1",
                 123,
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             (
                 "Endpoint 1",
                 {},
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             (
                 "Endpoint 1",
                 [],
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             (
                 "Endpoint 1",
                 (),
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             (
                 "Endpoint 1",
                 True,
-                "[update_endpoint]: The 'update_values' argument must be a non-empty string and not None.",
+                "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
                 False
             ),
             # Test case: API update raises an exception
@@ -1310,7 +1310,7 @@ class TestCollectionCliConnectors:
         ]
     )
     @patch('moonshot.integrations.cli.common.connectors.api_update_endpoint')
-    def test_update_endpoint(self, mock_api_update_endpoint, capsys, endpoint, update_values, expected_log, to_be_called):
+    def test_update_endpoint(self, mock_api_update_endpoint, capsys, endpoint, update_kwargs, expected_log, to_be_called):
         if "error" in expected_log:
             mock_api_update_endpoint.side_effect = Exception(
                 "An error has occurred while updating the endpoint."
@@ -1321,7 +1321,7 @@ class TestCollectionCliConnectors:
 
         args = Namespace(
             endpoint = endpoint,
-            update_values = update_values
+            update_kwargs = update_kwargs
         )
 
         update_endpoint(args)
@@ -1331,7 +1331,7 @@ class TestCollectionCliConnectors:
 
         if to_be_called:
             mock_api_update_endpoint.assert_called_once_with(
-                args.endpoint, **dict(literal_eval(args.update_values))
+                args.endpoint, **dict(literal_eval(args.update_kwargs))
             )
         else:
             mock_api_update_endpoint.assert_not_called()    
