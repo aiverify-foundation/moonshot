@@ -34,6 +34,7 @@ class AttackModule:
 
     def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         self.id = am_id
+        self.req_and_config = self.get_attack_module_req_and_config()
         if am_arguments is not None:
             self.connector_ids = am_arguments.connector_ids
             self.prompt_templates = am_arguments.prompt_templates
@@ -45,7 +46,6 @@ class AttackModule:
             self.red_teaming_progress = am_arguments.red_teaming_progress
             self.cancel_event = am_arguments.cancel_event
             self.optional_params = am_arguments.optional_params
-            self.req_and_config = self.get_attack_module_req_and_config()
 
     @classmethod
     def load(
