@@ -37,7 +37,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: 'docs'
+          ref: ${{ inputs.docs_branch }}
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5
@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdocs build
 
-      - name: Upload artifact
+      - name: Upload docs artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./site
@@ -66,7 +66,8 @@ jobs:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
 
-    # Deploy to the github-pages environment (ensure main can deploy to pages)
+    # Deploy to the github-pages environment
+    # Ensure main branch can deploy to pages in the GitHub Pages Environment settings
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
