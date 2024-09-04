@@ -146,6 +146,6 @@ jobs:
             parse_junit \
             --title "Moonshot" \
             --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "1" \
+            --milestone-id "5" \
             --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
             -f "./test-results/junit-report.xml" 
