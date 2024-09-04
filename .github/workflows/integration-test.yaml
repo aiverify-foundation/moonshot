@@ -137,7 +137,6 @@ jobs:
         TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
       run: |
           cd moonshot-integration-testing/ui-integration-testing
-          ls test-results
           pip install trcli
           trcli -y \
             -h https://imdabtg.testrail.io/ \
@@ -147,7 +146,6 @@ jobs:
             parse_junit \
             --title "Moonshot" \
             --result-fields "os:Ubuntu 22.04" \
-            # --case-fields "refs:TEST-2" \
             --milestone-id "1" \
             --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
             -f "./test-results/junit-report.xml" 
