@@ -33,7 +33,7 @@ jobs:
   nightly-build:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     permissions:
       id-token: write
       contents: read
@@ -126,6 +126,7 @@ jobs:
           echo "Command status: $status"
 
       - name: Run smoke test
+        timeout-minutes: 30
         run: |
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
