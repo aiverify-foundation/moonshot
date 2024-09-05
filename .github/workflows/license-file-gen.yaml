@@ -27,7 +27,9 @@ on:
         default: 'main'
         type: string
 
-  pull_request:
+  push:
+    branches:
+      - ci-workflow-dev
 
 jobs:
   license-file-gen:
