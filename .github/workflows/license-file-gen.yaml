@@ -27,10 +27,6 @@ on:
         default: 'main'
         type: string
 
-  push:
-    branches:
-      - ci-workflow-dev
-
 jobs:
   license-file-gen:
     runs-on: ubuntu-latest
