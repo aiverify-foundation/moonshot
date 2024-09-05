@@ -1,0 +1,53 @@
+name: License File Generation
+
+on:
+  workflow_call:
+    inputs:
+      repo:
+        description: 'Repository name'
+        required: true
+        default: 'aiverify-foundation/moonshot'
+        type: string
+      branch:
+        description: 'Branch or tag'
+        required: true
+        default: 'main'
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Repository name'
+        required: true
+        default: 'aiverify-foundation/moonshot'
+        type: string
+      branch:
+        description: 'Branch or tag'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  license-file-gen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.branch }}
+          submodules: recursive
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate license file
+        run: |
+          pip install -r requirements.txt
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=${{ github.event.inputs.repo }} --detect.project.version.name=${{ github.event.inputs.branch }} --detect.source.path=. --detect.code.location.name="license_${{ github.event.inputs.branch }}" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.blackduck.scan.mode=RAPID
+          ls
+          cat ./*_Black_Duck_Notices_Report.txt
+
