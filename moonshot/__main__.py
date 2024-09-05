@@ -117,7 +117,17 @@ def download_nltk_resources() -> None:
 
 
 def moonshot_data_installation(unattended: bool, overwrite: bool) -> None:
-    # Code for moonshot-data installation
+    """
+    Install Moonshot Data from GitHub.
+
+    This function clones the Moonshot Data repository from GitHub, installs its requirements,
+    and sets up the necessary environment. If the target directory already exists, it handles
+    the situation based on the 'unattended' and 'overwrite' flags.
+
+    Args:
+        unattended (bool): If True, the function will not prompt the user for input.
+        overwrite (bool): If True, the existing directory will be removed before installation.
+    """
     logger.info("Installing Moonshot Data from GitHub")
     repo = "https://github.com/aiverify-foundation/moonshot-data.git"
     folder_name = repo.split("/")[-1].replace(".git", "")
@@ -168,7 +178,6 @@ def moonshot_data_installation(unattended: bool, overwrite: bool) -> None:
 
     # Change back to the base directory
     os.chdir("..")
-
 
 def check_node() -> bool:
     """
