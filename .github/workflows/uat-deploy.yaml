@@ -70,10 +70,6 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
 
-#  deploy-to-uat:
-#    needs:
-#      - publish-to-testpypi
-#    runs-on: ubuntu-latest
 
 
 
