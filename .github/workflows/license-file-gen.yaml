@@ -27,6 +27,8 @@ on:
         default: 'main'
         type: string
 
+  pull_request:
+
 jobs:
   license-file-gen:
     runs-on: ubuntu-latest
