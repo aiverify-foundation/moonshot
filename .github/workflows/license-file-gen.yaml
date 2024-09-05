@@ -46,37 +46,8 @@ jobs:
 
       - name: Generate license file
         run: |
-          set +e
           pip install -r requirements.txt
-          npm install
-          repo_name=$(echo "${{ github.event.inputs.repo }}" | awk -F'/' '{print $2}')
-          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) \
-            --blackduck.url=https://blackduck.aipo-imda.net/ \
-            --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} \
-            --detect.detector.search.depth=10 \
-            --detect.project.name=aiverify-${repo_name} \
-            --detect.project.version.name=${{ github.event.inputs.branch }} \
-            --detect.source.path=. \
-            --detect.code.location.name="aiverify-${repo_name}_${{ github.event.inputs.branch }}" \
-            --detect.excluded.directories=/tests \
-            --blackduck.trust.cert=true \
-            --detect.excluded.detector.types=POETRY \
-            --detect.blackduck.scan.mode=RAPID \
-            --detect.notices.report=true \
-            --detect.notices.report.path=.
-          set -e
-          ls -al
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=${{ github.event.inputs.repo }} --detect.project.version.name=${{ github.event.inputs.branch }} --detect.source.path=. --detect.code.location.name="license_${{ github.event.inputs.branch }}" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.blackduck.scan.mode=RAPID
+          ls
           cat ./*_Black_Duck_Notices_Report.txt
 
-#
-#      - name: Commit license file
-#        run: |
-#          set +e
-#          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt LICENSE-2.md
-#          git add LICENSE-2.md
-#          git config user.name "imda-btg"
-#          git config user.email "idma-btg@imda.gov.sg"
-#          git commit -m "update license file"
-#          git push
-#          set -e
-#
