@@ -48,6 +48,7 @@ jobs:
         run: |
           set +e
           pip install -r requirements.txt
+          npm install
           repo_name=$(echo "${{ github.event.inputs.repo }}" | awk -F'/' '{print $2}')
           bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-${repo_name} --detect.project.version.name=${{ github.event.inputs.branch }} --detect.source.path=. --detect.code.location.name="license_${{ github.event.inputs.branch }}" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.blackduck.scan.mode=RAPID
           set -e
