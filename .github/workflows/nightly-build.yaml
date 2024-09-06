@@ -153,7 +153,7 @@ jobs:
                 --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
                 --query "StandardOutputContent" \
                 --output text)
-              echo "SMOKE_TEST_STATUS=$output" >> $GITHUB_ENV
+              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
               echo "Smoke test output: $output"
               echo "Command status: $status"
               if [ "$status" == "Success" ]; then
@@ -167,11 +167,13 @@ jobs:
               attempts=$((attempts + 1))
             else
               echo "Unexpected command status: $status"
+              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
               exit 1
             fi
           done
       
           echo "Max attempts reached, exiting."
+          echo "SMOKE_TEST_STATUS=timeout" >> $GITHUB_ENV
           exit 1
 
       # Send slack notification
