@@ -1,19 +1,19 @@
 Developing GitHub Workflows
 ===========================
-These instructions are used to develop Github workflows in a non-main branch 
+Follow these instructions to develop Github workflows in a non-main branch 
 instead of in the main branch to avoid creating unwanted commit records to
 the main branch.
 
-Workflows created in a non-main branch can be only be run via CLI as follows:
+Workflows created in a non-main branch can only be run via CLI as follows:
 
 `gh workflow run <workflow-name> --ref <branch-name> -f <parameter-name>=<parameter-value>`
 
-For example, to run a workflow called License File Generation:
+For example, to run a workflow called License File Generation created in the ci-workflow-dev branch:
 
 `gh workflow run 'License File Generation' --ref ci-workflow-dev -f repo=aiverify-foundation/moonshot -f branch=ci-workflow-dev`
 
-Before you can run the workflow via CLI, it must first appear in the workflow
-list when you run the following command:
+To run the workflow via CLI, it must appear in the workflow list when you
+run the following command:
 
 `gh workflow list`
 
