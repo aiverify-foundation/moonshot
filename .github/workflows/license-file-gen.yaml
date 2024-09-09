@@ -65,7 +65,7 @@ jobs:
             --detect.notices.report=true \
             --detect.notices.report.path=.
           set -e
-          ls -l
+          ls -al
           cat ./*_Black_Duck_Notices_Report.txt
 
 #
