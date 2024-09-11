@@ -39,7 +39,7 @@ In this initial version, Moonshot can be used through several interfaces:
     # Activate the virtual environment
     source venv/bin/activate
     ```
-4. If you plan to install our Web UI, you will also need [Node.js verion 20.11.1 LTS](https://nodejs.org/en/blog/release/v20.11.1) and above
+4. If you plan to install our Web UI, you will also need [Node.js version 20.11.1 LTS](https://nodejs.org/en/blog/release/v20.11.1) and above
 </br>
 
 ### ⬇️ Installation
