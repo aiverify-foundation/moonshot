@@ -48,10 +48,10 @@ def api_get_all_datasets_name() -> list[str]:
 
 
 def api_create_datasets(
-    name: str, description: str, reference: str, license: str, method: str, **kwargs
+    name: str, description: str, reference: str, license: str, examples: list
 ) -> str:
     """
-    This function creates a new dataset.
+    Creates a new dataset with the provided details.
 
     This function takes the name, description, reference, and license for a new dataset as input. It then creates a new
     DatasetArguments object with these details and an empty id. The id is left empty because it will be generated
@@ -63,8 +63,7 @@ def api_create_datasets(
         description (str): A brief description of the new dataset.
         reference (str): A reference link for the new dataset.
         license (str): The license of the new dataset.
-        method (str): The method to create new dataset. (csv/hf)
-        kwargs: Additional keyword arguments for the Dataset's create method.
+        examples (list): The examples for the new dataset.
 
     Returns:
         str: The ID of the newly created dataset.
@@ -75,7 +74,73 @@ def api_create_datasets(
         description=description,
         reference=reference,
         license=license,
-        examples=None,
+        examples=examples,
     )
 
-    return Dataset.create(ds_args, method, **kwargs)
+    return Dataset.create(ds_args)
+
+
+def api_download_dataset(
+    name: str, description: str, reference: str, license: str, **kwargs
+) -> str:
+    """
+    Downloads a dataset from Hugging Face and creates a new dataset with the provided details.
+
+    This function takes the name, description, reference, and license for a new dataset as input, along with additional
+    keyword arguments for downloading the dataset from Hugging Face. It then creates a new DatasetArguments object with
+    these details and an empty id. The id is left empty because it will be generated from the name during the creation
+    process. The function then calls the Dataset's create method to create the new dataset.
+
+    Args:
+        name (str): The name of the new dataset.
+        description (str): A brief description of the new dataset.
+        reference (str): A reference link for the new dataset.
+        license (str): The license of the new dataset.
+        kwargs: Additional keyword arguments for downloading the dataset from Hugging Face.
+
+    Returns:
+        str: The ID of the newly created dataset.
+    """
+    examples = Dataset.download_hf(**kwargs)
+    ds_args = DatasetArguments(
+        id="",
+        name=name,
+        description=description,
+        reference=reference,
+        license=license,
+        examples=examples,
+    )
+    return Dataset.create(ds_args)
+
+
+def api_convert_dataset(
+    name: str, description: str, reference: str, license: str, csv_file_path: str
+) -> str:
+    """
+    Converts a CSV file to a dataset and creates a new dataset with the provided details.
+
+    This function takes the name, description, reference, and license for a new dataset as input, along with the file
+    path to a CSV file. It then creates a new DatasetArguments object with these details and an empty id. The id is left
+    empty because it will be generated from the name during the creation process. The function then calls the Dataset's
+    create method to create the new dataset.
+
+    Args:
+        name (str): The name of the new dataset.
+        description (str): A brief description of the new dataset.
+        reference (str): A reference link for the new dataset.
+        license (str): The license of the new dataset.
+        csv_file_path (str): The file path to the CSV file.
+
+    Returns:
+        str: The ID of the newly created dataset.
+    """
+    examples = Dataset.convert_data(csv_file_path)
+    ds_args = DatasetArguments(
+        id="",
+        name=name,
+        description=description,
+        reference=reference,
+        license=license,
+        examples=examples,
+    )
+    return Dataset.create(ds_args)
