@@ -1,8 +1,8 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 
 from ..container import Container
-from ..schemas.dataset_create_dto import DatasetCreateDTO
+from ..schemas.dataset_create_dto import CSV_Dataset_DTO, HF_Dataset_DTO
 from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.dataset_service import DatasetService
 from ..services.utils.exceptions_handler import ServiceException
@@ -10,27 +10,22 @@ from ..services.utils.exceptions_handler import ServiceException
 router = APIRouter(tags=["Datasets"])
 
 
-@router.post("/api/v1/datasets")
+@router.post("/api/v1/datasets/csv")
 @inject
-def create_dataset(
-    dataset_data: DatasetCreateDTO,
-    method: str = Query(
-        ...,
-        description="The method to use for creating the dataset. Supported methods are 'hf' and 'csv'.",
-    ),
+def convert_dataset(
+    dataset_data: CSV_Dataset_DTO,
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
 ) -> str:
     """
-    Create a new dataset using the specified method.
+    Convert a CSV dataset to the desired format.
 
     Args:
-        dataset_data (DatasetCreateDTO): The data required to create the dataset.
-        method (str): The method to use for creating the dataset. Supported methods are "hf" and "csv".
-        dataset_service (DatasetService, optional): The service responsible for creating the dataset.
+        dataset_data (CSV_Dataset_DTO): The data required to convert the dataset.
+        dataset_service (DatasetService, optional): The service responsible for converting the dataset.
         Defaults to Depends(Provide[Container.dataset_service]).
 
     Returns:
-        dict: A message indicating the dataset was created successfully.
+        str: The path to the newly created dataset.
 
     Raises:
         HTTPException: An error with status code 404 if the dataset file is not found.
@@ -38,19 +33,58 @@ def create_dataset(
                        An error with status code 500 for any other server-side error.
     """
     try:
-        return dataset_service.create_dataset(dataset_data, method)
+        return dataset_service.convert_dataset(dataset_data)
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(
-                status_code=404, detail=f"Failed to retrieve datasets: {e.msg}"
+                status_code=404, detail=f"Failed to convert dataset: {e.msg}"
             )
         elif e.error_code == "ValidationError":
             raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve datasets: {e.msg}"
+                status_code=400, detail=f"Failed to convert dataset: {e.msg}"
             )
         else:
             raise HTTPException(
-                status_code=500, detail=f"Failed to retrieve datasets: {e.msg}"
+                status_code=500, detail=f"Failed to convert dataset: {e.msg}"
+            )
+
+
+@router.post("/api/v1/datasets/hf")
+@inject
+def download_dataset(
+    dataset_data: HF_Dataset_DTO,
+    dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
+) -> str:
+    """
+    Download a dataset from Hugging Face using the provided dataset data.
+
+    Args:
+        dataset_data (HF_Dataset_DTO): The data required to download the dataset.
+        dataset_service (DatasetService, optional): The service responsible for downloading the dataset.
+        Defaults to Depends(Provide[Container.dataset_service]).
+
+    Returns:
+        str: The path to the newly downloaded dataset.
+
+    Raises:
+        HTTPException: An error with status code 404 if the dataset file is not found.
+                       An error with status code 400 if there is a validation error.
+                       An error with status code 500 for any other server-side error.
+    """
+    try:
+        return dataset_service.download_dataset(dataset_data)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to download dataset: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to download dataset: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to download dataset: {e.msg}"
             )
 
 
