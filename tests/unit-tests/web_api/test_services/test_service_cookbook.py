@@ -17,7 +17,8 @@ MOCK_COOKBOOKS = [
             "recipe-2",
             "recipe-3"
         ],
-        "total_prompt_in_cookbook": None
+        "total_prompt_in_cookbook": None,
+        "endpoint_required": None
     },
     {
         "id": "test-cookbook-2",
@@ -28,7 +29,8 @@ MOCK_COOKBOOKS = [
             "recipe-2",
             "recipe-3"
         ],
-        "total_prompt_in_cookbook": None
+        "total_prompt_in_cookbook": None,
+        "endpoint_required": None
     }
 ]
 MOCK_COOKBOOK_NAMES = ["test-cookbook-1","test-cookbook-2"]
