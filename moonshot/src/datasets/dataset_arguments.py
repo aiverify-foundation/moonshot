@@ -1,5 +1,6 @@
+from typing import Iterator
+
 from pydantic import BaseModel
-from pyparsing import Iterator
 
 
 class DatasetArguments(BaseModel):
