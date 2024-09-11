@@ -509,3 +509,17 @@ ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION = (
 ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION = (
     "There is no active session. Activate a session to bookmark a prompt."
 )
+
+
+# ------------------------------------------------------------------------------
+# Redteaming - list_attack_modules
+# ------------------------------------------------------------------------------
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_FIND_VALIDATION = (
+    "Invalid type for parameter: find. Expecting type str."
+)
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION = (
+    "Invalid type for parameter: pagination. Expecting type str."
+)
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION_1 = (
+    "The 'pagination' argument must be a tuple of two integers."
+)
