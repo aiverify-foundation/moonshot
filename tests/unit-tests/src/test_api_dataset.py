@@ -10,7 +10,8 @@ from moonshot.api import (
     api_get_all_datasets,
     api_get_all_datasets_name,
     api_set_environment_variables,
-    api_create_datasets
+    api_download_dataset,
+    api_convert_dataset,
 )
 
 
@@ -39,8 +40,8 @@ class TestCollectionApiDataset:
             "tests/unit-tests/src/data/datasets/arc-easy.json",
             "tests/unit-tests/src/data/datasets/cache.json",
             "tests/unit-tests/src/data/datasets/datasets_config.json",
-            "tests/unit-tests/src/data/datasets/test-dataset-1.json",
-            "tests/unit-tests/src/data/datasets/test-dataset-2.json",
+            "tests/unit-tests/src/data/datasets/test-hf-dataset.json",
+            "tests/unit-tests/src/data/datasets/test-csv-dataset.json",
         ]
         for dataset in datasets:
             if os.path.exists(dataset):
@@ -198,41 +199,26 @@ class TestCollectionApiDataset:
                 ), "An unexpected exception type was specified in the test parameters."
 
     # ------------------------------------------------------------------------------
-    # Test api_create_datasets functionality
+    # Test test_api_convert_dataset functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "dataset_details, expected_result",
         [
-            # Valid cases
+            # Valid cases for api_convert_dataset
             (
                 {
-                    "name": "Test Dataset 1",
+                    "name": "Test CSV Dataset",
                     "description": "Dataset convert from csv",
                     "reference": "www.reference.com",
                     "license": "LICENSE",
                     "method": "csv",
                     "csv_file_path": "tests/unit-tests/common/samples/sample-dataset.csv"
                 },
-                "tests/unit-tests/src/data/datasets/test-dataset-1.json"
-            ),
-            (
-                {
-                    "name": "Test Dataset 2",
-                    "description": "Dataset convert from hf",
-                    "reference": "www.reference.com",
-                    "license": "NORMAN LICENSE",
-                    "method": "hf",
-                    "dataset_name": "cais/mmlu",
-                    "dataset_config": "college_biology",
-                    "split": "test",
-                    "input_col": ["question", "choices"],
-                    "target_col": "answer"
-                },
-                "tests/unit-tests/src/data/datasets/test-dataset-2.json"
-            ),
+                "tests/unit-tests/src/data/datasets/test-csv-dataset.json"
+            )
         ],
     )
-    def test_api_create_datasets(self, dataset_details, expected_result):
+    def test_api_convert_dataset(self, dataset_details, expected_result):
         """
         Test the creation of datasets via the API.
 
@@ -244,7 +230,57 @@ class TestCollectionApiDataset:
             dataset_details: A dictionary containing the details of the dataset to create.
             expected_result: The expected result from the api_create_datasets call.
         """
+        # Extract the common arguments
+        name = dataset_details.pop('name')
+        description = dataset_details.pop('description')
+        reference = dataset_details.pop('reference')
+        license = dataset_details.pop('license')
+        csv_file_path= dataset_details.pop('csv_file_path')
+
         # Call the api_create_datasets function with unpacked arguments
-        result = api_create_datasets(**dataset_details)
+        result = api_convert_dataset(name, description, reference, license, csv_file_path)
+        # Assert that the result matches the expected result
+        assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."
+
+    @pytest.mark.parametrize(
+        "dataset_details, expected_result",
+        [
+            # Valid cases for api_download_dataset
+            (
+                {
+                    'name': 'Test HF Dataset',
+                    'description': 'Dataset convert from hf',
+                    'reference': 'www.reference.com',
+                    'license': 'NORMAN LICENSE',
+                    'dataset_name': 'cais/mmlu',
+                    'dataset_config': 'college_biology',
+                    'split': 'dev',
+                    'input_col': ['question', 'choices'],
+                    'target_col': 'answer'
+                },
+                "tests/unit-tests/src/data/datasets/test-hf-dataset.json"
+            )
+        ],
+    )
+    def test_api_download_dataset(self, dataset_details, expected_result):
+        """
+        Test the downloading of datasets via the API.
+
+        This test function simulates the downloading of datasets by calling the
+        api_download_dataset function with various dataset details. It then verifies that
+        the output matches the expected result.
+
+        Args:
+            dataset_details: A dictionary containing the details of the dataset to download.
+            expected_result: The expected result from the api_download_dataset call.
+        """
+        # Extract the common arguments
+        name = dataset_details.pop('name')
+        description = dataset_details.pop('description')
+        reference = dataset_details.pop('reference')
+        license = dataset_details.pop('license')
+
+        # Call the api_download_dataset function with unpacked arguments
+        result = api_download_dataset(name, description, reference, license, **dataset_details)
         # Assert that the result matches the expected result
         assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."
