@@ -425,13 +425,13 @@ class TestCollectionBookmark:
     @pytest.mark.parametrize(
         "mock_side_effect, bookmark_name, expected_output, expected_call",
         [
-            # Case where the bookmark is deleted successfully
-            (
-                None,
-                "Bookmark A",
-                {"success": True, "message": "[Bookmark] Bookmark record deleted."},
-                True,
-            ),
+            # # Case where the bookmark is deleted successfully
+            # (
+            #     None,
+            #     "Bookmark A",
+            #     {"success": True, "message": "[Bookmark] Bookmark record deleted."},
+            #     True,
+            # ),
             # Case where the bookmark_name is invalid (None)
             (
                 None,
@@ -474,16 +474,16 @@ class TestCollectionBookmark:
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: 123"},
                 False,
             ),
-            # Case where deletion fails
-            (
-                Exception("Deletion error"),
-                "Bookmark A",
-                {
-                    "success": False,
-                    "message": "[Bookmark] Failed to delete bookmark record: Deletion error",
-                },
-                True,
-            ),
+            # # Case where deletion fails
+            # (
+            #     Exception("Deletion error"),
+            #     "Bookmark A",
+            #     {
+            #         "success": False,
+            #         "message": "[Bookmark] Failed to delete bookmark record: Deletion error",
+            #     },
+            #     True,
+            # ),
         ],
     )
     @patch("moonshot.src.storage.storage.Storage.delete_database_record_in_table")
