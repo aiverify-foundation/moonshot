@@ -170,9 +170,15 @@ def _display_metrics(metrics_list: list):
     table.add_column("No.", width=2)
     table.add_column("Metric", justify="left", width=78)
     for idx, metric in enumerate(metrics_list, 1):
-        id, name, description, *other_args = metric.values()
+        id, name, description, endpoints, configurations, *other_args = metric.values()
         idx = metric.get("idx", idx)
-        result_info = f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        result_info = (
+            f"[red]Id: {id}[/red]\n\n"
+            f"[blue]Name: {name}[/blue]\n\n"
+            f"[blue]Description: {description}[/blue]\n\n"
+            f"[blue]Endpoints: {endpoints}[/blue]\n\n"
+            f"[blue]Configurations:{configurations}[/blue]\n\n"
+        )
 
         table.add_section()
         table.add_row(str(idx), result_info)
