@@ -34,6 +34,7 @@ class AttackModule:
 
     def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         self.id = am_id
+        self.req_and_config = self.get_attack_module_req_and_config()
         if am_arguments is not None:
             self.connector_ids = am_arguments.connector_ids
             self.prompt_templates = am_arguments.prompt_templates
@@ -528,6 +529,45 @@ class AttackModule:
             cache_updated = True
 
         return am_metadata, cache_updated
+
+    def get_attack_module_req_and_config(self) -> dict:
+        """
+        Retrieves the configuration for a specific attack module by its identifier.
+
+        Returns:
+            dict: The attack module configuration as a dictionary. Returns an empty dict if the configuration
+            is not found.
+
+        Raises:
+            Exception: If reading the attack module configuration fails or if the configuration cannot be created.
+        """
+        attack_module_config = "attack_modules_config"
+        try:
+            obj_results = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+            )
+            return obj_results.get(self.id, {})
+        except Exception as e:
+            logger.warning(
+                f"[AttackModule] Failed to read attack module configuration: {str(e)}"
+            )
+            logger.info("Attempting to create empty attack module configuration...")
+            try:
+                Storage.create_object(
+                    obj_type=EnvVariables.ATTACK_MODULES.name,
+                    obj_id=attack_module_config,
+                    obj_info={},
+                    obj_extension="json",
+                )
+                # After creation, attempt to read it again to ensure it was created successfully
+                obj_results = Storage.read_object(
+                    EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+                )
+                return obj_results.get(self.id, {})
+            except Exception as e:
+                raise Exception(
+                    f"[AttackModule] Failed to retrieve attack modules configuration: {str(e)}"
+                )
 
     @staticmethod
     def delete(am_id: str) -> bool:

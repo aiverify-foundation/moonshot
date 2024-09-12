@@ -65,7 +65,7 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
         touch .env
-        echo "${{ vars.ENVIRONMENT_VARS }}" >> .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
     - name: Checkout Moonshot Data (Pull Request Review)
       if: github.event_name == 'pull_request_review'
@@ -118,15 +118,34 @@ jobs:
       uses: actions/checkout@v4
       with:
           repository: aiverify-foundation/moonshot-integration-testing
-          path: moonshot-smoke-testing
+          path: moonshot-integration-testing
 
     - name: Run Integration Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
-        ADDITIONAL_PARAMETERS: ${{ vars.ADDITIONAL_PARAMETERS }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
       run: |
-         cd moonshot-smoke-testing/ui-integration-testing
+         cd moonshot-integration-testing/ui-integration-testing
          npm ci
          npx playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test
+
+    - name: TestRail CLI upload results
+      env:
+        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
+      run: |
+          cd moonshot-integration-testing/ui-integration-testing
+          pip install trcli
+          trcli -y \
+            -h https://imdabtg.testrail.io/ \
+            --project "Moonshot" \
+            -u $TESTRAIL_USERNAME \
+            -p $TESTRAIL_PASSWORD \
+            parse_junit \
+            --title "Moonshot" \
+            --result-fields "os:Ubuntu 22.04" \
+            --milestone-id "5" \
+            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            -f "./test-results/junit-report.xml" 

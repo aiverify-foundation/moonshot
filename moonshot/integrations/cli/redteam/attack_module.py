@@ -5,6 +5,11 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_delete_attack_module, api_get_all_attack_module_metadata
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_RED_TEAMING_LIST_ATTACK_MODULES_FIND_VALIDATION,
+    ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION,
+    ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION_1,
+)
 from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
@@ -28,6 +33,31 @@ def list_attack_modules(args) -> list | None:
     try:
         print("Listing attack modules may take a while...")
         attack_module_metadata_list = api_get_all_attack_module_metadata()
+
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_RED_TEAMING_LIST_ATTACK_MODULES_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(
+                    ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION
+                )
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION_1
+                )
+
         keyword = args.find.lower() if args.find else ""
         pagination = literal_eval(args.pagination) if args.pagination else ()
 
@@ -41,7 +71,6 @@ def list_attack_modules(args) -> list | None:
 
         console.print("[red]There are no attack modules found.[/red]")
         return None
-
     except Exception as e:
         print(f"[list_attack_modules]: {str(e)}")
 
