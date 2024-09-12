@@ -2,7 +2,7 @@
 
 ![Moonshot Logo](https://github.com/aiverify-foundation/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
 
-**Version 0.4.3**
+**Version 0.4.6**
 
 A simple and modular tool to evaluate any LLM application.
 
@@ -39,7 +39,7 @@ In this initial version, Moonshot can be used through several interfaces:
     # Activate the virtual environment
     source venv/bin/activate
     ```
-4. If you plan to install our Web UI, you will also need [Node.js verion 20.11.1 LTS](https://nodejs.org/en/blog/release/v20.11.1) and above
+4. If you plan to install our Web UI, you will also need [Node.js version 20.11.1 LTS](https://nodejs.org/en/blog/release/v20.11.1) and above
 </br>
 
 ### ⬇️ Installation
@@ -55,7 +55,7 @@ python -m moonshot -i moonshot-data -i moonshot-ui
 ```
 Check out our [Installation Guide](https://aiverify-foundation.github.io/moonshot/getting_started/quick_install/) for a more details.
 
-If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/common_issues/).
+If you are having installation issues, see the [Troubleshooting Guide](https://aiverify-foundation.github.io/moonshot/faq/).
 <details>
 <summary><b>Other installation options</b></summary>
 Here's a summary of other installation commands available:

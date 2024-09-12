@@ -1,5 +1,5 @@
 from .... import api as moonshot_api
-from ..schemas.dataset_create_dto import DatasetCreateDTO
+from ..schemas.dataset_create_dto import CSV_Dataset_DTO, HF_Dataset_DTO
 from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
@@ -8,24 +8,49 @@ from .utils.file_manager import copy_file
 
 class DatasetService(BaseService):
     @exception_handler
-    def create_dataset(self, dataset_data: DatasetCreateDTO, method: str) -> str:
+    def convert_dataset(self, dataset_data: CSV_Dataset_DTO) -> str:
         """
-        Create a dataset using the specified method.
+        Convert a dataset using the provided dataset data.
 
         Args:
-            dataset_data (DatasetCreateDTO): The data required to create the dataset.
-            method (str): The method to use for creating the dataset.
-                          Supported methods are "hf" and "csv".
+            dataset_data (CSV_Dataset_DTO): The data required to convert the dataset.
+
+        Returns:
+            str: The path to the newly created dataset.
 
         Raises:
-            Exception: If an error occurs during dataset creation.
+            Exception: If an error occurs during dataset conversion.
         """
-        new_ds_path = moonshot_api.api_create_datasets(
+
+        new_ds_path = moonshot_api.api_convert_dataset(
             name=dataset_data.name,
             description=dataset_data.description,
             reference=dataset_data.reference,
             license=dataset_data.license,
-            method=method,
+            csv_file_path=dataset_data.csv_file_path,
+        )
+        return copy_file(new_ds_path)
+
+    @exception_handler
+    def download_dataset(self, dataset_data: HF_Dataset_DTO) -> str:
+        """
+        Download a dataset using the provided dataset data.
+
+        Args:
+            dataset_data (HF_Dataset_DTO): The data required to download the dataset.
+
+        Returns:
+            str: The path to the newly downloaded dataset.
+
+        Raises:
+            Exception: If an error occurs during dataset download.
+        """
+
+        new_ds_path = moonshot_api.api_download_dataset(
+            name=dataset_data.name,
+            description=dataset_data.description,
+            reference=dataset_data.reference,
+            license=dataset_data.license,
             **dataset_data.params,
         )
         return copy_file(new_ds_path)

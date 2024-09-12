@@ -1,0 +1,183 @@
+# Pre-build Checks (for moonshot)
+# 1. Unit tests with code coverage (pytest)
+# 2. Code quality analysis (flake8)
+# 3. Dependency analysis (vulnerabilities)
+# 4. Dependency analysis (undesirable licenses)
+# 5. Deploy reports generated from the above to GitHub Pages
+
+name: Pre-Build Checks
+
+on:
+  # Runs when a pull request to main is being assigned
+  pull_request:
+    types: [ assigned, synchronize ]
+    branches:
+      - 'dev_main'
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'dev_main'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+
+  pre-build-checks:
+    # Run only when PR is assigned, even on subsequent commits (i.e. synchronize)
+    if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+
+      - name: Set branch variable (pull_request)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "MS_BRANCH=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_ENV"
+          echo "MS_DATA_BRANCH=dev_main" >> "$GITHUB_ENV"
+          echo "PR_NUM=#${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
+
+      - name: Set branch variable (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "MS_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+          echo "MS_DATA_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+          echo "PR_NUM=#0" >> "$GITHUB_ENV"
+
+      # Checkout moonshot code
+      - name: Checkout code (moonshot)
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.MS_BRANCH }}
+          submodules: recursive
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Checkout moonshot-data code
+      - name: Checkout code (moonshot-data)
+        uses: actions/checkout@v3
+        with:
+          repository: aiverify-foundation/moonshot-data
+          ref: ${{ env.MS_DATA_BRANCH }}
+          submodules: recursive
+          path: moonshot-data
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r moonshot-data/requirements.txt
+          pip install pytest pytest-mock pytest-html pytest-json pytest-cov coverage httpx anybadge
+          pip install flake8 flake8-html
+
+      # Setup .env file
+      - name: Setup env file
+        run: |
+          echo "# For Data
+          ATTACK_MODULES=\"./moonshot-data/attack-modules\"
+          BOOKMARKS=\"./moonshot-data/generated-outputs/bookmarks\"
+          CONNECTORS=\"./moonshot-data/connectors\"
+          CONNECTORS_ENDPOINTS=\"./moonshot-data/connectors-endpoints\"
+          CONTEXT_STRATEGY=\"./moonshot-data/context-strategy\"
+          COOKBOOKS=\"./moonshot-data/cookbooks\"
+          DATABASES=\"./moonshot-data/generated-outputs/databases\"
+          DATABASES_MODULES=\"./moonshot-data/databases-modules\"
+          DATASETS=\"./moonshot-data/datasets\"
+          IO_MODULES=\"./moonshot-data/io-modules\"
+          METRICS=\"./moonshot-data/metrics\"
+          PROMPT_TEMPLATES=\"./moonshot-data/prompt-templates\"
+          RECIPES=\"./moonshot-data/recipes\"
+          RESULTS=\"./moonshot-data/generated-outputs/results\"
+          RESULTS_MODULES=\"./moonshot-data/results-modules\"
+          RUNNERS=\"./moonshot-data/generated-outputs/runners\"
+          RUNNERS_MODULES=\"./moonshot-data/runners-modules\"
+          TOKENIZERS_PARALLELISM=false
+          
+          # For Web API
+          HOST_ADDRESS=127.0.0.1
+          HOST_PORT=5000" > .env
+          cat .env
+
+      # Unit tests & coverage
+      - name: Unit tests with coverage
+        id: unit_tests
+        if: ${{ ! cancelled() }}
+        timeout-minutes: 30
+        run: |
+          set +e
+          bash ci/run-test.sh
+          source ci/gen_pre_build_summ.sh test
+          test_status=$?
+          source ci/gen_pre_build_summ.sh coverage
+          coverage_status=$?
+          echo "UNIT_TESTS_STATUS=$UNITTEST_SUMMARY" >> $GITHUB_ENV
+          echo "CODE_COVERAGE_STATUS=$COVERAGE_SUMMARY" >> $GITHUB_ENV
+          set -e
+          if [ $test_status -ne 0 ] || [ $coverage_status -ne 0 ]; then
+            exit 1
+          fi
+
+      # Code quality analysis (flake8)
+      - name: Code quality analysis (flake8)
+        id: code_quality
+        if: ${{ ! cancelled() }}
+        run: |
+          set +e
+          bash ci/run-flake8.sh
+          source ci/gen_pre_build_summ.sh lint
+          lint_status=$?
+          echo "CODE_QUALITY_STATUS=$LINT_SUMMARY" >> $GITHUB_ENV
+          set -e
+          exit $lint_status
+
+      # pip-audit
+      - name: Dependency analysis (vulnerabilities & licenses)
+        id: dependency_analysis
+        if: ${{ ! cancelled() }}
+        run: |
+          set +e
+          bash ci/run-pip-audit.sh
+          source ci/gen_pre_build_summ.sh dependency
+          dep_status=$?
+          source ci/gen_pre_build_summ.sh license
+          lic_status=$?
+          echo "DEPENDENCY_STATUS=$DEPENDENCY_SUMMARY" >> $GITHUB_ENV
+          echo "LICENSE_STATUS=$LICENSE_SUMMARY" >> $GITHUB_ENV
+          set -e
+          if [ $dep_status -ne 0 ] || [ $lic_status -ne 0 ]; then
+            exit 1
+          fi
+
+#      - name: Capture step statuses
+#        if: ${{ ! cancelled() }}
+#        run: |
+#          echo "UNIT_TESTS_STATUS=${{ steps.unit_tests.outcome }}" >> $GITHUB_ENV
+#          echo "CODE_QUALITY_STATUS=${{ steps.code_quality.outcome }}" >> $GITHUB_ENV
+#          echo "DEPENDENCY_ANALYSIS_STATUS=${{ steps.dependency_analysis.outcome }}" >> $GITHUB_ENV
+
+      # Send slack notification
+      - name: Send slack notification
+        if: ${{ ! cancelled() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "workflow": "${{ github.repository }} | ${{ github.workflow }} | ${{ env.PR_NUM }}",
+              "status": "${{ job.status }}",
+              "details": "${{ env.UNIT_TESTS_STATUS }} | ${{ env.CODE_COVERAGE_STATUS }} | ${{ env.CODE_QUALITY_STATUS }} | ${{ env.DEPENDENCY_STATUS }} | ${{ env.LICENSE_STATUS }}",
+              "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

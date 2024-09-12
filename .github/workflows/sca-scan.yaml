@@ -1,0 +1,111 @@
+name: Software Composition Analysis
+
+# Runs when a pull request review is being submitted
+on: 
+  pull_request:
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'main'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  software-composition-analysis:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+
+    - name: Checkout Code (Pull_Request)
+      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v4
+      with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          submodules: recursive
+
+    - name: Checkout Code (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          ref: ${{ inputs.branch_to_test }}
+
+    - name: Set Branch Variable (Pull_Request)
+      if: github.event_name == 'pull_request'
+      run: |
+          echo "BRANCH=branch" >> "$GITHUB_ENV"
+
+    - name: Set Branch Variable (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+          echo "BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install & Scan MOONSHOT (Pull_Request)
+      if: github.event_name == 'pull_request'
+      run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.blackduck.scan.mode=RAPID
+          cd ../
+
+    - name: Install & Scan MOONSHOT (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.notices.report=true --detect.notices.report.path=.
+
+    - name: Configure GIT (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+          git config --global user.email "${{ github.actor }}"
+          git config --global user.name "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      shell: bash
+
+    - name: Switch to branch (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+          git checkout -B notices
+      shell: bash
+
+    - name: Commit Notice File (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+          git add .
+          git commit -m "Update Notices"
+          git push -f -u origin HEAD
+      shell: bash
+
+    - name: Create PR (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          gh pr create --title "Update License for Moonshot" --body "This PR updates adds License File for Moonshot" --base main --head notices
+      shell: bash
+
+    - name: Merge PR (Workflow_Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          pr_number=$(gh pr list --state open --limit 1 --json number --jq '.[0].number')
+          gh pr merge $pr_number --merge --admin
+      shell: bash

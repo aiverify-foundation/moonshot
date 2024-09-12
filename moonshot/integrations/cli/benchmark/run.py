@@ -5,6 +5,12 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import api_get_all_run
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_LIST_RUNS_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_RUNS_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_RUNS_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_RUN_RUNNER_ID_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import (
     display_view_list_format,
     display_view_str_format,
@@ -22,23 +28,41 @@ def list_runs(args) -> list | None:
     List all runs.
 
     This function retrieves all available runs by calling the api_get_all_run function from the
-    moonshot.api module. It then calls the _display_runs function to present the retrieved run information
-    in a user-friendly format on the command line interface. If an exception occurs during the retrieval
-    or display process, it prints an error message.
+    moonshot.api module. It then filters the runs based on the provided keyword and pagination arguments.
+    If there are no runs, it prints a message indicating that no runs were found.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find run(s) with a keyword.
-        pagination (str): Optional field to paginate runs.
+        args (argparse.Namespace): The arguments provided to the command line interface.
+            find (str): Optional field to find run(s) with a keyword.
+            pagination (str): Optional field to paginate runs.
 
     Returns:
-        list | None: A list of Run or None if there is no result.
+        list | None: A list of runs or None if there are no runs.
     """
 
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_RUNS_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_RUNS_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(ERROR_BENCHMARK_LIST_RUNS_PAGINATION_VALIDATION_1)
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_RUNS_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         runner_run_info = api_get_all_run()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if runner_run_info:
             filtered_runs_list = filter_data(runner_run_info, keyword, pagination)
@@ -51,6 +75,7 @@ def list_runs(args) -> list | None:
 
     except Exception as e:
         print(f"[list_runs]: {str(e)}")
+        return None
 
 
 def view_run(args) -> None:
@@ -62,13 +87,20 @@ def view_run(args) -> None:
     user-friendly format.
 
     Args:
-        args: A namespace object from argparse. It should have the following attribute:
-            runner (str): The identifier of the runner whose runs are to be viewed.
+        args (argparse.Namespace): The arguments provided to the command line interface.
+            runner_id (str): The identifier of the runner whose runs are to be viewed.
 
     Returns:
         None
     """
     try:
+        if (
+            not isinstance(args.runner_id, str)
+            or not args.runner_id
+            or args.runner_id is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_VIEW_RUN_RUNNER_ID_VALIDATION)
+
         runner_run_info = api_get_all_run(args.runner_id)
         _display_runs(runner_run_info)
     except Exception as e:
@@ -151,7 +183,7 @@ def _display_runs(runs_list: list):
 # ------------------------------------------------------------------------------
 # View run arguments
 view_run_args = cmd2.Cmd2ArgumentParser(
-    description="View a runner runs.",
+    description="View a runner's runs.",
     epilog="Example:\n view_run my-new-cookbook-runner",
 )
 view_run_args.add_argument("runner_id", type=str, help="Name of the runner")
