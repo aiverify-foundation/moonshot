@@ -11,6 +11,7 @@ from moonshot.src.messages_constants import (
     BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR,
     BOOKMARK_DELETE_ALL_BOOKMARK_ERROR,
     BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS,
+    BOOKMARK_DELETE_BOOKMARK_FAIL,
     BOOKMARK_DELETE_BOOKMARK_ERROR,
     BOOKMARK_DELETE_BOOKMARK_ERROR_1,
     BOOKMARK_DELETE_BOOKMARK_SUCCESS,
@@ -209,15 +210,21 @@ class Bookmark:
         """
         if isinstance(bookmark_name, str) and bookmark_name:
             try:
-                sql_delete_bookmark_record = textwrap.dedent(
-                    f"""
-                    DELETE FROM bookmark WHERE name = '{bookmark_name}';
-                """
-                )
-                Storage.delete_database_record_in_table(
-                    self.db_instance, sql_delete_bookmark_record
-                )
-                return {"success": True, "message": BOOKMARK_DELETE_BOOKMARK_SUCCESS}
+
+                bookmark_info = Storage.read_database_record(
+                self.db_instance, (bookmark_name,), Bookmark.sql_select_bookmark_record)
+                if bookmark_info is not None:
+                    sql_delete_bookmark_record = textwrap.dedent(
+                        f"""
+                        DELETE FROM bookmark WHERE name = '{bookmark_name}';
+                    """
+                    )
+                    Storage.delete_database_record_in_table(
+                        self.db_instance, sql_delete_bookmark_record
+                    )
+                    return {"success": True, "message": BOOKMARK_DELETE_BOOKMARK_SUCCESS}
+                else:
+                    return {"success": False, "message": BOOKMARK_DELETE_BOOKMARK_FAIL}
             except Exception as e:
                 return {
                     "success": False,

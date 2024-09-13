@@ -982,6 +982,14 @@ class TestCollectionApiBookmark:
                     "message": "[Bookmark] Bookmark record deleted.",
                 },
             ),
+            # Missing bookmark
+            (
+                "Invalid bookmark",
+                {
+                    "success": False,
+                    "message": "[Bookmark] Bookmark record not found. Unable to delete."
+                },
+            )
         ],
     )
     def test_api_delete_bookmark(self, bookmark_name, expected_result):
