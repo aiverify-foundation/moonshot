@@ -10,6 +10,7 @@ from typing import Callable
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.connectors.connector_response import ConnectorResponse
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
@@ -168,9 +169,9 @@ class Connector:
         return wrapper
 
     @abstractmethod
-    async def get_response(self, prompt: str) -> str:
+    async def get_response(self, prompt: str) -> ConnectorResponse:
         """
-        Abstract method to be implemented by subclasses to get a response from the connector.
+        Abstract method to be implemented by subclasses to obtain a response from the connector.
 
         This method should asynchronously send a prompt to the connector's API and return the response.
 
@@ -178,7 +179,8 @@ class Connector:
             prompt (str): The input prompt to be sent to the connector.
 
         Returns:
-            str: The response received from the connector.
+            ConnectorResponse: An instance containing the response received from the connector and any
+            additional metadata.
         """
         pass
 
@@ -277,7 +279,7 @@ class Connector:
         object, which is used to generate the prediction. The method also optionally takes a `prompt_callback` function,
         which is called after the prediction is generated.
 
-        The method first prints a message indicating that it is predicting the prompt. It then records the start time
+        The method logs a message indicating that it is predicting the prompt. It then records the start time
         and uses the `connector` to generate a prediction for the `generated_prompt`. The duration of the prediction
         is calculated and stored in the `generated_prompt`.
 
