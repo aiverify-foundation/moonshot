@@ -7,144 +7,101 @@ Distribution: EXTERNAL
 
 Components: 
 
-aiohappyeyeballs 2.3.5 : Python Software Foundation License 2.0
-aiohttp 3.10.1 : Apache License 2.0
-aiohttp 3.9.3 : Apache License 2.0
+aiohappyeyeballs 2.4.0 : Python License 2.0.1
+aiohttp 3.10.5 : Apache License 2.0
 aiosignal 1.3.1 : Apache License 2.0
-aiverify-moonshot 0.4.5 : Apache License 2.0
-annotated-types 0.6.0 : MIT License
+aiverify-moonshot 0.4.6 : Apache License 2.0
 annotated-types 0.7.0 : MIT License
-anyio 4.2.0 : MIT License
 anyio 4.4.0 : MIT License
-Apache Arrow 8.0.1 : Apache License 2.0
 arrow 17.0.0 : Apache License 2.0
-chardet 5.1.0 : GNU Lesser General Public License v2.1 or later
-Click - Python Command Line Utility 8.1.3 : BSD 3-clause "New" or "Revised" License
 Click - Python Command Line Utility 8.1.7 : BSD 3-clause "New" or "Revised" License
 cmd2 2.4.3 : MIT License
 colorama 0.4.6 : BSD 3-clause "New" or "Revised" License
-datasets 2.12.0 : Apache License 2.0
-datasets 2.20.0 : Apache License 2.0
+datasets 2.21.0 : Apache License 2.0
 embedded-postgres-binaries-darwin-amd64 12.20.0 : Apache License 2.0
-ets-labs/python-dependency-injector 4.40.0 : BSD 3-clause "New" or "Revised" License
+encode/uvicorn 0.30.6 : BSD 3-clause "New" or "Revised" License
 ets-labs/python-dependency-injector 4.41.0 : BSD 3-clause "New" or "Revised" License
-fastapi 0.106.0 : MIT License
-fastapi 0.112.0 : MIT License
-frozenlist 1.4.0 : Apache License 2.0
+fastapi 0.112.2 : MIT License
 frozenlist 1.4.1 : Apache License 2.0
-fsspec 2024.5.0 : BSD 3-clause "New" or "Revised" License
+fsspec 2024.6.1 : BSD 3-clause "New" or "Revised" License
 h11 0.14.0 : MIT License
-httplib-cachecontrol 0.12.11 : Apache License 2.0
-httplib-cachecontrol 0.13.1 : Apache License 2.0
-huggingface-hub 0.24.5 : Apache License 2.0
-huggingface_hub 0.20.3 : Apache License 2.0
+huggingface-hub 0.24.6 : Apache License 2.0
+huggingface/huggingface_hub v0.24.0.rc0 : Apache License 2.0
+huggingface/huggingface_hub v0.24.5 : Apache License 2.0
 idna 3.4 : BSD 3-clause "New" or "Revised" License
-idna 3.7 : BSD 3-clause "New" or "Revised" License
-ijson 3.1.4 : BSD 3-clause "New" or "Revised" License
+idna 3.8 : BSD 3-clause "New" or "Revised" License
 ijson 3.3.0 : BSD 3-clause "New" or "Revised" License
-intake/filesystem_spec 2023.12.2 : BSD 3-clause "New" or "Revised" License
-jamesturk/jellyfish v1.0.3 : MIT License
 JavaCPP Presets for NumPy 1.26.3-1.5.10 : (GNU General Public License v2.0 w/Classpath exception AND Apache License 2.0 AND GNU General Public License v3.0 or later)
-Jinja 3.1.2 : BSD 3-clause "New" or "Revised" License
 Jinja 3.1.4 : BSD 3-clause "New" or "Revised" License
 markdown-it-py 3.0.0 : MIT License
-MarkupSafe 2.1.3 : BSD 3-clause "New" or "Revised" License
+markdown-it-py 3.0.0 : Expat License
 MarkupSafe 2.1.5 : BSD 3-clause "New" or "Revised" License
 mdurl 0.1.2 : MIT License
-moonshot-admin/moonshot 0.4.5 : Apache License 2.0
+moonshot-admin/moonshot 0.4.6 : Apache License 2.0
 multi_process 0.70.16 : BSD 3-clause "New" or "Revised" License
 multidict 6.0.4 : Apache License 2.0
-multidict 6.0.5 : Apache License 2.0
-multiprocess 0.70.14 : BSD 3-clause "New" or "Revised" License
-nedbat/unittest-mixins 1.6 : Apache License 2.0
+multidict 6.1.0 : Apache License 2.0
+NumPy 1.26.2 : BSD 3-clause "New" or "Revised" License
 NumPy 1.26.4 : BSD 3-clause "New" or "Revised" License
-numpy-base 1.26.3 : BSD 3-clause "New" or "Revised" License
-Packaging 21.3 : (BSD 2-clause "Simplified" License OR Apache License 2.0)
-Packaging 23.1 : (Apache License 2.0 AND BSD 3-clause "New" or "Revised" License)
 Packaging 24.1 : (Apache License 2.0 AND BSD 3-clause "New" or "Revised" License)
 pandas-python 2.2.1 : BSD 3-clause "New" or "Revised" License
 pandas-python 2.2.2 : BSD 3-clause "New" or "Revised" License
-pip 23.3.1 : MIT License
-pip-darwin-aarch64 23.1.2-0.9.5 : MIT License
+pip 24.0 : MIT License
 psf-requests 2.32.3 : Apache License 2.0
-py-distro 1.8.0 : MIT License
 py-filelock 3.15.4 : Public Domain
-py-text-unidecode 1.3 : (GNU General Public License v2.0 or later AND Artistic License 1.0 (Perl))
-py-webencodings 0.5.1 : BSD 3-clause "New" or "Revised" License
-py3-charset-normalizer 3.3.2 : MIT License
-py3-flask-restful 0.3.9 : BSD 3-clause "New" or "Revised" License
-py3-fsspec 2022.11.0 : BSD 3-clause "New" or "Revised" License
-py3-i3ipc 2.2.1 : BSD 3-clause "New" or "Revised" License
-py3-iniconfig 1.1.1 : MIT License
-py3-markdown-it-py 2.2.0 : MIT License
+py-filelock 3.16.0 : The Unlicense
 py3-markdown-it-py 3.0.0 : MIT License
-py3-mdurl 0.1.2 : MIT License
-py3-platformdirs 3.2.0 : MIT License
-py3-pyproject-hooks 1.0.0 : MIT License
-py3-rich 13.0.1 : MIT License
-py3-sniffio 1.3.0 : (MIT License OR Apache License 2.0)
-py3-tenacity 8.2.1 : Apache License 2.0
-py3-tomli 2.0.1 : MIT License
-py3-yarl 1.9.4 : Apache License 2.0
 pyarrow 17.0.0 : Apache License 2.0
-pyarrow-hotfix 0.6 : Apache License 2.0
-pyasn1 0.5.0 : BSD 2-clause "Simplified" License
-pydantic 1.10.2 : MIT License
-pydantic 2.5.3 : MIT License
-pydantic 2.6.4 : MIT License
 pydantic 2.8.2 : MIT License
-pydantic-core 2.14.6 : MIT License
+pydantic-core 2.20.0 : MIT License
 pydantic-core 2.20.1 : MIT License
 Pygments - Python syntax highlighter 2.18.0 : BSD 2-clause "Simplified" License
-Pyparsing 3.0.9 : MIT License
-Pyparsing 3.1.2 : MIT License
-pyperclip 1.8.2 : BSD 3-clause "New" or "Revised" License
+Pyparsing 3.1.4 : MIT License
 pyperclip 1.9.0 : BSD 3-clause "New" or "Revised" License
 pypi/setuptools 65.5.0 : MIT License
-pytest-dev/pytest-metadata 3.1.1 : Mozilla Public License 2.0
+Python programming language 3.12.2 : Python Software Foundation License 2.0
 Python six 1.16.0 : MIT License
 Python tzdata 2024.1 : Apache License 2.0
-python-attrs 23.1.0 : MIT License
 python-attrs 24.2.0 : MIT License
-python-certifi 2024.7.4 : Mozilla Public License 2.0
+python-certifi 2024.8.30 : Mozilla Public License 2.0
 python-cmd2/cmd2 2.4.3 : MIT License
-python-dateutil 2.9.0 : (Apache License 2.0 OR BSD 3-clause "New" or "Revised" License)
 python-dateutil 2.9.0.post0 : (Apache License 2.0 OR BSD 3-clause "New" or "Revised" License)
-python-dill 0.3.7 : BSD 3-clause "New" or "Revised" License
 python-dill 0.3.8 : BSD 3-clause "New" or "Revised" License
-python-dotenv 0.21.0 : BSD 3-clause "New" or "Revised" License
+python-distlib 0.3.8 : Apache License 2.0
+python-distro 1.8.0 : Apache License 2.0
 python-dotenv 1.0.1 : BSD 3-clause "New" or "Revised" License
+python-dotenv v1.0.1 : BSD 3-clause "New" or "Revised" License
 python-hyper/h11 0.14.0 : MIT License
-python-slugify 8.0.2 : MIT License
 python-slugify 8.0.4 : MIT License
-python-trio/sniffio v1.3.1 : (MIT License AND Apache License 2.0)
 python-typing-extensions 4.12.2 : Python Software Foundation License 2.3
-python-user-agents 2.2.0 : MIT License
+python-webencodings 0.5.1 : BSD 3-clause "New" or "Revised" License
+python3-aiohappyeyeballs 2.3.7 : Python Software Foundation License 2.0
 python3-charset-normalizer 3.3.2 : MIT License
+python3-fsspec 2024.6.1 : BSD 3-clause "New" or "Revised" License
+python3-mdurl 0.1.2 : MIT License
+python3-multiprocess 0.70.16 : BSD 3-clause "New" or "Revised" License
+python3-pandas+test 2.2.1 : (MIT License AND BSD 3-clause "New" or "Revised" License)
+python3-sniffio 1.3.1 : (MIT License OR Apache License 2.0)
+PyTZ - Python Time Zone Library 2023.4 : MIT License
 PyTZ - Python Time Zone Library 2024.1 : MIT License
-PyYAML 6.0.1 : MIT License
+PyTZ - Python Time Zone Library 2024.2 : MIT License
 PyYAML 6.0.2 : MIT License
-rich 13.7.1 : MIT License
-sarugaku/resolvelib 1.0.1 : ISC License
+rich 13.8.0 : MIT License
 sniffio 1.3.1 : Apache License 2.0
-Starlette 0.37.2 : BSD 3-clause "New" or "Revised" License
+Starlette 0.38.5 : BSD 3-clause "New" or "Revised" License
 text-unidecode 1.3 : Artistic License 1.0
-tqdm 4.64.1 : (MIT License AND Mozilla Public License 2.0)
-tqdm 4.66.4 : (MIT License AND Mozilla Public License 2.0)
+tomli 2.0.1 : MIT License
 tqdm 4.66.5 : (MIT License AND Mozilla Public License 2.0)
-truststore 0.8.0 : MIT License
-urllib3 1.26.16 : MIT License
-urllib3 2.0.2 : MIT License
 urllib3 2.2.2 : MIT License
-uvicorn 0.20.0 : BSD 3-clause "New" or "Revised" License
-uvicorn 0.30.5 : BSD 3-clause "New" or "Revised" License
+uvicorn 0.30.6 : BSD 3-clause "New" or "Revised" License
 wcwidth 0.2.13 : MIT License
-xxhash 3.4.1 : BSD 3-clause "New" or "Revised" License
-yarl 1.9.4 : Apache License 2.0
+xxhash 3.4.0 : BSD 3-clause "New" or "Revised" License
+xxhash 3.5.0 : BSD 3-clause "New" or "Revised" License
+yarl 1.11.1 : Apache License 2.0
 Licenses: 
 
 Apache License 2.0
-(aiohttp 3.10.1, aiohttp 3.9.3, aiosignal 1.3.1, aiverify-moonshot 0.4.5, Apache Arrow 8.0.1, arrow 17.0.0, datasets 2.12.0, datasets 2.20.0, embedded-postgres-binaries-darwin-amd64 12.20.0, frozenlist 1.4.0, frozenlist 1.4.1, httplib-cachecontrol 0.12.11, httplib-cachecontrol 0.13.1, huggingface-hub 0.24.5, huggingface_hub 0.20.3, JavaCPP Presets for NumPy 1.26.3-1.5.10, moonshot-admin/moonshot 0.4.5, multidict 6.0.4, multidict 6.0.5, nedbat/unittest-mixins 1.6, Packaging 21.3, Packaging 23.1, Packaging 24.1, psf-requests 2.32.3, py3-sniffio 1.3.0, py3-tenacity 8.2.1, py3-yarl 1.9.4, pyarrow 17.0.0, pyarrow-hotfix 0.6, Python tzdata 2024.1, python-dateutil 2.9.0, python-dateutil 2.9.0.post0, python-trio/sniffio v1.3.1, sniffio 1.3.1, yarl 1.9.4)
+(aiohttp 3.10.5, aiosignal 1.3.1, aiverify-moonshot 0.4.6, arrow 17.0.0, datasets 2.21.0, embedded-postgres-binaries-darwin-amd64 12.20.0, frozenlist 1.4.1, huggingface-hub 0.24.6, huggingface/huggingface_hub v0.24.0.rc0, huggingface/huggingface_hub v0.24.5, JavaCPP Presets for NumPy 1.26.3-1.5.10, moonshot-admin/moonshot 0.4.6, multidict 6.0.4, multidict 6.1.0, Packaging 24.1, psf-requests 2.32.3, pyarrow 17.0.0, Python tzdata 2024.1, python-dateutil 2.9.0.post0, python-distlib 0.3.8, python-distro 1.8.0, python3-sniffio 1.3.1, sniffio 1.3.1, yarl 1.11.1)
 
 Apache License
 Version 2.0, January 2004
@@ -444,165 +401,8 @@ The End
 
 ---
 
-Artistic License 1.0 (Perl)
-(py-text-unidecode 1.3)
-
-The "Artistic License"
-======================
-
-Preamble
-
-The intent of this document is to state the conditions under which a Package may
-be copied, such that the Copyright Holder maintains some semblance of artistic
-control over the development of the package, while giving the users of the
-package the right to use and distribute the Package in a more-or-less customary
-fashion, plus the right to make reasonable modifications.
-
-Definitions:
-
-  *  "Package" refers to the collection of files distributed by the Copyright
-    Holder, and derivatives of that collection of files created through textual
-    modification.
-
-  *  "Standard Version" refers to such a Package if it has not been modified, or
-    has been modified in accordance with the wishes of the Copyright Holder as
-    specified below.
-
-  *  "Copyright Holder" is whoever is named in the copyright or copyrights for
-    the package.
-
-  *  "You" is you, if you're thinking about copying or distributing this Package.
-
-  *  "Reasonable copying fee" is whatever you can justify on the basis of media
-    cost, duplication charges, time of people involved, and so on. (You will not
-    be required to justify it to the Copyright Holder, but only to the computing
-    community at large as a market that must bear the fee.)
-
-  *  "Freely Available" means that no fee is charged for the item itself, though
-    there may be fees involved in handling the item. It also means that
-    recipients of the item may redistribute it under the same conditions they
-    received it.
-
-  1. You may make and give away verbatim copies of the source form of the
-    Standard Version of this Package without restriction, provided that you
-    duplicate all of the original copyright notices and associated disclaimers.
-
-  2.  You may apply bug fixes, portability fixes and other modifications derived
-    from the Public Domain or from the Copyright Holder. A Package modified in
-    such a way shall still be considered the Standard Version.
-
-  3. You may otherwise modify your copy of this Package in any way, provided that
-    you insert a prominent notice in each changed file stating how and when you
-    changed that file, and provided that you do at least ONE of the following:
-
-      a.  place your modifications in the Public Domain or otherwise make them
-        Freely Available, such as by posting said modifications to Usenet or an
-        equivalent medium, or placing the modifications on a major archive site
-        such as uunet.uu.net, or by allowing the Copyright Holder to include your
-        modifications in the Standard Version of the Package.
-
-      b.  use the modified Package only within your corporation or organization.
-
-      c.  rename any non-standard executables so the names do not conflict with
-        standard executables, which must also be provided, and provide a separate
-        manual page for each non-standard executable that clearly documents how
-        it differs from the Standard Version.
-
-      d.  make other distribution arrangements with the Copyright Holder.
-
-  4. You may distribute the programs of this Package in object code or executable
-    form, provided that you do at least ONE of the following:
-
-      a.  distribute a Standard Version of the executables and library files,
-        together with instructions (in the manual page or equivalent) on where to
-        get the Standard Version.
-
-      b.  accompany the distribution with the machine-readable source of the
-        Package with your modifications.
-
-      c.  give non-standard executables non-standard names, and clearly document
-        the differences in manual pages (or equivalent), together with
-        instructions on where to get the Standard Version.
-
-      d.  make other distribution arrangements with the Copyright Holder.
-
-  5.  You may charge a reasonable copying fee for any distribution of this
-    Package. You may charge any fee you choose for support of this Package. You
-    may not charge a fee for this Package itself. However, you may distribute
-    this Package in aggregate with other (possibly commercial) programs as part
-    of a larger (possibly commercial) software distribution provided that you do
-    not advertise this Package as a product of your own. You may embed this
-    Package's interpreter within an executable of yours (by linking); this shall
-    be construed as a mere form of aggregation, provided that the complete
-    Standard Version of the interpreter is so embedded.
-
-  6.  The scripts and library files supplied as input to or produced as output
-    from the programs of this Package do not automatically fall under the
-    copyright of this Package, but belong to whoever generated them, and may be
-    sold commercially, and may be aggregated with this Package. If such scripts
-    or library files are aggregated with this Package via the so-called "undump"
-    or "unexec" methods of producing a binary executable image, then distribution
-    of such an image shall neither be construed as a distribution of this Package
-    nor shall it fall under the restrictions of Paragraphs 3 and 4, provided that
-    you do not represent such an executable image as a Standard Version of this
-    Package.
-
-  7.  C subroutines (or comparably compiled subroutines in other languages)
-    supplied by you and linked into this Package in order to emulate subroutines
-    and variables of the language defined by this Package shall not be considered
-    part of this Package, but are the equivalent of input as in Paragraph 6,
-    provided these subroutines do not change the language in any way that would
-    cause it to fail the regression tests for the language.
-
-  8.  Aggregation of this Package with a commercial distribution is always
-    permitted provided that the use of this Package is embedded; that is, when no
-    overt attempt is made to make this Package's interfaces visible to the end
-    user of the commercial distribution. Such use shall not be construed as a
-    distribution of this Package.
-
-  9. The name of the Copyright Holder may not be used to endorse or promote
-    products derived from this software without specific prior written
-    permission.
-
-  10.  THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
-    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
-    MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-The End
-
----
-
 BSD 2-clause "Simplified" License
-(Packaging 21.3)
-
-Copyright (c) Donald Stufft and individual contributors.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
-
----
-
-BSD 2-clause "Simplified" License
-(pyasn1 0.5.0, Pygments - Python syntax highlighter 2.18.0)
+(Pygments - Python syntax highlighter 2.18.0)
 
 BSD Two Clause License
 ======================
@@ -631,83 +431,40 @@ DAMAGE.
 ---
 
 BSD 3-clause "New" or "Revised" License
-(ijson 3.1.4)
-
-=====
-
-Copyright (c) 2010, Ivan Sagalaev
-All rights reserved.
+(python-webencodings 0.5.1)
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+modification, are permitted provided that the following conditions are
+met:
 
     * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name "ijson" nor the names of its contributors
-      may be used to endorse or promote products derived from this software
-      without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
 
----
+    * The names of the contributors may not be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
 
-BSD 3-clause "New" or "Revised" License
-(pyperclip 1.8.2)
-
-Upstream-Contact: Al Sweigart <al@inventwithpython.com>
-Source: https://github.com/asweigart/pyperclip
-
-Files: *
-Copyright: 2014 Al Sweigart <al@inventwithpython.com>
-License: BSD-3-clause
-
-Files: debian/*
-Copyright: 2015 Sophie Brun <sophie@freexian.com>
-License: BSD-3-clause
-
-License: BSD-3-clause
- All rights reserved.
- .
-
-Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
- .
- * Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
- * Neither the name of organization nor the names of its contributors
-   may be used to endorse or promote products derived from this software
-   without specific prior written permission.
- .
- THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
- EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY
- DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 ---
 
 BSD 3-clause "New" or "Revised" License
-(Click - Python Command Line Utility 8.1.3, Click - Python Command Line Utility 8.1.7, colorama 0.4.6, ets-labs/python-dependency-injector 4.40.0, ets-labs/python-dependency-injector 4.41.0, fsspec 2024.5.0, idna 3.4, idna 3.7, ijson 3.3.0, intake/filesystem_spec 2023.12.2, Jinja 3.1.2, Jinja 3.1.4, MarkupSafe 2.1.3, MarkupSafe 2.1.5, multi_process 0.70.16, multiprocess 0.70.14, NumPy 1.26.4, numpy-base 1.26.3, Packaging 23.1, Packaging 24.1, pandas-python 2.2.1, pandas-python 2.2.2, py-webencodings 0.5.1, py3-flask-restful 0.3.9, py3-fsspec 2022.11.0, py3-i3ipc 2.2.1, pyperclip 1.9.0, python-dateutil 2.9.0, python-dateutil 2.9.0.post0, python-dill 0.3.7, python-dill 0.3.8, python-dotenv 0.21.0, python-dotenv 1.0.1, Starlette 0.37.2, uvicorn 0.20.0, uvicorn 0.30.5, xxhash 3.4.1)
+(Click - Python Command Line Utility 8.1.7, colorama 0.4.6, encode/uvicorn 0.30.6, ets-labs/python-dependency-injector 4.41.0, fsspec 2024.6.1, idna 3.4, idna 3.8, ijson 3.3.0, Jinja 3.1.4, MarkupSafe 2.1.5, multi_process 0.70.16, NumPy 1.26.2, NumPy 1.26.4, Packaging 24.1, pandas-python 2.2.1, pandas-python 2.2.2, pyperclip 1.9.0, python-dateutil 2.9.0.post0, python-dill 0.3.8, python-dotenv 1.0.1, python-dotenv v1.0.1, python3-fsspec 2024.6.1, python3-multiprocess 0.70.16, python3-pandas+test 2.2.1, Starlette 0.38.5, uvicorn 0.30.6, xxhash 3.4.0, xxhash 3.5.0)
 
 Copyright (c) <YEAR>, <OWNER>
 All rights reserved.
@@ -740,336 +497,32 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-GNU General Public License v2.0 or later
-(py-text-unidecode 1.3)
+Expat License
+(markdown-it-py 3.0.0)
 
-The GNU General Public License (GPL)
-====================================
+Expat License
+=============
 
+Copyright (c) 1998, 1999, 2000 Thai Open Source Software Center Ltd
+                               and Clark Cooper
+Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Expat maintainers.
 
-Version 2, June 1991
---------------------
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
-Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-59 Temple Place, Suite 330, Boston, MA 02111-1307 USAEveryone is permitted to copy and distribute verbatim copies
-of this license document, but changing it is not allowed.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Preamble
-
-The licenses for most software are designed to take away your freedom to share
-and change it. By contrast, the GNU General Public License is intended to
-guarantee your freedom to share and change free software--to make sure the
-software is free for all its users. This General Public License applies to most
-of the Free Software Foundation's software and to any other program whose authors
-commit to using it. (Some other Free Software Foundation software is covered by
-the GNU Library General Public License instead.) You can apply it to your
-programs, too.
-
-When we speak of free software, we are referring to freedom, not price. Our
-General Public Licenses are designed to make sure that you have the freedom to
-distribute copies of free software (and charge for this service if you wish),
-that you receive source code or can get it if you want it, that you can change
-the software or use pieces of it in new free programs; and that you know you can
-do these things.
-
-To protect your rights, we need to make restrictions that forbid anyone to deny
-you these rights or to ask you to surrender the rights. These restrictions
-translate to certain responsibilities for you if you distribute copies of the
-software, or if you modify it.
-
-For example, if you distribute copies of such a program, whether gratis or for a
-fee, you must give the recipients all the rights that you have. You must make
-sure that they, too, receive or can get the source code. And you must show them
-these terms so they know their rights.
-
-We protect your rights with two steps: (1) copyright the software, and (2) offer
-you this license which gives you legal permission to copy, distribute and/or
-modify the software.
-
-Also, for each author's protection and ours, we want to make certain that
-everyone understands that there is no warranty for this free software. If the
-software is modified by someone else and passed on, we want its recipients to
-know that what they have is not the original, so that any problems introduced by
-others will not reflect on the original authors' reputations.
-
-Finally, any free program is threatened constantly by software patents. We wish
-to avoid the danger that redistributors of a free program will individually
-obtain patent licenses, in effect making the program proprietary. To prevent
-this, we have made it clear that any patent must be licensed for everyone's free
-use or not licensed at all.
-
-The precise terms and conditions for copying, distribution and modification
-follow.
-
-TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
-  1.  This License applies to any program or other work which contains a notice
-    placed by the copyright holder saying it may be distributed under the terms
-    of this General Public License. The "Program", below, refers to any such
-    program or work, and a "work based on the Program" means either the Program
-    or any derivative work under copyright law: that is to say, a work containing
-    the Program or a portion of it, either verbatim or with modifications and/or
-    translated into another language. (Hereinafter, translation is included
-    without limitation in the term "modification".) Each licensee is addressed as
-    "you".
-
-    Activities other than copying, distribution and modification are not covered
-    by this License; they are outside its scope. The act of running the Program
-    is not restricted, and the output from the Program is covered only if its
-    contents constitute a work based on the Program (independent of having been
-    made by running the Program). Whether that is true depends on what the
-    Program does.
-
-  2. You may copy and distribute verbatim copies of the Program's source code as
-    you receive it, in any medium, provided that you conspicuously and
-    appropriately publish on each copy an appropriate copyright notice and
-    disclaimer of warranty; keep intact all the notices that refer to this
-    License and to the absence of any warranty; and give any other recipients of
-    the Program a copy of this License along with the Program.
-
-    You may charge a fee for the physical act of transferring a copy, and you may
-    at your option offer warranty protection in exchange for a fee.
-
-  3. You may modify your copy or copies of the Program or any portion of it, thus
-    forming a work based on the Program, and copy and distribute such
-    modifications or work under the terms of Section 1 above, provided that you
-    also meet all of these conditions:
-
-      a. You must cause the modified files to carry prominent notices stating
-        that you changed the files and the date of any change.
-
-      b. You must cause any work that you distribute or publish, that in whole or
-        in part contains or is derived from the Program or any part thereof, to
-        be licensed as a whole at no charge to all third parties under the terms
-        of this License.
-
-      c. If the modified program normally reads commands interactively when run,
-        you must cause it, when started running for such interactive use in the
-        most ordinary way, to print or display an announcement including an
-        appropriate copyright notice and a notice that there is no warranty (or
-        else, saying that you provide a warranty) and that users may redistribute
-        the program under these conditions, and telling the user how to view a
-        copy of this License. (Exception: if the Program itself is interactive
-        but does not normally print such an announcement, your work based on the
-        Program is not required to print an announcement.)
-
-    These requirements apply to the modified work as a whole. If identifiable
-    sections of that work are not derived from the Program, and can be reasonably
-    considered independent and separate works in themselves, then this License,
-    and its terms, do not apply to those sections when you distribute them as
-    separate works. But when you distribute the same sections as part of a whole
-    which is a work based on the Program, the distribution of the whole must be
-    on the terms of this License, whose permissions for other licensees extend to
-    the entire whole, and thus to each and every part regardless of who wrote it.
-
-    Thus, it is not the intent of this section to claim rights or contest your
-    rights to work written entirely by you; rather, the intent is to exercise the
-    right to control the distribution of derivative or collective works based on
-    the Program.
-
-    In addition, mere aggregation of another work not based on the Program with
-    the Program (or with a work based on the Program) on a volume of a storage or
-    distribution medium does not bring the other work under the scope of this
-    License.
-
-  4. You may copy and distribute the Program (or a work based on it, under
-    Section 2) in object code or executable form under the terms of Sections 1
-    and 2 above provided that you also do one of the following:
-
-      a. Accompany it with the complete corresponding machine-readable source
-        code, which must be distributed under the terms of Sections 1 and 2 above
-        on a medium customarily used for software interchange; or,
-
-      b. Accompany it with a written offer, valid for at least three years, to
-        give any third party, for a charge no more than your cost of physically
-        performing source distribution, a complete machine-readable copy of the
-        corresponding source code, to be distributed under the terms of Sections
-        1 and 2 above on a medium customarily used for software interchange; or,
-
-      c. Accompany it with the information you received as to the offer to
-        distribute corresponding source code. (This alternative is allowed only
-        for noncommercial distribution and only if you received the program in
-        object code or executable form with such an offer, in accord with
-        Subsection b above.)
-
-    The source code for a work means the preferred form of the work for making
-    modifications to it. For an executable work, complete source code means all
-    the source code for all modules it contains, plus any associated interface
-    definition files, plus the scripts used to control compilation and
-    installation of the executable. However, as a special exception, the source
-    code distributed need not include anything that is normally distributed (in
-    either source or binary form) with the major components (compiler, kernel,
-    and so on) of the operating system on which the executable runs, unless that
-    component itself accompanies the executable.
-
-    If distribution of executable or object code is made by offering access to
-    copy from a designated place, then offering equivalent access to copy the
-    source code from the same place counts as distribution of the source code,
-    even though third parties are not compelled to copy the source along with the
-    object code.
-
-  5. You may not copy, modify, sublicense, or distribute the Program except as
-    expressly provided under this License. Any attempt otherwise to copy, modify,
-    sublicense or distribute the Program is void, and will automatically
-    terminate your rights under this License. However, parties who have received
-    copies, or rights, from you under this License will not have their licenses
-    terminated so long as such parties remain in full compliance.
-
-  6. You are not required to accept this License, since you have not signed it.
-    However, nothing else grants you permission to modify or distribute the
-    Program or its derivative works. These actions are prohibited by law if you
-    do not accept this License. Therefore, by modifying or distributing the
-    Program (or any work based on the Program), you indicate your acceptance of
-    this License to do so, and all its terms and conditions for copying,
-    distributing or modifying the Program or works based on it.
-
-  7. Each time you redistribute the Program (or any work based on the Program),
-    the recipient automatically receives a license from the original licensor to
-    copy, distribute or modify the Program subject to these terms and conditions.
-    You may not impose any further restrictions on the recipients' exercise of
-    the rights granted herein. You are not responsible for enforcing compliance
-    by third parties to this License.
-
-  8. If, as a consequence of a court judgment or allegation of patent
-    infringement or for any other reason (not limited to patent issues),
-    conditions are imposed on you (whether by court order, agreement or
-    otherwise) that contradict the conditions of this License, they do not excuse
-    you from the conditions of this License. If you cannot distribute so as to
-    satisfy simultaneously your obligations under this License and any other
-    pertinent obligations, then as a consequence you may not distribute the
-    Program at all. For example, if a patent license would not permit
-    royalty-free redistribution of the Program by all those who receive copies
-    directly or indirectly through you, then the only way you could satisfy both
-    it and this License would be to refrain entirely from distribution of the
-    Program.
-
-    If any portion of this section is held invalid or unenforceable under any
-    particular circumstance, the balance of the section is intended to apply and
-    the section as a whole is intended to apply in other circumstances.
-
-    It is not the purpose of this section to induce you to infringe any patents
-    or other property right claims or to contest validity of any such claims;
-    this section has the sole purpose of protecting the integrity of the free
-    software distribution system, which is implemented by public license
-    practices. Many people have made generous contributions to the wide range of
-    software distributed through that system in reliance on consistent
-    application of that system; it is up to the author/donor to decide if he or
-    she is willing to distribute software through any other system and a licensee
-    cannot impose that choice.
-
-    This section is intended to make thoroughly clear what is believed to be a
-    consequence of the rest of this License.
-
-  9. If the distribution and/or use of the Program is restricted in certain
-    countries either by patents or by copyrighted interfaces, the original
-    copyright holder who places the Program under this License may add an
-    explicit geographical distribution limitation excluding those countries, so
-    that distribution is permitted only in or among countries not thus excluded.
-    In such case, this License incorporates the limitation as if written in the
-    body of this License.
-
-  10. The Free Software Foundation may publish revised and/or new versions of the
-    General Public License from time to time. Such new versions will be similar
-    in spirit to the present version, but may differ in detail to address new
-    problems or concerns.
-
-    Each version is given a distinguishing version number. If the Program
-    specifies a version number of this License which applies to it and "any later
-    version", you have the option of following the terms and conditions either of
-    that version or of any later version published by the Free Software
-    Foundation. If the Program does not specify a version number of this License,
-    you may choose any version ever published by the Free Software Foundation.
-
-  11. If you wish to incorporate parts of the Program into other free programs
-    whose distribution conditions are different, write to the author to ask for
-    permission. For software which is copyrighted by the Free Software
-    Foundation, write to the Free Software Foundation; we sometimes make
-    exceptions for this. Our decision will be guided by the two goals of
-    preserving the free status of all derivatives of our free software and of
-    promoting the sharing and reuse of software generally.
-
-    NO WARRANTY
-
-  12. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR
-    THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE
-    STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE
-    PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-    FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
-    PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
-    YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-  13. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL
-    ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE
-    THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-    GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE
-    OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR
-    DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR
-    A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH
-    HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-    END OF TERMS AND CONDITIONS
-
-How to Apply These Terms to Your New Programs
-
-If you develop a new program, and you want it to be of the greatest possible use
-to the public, the best way to achieve this is to make it free software which
-everyone can redistribute and change under these terms.
-
-To do so, attach the following notices to the program. It is safest to attach
-them to the start of each source file to most effectively convey the exclusion of
-warranty; and each file should have at least the "copyright" line and a pointer
-to where the full notice is found.
-
-one line to give the program's name and a brief idea of what it does.Copyright (C)
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-Also add information on how to contact you by electronic and paper mail.
-
-If the program is interactive, make it output a short notice like this when it
-starts in an interactive mode:
-
-Gnomovision version 69, Copyright (C) year name of author
-Gnomovision comes with ABSOLUTELY NO WARRANTY; for details
-type `show w'. This is free software, and you are welcome
-to redistribute it under certain conditions; type `show c'
-for details.
-
-The hypothetical commands `show w' and `show c' should show the appropriate parts
-of the General Public License. Of course, the commands you use may be called
-something other than `show w' and `show c'; they could even be mouse-clicks or
-menu items--whatever suits your program.
-
-You should also get your employer (if you work as a programmer) or your school,
-if any, to sign a "copyright disclaimer" for the program, if necessary. Here is a
-sample; alter the names:
-
-Yoyodyne, Inc., hereby disclaims all copyright
-interest in the program `Gnomovision'
-(which makes passes at compilers) written
-by James Hacker.
-
-signature of Ty Coon, 1 April 1989
-Ty Coon, President of Vice
-
-This General Public License does not permit incorporating your program into
-proprietary programs. If your program is a subroutine library, you may consider
-it more useful to permit linking proprietary applications with the library. If
-this is what you want to do, use the GNU Library General Public License instead
-of this License.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -2066,522 +1519,6 @@ this License. But first, please read
 
 ---
 
-GNU Lesser General Public License v2.1 or later
-(chardet 5.1.0)
-
-GNU Lesser General Public License
-=================================
-
-Version 2.1, February 1999
-
-      Copyright (C) 1991, 1999 Free Software Foundation, Inc.
-
-      59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-      Everyone is permitted to copy and distribute verbatim copies
-
-      of this license document, but changing it is not allowed.
-
-      [This is the first released version of the Lesser GPL. It also counts
-
-      as the successor of the GNU Library Public License, version 2, hence
-
-      the version number 2.1.]
-
-
-Preamble
---------
-
-The licenses for most software are designed to take away your freedom to share
-and change it. By contrast, the GNU General Public Licenses are intended to
-guarantee your freedom to share and change free software--to make sure the
-software is free for all its users.
-
-This license, the Lesser General Public License, applies to some specially
-designated software packages--typically libraries--of the Free Software
-Foundation and other authors who decide to use it. You can use it too, but we
-suggest you first think carefully about whether this license or the ordinary
-General Public License is the better strategy to use in any particular case,
-based on the explanations below.
-
-When we speak of free software, we are referring to freedom of use, not price.
-Our General Public Licenses are designed to make sure that you have the freedom
-to distribute copies of free software (and charge for this service if you wish);
-that you receive source code or can get it if you want it; that you can change
-the software and use pieces of it in new free programs; and that you are informed
-that you can do these things.
-
-To protect your rights, we need to make restrictions that forbid distributors to
-deny you these rights or to ask you to surrender these rights. These restrictions
-translate to certain responsibilities for you if you distribute copies of the
-library or if you modify it.
-
-For example, if you distribute copies of the library, whether gratis or for a
-fee, you must give the recipients all the rights that we gave you. You must make
-sure that they, too, receive or can get the source code. If you link other code
-with the library, you must provide complete object files to the recipients, so
-that they can relink them with the library after making changes to the library
-and recompiling it. And you must show them these terms so they know their rights.
-
-We protect your rights with a two-step method: (1) we copyright the library, and
-(2) we offer you this license, which gives you legal permission to copy,
-distribute and/or modify the library.
-
-To protect each distributor, we want to make it very clear that there is no
-warranty for the free library. Also, if the library is modified by someone else
-and passed on, the recipients should know that what they have is not the original
-version, so that the original author's reputation will not be affected by
-problems that might be introduced by others.
-
-Finally, software patents pose a constant threat to the existence of any free
-program. We wish to make sure that a company cannot effectively restrict the
-users of a free program by obtaining a restrictive license from a patent holder.
-Therefore, we insist that any patent license obtained for a version of the
-library must be consistent with the full freedom of use specified in this
-license.
-
-Most GNU software, including some libraries, is covered by the ordinary GNU
-General Public License. This license, the GNU Lesser General Public License,
-applies to certain designated libraries, and is quite different from the ordinary
-General Public License. We use this license for certain libraries in order to
-permit linking those libraries into non-free programs.
-
-When a program is linked with a library, whether statically or using a shared
-library, the combination of the two is legally speaking a combined work, a
-derivative of the original library. The ordinary General Public License therefore
-permits such linking only if the entire combination fits its criteria of freedom.
-The Lesser General Public License permits more lax criteria for linking other
-code with the library.
-
-We call this license the "Lesser" General Public License because it does Less to
-protect the user's freedom than the ordinary General Public License. It also
-provides other free software developers Less of an advantage over competing
-non-free programs. These disadvantages are the reason we use the ordinary General
-Public License for many libraries. However, the Lesser license provides
-advantages in certain special circumstances.
-
-For example, on rare occasions, there may be a special need to encourage the
-widest possible use of a certain library, so that it becomes a de-facto standard.
-To achieve this, non-free programs must be allowed to use the library. A more
-frequent case is that a free library does the same job as widely used non-free
-libraries. In this case, there is little to gain by limiting the free library to
-free software only, so we use the Lesser General Public License.
-
-In other cases, permission to use a particular library in non-free programs
-enables a greater number of people to use a large body of free software. For
-example, permission to use the GNU C Library in non-free programs enables many
-more people to use the whole GNU operating system, as well as its variant, the
-GNU/Linux operating system.
-
-Although the Lesser General Public License is Less protective of the users'
-freedom, it does ensure that the user of a program that is linked with the
-Library has the freedom and the wherewithal to run that program using a modified
-version of the Library.
-
-The precise terms and conditions for copying, distribution and modification
-follow. Pay close attention to the difference between a "work based on the
-library" and a "work that uses the library". The former contains code derived
-from the library, whereas the latter must be combined with the library in order
-to run.
-
-
-TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
----------------------------------------------------------------
-
-0. This License Agreement applies to any software library or other program which
-contains a notice placed by the copyright holder or other authorized party saying
-it may be distributed under the terms of this Lesser General Public License (also
-called "this License"). Each licensee is addressed as "you".
-
-A "library" means a collection of software functions and/or data prepared so as
-to be conveniently linked with application programs (which use some of those
-functions and data) to form executables.
-
-The "Library", below, refers to any such software library or work which has been
-distributed under these terms. A "work based on the Library" means either the
-Library or any derivative work under copyright law: that is to say, a work
-containing the Library or a portion of it, either verbatim or with modifications
-and/or translated straightforwardly into another language. (Hereinafter,
-translation is included without limitation in the term "modification".)
-
-"Source code" for a work means the preferred form of the work for making
-modifications to it. For a library, complete source code means all the source
-code for all modules it contains, plus any associated interface definition files,
-plus the scripts used to control compilation and installation of the library.
-
-Activities other than copying, distribution and modification are not covered by
-this License; they are outside its scope. The act of running a program using the
-Library is not restricted, and output from such a program is covered only if its
-contents constitute a work based on the Library (independent of the use of the
-Library in a tool for writing it). Whether that is true depends on what the
-Library does and what the program that uses the Library does.
-
-1. You may copy and distribute verbatim copies of the Library's complete source
-code as you receive it, in any medium, provided that you conspicuously and
-appropriately publish on each copy an appropriate copyright notice and disclaimer
-of warranty; keep intact all the notices that refer to this License and to the
-absence of any warranty; and distribute a copy of this License along with the
-Library.
-
-You may charge a fee for the physical act of transferring a copy, and you may at
-your option offer warranty protection in exchange for a fee.
-
-2. You may modify your copy or copies of the Library or any portion of it, thus
-forming a work based on the Library, and copy and distribute such modifications
-or work under the terms of Section 1 above, provided that you also meet all of
-these conditions:
-
-      a) The modified work must itself be a software library.
-
-      b) You must cause the files modified to carry prominent notices stating
-      that you changed the files and the date of any change.
-
-      c) You must cause the whole of the work to be licensed at no charge to all
-      third parties under the terms of this License.
-
-      d) If a facility in the modified Library refers to a function or a table of
-      data to be supplied by an application program that uses the facility, other
-      than as an argument passed when the facility is invoked, then you must make
-      a good faith effort to ensure that, in the event an application does not
-      supply such function or table, the facility still operates, and performs
-      whatever part of its purpose remains meaningful.
-
-      (For example, a function in a library to compute square roots has a purpose
-      that is entirely well-defined independent of the application. Therefore,
-      Subsection 2d requires that any application-supplied function or table used
-      by this function must be optional: if the application does not supply it,
-      the square root function must still compute square roots.)
-
-      These requirements apply to the modified work as a whole. If identifiable
-      sections of that work are not derived from the Library, and can be
-      reasonably considered independent and separate works in themselves, then
-      this License, and its terms, do not apply to those sections when you
-      distribute them as separate works. But when you distribute the same
-      sections as part of a whole which is a work based on the Library, the
-      distribution of the whole must be on the terms of this License, whose
-      permissions for other licensees extend to the entire whole, and thus to
-      each and every part regardless of who wrote it.
-
-      Thus, it is not the intent of this section to claim rights or contest your
-      rights to work written entirely by you; rather, the intent is to exercise
-      the right to control the distribution of derivative or collective works
-      based on the Library.
-
-      In addition, mere aggregation of another work not based on the Library with
-      the Library (or with a work based on the Library) on a volume of a storage
-      or distribution medium does not bring the other work under the scope of
-      this License.
-
-3. You may opt to apply the terms of the ordinary GNU General Public License
-instead of this License to a given copy of the Library. To do this, you must
-alter all the notices that refer to this License, so that they refer to the
-ordinary GNU General Public License, version 2, instead of to this License. (If a
-newer version than version 2 of the ordinary GNU General Public License has
-appeared, then you can specify that version instead if you wish.) Do not make any
-other change in these notices.
-
-Once this change is made in a given copy, it is irreversible for that copy, so
-the ordinary GNU General Public License applies to all subsequent copies and
-derivative works made from that copy.
-
-This option is useful when you wish to copy part of the code of the Library into
-a program that is not a library.
-
-4. You may copy and distribute the Library (or a portion or derivative of it,
-under Section 2) in object code or executable form under the terms of Sections 1
-and 2 above provided that you accompany it with the complete corresponding
-machine-readable source code, which must be distributed under the terms of
-Sections 1 and 2 above on a medium customarily used for software interchange.
-
-If distribution of object code is made by offering access to copy from a
-designated place, then offering equivalent access to copy the source code from
-the same place satisfies the requirement to distribute the source code, even
-though third parties are not compelled to copy the source along with the object
-code.
-
-5. A program that contains no derivative of any portion of the Library, but is
-designed to work with the Library by being compiled or linked with it, is called
-a "work that uses the Library". Such a work, in isolation, is not a derivative
-work of the Library, and therefore falls outside the scope of this License.
-
-However, linking a "work that uses the Library" with the Library creates an
-executable that is a derivative of the Library (because it contains portions of
-the Library), rather than a "work that uses the library". The executable is
-therefore covered by this License. Section 6 states terms for distribution of
-such executables.
-
-When a "work that uses the Library" uses material from a header file that is part
-of the Library, the object code for the work may be a derivative work of the
-Library even though the source code is not. Whether this is true is especially
-significant if the work can be linked without the Library, or if the work is
-itself a library. The threshold for this to be true is not precisely defined by
-law.
-
-If such an object file uses only numerical parameters, data structure layouts and
-accessors, and small macros and small inline functions (ten lines or less in
-length), then the use of the object file is unrestricted, regardless of whether
-it is legally a derivative work. (Executables containing this object code plus
-portions of the Library will still fall under Section 6.)
-
-Otherwise, if the work is a derivative of the Library, you may distribute the
-object code for the work under the terms of Section 6. Any executables containing
-that work also fall under Section 6, whether or not they are linked directly with
-the Library itself.
-
-6. As an exception to the Sections above, you may also combine or link a "work
-that uses the Library" with the Library to produce a work containing portions of
-the Library, and distribute that work under terms of your choice, provided that
-the terms permit modification of the work for the customer's own use and reverse
-engineering for debugging such modifications.
-
-You must give prominent notice with each copy of the work that the Library is
-used in it and that the Library and its use are covered by this License. You must
-supply a copy of this License. If the work during execution displays copyright
-notices, you must include the copyright notice for the Library among them, as
-well as a reference directing the user to the copy of this License. Also, you
-must do one of these things:
-
-      a) Accompany the work with the complete corresponding machine-readable
-      source code for the Library including whatever changes were used in the
-      work (which must be distributed under Sections 1 and 2 above); and, if the
-      work is an executable linked with the Library, with the complete
-      machine-readable "work that uses the Library", as object code and/or source
-      code, so that the user can modify the Library and then relink to produce a
-      modified executable containing the modified Library. (It is understood that
-      the user who changes the contents of definitions files in the Library will
-      not necessarily be able to recompile the application to use the modified
-      definitions.)
-
-      b) Use a suitable shared library mechanism for linking with the Library. A
-      suitable mechanism is one that (1) uses at run time a copy of the library
-      already present on the user's computer system, rather than copying library
-      functions into the executable, and (2) will operate properly with a
-      modified version of the library, if the user installs one, as long as the
-      modified version is interface-compatible with the version that the work was
-      made with.
-
-      c) Accompany the work with a written offer, valid for at least three years,
-      to give the same user the materials specified in Subsection 6a, above, for
-      a charge no more than the cost of performing this distribution.
-
-      d) If distribution of the work is made by offering access to copy from a
-      designated place, offer equivalent access to copy the above specified
-      materials from the same place.
-
-      e) Verify that the user has already received a copy of these materials or
-      that you have already sent this user a copy.
-
-For an executable, the required form of the "work that uses the Library" must
-include any data and utility programs needed for reproducing the executable from
-it. However, as a special exception, the materials to be distributed need not
-include anything that is normally distributed (in either source or binary form)
-with the major components (compiler, kernel, and so on) of the operating system
-on which the executable runs, unless that component itself accompanies the
-executable.
-
-It may happen that this requirement contradicts the license restrictions of other
-proprietary libraries that do not normally accompany the operating system. Such a
-contradiction means you cannot use both them and the Library together in an
-executable that you distribute.
-
-7. You may place library facilities that are a work based on the Library
-side-by-side in a single library together with other library facilities not
-covered by this License, and distribute such a combined library, provided that
-the separate distribution of the work based on the Library and of the other
-library facilities is otherwise permitted, and provided that you do these two
-things:
-
-      a) Accompany the combined library with a copy of the same work based on the
-      Library, uncombined with any other library facilities. This must be
-      distributed under the terms of the Sections above.
-
-      b) Give prominent notice with the combined library of the fact that part of
-      it is a work based on the Library, and explaining where to find the
-      accompanying uncombined form of the same work.
-
-8. You may not copy, modify, sublicense, link with, or distribute the Library
-except as expressly provided under this License. Any attempt otherwise to copy,
-modify, sublicense, link with, or distribute the Library is void, and will
-automatically terminate your rights under this License. However, parties who have
-received copies, or rights, from you under this License will not have their
-licenses terminated so long as such parties remain in full compliance.
-
-9. You are not required to accept this License, since you have not signed it.
-However, nothing else grants you permission to modify or distribute the Library
-or its derivative works. These actions are prohibited by law if you do not accept
-this License. Therefore, by modifying or distributing the Library (or any work
-based on the Library), you indicate your acceptance of this License to do so, and
-all its terms and conditions for copying, distributing or modifying the Library
-or works based on it.
-
-10. Each time you redistribute the Library (or any work based on the Library),
-the recipient automatically receives a license from the original licensor to
-copy, distribute, link with or modify the Library subject to these terms and
-conditions. You may not impose any further restrictions on the recipients'
-exercise of the rights granted herein. You are not responsible for enforcing
-compliance by third parties with this License.
-
-11. If, as a consequence of a court judgment or allegation of patent infringement
-or for any other reason (not limited to patent issues), conditions are imposed on
-you (whether by court order, agreement or otherwise) that contradict the
-conditions of this License, they do not excuse you from the conditions of this
-License. If you cannot distribute so as to satisfy simultaneously your
-obligations under this License and any other pertinent obligations, then as a
-consequence you may not distribute the Library at all. For example, if a patent
-license would not permit royalty-free redistribution of the Library by all those
-who receive copies directly or indirectly through you, then the only way you
-could satisfy both it and this License would be to refrain entirely from
-distribution of the Library.
-
-If any portion of this section is held invalid or unenforceable under any
-particular circumstance, the balance of the section is intended to apply, and the
-section as a whole is intended to apply in other circumstances.
-
-It is not the purpose of this section to induce you to infringe any patents or
-other property right claims or to contest validity of any such claims; this
-section has the sole purpose of protecting the integrity of the free software
-distribution system which is implemented by public license practices. Many people
-have made generous contributions to the wide range of software distributed
-through that system in reliance on consistent application of that system; it is
-up to the author/donor to decide if he or she is willing to distribute software
-through any other system and a licensee cannot impose that choice.
-
-This section is intended to make thoroughly clear what is believed to be a
-consequence of the rest of this License.
-
-12. If the distribution and/or use of the Library is restricted in certain
-countries either by patents or by copyrighted interfaces, the original copyright
-holder who places the Library under this License may add an explicit geographical
-distribution limitation excluding those countries, so that distribution is
-permitted only in or among countries not thus excluded. In such case, this
-License incorporates the limitation as if written in the body of this License.
-
-13. The Free Software Foundation may publish revised and/or new versions of the
-Lesser General Public License from time to time. Such new versions will be
-similar in spirit to the present version, but may differ in detail to address new
-problems or concerns.
-
-Each version is given a distinguishing version number. If the Library specifies a
-version number of this License which applies to it and "any later version", you
-have the option of following the terms and conditions either of that version or
-of any later version published by the Free Software Foundation. If the Library
-does not specify a license version number, you may choose any version ever
-published by the Free Software Foundation.
-
-14. If you wish to incorporate parts of the Library into other free programs
-whose distribution conditions are incompatible with these, write to the author to
-ask for permission. For software which is copyrighted by the Free Software
-Foundation, write to the Free Software Foundation; we sometimes make exceptions
-for this. Our decision will be guided by the two goals of preserving the free
-status of all derivatives of our free software and of promoting the sharing and
-reuse of software generally.
-
-NO WARRANTY
-
-15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE
-LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED
-IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE LIBRARY "AS IS"
-WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
-LIBRARY IS WITH YOU. SHOULD THE LIBRARY PROVE DEFECTIVE, YOU ASSUME THE COST OF
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-16. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL
-ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE
-LIBRARY AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL,
-SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY
-TO USE THE LIBRARY (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF
-THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER
-PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-
-END OF TERMS AND CONDITIONS
-
-
-How to Apply These Terms to Your New Libraries
-----------------------------------------------
-
-If you develop a new library, and you want it to be of the greatest possible use
-to the public, we recommend making it free software that everyone can
-redistribute and change. You can do so by permitting redistribution under these
-terms (or, alternatively, under the terms of the ordinary General Public
-License).
-
-To apply these terms, attach the following notices to the library. It is safest
-to attach them to the start of each source file to most effectively convey the
-exclusion of warranty; and each file should have at least the "copyright" line
-and a pointer to where the full notice is found.
-
-      one line to give the library's name and an idea of what it does.
-
-      Copyright (C) year name of author
-
-      This library is free software; you can redistribute it and/or
-
-      modify it under the terms of the GNU Lesser General Public
-
-      License as published by the Free Software Foundation; either
-
-      version 2.1 of the License, or (at your option) any later version.
-
-      This library is distributed in the hope that it will be useful,
-
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-
-      Lesser General Public License for more details.
-
-      You should have received a copy of the GNU Lesser General Public
-
-      License along with this library; if not, write to the Free Software
-
-      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-Also add information on how to contact you by electronic and paper mail.
-
-You should also get your employer (if you work as a programmer) or your school,
-if any, to sign a "copyright disclaimer" for the library, if necessary. Here is a
-sample; alter the names:
-
-      Yoyodyne, Inc., hereby disclaims all copyright interest in
-
-      the library `Frob' (a library for tweaking knobs) written
-
-      by James Random Hacker.
-
-      signature of Ty Coon, 1 April 1990
-
-      Ty Coon, President of Vice
-
-That's all there is to it!
-
----
-
-ISC License
-(sarugaku/resolvelib 1.0.1)
-
-ISC License (ISCL)
-==================
-
-Copyright (c) 4-digit year, Company or Person's Name
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
-
----
-
 MIT License
 (Python six 1.16.0)
 
@@ -2607,43 +1544,34 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 ---
 
 MIT License
-(python-user-agents 2.2.0)
+(tomli 2.0.1)
 
-Source: https://pypi.org/project/user-agents/1.1.0/
+MIT License
 
-Files: *
-Copyright: 2013 Selwin Ong
-License: MIT
-
-Files: debian/*
-Copyright: 2018-2019 Ruben Undheim <ruben.undheim@gmail.com>
-License: MIT
-
-
-License: MIT
+Copyright (c) 2021 Taneli Hukkinen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- .
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- .
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE
 
 ---
 
 MIT License
-(annotated-types 0.6.0, annotated-types 0.7.0, anyio 4.2.0, anyio 4.4.0, cmd2 2.4.3, fastapi 0.106.0, fastapi 0.112.0, h11 0.14.0, jamesturk/jellyfish v1.0.3, markdown-it-py 3.0.0, mdurl 0.1.2, pip 23.3.1, pip-darwin-aarch64 23.1.2-0.9.5, py-distro 1.8.0, py3-charset-normalizer 3.3.2, py3-iniconfig 1.1.1, py3-markdown-it-py 2.2.0, py3-markdown-it-py 3.0.0, py3-mdurl 0.1.2, py3-platformdirs 3.2.0, py3-pyproject-hooks 1.0.0, py3-rich 13.0.1, py3-sniffio 1.3.0, py3-tomli 2.0.1, pydantic 1.10.2, pydantic 2.5.3, pydantic 2.6.4, pydantic 2.8.2, pydantic-core 2.14.6, pydantic-core 2.20.1, Pyparsing 3.0.9, Pyparsing 3.1.2, pypi/setuptools 65.5.0, python-attrs 23.1.0, python-attrs 24.2.0, python-cmd2/cmd2 2.4.3, python-hyper/h11 0.14.0, python-slugify 8.0.2, python-slugify 8.0.4, python-trio/sniffio v1.3.1, python3-charset-normalizer 3.3.2, PyTZ - Python Time Zone Library 2024.1, PyYAML 6.0.1, PyYAML 6.0.2, rich 13.7.1, tqdm 4.64.1, tqdm 4.66.4, tqdm 4.66.5, truststore 0.8.0, urllib3 1.26.16, urllib3 2.0.2, urllib3 2.2.2, wcwidth 0.2.13)
+(annotated-types 0.7.0, anyio 4.4.0, cmd2 2.4.3, fastapi 0.112.2, h11 0.14.0, markdown-it-py 3.0.0, mdurl 0.1.2, pip 24.0, py3-markdown-it-py 3.0.0, pydantic 2.8.2, pydantic-core 2.20.0, pydantic-core 2.20.1, Pyparsing 3.1.4, pypi/setuptools 65.5.0, python-attrs 24.2.0, python-cmd2/cmd2 2.4.3, python-hyper/h11 0.14.0, python-slugify 8.0.4, python3-charset-normalizer 3.3.2, python3-mdurl 0.1.2, python3-pandas+test 2.2.1, python3-sniffio 1.3.1, PyTZ - Python Time Zone Library 2023.4, PyTZ - Python Time Zone Library 2024.1, PyTZ - Python Time Zone Library 2024.2, PyYAML 6.0.2, rich 13.8.0, tqdm 4.66.5, urllib3 2.2.2, wcwidth 0.2.13)
 
 The MIT License
 ===============
@@ -2670,7 +1598,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Mozilla Public License 2.0
-(pytest-dev/pytest-metadata 3.1.1, python-certifi 2024.7.4, tqdm 4.64.1, tqdm 4.66.4, tqdm 4.66.5)
+(python-certifi 2024.8.30, tqdm 4.66.5)
 
 Mozilla Public License
 Version 2.0
@@ -3090,8 +2018,204 @@ Public domain code is not subject to any license.
 
 ---
 
+Python License 2.0.1
+(aiohappyeyeballs 2.4.0)
+
+Python License 2.0.1
+====================
+
+
+PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
+--------------------------------------------
+
+--------------------------------------------
+
+  1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"),
+    and the Individual or Organization ("Licensee") accessing and otherwise using
+    this software ("Python") in source or binary form and its associated
+    documentation.
+
+  2. Subject to the terms and conditions of this License Agreement, PSF hereby
+    grants Licensee a nonexclusive, royalty-free, world-wide license to
+    reproduce, analyze, test, perform and/or display publicly, prepare derivative
+    works, distribute, and otherwise use Python 2.0.1 alone or in any derivative
+    version, provided, however, that PSF's License Agreement and PSF's notice of
+    copyright, i.e., "Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Python
+    Software Foundation; All Rights Reserved" are retained in Python 2.0.1 alone
+    or in any derivative version prepared by Licensee.
+
+  3. In the event Licensee prepares a derivative work that is based on or
+    incorporates Python 2.0.1 or any part thereof, and wants to make the
+    derivative work available to others as provided herein, then Licensee hereby
+    agrees to include in any such work a brief summary of the changes made to
+    Python 2.0.1.
+
+  4. PSF is making Python 2.0.1 available to Licensee on an "AS IS" basis. PSF
+    MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF
+    EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR
+    WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
+    USE OF PYTHON 2.0.1 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+
+  5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 2.0.1 FOR
+    ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 2.0.1, OR ANY DERIVATIVE
+    THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+  6. This License Agreement will automatically terminate upon a material breach
+    of its terms and conditions.
+
+  7. Nothing in this License Agreement shall be deemed to create any relationship
+    of agency, partnership, or joint venture between PSF and Licensee. This
+    License Agreement does not grant permission to use PSF trademarks or trade
+    name in a trademark sense to endorse or promote products or services of
+    Licensee, or any third party.
+
+  8. By copying, installing or otherwise using Python 2.0.1, Licensee agrees to
+    be bound by the terms and conditions of this License Agreement.
+
+
+BEOPEN.COM LICENSE AGREEMENT FOR PYTHON 2.0
+-------------------------------------------
+
+-------------------------------------------
+
+
+BEOPEN PYTHON OPEN SOURCE LICENSE AGREEMENT VERSION 1
+
+  1. This LICENSE AGREEMENT is between BeOpen.com ("BeOpen"), having an office at
+    160 Saratoga Avenue, Santa Clara, CA 95051, and the Individual or
+    Organization ("Licensee") accessing and otherwise using this software in
+    source or binary form and its associated documentation ("the Software").
+
+  2. Subject to the terms and conditions of this BeOpen Python License Agreement,
+    BeOpen hereby grants Licensee a non-exclusive, royalty-free, world-wide
+    license to reproduce, analyze, test, perform and/or display publicly, prepare
+    derivative works, distribute, and otherwise use the Software alone or in any
+    derivative version, provided, however, that the BeOpen Python License is
+    retained in the Software, alone or in any derivative version prepared by
+    Licensee.
+
+  3. BeOpen is making the Software available to Licensee on an "AS IS" basis.
+    BEOPEN MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF
+    EXAMPLE, BUT NOT LIMITATION, BEOPEN MAKES NO AND DISCLAIMS ANY REPRESENTATION
+    OR WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT
+    THE USE OF THE SOFTWARE WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+
+  4. BEOPEN SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF THE SOFTWARE
+    FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+    USING, MODIFYING OR DISTRIBUTING THE SOFTWARE, OR ANY DERIVATIVE THEREOF,
+    EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+  5. This License Agreement will automatically terminate upon a material breach
+    of its terms and conditions.
+
+  6. This License Agreement shall be governed by and interpreted in all respects
+    by the law of the State of California, excluding conflict of law provisions.
+    Nothing in this License Agreement shall be deemed to create any relationship
+    of agency, partnership, or joint venture between BeOpen and Licensee. This
+    License Agreement does not grant permission to use BeOpen trademarks or trade
+    names in a trademark sense to endorse or promote products or services of
+    Licensee, or any third party. As an exception, the "BeOpen Python" logos
+    available at http://www.pythonlabs.com/logos.html may be used according to
+    the permissions granted on that web page.
+
+  7. By copying, installing or otherwise using the software, Licensee agrees to
+    be bound by the terms and conditions of this License Agreement.
+
+
+CNRI LICENSE AGREEMENT FOR PYTHON 1.6.1
+---------------------------------------
+
+---------------------------------------
+
+  1. This LICENSE AGREEMENT is between the Corporation for National Research
+    Initiatives, having an office at 1895 Preston White Drive, Reston, VA 20191
+    ("CNRI"), and the Individual or Organization ("Licensee") accessing and
+    otherwise using Python 1.6.1 software in source or binary form and its
+    associated documentation.
+
+  2. Subject to the terms and conditions of this License Agreement, CNRI hereby
+    grants Licensee a nonexclusive, royalty-free, world-wide license to
+    reproduce, analyze, test, perform and/or display publicly, prepare derivative
+    works, distribute, and otherwise use Python 1.6.1 alone or in any derivative
+    version, provided, however, that CNRI's License Agreement and CNRI's notice
+    of copyright, i.e., "Copyright ÃÂÃ¢ÂÂÃÂÃÂ© 1995-2001 Corporation for
+    National Research Initiatives; All Rights Reserved" are retained in Python
+    1.6.1 alone or in any derivative version prepared by Licensee. Alternately,
+    in lieu of CNRI's License Agreement, Licensee may substitute the following
+    text (omitting the quotes): "Python 1.6.1 is made available subject to the
+    terms and conditions in CNRI's License Agreement. This Agreement together
+    with Python 1.6.1 may be located on the Internet using the following unique,
+    persistent identifier (known as a handle): 1895.22/1013. This Agreement may
+    also be obtained from a proxy server on the Internet using the following URL:
+    http://hdl.handle.net/1895.22/1013".
+
+  3. In the event Licensee prepares a derivative work that is based on or
+    incorporates Python 1.6.1 or any part thereof, and wants to make the
+    derivative work available to others as provided herein, then Licensee hereby
+    agrees to include in any such work a brief summary of the changes made to
+    Python 1.6.1.
+
+  4. CNRI is making Python 1.6.1 available to Licensee on an "AS IS" basis. CNRI
+    MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF
+    EXAMPLE, BUT NOT LIMITATION, CNRI MAKES NO AND DISCLAIMS ANY REPRESENTATION
+    OR WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT
+    THE USE OF PYTHON 1.6.1 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+
+  5. CNRI SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 1.6.1 FOR
+    ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 1.6.1, OR ANY DERIVATIVE
+    THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+  6. This License Agreement will automatically terminate upon a material breach
+    of its terms and conditions.
+
+  7. This License Agreement shall be governed by the federal intellectual
+    property law of the United States, including without limitation the federal
+    copyright law, and, to the extent such U.S. federal law does not apply, by
+    the law of the Commonwealth of Virginia, excluding Virginia's conflict of law
+    provisions. Notwithstanding the foregoing, with regard to derivative works
+    based on Python 1.6.1 that incorporate non-separable material that was
+    previously distributed under the GNU General Public License (GPL), the law of
+    the Commonwealth of Virginia shall govern this License Agreement only as to
+    issues arising under or with respect to Paragraphs 4, 5, and 7 of this
+    License Agreement. Nothing in this License Agreement shall be deemed to
+    create any relationship of agency, partnership, or joint venture between CNRI
+    and Licensee. This License Agreement does not grant permission to use CNRI
+    trademarks or trade name in a trademark sense to endorse or promote products
+    or services of Licensee, or any third party.
+
+  8. By clicking on the "ACCEPT" button where indicated, or by copying,
+    installing or otherwise using Python 1.6.1, Licensee agrees to be bound by
+    the terms and conditions of this License Agreement.
+
+
+CWI LICENSE AGREEMENT FOR PYTHON 0.9.0 THROUGH 1.2
+--------------------------------------------------
+
+Copyright (c) 1991 - 1995, Stichting Mathematisch Centrum Amsterdam, The
+Netherlands. All rights reserved.
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided that
+the above copyright notice appear in all copies and that both that copyright
+notice and this permission notice appear in supporting documentation, and that
+the name of Stichting Mathematisch Centrum or CWI not be used in advertising or
+publicity pertaining to distribution of the software without specific, written
+prior permission.
+
+STICHTING MATHEMATISCH CENTRUM DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+EVENT SHALL STICHTING MATHEMATISCH CENTRUM BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+
+---
+
 Python Software Foundation License 2.0
-(aiohappyeyeballs 2.3.5)
+(Python programming language 3.12.2, python3-aiohappyeyeballs 2.3.7)
 
 This license was approved as the official PSF License Version 2 on October 22,
 2004. The only differences between this and version 1 of the PSF license consist
@@ -3347,6 +2471,36 @@ third party.
 
 8. By copying, installing or otherwise using Python 2.3, Licensee agrees to be
 bound by the terms and conditions of this License Agreement.
+
+---
+
+The Unlicense
+(py-filelock 3.16.0)
+
+The Unlicense
+=============
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+software, either in source code form or as a compiled binary, for any purpose,
+commercial or non-commercial, and by any means.
+
+In jurisdictions that recognize copyright laws, the author or authors of this
+software dedicate any and all copyright interest in the software to the public
+domain. We make this dedication for the benefit of the public at large and to the
+detriment of our heirs and successors. We intend this dedication to be an overt
+act of relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to http://unlicense.org/
 
 ---
 
