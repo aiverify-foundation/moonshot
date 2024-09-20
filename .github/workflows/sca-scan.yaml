@@ -90,7 +90,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
           git add .
-          git commit -m "Update Notices"
+          git commit -m "Update LICENSE.md"
           git push -f -u origin HEAD
       shell: bash
 
@@ -99,7 +99,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-          gh pr create --title "Update License.md for Moonshot" --body "This PR updates License File for Moonshot" --base main --head notices
+          gh pr create --title "Update LICENSE.md for Moonshot" --body "This PR updates License File for Moonshot" --base main --head notices
       shell: bash
 
     - name: Merge PR (Workflow_Dispatch)
