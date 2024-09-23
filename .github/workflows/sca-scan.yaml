@@ -71,7 +71,7 @@ jobs:
           source venv/bin/activate
           pip install -r requirements.txt
           bash <(curl -s -L https://detect.synopsys.com/detect9.sh) --blackduck.url=https://blackduck.aipo-imda.net/ --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} --detect.detector.search.depth=10 --detect.project.name=aiverify-moonshot --detect.project.version.name=$BRANCH --detect.source.path=. --detect.code.location.name="aiverify-moonshot_$BRANCH" --detect.excluded.directories=/tests --blackduck.trust.cert=true --detect.excluded.detector.types=POETRY --detect.notices.report=true --detect.notices.report.path=.
-          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt LICENSE.md
+          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt NOTICES.md
 
     - name: Configure GIT (Workflow_Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -90,7 +90,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
           git add .
-          git commit -m "Update LICENSE.md"
+          git commit -m "Update NOTICES.md"
           git push -f -u origin HEAD
       shell: bash
 
@@ -99,7 +99,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-          gh pr create --title "Update LICENSE.md for Moonshot" --body "This PR updates License File for Moonshot" --base main --head notices
+          gh pr create --title "Update NOTICES.md for Moonshot" --body "This PR updates Notice File for Moonshot" --base main --head notices
       shell: bash
 
     - name: Merge PR (Workflow_Dispatch)
