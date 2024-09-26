@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: moonshot-ui
-          image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.4
+          image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.8
           args:
             - "/bin/sh"
             - "-c"

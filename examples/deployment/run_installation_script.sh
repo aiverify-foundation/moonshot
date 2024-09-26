@@ -1,3 +1,8 @@
+# set logger
+export MS_LOG_NAME="moonshot"
+export MS_LOG_LEVEL="DEBUG"
+export MS_LOG_TO_FILE="true"
+
 # install moonshot
 pip3 install --no-cache-dir "aiverify-moonshot[all]"
 
