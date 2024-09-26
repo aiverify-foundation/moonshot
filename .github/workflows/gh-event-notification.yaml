@@ -1,0 +1,43 @@
+name: GH Event Notification
+
+on:
+#  issues:
+#    types: [opened]
+#  pull_request:
+#    types: [opened]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get PR or Issue details
+      id: details
+      run: |
+        if [ "${{ github.event_name }}" == "issues" ]; then
+          echo "::set-output name=type::issue"
+          echo "::set-output name=title::${{ github.event.issue.title }}"
+          echo "::set-output name=user::${{ github.event.issue.user.login }}"
+          echo "::set-output name=url::${{ github.event.issue.html_url }}"        
+        else
+          echo "::set-output name=type::pull_request"
+          echo "::set-output name=title::${{ github.event.pull_request.title }}"
+          echo "::set-output name=user::${{ github.event.pull_request.user.login }}"
+          echo "::set-output name=url::${{ github.event.pull_request.html_url }}"   
+        fi
+        echo "::set-output name=repo::${{ github.repository }}"
+
+    - name: Send notification to Slack
+      uses: slackapi/slack-github-action@v1.26.0
+      with:
+        payload: |
+          {
+            "type": "${{ steps.details.outputs.type }}",
+            "title": "${{ steps.details.outputs.title }}",
+            "user": "${{ steps.details.outputs.user }}",
+            "repo": "${{ steps.details.outputs.repo }}",
+            "url": "${{ steps.details.outputs.url }}"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GH_NOTIF_URL }}

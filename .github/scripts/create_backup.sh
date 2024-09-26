@@ -1,12 +1,18 @@
 #!/bin/bash
 
-# Define the backup directory and the maximum number of backups
-BACKUP_DIR=~/moonshot/backups
+BASE_DIR=~/moonshot
+MOONSHOT_DIR=moonshot-sit
+
+# Moonshot SIT dir
+SIT_DIR=$BASE_DIR/$MOONSHOT_DIR
+
+# Backup directory and the maximum number of backups
+BACKUP_DIR=$BASE_DIR/backups
 MAX_BACKUPS=5
 
 # Check if the moonshot directory exists
-if [ ! -d ~/moonshot/moonshot ]; then
-  echo "Skip backup: ~/moonshot/moonshot dir does not exist."
+if [ ! -d $SIT_DIR ]; then
+  echo "Skip backup: $SIT_DIR dir does not exist."
   exit 0
 fi
 
@@ -30,5 +36,5 @@ else
   new_backup=$highest_backup
 fi
 
-# Create a new backup by moving the moonshot directory to the backup directory with the new backup number
-mv ~/moonshot/moonshot $BACKUP_DIR/backup_$new_backup
+# Create a new backup by moving the moonshot dir to the backup dir with the new backup number
+mv $SIT_DIR $BACKUP_DIR/backup_$new_backup

@@ -1,0 +1,7 @@
+ADDITIONAL_PARAMETERS='{
+  "timeout": 300,
+  "allow_retries": true,
+  "num_of_retries": 3,
+  "temperature": 0.5,
+  "model": "gpt-4o"
+}'

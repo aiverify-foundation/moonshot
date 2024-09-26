@@ -33,7 +33,7 @@ jobs:
   nightly-build:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     permissions:
       id-token: write
       contents: read
@@ -126,12 +126,13 @@ jobs:
           echo "Command status: $status"
 
       - name: Run smoke test
+        timeout-minutes: 30
         run: |
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Run smoke test" \
-            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh\""]' \
+            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh ${{ secrets.AZURE_OPENAI_TOKEN }} ${{ secrets.AZURE_OPENAI_URI }} \""]' \
             --query "Command.CommandId" \
             --output text)
       
@@ -152,6 +153,7 @@ jobs:
                 --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
                 --query "StandardOutputContent" \
                 --output text)
+              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
               echo "Smoke test output: $output"
               echo "Command status: $status"
               if [ "$status" == "Success" ]; then
@@ -165,9 +167,26 @@ jobs:
               attempts=$((attempts + 1))
             else
               echo "Unexpected command status: $status"
+              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
               exit 1
             fi
           done
       
           echo "Max attempts reached, exiting."
+          echo "SMOKE_TEST_STATUS=timeout" >> $GITHUB_ENV
           exit 1
+
+      # Send slack notification
+      - name: Send slack notification
+        if: ${{ ! cancelled() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "workflow": "${{ github.repository }} | ${{ github.workflow }}",
+              "status": "${{ job.status }}",
+              "details": "${{ env.SMOKE_TEST_STATUS }}",
+              "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

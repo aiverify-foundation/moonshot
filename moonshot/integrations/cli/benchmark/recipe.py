@@ -17,6 +17,41 @@ from moonshot.api import (
     api_read_recipe,
     api_update_recipe,
 )
+from moonshot.integrations.cli.cli_errors import (
+    ERROR_BENCHMARK_ADD_RECIPE_CATEGORIES_LIST_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_CATEGORIES_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_DATASETS_LIST_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_DATASETS_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_DESC_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_GRADING_SCALE_DICT_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_GRADING_SCALE_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_METRICS_LIST_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_METRICS_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_NAME_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_PROMPT_TEMPLATES_LIST_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_PROMPT_TEMPLATES_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_TAGS_LIST_STR_VALIDATION,
+    ERROR_BENCHMARK_ADD_RECIPE_TAGS_VALIDATION,
+    ERROR_BENCHMARK_DELETE_RECIPE_RECIPE_VALIDATION,
+    ERROR_BENCHMARK_LIST_RECIPES_FIND_VALIDATION,
+    ERROR_BENCHMARK_LIST_RECIPES_PAGINATION_VALIDATION,
+    ERROR_BENCHMARK_LIST_RECIPES_PAGINATION_VALIDATION_1,
+    ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION_1,
+    ERROR_BENCHMARK_RUN_RECIPE_NAME_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_NO_RESULT,
+    ERROR_BENCHMARK_RUN_RECIPE_NUM_OF_PROMPTS_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_RANDOM_SEED_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_RECIPES_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_RECIPES_VALIDATION_1,
+    ERROR_BENCHMARK_RUN_RECIPE_RESULT_PROC_MOD_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_RUNNER_PROC_MOD_VALIDATION,
+    ERROR_BENCHMARK_RUN_RECIPE_SYS_PROMPT_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_RECIPE_RECIPE_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_RECIPE_UPDATE_VALUES_VALIDATION,
+    ERROR_BENCHMARK_UPDATE_RECIPE_UPDATE_VALUES_VALIDATION_1,
+    ERROR_BENCHMARK_VIEW_RECIPE_RECIPE_VALIDATION,
+)
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
 from moonshot.integrations.cli.utils.process_data import filter_data
 
@@ -37,23 +72,114 @@ def add_recipe(args) -> None:
 
     Args:
         args (argparse.Namespace): The arguments provided to the command line interface.
-        Expected keys are name, description, tags, categories, dataset, prompt_templates, metrics and grading_scale.
+        Expected keys are name, description, tags, categories, datasets, prompt_templates, metrics, and grading_scale.
 
     Returns:
         None
 
     Raises:
-        Exception: If there is an error during the creation of the recipe or the arguments cannot be evaluated.
+        TypeError: If any of the required arguments are not strings or are None.
+        ValueError: If the evaluated arguments are not of the expected types.
     """
     try:
-        tags = literal_eval(args.tags) if args.tags else []
+        if not isinstance(args.name, str) or not args.name or args.name is None:
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_NAME_VALIDATION)
+
+        if (
+            not isinstance(args.description, str)
+            or not args.description
+            or args.description is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_DESC_VALIDATION)
+
+        if not isinstance(args.tags, str) or not args.tags or args.tags is None:
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_TAGS_VALIDATION)
+
+        if (
+            not isinstance(args.categories, str)
+            or not args.categories
+            or args.categories is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_CATEGORIES_VALIDATION)
+
+        if (
+            not isinstance(args.datasets, str)
+            or not args.datasets
+            or args.datasets is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_DATASETS_VALIDATION)
+
+        if (
+            not isinstance(args.prompt_templates, str)
+            or not args.prompt_templates
+            or args.prompt_templates is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_PROMPT_TEMPLATES_VALIDATION)
+
+        if (
+            not isinstance(args.metrics, str)
+            or not args.metrics
+            or args.metrics is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_METRICS_VALIDATION)
+
+        if (
+            not isinstance(args.grading_scale, str)
+            or not args.grading_scale
+            or args.grading_scale is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_ADD_RECIPE_GRADING_SCALE_VALIDATION)
+
+        tags = literal_eval(args.tags)
         categories = literal_eval(args.categories)
         datasets = literal_eval(args.datasets)
-        prompt_templates = (
-            literal_eval(args.prompt_templates) if args.prompt_templates else []
-        )
+        prompt_templates = literal_eval(args.prompt_templates)
         metrics = literal_eval(args.metrics)
-        grading_scale = literal_eval(args.grading_scale) if args.grading_scale else {}
+        grading_scale = literal_eval(args.grading_scale)
+
+        if not (isinstance(tags, list) and all(isinstance(tag, str) for tag in tags)):
+            raise ValueError(ERROR_BENCHMARK_ADD_RECIPE_TAGS_LIST_STR_VALIDATION)
+
+        if not (
+            isinstance(categories, list)
+            and all(isinstance(category, str) for category in categories)
+        ):
+            raise ValueError(ERROR_BENCHMARK_ADD_RECIPE_CATEGORIES_LIST_STR_VALIDATION)
+
+        if not (
+            isinstance(datasets, list)
+            and all(isinstance(dataset, str) for dataset in datasets)
+        ):
+            raise ValueError(ERROR_BENCHMARK_ADD_RECIPE_DATASETS_LIST_STR_VALIDATION)
+
+        if not (
+            isinstance(prompt_templates, list)
+            and all(
+                isinstance(prompt_template, str) for prompt_template in prompt_templates
+            )
+        ):
+            raise ValueError(
+                ERROR_BENCHMARK_ADD_RECIPE_PROMPT_TEMPLATES_LIST_STR_VALIDATION
+            )
+
+        if not (
+            isinstance(metrics, list)
+            and all(isinstance(metric, str) for metric in metrics)
+        ):
+            raise ValueError(ERROR_BENCHMARK_ADD_RECIPE_METRICS_LIST_STR_VALIDATION)
+
+        if not (
+            isinstance(grading_scale, dict)
+            and all(
+                isinstance(gs, list)
+                and len(gs) == 2
+                and all(isinstance(value, int) for value in gs)
+                for gs in grading_scale.values()
+            )
+        ):
+            raise ValueError(
+                ERROR_BENCHMARK_ADD_RECIPE_GRADING_SCALE_DICT_STR_VALIDATION
+            )
 
         new_recipe_id = api_create_recipe(
             args.name,
@@ -79,18 +205,42 @@ def list_recipes(args) -> list | None:
     It then displays the retrieved recipes using the _display_recipes function.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find recipe(s) with a keyword.
-        pagination (str): Optional field to paginate recipes.
+        args: A namespace object from argparse. It should have optional attributes:
+            find (str): Optional field to find recipe(s) with a keyword.
+            pagination (str): Optional field to paginate recipes.
 
     Returns:
-        list | None: A list of Recipe or None if there is no result.
-    """
+        list | None: A list of recipes or None if there is no result.
 
+    Raises:
+        TypeError: If the 'find' or 'pagination' arguments are not strings or are invalid.
+        ValueError: If the 'pagination' argument cannot be evaluated into a tuple of two integers.
+    """
     try:
+        if args.find is not None:
+            if not isinstance(args.find, str) or not args.find:
+                raise TypeError(ERROR_BENCHMARK_LIST_RECIPES_FIND_VALIDATION)
+
+        if args.pagination is not None:
+            if not isinstance(args.pagination, str) or not args.pagination:
+                raise TypeError(ERROR_BENCHMARK_LIST_RECIPES_PAGINATION_VALIDATION)
+            try:
+                pagination = literal_eval(args.pagination)
+                if not (
+                    isinstance(pagination, tuple)
+                    and len(pagination) == 2
+                    and all(isinstance(i, int) for i in pagination)
+                ):
+                    raise ValueError(
+                        ERROR_BENCHMARK_LIST_RECIPES_PAGINATION_VALIDATION_1
+                    )
+            except (ValueError, SyntaxError):
+                raise ValueError(ERROR_BENCHMARK_LIST_RECIPES_PAGINATION_VALIDATION_1)
+        else:
+            pagination = ()
+
         recipes_list = api_get_all_recipe()
         keyword = args.find.lower() if args.find else ""
-        pagination = literal_eval(args.pagination) if args.pagination else ()
 
         if recipes_list:
             filtered_recipes_list = filter_data(recipes_list, keyword, pagination)
@@ -103,6 +253,7 @@ def list_recipes(args) -> list | None:
 
     except Exception as e:
         print(f"[list_recipes]: {str(e)}")
+        return None
 
 
 def view_recipe(args) -> None:
@@ -111,7 +262,7 @@ def view_recipe(args) -> None:
 
     This function retrieves a specific recipe by calling the api_read_recipe function from the
     moonshot.api module using the recipe name provided in the args.
-    It then displays the retrieved recipe using the display_view_recipe function.
+    It then displays the retrieved recipe using the _display_recipes function.
 
     Args:
         args: A namespace object from argparse. It should have the following attribute:
@@ -119,8 +270,14 @@ def view_recipe(args) -> None:
 
     Returns:
         None
+
+    Raises:
+        TypeError: If the 'recipe' argument is not a string or is None.
     """
     try:
+        if not isinstance(args.recipe, str) or not args.recipe or args.recipe is None:
+            raise TypeError(ERROR_BENCHMARK_VIEW_RECIPE_RECIPE_VALIDATION)
+
         recipe_info = api_read_recipe(args.recipe)
         _display_recipes([recipe_info])
     except Exception as e:
@@ -148,46 +305,103 @@ def run_recipe(args) -> None:
 
     Returns:
         None
+
+    Raises:
+        TypeError: If any of the required arguments are not of the expected types or are None.
+        ValueError: If the 'recipes' or 'endpoints' arguments cannot be evaluated into lists of strings.
+        RuntimeError: If no results are found after running the recipes.
     """
     try:
-        name = args.name
+        if not isinstance(args.name, str) or not args.name or args.name is None:
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_NAME_VALIDATION)
+
+        if (
+            not isinstance(args.recipes, str)
+            or not args.recipes
+            or args.recipes is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_RECIPES_VALIDATION)
+
+        if (
+            not isinstance(args.endpoints, str)
+            or not args.endpoints
+            or args.endpoints is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION)
+
+        if isinstance(args.num_of_prompts, bool) or not isinstance(
+            args.num_of_prompts, int
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_NUM_OF_PROMPTS_VALIDATION)
+
+        if isinstance(args.random_seed, bool) or not isinstance(args.random_seed, int):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_RANDOM_SEED_VALIDATION)
+
+        if (
+            not isinstance(args.system_prompt, str)
+            or not args.system_prompt
+            or args.system_prompt is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_SYS_PROMPT_VALIDATION)
+
+        if (
+            not isinstance(args.runner_proc_module, str)
+            or not args.runner_proc_module
+            or args.runner_proc_module is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_RUNNER_PROC_MOD_VALIDATION)
+
+        if (
+            not isinstance(args.result_proc_module, str)
+            or not args.result_proc_module
+            or args.result_proc_module is None
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_RESULT_PROC_MOD_VALIDATION)
+
         recipes = literal_eval(args.recipes)
+        if not (
+            isinstance(recipes, list) and all(isinstance(item, str) for item in recipes)
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_RECIPES_VALIDATION_1)
+
         endpoints = literal_eval(args.endpoints)
-        num_of_prompts = args.num_of_prompts
-        random_seed = args.random_seed
-        system_prompt = args.system_prompt
-        runner_proc_module = args.runner_proc_module
-        result_proc_module = args.result_proc_module
+        if not (
+            isinstance(endpoints, list)
+            and all(isinstance(item, str) for item in endpoints)
+        ):
+            raise TypeError(ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION_1)
 
         # Run the recipes with the defined endpoints
-        slugify_id = slugify(name, lowercase=True)
+        slugify_id = slugify(args.name, lowercase=True)
         if slugify_id in api_get_all_runner_name():
             rec_runner = api_load_runner(slugify_id)
         else:
-            rec_runner = api_create_runner(name, endpoints)
+            rec_runner = api_create_runner(args.name, endpoints)
+
+        async def run():
+            await rec_runner.run_recipes(
+                recipes,
+                args.num_of_prompts,
+                args.random_seed,
+                args.system_prompt,
+                args.runner_proc_module,
+                args.result_proc_module,
+            )
+            await rec_runner.close()
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(
-            rec_runner.run_recipes(
-                recipes,
-                num_of_prompts,
-                random_seed,
-                system_prompt,
-                runner_proc_module,
-                result_proc_module,
-            )
-        )
-        rec_runner.close()
+        loop.run_until_complete(run())
 
         # Display results
         runner_runs = api_get_all_run(rec_runner.id)
         result_info = runner_runs[-1].get("results")
         if result_info:
-            show_recipe_results(
+            _show_recipe_results(
                 recipes, endpoints, result_info, result_info["metadata"]["duration"]
             )
         else:
-            raise RuntimeError("no run result generated")
+            raise RuntimeError(ERROR_BENCHMARK_RUN_RECIPE_NO_RESULT)
+
     except Exception as e:
         print(f"[run_recipe]: {str(e)}")
 
@@ -207,11 +421,31 @@ def update_recipe(args) -> None:
 
     Returns:
         None
+
+    Raises:
+        ValueError: If the 'recipe' or 'update_values' arguments are not strings or are None.
+        ValueError: If the 'update_values' argument cannot be evaluated into a list of tuples.
     """
     try:
+        if args.recipe is None or not isinstance(args.recipe, str) or not args.recipe:
+            raise ValueError(ERROR_BENCHMARK_UPDATE_RECIPE_RECIPE_VALIDATION)
+
+        if (
+            args.update_values is None
+            or not isinstance(args.update_values, str)
+            or not args.update_values
+        ):
+            raise ValueError(ERROR_BENCHMARK_UPDATE_RECIPE_UPDATE_VALUES_VALIDATION)
+
         recipe = args.recipe
-        update_values = dict(literal_eval(args.update_values))
+        if literal_eval(args.update_values) and all(
+            isinstance(i, tuple) for i in literal_eval(args.update_values)
+        ):
+            update_values = dict(literal_eval(args.update_values))
+        else:
+            raise ValueError(ERROR_BENCHMARK_UPDATE_RECIPE_UPDATE_VALUES_VALIDATION_1)
         api_update_recipe(recipe, **update_values)
+
         print("[update_recipe]: Recipe updated.")
     except Exception as e:
         print(f"[update_recipe]: {str(e)}")
@@ -232,6 +466,9 @@ def delete_recipe(args) -> None:
 
     Returns:
         None
+
+    Raises:
+        ValueError: If the 'recipe' argument is not a string or is None.
     """
     # Confirm with the user before deleting a recipe
     confirmation = console.input(
@@ -240,7 +477,11 @@ def delete_recipe(args) -> None:
     if confirmation.lower() != "y":
         console.print("[bold yellow]Recipe deletion cancelled.[/]")
         return
+
     try:
+        if args.recipe is None or not isinstance(args.recipe, str) or not args.recipe:
+            raise ValueError(ERROR_BENCHMARK_DELETE_RECIPE_RECIPE_VALIDATION)
+
         api_delete_recipe(args.recipe)
         print("[delete_recipe]: Recipe deleted.")
     except Exception as e:
@@ -250,7 +491,7 @@ def delete_recipe(args) -> None:
 # ------------------------------------------------------------------------------
 # Helper functions: Display on cli
 # ------------------------------------------------------------------------------
-def display_view_grading_scale_format(title: str, grading_scale: dict) -> str:
+def _display_view_grading_scale_format(title: str, grading_scale: dict) -> str:
     """
     Format the grading scale for display.
 
@@ -275,7 +516,7 @@ def display_view_grading_scale_format(title: str, grading_scale: dict) -> str:
         return f"[blue]{title}[/blue]: nil"
 
 
-def display_view_statistics_format(title: str, stats: dict) -> str:
+def _display_view_statistics_format(title: str, stats: dict) -> str:
     """
     Format the statistics for display.
 
@@ -348,10 +589,10 @@ def _display_recipes(recipes_list: list) -> None:
             "Prompt Templates", prompt_templates
         )
         metrics_info = display_view_list_format("Metrics", metrics)
-        grading_scale_info = display_view_grading_scale_format(
+        grading_scale_info = _display_view_grading_scale_format(
             "Grading Scale", grading_scale
         )
-        stats_info = display_view_statistics_format("Statistics", stats)
+        stats_info = _display_view_statistics_format("Statistics", stats)
 
         recipe_info = (
             f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
@@ -364,7 +605,7 @@ def _display_recipes(recipes_list: list) -> None:
     console.print(table)
 
 
-def show_recipe_results(recipes, endpoints, recipe_results, duration):
+def _show_recipe_results(recipes, endpoints, recipe_results, duration):
     """
     Show the results of the recipe benchmarking.
 
@@ -384,7 +625,7 @@ def show_recipe_results(recipes, endpoints, recipe_results, duration):
     """
     if recipe_results:
         # Display recipe results
-        generate_recipe_table(recipes, endpoints, recipe_results)
+        _generate_recipe_table(recipes, endpoints, recipe_results)
     else:
         console.print("[red]There are no results.[/red]")
 
@@ -394,7 +635,7 @@ def show_recipe_results(recipes, endpoints, recipe_results, duration):
     console.print(run_stats)
 
 
-def generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None:
+def _generate_recipe_table(recipes: list, endpoints: list, results: dict) -> None:
     """
     Generate and display a table of recipe results.
 

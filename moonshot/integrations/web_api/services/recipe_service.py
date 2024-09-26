@@ -84,6 +84,9 @@ class RecipeService(BaseService):
             if sort_by == "id":
                 filtered_recipes.sort(key=lambda x: x.id)
 
+        for recipe in filtered_recipes:
+            recipe.endpoint_required = get_endpoint_dependency_in_recipe(recipe)
+
         return filtered_recipes
 
     @exception_handler
@@ -152,3 +155,29 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> int:
         total_prompt_count *= len(recipe.prompt_templates)
 
     return total_prompt_count
+
+@staticmethod
+def get_endpoint_dependency_in_recipe(recipe: Recipe) -> list[str] | None:
+    """
+    Retrieve the list of endpoint dependencies for a given recipe.
+
+    This function fetches all metrics and their associated endpoints, then
+    matches the metrics in the provided recipe to find and compile a list
+    of endpoint dependencies.
+
+    Args:
+        recipe (Recipe): The recipe object containing the metrics information.
+
+    Returns:
+        list[str] | None: A list of endpoint dependencies if found, otherwise None.
+    """
+    metrics = recipe.metrics
+    all_metrics = moonshot_api.api_get_all_metric()
+    
+    endpoints = set()
+    for metric in metrics:
+        for m in all_metrics:
+            if m['id'] == metric:
+                endpoints.update(m['endpoints'])
+    
+    return list(endpoints) if endpoints else None
