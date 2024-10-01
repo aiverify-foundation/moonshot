@@ -16,16 +16,18 @@ from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
 from moonshot.src.messages_constants import (
-    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION,
+    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
     CONNECTOR_CREATE_ERROR,
     CONNECTOR_GET_AVAILABLE_ITEMS_ERROR,
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR,
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR,
     CONNECTOR_GET_PREDICTION_ERROR,
     CONNECTOR_GET_PREDICTION_INFO,
     CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO,
-    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION,
+    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
     CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR,
     CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR,
-    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION,
+    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR,
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
@@ -219,7 +221,9 @@ class Connector:
             RuntimeError: If the specified connector type does not match any available connector classes.
         """
         if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
-            raise ValueError(CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION)
+            raise ValueError(
+                CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
+            )
 
         connector_instance = get_instance(
             ep_args.connector_type,
@@ -259,7 +263,7 @@ class Connector:
         try:
             if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
                 raise ValueError(
-                    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION
+                    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
                 )
             return Connector.load(ep_args)
 
@@ -327,6 +331,18 @@ class Connector:
         Raises:
             Exception: If there is an error during prediction.
         """
+        if generated_prompt is None or not isinstance(
+            generated_prompt, ConnectorPromptArguments
+        ):
+            raise ValueError(
+                CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR
+            )
+
+        if connector is None or not isinstance(connector, Connector):
+            raise ValueError(
+                CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR
+            )
+
         try:
             logger.info(
                 CONNECTOR_GET_PREDICTION_INFO.format(
@@ -379,5 +395,5 @@ class Connector:
             ValueError: If the provided system prompt is not a string or is None.
         """
         if system_prompt is None or not isinstance(system_prompt, str):
-            raise ValueError(CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION)
+            raise ValueError(CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR)
         self.system_prompt = system_prompt
