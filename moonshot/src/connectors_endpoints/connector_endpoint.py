@@ -47,6 +47,7 @@ class ConnectorEndpoint:
                 "token": ep_args.token,
                 "max_calls_per_second": ep_args.max_calls_per_second,
                 "max_concurrency": ep_args.max_concurrency,
+                "model": ep_args.model,
                 "params": ep_args.params,
             }
 

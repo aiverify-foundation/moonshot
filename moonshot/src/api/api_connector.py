@@ -13,8 +13,8 @@ def api_create_connector_from_endpoint(ep_id: str) -> Connector:
     Creates a connector based on the provided endpoint ID.
 
     This function retrieves the endpoint arguments using the provided endpoint ID and then creates a connector
-    based on those arguments. It utilizes the ConnectorManager's read_endpoint method to fetch the endpoint
-    arguments and then calls the create_connector method to initialize and return the connector.
+    based on those arguments. It utilizes the ConnectorEndpoint's read method to fetch the endpoint
+    arguments and then calls the Connector's create method to initialize and return the connector.
 
     Args:
         ep_id (str): The ID of the endpoint for which to create a connector.
@@ -49,7 +49,7 @@ def api_get_all_connector_type() -> list[str]:
     """
     Retrieves a list of all available connector types.
 
-    This function calls the ConnectorManager's get_available_connector_types method to retrieve a list of all available
+    This function calls the Connector's get_available_items method to retrieve a list of all available
     connector types. It returns the list of connector types.
 
     Returns:
