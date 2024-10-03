@@ -7,4 +7,5 @@ from moonshot.src.cookbooks.cookbook_arguments import (
 
 class CookbookResponseModel(CookbookPydanticModel):
     total_prompt_in_cookbook: Optional[int] = None
+    total_dataset_in_cookbook: Optional[int] = None
     endpoint_required: Optional[list[str]] = None
