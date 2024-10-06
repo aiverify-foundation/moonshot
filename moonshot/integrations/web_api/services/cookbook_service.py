@@ -63,24 +63,24 @@ class CookbookService(BaseService):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if tags and cookbooks_recipe_has_tags(tags, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if categories and cookbooks_recipe_has_categories(categories, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if categories_excluded and cookbooks_recipe_has_categories(
@@ -134,7 +134,7 @@ class CookbookService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_cookbook(cookbook: Cookbook) -> int:
+def get_total_prompt_and_dataset_in_cookbook(cookbook: Cookbook) -> tuple[int, int]:
     """
     Calculate the total number of prompts in a cookbook.
 
@@ -147,7 +147,8 @@ def get_total_prompt_in_cookbook(cookbook: Cookbook) -> int:
         int: The total count of prompts within the cookbook.
     """
     recipes = moonshot_api.api_read_recipes(cookbook.recipes)
-    return sum(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes)
+    total_prompts, total_datasets = zip(*(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes))
+    return sum(total_prompts), sum(total_datasets)
 
 
 @staticmethod
