@@ -27,20 +27,21 @@ dependencies = [
     "pyparsing==3.1.4",
     "xxhash==3.5.0",
     "datasets==2.21.0",
-    "pandas==2.2.2",
-    "numpy==1.26.4"
+    "pandas==2.2.3",
+    "numpy==1.26.4",
+    "tenacity==8.5.0"
 ]
 
 [project.optional-dependencies]
 web-api = [
     "typing-extensions==4.12.2",
-    "fastapi==0.112.2",
-    "uvicorn==0.30.6",
-    "dependency-injector==4.41.0",
+    "fastapi==0.115.0",
+    "uvicorn==0.31.0",
+    "dependency-injector==4.42.0",
 ]
 cli = [
     "cmd2==2.4.3",
-    "rich==13.8.0",
+    "rich==13.9.2",
 ]
 all = [
     "aiverify-moonshot[web-api]",
@@ -112,14 +113,15 @@ pydantic = "2.8.2"
 pyparsing = "3.1.4"
 xxhash = "3.5.0"
 datasets = "2.21.0"
-pandas = "2.2.2"
+pandas = "2.2.3"
 numpy = "1.26.4"
+tenacity = "8.5.0"
 typing-extensions = "4.12.2"
-fastapi = "0.112.2"
-uvicorn = "0.30.6"
-dependency-injector = "4.41.0"
+fastapi = "0.115.0"
+uvicorn = "0.31.0"
+dependency-injector = "4.42.0"
 cmd2 = "2.4.3"
-rich = "13.8.0"
+rich = "13.9.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
