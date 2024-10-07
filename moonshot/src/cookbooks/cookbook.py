@@ -64,6 +64,8 @@ class Cookbook:
             cb_info = {
                 "name": cb_args.name,
                 "description": cb_args.description,
+                "tags": cb_args.tags,
+                "categories": cb_args.categories,
                 "recipes": cb_args.recipes,
             }
 

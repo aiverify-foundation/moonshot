@@ -21,9 +21,12 @@ class CookbookService(BaseService):
         moonshot_api.api_create_cookbook(
             name=cookbook_data.name,
             description=cookbook_data.description,
+            tags=cookbook_data.tags,
+            categories=cookbook_data.categories,
             recipes=cookbook_data.recipes,
         )
 
+    @exception_handler
     @exception_handler
     def get_all_cookbooks(
         self,
@@ -67,7 +70,7 @@ class CookbookService(BaseService):
                             get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
-            if tags and cookbooks_recipe_has_tags(tags, cookbook):
+            if tags and cookbook_has_tags(tags, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
@@ -75,7 +78,7 @@ class CookbookService(BaseService):
                             get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
-            if categories and cookbooks_recipe_has_categories(categories, cookbook):
+            if categories and cookbook_has_categories(categories, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
@@ -83,7 +86,7 @@ class CookbookService(BaseService):
                             get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
-            if categories_excluded and cookbooks_recipe_has_categories(
+            if categories_excluded and cookbook_has_categories(
                 categories_excluded, cookbook
             ):
                 cookbooks_list.remove(cookbook)
@@ -152,50 +155,39 @@ def get_total_prompt_and_dataset_in_cookbook(cookbook: Cookbook) -> tuple[int, i
 
 
 @staticmethod
-def cookbooks_recipe_has_tags(tags: str, cookbook: Cookbook) -> bool:
+def cookbook_has_tags(tags: str, cookbook: Cookbook) -> bool:
     """
-    Check if any recipe in a cookbook has the specified tags.
+    Check if a cookbook has the specified tags.
 
     Args:
-        tags (str): The tags to check for in the cookbook's recipes.
-        cookbook (Cookbook): The cookbook object containing the recipe IDs.
+        tags (str): The tags to check for in the cookbook.
+        cookbook (Cookbook): The cookbook object.
 
     Returns:
-        bool: True if any recipe in the cookbook has the specified tags, False otherwise.
+        bool: True if the cookbook has the specified tags, False otherwise.
     """
-    recipe_ids = cookbook.recipes
-    recipes = moonshot_api.api_read_recipes(recipe_ids)
-    for recipe in recipes:
-        recipe = Recipe(**recipe)
-        if tags in recipe.tags:
-            return True
-    return False
+    tags_list = [tag.lower() for tag in tags.split(",")]
+    return any(tag in [ctag.lower() for ctag in cookbook.tags] for tag in tags_list)
 
 
 @staticmethod
-def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool:
+def cookbook_has_categories(categories: str, cookbook: Cookbook) -> bool:
     """
-    Check if any recipe in a cookbook has the specified categories.
+    Check if a cookbook has the specified categories.
 
     Args:
-        categories (str): The categories to check for in the cookbook's recipes.
-        cookbook (Cookbook): The cookbook object containing the recipe IDs.
-        exclude_categories (str): The categories to exclude
+        categories (str): The categories to check for in the cookbook.
+        cookbook (Cookbook): The cookbook object.
 
     Returns:
-        bool: True if any recipe in the cookbook has the specified categories, False otherwise.
+        bool: True if the cookbook has the specified categories, False otherwise.
     """
-    recipe_ids = cookbook.recipes
     categories_list = [category.lower() for category in categories.split(",")]
-    recipes = moonshot_api.api_read_recipes(recipe_ids)
-    for recipe in recipes:
-        recipe = Recipe(**recipe)
-        if any(
-            category in [rcat.lower() for rcat in recipe.categories]
-            for category in categories_list
-        ):
-            return True
-    return False
+    return any(
+        category in [ccat.lower() for ccat in cookbook.categories]
+        for category in categories_list
+    )
+
 
 @staticmethod
 def cookbook_endpoint_dependency(cookbook: Cookbook) -> list[str] | None:

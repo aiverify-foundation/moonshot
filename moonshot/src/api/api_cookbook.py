@@ -8,7 +8,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 # Cookbook APIs
 # ------------------------------------------------------------------------------
 @validate_call
-def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
+def api_create_cookbook(name: str, description: str, tags: list[str], categories: list[str], recipes: list[str]) -> str:
     """
     Creates a new cookbook.
 
@@ -33,6 +33,8 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
         id="",
         name=name,
         description=description,
+        tags=tags,
+        categories=categories,
         recipes=recipes,
     )
     return Cookbook.create(cb_args)
