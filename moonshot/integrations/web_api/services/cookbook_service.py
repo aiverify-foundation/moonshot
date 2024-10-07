@@ -27,7 +27,6 @@ class CookbookService(BaseService):
         )
 
     @exception_handler
-    @exception_handler
     def get_all_cookbooks(
         self,
         tags: str,
@@ -86,10 +85,16 @@ class CookbookService(BaseService):
                             get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
-            if categories_excluded and cookbook_has_categories(
-                categories_excluded, cookbook
-            ):
-                cookbooks_list.remove(cookbook)
+            if categories_excluded:
+                excluded_categories_set = set(
+                    category.lower() for category in categories_excluded.split(",")
+                )
+                cookbook_categories_set = set(
+                    category.lower() for category in cookbook.categories
+                )
+                # Exclude only if all categories in the cookbook are in the excluded list
+                if cookbook_categories_set.issubset(excluded_categories_set):
+                    cookbooks_list.remove(cookbook)
 
         for cookbook in cookbooks_list:
             cookbook.endpoint_required = cookbook_endpoint_dependency(cookbook)
