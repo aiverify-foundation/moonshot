@@ -17,6 +17,7 @@ def api_create_endpoint(
     token: str,
     max_calls_per_second: int,
     max_concurrency: int,
+    model: str,
     params: dict,
 ) -> str:
     """
@@ -33,6 +34,7 @@ def api_create_endpoint(
         token (str): The token for authentication with the connector.
         max_calls_per_second (int): The maximum number of calls allowed per second.
         max_concurrency (int): The maximum number of concurrent calls allowed.
+        model (str): The model used by the connector.
         params (dict): Additional parameters for the connector.
 
     Returns:
@@ -51,6 +53,7 @@ def api_create_endpoint(
         token=token,
         max_calls_per_second=max_calls_per_second,
         max_concurrency=max_concurrency,
+        model=model,
         params=params,
         created_date="",
     )
@@ -136,7 +139,7 @@ def api_get_all_endpoint() -> list[dict]:
     """
     Retrieves a list of all available endpoints.
 
-    This function calls the ConnectorManager's get_available_endpoints method to retrieve a list of all available
+    This function calls the ConnectorEndpoint's get_available_items method to retrieve a list of all available
     endpoints and their details. It then converts each ConnectorEndpointArguments object into a dictionary for easier
     consumption by the caller.
 
@@ -151,8 +154,8 @@ def api_get_all_endpoint_name() -> list[str]:
     """
     Retrieves a list of all endpoint names.
 
-    This function calls the ConnectorManager's get_available_endpoints method to retrieve a list of all available
-    endpoint names. It extracts the names from the tuple returned by get_available_endpoints, which contains a list
+    This function calls the ConnectorEndpoint's get_available_items method to retrieve a list of all available
+    endpoint names. It extracts the names from the tuple returned by get_available_items, which contains a list
     of endpoint names and a list of ConnectorEndpointArguments objects.
 
     Returns:
