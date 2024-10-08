@@ -85,3 +85,39 @@ CONNECTOR_GET_PREDICTION_ERROR = "[Connector ID: {connector_id}] Prompt Index {p
 # CONNECTOR - set_system_prompt
 # ------------------------------------------------------------------------------
 CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR = "[Connector] The 'system_prompt' argument must be an instance of string and not None."  # noqa: E501
+
+# ------------------------------------------------------------------------------
+# CONNECTOR ENDPOINT - create
+# ------------------------------------------------------------------------------
+CONNECTOR_ENDPOINT_CREATE_ERROR = (
+    "[ConnectorEndpoint] Failed to create connector endpoint: {message}"
+)
+
+# ------------------------------------------------------------------------------
+# CONNECTOR ENDPOINT - read
+# ------------------------------------------------------------------------------
+CONNECTOR_ENDPOINT_READ_INVALID = "Invalid connector endpoint id - {ep_id}"
+CONNECTOR_ENDPOINT_READ_ERROR = (
+    "[ConnectorEndpoint] Failed to read connector endpoint: {message}"
+)
+
+# ------------------------------------------------------------------------------
+# CONNECTOR ENDPOINT - update
+# ------------------------------------------------------------------------------
+CONNECTOR_ENDPOINT_UPDATE_ERROR = (
+    "[ConnectorEndpoint] Failed to update connector endpoint: {message}"
+)
+
+# ------------------------------------------------------------------------------
+# CONNECTOR ENDPOINT - delete
+# ------------------------------------------------------------------------------
+CONNECTOR_ENDPOINT_DELETE_ERROR = (
+    "[ConnectorEndpoint] Failed to delete connector endpoint: {message}"
+)
+
+# ------------------------------------------------------------------------------
+# CONNECTOR ENDPOINT - get_available_items
+# ------------------------------------------------------------------------------
+CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR = (
+    "[ConnectorEndpoint] Failed to get available connector endpoints: {message}"
+)
