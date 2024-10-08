@@ -423,17 +423,19 @@ class TestCollectionBookmark:
     # Test delete_bookmark functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "mock_side_effect, bookmark_name, expected_output, expected_call",
+        "mock_read_database_side_effect, mock_delete_database_side_effect, bookmark_name, expected_output, expected_call",
         [
-            # # Case where the bookmark is deleted successfully
-            # (
-            #     None,
-            #     "Bookmark A",
-            #     {"success": True, "message": "[Bookmark] Bookmark record deleted."},
-            #     True,
-            # ),
+            # Case where the bookmark is deleted successfully
+            (
+                ("database_record","result"),
+                None,
+                "Bookmark A",
+                {"success": True, "message": "[Bookmark] Bookmark record deleted."},
+                True,
+            ),
             # Case where the bookmark_name is invalid (None)
             (
+                ("database_record","result"),
                 None,
                 None,
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: None"},
@@ -441,6 +443,7 @@ class TestCollectionBookmark:
             ),
             # Case where the bookmark_name is invalid (empty string)
             (
+                ("database_record","result"),
                 None,
                 "",
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: "},
@@ -448,6 +451,7 @@ class TestCollectionBookmark:
             ),
             # Case where the bookmark_name is invalid (tuple)
             (
+                ("database_record","result"),
                 None,
                 (),
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: ()"},
@@ -455,6 +459,7 @@ class TestCollectionBookmark:
             ),
             # Case where the bookmark_name is invalid (list)
             (
+                ("database_record","result"),
                 None,
                 [],
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: []"},
@@ -462,6 +467,7 @@ class TestCollectionBookmark:
             ),
             # Case where the bookmark_name is invalid (dictionary)
             (
+                ("database_record","result"),
                 None,
                 {},
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: {}"},
@@ -469,36 +475,44 @@ class TestCollectionBookmark:
             ),
             # Case where the bookmark_name is invalid (integer)
             (
+                ("database_record","result"),
                 None,
                 123,
                 {"success": False, "message": "[Bookmark] Invalid bookmark name: 123"},
                 False,
             ),
-            # # Case where deletion fails
-            # (
-            #     Exception("Deletion error"),
-            #     "Bookmark A",
-            #     {
-            #         "success": False,
-            #         "message": "[Bookmark] Failed to delete bookmark record: Deletion error",
-            #     },
-            #     True,
-            # ),
+            # Case where deletion fails
+            (
+                ("database_record","result"),
+                Exception("Deletion error"),
+                "Bookmark A",
+                {
+                    "success": False,
+                    "message": "[Bookmark] Failed to delete bookmark record: Deletion error",
+                },
+                True,
+            ),
         ],
     )
     @patch("moonshot.src.storage.storage.Storage.delete_database_record_in_table")
+    @patch("moonshot.src.storage.storage.Storage.read_database_record")
     def test_delete_bookmark(
         self,
+        mock_read_database_record_in_table,
         mock_delete_database_record_in_table,
-        mock_side_effect,
+        mock_read_database_side_effect,
+        mock_delete_database_side_effect,
         bookmark_name,
         expected_output,
         expected_call,
     ):
         bookmark_instance = Bookmark()
 
+        # Set up the mock side effect for read_database_record_in_table
+        mock_read_database_record_in_table.side_effect = mock_read_database_side_effect
+
         # Set up the mock side effect for delete_database_record_in_table
-        mock_delete_database_record_in_table.side_effect = mock_side_effect
+        mock_delete_database_record_in_table.side_effect = mock_delete_database_side_effect
 
         # Call the API function to delete the bookmark
         result = bookmark_instance.delete_bookmark(bookmark_name)
