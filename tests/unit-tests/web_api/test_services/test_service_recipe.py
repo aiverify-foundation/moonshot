@@ -20,7 +20,8 @@ MOCK_RECIPES = [
         "stats": {
             "num_of_datasets_prompts": {"realtimeqa-past": 50}
         },
-        "total_prompt_in_recipe": 50
+        "total_prompt_in_recipe": 50,
+        "endpoint_required": None
     }
 ]
 

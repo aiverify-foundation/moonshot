@@ -60,7 +60,7 @@ class RecipeService(BaseService):
         for recipe_dict in recipes:
             recipe = RecipeResponseModel(**recipe_dict)
             if count:
-                recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
+                recipe.total_prompt_in_recipe, _ = get_total_prompt_in_recipe(recipe)
             filtered_recipes.append(recipe)
 
         # TODO - do all filtering in 1 pass
@@ -83,6 +83,9 @@ class RecipeService(BaseService):
         if sort_by:
             if sort_by == "id":
                 filtered_recipes.sort(key=lambda x: x.id)
+
+        for recipe in filtered_recipes:
+            recipe.endpoint_required = get_endpoint_dependency_in_recipe(recipe)
 
         return filtered_recipes
 
@@ -126,7 +129,7 @@ class RecipeService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_recipe(recipe: Recipe) -> int:
+def get_total_prompt_in_recipe(recipe: Recipe) -> tuple[int, int]:
     """
     Calculate the total number of prompts in a recipe.
 
@@ -139,6 +142,7 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> int:
 
     Returns:
         int: The total count of prompts within the recipe.
+        int: The total count of datasets within the recipe.
     """
     # Initialize total prompt count
     total_prompt_count = 0
@@ -151,4 +155,30 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> int:
     if recipe.prompt_templates:
         total_prompt_count *= len(recipe.prompt_templates)
 
-    return total_prompt_count
+    return total_prompt_count, int(recipe.stats.get("num_of_datasets", 0))
+
+@staticmethod
+def get_endpoint_dependency_in_recipe(recipe: Recipe) -> list[str] | None:
+    """
+    Retrieve the list of endpoint dependencies for a given recipe.
+
+    This function fetches all metrics and their associated endpoints, then
+    matches the metrics in the provided recipe to find and compile a list
+    of endpoint dependencies.
+
+    Args:
+        recipe (Recipe): The recipe object containing the metrics information.
+
+    Returns:
+        list[str] | None: A list of endpoint dependencies if found, otherwise None.
+    """
+    metrics = recipe.metrics
+    all_metrics = moonshot_api.api_get_all_metric()
+    
+    endpoints = set()
+    for metric in metrics:
+        for m in all_metrics:
+            if m['id'] == metric:
+                endpoints.update(m['endpoints'])
+    
+    return list(endpoints) if endpoints else None

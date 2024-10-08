@@ -5,7 +5,7 @@ from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO, CookbookUpdateDTO
 from ..schemas.cookbook_response_model import CookbookResponseModel
 from ..services.base_service import BaseService
-from ..services.recipe_service import get_total_prompt_in_recipe
+from ..services.recipe_service import get_total_prompt_in_recipe, get_endpoint_dependency_in_recipe
 from ..services.utils.exceptions_handler import exception_handler
 
 
@@ -63,30 +63,33 @@ class CookbookService(BaseService):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if tags and cookbooks_recipe_has_tags(tags, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if categories and cookbooks_recipe_has_categories(categories, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook = (
-                            get_total_prompt_in_cookbook(cookbook)
+                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
+                            get_total_prompt_and_dataset_in_cookbook(cookbook)
                         )
 
             if categories_excluded and cookbooks_recipe_has_categories(
                 categories_excluded, cookbook
             ):
                 cookbooks_list.remove(cookbook)
+
+        for cookbook in cookbooks_list:
+            cookbook.endpoint_required = cookbook_endpoint_dependency(cookbook)
 
         return cookbooks_list
 
@@ -131,7 +134,7 @@ class CookbookService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_cookbook(cookbook: Cookbook) -> int:
+def get_total_prompt_and_dataset_in_cookbook(cookbook: Cookbook) -> tuple[int, int]:
     """
     Calculate the total number of prompts in a cookbook.
 
@@ -144,7 +147,8 @@ def get_total_prompt_in_cookbook(cookbook: Cookbook) -> int:
         int: The total count of prompts within the cookbook.
     """
     recipes = moonshot_api.api_read_recipes(cookbook.recipes)
-    return sum(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes)
+    total_prompts, total_datasets = zip(*(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes))
+    return sum(total_prompts), sum(total_datasets)
 
 
 @staticmethod
@@ -192,3 +196,26 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
         ):
             return True
     return False
+
+@staticmethod
+def cookbook_endpoint_dependency(cookbook: Cookbook) -> list[str] | None:
+    """
+    Retrieve a list of endpoint dependencies for all recipes in a given cookbook.
+
+    Args:
+        cookbook (Cookbook): The cookbook object containing the recipe IDs.
+
+    Returns:
+        list[str] | None: A list of endpoint dependencies if any are found, otherwise None.
+    """
+    recipes_in_cookbook = cookbook.recipes
+    recipes = moonshot_api.api_read_recipes(recipes_in_cookbook)
+    list_of_endpoints = set()
+
+    for recipe in recipes:
+        recipe = Recipe(**recipe)
+        endpoints = get_endpoint_dependency_in_recipe(recipe)
+        if endpoints:
+            list_of_endpoints.update(endpoints)
+
+    return list(list_of_endpoints) if list_of_endpoints else None
