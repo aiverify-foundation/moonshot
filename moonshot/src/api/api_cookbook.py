@@ -20,6 +20,8 @@ def api_create_cookbook(name: str, description: str, tags: list[str], categories
     Args:
         name (str): The name of the new cookbook.
         description (str): A brief description of the new cookbook.
+        tags (list[str]): A list of tags associated with the cookbook.
+        categories (list[str]): A list of categories the cookbook belongs to.
         recipes (list[str]): A list of recipes to be included in the new cookbook.
 
     Returns:

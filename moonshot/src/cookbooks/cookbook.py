@@ -19,6 +19,8 @@ class Cookbook:
         self.id = cb_args.id
         self.name = cb_args.name
         self.description = cb_args.description
+        self.tags = cb_args.tags
+        self.categories = cb_args.categories
         self.recipes = cb_args.recipes
 
     @classmethod
