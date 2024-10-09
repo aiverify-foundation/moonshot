@@ -21,8 +21,6 @@ class CookbookService(BaseService):
         moonshot_api.api_create_cookbook(
             name=cookbook_data.name,
             description=cookbook_data.description,
-            tags=cookbook_data.tags,
-            categories=cookbook_data.categories,
             recipes=cookbook_data.recipes,
         )
 

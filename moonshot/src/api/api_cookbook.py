@@ -8,7 +8,7 @@ from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
 # Cookbook APIs
 # ------------------------------------------------------------------------------
 @validate_call
-def api_create_cookbook(name: str, description: str, tags: list[str], categories: list[str], recipes: list[str]) -> str:
+def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     """
     Creates a new cookbook.
 
@@ -31,12 +31,13 @@ def api_create_cookbook(name: str, description: str, tags: list[str], categories
     # We do not need to provide the id.
     # This is because during creation:
     # 1. the id is slugify from the name and stored as id.
+    # We do not need to provide tags and categories as they will be generated based on the recipes selected.
     cb_args = CookbookArguments(
         id="",
         name=name,
         description=description,
-        tags=tags,
-        categories=categories,
+        tags=[],
+        categories=[],
         recipes=recipes,
     )
     return Cookbook.create(cb_args)
