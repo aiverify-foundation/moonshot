@@ -99,6 +99,7 @@ class Connector:
         self.token = ep_args.token
         self.max_concurrency = ep_args.max_concurrency
         self.max_calls_per_second = ep_args.max_calls_per_second
+        self.model = ep_args.model
         self.params = ep_args.params
 
         # Rate limiting
