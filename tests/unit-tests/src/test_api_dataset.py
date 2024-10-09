@@ -223,12 +223,12 @@ class TestCollectionApiDataset:
         Test the creation of datasets via the API.
 
         This test function simulates the creation of datasets by calling the
-        api_create_datasets function with various dataset details. It then verifies that
+        api_convert_datasets function with various dataset details. It then verifies that
         the output matches the expected result.
 
         Args:
             dataset_details: A dictionary containing the details of the dataset to create.
-            expected_result: The expected result from the api_create_datasets call.
+            expected_result: The expected result from the api_convert_datasets call.
         """
         # Extract the common arguments
         name = dataset_details.pop('name')
@@ -237,7 +237,7 @@ class TestCollectionApiDataset:
         license = dataset_details.pop('license')
         csv_file_path= dataset_details.pop('csv_file_path')
 
-        # Call the api_create_datasets function with unpacked arguments
+        # Call the api_convert_dataset function with unpacked arguments
         result = api_convert_dataset(name, description, reference, license, csv_file_path)
         # Assert that the result matches the expected result
         assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."
