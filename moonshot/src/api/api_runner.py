@@ -20,7 +20,7 @@ def api_create_runner(
     Creates a new runner.
 
     This function takes the name, endpoints, and an optional progress callback function to create a new Runner instance.
-    The id of the runner is generated from the name of the runner using the slugify function,
+    The ID of the runner is generated from the name of the runner using the slugify function,
     so it does not need to be provided.
 
     Args:
@@ -59,7 +59,8 @@ def api_load_runner(
 
     Args:
         runner_id (str): The ID of the runner to be loaded.
-        progress_callback_func (Callable | None): The progress callback function to be used by the runner.
+        progress_callback_func (Callable | None, optional): An optional progress callback function for the runner.
+        Defaults to None.
 
     Returns:
         Runner: An initialized Runner object.
@@ -108,8 +109,8 @@ def api_get_all_runner() -> list[dict]:
     """
     Retrieves all available runners.
 
-    This function calls the get_available_items method to retrieve all available runners. It then converts each
-    runner into a dictionary using the to_dict method and returns a list of these dictionaries.
+    This function calls the get_available_items method from the Runner class to retrieve all available runners.
+    It then converts each runner into a dictionary using the to_dict method and returns a list of these dictionaries.
 
     Returns:
         list[dict]: A list of dictionaries, each representing a runner.
@@ -122,8 +123,8 @@ def api_get_all_runner_name() -> list[str]:
     """
     Retrieves all available runner names.
 
-    This function calls the get_available_items method to retrieve all available runners. It then extracts the names of
-    each runner and returns a list of these names.
+    This function calls the get_available_items method from the Runner class to retrieve all available runners.
+    It then extracts the names of each runner and returns a list of these names.
 
     Returns:
         list[str]: A list of runner names.

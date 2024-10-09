@@ -10,7 +10,7 @@ def api_get_all_context_strategies() -> list[str]:
     """
     Retrieves and returns the names of all context strategies currently available.
 
-    This API endpoint interfaces with the `ContextStrategy.get_all_context_strategy_names` method to fetch a list
+    This API endpoint interfaces with the `ContextStrategy.get_all_context_strategies` method to fetch a list
     of all context strategy names. It's designed for clients that need to know what context strategies are available for
     use in sessions or other components of the system.
 
@@ -48,7 +48,7 @@ def api_get_all_context_strategy_metadata() -> list[dict]:
     returns a list of metadata dictionaries.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing the details of a context strategy metadata.
+        list[dict]: A list of dictionaries, each representing the details of a context strategy's metadata.
     """
 
     return [
