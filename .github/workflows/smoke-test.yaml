@@ -3,7 +3,7 @@
 name: Moonshot Smoke Test
 
 on:
-  # Runs on Pull Request Review
+  # Runs on Pull Request Review 
   pull_request_review:
    types: [submitted]
    branches:
