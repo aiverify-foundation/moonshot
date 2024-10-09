@@ -442,7 +442,7 @@ def _display_endpoints(endpoints_list):
 add_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' "
-    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 \"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}\"",
+    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 'gpt-3.5-turbo-1106' \"{'temperature': 0.5}\"",
 )
 add_endpoint_args.add_argument(
     "connector_type",
