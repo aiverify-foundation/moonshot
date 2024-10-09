@@ -62,7 +62,6 @@ class Cookbook:
             RuntimeError: If any of the recipes specified in the cookbook does not exist.
             Exception: If there is an error during the file writing process or any other operation within the method.
         """
-        #TODO get categories and tags from recipe
         try:
             cb_id = slugify(cb_args.name, lowercase=True)
             cb_info = {
@@ -256,9 +255,16 @@ class Cookbook:
 
     @staticmethod
     def get_categories_in_recipes(recipes: list[str]) -> list[str]:
-        return list({category for recipe_id in recipes for category in Recipe.read(recipe_id).categories})
+        return list(
+            {
+                category
+                for recipe_id in recipes
+                for category in Recipe.read(recipe_id).categories
+            }
+        )
 
-    
     @staticmethod
     def get_tags_in_recipes(recipes: list[str]) -> list[str]:
-        return list({tag for recipe_id in recipes for tag in Recipe.read(recipe_id).tags})
+        return list(
+            {tag for recipe_id in recipes for tag in Recipe.read(recipe_id).tags}
+        )

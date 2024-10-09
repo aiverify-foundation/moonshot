@@ -8,9 +8,9 @@ class CookbookArguments(BaseModel):
 
     description: str  # description (str): A brief description of the Cookbook.
 
-    tags: list[str] #  tags (list): The list of tags in the Cookbook.
+    tags: list[str]  #  tags (list): The list of tags in the Cookbook.
 
-    categories: list[str] # categories (list): The list of categories in the Cookbook.
+    categories: list[str]  # categories (list): The list of categories in the Cookbook.
 
     recipes: list[str] = Field(
         min_length=1
