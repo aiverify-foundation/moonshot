@@ -20,6 +20,8 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     Args:
         name (str): The name of the new cookbook.
         description (str): A brief description of the new cookbook.
+        tags (list[str]): A list of tags associated with the cookbook.
+        categories (list[str]): A list of categories the cookbook belongs to.
         recipes (list[str]): A list of recipes to be included in the new cookbook.
 
     Returns:
@@ -29,10 +31,13 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     # We do not need to provide the id.
     # This is because during creation:
     # 1. the id is slugify from the name and stored as id.
+    # We do not need to provide tags and categories as they will be generated based on the recipes selected.
     cb_args = CookbookArguments(
         id="",
         name=name,
         description=description,
+        tags=[],
+        categories=[],
         recipes=recipes,
     )
     return Cookbook.create(cb_args)

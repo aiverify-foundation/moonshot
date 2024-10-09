@@ -26,6 +26,7 @@ class TestCollectionApiCookbook:
                 "RECIPES": "tests/unit-tests/src/data/recipes/",
                 "DATASETS": "tests/unit-tests/src/data/datasets/",
                 "TEMPLATES": "tests/unit-tests/src/data/templates/",
+                "IO_MODULES": "tests/unit-tests/src/data/io-modules/"
             }
         )
 
@@ -71,6 +72,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {"expected_output": True, "expected_id": "my-new-cookbook"},
@@ -79,6 +82,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my new cookbook 1",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {"expected_output": True, "expected_id": "my-new-cookbook-1"},
@@ -87,6 +92,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my_new-coo kbook 1@.!23",
                     "description": "My new Recipe!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {"expected_output": True, "expected_id": "my-new-coo-kbook-1-23"},
@@ -95,6 +102,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "None",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -106,6 +115,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {"expected_output": True, "expected_id": "my-new-cookbook"},
@@ -114,6 +125,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {"expected_output": True, "expected_id": "my-new-cookbook"},
@@ -123,6 +136,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -136,6 +151,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": None,
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -148,6 +165,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": [],
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -160,6 +179,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": {},
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -172,6 +193,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": 123,
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -185,6 +208,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": None,
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -198,6 +223,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": [],
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -211,6 +238,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": {},
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -224,6 +253,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": 123,
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -238,6 +269,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "A collection of recipes!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": "",
                 },
                 {
@@ -251,6 +284,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "A collection of recipes!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": None,
                 },
                 {
@@ -264,6 +299,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "my-new-cookbook",
                     "description": "A collection of recipes!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc", 123],
                 },
                 {
@@ -293,6 +330,8 @@ class TestCollectionApiCookbook:
                 api_create_cookbook(
                     input_args["name"],
                     input_args["description"],
+                    input_args["tags"],
+                    input_args["categories"],
                     input_args["recipes"],
                 )
                 == expected_dict["expected_id"]
@@ -304,6 +343,8 @@ class TestCollectionApiCookbook:
                     api_create_cookbook(
                         input_args["name"],
                         input_args["description"],
+                        input_args["tags"],
+                        input_args["categories"],
                         input_args["recipes"],
                     )
                 assert e.value.args[0] == expected_dict["expected_error_message"]
@@ -313,6 +354,8 @@ class TestCollectionApiCookbook:
                     api_create_cookbook(
                         input_args["name"],
                         input_args["description"],
+                        input_args["tags"],
+                        input_args["categories"],
                         input_args["recipes"],
                     )
                 assert len(e.value.errors()) == 1
@@ -339,6 +382,8 @@ class TestCollectionApiCookbook:
                         "id": "sample-cookbook",
                         "name": "Sample Cookbook",
                         "description": "This is a sample cookbook",
+                        "tags": [],
+                        "categories": [],
                         "recipes": ["arc"],
                     }
                 },
@@ -452,6 +497,8 @@ class TestCollectionApiCookbook:
                             "id": "sample-cookbook",
                             "name": "Sample Cookbook",
                             "description": "This is a sample cookbook",
+                            "tags": [],
+                            "categories": [],
                             "recipes": ["arc"],
                         }
                     ]
@@ -913,6 +960,8 @@ class TestCollectionApiCookbook:
                 "id": "sample-cookbook",
                 "name": "Sample Cookbook",
                 "recipes": ["arc"],
+                "tags": [],
+                "categories": [],
             }
         ]
 
