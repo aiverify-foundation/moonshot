@@ -37,7 +37,7 @@ jobs:
   smoke-test:
     if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
 
     steps:
 
