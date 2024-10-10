@@ -173,10 +173,6 @@ class Cookbook:
                 ):
                     raise RuntimeError(f"{recipe} recipe does not exist.")
 
-            # Get updated categories and tags
-            cb_args.tags = Cookbook.get_tags_in_recipes(cb_args.recipes)
-            cb_args.categories = Cookbook.get_categories_in_recipes(cb_args.recipes)
-
             # Serialize the CookbookArguments object to a dictionary and remove derived properties
             cb_info = cb_args.to_dict()
             cb_info.pop("id", None)  # The 'id' is derived and should not be written
