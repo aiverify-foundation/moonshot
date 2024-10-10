@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: moonshot-ui
-          image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.8
+          image: 052567997892.dkr.ecr.ap-southeast-1.amazonaws.com/moonshot-app:0.4.9
           args:
             - "/bin/sh"
             - "-c"
@@ -35,10 +35,10 @@ spec:
           resources:
             limits:
               cpu: 1000m
-              memory: 2048Mi
+              memory: 4096Mi
             requests:
               cpu: 500m
-              memory: 1024Mi
+              memory: 2048Mi
           volumeMounts:
             - name: moonshot-mnt
               mountPath: /app/data
