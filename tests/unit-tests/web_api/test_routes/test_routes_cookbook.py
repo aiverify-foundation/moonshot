@@ -174,6 +174,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "Description for Test Cookbook 2",
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             },
         ],
@@ -186,6 +187,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "Description for Test Cookbook 1",
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,                
                 "endpoint_required": None
             },
             {
@@ -194,6 +196,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "Description for Test Cookbook 2",
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             },
         ]
@@ -208,6 +211,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "Filtered Description 1",
                 "recipes": ["recipe-3"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             }
         ],
@@ -220,6 +224,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "Filtered Description 1",
                 "recipes": ["recipe-3"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             }
         ]
@@ -246,6 +251,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "A cookbook with a specific tag",
                 "recipes": ["one-recipe-contains-this-tag"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             }
         ]
@@ -272,6 +278,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "A cookbook with a specific category",
                 "recipes": ["one-recipe-contains-this-category"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             }
         ]
@@ -298,6 +305,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "A cookbook with a count of recipes",
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": 2,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": None
             }
         ],
@@ -324,6 +332,7 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "description": "A cookbook with a count of recipes",
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                "total_dataset_in_cookbook": None,
                 "endpoint_required": ["openai-gpt35-turbo-16k"]
             }
         ]

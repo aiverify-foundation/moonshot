@@ -47,39 +47,6 @@ def api_get_all_datasets_name() -> list[str]:
     return datasets_name
 
 
-def api_create_datasets(
-    name: str, description: str, reference: str, license: str, examples: list
-) -> str:
-    """
-    Creates a new dataset with the provided details.
-
-    This function takes the name, description, reference, and license for a new dataset as input. It then creates a new
-    DatasetArguments object with these details and an empty id. The id is left empty because it will be generated
-    from the name during the creation process. The function then calls the Dataset's create method to
-    create the new dataset.
-
-    Args:
-        name (str): The name of the new dataset.
-        description (str): A brief description of the new dataset.
-        reference (str): A reference link for the new dataset.
-        license (str): The license of the new dataset.
-        examples (list): The examples for the new dataset.
-
-    Returns:
-        str: The ID of the newly created dataset.
-    """
-    ds_args = DatasetArguments(
-        id="",
-        name=name,
-        description=description,
-        reference=reference,
-        license=license,
-        examples=examples,
-    )
-
-    return Dataset.create(ds_args)
-
-
 def api_download_dataset(
     name: str, description: str, reference: str, license: str, **kwargs
 ) -> str:
