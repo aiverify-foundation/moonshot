@@ -129,3 +129,9 @@ Are you sure you want to delete the runner (y/N)? y
 ```
 
 We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
+
+#### I get an error when I try to run a benchmark which has unicode characters, or when the LLM's response contains unicode characters
+The error may look something like this: 
+`'charmap' codec can't encode characters in position 43-53: character maps to <undefined>`
+
+If you are using Windows, you may need to enable UTF-8 as it may not be enabled by default. You can refer to this link [here](https://exploratory.io/note/exploratory/Enabling-UTF-8-on-Windows-hYc3yWL0).
