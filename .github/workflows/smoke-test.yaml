@@ -40,7 +40,6 @@ jobs:
     timeout-minutes: 60
 
     steps:
-
     - name: Checkout Moonshot (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -130,10 +129,6 @@ jobs:
         MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
       run: |
          cd moonshot-smoke-testing
-         sudo apt-get remove nodejs
-         curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-         sudo apt-get install -y nodejs
-         node -v
          npm ci
          npm install -g yarn && yarn install --frozen-lockfile 
          yarn playwright install --with-deps
