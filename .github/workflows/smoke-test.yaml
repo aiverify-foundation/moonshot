@@ -102,11 +102,6 @@ jobs:
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
         
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 'node'   # 'node' will install the latest stable version
-    
     - name: Setup Moonshot UI
       run: |
         cd moonshot-ui
