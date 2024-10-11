@@ -3,7 +3,7 @@
 name: Moonshot Smoke Test
 
 on:
-  # Runs on Pull Request Review
+  # Runs on Pull Request Review 
   pull_request_review:
    types: [submitted]
    branches:
@@ -35,12 +35,11 @@ concurrency:
 
 jobs:
   smoke-test:
-
+    if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
 
     steps:
-
     - name: Checkout Moonshot (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -128,5 +127,6 @@ jobs:
       run: |
          cd moonshot-smoke-testing
          npm ci
-         npm init playwright@latest
+         npm install -g yarn && yarn install --frozen-lockfile 
+         yarn playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" npx playwright test tests/smoke-test.spec.ts
