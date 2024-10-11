@@ -36,8 +36,8 @@ concurrency:
 jobs:
   smoke-test:
 
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu
+    timeout-minutes: 60
 
     steps:
 
