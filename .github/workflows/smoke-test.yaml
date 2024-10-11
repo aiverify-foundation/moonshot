@@ -3,7 +3,7 @@
 name: Moonshot Smoke Test
 
 on:
-  # Runs on Pull Request Review 
+  # Runs on Pull Request Review
   pull_request_review:
    types: [submitted]
    branches:
@@ -35,11 +35,12 @@ concurrency:
 
 jobs:
   smoke-test:
-    if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
+
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 20
 
     steps:
+
     - name: Checkout Moonshot (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -102,11 +103,6 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
-        
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-          node-version: '20.11.1'  # Specify the Node.js version
     
     - name: Setup Moonshot UI
       run: |
@@ -131,6 +127,6 @@ jobs:
         MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
       run: |
          cd moonshot-smoke-testing
-         npm install playwright
-         npx playwright install chromium
-         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts --verbose
+         npm ci
+         npx playwright install --with-deps
+         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" npx playwright test tests/smoke-test.spec.ts
