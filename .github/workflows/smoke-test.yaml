@@ -102,6 +102,11 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+          node-version: '20.11.1'  # Specify the Node.js version
     
     - name: Setup Moonshot UI
       run: |
