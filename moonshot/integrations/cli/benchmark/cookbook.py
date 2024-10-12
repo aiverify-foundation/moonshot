@@ -474,7 +474,7 @@ def _display_view_cookbook(cookbook_info):
     Returns:
         None
     """
-    id, name, description, recipes = cookbook_info.values()
+    id, name, tags, categories, description, recipes = cookbook_info.values()
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
