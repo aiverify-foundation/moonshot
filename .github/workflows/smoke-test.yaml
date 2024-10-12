@@ -119,6 +119,7 @@ jobs:
     # Download NLTK stopwords
     - name: Download NLTK stopwords
       run: |
+          pip install nltk
           python -c "import nltk; nltk.download('stopwords')"
 
     - name: Run Smoke Test
