@@ -116,6 +116,11 @@ jobs:
           repository: aiverify-foundation/moonshot-smoke-testing
           path: moonshot-smoke-testing
 
+    # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+          python -c "import nltk; nltk.download('stopwords')"
+
     - name: Run Smoke Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
