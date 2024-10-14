@@ -68,8 +68,8 @@ class TestCollectionApiConnector:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty.",
-                    "expected_exception": "RuntimeError",
+                    "expected_error_message": "String should have at least 1 character",
+                    "expected_exception": "ValidationError",
                 },
             ),
             (
@@ -225,8 +225,8 @@ class TestCollectionApiConnector:
                 [""],
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty.",
-                    "expected_exception": "RuntimeError",
+                    "expected_error_message": "String should have at least 1 character",
+                    "expected_exception": "ValidationError",
                 },
             ),
             (
