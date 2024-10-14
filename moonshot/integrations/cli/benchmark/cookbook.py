@@ -440,9 +440,20 @@ def _display_cookbooks(cookbooks_list):
     table.add_column("Cookbook", justify="left", width=78)
     table.add_column("Contains", justify="left", width=20, overflow="fold")
     for idx, cookbook in enumerate(cookbooks_list, 1):
-        id, name, description, recipes, *other_args = cookbook.values()
+        (
+            id,
+            name,
+            tags,
+            categories,
+            description,
+            recipes,
+            *other_args,
+        ) = cookbook.values()
         idx = cookbook.get("idx", idx)
-        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n\n{description}"
+        cookbook_info += (
+            f"\n\n[blue]Tags: {tags}[/blue]\n[blue]Categories: {categories}[/blue]\n"
+        )
         recipes_info = display_view_list_format("Recipes", recipes)
         table.add_section()
         table.add_row(str(idx), cookbook_info, recipes_info)
@@ -463,11 +474,14 @@ def _display_view_cookbook(cookbook_info):
     Returns:
         None
     """
-    id, name, description, recipes = cookbook_info.values()
+    id, name, tags, categories, description, recipes = cookbook_info.values()
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
-            title="View Cookbook", show_lines=True, expand=True, header_style="bold"
+            title=f'Cookbook "{name}"',
+            show_lines=True,
+            expand=True,
+            header_style="bold",
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
@@ -482,7 +496,6 @@ def _display_view_cookbook(cookbook_info):
                 datasets,
                 prompt_templates,
                 metrics,
-                attack_strategies,
                 grading_scale,
                 stats,
             ) = recipe.values()
@@ -494,9 +507,6 @@ def _display_view_cookbook(cookbook_info):
                 "Prompt Templates", prompt_templates
             )
             metrics_info = display_view_list_format("Metrics", metrics)
-            attack_strategies_info = display_view_list_format(
-                "Attack Strategies", attack_strategies
-            )
             grading_scale_info = _display_view_grading_scale_format(
                 "Grading Scale", grading_scale
             )
@@ -506,7 +516,9 @@ def _display_view_cookbook(cookbook_info):
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
                 f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
             )
-            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
+            contains_info = (
+                f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}"
+            )
 
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)
