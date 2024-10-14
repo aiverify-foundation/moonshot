@@ -7,6 +7,7 @@ from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
 
@@ -19,6 +20,8 @@ class Cookbook:
         self.id = cb_args.id
         self.name = cb_args.name
         self.description = cb_args.description
+        self.tags = cb_args.tags
+        self.categories = cb_args.categories
         self.recipes = cb_args.recipes
 
     @classmethod
@@ -64,6 +67,8 @@ class Cookbook:
             cb_info = {
                 "name": cb_args.name,
                 "description": cb_args.description,
+                "tags": Cookbook.get_tags_in_recipes(cb_args.recipes),
+                "categories": Cookbook.get_categories_in_recipes(cb_args.recipes),
                 "recipes": cb_args.recipes,
             }
 
@@ -243,3 +248,19 @@ class Cookbook:
         except Exception as e:
             logger.error(f"Failed to get available cookbooks: {str(e)}")
             raise e
+
+    @staticmethod
+    def get_categories_in_recipes(recipes: list[str]) -> list[str]:
+        return list(
+            {
+                category
+                for recipe_id in recipes
+                for category in Recipe.read(recipe_id).categories
+            }
+        )
+
+    @staticmethod
+    def get_tags_in_recipes(recipes: list[str]) -> list[str]:
+        return list(
+            {tag for recipe_id in recipes for tag in Recipe.read(recipe_id).tags}
+        )
