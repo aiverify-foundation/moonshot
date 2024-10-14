@@ -35,6 +35,7 @@ concurrency:
 
 jobs:
   smoke-test:
+    if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     
@@ -101,6 +102,13 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
+
+      # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+        source venv/bin/activate
+        pip install nltk
+        python -c "import nltk; nltk.download('stopwords')"
         
     - name: Setup Moonshot UI
       run: |
@@ -124,9 +132,9 @@ jobs:
         MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
         MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
       run: |
+         source venv/bin/activate
          cd moonshot-smoke-testing
          npm install --global yarn
          yarn add playwright
          yarn playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts
-         npx playwright show-report
