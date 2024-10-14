@@ -44,8 +44,6 @@ MOCK_COOKBOOK_NAMES = ["test-cookbook-1","test-cookbook-2"]
 MOCK_COOKBOOK_CREATE_DTO = CookbookCreateDTO(
     name="New Cookbook",
     description="A new cookbook description",
-    tags= [],
-    categories= [],
     recipes=["recipe-1", "recipe-2"]
 )
 
@@ -120,8 +118,6 @@ def test_create_cookbook_success(mock_moonshot_api, cookbook_service):
     mock_moonshot_api.api_create_cookbook.assert_called_once_with(
         name=MOCK_COOKBOOK_CREATE_DTO.name,
         description=MOCK_COOKBOOK_CREATE_DTO.description,
-        tags= MOCK_COOKBOOK_CREATE_DTO.tags,
-        categories= MOCK_COOKBOOK_CREATE_DTO.categories,
         recipes=MOCK_COOKBOOK_CREATE_DTO.recipes
     )
 
