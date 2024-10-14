@@ -1,6 +1,6 @@
-# Smoke Test
+# Cli Smoke Test
 
-name: Moonshot Smoke Test
+name: Moonshot CLI Smoke Test
 
 on:
   # Runs on Pull Request Review
@@ -35,11 +35,12 @@ concurrency:
 
 jobs:
   smoke-test:
-    if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
+
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    
+    timeout-minutes: 20
+
     steps:
+
     - name: Checkout Moonshot (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -66,6 +67,7 @@ jobs:
         pip install -r requirements.txt
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
+
     - name: Checkout Moonshot Data (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -87,6 +89,7 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
+
     - name: Checkout Moonshot UI (Pull Request Review)
       if: github.event_name == 'pull_request_review'
       uses: actions/checkout@v4
@@ -102,22 +105,14 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
-
-      # Download NLTK stopwords
-    - name: Download NLTK stopwords
-      run: |
-        source venv/bin/activate
-        pip install nltk
-        python -c "import nltk; nltk.download('stopwords')"
-        
+    
     - name: Setup Moonshot UI
       run: |
         cd moonshot-ui
-        npm install
+        npm ci
         npm run build
         cd ../
-        source venv/bin/activate
-        python -m moonshot web &
+
     - name: Checkout Smoke Test 
       uses: actions/checkout@v4
       with:
@@ -131,10 +126,11 @@ jobs:
         ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
         MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
         MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
+        CLI_DIR: ${{ secrets.CLI_DIR }}
       run: |
          source venv/bin/activate
          cd moonshot-smoke-testing
-         npm install --global yarn
-         yarn add playwright
-         yarn playwright install --with-deps
-         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts
+         cd tests
+         pip install python-dotenv
+         pip install pytest
+         pytest test_cli.py
