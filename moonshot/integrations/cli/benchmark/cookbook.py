@@ -478,7 +478,7 @@ def _display_view_cookbook(cookbook_info):
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
-            title=f'Cookbook "{name}"',
+            title=f'Cookbook: "{name}"\n Tags: {tags}\n Categories: {categories}\n',
             show_lines=True,
             expand=True,
             header_style="bold",
@@ -486,6 +486,7 @@ def _display_view_cookbook(cookbook_info):
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
         table.add_column("Contains", justify="left", width=20, overflow="fold")
+
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
