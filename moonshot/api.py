@@ -35,7 +35,6 @@ from moonshot.src.api.api_cookbook import (
 )
 from moonshot.src.api.api_dataset import (
     api_convert_dataset,
-    api_create_datasets,
     api_delete_dataset,
     api_download_dataset,
     api_get_all_datasets,
@@ -118,7 +117,6 @@ __all__ = [
     "api_read_cookbook",
     "api_read_cookbooks",
     "api_update_cookbook",
-    "api_create_datasets",
     "api_convert_dataset",
     "api_download_dataset",
     "api_delete_dataset",

@@ -1,10 +1,11 @@
 name: GH Event Notification
 
 on:
-  issues:
-    types: [opened]
-  pull_request:
-    types: [opened]
+#  issues:
+#    types: [opened]
+#  pull_request:
+#    types: [opened]
+  workflow_dispatch:
 
 jobs:
   notify:
