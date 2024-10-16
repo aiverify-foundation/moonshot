@@ -22,6 +22,8 @@ class ConnectorEndpointArguments(BaseModel):
         gt=0
     )  # max_concurrency (int): The number of concurrent api calls
 
+    model: str  # model (str): The model identifier for the LLM connector.
+
     params: dict  # params (dict): A dictionary that contains connection specified parameters
 
     # created_date (str): The date and time the endpoint was created in isoformat without 'T'.
@@ -34,7 +36,7 @@ class ConnectorEndpointArguments(BaseModel):
 
         This method takes all the attributes of the ConnectorEndpointArguments instance and constructs a dictionary
         with attribute names as keys and their corresponding values. This includes the id, name, connector_type, uri,
-        token, max_calls_per_second, max_concurrency, params, and created_date. This dictionary can be used for
+        token, max_calls_per_second, max_concurrency, model, params, and created_date. This dictionary can be used for
         serialization purposes, such as storing the endpoint information in a JSON file or sending it over a network.
 
         Returns:
@@ -49,6 +51,7 @@ class ConnectorEndpointArguments(BaseModel):
             "token": self.token,
             "max_calls_per_second": self.max_calls_per_second,
             "max_concurrency": self.max_concurrency,
+            "model": self.model,
             "params": self.params,
             "created_date": self.created_date,
         }
