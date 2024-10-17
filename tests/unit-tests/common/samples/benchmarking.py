@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import asyncio
 import copy
+import json
 import random
 import time
 from itertools import groupby
@@ -13,6 +14,7 @@ from jinja2 import Template
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.connectors.connector_response import ConnectorResponse
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.datasets.dataset import Dataset
@@ -1014,7 +1016,7 @@ class PromptArguments(BaseModel):
             self.connector_prompt.prompt_index,
             self.connector_prompt.prompt,
             str(self.connector_prompt.target),
-            str(self.connector_prompt.predicted_results),
+            json.dumps(self.connector_prompt.predicted_results.to_dict()),
             str(self.connector_prompt.duration),
             self.random_seed,
             self.system_prompt,
@@ -1048,7 +1050,8 @@ class PromptArguments(BaseModel):
             target = cache_record[9]
 
         try:
-            predicted_results = ast.literal_eval(cache_record[10])
+            predicted_results_dict = json.loads(cache_record[10])
+            predicted_results = ConnectorResponse(**predicted_results_dict)
         except Exception:
             predicted_results = cache_record[10]
 
