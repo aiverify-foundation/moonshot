@@ -649,7 +649,8 @@ class RedTeamingPromptArguments(BaseModel):
 
         This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
         with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
-        connector_prompt.prompt, connector_prompt.predicted_results, connector_prompt.duration, start_time.
+        connector_prompt.prompt, system_prompt, connector_prompt.predicted_results.response, 
+        connector_prompt.duration, start_time.
 
         Returns:
             tuple: A tuple representation of the RedTeamingPromptArguments instance.
@@ -663,21 +664,21 @@ class RedTeamingPromptArguments(BaseModel):
             self.original_prompt,
             self.connector_prompt.prompt,
             self.system_prompt,
-            str(self.connector_prompt.predicted_results),
+            self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             str(self.connector_prompt.duration),
             self.start_time,
         )
 
     def to_dict(self) -> dict:
         """
-        Converts the RedTeamingPromptArguments instance into a dict.
+        Converts the RedTeamingPromptArguments instance into a dictionary.
 
-        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
-        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, prepared_prompt, system_prompt
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dictionary
+        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, system_prompt, prepared_prompt,
         response, duration, start_time.
 
         Returns:
-            dict: A dict representation of the RedTeamingPromptArguments instance.
+            dict: A dictionary representation of the RedTeamingPromptArguments instance.
         """
         return {
             "conn_id": self.conn_id,
@@ -688,7 +689,7 @@ class RedTeamingPromptArguments(BaseModel):
             "original_prompt": self.original_prompt,
             "prepared_prompt": self.connector_prompt.prompt,
             "system_prompt": self.system_prompt,
-            "response": str(self.connector_prompt.predicted_results),
+            "response": self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             "duration": str(self.connector_prompt.duration),
             "start_time": self.start_time,
         }
