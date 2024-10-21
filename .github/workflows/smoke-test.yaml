@@ -3,11 +3,11 @@
 name: Moonshot Smoke Test
 
 on:
-  # Runs on Pull Request Review
-  pull_request_review:
-   types: [submitted]
-   branches:
-     - 'dev_main'
+  # Runs when a pull request to main is being assigned
+  pull_request:
+    types: [ assigned, synchronize ]
+    branches:
+      - 'dev_main'
 
   # Run this workflow manually from Actions tab
   workflow_dispatch:
@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   smoke-test:
-    if: (github.event_name == 'pull_request_review' && github.event.pull_request.base.ref == 'dev_main') || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     
