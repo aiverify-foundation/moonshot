@@ -31,6 +31,22 @@ class AttackModule:
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
         """
+    sql_create_chat_history_table = """
+        CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        connection_id text NOT NULL,
+        context_strategy text,
+        prompt_template text,
+        attack_module text,
+        metric text,
+        prompt text NOT NULL,
+        prepared_prompt text NOT NULL,
+        system_prompt text,
+        predicted_result text NOT NULL,
+        duration text NOT NULL,
+        prompt_time text NOT NULL
+        );
+    """
 
     def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         self.id = am_id
@@ -261,6 +277,15 @@ class AttackModule:
             list: A list of consolidated responses from the specified LLM connector.
         """
         consolidated_responses = []
+
+        # perform a check to see if the target endpoint has its table in the db. if not, create one
+        endpoint_id = target_llm_connector.id.replace("-", "_")
+        if not Storage.check_database_table_exists(self.db_instance, endpoint_id):
+            Storage.create_database_table(
+                self.db_instance,
+                AttackModule.sql_create_chat_history_table.format(endpoint_id),
+            )
+
         for prepared_prompt in list_of_prompts:
             if self.cancel_event.is_set():
                 logger.warning(
@@ -316,6 +341,7 @@ class AttackModule:
             chat_record_tuple (tuple): A tuple containing the chat record information.
             chat_record_id (str): The ID of the chat record.
         """
+
         endpoint_id = chat_record_id.replace("-", "_")
         Storage.create_database_record(
             self.db_instance,
@@ -623,7 +649,8 @@ class RedTeamingPromptArguments(BaseModel):
 
         This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
         with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
-        connector_prompt.prompt, connector_prompt.predicted_results, connector_prompt.duration, start_time.
+        connector_prompt.prompt, system_prompt, connector_prompt.predicted_results.response, 
+        connector_prompt.duration, start_time.
 
         Returns:
             tuple: A tuple representation of the RedTeamingPromptArguments instance.
@@ -637,21 +664,21 @@ class RedTeamingPromptArguments(BaseModel):
             self.original_prompt,
             self.connector_prompt.prompt,
             self.system_prompt,
-            str(self.connector_prompt.predicted_results),
+            self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             str(self.connector_prompt.duration),
             self.start_time,
         )
 
     def to_dict(self) -> dict:
         """
-        Converts the RedTeamingPromptArguments instance into a dict.
+        Converts the RedTeamingPromptArguments instance into a dictionary.
 
-        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
-        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, prepared_prompt, system_prompt
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dictionary
+        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, system_prompt, prepared_prompt,
         response, duration, start_time.
 
         Returns:
-            dict: A dict representation of the RedTeamingPromptArguments instance.
+            dict: A dictionary representation of the RedTeamingPromptArguments instance.
         """
         return {
             "conn_id": self.conn_id,
@@ -662,7 +689,7 @@ class RedTeamingPromptArguments(BaseModel):
             "original_prompt": self.original_prompt,
             "prepared_prompt": self.connector_prompt.prompt,
             "system_prompt": self.system_prompt,
-            "response": str(self.connector_prompt.predicted_results),
+            "response": self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             "duration": str(self.connector_prompt.duration),
             "start_time": self.start_time,
         }
