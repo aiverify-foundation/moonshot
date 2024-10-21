@@ -40,8 +40,8 @@ jobs:
     timeout-minutes: 60
     
     steps:
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
+    - name: Checkout Moonshot (Pull Request)
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v4
       with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -67,7 +67,7 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
     - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v4
       with: 
          repository: aiverify-foundation/moonshot-data
@@ -88,7 +88,7 @@ jobs:
         cd moonshot-data
         pip install -r requirements.txt
     - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v4
       with:
         repository: aiverify-foundation/moonshot-ui
