@@ -1,14 +1,9 @@
-class ConnectorResponse:
-    def __init__(self, response: str, context: list = []):
-        """
-        Initializes a ConnectorResponse instance.
+from pydantic import BaseModel
 
-        Args:
-            response (str): The response text from the connector.
-            context (list, optional): Additional context or metadata related to the response. Defaults to an empty list.
-        """
-        self.response = response
-        self.context = context
+
+class ConnectorResponse(BaseModel):
+    response: str = ""
+    context: list = []
 
     def to_dict(self) -> dict:
         """
