@@ -85,7 +85,7 @@ class RecipeService(BaseService):
                 filtered_recipes.sort(key=lambda x: x.id)
 
         for recipe in filtered_recipes:
-            recipe.endpoint_required = get_endpoint_dependency_in_recipe(recipe)
+            recipe.required_config = get_metric_dependency_in_recipe(recipe)
 
         return filtered_recipes
 
@@ -157,28 +157,49 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> tuple[int, int]:
 
     return total_prompt_count, int(recipe.stats.get("num_of_datasets", 0))
 
-@staticmethod
-def get_endpoint_dependency_in_recipe(recipe: Recipe) -> list[str] | None:
-    """
-    Retrieve the list of endpoint dependencies for a given recipe.
 
-    This function fetches all metrics and their associated endpoints, then
-    matches the metrics in the provided recipe to find and compile a list
-    of endpoint dependencies.
+@staticmethod
+def get_metric_dependency_in_recipe(recipe: Recipe) -> dict | None:
+    """
+    Retrieve endpoint and configuration dependencies for a given recipe.
+
+    This function gathers all available metrics along with their endpoints and configurations,
+    then identifies and compiles the dependencies based on the metrics present in the provided recipe.
 
     Args:
-        recipe (Recipe): The recipe object containing the metrics information.
+        recipe (Recipe): The recipe object containing metrics information.
 
     Returns:
-        list[str] | None: A list of endpoint dependencies if found, otherwise None.
+        dict[str, dict[str, list[str]]] | None: A dictionary with 'endpoints' and 'configurations' as keys,
+        where 'endpoints' is a list of endpoint dependencies and 'configurations' is a dictionary of configuration
+        dependencies. Returns None if no dependencies are found.
     """
     metrics = recipe.metrics
     all_metrics = moonshot_api.api_get_all_metric()
-    
-    endpoints = set()
+    aggregated_endpoints = set()
+    aggregated_configurations = {}
+
     for metric in metrics:
-        for m in all_metrics:
-            if m['id'] == metric:
-                endpoints.update(m['endpoints'])
-    
-    return list(endpoints) if endpoints else None
+        metric_data = next((m for m in all_metrics if m["id"] == metric), None)
+        if metric_data:
+            # Aggregate endpoints
+            aggregated_endpoints.update(metric_data.get("endpoints", []))
+
+            # Aggregate configurations
+            for key, value in metric_data.get("configurations", {}).items():
+                if key in aggregated_configurations:
+                    aggregated_configurations[key].extend(
+                        v for v in value if v not in aggregated_configurations[key]
+                    )
+                else:
+                    aggregated_configurations[key] = value
+
+    aggregated_data = {
+        "endpoints": list(aggregated_endpoints),
+        "configurations": aggregated_configurations,
+    }
+    return (
+        aggregated_data
+        if aggregated_data["endpoints"] or aggregated_data["configurations"]
+        else None
+    )
