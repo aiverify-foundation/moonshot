@@ -17,5 +17,6 @@ class EndpointUpdateDTO(ConnectorEndpointPydanticModel):
     token: Optional[str] = None
     max_calls_per_second: Optional[int] = None
     max_concurrency: Optional[int] = None
+    model: Optional[str] = None
     params: Optional[dict] = None
     created_date: Optional[str] = None

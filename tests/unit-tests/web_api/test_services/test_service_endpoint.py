@@ -1,10 +1,18 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
+
+from moonshot.integrations.web_api.schemas.endpoint_create_dto import (
+    EndpointCreateDTO,
+    EndpointUpdateDTO,
+)
+from moonshot.integrations.web_api.schemas.endpoint_response_model import (
+    EndpointDataModel,
+)
 from moonshot.integrations.web_api.services.endpoint_service import EndpointService
-from moonshot.integrations.web_api.schemas.endpoint_response_model import EndpointDataModel
-from moonshot.integrations.web_api.schemas.endpoint_create_dto import EndpointUpdateDTO
-from moonshot.integrations.web_api.schemas.endpoint_create_dto import EndpointCreateDTO
-from moonshot.integrations.web_api.services.utils.exceptions_handler import ServiceException
+from moonshot.integrations.web_api.services.utils.exceptions_handler import (
+    ServiceException,
+)
 
 # Mock data for successful API calls
 MOCK_ENDPOINT = {
@@ -15,14 +23,9 @@ MOCK_ENDPOINT = {
     "token": "ADD_TOKEN",
     "max_calls_per_second": 10,
     "max_concurrency": 1,
-    "params": {
-        "model": "gpt-3.5-turbo",
-        "timeout": 300,
-        "allow_retries": True,
-        "num_of_retries": 3,
-        "temperature": 0.5
-    },
-    "created_date": "2024-05-22 17:01:37"
+    "model": "gpt-3.5-turbo",
+    "params": {"timeout": 300, "max_attempts": 3, "temperature": 0.5},
+    "created_date": "2024-05-22 17:01:37",
 }
 
 MOCK_ENDPOINTS = [MOCK_ENDPOINT]
@@ -31,7 +34,7 @@ MOCK_CONNECTOR_TYPES = [
     "together-connector",
     "openai-connector",
     "claude2-connector",
-    "huggingface-connector"
+    "huggingface-connector",
 ]
 
 MOCK_CREATE_ENDPOINT = EndpointCreateDTO(
@@ -41,31 +44,34 @@ MOCK_CREATE_ENDPOINT = EndpointCreateDTO(
     token="YOUR TOKEN",
     max_calls_per_second=10,
     max_concurrency=1,
-    params={
-        "model" : "gpt-3.5-turbo"
-    }
+    model="my-gpt-3.5-turbo",
+    params={},
 )
 MOCK_UPDATE_ENDPOINT = EndpointUpdateDTO(
     token="UPDATE TOKEN",
-
 )
+
 
 @pytest.fixture
 def endpoint_service():
     return EndpointService()
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_get_all_endpoints_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful retrieval of all endpoints.
     """
     mock_moonshot_api.api_get_all_endpoint.return_value = MOCK_ENDPOINTS
     endpoints = endpoint_service.get_all_endpoints()
-    expected_endpoints = [EndpointDataModel.model_validate(endpoint) for endpoint in MOCK_ENDPOINTS]
+    expected_endpoints = [
+        EndpointDataModel.model_validate(endpoint) for endpoint in MOCK_ENDPOINTS
+    ]
     assert endpoints == expected_endpoints
     mock_moonshot_api.api_get_all_endpoint.assert_called_once()
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_get_all_endpoints_names_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful retrieval of all endpoint names.
@@ -75,7 +81,8 @@ def test_get_all_endpoints_names_success(mock_moonshot_api, endpoint_service):
     assert endpoint_names == MOCK_ENDPOINT_NAMES
     mock_moonshot_api.api_get_all_endpoint_name.assert_called_once()
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_get_all_connectors_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful retrieval of all connector types.
@@ -85,6 +92,7 @@ def test_get_all_connectors_success(mock_moonshot_api, endpoint_service):
     assert connector_types == MOCK_CONNECTOR_TYPES
     mock_moonshot_api.api_get_all_connector_type.assert_called_once()
 
+
 # Exception scenarios to test
 exception_scenarios = [
     (FileNotFoundError("File not found"), "FileNotFound"),
@@ -92,9 +100,12 @@ exception_scenarios = [
     (Exception("Unexpected error"), "UnexpectedError"),
 ]
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_get_all_endpoints_exceptions(mock_moonshot_api, exception, error_code, endpoint_service):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_get_all_endpoints_exceptions(
+    mock_moonshot_api, exception, error_code, endpoint_service
+):
     """
     Test case for exceptions during retrieval of all endpoints.
     """
@@ -103,9 +114,12 @@ def test_get_all_endpoints_exceptions(mock_moonshot_api, exception, error_code, 
         endpoint_service.get_all_endpoints()
     assert exc_info.value.error_code == error_code
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_get_all_endpoints_names_exceptions(mock_moonshot_api, exception, error_code, endpoint_service):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_get_all_endpoints_names_exceptions(
+    mock_moonshot_api, exception, error_code, endpoint_service
+):
     """
     Test case for exceptions during retrieval of all endpoint names.
     """
@@ -114,9 +128,12 @@ def test_get_all_endpoints_names_exceptions(mock_moonshot_api, exception, error_
         endpoint_service.get_all_endpoints_names()
     assert exc_info.value.error_code == error_code
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_get_all_connectors_exceptions(mock_moonshot_api, exception, error_code, endpoint_service):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_get_all_connectors_exceptions(
+    mock_moonshot_api, exception, error_code, endpoint_service
+):
     """
     Test case for exceptions during retrieval of all connector types.
     """
@@ -125,7 +142,8 @@ def test_get_all_connectors_exceptions(mock_moonshot_api, exception, error_code,
         endpoint_service.get_all_connectors()
     assert exc_info.value.error_code == error_code
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_create_endpoint_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful creation of an endpoint.
@@ -138,21 +156,22 @@ def test_create_endpoint_success(mock_moonshot_api, endpoint_service):
         token=MOCK_CREATE_ENDPOINT.token,
         max_calls_per_second=MOCK_CREATE_ENDPOINT.max_calls_per_second,
         max_concurrency=MOCK_CREATE_ENDPOINT.max_concurrency,
-        params=MOCK_CREATE_ENDPOINT.params
+        params=MOCK_CREATE_ENDPOINT.params,
     )
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_update_endpoint_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful update of an endpoint.
     """
     endpoint_service.update_endpoint("endpoint_id", MOCK_UPDATE_ENDPOINT)
     mock_moonshot_api.api_update_endpoint.assert_called_once_with(
-        ep_id="endpoint_id",
-        token=MOCK_UPDATE_ENDPOINT.token
+        ep_id="endpoint_id", token=MOCK_UPDATE_ENDPOINT.token
     )
 
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
+
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
 def test_delete_endpoint_success(mock_moonshot_api, endpoint_service):
     """
     Test case for successful deletion of an endpoint.
@@ -160,9 +179,12 @@ def test_delete_endpoint_success(mock_moonshot_api, endpoint_service):
     endpoint_service.delete_endpoint("endpoint_id")
     mock_moonshot_api.api_delete_endpoint.assert_called_once_with("endpoint_id")
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_create_endpoint_exception(mock_moonshot_api, endpoint_service, exception, error_code):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_create_endpoint_exception(
+    mock_moonshot_api, endpoint_service, exception, error_code
+):
     """
     Test case for exceptions during creation of an endpoint.
     """
@@ -171,9 +193,12 @@ def test_create_endpoint_exception(mock_moonshot_api, endpoint_service, exceptio
         endpoint_service.add_endpoint(MOCK_CREATE_ENDPOINT)
     assert exc_info.value.error_code == error_code
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_update_endpoint_exception(mock_moonshot_api, endpoint_service, exception, error_code):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_update_endpoint_exception(
+    mock_moonshot_api, endpoint_service, exception, error_code
+):
     """
     Test case for exceptions during update of an endpoint.
     """
@@ -182,9 +207,12 @@ def test_update_endpoint_exception(mock_moonshot_api, endpoint_service, exceptio
         endpoint_service.update_endpoint("endpoint_id", MOCK_UPDATE_ENDPOINT)
     assert exc_info.value.error_code == error_code
 
+
 @pytest.mark.parametrize("exception, error_code", exception_scenarios)
-@patch('moonshot.integrations.web_api.services.endpoint_service.moonshot_api')
-def test_delete_endpoint_exception(mock_moonshot_api, endpoint_service, exception, error_code):
+@patch("moonshot.integrations.web_api.services.endpoint_service.moonshot_api")
+def test_delete_endpoint_exception(
+    mock_moonshot_api, endpoint_service, exception, error_code
+):
     """
     Test case for exceptions during deletion of an endpoint.
     """

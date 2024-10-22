@@ -15,7 +15,7 @@ def api_delete_metric(met_id: str) -> bool:
         met_id (str): The unique identifier for the metric to be deleted.
 
     Returns:
-        bool: True if the metric was successfully deleted.
+        bool: True if the metric was successfully deleted, False otherwise.
 
     Raises:
         Exception: If the deletion process encounters an error.
