@@ -368,16 +368,16 @@ class RedTeamingPromptArguments(BaseModel):
 
     def to_tuple(self) -> tuple:
         """
-        Converts the PromptArguments instance into a tuple.
+        Converts the RedTeamingPromptArguments instance into a tuple.
 
-        This method collects all the attributes of the PromptArguments instance and forms a tuple
-        with the attribute values in this specific order: conn_id, rec_id, ds_id, pt_id, prompt,
-        target, predicted_results, duration.
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
+        with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
+        prepared_prompt, system_prompt, response, duration, start_time.
         This tuple is suitable for serialization tasks, like storing the prompt arguments data
         in a database or transmitting it over a network.
 
         Returns:
-            tuple: A tuple representation of the PromptArguments instance.
+            tuple: A tuple representation of the RedTeamingPromptArguments instance.
         """
         return (
             self.conn_id,
@@ -388,7 +388,7 @@ class RedTeamingPromptArguments(BaseModel):
             self.original_prompt,
             self.connector_prompt.prompt,
             self.system_prompt,
-            str(self.connector_prompt.predicted_results),
+            self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             str(self.connector_prompt.duration),
             self.start_time,
         )
@@ -398,7 +398,7 @@ class RedTeamingPromptArguments(BaseModel):
         Converts the RedTeamingPromptArguments instance into a dict.
 
         This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
-        with the keys: conn_id, cs_id, pt_id, original_prompt, prepared_prompt, system_prompt ,response,
+        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, prepared_prompt, system_prompt, response,
         duration, start_time.
 
         Returns:
@@ -413,7 +413,7 @@ class RedTeamingPromptArguments(BaseModel):
             "original_prompt": self.original_prompt,
             "prepared_prompt": self.connector_prompt.prompt,
             "system_prompt": self.system_prompt,
-            "response": str(self.connector_prompt.predicted_results),
+            "response": self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             "duration": str(self.connector_prompt.duration),
             "start_time": self.start_time,
         }

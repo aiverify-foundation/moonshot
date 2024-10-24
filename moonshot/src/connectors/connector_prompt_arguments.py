@@ -6,14 +6,14 @@ from pydantic import BaseModel, Field
 
 from moonshot.src.connectors.connector_response import ConnectorResponse
 
+from moonshot.src.connectors.connector_response import ConnectorResponse
+
 
 class ConnectorPromptArguments(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    prompt_index: Annotated[
-        int, Field(strict=True, ge=0)
-    ]  # The index of the prompt in the dataset
+    prompt_index: int  # The index of the prompt in the dataset
 
     prompt: str  # The actual prompt text
 
