@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - app-data:/app/data
+    restart: always
+    image: ${ECR_REPOSITORY}/${MOONSHOT_APP_NAME}:${MOONSHOT_VERSION}
+
+volumes:
+  app-data:
