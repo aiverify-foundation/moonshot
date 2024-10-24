@@ -3,16 +3,31 @@ from __future__ import annotations
 import asyncio
 import time
 from abc import abstractmethod
-from asyncio import sleep
-from functools import wraps
+from functools import partial, wraps
 from pathlib import Path
 from typing import Callable
+
+from tenacity import RetryCallState, retry, stop_after_attempt, wait_random_exponential
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
 from moonshot.src.connectors.connector_response import ConnectorResponse
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
+)
+from moonshot.src.messages_constants import (
+    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
+    CONNECTOR_CREATE_ERROR,
+    CONNECTOR_GET_AVAILABLE_ITEMS_ERROR,
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR,
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR,
+    CONNECTOR_GET_PREDICTION_ERROR,
+    CONNECTOR_GET_PREDICTION_INFO,
+    CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO,
+    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
+    CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR,
+    CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR,
+    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR,
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
@@ -22,43 +37,56 @@ from moonshot.src.utils.log import configure_logger
 logger = configure_logger(__name__)
 
 
+def perform_retry_callback(connector_id: str, retry_state: RetryCallState) -> None:
+    """
+    Callback function to log retry attempts with detailed information.
+
+    This function is called by the tenacity library before each retry attempt.
+    It logs the retry attempt number, the sleep time before the next attempt,
+    the error message that caused the retry, and the connector ID.
+
+    Args:
+        connector_id (str): The ID of the connector.
+        retry_state (RetryCallState): The state of the retry call, which includes
+            information about the current attempt, the exception raised, and the next action.
+    """
+    sleep_time = retry_state.idle_for if retry_state else 0
+    exception = (
+        retry_state.outcome.exception() if retry_state.outcome else "Unknown exception"
+    )
+    logger.error(
+        CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR.format(
+            connector_id=connector_id,
+            attempt_no=retry_state.attempt_number,
+            sleep=f"{sleep_time:.2f}",
+            message=str(exception),
+        )
+    )
+
+
 def perform_retry(func):
     """
-    A decorator to perform retries on a function.
+    A decorator to perform retries on a function using tenacity.
 
-    This decorator wraps a function to enable retrying the function call
-    if it fails. The number of retries and the delay between retries
-    are determined by the `retries_times` and `allow_retries`
-    attributes of the class instance.
+    This decorator wraps an asynchronous function to enable retrying the function call
+    if it fails. The number of attempts and the delay between attempts
+    are determined by the `max_attempts` attribute of the class instance.
 
-    Parameters:
-    - func (Callable): The function to be wrapped and retried.
+    Args:
+        func (Callable): The asynchronous function to be wrapped and retried.
 
     Returns:
-    - Callable: A wrapper function that includes retry logic.
+        Callable: A wrapper function that includes retry logic.
     """
 
     async def wrapper(self, *args, **kwargs):
-        if self.allow_retries:
-            retry_count = 0
-            base_delay = 1
-            while retry_count <= self.retries_times:
-                # Perform the request
-                try:
-                    return await func(self, *args, **kwargs)
-                except Exception as exc:
-                    logger.warning(f"Operation failed. {str(exc)} - Retrying...")
-
-                # Perform retry
-                retry_count += 1
-                if retry_count <= self.retries_times:
-                    delay = base_delay * (2**retry_count)
-                    logger.warning(
-                        f"Attempt {retry_count}, Retrying in {delay} seconds..."
-                    )
-                    await sleep(delay)
-            # Raise an exception
-            raise ConnectionError("Failed to get response.")
+        retry_decorator = retry(
+            wait=wait_random_exponential(min=1, max=60),
+            stop=stop_after_attempt(self.max_attempts),
+            after=partial(perform_retry_callback, self.id),
+            reraise=True,
+        )
+        return await retry_decorator(func)(self, *args, **kwargs)
 
     return wrapper
 
@@ -71,6 +99,7 @@ class Connector:
         self.token = ep_args.token
         self.max_concurrency = ep_args.max_concurrency
         self.max_calls_per_second = ep_args.max_calls_per_second
+        self.model = ep_args.model
         self.params = ep_args.params
 
         # Rate limiting
@@ -80,21 +109,19 @@ class Connector:
         self.updated_at = time.time()
         self.semaphore = asyncio.Semaphore(ep_args.max_concurrency)
 
-        # Set Prompts if they exists
+        # Set Prompts if they exist
         self.pre_prompt = ep_args.params.get("pre_prompt", "")
         self.post_prompt = ep_args.params.get("post_prompt", "")
         self.system_prompt = ep_args.params.get("system_prompt", "")
 
         # Connection timeout
         self.timeout = ep_args.params.get("timeout", 600)
-        self.allow_retries = ep_args.params.get("allow_retries", True)
-        self.retries_times = ep_args.params.get("num_of_retries", 3)
+        self.max_attempts = ep_args.params.get("max_attempts", 3)
 
         # Optional params
         excluded_keys = {
-            "allow_retries",
             "timeout",
-            "num_of_retries",
+            "max_attempts",
             "pre_prompt",
             "post_prompt",
             "system_prompt",
@@ -114,10 +141,6 @@ class Connector:
 
         The method updates the `updated_at` attribute to the current time after tokens are added, ensuring that
         the next token addition will be calculated based on the correct elapsed time.
-
-        Usage:
-            # Assume `self` is an instance of a class with `rate_limiter`, `tokens`, and `updated_at` attributes.
-            await self.add_tokens()
         """
         now = time.time()
         elapsed = now - self.updated_at
@@ -144,11 +167,6 @@ class Connector:
 
         Returns:
             Callable: The decorated function wrapped with rate limiting logic.
-
-        Usage:
-            @rate_limited
-            async def some_async_function(*args, **kwargs):
-                # Function implementation
         """
 
         @wraps(func)
@@ -187,7 +205,7 @@ class Connector:
     @classmethod
     def load(cls, ep_args: ConnectorEndpointArguments) -> Connector:
         """
-        This method dynamically loads a connector instance based on the provided endpoint arguments.
+        Dynamically loads a connector instance based on the provided endpoint arguments.
 
         The connector type specified in the `ep_args` is used to dynamically load the corresponding
         connector class. The connector is then instantiated with the provided endpoint arguments. If the
@@ -203,17 +221,24 @@ class Connector:
         Raises:
             RuntimeError: If the specified connector type does not match any available connector classes.
         """
+        if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
+            raise ValueError(
+                CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
+            )
+
         connector_instance = get_instance(
             ep_args.connector_type,
             Storage.get_filepath(
                 EnvVariables.CONNECTORS.name, ep_args.connector_type, "py"
             ),
         )
-        if connector_instance:
+        if connector_instance and isinstance(connector_instance, Callable):
             return connector_instance(ep_args)
         else:
             raise RuntimeError(
-                f"Unable to get defined connector instance - {ep_args.connector_type}"
+                CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR.format(
+                    message=ep_args.connector_type
+                )
             )
 
     @staticmethod
@@ -223,7 +248,7 @@ class Connector:
 
         This method takes a ConnectorEndpointArguments object, which contains the necessary information
         to initialize and return a Connector object. The Connector object is created by calling the
-        `load_connector` method, which dynamically loads and initializes the connector based on the
+        `load` method, which dynamically loads and initializes the connector based on the
         endpoint arguments provided.
 
         Args:
@@ -231,12 +256,20 @@ class Connector:
 
         Returns:
             Connector: An initialized Connector object based on the provided endpoint arguments.
+
+        Raises:
+            ValueError: If the provided endpoint arguments are invalid.
+            Exception: If there is an error during the creation of the connector.
         """
         try:
+            if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
+                raise ValueError(
+                    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
+                )
             return Connector.load(ep_args)
 
         except Exception as e:
-            logger.error(f"Failed to create connector: {str(e)}")
+            logger.error(CONNECTOR_CREATE_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
@@ -245,7 +278,7 @@ class Connector:
         Fetches a list of all available connector types.
 
         This method employs the `get_connectors` method to locate all Python files in the directory
-        defined by the `EnvironmentVars.CONNECTORS` environment variable. It subsequently excludes any files that are
+        defined by the `EnvVariables.CONNECTORS` environment variable. It subsequently excludes any files that are
         not intended to be exposed as connectors (those containing "__" in their names). The method yields a list of the
         names of these connector types.
 
@@ -263,7 +296,7 @@ class Connector:
             ]
 
         except Exception as e:
-            logger.error(f"Failed to get available connectors: {str(e)}")
+            logger.error(CONNECTOR_GET_AVAILABLE_ITEMS_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
@@ -299,9 +332,24 @@ class Connector:
         Raises:
             Exception: If there is an error during prediction.
         """
+        if generated_prompt is None or not isinstance(
+            generated_prompt, ConnectorPromptArguments
+        ):
+            raise ValueError(
+                CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR
+            )
+
+        if connector is None or not isinstance(connector, Connector):
+            raise ValueError(
+                CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR
+            )
+
         try:
             logger.info(
-                f"Predicting prompt {generated_prompt.prompt_index} [{connector.id}]"
+                CONNECTOR_GET_PREDICTION_INFO.format(
+                    connector_id=connector.id,
+                    prompt_index=generated_prompt.prompt_index,
+                )
             )
 
             start_time = time.perf_counter()
@@ -310,7 +358,11 @@ class Connector:
             )
             generated_prompt.duration = time.perf_counter() - start_time
             logger.debug(
-                f"[Prompt {generated_prompt.prompt_index}] took {generated_prompt.duration:.4f}s"
+                CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO.format(
+                    connector_id=connector.id,
+                    prompt_index=generated_prompt.prompt_index,
+                    prompt_duration=f"{generated_prompt.duration:.4f}",
+                )
             )
 
             # Call prompt callback
@@ -321,17 +373,28 @@ class Connector:
             return generated_prompt
 
         except Exception as e:
-            logger.error(f"Failed to get prediction: {str(e)}")
+            logger.error(
+                CONNECTOR_GET_PREDICTION_ERROR.format(
+                    connector_id=connector.id,
+                    prompt_index=generated_prompt.prompt_index,
+                    message=str(e),
+                )
+            )
             raise e
 
     def set_system_prompt(self, system_prompt: str) -> None:
         """
-        Assigns a new system prompt to this connector instance.
+        Sets a new system prompt for this connector instance.
 
-        The system prompt serves as a preconfigured command or message that the connector can use to initiate
-        interactions or execute specific operations.
+        The system prompt is a predefined message or command that the connector can use to start interactions
+        or perform specific tasks.
 
-        Parameters:
+        Args:
             system_prompt (str): The new system prompt to set for this connector.
+
+        Raises:
+            ValueError: If the provided system prompt is not a string or is None.
         """
+        if system_prompt is None or not isinstance(system_prompt, str):
+            raise ValueError(CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR)
         self.system_prompt = system_prompt

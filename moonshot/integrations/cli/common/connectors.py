@@ -17,6 +17,7 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_COMMON_ADD_ENDPOINT_CONNECTOR_TYPE_VALIDATION,
     ERROR_COMMON_ADD_ENDPOINT_MAX_CALLS_PER_SECOND_VALIDATION,
     ERROR_COMMON_ADD_ENDPOINT_MAX_CONCURRENCY_VALIDATION,
+    ERROR_COMMON_ADD_ENDPOINT_MODEL_VALIDATION,
     ERROR_COMMON_ADD_ENDPOINT_NAME_VALIDATION,
     ERROR_COMMON_ADD_ENDPOINT_PARAMS_VALIDATION,
     ERROR_COMMON_ADD_ENDPOINT_TOKEN_VALIDATION,
@@ -56,6 +57,7 @@ def add_endpoint(args) -> None:
             token (str): The access token for the API.
             max_calls_per_second (int): The maximum number of API calls allowed per second.
             max_concurrency (int): The maximum number of concurrent API calls.
+            model (str): The model used by the endpoint.
             params (str): A string representation of a dictionary containing additional parameters for the connector.
 
     Returns:
@@ -94,6 +96,9 @@ def add_endpoint(args) -> None:
         ):
             raise TypeError(ERROR_COMMON_ADD_ENDPOINT_MAX_CONCURRENCY_VALIDATION)
 
+        if not isinstance(args.model, str) or args.model is None:
+            raise TypeError(ERROR_COMMON_ADD_ENDPOINT_MODEL_VALIDATION)
+
         try:
             params_dict = literal_eval(args.params)
         except Exception:
@@ -108,6 +113,7 @@ def add_endpoint(args) -> None:
             args.token,
             args.max_calls_per_second,
             args.max_concurrency,
+            args.model,
             params_dict,
         )
         print(f"[add_endpoint]: Endpoint ({new_endpoint_id}) created.")
@@ -123,9 +129,9 @@ def list_endpoints(args) -> list | None:
     moonshot.api module. It then displays the endpoints using the _display_endpoints function.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find endpoint(s) with a keyword.
-        pagination (str): Optional field to paginate endpoints.
+        args: A namespace object from argparse. It should have the following optional attributes:
+            find (str): Optional field to find endpoint(s) with a keyword.
+            pagination (str): Optional field to paginate endpoints.
 
     Returns:
         list | None: A list of ConnectorEndpoint or None if there is no result.
@@ -176,9 +182,9 @@ def list_connector_types(args) -> list | None:
     moonshot.api module. It then displays the connector types using the _display_connector_types function.
 
     Args:
-        args: A namespace object from argparse. It should have an optional attribute:
-        find (str): Optional field to find connector type(s) with a keyword.
-        pagination (str): Optional field to paginate connector types.
+        args: A namespace object from argparse. It should have the following optional attributes:
+            find (str): Optional field to find connector type(s) with a keyword.
+            pagination (str): Optional field to paginate connector types.
 
     Returns:
         list | None: A list of Connector or None if there is no result.
@@ -373,7 +379,8 @@ def _display_endpoints(endpoints_list):
 
     Args:
         endpoints_list (list): A list of endpoints. Each endpoint is a dictionary with keys 'id', 'name',
-        'connector_type', 'uri', 'token', 'max_calls_per_second', 'max_concurrency', 'params', and 'created_date'.
+        'connector_type', 'uri', 'token', 'max_calls_per_second', 'max_concurrency', 'model', 'params',
+        and 'created_date'.
 
     Returns:
         None
@@ -391,7 +398,8 @@ def _display_endpoints(endpoints_list):
     table.add_column("Uri", justify="left", width=10)
     table.add_column("Token", justify="left", width=10)
     table.add_column("Max Calls Per Second", justify="left", width=5)
-    table.add_column("Max concurrency", justify="left", width=5)
+    table.add_column("Max Concurrency", justify="left", width=5)
+    table.add_column("Model", justify="left", width=5)
     table.add_column("Params", justify="left", width=30)
     table.add_column("Created Date", justify="left", width=8)
 
@@ -404,6 +412,7 @@ def _display_endpoints(endpoints_list):
             token,
             max_calls_per_second,
             max_concurrency,
+            model,
             params,
             created_date,
             *other_args,
@@ -419,6 +428,7 @@ def _display_endpoints(endpoints_list):
             token,
             str(max_calls_per_second),
             str(max_concurrency),
+            str(model),
             escape(str(params)),
             created_date,
         )
@@ -432,7 +442,7 @@ def _display_endpoints(endpoints_list):
 add_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Add a new endpoint. The 'name' argument will be slugified to create a unique identifier.",
     epilog="Example:\n add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' "
-    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 \"{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}\"",
+    "MY_URI ADD_YOUR_TOKEN_HERE 1 1 'gpt-3.5-turbo-1106' \"{'temperature': 0.5}\"",
 )
 add_endpoint_args.add_argument(
     "connector_type",
@@ -450,6 +460,7 @@ add_endpoint_args.add_argument(
 add_endpoint_args.add_argument(
     "max_concurrency", type=int, help="Max concurrency of the new endpoint"
 )
+add_endpoint_args.add_argument("model", type=str, help="Model of the new endpoint")
 add_endpoint_args.add_argument("params", type=str, help="Params of the new endpoint")
 
 # Update endpoint arguments
@@ -457,11 +468,12 @@ update_endpoint_args = cmd2.Cmd2ArgumentParser(
     description="Update an endpoint.",
     epilog=(
         "Available keys:\n"
-        "  name: name of the endpoint\n"
+        "  name: Name of the endpoint\n"
         "  uri: URI of the endpoint\n"
         "  token: Token of the endpoint\n"
         "  max_calls_per_second: Rate limit for max calls per second\n"
         "  max_concurrency: Rate limit for max concurrency\n"
+        "  model: Model of the endpoint\n"
         "  params: Extra arguments for the endpoint\n\n"
         "Example:\n"
         "  update_endpoint openai-gpt4 \"[('name', 'my-special-openai-endpoint'), "
