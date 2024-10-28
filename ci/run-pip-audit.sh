@@ -22,6 +22,7 @@ pip-audit --format markdown --desc on -o pip-audit-report.md &> pip-audit-count.
 exit_code=$?
 pip install mdtree
 
+echo "=========== New pip-audit ============"
 if [ -f pip-audit-report.md ]; then
   echo "pip-audit-report.md:"
   fc1=`cat pip-audit-report.md`
