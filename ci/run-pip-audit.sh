@@ -23,25 +23,12 @@ exit_code=$?
 pip install mdtree
 
 if [ -f pip-audit-report.md ]; then
-  echo "============== Vulnerabilities Found =============="
-  cat pip-audit-report.md
   mdtree pip-audit-report.md > pip-audit-report.html
 else
   touch pip-audit-report.html
 fi
 
 if [ -f licenses-found.md ]; then
-  copyleftLic=("GPL" "LGPL" "MPL" "AGPL" "EUPL" "CCDL" "EPL" "CC-BY-SA" "OSL" "CPL")
-  echo "============== Copyleft Licenses Found =============="
-  head -n 2 licenses-found.md
-  while IFS= read -r line; do
-    for lic in "${copyleftLic[@]}"; do
-      if [[ $line == *"$lic"* ]]; then
-        echo "$line"
-        break
-      fi
-    done
-  done < licenses-found.md
   mdtree licenses-found.md > license-report.html
 else
   touch license-report.html
