@@ -62,7 +62,6 @@ read_dependency() {
 
 # Function to read license data
 read_license() {
-#  content=$(<licenses-found.md)
   copyleftLic=("GPL" "LGPL" "MPL" "AGPL" "EUPL" "CCDL" "EPL" "CC-BY-SA" "OSL" "CPL")
   numCopyleftLic=0
   if [ -f licenses-found.md ]; then
@@ -75,13 +74,6 @@ read_license() {
       done
     done < licenses-found.md
   fi
-
-#  for lic in "${copyleftLic[@]}"; do
-#    if [[ $content == *"$lic"* ]]; then
-#      ((numCopyleftLic++))
-#    fi
-#  done
-
   message="Copyleft licenses found: $numCopyleftLic"
   export LICENSE_SUMMARY="$message"
   echo "$message"
