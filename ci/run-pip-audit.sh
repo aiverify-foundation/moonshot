@@ -22,20 +22,30 @@ pip-audit --format markdown --desc on -o pip-audit-report.md &> pip-audit-count.
 exit_code=$?
 pip install mdtree
 
-echo "=========== New pip-audit ============"
 if [ -f pip-audit-report.md ]; then
-  echo "pip-audit-report.md:"
-  fc1=`cat pip-audit-report.md`
-  echo "$fc1"
+  echo "Vulnerabilities Found"
+  cat pip-audit-report.md
+#  fc1=`cat pip-audit-report.md`
+#  echo "$fc1"
   mdtree pip-audit-report.md > pip-audit-report.html
 else
   touch pip-audit-report.html
 fi
 
 if [ -f licenses-found.md ]; then
-  echo "license-found.md:"
-  fc2=`cat licenses-found.md`
-  echo "$fc2"
+  copyleftLic=("GPL" "LGPL" "MPL" "AGPL" "EUPL" "CCDL" "EPL" "CC-BY-SA" "OSL" "CPL")
+  echo "Copyleft Licenses Found:"
+  head -n 2 licenses-found.md
+  while IFS= read -r line; do
+    for lic in "${copyleftLic[@]}"; do
+      if [[ $line == *"$lic"* ]]; then
+        echo "$line"
+        break
+      fi
+    done
+  done < licenses-found.md
+#  fc2=`cat licenses-found.md`
+#  echo "$fc2"
   mdtree licenses-found.md > license-report.html
 else
   touch license-report.html
