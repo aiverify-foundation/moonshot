@@ -34,7 +34,7 @@ dependencies = [
 [project.optional-dependencies]
 web-api = [
     "typing-extensions>=4.12.2",
-    "fastapi>=0.112.2",
+    "fastapi>=0.115.4",
     "uvicorn>=0.30.6",
     "dependency-injector>=4.41.0",
 ]
@@ -114,7 +114,7 @@ datasets = ">=2.21.0"
 pandas = ">=2.2.2"
 numpy = ">=1.26.4"
 typing-extensions = ">=4.12.2"
-fastapi = ">=0.112.2"
+fastapi = ">=0.115.4"
 uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
 cmd2 = ">=2.4.3"
