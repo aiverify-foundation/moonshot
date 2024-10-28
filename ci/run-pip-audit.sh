@@ -23,12 +23,14 @@ exit_code=$?
 pip install mdtree
 
 if [ -f pip-audit-report.md ]; then
+  cat pip-audit-report.md
   mdtree pip-audit-report.md > pip-audit-report.html
 else
   touch pip-audit-report.html
 fi
 
 if [ -f licenses-found.md ]; then
+  cat licenses-found.md
   mdtree licenses-found.md > license-report.html
 else
   touch license-report.html
