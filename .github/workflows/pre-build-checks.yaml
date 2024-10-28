@@ -51,7 +51,6 @@ jobs:
         run: |
           echo "MS_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
           echo "MS_DATA_BRANCH=dev_main" >> "$GITHUB_ENV"
-#          echo "MS_DATA_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
           echo "PR_NUM=#0" >> "$GITHUB_ENV"
 
       # Checkout moonshot code
