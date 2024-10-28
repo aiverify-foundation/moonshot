@@ -8,11 +8,13 @@ source ci-venv/bin/activate
 pip install -r requirements.txt
 
 # license check
+echo "Installing pip-licenses..."
 pip install pip-licenses
 pip-licenses --format markdown --output-file licenses-found.md
 pip uninstall pip-licenses prettytable wcwidth -y
 
 # dependency check
+echo "Installing pip-audit..."
 pip install pip-audit
 pip uninstall setuptools -y
 set +e
@@ -28,7 +30,7 @@ python3 ci/createBadges.py dependency
 python3 ci/createBadges.py license
 
 deactivate
-rm -rf ci-venv
+#rm -rf ci-venv
 
 set -e
 if [ $exit_code -ne 0 ]; then
