@@ -21,8 +21,18 @@ set +e
 pip-audit --format markdown --desc on -o pip-audit-report.md &> pip-audit-count.txt
 exit_code=$?
 pip install mdtree
-mdtree pip-audit-report.md > pip-audit-report.html
-mdtree licenses-found.md > license-report.html
+
+if [ -f pip-audit-report.md ]; then
+  mdtree pip-audit-report.md > pip-audit-report.html
+else
+  touch pip-audit-report.html
+fi
+
+if [ -f licenses-found.md ]; then
+  mdtree licenses-found.md > license-report.html
+else
+  touch license-report.html
+fi
 
 # Create badges
 pip install anybadge
