@@ -4,13 +4,15 @@
 python3 -m venv ci-venv
 source ci-venv/bin/activate
 
+pip install --upgrade pip > /dev/null
+
 # install dependencies
 pip install -r requirements.txt > /dev/null
 
 # license check
 echo "License check..."
 pip install pip-licenses > /dev/null
-pip-licenses --format markdown --output-file licenses-found.md
+pip-licenses --format markdown --output-file licenses-found.md > /dev/null
 pip uninstall pip-licenses prettytable wcwidth -y > /dev/null
 
 # dependency check
