@@ -5,22 +5,22 @@ python3 -m venv ci-venv
 source ci-venv/bin/activate
 
 # install dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt > /dev/null
 
 # license check
-echo "Installing pip-licenses..."
-pip install pip-licenses
+echo "License check..."
+pip install pip-licenses > /dev/null
 pip-licenses --format markdown --output-file licenses-found.md
-pip uninstall pip-licenses prettytable wcwidth -y
+pip uninstall pip-licenses prettytable wcwidth -y > /dev/null
 
 # dependency check
-echo "Installing pip-audit..."
-pip install pip-audit
-pip uninstall setuptools -y
+echo "Dependency check..."
+pip install pip-audit > /dev/null
+pip uninstall setuptools -y > /dev/null
 set +e
 pip-audit --format markdown --desc on -o pip-audit-report.md &> pip-audit-count.txt
 exit_code=$?
-pip install mdtree
+pip install mdtree > /dev/null
 
 if [ -f pip-audit-report.md ]; then
   echo "============ Vulnerabilities Found ============"
@@ -48,15 +48,15 @@ else
 fi
 
 # Create badges
-pip install anybadge
-python3 ci/createBadges.py dependency
-python3 ci/createBadges.py license
+#pip install anybadge
+#python3 ci/createBadges.py dependency
+#python3 ci/createBadges.py license
 
 deactivate
-#rm -rf ci-venv
+rm -rf ci-venv
 
 set -e
 if [ $exit_code -ne 0 ]; then
-  echo "pip-audit failed, exiting..."
+#  echo "pip-audit failed, exiting..."
   exit $exit_code
 fi
