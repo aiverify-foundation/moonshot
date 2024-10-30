@@ -70,11 +70,13 @@ You can try the following:
 In release [0.4.12](link to release), we changed the schema for connector-endpoints. [Details about the change here](link to PR).
 This is a non-backwards compatible change, if you update `moonshot` but not `moonshot-data`, you may encounter errors due to schema mismatch.
 
-Some of the errors you see may include:
-
-[insert screenshots
-
 If you have created a connector-endpoint following the previous schema, you will need to edit/ create a new one that uses the latest schema.
+
+Some of the errors you see may include:
+![endpoint-schema-app-error](./res/faq/endpoint-schema-app-error.png)
+![endpoint-schema-cli-error](./res/faq/endpoint-schema-cli-error.png)
+![endpoint-schema-modal-error](./res/faq/endpoint-schema-modal-error.png)
+![endpoint-schema-list-error](./res/faq/endpoint-schema-list-error.png)
 
 </br>
 
