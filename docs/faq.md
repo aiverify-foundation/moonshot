@@ -1,11 +1,17 @@
 # FAQ
 
-## Installation 
+Jump to:
+- [Issues with installing Moonshot](#installing-moonshot)
+- [Issues caused by updating Moonshot](#updating-moonshot)
+- [Issues while using Moonshot](#using-moonshot)
+
+</br>
+
+## Installing Moonshot
 
 ### How do I get started?
 
 To install Moonshot, please follow our [quick start guide](./getting_started/) or [quick install page](./getting_started/quick_start.md) 
-
 
 ### What are Moonshot's prerequisites?
 
@@ -38,6 +44,40 @@ You may face issues installing some of the dependencies. We suggest using virtua
 
 Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
+### (MacOs Only) I am unable to install PyTorch
+
+If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
+
+### (Windows Only) I am having issues installing some Tensorflow Python packages
+
+At the time of writing (Jun 2024), there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
+
+![windows-installation-error-tensorflow](./res/faq/windows-installation-error-tensorflow.png)
+
+You can try the following:
+
+1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
+2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
+3. The issue should be resolved.
+
+
+</br>
+
+## Updating Moonshot
+
+### Why am I encountering errors with my endpoints after updating Moonshot?
+
+In release [0.4.12](link to release), we changed the schema for connector-endpoints. [Details about the change here](link to PR).
+This is a non-backwards compatible change, if you update `moonshot` but not `moonshot-data`, you may encounter errors due to schema mismatch.
+
+Some of the errors you see may include:
+
+[insert screenshots
+
+If you have created a connector-endpoint following the previous schema, you will need to edit/ create a new one that uses the latest schema.
+
+</br>
+
 ## Using Moonshot
 
 ### My tests are all completed with errors! I cannot view any report!
@@ -46,7 +86,8 @@ Some benchmark tests and attack modules require connector endpoints to be config
 
 ![](./getting_started/getting_started/8.png)
 
-####Requirements
+<b>Requirements</b>
+
 This is the full list of requirements for the following tests:
 
 | Test | Type | Model Required | Name of the Endpoint | Configuration Required
@@ -96,28 +137,7 @@ Open your preferred code editor, locate the `token` field, and replace `ADD_API_
 
 Please refresh the page.
 
-
-### Issues related to MacOS
-####  I am unable to install PyTorch
-
-If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
-
-
-### Issues related to Windows
-#### I am having issues installing some Tensorflow Python packages
-
-At the time of writing, there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
-
-![windows-installation-error-tensorflow](./res/faq/windows-installation-error-tensorflow.png)
-
-You can try the following:
-
-1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
-2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
-3. The issue should be resolved.
-
-
-#### I cannot delete my runner in the CLI on Windows.
+### (Windows Only) I cannot delete my runner in the CLI on Windows.
 
 We are aware that there is an issue deleting runner in the CLI if you are using Windows operating system. You may see the following error when you attempt to delete one of the runners using CLI:
 
@@ -130,7 +150,8 @@ Are you sure you want to delete the runner (y/N)? y
 
 We are working to produce a fix. In the meanwhile, please exit the program and delete it via your file explorer.
 
-#### I get an error when I try to run a benchmark which has unicode characters, or when the LLM's response contains unicode characters
+### (Windows Only) I get an error when I try to run a benchmark which has unicode characters, or when the LLM's response contains unicode characters
+
 The error may look something like this: 
 `'charmap' codec can't encode characters in position 43-53: character maps to <undefined>`
 
