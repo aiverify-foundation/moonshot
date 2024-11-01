@@ -19,28 +19,28 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = [
-    "python-slugify==8.0.4",
-    "python-dotenv==1.0.1",
-    "ijson==3.3.0",
-    "jinja2==3.1.4",
+    "python-slugify>=8.0.4",
+    "python-dotenv>=1.0.1",
+    "ijson>=3.3.0",
+    "jinja2>=3.1.4",
     "pydantic==2.8.2",
-    "pyparsing==3.1.4",
-    "xxhash==3.5.0",
-    "datasets==2.21.0",
-    "pandas==2.2.2",
-    "numpy==1.26.4"
+    "pyparsing>=3.1.4",
+    "xxhash>=3.5.0",
+    "datasets>=2.21.0",
+    "pandas>=2.2.2",
+    "numpy>=1.26.4"
 ]
 
 [project.optional-dependencies]
 web-api = [
-    "typing-extensions==4.12.2",
-    "fastapi==0.112.2",
-    "uvicorn==0.30.6",
-    "dependency-injector==4.41.0",
+    "typing-extensions>=4.12.2",
+    "fastapi>=0.112.2",
+    "uvicorn>=0.30.6",
+    "dependency-injector>=4.41.0",
 ]
 cli = [
-    "cmd2==2.4.3",
-    "rich==13.8.0",
+    "cmd2>=2.4.3",
+    "rich>=13.8.0",
 ]
 all = [
     "aiverify-moonshot[web-api]",
@@ -86,7 +86,6 @@ exclude = [
   "run_unit_test.sh"
 ]
 
-
 [project.urls]
 Repository = "https://github.com/aiverify-foundation/moonshot"
 Documentation = "https://aiverify-foundation.github.io/moonshot/"
@@ -104,22 +103,22 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-python-slugify = "8.0.4"
-python-dotenv = "1.0.1"
-ijson = "3.3.0"
-jinja2 = "3.1.4"
+python-slugify = ">=8.0.4"
+python-dotenv = ">=1.0.1"
+ijson = ">=3.3.0"
+jinja2 = ">=3.1.4"
 pydantic = "2.8.2"
-pyparsing = "3.1.4"
-xxhash = "3.5.0"
-datasets = "2.21.0"
-pandas = "2.2.2"
-numpy = "1.26.4"
-typing-extensions = "4.12.2"
-fastapi = "0.112.2"
-uvicorn = "0.30.6"
-dependency-injector = "4.41.0"
-cmd2 = "2.4.3"
-rich = "13.8.0"
+pyparsing = ">=3.1.4"
+xxhash = ">=3.5.0"
+datasets = ">=2.21.0"
+pandas = ">=2.2.2"
+numpy = ">=1.26.4"
+typing-extensions = ">=4.12.2"
+fastapi = ">=0.112.2"
+uvicorn = ">=0.30.6"
+dependency-injector = ">=4.41.0"
+cmd2 = ">=2.4.3"
+rich = ">=13.8.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
