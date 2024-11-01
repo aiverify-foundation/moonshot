@@ -20,22 +20,39 @@ class RunProgress:
     def __init__(
         self, run_arguments: RunArguments, run_progress_callback_func: Callable | None
     ):
-        # Information on the run and callback for progress updating
+        """
+        Initializes the RunProgress instance with the given run arguments and callback function.
+
+        Args:
+            run_arguments (RunArguments): The arguments related to the run.
+            run_progress_callback_func (Callable | None): A callback function for updating run progress.
+        """
+        # Store the run arguments and callback function for progress updates
         self.run_arguments = run_arguments
         self.run_progress_callback_func = run_progress_callback_func
 
-        # Information to be sent back through callback
-        self.cookbook_index: int = -1
-        self.cookbook_name: str = ""
-        self.cookbook_total: int = -1
-        self.recipe_index: int = -1
-        self.recipe_name: str = ""
-        self.recipe_total: int = -1
-        self.progress: int = 0
+        # Initialize progress tracking attributes
+        self.total_num_of_tasks: int = 0
+        self.total_num_of_prompts: int = 0
+        self.total_num_of_metrics: int = 0
+        self.completed_num_of_prompts: int = 0
+        self.cancelled_num_of_prompts: int = 0
+        self.error_num_of_prompts: int = 0
+        self.completed_num_of_metrics: int = 0
+        self.overall_progress: int = 0
+        self.overall_prompt_progress: int = 0
+        self.overall_metric_progress: int = 0
+
+        # Lists to track error or cancelled prompts
+        self.cancelled_prompts = []
+        self.error_prompts = []
+
+        # List to track current running tasks
+        self.current_running_tasks = []
 
     def notify_error(self, error_message: str) -> None:
         """
-        Notifies about an error that occurred during the run process.
+        Logs an error message and updates the run status to indicate errors.
 
         This method logs the error message, appends it to the run arguments' error messages list,
         and updates the run progress status to indicate that the run is continuing with errors.
@@ -43,19 +60,21 @@ class RunProgress:
         Args:
             error_message (str): The error message to be logged and recorded.
         """
-        # Update error message
-        logger.error(error_message)
-        self.run_arguments.error_messages.append(error_message)
+        if error_message:
+            # Log the error message
+            logger.error(error_message)
+            if error_message not in self.run_arguments.error_messages:
+                self.run_arguments.error_messages.append(error_message)
 
-        # Update progress status
-        self.notify_progress(status=RunStatus.RUNNING_WITH_ERRORS)
+            # Update progress status
+            self.notify_progress(status=RunStatus.RUNNING_WITH_ERRORS)
 
     def notify_progress(self, **kwargs) -> None:
         """
         Updates the run progress information and the run status.
 
-        This method is responsible for updating the run status, setting the end time, calculating the run duration,
-        and persisting these changes to the database. Additionally, if a callback function for run progress has been
+        This method updates the run status, sets the end time, calculates the run duration,
+        and persists these changes to the database. Additionally, if a callback function for run progress has been
         set, this method will invoke it with the current state of run arguments.
 
         The method accepts arbitrary keyword arguments which are used to update specific attributes of the run_arguments
@@ -85,25 +104,6 @@ class RunProgress:
             if hasattr(self.run_arguments, key):
                 setattr(self.run_arguments, key, value)
 
-        # Calculate percentage
-        if self.cookbook_total > 0:
-            if self.recipe_total > 0 and self.cookbook_index != self.cookbook_total:
-                # Calculate percentage with cookbook and recipe defined
-                per_recipe_percentage = (100 / self.cookbook_total) / self.recipe_total
-                self.progress = int(
-                    self.cookbook_index * (100 / self.cookbook_total)
-                ) + int(self.recipe_index * per_recipe_percentage)
-            else:
-                # Calculate percentage with cookbook defined and no recipes defined
-                # Or cookbook index and total is same.
-                self.progress = int(self.cookbook_index * (100 / self.cookbook_total))
-        elif self.recipe_total > 0:
-            # There is no cookbook, calculate for recipes defined
-            self.progress = int(self.recipe_index * (100 / self.recipe_total))
-        else:
-            # Initialization: set 0
-            self.progress = 0
-
         # Update database record
         if self.run_arguments.database_instance:
             Storage.update_database_record(
@@ -113,7 +113,7 @@ class RunProgress:
             )
         else:
             logger.warning(
-                "[RunProgress] Failed to update run progress: database instance is not initialised."
+                "[RunProgress] Failed to update run progress: database instance is not initialized."
             )
 
         # If a callback function is provided, call it with the updated run arguments
@@ -122,28 +122,48 @@ class RunProgress:
 
     def get_dict(self) -> dict:
         """
-        Constructs and returns a dictionary with the current state of the benchmark execution.
+        Constructs and returns a dictionary with the current state of the run progress.
 
-        This method assembles a dictionary encapsulating the current progress of the benchmark execution.
-        The resulting dictionary is composed of the following keys: execution identifier, name, type, current duration,
-        status, cookbook index, cookbook name, cookbook total, recipe index, recipe name, recipe total,
-        progress percentage, and a list of error messages.
+        This method assembles a dictionary encapsulating the current progress of the run.
+        The resulting dictionary includes the total number of tasks, total number of prompts,
+        completed prompts, cancelled prompts, error prompts, total number of metrics, completed metrics,
+        current runner ID, current status, current progress, current cancelled prompts, current error prompts,
+        a list of unique error messages, and the current running tasks.
 
         Returns:
-            dict: A dictionary representing the current benchmark execution state, with keys for various progress
-            metrics and details.
+            dict: A dictionary representing the current run progress state. The dictionary contains the following keys:
+                - total_num_of_tasks (int): The total number of tasks.
+                - total_num_of_prompts (int): The total number of prompts.
+                - total_num_of_metrics (int): The total number of metrics.
+                - completed_num_of_prompts (int): The number of completed prompts.
+                - cancelled_num_of_prompts (int): The number of cancelled prompts.
+                - error_num_of_prompts (int): The number of error prompts.
+                - completed_num_of_metrics (int): The number of completed metrics.
+                - current_runner_id (str): The ID of the current runner.
+                - current_status (str): The current status of the run.
+                - current_progress (float): The overall progress of the run.
+                - current_prompt_progress (float): The progress of the prompts.
+                - current_metric_progress (float): The progress of the metrics.
+                - current_cancelled_prompts (list): The current cancelled benchmark prompts.
+                - current_error_prompts (list): The current error benchmark prompts.
+                - current_error_messages (list[str]): A list of unique error messages.
+                - current_running_tasks (list[dict]): A list of dictionaries representing the current running tasks.
         """
         return {
+            "total_num_of_tasks": self.total_num_of_tasks,
+            "total_num_of_prompts": self.total_num_of_prompts,
+            "total_num_of_metrics": self.total_num_of_metrics,
+            "completed_num_of_prompts": self.completed_num_of_prompts,
+            "cancelled_num_of_prompts": self.cancelled_num_of_prompts,
+            "error_num_of_prompts": self.error_num_of_prompts,
+            "completed_num_of_metrics": self.completed_num_of_metrics,
             "current_runner_id": self.run_arguments.runner_id,
-            "current_runner_type": self.run_arguments.runner_type.value,
-            "current_duration": self.run_arguments.duration,
             "current_status": self.run_arguments.status.value,
-            "current_cookbook_index": self.cookbook_index,
-            "current_cookbook_name": self.cookbook_name,
-            "current_cookbook_total": self.cookbook_total,
-            "current_recipe_index": self.recipe_index,
-            "current_recipe_name": self.recipe_name,
-            "current_recipe_total": self.recipe_total,
-            "current_progress": self.progress,
+            "current_progress": self.overall_progress,
+            "current_prompt_progress": self.overall_prompt_progress,
+            "current_metric_progress": self.overall_metric_progress,
+            "current_cancelled_prompts": self.cancelled_prompts,
+            "current_error_prompts": self.error_prompts,
             "current_error_messages": list(set(self.run_arguments.error_messages)),
+            "current_running_tasks": self.current_running_tasks,
         }

@@ -271,6 +271,8 @@ class Run:
             if runner_module_instance:
                 runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
                     loop,
+                    self.run_arguments.run_id,
+                    self.run_arguments.runner_id,
                     self.run_arguments.runner_args,
                     self.run_arguments.database_instance,
                     self.run_arguments.endpoints,
