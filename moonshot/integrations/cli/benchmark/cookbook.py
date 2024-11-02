@@ -37,7 +37,8 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION_1,
     ERROR_BENCHMARK_RUN_COOKBOOK_NAME_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_NO_RESULT,
-    ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION,
+    ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION,
+    ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RESULT_PROC_MOD_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RUNNER_PROC_MOD_VALIDATION,
@@ -212,11 +213,12 @@ def run_cookbook(args) -> None:
     The cookbooks are run against the specified endpoints, and the results are processed and displayed.
 
     Args:
-        args: A namespace object from argparse. It should have the following attributes:
+        args (argparse.Namespace): The arguments provided to the command line interface.
+        Expected keys are:
             name (str): The name of the cookbook runner.
             cookbooks (str): A string representation of a list of cookbooks to run.
             endpoints (str): A string representation of a list of endpoints to run.
-            num_of_prompts (int): The number of prompts to run.
+            prompt_selection_percentage (int): The percentage of prompts to run.
             random_seed (int): The random seed number for reproducibility.
             system_prompt (str): The system prompt to use.
             runner_proc_module (str): The runner processing module to use.
@@ -248,10 +250,19 @@ def run_cookbook(args) -> None:
         ):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION)
 
-        if isinstance(args.num_of_prompts, bool) or not isinstance(
-            args.num_of_prompts, int
+        if isinstance(args.prompt_selection_percentage, bool) or not isinstance(
+            args.prompt_selection_percentage, int
         ):
-            raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION)
+            raise TypeError(
+                ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION
+            )
+        elif (
+            args.prompt_selection_percentage < 1
+            or args.prompt_selection_percentage > 100
+        ):
+            raise ValueError(
+                ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION
+            )
 
         if isinstance(args.random_seed, bool) or not isinstance(args.random_seed, int):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION)
@@ -301,7 +312,7 @@ def run_cookbook(args) -> None:
         async def run():
             await cb_runner.run_cookbooks(
                 cookbooks,
-                args.num_of_prompts,
+                args.prompt_selection_percentage,
                 args.random_seed,
                 args.system_prompt,
                 args.runner_proc_module,
@@ -722,7 +733,11 @@ run_cookbook_args.add_argument("name", type=str, help="Name of cookbook runner")
 run_cookbook_args.add_argument("cookbooks", type=str, help="List of cookbooks to run")
 run_cookbook_args.add_argument("endpoints", type=str, help="List of endpoints to run")
 run_cookbook_args.add_argument(
-    "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
+    "-n",
+    "--prompt_selection_percentage",
+    type=int,
+    default=100,
+    help="Percentage of prompts to run",
 )
 run_cookbook_args.add_argument(
     "-r", "--random_seed", type=int, default=0, help="Random seed number"

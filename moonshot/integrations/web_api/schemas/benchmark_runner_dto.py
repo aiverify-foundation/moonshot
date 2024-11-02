@@ -7,7 +7,7 @@ class BenchmarkRunnerDTO(BaseModel):
     description: str
     endpoints: list[str]
     inputs: list[str]
-    num_of_prompts: int
+    prompt_selection_percentage: int
     random_seed: int
     system_prompt: str
     runner_processing_module: str
