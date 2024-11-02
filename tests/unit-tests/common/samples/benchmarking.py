@@ -39,7 +39,7 @@ class Benchmarking:
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
     sql_read_runner_cache_record = """
-        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? AND dataset_id=? AND prompt_template_id=? AND prompt=?
+        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? AND dataset_id=? AND prompt_template_id=? AND prompt=?  # noqa: E501
     """
     BATCH_SIZE = 10
     QUEUE_SIZE = 10
@@ -90,9 +90,20 @@ class Benchmarking:
             # Get required arguments from runner_args
             self.cookbooks = self.runner_args.get("cookbooks", None)
             self.recipes = self.runner_args.get("recipes", None)
-            self.prompt_selection_percentage = self.runner_args.get("prompt_selection_percentage", 100)
+            self.prompt_selection_percentage = self.runner_args.get(
+                "prompt_selection_percentage", 100
+            )
             self.random_seed = self.runner_args.get("random_seed", 0)
             self.system_prompt = self.runner_args.get("system_prompt", "")
+
+            # Perform validation on prompt_selection_percentage
+            if (
+                self.prompt_selection_percentage < 1
+                or self.prompt_selection_percentage > 100
+            ):
+                raise RuntimeError(
+                    "The 'prompt_selection_percentage' argument must be between 1 - 100."
+                )
 
             # ------------------------------------------------------------------------------
             # Part 0: Load common instances
@@ -721,8 +732,10 @@ class Benchmarking:
         ds_args = Dataset.read(ds_id)
 
         # Generate a list of prompt indices based on prompt_selection_percentage and random_seed
-        self.num_of_prompts = int((self.prompt_selection_percentage / 100) * ds_args.num_of_dataset_prompts)
-        if self.num_of_prompts >= ds_args.num_of_dataset_prompts:
+        self.num_of_prompts = int(
+            (self.prompt_selection_percentage / 100) * ds_args.num_of_dataset_prompts
+        )
+        if self.num_of_prompts == ds_args.num_of_dataset_prompts:
             prompt_indices = range(ds_args.num_of_dataset_prompts)
         else:
             random.seed(self.random_seed)
