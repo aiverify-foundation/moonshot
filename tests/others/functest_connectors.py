@@ -1,5 +1,5 @@
 from moonshot.api import (
-    api_create_connector_from_endpoint, 
+    api_create_connector_from_endpoint,
     api_create_connectors_from_endpoints,
     api_create_endpoint,
     api_delete_endpoint,
@@ -22,6 +22,7 @@ def test_create_connector_endpoint():
         token="1234",
         max_calls_per_second=256,
         max_concurrency=1,
+        model="HelloWorld",
         params={"hello": "world"},
     )
 
@@ -41,8 +42,8 @@ def test_delete_connector_endpoint():
     try:
         api_delete_endpoint("endpoint123")
         print("Delete endpoint if exist: FAILED")
-    except Exception as ex:
-        print(f"Delete endpoint if do not exist: PASSED")
+    except Exception:
+        print("Delete endpoint if do not exist: PASSED")
 
     # Delete endpoint if exists
     try:
@@ -80,8 +81,7 @@ def test_create_connector_from_ep():
     print("Updated at: ", connector.updated_at)
     print("Semaphore: ", connector.semaphore)
     print("Timeout: ", connector.timeout)
-    print("Allow Retries: ", connector.allow_retries)
-    print("Retries Times: ", connector.retries_times)
+    print("Number of attempts: ", connector.max_attempts)
 
     # Delete connector endpoint
     test_delete_connector_endpoint()
@@ -92,7 +92,9 @@ def test_create_connectors_from_eps():
     test_create_connector_endpoint()
 
     # Create new connector
-    connectors = api_create_connectors_from_endpoints(["my-new-gpt4", "my-new-gpt4", "my-new-gpt4"])
+    connectors = api_create_connectors_from_endpoints(
+        ["my-new-gpt4", "my-new-gpt4", "my-new-gpt4"]
+    )
     for connector_no, connector in enumerate(connectors, 1):
         print("-" * 100)
         print("Connector No. ", connector_no)
@@ -109,8 +111,7 @@ def test_create_connectors_from_eps():
         print("Updated at: ", connector.updated_at)
         print("Semaphore: ", connector.semaphore)
         print("Timeout: ", connector.timeout)
-        print("Allow Retries: ", connector.allow_retries)
-        print("Retries Times: ", connector.retries_times)
+        print("Number of attempts: ", connector.max_attempts)
 
     # Delete connector endpoint
     test_delete_connector_endpoint()
@@ -151,6 +152,7 @@ def test_run_connector_endpoints_api():
     # List all connector endpoints names
     print("=" * 100, "\nTest listing all connector endpoint names")
     test_get_all_connector_endpoint_name()
+
 
 def test_run_connector_api():
     # ------------------------------------------------------------------------------
