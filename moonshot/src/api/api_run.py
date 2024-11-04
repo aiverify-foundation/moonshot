@@ -14,7 +14,7 @@ def api_get_all_run(runner_id: str = "") -> list[dict]:
 
     Args:
         runner_id (str, optional): The ID of the runner to retrieve runs for. If empty, runs for all runners
-        are retrieved.
+                                   are retrieved.
 
     Returns:
         list[dict]: A list of dictionaries, each representing a run's data.
@@ -34,8 +34,8 @@ def _api_get_available_runs(
     RunArguments instances representing the runs.
 
     Args:
-        runner_id (str): The ID of the runner for which to retrieve run information. If empty, information for
-                         all runners is retrieved.
+        runner_id (str, optional): The ID of the runner for which to retrieve run information. If empty, information
+                                   for all runners is retrieved.
 
     Returns:
         tuple[list[str], list[RunArguments]]: A tuple containing a list of runner IDs and a list of RunArguments

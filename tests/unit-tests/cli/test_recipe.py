@@ -1440,7 +1440,7 @@ class TestCollectionCliRecipe:
     # Test run_recipe functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "name, recipes, endpoints, num_of_prompts, random_seed, system_prompt, \
+        "name, recipes, endpoints, prompt_selection_percentage, random_seed, system_prompt, \
         runner_proc_module, result_proc_module, expected_log",
         [
             # Valid case
@@ -1713,7 +1713,43 @@ class TestCollectionCliRecipe:
                 "result_module",
                 "[run_recipe]: The 'endpoints' argument must be a non-empty string and not None.",
             ),
-            # Invalid case: num_of_prompts is not an integer
+            # Invalid case: prompt_selection_percentage is 0
+            (
+                "Test Runner",
+                "['recipe1', 'recipe2']",
+                "['endpoint1', 'endpoint2']",
+                0,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is -1
+            (
+                "Test Runner",
+                "['recipe1', 'recipe2']",
+                "['endpoint1', 'endpoint2']",
+                -1,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is 101
+            (
+                "Test Runner",
+                "['recipe1', 'recipe2']",
+                "['endpoint1', 'endpoint2']",
+                101,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is not an integer
             (
                 "Test Runner",
                 "['recipe1', 'recipe2']",
@@ -1723,7 +1759,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1734,7 +1770,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1745,7 +1781,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1756,7 +1792,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1767,7 +1803,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1778,7 +1814,7 @@ class TestCollectionCliRecipe:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_recipe]: The 'num_of_prompts' argument must be an integer.",
+                "[run_recipe]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             # Invalid case: random_seed is not an integer
             (
@@ -2137,7 +2173,7 @@ class TestCollectionCliRecipe:
         name,
         recipes,
         endpoints,
-        num_of_prompts,
+        prompt_selection_percentage,
         random_seed,
         system_prompt,
         runner_proc_module,
@@ -2204,7 +2240,7 @@ class TestCollectionCliRecipe:
         args.name = name
         args.recipes = recipes
         args.endpoints = endpoints
-        args.num_of_prompts = num_of_prompts
+        args.prompt_selection_percentage = prompt_selection_percentage
         args.random_seed = random_seed
         args.system_prompt = system_prompt
         args.runner_proc_module = runner_proc_module
