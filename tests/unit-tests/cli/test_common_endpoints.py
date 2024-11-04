@@ -1,12 +1,21 @@
-from ast import literal_eval
-import pytest
-from unittest.mock import patch, MagicMock
 from argparse import Namespace
-from moonshot.integrations.cli.common.connectors import add_endpoint, delete_endpoint, list_connector_types, list_endpoints, update_endpoint, view_endpoint
-from _pytest.assertion import truncate
-truncate.DEFAULT_MAX_LINES = 9999
-truncate.DEFAULT_MAX_CHARS = 9999  
+from ast import literal_eval
+from unittest.mock import MagicMock, patch
 
+import pytest
+from _pytest.assertion import truncate
+
+from moonshot.integrations.cli.common.connectors import (
+    add_endpoint,
+    delete_endpoint,
+    list_connector_types,
+    list_endpoints,
+    update_endpoint,
+    view_endpoint,
+)
+
+truncate.DEFAULT_MAX_LINES = 9999
+truncate.DEFAULT_MAX_CHARS = 9999
 
 
 class TestCollectionCliConnectors:
@@ -19,408 +28,503 @@ class TestCollectionCliConnectors:
     # Add Endpoint
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "connector_type, name, uri, token, max_calls_per_second, max_concurrency, params, expected_output",
-    [
-        # Valid cases
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: Endpoint (test-connector) created."
-        ),
-        (
-            "openai-connector",
-            "'test_connector'",
-            "example uri",
-            "example token",
-            2,
-            3,
-            "{'temperature': 1.5, 'model': 'gpt-3.5-turbo-1106', 'new': 'field'}",
-            "[add_endpoint]: Endpoint (test-connector) created."
-        ),        
-        # Invalid connector_type
-        (
-            None,
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None."
-        ),
-        (
-            ["invalid connector type"],
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None."
-        ),
-        (
-            {"invalid connector": "type"},
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None."
-        ), 
-        (
-            123,
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None."
-        ),          
-        (
-            True,
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None."
-        ),                              
-        # Invalid name
-        (
-            "openai-connector",
-            None,
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'name' argument must be a non-empty string and not None."
-        ),
-        (
-            "openai-connector",
-            ['invalid name'],
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'name' argument must be a non-empty string and not None."
-        ),        
-        (
-            "openai-connector",
-            {'invalid': 'name'},
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'name' argument must be a non-empty string and not None."
-        ),         
-        (
-            "openai-connector",
-            123,
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'name' argument must be a non-empty string and not None."
-        ),      
-        (
-            "openai-connector",
-            True,
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'name' argument must be a non-empty string and not None."
-        ),                         
-        # Invalid uri
-        (
-            "openai-connector",
-            "'test connector'",
-            None,
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'uri' argument must be a non-empty string and not None."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            ['invalid uri'],
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'uri' argument must be a non-empty string and not None."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            {"invalid": "uri"},
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'uri' argument must be a non-empty string and not None."
-        ),              
-        (
-            "openai-connector",
-            "'test connector'",
-            123,
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'uri' argument must be a non-empty string and not None."
-        ),        
-        (
-            "openai-connector",
-            "'test connector'",
-            True,
-            "example_token",
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'uri' argument must be a non-empty string and not None."
-        ),                            
-        # Invalid token
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            None,
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'token' argument must be a non-empty string and not None."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            ["invalid token"],
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'token' argument must be a non-empty string and not None."
-        ),        
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            {"invalid": "token"},
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'token' argument must be a non-empty string and not None."
-        ),            
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            123,
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'token' argument must be a non-empty string and not None."
-        ),          
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            True,
-            1,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'token' argument must be a non-empty string and not None."
-        ),                   
-        # Invalid max_calls_per_second
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            None,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            "invalid",
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),      
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            ["invalid"],
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),               
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            {"invalid"},
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),      
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            0.23,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),    
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            False,
-            1,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None."
-        ),                                  
-        # Invalid max_concurrency
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            None,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            "invalid",
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),        
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            ["invalid"],
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),     
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            {"invalid"},
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),     
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            0.23,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),      
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            False,
-            "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}",
-            "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None."
-        ),                                           
-        # Invalid params
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            "",
-            "[add_endpoint]: The 'params' argument must be a string representation of a dictionary."
-        ),
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            [],
-            "[add_endpoint]: The 'params' argument must be a string representation of a dictionary."
-        ),        
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            {},
-            "[add_endpoint]: The 'params' argument must be a string representation of a dictionary."
-        ),            
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            True,
-            "[add_endpoint]: The 'params' argument must be a string representation of a dictionary."
-        ),        
-        (
-            "openai-connector",
-            "'test connector'",
-            "example_uri",
-            "example_token",
-            1,
-            1,
-            0.123,
-            "[add_endpoint]: The 'params' argument must be a string representation of a dictionary."
-        ),              
-    ],
-)
+        "connector_type, name, uri, token, max_calls_per_second, max_concurrency, model, params, expected_output",
+        [
+            # Valid cases
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: Endpoint (test-connector) created.",
+            ),
+            (
+                "openai-connector",
+                "'test_connector'",
+                "example uri",
+                "example token",
+                2,
+                3,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 1.5, 'new': 'field'}",
+                "[add_endpoint]: Endpoint (test-connector) created.",
+            ),
+            # Invalid connector_type
+            (
+                None,
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None.",
+            ),
+            (
+                ["invalid connector type"],
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None.",
+            ),
+            (
+                {"invalid connector": "type"},
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None.",
+            ),
+            (
+                123,
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None.",
+            ),
+            (
+                True,
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'connector_type' argument must be a non-empty string and not None.",
+            ),
+            # Invalid name
+            (
+                "openai-connector",
+                None,
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'name' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                ["invalid name"],
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'name' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                {"invalid": "name"},
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'name' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                123,
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'name' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                True,
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'name' argument must be a non-empty string and not None.",
+            ),
+            # Invalid uri
+            (
+                "openai-connector",
+                "'test connector'",
+                None,
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'uri' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                ["invalid uri"],
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'uri' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                {"invalid": "uri"},
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'uri' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                123,
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'uri' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                True,
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'uri' argument must be a non-empty string and not None.",
+            ),
+            # Invalid token
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                None,
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'token' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                ["invalid token"],
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'token' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                {"invalid": "token"},
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'token' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                123,
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'token' argument must be a non-empty string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                True,
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'token' argument must be a non-empty string and not None.",
+            ),
+            # Invalid max_calls_per_second
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                None,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                "invalid",
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                ["invalid"],
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                {"invalid"},
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                0.23,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                False,
+                1,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_calls_per_second' argument must be a non-empty positive integer and not None.",  # noqa: E501
+            ),
+            # Invalid max_concurrency
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                None,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                "invalid",
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                ["invalid"],
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                {"invalid"},
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                0.23,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                False,
+                "gpt-3.5-turbo-1106",
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'max_concurrency' argument must be a non-empty positive integer and not None.",
+            ),
+            # Invalid model
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                None,
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'model' argument must be a string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                ["invalid"],
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'model' argument must be a string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                {"invalid"},
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'model' argument must be a string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                0.23,
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'model' argument must be a string and not None.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                False,
+                "{'temperature': 0.5}",
+                "[add_endpoint]: The 'model' argument must be a string and not None.",
+            ),
+            # Invalid params
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                "",
+                "[add_endpoint]: The 'params' argument must be a string representation of a dictionary.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                [],
+                "[add_endpoint]: The 'params' argument must be a string representation of a dictionary.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                {},
+                "[add_endpoint]: The 'params' argument must be a string representation of a dictionary.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                True,
+                "[add_endpoint]: The 'params' argument must be a string representation of a dictionary.",
+            ),
+            (
+                "openai-connector",
+                "'test connector'",
+                "example_uri",
+                "example_token",
+                1,
+                1,
+                "gpt-3.5-turbo-1106",
+                0.123,
+                "[add_endpoint]: The 'params' argument must be a string representation of a dictionary.",
+            ),
+        ],
+    )
     @patch("moonshot.integrations.cli.common.connectors.api_create_endpoint")
     def test_add_endpoint(
         self,
@@ -431,10 +535,10 @@ class TestCollectionCliConnectors:
         token,
         max_calls_per_second,
         max_concurrency,
+        model,
         params,
         expected_output,
-        capsys
-
+        capsys,
     ):
         if "error" in expected_output:
             mock_api_create_endpoint.side_effect = Exception(
@@ -444,15 +548,15 @@ class TestCollectionCliConnectors:
             mock_api_create_endpoint.return_value = "test-connector"
 
         args = Namespace(
-            connector_type = connector_type, 
-            name = name,
-            uri = uri,
-            token = token,
-            max_calls_per_second = max_calls_per_second,
-            max_concurrency = max_concurrency,
-            params = params
+            connector_type=connector_type,
+            name=name,
+            uri=uri,
+            token=token,
+            max_calls_per_second=max_calls_per_second,
+            max_concurrency=max_concurrency,
+            model=model,
+            params=params,
         )
-
 
         add_endpoint(args)
 
@@ -468,10 +572,12 @@ class TestCollectionCliConnectors:
             and uri
             and isinstance(token, str)
             and token
-            and isinstance(max_calls_per_second, int)                        
+            and isinstance(max_calls_per_second, int)
             and max_calls_per_second
-            and isinstance(max_concurrency, int)                        
-            and max_concurrency      
+            and isinstance(max_concurrency, int)
+            and max_concurrency
+            and isinstance(model, str)
+            and model
         ):
             try:
                 params_dict = literal_eval(params)
@@ -483,7 +589,14 @@ class TestCollectionCliConnectors:
                 params_dict = None
             if params_dict is not None:
                 mock_api_create_endpoint.assert_called_once_with(
-                    name, connector_type, uri, token, max_calls_per_second, max_concurrency, params_dict
+                    name,
+                    connector_type,
+                    uri,
+                    token,
+                    max_calls_per_second,
+                    max_concurrency,
+                    model,
+                    params_dict,
                 )
             else:
                 mock_api_create_endpoint.assert_not_called()
@@ -509,7 +622,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [
@@ -521,7 +635,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 "",
@@ -547,8 +662,9 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
-                    },       
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                    },
                 ],
                 [
                     {
@@ -559,7 +675,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 "",
@@ -572,7 +689,7 @@ class TestCollectionCliConnectors:
                 None,
                 "There are no endpoints found.",
             ),
-            # Valid case with pagination                        
+            # Valid case with pagination
             (
                 None,
                 "(1, 1)",
@@ -585,7 +702,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [
@@ -597,8 +715,9 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'},
-                        "idx" : 1
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                        "idx": 1,
                     }
                 ],
                 "",
@@ -737,7 +856,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -755,7 +875,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -773,7 +894,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -791,7 +913,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -809,7 +932,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -827,7 +951,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -842,7 +967,7 @@ class TestCollectionCliConnectors:
                 "[list_endpoints]: An error has occurred while listing endpoints.",
             ),
         ],
-    )    
+    )
     @patch("moonshot.integrations.cli.common.connectors.api_get_all_endpoint")
     @patch("moonshot.integrations.cli.common.connectors._display_endpoints")
     def test_list_endpoints(
@@ -863,10 +988,7 @@ class TestCollectionCliConnectors:
         else:
             mock_api_get_all_endpoint.return_value = api_response
 
-        args = Namespace(
-            find = find, 
-            pagination = pagination
-        )
+        args = Namespace(find=find, pagination=pagination)
 
         result = list_endpoints(args)
 
@@ -897,11 +1019,12 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
-                    }                 
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                    }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -909,11 +1032,12 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
-                    }                           
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                    }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -921,7 +1045,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 "",
@@ -930,7 +1055,7 @@ class TestCollectionCliConnectors:
                 "Endpoint",
                 None,
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -938,11 +1063,12 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -950,11 +1076,12 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -962,7 +1089,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 "",
@@ -971,7 +1099,7 @@ class TestCollectionCliConnectors:
                 None,
                 "(0, 1)",
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -979,11 +1107,12 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'},
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -991,12 +1120,13 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'},
-                        "idx": 1
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                        "idx": 1,
                     }
                 ],
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -1004,8 +1134,9 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'},
-                        "idx": 1
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
+                        "idx": 1,
                     }
                 ],
                 "",
@@ -1015,7 +1146,7 @@ class TestCollectionCliConnectors:
                 None,
                 None,
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -1023,7 +1154,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 None,
@@ -1035,7 +1167,7 @@ class TestCollectionCliConnectors:
                 None,
                 None,
                 [
-                     {
+                    {
                         "id": 1,
                         "name": "endpoint1",
                         "connector_type": "openai-gpt4",
@@ -1043,7 +1175,8 @@ class TestCollectionCliConnectors:
                         "token": "test_token",
                         "max_calls_per_second": 1,
                         "max_concurrency": 1,
-                        "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                        "model": "gpt-3.5-turbo-1106",
+                        "params": {"temperature": 0.5},
                     }
                 ],
                 [],
@@ -1056,7 +1189,6 @@ class TestCollectionCliConnectors:
     @patch("moonshot.integrations.cli.common.connectors._display_endpoints")
     @patch("moonshot.integrations.cli.common.connectors.filter_data")
     def test_list_endpoints_filtered(
-
         self,
         mock_filter_data,
         mock_display_endpoints,
@@ -1072,10 +1204,7 @@ class TestCollectionCliConnectors:
         mock_api_get_all_endpoints.return_value = api_response
         mock_filter_data.return_value = filtered_response
 
-        args = Namespace(
-            find = find,
-            pagination = pagination
-        )
+        args = Namespace(find=find, pagination=pagination)
 
         result = list_endpoints(args)
 
@@ -1088,9 +1217,8 @@ class TestCollectionCliConnectors:
         else:
             mock_display_endpoints.assert_not_called()
 
-
     # ------------------------------------------------------------------------------
-    # View Endpoint 
+    # View Endpoint
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "endpoint, api_response, expected_log",
@@ -1106,7 +1234,8 @@ class TestCollectionCliConnectors:
                     "token": "test_token",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}
+                    "model": "gpt-3.5-turbo-1106",
+                    "params": {"temperature": 0.5},
                 },
                 "",
             ),
@@ -1173,10 +1302,7 @@ class TestCollectionCliConnectors:
         else:
             mock_api_read_endpoint.return_value = api_response
 
-
-        args = Namespace(
-            endpoint = endpoint
-        )
+        args = Namespace(endpoint=endpoint)
 
         view_endpoint(args)
 
@@ -1186,11 +1312,10 @@ class TestCollectionCliConnectors:
         if api_response and not expected_log:
             mock_display_view_endpoint.assert_called_once_with([api_response])
         else:
-            mock_display_view_endpoint.assert_not_called()            
-
+            mock_display_view_endpoint.assert_not_called()
 
     # ------------------------------------------------------------------------------
-    # Update Endpoint 
+    # Update Endpoint
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
         "endpoint, update_kwargs, expected_log, to_be_called",
@@ -1198,119 +1323,127 @@ class TestCollectionCliConnectors:
             # Valid case - Full update
             (
                 "Endpoint 1",
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: Endpoint updated.",
-                True
+                True,
             ),
             # Invalid case - endpoint
             (
                 "",
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Invalid case - update values
             (
                 "Endpoint 1",
                 "['', '']",
                 "[update_endpoint]: The 'update_kwargs' argument must evaluate to a list of tuples.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 "[[], ()]",
                 "[update_endpoint]: The 'update_kwargs' argument must evaluate to a list of tuples.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 "",
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
-            ),            
+                False,
+            ),
             (
-                "Endpoint 1",  
+                "Endpoint 1",
                 None,
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 123,
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 {},
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 [],
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 (),
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 "Endpoint 1",
                 True,
                 "[update_endpoint]: The 'update_kwargs' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             # Test case: API update raises an exception
             (
                 "Endpoint 1",
-                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('params', {'hello': 'world'})]",
+                "[('name', 'Updated Endpoint'), ('uri', 'Updated URI'), ('token', 'Update token'), ('max_calls_per_second', 1), ('max_concurrency', 1), ('model', 'gpt-4o'), ('params', {'hello': 'world'})]",  # noqa: E501
                 "[update_endpoint]: An error has occurred while updating the endpoint.",
-                True
+                True,
             ),
-        ]
+        ],
     )
-    @patch('moonshot.integrations.cli.common.connectors.api_update_endpoint')
-    def test_update_endpoint(self, mock_api_update_endpoint, capsys, endpoint, update_kwargs, expected_log, to_be_called):
+    @patch("moonshot.integrations.cli.common.connectors.api_update_endpoint")
+    def test_update_endpoint(
+        self,
+        mock_api_update_endpoint,
+        capsys,
+        endpoint,
+        update_kwargs,
+        expected_log,
+        to_be_called,
+    ):
         if "error" in expected_log:
             mock_api_update_endpoint.side_effect = Exception(
                 "An error has occurred while updating the endpoint."
@@ -1318,11 +1451,7 @@ class TestCollectionCliConnectors:
         else:
             mock_api_update_endpoint.return_value = "updated"
 
-
-        args = Namespace(
-            endpoint = endpoint,
-            update_kwargs = update_kwargs
-        )
+        args = Namespace(endpoint=endpoint, update_kwargs=update_kwargs)
 
         update_endpoint(args)
 
@@ -1334,68 +1463,68 @@ class TestCollectionCliConnectors:
                 args.endpoint, **dict(literal_eval(args.update_kwargs))
             )
         else:
-            mock_api_update_endpoint.assert_not_called()    
-
+            mock_api_update_endpoint.assert_not_called()
 
     # ------------------------------------------------------------------------------
-    # Delete Endpoint 
+    # Delete Endpoint
     # ------------------------------------------------------------------------------
 
     @pytest.mark.parametrize(
         "endpoint, expected_log, to_be_called",
         [
             # Valid case
-            (
-                "Endpoint 1",
-                "[delete_endpoint]: Endpoint deleted.",
-                True
-            ),
+            ("Endpoint 1", "[delete_endpoint]: Endpoint deleted.", True),
             # Invalid case - endpoint
             (
                 "",
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 None,
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 123,
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 {},
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 [],
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 (),
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
             (
                 True,
                 "[delete_endpoint]: The 'endpoint' argument must be a non-empty string and not None.",
-                False
+                False,
             ),
-        ]
+        ],
     )
     @patch("moonshot.integrations.cli.common.connectors.api_delete_endpoint")
-    def test_delete_endpoint(self, mock_api_delete_endpoint, capsys, endpoint, expected_log, to_be_called):
-        args = Namespace(
-            endpoint = endpoint
-        )
+    def test_delete_endpoint(
+        self, mock_api_delete_endpoint, capsys, endpoint, expected_log, to_be_called
+    ):
+        args = Namespace(endpoint=endpoint)
 
-        with patch("moonshot.integrations.cli.common.connectors.console.input", return_value="y"):
-            with patch("moonshot.integrations.cli.common.connectors.console.print") as mock_console_print:
+        with patch(
+            "moonshot.integrations.cli.common.connectors.console.input",
+            return_value="y",
+        ):
+            with patch(
+                "moonshot.integrations.cli.common.connectors.console.print"
+            ) as _:
                 delete_endpoint(args)
 
         captured = capsys.readouterr()
@@ -1406,40 +1535,55 @@ class TestCollectionCliConnectors:
         else:
             mock_api_delete_endpoint.assert_not_called()
 
-
-    @patch('moonshot.integrations.cli.common.connectors.console.input', return_value='y')
-    @patch('moonshot.integrations.cli.common.connectors.api_delete_endpoint')
+    @patch(
+        "moonshot.integrations.cli.common.connectors.console.input", return_value="y"
+    )
+    @patch("moonshot.integrations.cli.common.connectors.api_delete_endpoint")
     def test_delete_endpoint_confirm_yes(self, mock_delete, mock_input):
         args = MagicMock()
-        args.endpoint = 'test_endpoint_id'
-        
-        delete_endpoint(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the endpoint (y/N)? [/]")
-        mock_delete.assert_called_once_with('test_endpoint_id')
+        args.endpoint = "test_endpoint_id"
 
-    @patch('moonshot.integrations.cli.common.connectors.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.common.connectors.api_delete_endpoint')
+        delete_endpoint(args)
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the endpoint (y/N)? [/]"
+        )
+        mock_delete.assert_called_once_with("test_endpoint_id")
+
+    @patch(
+        "moonshot.integrations.cli.common.connectors.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.common.connectors.api_delete_endpoint")
     def test_delete_endpoint_confirm_no(self, mock_delete, mock_input):
         args = MagicMock()
-        args.endpoint = 'test_endpoint_id'
-        
+        args.endpoint = "test_endpoint_id"
+
         delete_endpoint(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the endpoint (y/N)? [/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the endpoint (y/N)? [/]"
+        )
         mock_delete.assert_not_called()
-    
-    @patch('moonshot.integrations.cli.common.connectors.console.input', return_value='n')
-    @patch('moonshot.integrations.cli.common.connectors.console.print')
-    @patch('moonshot.integrations.cli.common.connectors.api_delete_endpoint')
-    def test_delete_endpoint_cancelled_output(self, mock_delete, mock_print, mock_input):
+
+    @patch(
+        "moonshot.integrations.cli.common.connectors.console.input", return_value="n"
+    )
+    @patch("moonshot.integrations.cli.common.connectors.console.print")
+    @patch("moonshot.integrations.cli.common.connectors.api_delete_endpoint")
+    def test_delete_endpoint_cancelled_output(
+        self, mock_delete, mock_print, mock_input
+    ):
         args = MagicMock()
-        args.endpoint = 'test_endpoint_id'
-        
+        args.endpoint = "test_endpoint_id"
+
         delete_endpoint(args)
-        
-        mock_input.assert_called_once_with("[bold red]Are you sure you want to delete the endpoint (y/N)? [/]")
-        mock_print.assert_called_once_with("[bold yellow]Endpoint deletion cancelled.[/]")
+
+        mock_input.assert_called_once_with(
+            "[bold red]Are you sure you want to delete the endpoint (y/N)? [/]"
+        )
+        mock_print.assert_called_once_with(
+            "[bold yellow]Endpoint deletion cancelled.[/]"
+        )
         mock_delete.assert_not_called()
 
     # ------------------------------------------------------------------------------
@@ -1479,7 +1623,7 @@ class TestCollectionCliConnectors:
                     "connector-type-1",
                     "connector-type-2",
                 ],
-                  [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
@@ -1493,7 +1637,7 @@ class TestCollectionCliConnectors:
                 None,
                 "There are no connector types found.",
             ),
-            # Valid case with pagination                        
+            # Valid case with pagination
             (
                 None,
                 "(1, 1)",
@@ -1635,7 +1779,7 @@ class TestCollectionCliConnectors:
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             (
                 None,
@@ -1645,7 +1789,7 @@ class TestCollectionCliConnectors:
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             (
                 None,
@@ -1655,37 +1799,37 @@ class TestCollectionCliConnectors:
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             (
                 None,
                 "(1, -1)",
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             (
                 None,
                 "(-1, 1)",
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             (
                 None,
                 "(-1, -1)",
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
                 None,
-                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",
+                "[list_connector_types]: Invalid page number or page size. Page number and page size should start from 1.",  # noqa: E501
             ),
             # Exception case
             (
@@ -1696,7 +1840,7 @@ class TestCollectionCliConnectors:
                 "[list_connector_types]: An error has occurred while listing connector types.",
             ),
         ],
-    )    
+    )
     @patch("moonshot.integrations.cli.common.connectors.api_get_all_connector_type")
     @patch("moonshot.integrations.cli.common.connectors._display_connector_types")
     def test_list_connector_type(
@@ -1717,10 +1861,7 @@ class TestCollectionCliConnectors:
         else:
             mock_api_get_all_connector_type.return_value = api_response
 
-        args = Namespace(
-            find = find, 
-            pagination = pagination
-        )
+        args = Namespace(find=find, pagination=pagination)
 
         result = list_connector_types(args)
 
@@ -1742,15 +1883,15 @@ class TestCollectionCliConnectors:
             (
                 None,
                 None,
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
@@ -1759,15 +1900,15 @@ class TestCollectionCliConnectors:
             (
                 "connector",
                 None,
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
-               [
+                [
                     "connector-type-1",
                     "connector-type-2",
                 ],
@@ -1810,7 +1951,7 @@ class TestCollectionCliConnectors:
                     "connector-type-4",
                 ],
                 "",
-            ),           
+            ),
             (
                 None,
                 "(2, 2)",
@@ -1829,7 +1970,7 @@ class TestCollectionCliConnectors:
                     "connector-type-4",
                 ],
                 "",
-            ),                        
+            ),
             # Case where filtered_response is None
             (
                 None,
@@ -1860,7 +2001,6 @@ class TestCollectionCliConnectors:
     @patch("moonshot.integrations.cli.common.connectors._display_connector_types")
     @patch("moonshot.integrations.cli.common.connectors.filter_data")
     def test_list_connector_types_filtered(
-
         self,
         mock_filter_data,
         mock_display_connector_types,
@@ -1876,10 +2016,7 @@ class TestCollectionCliConnectors:
         mock_api_get_all_connector_type.return_value = api_response
         mock_filter_data.return_value = filtered_response
 
-        args = Namespace(
-            find = find,
-            pagination = pagination
-        )
+        args = Namespace(find=find, pagination=pagination)
 
         result = list_connector_types(args)
 
