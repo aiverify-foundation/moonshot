@@ -39,7 +39,8 @@ class Benchmarking:
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
     sql_read_runner_cache_record = """
-        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? AND dataset_id=? AND prompt_template_id=? AND prompt=?  # noqa: E501
+        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? 
+        AND dataset_id=? AND prompt_template_id=? AND prompt=?
     """
     BATCH_SIZE = 10
     QUEUE_SIZE = 10

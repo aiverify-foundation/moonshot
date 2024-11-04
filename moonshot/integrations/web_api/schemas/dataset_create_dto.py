@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional,Any
 
 from pydantic import Field
 
@@ -9,7 +9,7 @@ from moonshot.src.datasets.dataset_arguments import (
 
 class CSV_Dataset_DTO(DatasetPydanticModel):
     id: Optional[str] = None  # Not a required from user
-    examples: Optional[list] = None  # Not a required from user
+    examples: Optional[Any] = None  # Not a required from user
     name: str = Field(..., min_length=1)
     description: str = Field(default="", min_length=1)
     license: Optional[str] = ""
@@ -19,7 +19,7 @@ class CSV_Dataset_DTO(DatasetPydanticModel):
 
 class HF_Dataset_DTO(DatasetPydanticModel):
     id: Optional[str] = None  # Not a required from user
-    examples: Optional[list] = None  # Not a required from user
+    examples: Optional[Any] = None  # Not a required from user
     name: str = Field(..., min_length=1)
     description: str = Field(default="", min_length=1)
     license: Optional[str] = ""

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Iterator
 
 import pandas as pd
 from datasets import load_dataset
@@ -56,15 +57,18 @@ class Dataset:
                 "description": ds_args.description,
                 "reference": ds_args.reference,
                 "license": ds_args.license,
-                "examples": ds_args.examples,
             }
 
+            examples = ds_args.examples
+
             # Write as JSON output
-            file_path = Storage.create_object(
+            file_path = Storage.create_object_with_iterator(
                 EnvVariables.DATASETS.name,
                 ds_id,
                 ds_info,
                 "json",
+                iterator_keys=["examples"],
+                iterator_data=examples,
             )
 
             return file_path
@@ -74,11 +78,11 @@ class Dataset:
 
     @staticmethod
     @validate_call
-    def convert_data(csv_file_path: str) -> list:
+    def convert_data(csv_file_path: str) -> Iterator[dict]:
         """
-        Converts a CSV file to a list of dictionaries.
+        Converts a CSV file to an iterator of dictionaries.
 
-        This method reads a CSV file and converts its contents into a list of dictionaries,
+        This method reads a CSV file and converts its contents into an iterator of dictionaries,
         where each dictionary represents a row in the CSV file.
 
         Args:
@@ -87,17 +91,18 @@ class Dataset:
         Returns:
             list[dict]: A list of dictionaries representing the CSV data.
         """
-        df = pd.read_csv(csv_file_path)
-        return df.to_dict("records")
+        df = pd.read_csv(csv_file_path, chunksize=1)
+        for chunk in df:
+            yield chunk.to_dict("records")[0]
 
     @staticmethod
     @validate_call
-    def download_hf(**hf_args) -> list:
+    def download_hf(**hf_args) -> Iterator[dict]:
         """
-        Downloads a dataset from Hugging Face and converts it to a list of dictionaries.
+        Downloads a dataset from Hugging Face and converts it to an iterator of dictionaries.
 
         This method loads a dataset from Hugging Face based on the provided arguments and converts
-        its contents into a list of dictionaries, where each dictionary contains 'input' and 'target' keys.
+        its contents into an iterator of dictionaries, where each dictionary contains 'input' and 'target' keys.
 
         Args:
             hf_args (dict): A dictionary containing the following keys:
@@ -108,7 +113,7 @@ class Dataset:
                 - 'target_col' (str): The target column.
 
         Returns:
-            list[dict]: A list of dictionaries representing the dataset.
+            Iterator[dict]: An iterator of dictionaries representing the dataset.
         """
 
         dataset = load_dataset(
@@ -119,9 +124,7 @@ class Dataset:
         for example in dataset:
             input_data = " ".join([str(example[col]) for col in hf_args["input_col"]])
             target_data = str(example[hf_args["target_col"]])
-            result.append({"input": input_data, "target": target_data})
-
-        return result
+            yield {"input": input_data, "target": target_data}
 
     @staticmethod
     @validate_call

@@ -114,15 +114,11 @@ def test_execute_benchmark_cb(test_client, mock_bm_service, benchmark_data, benc
             mock_bm_service.execute_recipe.return_value = benchmark_data.get("run_name")
 
     response = test_client.post(f"/api/v1/benchmarks?type={benchmark_type}", json=benchmark_data)
-    print(benchmark_data)
-    print(response.json())
     assert response.status_code == expected_status
     if exception:
         assert exception.msg in response.json()["detail"]
     else:
         if expected_status == 200:
-            print(response.json())
-            print(expected_response)
             assert response.json() == expected_response
 
 # not mocking response cause response too long
