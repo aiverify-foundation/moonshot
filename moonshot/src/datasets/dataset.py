@@ -89,7 +89,7 @@ class Dataset:
             csv_file_path (str): The file path to the CSV file.
 
         Returns:
-            list[dict]: A list of dictionaries representing the CSV data.
+            Iterator[dict]: An iterator of dictionaries representing the CSV data.
         """
         df = pd.read_csv(csv_file_path, chunksize=1)
         for chunk in df:
@@ -120,7 +120,6 @@ class Dataset:
             hf_args["dataset_name"], hf_args["dataset_config"], split=hf_args["split"]
         )
 
-        result = []
         for example in dataset:
             input_data = " ".join([str(example[col]) for col in hf_args["input_col"]])
             target_data = str(example[hf_args["target_col"]])

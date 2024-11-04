@@ -2,6 +2,7 @@ from typing import Iterator
 
 from pydantic import BaseModel
 
+
 class DatasetArguments(BaseModel):
     class Config:
         arbitrary_types_allowed = True
