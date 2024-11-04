@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install hatch
 
       - name: Bump version
         run: |
@@ -47,11 +47,10 @@ jobs:
           pip install bump2version
           bump2version patch
 
-      - name: Package test PyPI
+      - name: Build package with hatch
         run: |
-          echo "Packaging test PyPI..."
-          pip install build
-          python3 -m build
+          echo "Building package with hatch..."
+          hatch build
 
       - name: Store the distribution packages
         uses: actions/upload-artifact@v3
@@ -83,3 +82,19 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
+  install-from-testpypi:
+    needs:
+      - publish-to-testpypi
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package from Test PyPI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ aiverify-moonshot
