@@ -1,4 +1,4 @@
-name: License File Generation
+name: Notices File Generation
 
 on:
   workflow_call:
