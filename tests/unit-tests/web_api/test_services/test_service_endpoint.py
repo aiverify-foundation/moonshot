@@ -154,6 +154,7 @@ def test_create_endpoint_success(mock_moonshot_api, endpoint_service):
         connector_type=MOCK_CREATE_ENDPOINT.connector_type,
         uri=MOCK_CREATE_ENDPOINT.uri,
         token=MOCK_CREATE_ENDPOINT.token,
+        model=MOCK_CREATE_ENDPOINT.model,
         max_calls_per_second=MOCK_CREATE_ENDPOINT.max_calls_per_second,
         max_concurrency=MOCK_CREATE_ENDPOINT.max_concurrency,
         params=MOCK_CREATE_ENDPOINT.params,

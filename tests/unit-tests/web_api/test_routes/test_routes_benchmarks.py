@@ -9,7 +9,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
@@ -23,7 +23,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
@@ -37,7 +37,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
@@ -52,7 +52,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0

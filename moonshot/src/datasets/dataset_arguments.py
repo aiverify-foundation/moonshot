@@ -1,12 +1,7 @@
-from typing import Iterator
-
 from pydantic import BaseModel
 
 
 class DatasetArguments(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
-
     # id (str): Unique identifier for the dataset
     id: str
 
@@ -16,8 +11,8 @@ class DatasetArguments(BaseModel):
     # description (str): Description of the dataset's contents and purpose
     description: str
 
-    # examples (Iterator[dict] | None): Generator of examples from the dataset, where each example is a dictionary.
-    examples: Iterator[dict] | None
+    # examples (list | None): A list of examples from the dataset, where each example is a dictionary.
+    examples: list | None
 
     # num_of_dataset_prompts (int): The number of dataset prompts, automatically calculated
     num_of_dataset_prompts: int = 0

@@ -1,7 +1,6 @@
 from typing import Optional
 
 from pydantic import Field
-from pyparsing import Iterator
 
 from moonshot.src.datasets.dataset_arguments import (
     DatasetArguments as DatasetPydanticModel,
@@ -10,7 +9,7 @@ from moonshot.src.datasets.dataset_arguments import (
 
 class CSV_Dataset_DTO(DatasetPydanticModel):
     id: Optional[str] = None  # Not a required from user
-    examples: Optional[Iterator[dict]] = None  # Not a required from user
+    examples: Optional[list] = None  # Not a required from user
     name: str = Field(..., min_length=1)
     description: str = Field(default="", min_length=1)
     license: Optional[str] = ""
@@ -20,7 +19,7 @@ class CSV_Dataset_DTO(DatasetPydanticModel):
 
 class HF_Dataset_DTO(DatasetPydanticModel):
     id: Optional[str] = None  # Not a required from user
-    examples: Optional[Iterator[dict]] = None  # Not a required from user
+    examples: Optional[list] = None  # Not a required from user
     name: str = Field(..., min_length=1)
     description: str = Field(default="", min_length=1)
     license: Optional[str] = ""
