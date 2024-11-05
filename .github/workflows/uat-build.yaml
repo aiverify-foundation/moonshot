@@ -83,6 +83,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
+  # Install package to UAT server
   install-from-testpypi:
     needs:
       - publish-to-testpypi
