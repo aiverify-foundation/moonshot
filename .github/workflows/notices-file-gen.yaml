@@ -28,7 +28,7 @@ on:
         type: string
 
 jobs:
-  license-file-gen:
+  notices-file-gen:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Generate license file
+      - name: Generate notices file
         run: |
           set +e
           pip install -r requirements.txt
@@ -69,14 +69,14 @@ jobs:
           cat ./*_Black_Duck_Notices_Report.txt
 
 #
-#      - name: Commit license file
+#      - name: Commit notices file
 #        run: |
 #          set +e
-#          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt LICENSE-2.md
-#          git add LICENSE-2.md
+#          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt NOTICES.md
+#          git add NOTICES.md
 #          git config user.name "imda-btg"
 #          git config user.email "idma-btg@imda.gov.sg"
-#          git commit -m "update license file"
+#          git commit -m "update notices file"
 #          git push
 #          set -e
 #
