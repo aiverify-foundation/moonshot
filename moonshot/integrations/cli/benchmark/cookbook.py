@@ -267,11 +267,7 @@ def run_cookbook(args) -> None:
         if isinstance(args.random_seed, bool) or not isinstance(args.random_seed, int):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION)
 
-        if (
-            not isinstance(args.system_prompt, str)
-            or not args.system_prompt
-            or args.system_prompt is None
-        ):
+        if not isinstance(args.system_prompt, str) or args.system_prompt is None:
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_SYS_PROMPT_VALIDATION)
 
         if (
