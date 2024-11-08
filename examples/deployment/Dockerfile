@@ -22,6 +22,9 @@ COPY run_installation_script.sh .
 # set executable rights to the installation script
 RUN chmod +x /app/run_installation_script.sh
 
+# Create /app/data directory and change owner
+RUN mkdir /app/data && chown -R 1000:1000 /app/data
+
 # Change owner
 RUN chown -R 1000:1000 /app
 

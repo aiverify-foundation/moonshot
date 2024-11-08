@@ -743,37 +743,37 @@ class TestCollectionBookmark:
             (
                 None,
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
             # Case where export_file_name is an empty string
             (
                 "",
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
             # Case where export_file_name is a tuple
             (
                 (),
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
             # Case where export_file_name is a list
             (
                 [],
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
             # Case where export_file_name is a dictionary
             (
                 {},
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
             # Case where export_file_name is an integer
             (
                 123,
                 Exception,
-                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string",
+                "[Bookmark] Failed to export bookmarks: Export filename must be a non-empty string.",
             ),
         ],
     )

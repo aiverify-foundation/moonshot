@@ -256,11 +256,7 @@ def run_cookbook(args) -> None:
         if isinstance(args.random_seed, bool) or not isinstance(args.random_seed, int):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION)
 
-        if (
-            not isinstance(args.system_prompt, str)
-            or not args.system_prompt
-            or args.system_prompt is None
-        ):
+        if not isinstance(args.system_prompt, str) or args.system_prompt is None:
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_SYS_PROMPT_VALIDATION)
 
         if (
@@ -467,7 +463,10 @@ def _display_view_cookbook(cookbook_info):
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
-            title="View Cookbook", show_lines=True, expand=True, header_style="bold"
+            title=f'Cookbook "{name}"',
+            show_lines=True,
+            expand=True,
+            header_style="bold",
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
@@ -482,7 +481,6 @@ def _display_view_cookbook(cookbook_info):
                 datasets,
                 prompt_templates,
                 metrics,
-                attack_strategies,
                 grading_scale,
                 stats,
             ) = recipe.values()
@@ -494,9 +492,6 @@ def _display_view_cookbook(cookbook_info):
                 "Prompt Templates", prompt_templates
             )
             metrics_info = display_view_list_format("Metrics", metrics)
-            attack_strategies_info = display_view_list_format(
-                "Attack Strategies", attack_strategies
-            )
             grading_scale_info = _display_view_grading_scale_format(
                 "Grading Scale", grading_scale
             )
@@ -506,7 +501,9 @@ def _display_view_cookbook(cookbook_info):
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
                 f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
             )
-            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
+            contains_info = (
+                f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}"
+            )
 
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)

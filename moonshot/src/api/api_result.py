@@ -11,7 +11,7 @@ def api_read_result(res_id: str) -> dict:
     """
     Reads a result and returns its information.
 
-    This function takes a result ID as input, reads the corresponding database file from the storage manager,
+    This function takes a result ID as input, reads the corresponding result from the storage manager,
     and returns a dictionary containing the result's information.
 
     Args:
@@ -28,7 +28,7 @@ def api_read_results(res_ids: conlist(str, min_length=1)) -> list[dict]:
     """
     Reads multiple results and returns their information.
 
-    This function takes a list of result IDs as input, reads the corresponding database files from the storage manager,
+    This function takes a list of result IDs as input, reads the corresponding results from the storage manager,
     and returns a list of dictionaries, each containing a result's information.
 
     Args:
@@ -37,7 +37,6 @@ def api_read_results(res_ids: conlist(str, min_length=1)) -> list[dict]:
     Returns:
         list[dict]: A list of dictionaries, each containing a result's information.
     """
-
     return [Result.read(res_id) for res_id in res_ids]
 
 
@@ -63,11 +62,13 @@ def api_delete_result(res_id: str) -> bool:
 
 def api_get_all_result() -> list[dict]:
     """
-    This function retrieves all available results and returns them as a list of dictionaries. Each dictionary
-    represents a result and contains its information.
+    This function retrieves all available results and returns them as a list of dictionaries.
+
+    This function calls the get_available_items method from the Result class to retrieve all available results.
+    It then returns a list of dictionaries, each containing the details of a result.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing a result.
+        list[dict]: A list of dictionaries, each representing a result's details.
     """
     _, results = Result.get_available_items()
     return [result for result in results]
@@ -76,6 +77,9 @@ def api_get_all_result() -> list[dict]:
 def api_get_all_result_name() -> list[str]:
     """
     This function retrieves all available result names and returns them as a list.
+
+    This function calls the get_available_items method from the Result class to retrieve all available results.
+    It then extracts the names of each result and returns a list of these names.
 
     Returns:
         list[str]: A list of result names.
