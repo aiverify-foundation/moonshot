@@ -13,6 +13,7 @@ class EndpointService(BaseService):
             connector_type=endpoint_data.connector_type,
             uri=endpoint_data.uri,
             token=endpoint_data.token,
+            model=endpoint_data.model,
             max_calls_per_second=endpoint_data.max_calls_per_second,
             max_concurrency=endpoint_data.max_concurrency,
             params=endpoint_data.params,
