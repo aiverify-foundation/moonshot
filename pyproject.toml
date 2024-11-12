@@ -19,10 +19,10 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = [
-    "python-slugify^8.0.4",
-    "python-dotenv^1.0.1",
-    "ijson^3.3.0",
-    "jinja2^3.1.4",
+    "python-slugify>=8.0.4",
+    "python-dotenv>=1.0.1",
+    "ijson>=3.3.0",
+    "jinja2>=3.1.4",
     "pydantic==2.8.2",
     "pyparsing>=3.1.4",
     "xxhash>=3.5.0",
@@ -104,10 +104,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-python-slugify = "^8.0.4"
-python-dotenv = "^1.0.1"
-ijson = "^3.3.0"
-jinja2 = "^3.1.4"
+python-slugify = ">=8.0.4"
+python-dotenv = ">=1.0.1"
+ijson = ">=3.3.0"
+jinja2 = ">=3.1.4"
 pydantic = "2.8.2"
 pyparsing = ">=3.1.4"
 xxhash = ">=3.5.0"
