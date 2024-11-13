@@ -354,6 +354,9 @@ ERROR_COMMON_ADD_ENDPOINT_MAX_CALLS_PER_SECOND_VALIDATION = "The 'max_calls_per_
 ERROR_COMMON_ADD_ENDPOINT_MAX_CONCURRENCY_VALIDATION = (
     "The 'max_concurrency' argument must be a non-empty positive integer and not None."
 )
+ERROR_COMMON_ADD_ENDPOINT_MODEL_VALIDATION = (
+    "The 'model' argument must be a string and not None."
+)
 ERROR_COMMON_ADD_ENDPOINT_PARAMS_VALIDATION = (
     "The 'params' argument must be a string representation of a dictionary."
 )
