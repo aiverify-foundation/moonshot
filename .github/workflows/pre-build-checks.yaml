@@ -3,7 +3,7 @@
 # 2. Code quality analysis (flake8)
 # 3. Dependency analysis (vulnerabilities)
 # 4. Dependency analysis (undesirable licenses)
-# 5. Deploy reports generated from the above to GitHub Pages
+# 5. Send slack notification on check results
 
 name: Pre-Build Checks
 
@@ -50,8 +50,9 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "MS_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
-          echo "MS_DATA_BRANCH=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+          echo "MS_DATA_BRANCH=dev_main" >> "$GITHUB_ENV"
           echo "PR_NUM=#0" >> "$GITHUB_ENV"
+          echo "${{ inputs.branch_to_test }}"
 
       # Checkout moonshot code
       - name: Checkout code (moonshot)
@@ -110,7 +111,7 @@ jobs:
           HOST_PORT=5000" > .env
           cat .env
 
-      # Unit tests & coverage
+      # Check 1: Unit tests & coverage
       - name: Unit tests with coverage
         id: unit_tests
         if: ${{ ! cancelled() }}
@@ -129,7 +130,7 @@ jobs:
             exit 1
           fi
 
-      # Code quality analysis (flake8)
+      # Check 2: Code quality analysis (flake8)
       - name: Code quality analysis (flake8)
         id: code_quality
         if: ${{ ! cancelled() }}
@@ -142,7 +143,7 @@ jobs:
           set -e
           exit $lint_status
 
-      # pip-audit
+      # Check 3: Dependency vulnerability & license analysis (pip-audit)
       - name: Dependency analysis (vulnerabilities & licenses)
         id: dependency_analysis
         if: ${{ ! cancelled() }}
