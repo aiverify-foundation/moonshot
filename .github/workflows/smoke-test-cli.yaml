@@ -42,7 +42,7 @@ jobs:
     steps:
 
     - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v4
       with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
