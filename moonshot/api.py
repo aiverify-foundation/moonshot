@@ -43,8 +43,11 @@ from moonshot.src.api.api_dataset import (
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
     api_delete_metric,
+    api_delete_metrics_config,
     api_get_all_metric,
     api_get_all_metric_name,
+    api_get_all_metrics_config,
+    api_update_metrics_config,
 )
 from moonshot.src.api.api_prompt_template import (
     api_delete_prompt_template,
@@ -62,8 +65,11 @@ from moonshot.src.api.api_recipe import (
 )
 from moonshot.src.api.api_red_teaming import (
     api_delete_attack_module,
+    api_delete_attack_module_config,
     api_get_all_attack_module_metadata,
     api_get_all_attack_modules,
+    api_get_all_attack_modules_config,
+    api_update_attack_module_config,
 )
 from moonshot.src.api.api_result import (
     api_delete_result,
@@ -126,6 +132,9 @@ __all__ = [
     "api_delete_metric",
     "api_get_all_metric",
     "api_get_all_metric_name",
+    "api_get_all_metrics_config",
+    "api_update_metrics_config",
+    "api_delete_metrics_config",
     "api_get_all_prompt_template_detail",
     "api_get_all_prompt_template_name",
     "api_delete_prompt_template",
@@ -139,6 +148,9 @@ __all__ = [
     "api_get_all_attack_module_metadata",
     "api_get_all_attack_modules",
     "api_delete_attack_module",
+    "api_get_all_attack_modules_config",
+    "api_update_attack_module_config",
+    "api_delete_attack_module_config",
     "api_delete_result",
     "api_get_all_result",
     "api_get_all_result_name",

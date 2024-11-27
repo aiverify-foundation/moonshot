@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import validate_call
 
 from moonshot.src.redteaming.attack.attack_module import AttackModule
@@ -53,3 +55,53 @@ def api_delete_attack_module(am_id: str) -> bool:
         Exception: If the deletion process encounters an error.
     """
     return AttackModule.delete(am_id)
+
+
+def api_get_all_attack_modules_config() -> dict:
+    """
+    Retrieves the configuration for all attack modules.
+
+    This function calls the `get_all_attack_modules_config` method from the `AttackModule` class
+    to retrieve the configuration settings for all available attack modules.
+
+    Returns:
+        dict: A dictionary containing the configuration details for all attack modules.
+    """
+    return AttackModule.get_all_attack_modules_config()
+
+
+def api_update_attack_module_config(am_id: str, value: Any) -> bool:
+    """
+    Updates the configuration of a specific attack module.
+
+    This function updates the configuration of an attack module identified by its unique ID.
+
+    Args:
+        am_id (str): The unique identifier of the attack module to be updated.
+        value (Any): The new configuration value to be set for the attack module.
+
+    Returns:
+        bool: True if the configuration was successfully updated.
+
+    Raises:
+        Exception: If the update process encounters an error.
+    """
+    return AttackModule.update_attack_module_config(am_id, value)
+
+
+def api_delete_attack_module_config(am_id: str) -> bool:
+    """
+    Deletes the configuration of a specific attack module.
+
+    This function deletes the configuration of an attack module identified by its unique ID.
+
+    Args:
+        am_id (str): The unique identifier of the attack module whose configuration is to be deleted.
+
+    Returns:
+        bool: True if the configuration was successfully deleted.
+
+    Raises:
+        Exception: If the deletion process encounters an error.
+    """
+    return AttackModule.delete_attack_module_config(am_id)

@@ -596,6 +596,121 @@ class AttackModule:
                 )
 
     @staticmethod
+    def get_all_attack_modules_config() -> dict:
+        """
+        Retrieves the configuration for all attack modules from attack_modules.config.json.
+
+        This method attempts to read the attack module configuration from storage. If the configuration
+        does not exist, it creates an empty configuration and attempts to read it again.
+
+        Returns:
+            dict: A dictionary containing the configuration of all attack modules.
+
+        Raises:
+            Exception: If an error occurs during the creation or retrieval of the attack module configuration.
+        """
+        attack_module_config = "attack_modules_config"
+        try:
+            obj_results = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+            )
+            return obj_results
+        except Exception as e:
+            logger.warning(
+                f"[AttackModule] Failed to read attack module configuration: {str(e)}"
+            )
+            logger.info("Attempting to create empty attack module configuration...")
+            try:
+                Storage.create_object(
+                    obj_type=EnvVariables.ATTACK_MODULES.name,
+                    obj_id=attack_module_config,
+                    obj_info={},
+                    obj_extension="json",
+                )
+                # After creation, attempt to read it again to ensure it was created successfully
+                obj_results = Storage.read_object(
+                    EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+                )
+                return obj_results
+            except Exception as e:
+                raise Exception(
+                    f"[AttackModule] Failed to retrieve attack modules configuration: {str(e)}"
+                )
+
+    @staticmethod
+    def update_attack_module_config(am_id: str, value: Any) -> bool:
+        """
+        Updates the attack_modules_config.json with the specified key-value pair.
+
+        Args:
+            am_id (str): The attack module in the configuration to update.
+            value (Any): The new value to set for the specified attack module.
+
+        Raises:
+            Exception: If an error occurs during the update process.
+        """
+        attack_module_config = "attack_modules_config"
+        try:
+            # Read the existing configuration
+            obj_results = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+            )
+            # Update the configuration with the new key-value pair
+            obj_results[am_id] = value
+            # Write the updated configuration back to storage
+            Storage.create_object(
+                obj_type=EnvVariables.ATTACK_MODULES.name,
+                obj_id=attack_module_config,
+                obj_info=obj_results,
+                obj_extension="json",
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[AttackModule] Failed to update attack module configuration: {str(e)}"
+            )
+            raise e
+
+    @staticmethod
+    def delete_attack_module_config(am_id: str) -> bool:
+        """
+        Deletes the specified attack module from attack_modules_config.json.
+
+        Args:
+            am_id (str): The attack module in the configuration to delete.
+
+        Raises:
+            Exception: If an error occurs during the deletion process.
+        """
+        attack_module_config = "attack_modules_config"
+        try:
+            # Read the existing configuration
+            obj_results = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+            )
+            # Delete the attack module from the configuration if it exists
+            if am_id in obj_results:
+                del obj_results[am_id]
+            else:
+                logger.warning(
+                    f"[AttackModule] '{am_id}' does not have any configuration."
+                )
+
+            # Write the updated configuration back to storage
+            Storage.create_object(
+                obj_type=EnvVariables.ATTACK_MODULES.name,
+                obj_id=attack_module_config,
+                obj_info=obj_results,
+                obj_extension="json",
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[AttackModule] Failed to delete attack module {am_id} from attack module configuration: {str(e)}"
+            )
+            raise e
+
+    @staticmethod
     def delete(am_id: str) -> bool:
         """
         Deletes the specified attack module from storage.
@@ -615,6 +730,7 @@ class AttackModule:
         """
         try:
             Storage.delete_object(EnvVariables.ATTACK_MODULES.name, am_id, "py")
+            AttackModule.delete_attack_module_config(am_id)
             return True
 
         except Exception as e:
@@ -649,7 +765,7 @@ class RedTeamingPromptArguments(BaseModel):
 
         This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
         with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
-        connector_prompt.prompt, system_prompt, connector_prompt.predicted_results.response, 
+        connector_prompt.prompt, system_prompt, connector_prompt.predicted_results.response,
         connector_prompt.duration, start_time.
 
         Returns:
@@ -664,7 +780,9 @@ class RedTeamingPromptArguments(BaseModel):
             self.original_prompt,
             self.connector_prompt.prompt,
             self.system_prompt,
-            self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
+            self.connector_prompt.predicted_results.response
+            if self.connector_prompt.predicted_results
+            else "",
             str(self.connector_prompt.duration),
             self.start_time,
         )
@@ -689,7 +807,9 @@ class RedTeamingPromptArguments(BaseModel):
             "original_prompt": self.original_prompt,
             "prepared_prompt": self.connector_prompt.prompt,
             "system_prompt": self.system_prompt,
-            "response": self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
+            "response": self.connector_prompt.predicted_results.response
+            if self.connector_prompt.predicted_results
+            else "",
             "duration": str(self.connector_prompt.duration),
             "start_time": self.start_time,
         }

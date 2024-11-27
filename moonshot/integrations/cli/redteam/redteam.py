@@ -7,6 +7,8 @@ from moonshot.integrations.cli.redteam.attack_module import (
     delete_attack_module_args,
     list_attack_modules,
     list_attack_modules_args,
+    list_attack_modules_configs,
+    list_attack_modules_configs_args,
 )
 from moonshot.integrations.cli.redteam.context_strategy import (
     clear_context_strategy,
@@ -131,6 +133,10 @@ class RedTeamCommandSet(cmd2.CommandSet):
     @cmd2.with_argparser(export_bookmarks_args)
     def do_export_bookmarks(self, args: argparse.Namespace) -> None:
         export_bookmarks(args)
+
+    @cmd2.with_argparser(list_attack_modules_configs_args)
+    def do_list_attack_modules_configs(self, args: argparse.Namespace) -> None:
+        list_attack_modules_configs(args)
 
     def do_show_prompts(self, _: cmd2.Statement) -> None:
         show_prompts()

@@ -4,7 +4,11 @@ import cmd2
 from rich.console import Console
 from rich.table import Table
 
-from moonshot.api import api_delete_attack_module, api_get_all_attack_module_metadata
+from moonshot.api import (
+    api_delete_attack_module,
+    api_get_all_attack_module_metadata,
+    api_get_all_attack_modules_config,
+)
 from moonshot.integrations.cli.cli_errors import (
     ERROR_RED_TEAMING_LIST_ATTACK_MODULES_FIND_VALIDATION,
     ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION,
@@ -75,12 +79,44 @@ def list_attack_modules(args) -> list | None:
         print(f"[list_attack_modules]: {str(e)}")
 
 
+def list_attack_modules_configs(args) -> None:
+    """
+    Retrieves and prints the configurations of all attack modules.
+
+    Args:
+        args: A namespace object from argparse. It can have an optional attribute:
+        find (str): Optional field to find attack module configurations with a keyword.
+    """
+    attack_modules_configs = api_get_all_attack_modules_config()
+
+    if attack_modules_configs:
+        table = Table(
+            title="Attack Module Id", show_lines=True, expand=True, header_style="bold"
+        )
+        table.add_column("Attack Module", justify="left", width=30)
+        table.add_column("Configurations", justify="left", width=68)
+
+        for key, value in attack_modules_configs.items():
+            value_str = (
+                "\n".join(
+                    f"[blue]{k.capitalize()}:[/blue] {v}" for k, v in value.items()
+                )
+                if isinstance(value, dict)
+                else str(value)
+            )
+            table.add_row(key, value_str)
+
+        console.print(table)
+    else:
+        console.print("[red]There are no attack module configurations found.[/red]")
+
+
 def delete_attack_module(args) -> None:
     """
     Deletes an attack module after confirming with the user.
 
     Args:
-        args (object): The arguments object. It should have a 'attack_modulee' attribute
+        args (object): The arguments object. It should have a 'attack_module' attribute
                        which is the ID of the attack module to delete.
     """
     # Confirm with the user before deleting an attack module
@@ -161,5 +197,19 @@ list_attack_modules_args.add_argument(
     "--pagination",
     type=str,
     help="Optional tuple to paginate attack module(s). E.g. (2,10) returns 2nd page with 10 items in each page.",
+    nargs="?",
+)
+
+# List attack modules configurations
+list_attack_modules_configs_args = cmd2.Cmd2ArgumentParser(
+    description="List all attack modules configurations.",
+    epilog='Example:\n list_attack_modules_configs -f "text"',
+)
+
+list_attack_modules_configs_args.add_argument(
+    "-f",
+    "--find",
+    type=str,
+    help="Optional field to find attack module configurations with keyword",
     nargs="?",
 )

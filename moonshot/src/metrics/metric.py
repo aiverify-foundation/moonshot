@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from pydantic import validate_call
 
@@ -194,3 +195,112 @@ class Metric:
             cache_updated = True
 
         return met_metadata, cache_updated
+
+    @staticmethod
+    def get_all_metrics_config() -> dict:
+        """
+        Retrieves the configuration for all metrics from metrics_config.json.
+
+        This method attempts to read the metric configuration from storage. If the configuration
+        does not exist, it creates an empty configuration and attempts to read it again.
+
+        Returns:
+            dict: A dictionary containing the configuration of all metrics.
+
+        Raises:
+            Exception: If an error occurs during the creation or retrieval of the metric configuration.
+        """
+        metric_config = "metrics_config"
+        try:
+            obj_results = Storage.read_object(
+                EnvVariables.METRICS.name, metric_config, "json"
+            )
+            return obj_results
+        except Exception as e:
+            logger.warning(f"[Metric] Failed to read metric configuration: {str(e)}")
+            logger.info("Attempting to create empty metric configuration...")
+            try:
+                Storage.create_object(
+                    obj_type=EnvVariables.METRICS.name,
+                    obj_id=metric_config,
+                    obj_info={},
+                    obj_extension="json",
+                )
+                # After creation, attempt to read it again to ensure it was created successfully
+                obj_results = Storage.read_object(
+                    EnvVariables.METRICS.name, metric_config, "json"
+                )
+                return obj_results
+            except Exception as e:
+                raise Exception(
+                    f"[Metric] Failed to retrieve metrics configuration: {str(e)}"
+                )
+
+    @staticmethod
+    def update_metric_config(me_id: str, value: Any) -> bool:
+        """
+        Updates the metrics_config.json with the specified key-value pair.
+
+        Args:
+            me_id (str): The metric in the configuration to update.
+            value (Any): The new value to set for the specified key.
+
+        Raises:
+            Exception: If an error occurs during the update process.
+        """
+        metric_config = "metrics_configs"
+        try:
+            # Read the existing configuration
+            obj_results = Storage.read_object(
+                EnvVariables.METRICS.name, metric_config, "json"
+            )
+            # Update the configuration with the new key-value pair
+            obj_results[me_id] = value
+            # Write the updated configuration back to storage
+            Storage.create_object(
+                obj_type=EnvVariables.METRICS.name,
+                obj_id=metric_config,
+                obj_info=obj_results,
+                obj_extension="json",
+            )
+            return True
+        except Exception as e:
+            logger.error(f"[Metric] Failed to update metric configuration: {str(e)}")
+            raise e
+
+    @staticmethod
+    def delete_metric_config(me_id: str) -> bool:
+        """
+        Deletes the specified metric from metrics_config.json.
+
+        Args:
+            key (str): The metric in the configuration to delete.
+
+        Raises:
+            Exception: If an error occurs during the deletion process.
+        """
+        metric_config = "metrics_config"
+        try:
+            # Read the existing configuration
+            obj_results = Storage.read_object(
+                EnvVariables.METRICS.name, metric_config, "json"
+            )
+            # Delete the metric from the configuration if it exists
+            if me_id in obj_results:
+                del obj_results[me_id]
+            else:
+                logger.warning(f"[Metric] '{me_id}' does not have any configuration.")
+
+            # Write the updated configuration back to storage
+            Storage.create_object(
+                obj_type=EnvVariables.METRICS.name,
+                obj_id=metric_config,
+                obj_info=obj_results,
+                obj_extension="json",
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[Metric] Failed to delete metric {me_id} from metric configuration: {str(e)}"
+            )
+            raise e
