@@ -3,21 +3,21 @@ activate () {
 }
 
 # Check if Python is installed
-if ! command -v python3 &> /dev/null
+if ! command -v python &> /dev/null
 then
     echo "Python could not be found. Please install Python and try again."
     exit 1
 fi
 
 # Check if pip is installed
-if ! command -v pip3 &> /dev/null
+if ! command -v pip &> /dev/null
 then
-    echo "pip3 could not be found. Please install pip and try again."
+    echo "pip could not be found. Please install pip and try again."
     exit 1
 fi
 
 # Create a virtual environment
-python3 -m venv env
+python -m venv env
 if [ $? -ne 0 ]; then
     echo "Failed to create virtual environment."
     exit 1
@@ -31,17 +31,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install the moonshot requirements
-pip3 install -r ../../requirements.txt
+pip install -r ../../requirements.txt
 if [ $? -ne 0 ]; then
     echo "Failed to install requirements from ../requirements.txt."
     deactivate
     exit 1
 fi
 
-# Install rich library for display
-pip3 install rich
+# Install supporting libraries
+pip install rich ipython ipykernel
 if [ $? -ne 0 ]; then
-    echo "Failed to install rich library."
+    echo "Failed to install supporting libraries."
     deactivate
     exit 1
 fi
