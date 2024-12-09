@@ -109,7 +109,6 @@ jobs:
       run: |
         cd moonshot-ui
         npm ci
-        npm install dotenv
         npm run build
         cd ../
         source venv/bin/activate
@@ -129,6 +128,7 @@ jobs:
       run: |
          cd moonshot-integration-testing/ui-integration-testing
          npm ci
+         npm install dotenv
          npx playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test
 
