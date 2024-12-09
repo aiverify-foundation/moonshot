@@ -104,6 +104,13 @@ jobs:
         repository: aiverify-foundation/moonshot-ui
         ref: ${{ inputs.moonshot_ui_branch }}
         path: moonshot-ui
+
+     # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+        source venv/bin/activate
+        pip install nltk
+        python -c "import nltk; nltk.download('stopwords')"
     
     - name: Setup Moonshot UI
       run: |
