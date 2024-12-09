@@ -67,7 +67,7 @@ You can try the following:
 
 ### Why am I encountering errors with my endpoints after updating Moonshot?
 
-In release [0.4.12](link to release), we changed the schema for connector-endpoints. [Details about the change here](link to PR).
+In release 0.5.0 (Dec 2024), we changed the schema for connector-endpoints. Check out the new schema [here](https://github.com/aiverify-foundation/moonshot-data/tree/main/connectors-endpoints)
 This is a non-backwards compatible change, if you update `moonshot` but not `moonshot-data`, you may encounter errors due to schema mismatch.
 
 If you have created a connector-endpoint following the previous schema, you will need to edit/ create a new one that uses the latest schema.
