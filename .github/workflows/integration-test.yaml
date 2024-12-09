@@ -109,6 +109,7 @@ jobs:
       run: |
         cd moonshot-ui
         npm ci
+        npm install
         npm run build
         cd ../
         source venv/bin/activate
