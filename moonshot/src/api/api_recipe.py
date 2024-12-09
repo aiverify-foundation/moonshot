@@ -79,7 +79,7 @@ def api_read_recipes(rec_ids: conlist(str, min_length=1)) -> list[dict]:
     and returns a list of dictionaries containing each recipe's information.
 
     Args:
-        rec_ids (list[str]): The IDs of the recipes.
+        rec_ids (conlist(str, min_length=1)): The IDs of the recipes.
 
     Returns:
         list[dict]: A list of dictionaries, each containing a recipe's information.
@@ -155,7 +155,7 @@ def api_get_all_recipe() -> list[dict]:
     """
     Retrieves all available recipes.
 
-    This function calls the get_available_recipes method to retrieve all available recipes. It then converts each
+    This function calls the get_available_items method to retrieve all available recipes. It then converts each
     recipe into a dictionary using the to_dict method and returns a list of these dictionaries.
 
     Returns:
@@ -169,7 +169,7 @@ def api_get_all_recipe_name() -> list[str]:
     """
     Retrieves all available recipe names.
 
-    This function calls the get_available_recipes method to retrieve all available recipes. It then extracts the names
+    This function calls the get_available_items method to retrieve all available recipes. It then extracts the names
     of each recipe and returns a list of these names.
 
     Returns:

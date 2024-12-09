@@ -1,11 +1,19 @@
 from pathlib import Path
 
-from pydantic import validate_call
+from pydantic import constr, validate_call
 from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
+)
+from moonshot.src.messages_constants import (
+    CONNECTOR_ENDPOINT_CREATE_ERROR,
+    CONNECTOR_ENDPOINT_DELETE_ERROR,
+    CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR,
+    CONNECTOR_ENDPOINT_READ_ERROR,
+    CONNECTOR_ENDPOINT_READ_INVALID,
+    CONNECTOR_ENDPOINT_UPDATE_ERROR,
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
@@ -16,6 +24,7 @@ logger = configure_logger(__name__)
 
 class ConnectorEndpoint:
     @staticmethod
+    @validate_call
     def create(ep_args: ConnectorEndpointArguments) -> str:
         """
         Creates a new connector endpoint and stores its details as a JSON object.
@@ -47,6 +56,7 @@ class ConnectorEndpoint:
                 "token": ep_args.token,
                 "max_calls_per_second": ep_args.max_calls_per_second,
                 "max_concurrency": ep_args.max_concurrency,
+                "model": ep_args.model,
                 "params": ep_args.params,
             }
 
@@ -57,12 +67,12 @@ class ConnectorEndpoint:
             return ep_id
 
         except Exception as e:
-            logger.error(f"Failed to create endpoint: {str(e)}")
+            logger.error(CONNECTOR_ENDPOINT_CREATE_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
     @validate_call
-    def read(ep_id: str) -> ConnectorEndpointArguments:
+    def read(ep_id: constr(min_length=1)) -> ConnectorEndpointArguments:
         """
         Retrieves the details of a specified endpoint by its ID.
 
@@ -72,27 +82,24 @@ class ConnectorEndpoint:
         any other error occurs, an exception is raised with an appropriate error message.
 
         Args:
-            ep_id (str): The unique identifier of the endpoint whose details are to be retrieved.
+            ep_id (constr(min_length=1)): The unique identifier of the endpoint whose details are to be retrieved.
 
         Returns:
             ConnectorEndpointArguments: An instance filled with the endpoint's details.
 
         Raises:
-            RuntimeError: If the endpoint ID is empty or the specified endpoint does not exist.
+            RuntimeError: If the specified endpoint does not exist.
             Exception: For any issues encountered during the file reading or data parsing process.
         """
         try:
-            if not ep_id:
-                raise RuntimeError("Connector Endpoint ID is empty.")
-
             endpoint_details = ConnectorEndpoint._read_endpoint(ep_id)
             if not endpoint_details:
-                raise RuntimeError(f"Endpoint with ID '{ep_id}' does not exist.")
+                raise RuntimeError(CONNECTOR_ENDPOINT_READ_INVALID.format(ep_id=ep_id))
 
             return ConnectorEndpointArguments(**endpoint_details)
 
         except Exception as e:
-            logger.error(f"Failed to read endpoint: {str(e)}")
+            logger.error(CONNECTOR_ENDPOINT_READ_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
@@ -124,6 +131,7 @@ class ConnectorEndpoint:
         return connector_endpoint_info
 
     @staticmethod
+    @validate_call
     def update(ep_args: ConnectorEndpointArguments) -> bool:
         """
         Updates the endpoint information in the storage based on the provided ConnectorEndpointArguments object.
@@ -138,11 +146,10 @@ class ConnectorEndpoint:
             ep_args (ConnectorEndpointArguments): The object encapsulating the updated attributes of the endpoint.
 
         Returns:
-            bool: Indicates whether the update operation was successful. Returns True if the update was successfully
-            persisted to the storage; otherwise, an exception is raised.
+            bool: True if the update was successfully persisted to the storage; otherwise, an exception is raised.
 
         Raises:
-            Exception: Signifies a failure in the update process, potentially due to issues with data serialization or
+            Exception: If the update process encounters an error, potentially due to issues with data serialization or
             storage access.
         """
         try:
@@ -160,24 +167,24 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to update endpoint: {str(e)}")
+            logger.error(CONNECTOR_ENDPOINT_UPDATE_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
     @validate_call
-    def delete(ep_id: str) -> bool:
+    def delete(ep_id: constr(min_length=1)) -> bool:
         """
         Deletes the endpoint with the specified ID.
 
         This method attempts to delete the endpoint corresponding to the given ID from the storage.
-        If the deletion is successful, it returns True. If an error occurs, it prints an error message
+        If the deletion is successful, it returns True. If an error occurs, it logs an error message
         and re-raises the exception.
 
         Args:
-            ep_id (str): The unique identifier of the endpoint to be deleted.
+            ep_id (constr(min_length=1)): The unique identifier of the endpoint to be deleted
 
         Returns:
-            bool: True if the endpoint was successfully deleted.
+            bool: True if the endpoint was successfully deleted; otherwise, an exception is raised.
 
         Raises:
             Exception: If the deletion process encounters an error.
@@ -187,7 +194,7 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to delete endpoint: {str(e)}")
+            logger.error(CONNECTOR_ENDPOINT_DELETE_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
@@ -204,6 +211,9 @@ class ConnectorEndpoint:
         Returns:
             tuple[list[str], list[ConnectorEndpointArguments]]: A tuple containing a list of endpoint IDs and a list of
             ConnectorEndpointArguments objects with endpoint details.
+
+        Raises:
+            Exception: If the process of fetching available items encounters an error.
         """
         try:
             retn_eps = []
@@ -223,5 +233,7 @@ class ConnectorEndpoint:
             return retn_eps_ids, retn_eps
 
         except Exception as e:
-            logger.error(f"Failed to get available endpoints: {str(e)}")
+            logger.error(
+                CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR.format(message=str(e))
+            )
             raise e
