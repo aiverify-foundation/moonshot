@@ -39,7 +39,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install supporting libraries
-pip install rich ipython ipykernel
+pip install jupyter rich ipython ipykernel
 if [ $? -ne 0 ]; then
     echo "Failed to install supporting libraries."
     deactivate
