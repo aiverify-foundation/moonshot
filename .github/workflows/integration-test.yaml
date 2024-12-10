@@ -131,6 +131,13 @@ jobs:
          npx playwright install --with-deps
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" npx playwright test
 
+    - name: Upload Playwright Traces
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace
+          path: |
+            test-results
+
     - name: TestRail CLI upload results
       env:
         TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
