@@ -5,7 +5,10 @@ from .... import api as moonshot_api
 from ..schemas.cookbook_create_dto import CookbookCreateDTO, CookbookUpdateDTO
 from ..schemas.cookbook_response_model import CookbookResponseModel
 from ..services.base_service import BaseService
-from ..services.recipe_service import get_total_prompt_in_recipe, get_endpoint_dependency_in_recipe
+from ..services.recipe_service import (
+    get_metric_dependency_in_recipe,
+    get_total_prompt_in_recipe,
+)
 from ..services.utils.exceptions_handler import exception_handler
 
 
@@ -63,25 +66,28 @@ class CookbookService(BaseService):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
-                            get_total_prompt_and_dataset_in_cookbook(cookbook)
-                        )
+                        (
+                            cookbook.total_prompt_in_cookbook,
+                            cookbook.total_dataset_in_cookbook,
+                        ) = get_total_prompt_and_dataset_in_cookbook(cookbook)
 
             if tags and cookbooks_recipe_has_tags(tags, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
-                            get_total_prompt_and_dataset_in_cookbook(cookbook)
-                        )
+                        (
+                            cookbook.total_prompt_in_cookbook,
+                            cookbook.total_dataset_in_cookbook,
+                        ) = get_total_prompt_and_dataset_in_cookbook(cookbook)
 
             if categories and cookbooks_recipe_has_categories(categories, cookbook):
                 if cookbook not in cookbooks_list:
                     cookbooks_list.append(cookbook)
                     if count:
-                        cookbook.total_prompt_in_cookbook, cookbook.total_dataset_in_cookbook = (
-                            get_total_prompt_and_dataset_in_cookbook(cookbook)
-                        )
+                        (
+                            cookbook.total_prompt_in_cookbook,
+                            cookbook.total_dataset_in_cookbook,
+                        ) = get_total_prompt_and_dataset_in_cookbook(cookbook)
 
             if categories_excluded and cookbooks_recipe_has_categories(
                 categories_excluded, cookbook
@@ -89,7 +95,7 @@ class CookbookService(BaseService):
                 cookbooks_list.remove(cookbook)
 
         for cookbook in cookbooks_list:
-            cookbook.endpoint_required = cookbook_endpoint_dependency(cookbook)
+            cookbook.required_config = cookbook_metrics_dependency(cookbook)
 
         return cookbooks_list
 
@@ -147,7 +153,9 @@ def get_total_prompt_and_dataset_in_cookbook(cookbook: Cookbook) -> tuple[int, i
         int: The total count of prompts within the cookbook.
     """
     recipes = moonshot_api.api_read_recipes(cookbook.recipes)
-    total_prompts, total_datasets = zip(*(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes))
+    total_prompts, total_datasets = zip(
+        *(get_total_prompt_in_recipe(Recipe(**recipe)) for recipe in recipes)
+    )
     return sum(total_prompts), sum(total_datasets)
 
 
@@ -197,25 +205,48 @@ def cookbooks_recipe_has_categories(categories: str, cookbook: Cookbook) -> bool
             return True
     return False
 
+
 @staticmethod
-def cookbook_endpoint_dependency(cookbook: Cookbook) -> list[str] | None:
+def cookbook_metrics_dependency(cookbook: Cookbook) -> dict | None:
     """
-    Retrieve a list of endpoint dependencies for all recipes in a given cookbook.
+    Retrieve a list of endpoint and configuration dependencies for all recipes in a given cookbook.
 
     Args:
         cookbook (Cookbook): The cookbook object containing the recipe IDs.
 
     Returns:
-        list[str] | None: A list of endpoint dependencies if any are found, otherwise None.
+        dict[str, list[str]] | None: A dictionary with aggregated endpoint and configuration dependencies
+        if any are found, otherwise None.
     """
     recipes_in_cookbook = cookbook.recipes
     recipes = moonshot_api.api_read_recipes(recipes_in_cookbook)
-    list_of_endpoints = set()
+    aggregated_endpoints = set()
+    aggregated_configurations = {}
 
     for recipe in recipes:
         recipe = Recipe(**recipe)
-        endpoints = get_endpoint_dependency_in_recipe(recipe)
-        if endpoints:
-            list_of_endpoints.update(endpoints)
+        dependency = get_metric_dependency_in_recipe(recipe)
+        if dependency:
+            # Aggregate endpoints
+            aggregated_endpoints.update(dependency.get("endpoints", []))
 
-    return list(list_of_endpoints) if list_of_endpoints else None
+            # Aggregate configurations
+            for key, value in dependency.get("configurations", {}).items():
+                if key in aggregated_configurations:
+                    aggregated_configurations[key].extend(
+                        v for v in value if v not in aggregated_configurations[key]
+                    )
+                else:
+                    aggregated_configurations[key] = value
+
+    aggregated_dependencies = {
+        "endpoints": list(aggregated_endpoints),
+        "configurations": aggregated_configurations,
+    }
+
+    return (
+        aggregated_dependencies
+        if aggregated_dependencies["endpoints"]
+        or aggregated_dependencies["configurations"]
+        else None
+    )
