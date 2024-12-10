@@ -1,0 +1,82 @@
+name: Notices File Generation
+
+on:
+  workflow_call:
+    inputs:
+      repo:
+        description: 'Repository name'
+        required: true
+        default: 'aiverify-foundation/moonshot'
+        type: string
+      branch:
+        description: 'Branch or tag'
+        required: true
+        default: 'main'
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Repository name'
+        required: true
+        default: 'aiverify-foundation/moonshot'
+        type: string
+      branch:
+        description: 'Branch or tag'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  notices-file-gen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.branch }}
+          submodules: recursive
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate notices file
+        run: |
+          set +e
+          pip install -r requirements.txt
+          npm install
+          repo_name=$(echo "${{ github.event.inputs.repo }}" | awk -F'/' '{print $2}')
+          bash <(curl -s -L https://detect.synopsys.com/detect9.sh) \
+            --blackduck.url=https://blackduck.aipo-imda.net/ \
+            --blackduck.api.token=${{ secrets.BLACKDUCK_TOKEN }} \
+            --detect.detector.search.depth=10 \
+            --detect.project.name=aiverify-${repo_name} \
+            --detect.project.version.name=${{ github.event.inputs.branch }} \
+            --detect.source.path=. \
+            --detect.code.location.name="aiverify-${repo_name}_${{ github.event.inputs.branch }}" \
+            --detect.excluded.directories=/tests \
+            --blackduck.trust.cert=true \
+            --detect.excluded.detector.types=POETRY \
+            --detect.blackduck.scan.mode=RAPID \
+            --detect.notices.report=true \
+            --detect.notices.report.path=.
+          set -e
+          ls -al
+          cat ./*_Black_Duck_Notices_Report.txt
+
+#
+#      - name: Commit notices file
+#        run: |
+#          set +e
+#          mv aiverify_moonshot_main_Black_Duck_Notices_Report.txt NOTICES.md
+#          git add NOTICES.md
+#          git config user.name "imda-btg"
+#          git config user.email "idma-btg@imda.gov.sg"
+#          git commit -m "update notices file"
+#          git push
+#          set -e
+#
