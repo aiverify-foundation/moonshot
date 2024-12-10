@@ -33,6 +33,9 @@ class RecipeArguments(BaseModel):
     # stats (dict): A dictionary containing statistics about the recipe.
     stats: dict = {}
 
+    # configuration (dict): A dictionary with the additional required configuration
+    configurations: dict = {}
+
     def __init__(self, **data: Any):
         super().__init__(**data)
         self.validate_grading_scale()

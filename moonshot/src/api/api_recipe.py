@@ -177,3 +177,19 @@ def api_get_all_recipe_name() -> list[str]:
     """
     recipes_names, _ = Recipe.get_available_items()
     return recipes_names
+
+
+def api_get_recipe_all_metric_configs(rec_id: str) -> dict:
+    """
+    Retrieves all metric configurations for a given recipe.
+
+    This function takes a recipe ID as input and returns a dict with a list of metric configurations
+    associated with that recipe. If the recipe does not have any metric configurations, it returns None.
+
+    Args:
+        rec_id (str): The ID of the recipe for which to retrieve metric configurations.
+
+    Returns:
+        dict: A dictionary with metric configurations if available, otherwise empty dict.
+    """
+    return Recipe.get_recipe_all_metric_configs(rec_id)

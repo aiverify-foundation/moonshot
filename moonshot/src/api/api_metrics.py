@@ -49,3 +49,19 @@ def api_get_all_metric_name() -> list[str]:
     """
     metrics_names, _ = Metric.get_available_items()
     return metrics_names
+
+
+def api_get_metric_configs(me_id: str) -> dict:
+    """
+    Retrieves the configuration for a specific metric.
+
+    This function calls the get_metric_configs method from the Metric class to retrieve the configuration
+    details of a specific metric identified by its unique metric ID.
+
+    Args:
+        me_id (str): The unique identifier for the metric whose configuration is to be retrieved.
+
+    Returns:
+        dict: A dictionary containing the metric's configuration details, or empty dict if there's no configuration.
+    """
+    return Metric.get_metric_configs(me_id)

@@ -7,6 +7,7 @@ from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.datasets.dataset import Dataset
+from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe_arguments import RecipeArguments
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
@@ -177,28 +178,6 @@ class Recipe:
         else:
             obj_results.update(recipe_info)
 
-        # Calculate statistics for the recipe and update the results dictionary with them
-        stats = {
-            "num_of_tags": len(obj_results["tags"]),
-            "num_of_datasets": len(obj_results["datasets"]),
-            "num_of_prompt_templates": len(obj_results["prompt_templates"]),
-            "num_of_metrics": len(obj_results["metrics"]),
-            "num_of_datasets_prompts": {},
-        }
-
-        if dataset_prompts_count:
-            stats["num_of_datasets_prompts"] = {
-                dataset_name: dataset_prompts_count.get(dataset_name, 0)
-                for dataset_name in obj_results["datasets"]
-            }
-        else:
-            _, datasets_metadata = Dataset.get_available_items(obj_results["datasets"])
-            stats["num_of_datasets_prompts"] = {
-                dataset.id: dataset.num_of_dataset_prompts
-                for dataset in datasets_metadata
-            }
-
-        obj_results["stats"] = stats
         return obj_results
 
     @staticmethod
@@ -336,3 +315,48 @@ class Recipe:
                 env_var_name, file_name, extension
             ):
                 raise RuntimeError(f"[Recipe] {file_type} {file_name} does not exist.")
+
+    @staticmethod
+    def get_recipe_all_metric_configs(rec_id: str) -> dict:
+        """
+        Retrieves all metric configurations for a given recipe.
+
+        This method takes a recipe ID, reads the recipe details, and extracts the list of metrics associated with the
+        recipe. It then fetches the configuration for each metric using the Metric class's `get_metric_configs` method.
+
+        Args:
+            rec_id (str): The unique identifier for the recipe whose metric configurations are to be retrieved.
+
+        Returns:
+            dict: A dict containing metric configurations if metrics are present in the recipe; otherwise, empty dict.
+
+        Raises:
+            RuntimeError: If the recipe ID is empty or if the recipe does not exist.
+            Exception: If any other error occurs during the process, it logs the error and re-raises the exception.
+        """
+        try:
+            if not rec_id:
+                raise RuntimeError("Recipe ID is empty.")
+
+            recipe_details = Recipe._read_recipe(rec_id, {})
+            if not recipe_details:
+                raise RuntimeError(f"Recipe with ID '{rec_id}' does not exist.")
+
+            list_of_metrics = recipe_details.get("metrics", {})
+
+            if list_of_metrics:
+                metric_config = [
+                    Metric.get_metric_configs(metric) for metric in list_of_metrics
+                ]
+                if metric_config:
+                    return {"recipe_id": rec_id, "recipe_configurations": metric_config}
+                else:
+                    return {}
+            else:
+                return (
+                    {}
+                )  # Return an empty dictionary if there are no metrics in the recipe
+
+        except Exception as e:
+            logger.error(f"Failed to read recipe: {str(e)}")
+            raise e

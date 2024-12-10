@@ -13,6 +13,7 @@ from moonshot.api import (
     api_get_all_cookbook,
     api_get_all_run,
     api_get_all_runner_name,
+    api_get_cookbook_recipe_configurations,
     api_load_runner,
     api_read_cookbook,
     api_read_recipes,
@@ -294,6 +295,9 @@ def run_cookbook(args) -> None:
         else:
             cb_runner = api_create_runner(args.name, endpoints)
 
+        # Display all requirements for every recipe in the cookbook
+        _display_cookbook_configurations(cookbooks)
+
         async def run():
             await cb_runner.run_cookbooks(
                 cookbooks,
@@ -320,6 +324,57 @@ def run_cookbook(args) -> None:
 
     except Exception as e:
         print(f"[run_cookbook]: {str(e)}")
+
+
+def _display_cookbook_configurations(cookbooks: list) -> None:
+    """
+    Display the configurations for each recipe in the provided cookbooks.
+
+    This function retrieves and prints the configuration details for each recipe in the given list of cookbooks.
+    It uses the `api_get_cookbook_recipe_configurations` function to fetch the configurations for each cookbook.
+    The configurations are displayed in a structured format using the `console` object from the `rich` library.
+
+    Args:
+        cookbooks (list): A list of cookbook identifiers for which configurations need to be displayed.
+
+    Returns:
+        None: This function does not return any value. It prints the configurations to the console.
+
+    Side Effects:
+        Prints the configurations of each recipe in the cookbooks to the console. If any configurations are found,
+        it also prints a reminder to ensure that the configurations are set before running the recipes.
+
+    Raises:
+        None: This function does not raise any exceptions.
+    """
+    require_config = False
+    # get all configurations from all cookbooks and print them out
+    for cookbook in cookbooks:
+        cookbook_config = api_get_cookbook_recipe_configurations(cookbook)
+        console.print(f"[bold blue]Cookbook {cookbook} configurations:[/]")
+        for recipe_config in cookbook_config:
+            console.print(
+                f"\t[bold blue]Recipe {recipe_config['recipe_id']} configurations:[/]"
+            )
+            recipe_config = recipe_config.get("recipe_configurations", [])
+            for metric_config in recipe_config:
+                # metric does not require configuration
+                if not metric_config["metric_configurations"]:
+                    continue
+
+                # metric requires configuration. print configurations out
+                require_config = True
+                me_id = metric_config["metric_id"]
+                console.print(
+                    f"\t\t[bold yellow]Metric {me_id} requires the following configurations:[/]"
+                )
+                for key, value in metric_config["metric_configurations"].items():
+                    console.print(f"\t\t\t{key}: {value}")
+        console.print("\n")
+    if require_config:
+        console.print(
+            "[bold yellow]Ensure that the configurations are set before running recipe.[/]"
+        )
 
 
 def update_cookbook(args) -> None:

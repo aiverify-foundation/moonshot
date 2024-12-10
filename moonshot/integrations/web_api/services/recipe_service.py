@@ -157,6 +157,7 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> tuple[int, int]:
 
     return total_prompt_count, int(recipe.stats.get("num_of_datasets", 0))
 
+
 @staticmethod
 def get_endpoint_dependency_in_recipe(recipe: Recipe) -> list[str] | None:
     """
@@ -174,11 +175,25 @@ def get_endpoint_dependency_in_recipe(recipe: Recipe) -> list[str] | None:
     """
     metrics = recipe.metrics
     all_metrics = moonshot_api.api_get_all_metric()
-    
+
     endpoints = set()
     for metric in metrics:
         for m in all_metrics:
-            if m['id'] == metric:
-                endpoints.update(m['endpoints'])
-    
+            if m["id"] == metric:
+                endpoints.update(m["endpoints"])
+
     return list(endpoints) if endpoints else None
+
+
+@staticmethod
+def get_recipes_configurations(recipe_id: str) -> dict:
+    """
+    Retrieve the configurations of a recipe by its ID.
+
+    Args:
+        recipe_id (str): The ID of the recipe to retrieve configurations for.
+
+    Returns:
+        dict: A dictionary containing the configurations of the recipe.
+    """
+    return moonshot_api.api_get_recipe_all_metric_configs(recipe_id)

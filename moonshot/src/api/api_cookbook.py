@@ -158,3 +158,19 @@ def api_get_all_cookbook_name() -> list[str]:
     """
     cookbooks_names, _ = Cookbook.get_available_items()
     return cookbooks_names
+
+
+def api_get_cookbook_recipe_configurations(cb_id: str) -> list:
+    """
+    Retrieves the configuration details of all the recipes in the specified cookbook.
+
+    This function takes a cookbook ID as input and returns a list containing
+    the configuration details of all the recipes in the specified cookbook.
+
+    Args:
+        cb_id (str): The ID of the cookbook whose configurations are to be retrieved.
+
+    Returns:
+        list: A list containing the configuration details of all the recipes in the cookbook.
+    """
+    return Cookbook.get_cookbook_recipe_configurations(cb_id)

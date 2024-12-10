@@ -194,3 +194,35 @@ class Metric:
             cache_updated = True
 
         return met_metadata, cache_updated
+
+    @staticmethod
+    def get_metric_configs(me_id: str) -> dict:
+        """
+        Retrieves the configuration for the specified metric.
+
+        This method reads the metric configuration from the storage and returns the configuration
+        details for the specified metric ID. If the configuration cannot be retrieved, an exception
+        is logged and re-raised.
+
+        Args:
+            me_id (str): The unique identifier of the metric whose configuration is to be retrieved.
+
+        Returns:
+            dict: A dictionary containing the metric ID and its configuration details; otherwise, an empty dict.
+
+        Raises:
+            Exception: If an error occurs during the retrieval of the metric configuration.
+        """
+        metric_config = "metrics_config"
+        try:
+            # Read the existing configuration
+            obj_results = Storage.read_object(
+                EnvVariables.METRICS.name, metric_config, "json"
+            )
+            # Retrieve the configurations of the specified metric, and return empty list if no requirements
+            metric_config = obj_results.get("me_id", {})
+            return {"metric_id": me_id, "metric_configurations": metric_config}
+
+        except Exception as e:
+            logger.warning(f"[Metric] No metric configuration for {me_id}: {str(e)}")
+            raise e

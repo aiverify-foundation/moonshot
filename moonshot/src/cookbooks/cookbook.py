@@ -7,6 +7,7 @@ from slugify import slugify
 
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.recipes.recipe import Recipe
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
 
@@ -243,3 +244,21 @@ class Cookbook:
         except Exception as e:
             logger.error(f"Failed to get available cookbooks: {str(e)}")
             raise e
+
+    @staticmethod
+    def get_cookbook_recipe_configurations(cb_id: str) -> list:
+        """
+        Retrieve the configurations for each recipe in a given cookbook.
+
+        Args:
+            cookbook (Cookbook): The cookbook object containing the recipe IDs.
+
+        Returns:
+            list: A list of configurations for each recipe if available, otherwise empty list.
+        """
+        cookbook_info = Cookbook._read_cookbook(cb_id)
+        cookbook_recipes = cookbook_info.get("recipes", [])
+
+        return [
+            Recipe.get_recipe_all_metric_configs(recipe) for recipe in cookbook_recipes
+        ]

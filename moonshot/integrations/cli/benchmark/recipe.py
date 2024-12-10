@@ -11,8 +11,8 @@ from moonshot.api import (
     api_create_runner,
     api_delete_recipe,
     api_get_all_recipe,
-    api_get_all_run,
     api_get_all_runner_name,
+    api_get_recipe_all_metric_configs,
     api_load_runner,
     api_read_recipe,
     api_update_recipe,
@@ -54,6 +54,7 @@ from moonshot.integrations.cli.cli_errors import (
 )
 from moonshot.integrations.cli.common.display_helper import display_view_list_format
 from moonshot.integrations.cli.utils.process_data import filter_data
+from moonshot.src.api.api_run import api_get_all_run
 
 console = Console()
 
@@ -374,6 +375,9 @@ def run_recipe(args) -> None:
         else:
             rec_runner = api_create_runner(args.name, endpoints)
 
+        # Display all requirements every recipe
+        _display_recipe_configurations(recipes)
+
         async def run():
             await rec_runner.run_recipes(
                 recipes,
@@ -400,6 +404,46 @@ def run_recipe(args) -> None:
 
     except Exception as e:
         print(f"[run_recipe]: {str(e)}")
+
+
+def _display_recipe_configurations(recipes: list) -> None:
+    """
+    Display the required configurations for a list of recipes.
+
+    This function retrieves and displays the configuration details for each recipe in the provided list.
+    It fetches the metric configurations for each recipe using the `api_get_recipe_all_metric_configs` function
+    and prints the required configurations for each metric.
+
+    Args:
+        recipes (list): A list of recipe identifiers for which configurations need to be displayed.
+
+    Returns:
+        None: This function does not return any value. It prints the configurations to the console.
+    """
+    # get all configurations from all recipes and print them out (currently all the configurations come from metrics)
+    require_config = False
+    for recipe in recipes:
+        recipe_config = api_get_recipe_all_metric_configs(recipe)
+        console.print(f"\n[bold blue]Recipe {recipe} configurations:[/]")
+        metric_configs = recipe_config.get("recipe_configurations", [])
+        for metric_config in metric_configs:
+            # metric does not require configuration
+            if not metric_config["metric_configurations"]:
+                continue
+
+            # metric requires configuration. print configurations out
+            require_config = True
+            me_id = metric_config["metric_id"]
+            console.print(
+                f"\t[bold yellow]Metric {me_id} requires the following configurations:[/]"
+            )
+            for key, value in metric_config["metric_configurations"].items():
+                console.print(f"\t\t{key}: {value}")
+
+    if require_config:
+        console.print(
+            "\n[bold yellow]Ensure that the configurations are set before running recipe.[/]"
+        )
 
 
 def update_recipe(args) -> None:
