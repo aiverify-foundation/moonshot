@@ -60,14 +60,14 @@ class BenchmarkTestManager(BaseService):
             if benchmark_type == BenchmarkCollectionType.COOKBOOK:
                 async_run = moonshot_runner.run_cookbooks(
                     cookbooks=benchmark_input_data.inputs,
-                    num_of_prompts=benchmark_input_data.num_of_prompts,
+                    prompt_selection_percentage=benchmark_input_data.prompt_selection_percentage,
                     random_seed=benchmark_input_data.random_seed,
                     system_prompt=benchmark_input_data.system_prompt,
                 )
             else:
                 async_run = moonshot_runner.run_recipes(
                     recipes=benchmark_input_data.inputs,
-                    num_of_prompts=benchmark_input_data.num_of_prompts,
+                    prompt_selection_percentage=benchmark_input_data.prompt_selection_percentage,
                     random_seed=benchmark_input_data.random_seed,
                     system_prompt=benchmark_input_data.system_prompt,
                 )

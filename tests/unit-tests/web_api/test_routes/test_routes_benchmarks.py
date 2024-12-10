@@ -9,7 +9,20 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 1,
+            "system_prompt": "",
+            "runner_processing_module": "benchmarking",
+            "random_seed" : 0
+        },
+        "cookbook", None, 200 , {"id":"test-benchmark-1"}
+    ),
+    (
+        {
+            "run_name": "test-benchmark-1",
+            "description": "norman testing benchmark",
+            "inputs": ["common-risk-easy"],
+            "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
+            "prompt_selection_percentage": 100,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
@@ -23,7 +36,7 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
@@ -37,13 +50,13 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
         },
         "cookbook", 
-        ServiceException("An unexpected error occurred", "create_cookbook", "UnknownError"), 500 , None
+        ServiceException("An unexpected error occurred", "execute_cookbook", "UnknownError"), 500 , None
     ),
     # Exception Scenario RECIPE
     (
@@ -52,14 +65,41 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
             "description": "norman testing benchmark",
             "inputs": ["common-risk-easy"],
             "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
-            "num_of_prompts": 3,
+            "prompt_selection_percentage": 3,
             "system_prompt": "",
             "runner_processing_module": "benchmarking",
             "random_seed" : 0
         },
         "recipe", 
-        ServiceException("An unexpected error occurred", "create_cookbook", "UnknownError"), 500 , None
-    )
+        ServiceException("An unexpected error occurred", "execute_cookbook", "UnknownError"), 500 , None
+    ),
+    # Exception Prompt Selection <1 or >100 
+    (
+        {
+            "run_name": "test-benchmark-range-0",
+            "description": "test benchmark range 0",
+            "inputs": ["common-risk-easy"],
+            "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
+            "prompt_selection_percentage": 0,
+            "system_prompt": "",
+            "runner_processing_module": "benchmarking",
+            "random_seed" : 0
+        },
+        "cookbook", None, 422 , None
+    ),
+    (
+        {
+            "run_name": "test-benchmark-range-101",
+            "description": "test benchmark range 101",
+            "inputs": ["common-risk-easy"],
+            "endpoints": ["openai-gpt35-turbo","openai-gpt35-turbo-16k"],
+            "prompt_selection_percentage": 101,
+            "system_prompt": "",
+            "runner_processing_module": "benchmarking",
+            "random_seed" : 0
+        },
+        "cookbook", None, 422 , None
+    ),
 ])
 def test_execute_benchmark_cb(test_client, mock_bm_service, benchmark_data, benchmark_type, exception, expected_status, expected_response):
     if exception:
@@ -74,14 +114,11 @@ def test_execute_benchmark_cb(test_client, mock_bm_service, benchmark_data, benc
             mock_bm_service.execute_recipe.return_value = benchmark_data.get("run_name")
 
     response = test_client.post(f"/api/v1/benchmarks?type={benchmark_type}", json=benchmark_data)
-
     assert response.status_code == expected_status
     if exception:
         assert exception.msg in response.json()["detail"]
     else:
         if expected_status == 200:
-            print(response.json())
-            print(expected_response)
             assert response.json() == expected_response
 
 # not mocking response cause response too long
