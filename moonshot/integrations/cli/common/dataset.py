@@ -5,13 +5,12 @@ from rich.console import Console
 from rich.table import Table
 
 from moonshot.api import (
+    api_convert_dataset,
     api_delete_dataset,
+    api_download_dataset,
     api_get_all_datasets,
     api_get_all_datasets_name,
-    api_convert_dataset, 
-    api_download_dataset
 )
-
 from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_DELETE_DATASET_DATASET_VALIDATION,
     ERROR_BENCHMARK_LIST_DATASETS_FIND_VALIDATION,
@@ -19,11 +18,11 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_LIST_DATASETS_PAGINATION_VALIDATION_1,
     ERROR_BENCHMARK_VIEW_DATASET_DATASET_FILENAME_VALIDATION,
 )
-
 from moonshot.integrations.cli.common.display_helper import display_view_str_format
 from moonshot.integrations.cli.utils.process_data import filter_data
 
 console = Console()
+
 
 def list_datasets(args) -> list | None:
     """
@@ -154,6 +153,7 @@ def delete_dataset(args) -> None:
         print("[delete_dataset]: Dataset deleted.")
     except Exception as e:
         print(f"[delete_dataset]: {str(e)}")
+
 
 def convert_dataset(args) -> None:
     """
@@ -350,8 +350,7 @@ download_dataset_args.add_argument(
     type=literal_eval,
     help=(
         "Params of the new dataset in dictionary format. For example: \n"
-        "1. For 'csv' method: \"{'csv_file_path': '/path/to/your/file.csv'}\"\n"
-        "2. For 'hf' method: \"{'dataset_name': 'cais_mmlu', 'dataset_config': 'college_biology', 'split': 'test', "
+        "{'dataset_name': 'cais_mmlu', 'dataset_config': 'college_biology', 'split': 'test', "
         "'input_col': ['questions','choices'], 'target_col': 'answer'}\""
     ),
 )
