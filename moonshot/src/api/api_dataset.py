@@ -16,7 +16,7 @@ def api_delete_dataset(ds_id: str) -> bool:
         ds_id (str): The unique identifier for the dataset to be deleted.
 
     Returns:
-        bool: True if the dataset was successfully deleted.
+        bool: True if the dataset was successfully deleted, False otherwise.
 
     Raises:
         Exception: If the deletion process encounters an error.
@@ -27,10 +27,10 @@ def api_delete_dataset(ds_id: str) -> bool:
 def api_get_all_datasets() -> list[dict]:
     """
     This function retrieves all available datasets and returns them as a list of dictionaries. Each dictionary
-    represents a result and contains its information.
+    represents a dataset and contains its information.
 
     Returns:
-        list[dict]: A list of dictionaries, each representing a result.
+        list[dict]: A list of dictionaries, each representing a dataset.
     """
     _, datasets = Dataset.get_available_items()
     return [dataset.to_dict() for dataset in datasets]
@@ -38,10 +38,10 @@ def api_get_all_datasets() -> list[dict]:
 
 def api_get_all_datasets_name() -> list[str]:
     """
-    This function retrieves all available datasets names and returns them as a list.
+    This function retrieves all available dataset names and returns them as a list.
 
     Returns:
-        list[str]: A list of datasets names.
+        list[str]: A list of dataset names.
     """
     datasets_name, _ = Dataset.get_available_items()
     return datasets_name
