@@ -43,11 +43,14 @@ def api_create_session(
     Args:
         runner_id (str): The unique identifier of the runner for which the session is to be created.
         database_instance (Any): The database instance to be used for the session.
-        endpoints (list): A list of endpoints for the session.
+        endpoints (list[str]): A list of endpoints for the session.
         runner_args (dict): A dictionary of arguments for the runner.
 
     Returns:
-        Session
+        Session: A new Session object.
+
+    Raises:
+        RuntimeError: If the runner_id is empty or if the database_instance is not provided.
     """
     if isinstance(database_instance, DBInterface):
         if runner_id:
@@ -86,16 +89,16 @@ def api_get_all_session_names() -> list[str]:
     return session_names
 
 
-def api_get_available_session_info() -> tuple[list, list]:
+def api_get_available_session_info() -> tuple[list[str], list[dict]]:
     """
-    Retrieves the IDs and database instances of runners with active sessions.
+    Retrieves the IDs and metadata of runners with active sessions.
 
-    This function retrieves the IDs and database instances of runners with active sessions by querying all runners
+    This function retrieves the IDs and metadata of runners with active sessions by querying all runners
     and checking if each runner has an active session. It returns a tuple containing a list of runner IDs and a list
     of corresponding session metadata for runners with active sessions.
 
     Returns:
-        tuple[list[str], list[str]]: A tuple containing a list of runner IDs and a list of corresponding session
+        tuple[list[str], list[dict]]: A tuple containing a list of runner IDs and a list of corresponding session
         metadata for runners with active sessions.
     """
     runners_info = api_get_all_runner()
@@ -122,7 +125,8 @@ def api_get_all_session_metadata() -> list[dict]:
     This function retrieves the metadata for all active sessions by calling the `api_get_available_session_info` method.
 
     Returns:
-        list: A list containing the metadata for all active sessions, sorted by created datetime in descending order.
+        list[dict]: A list containing the metadata for all active sessions, sorted by created datetime in
+                    descending order.
     """
     _, session_metadata_list = api_get_available_session_info()
     return sorted(

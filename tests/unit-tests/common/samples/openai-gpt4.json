@@ -5,11 +5,10 @@
   "token": "",
   "max_calls_per_second": 100,
   "max_concurrency": 100,
+  "model": "gpt-4",
   "params": {
     "timeout": 300,
-    "allow_retries": true,
-    "num_of_retries": 3,
-    "temperature": 0.5,
-    "model": "gpt-4"
+    "max_attempts": 3,
+    "temperature": 0.5
   }
 }

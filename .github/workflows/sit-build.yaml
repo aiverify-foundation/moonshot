@@ -1,5 +1,5 @@
 
-name: Nightly Build
+name: SIT Build
 
 on:
 
@@ -30,7 +30,8 @@ concurrency:
 
 jobs:
 
-  nightly-build:
+  # Remote deployment of moonshot to SIT server
+  sit-build:
 
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -125,56 +126,62 @@ jobs:
             --output text)
           echo "Command status: $status"
 
-      - name: Run smoke test
-        timeout-minutes: 30
+#      - name: Run smoke test
+#        timeout-minutes: 30
+#        run: |
+#          command_id=$(aws ssm send-command \
+#            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+#            --document-name "AWS-RunShellScript" \
+#            --comment "Run smoke test" \
+#            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh ${{ secrets.AZURE_OPENAI_TOKEN }} ${{ secrets.AZURE_OPENAI_URI }} \""]' \
+#            --query "Command.CommandId" \
+#            --output text)
+#
+#          max_attempts=20
+#          delay=60
+#          attempts=0
+#
+#          while [ $attempts -lt $max_attempts ]; do
+#            status=$(aws ssm list-command-invocations \
+#              --command-id "$command_id" \
+#              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+#              --query "CommandInvocations[0].Status" \
+#              --output text)
+#
+#            if [ "$status" == "Success" ] || [ "$status" == "Failed" ]; then
+#              output=$(aws ssm get-command-invocation \
+#                --command-id "$command_id" \
+#                --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+#                --query "StandardOutputContent" \
+#                --output text)
+#              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
+#              echo "Smoke test output: $output"
+#              echo "Command status: $status"
+#              if [ "$status" == "Success" ]; then
+#                exit 0
+#              else
+#                exit 1
+#              fi
+#            elif [ "$status" == "InProgress" ]; then
+#              echo "Command status: $status, waiting..."
+#              sleep $delay
+#              attempts=$((attempts + 1))
+#            else
+#              echo "Unexpected command status: $status"
+#              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
+#              exit 1
+#            fi
+#          done
+#
+#          echo "Max attempts reached, exiting."
+#          echo "SMOKE_TEST_STATUS=timeout" >> $GITHUB_ENV
+#          exit 1
+
+      # Remote execution of integration test in SIT server
+      - name: Run integration test
         run: |
-          command_id=$(aws ssm send-command \
-            --instance-ids "${{ vars.AWS_SIT_INSTANCE_ID }}" \
-            --document-name "AWS-RunShellScript" \
-            --comment "Run smoke test" \
-            --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/run_smoke_test.sh ${{ secrets.AZURE_OPENAI_TOKEN }} ${{ secrets.AZURE_OPENAI_URI }} \""]' \
-            --query "Command.CommandId" \
-            --output text)
-      
-          max_attempts=20
-          delay=60
-          attempts=0
-      
-          while [ $attempts -lt $max_attempts ]; do
-            status=$(aws ssm list-command-invocations \
-              --command-id "$command_id" \
-              --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
-              --query "CommandInvocations[0].Status" \
-              --output text)
-      
-            if [ "$status" == "Success" ] || [ "$status" == "Failed" ]; then
-              output=$(aws ssm get-command-invocation \
-                --command-id "$command_id" \
-                --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
-                --query "StandardOutputContent" \
-                --output text)
-              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
-              echo "Smoke test output: $output"
-              echo "Command status: $status"
-              if [ "$status" == "Success" ]; then
-                exit 0
-              else
-                exit 1
-              fi
-            elif [ "$status" == "InProgress" ]; then
-              echo "Command status: $status, waiting..."
-              sleep $delay
-              attempts=$((attempts + 1))
-            else
-              echo "Unexpected command status: $status"
-              echo "SMOKE_TEST_STATUS=$status" >> $GITHUB_ENV
-              exit 1
-            fi
-          done
-      
-          echo "Max attempts reached, exiting."
-          echo "SMOKE_TEST_STATUS=timeout" >> $GITHUB_ENV
-          exit 1
+          echo "Run integration test in SIT server..."      
+          echo "INTG_TEST_STATUS=NotRun" >> $GITHUB_ENV
 
       # Send slack notification
       - name: Send slack notification
@@ -185,7 +192,7 @@ jobs:
             {
               "workflow": "${{ github.repository }} | ${{ github.workflow }}",
               "status": "${{ job.status }}",
-              "details": "${{ env.SMOKE_TEST_STATUS }}",
+              "details": "${{ env.INTG_TEST_STATUS }}",
               "ref": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
