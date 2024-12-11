@@ -14,7 +14,7 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
 
     This function takes the name, description, and recipes for a new cookbook as input. It then creates a new
     CookbookArguments object with these details and an empty id. The id is left empty because it will be generated
-    from the name during the creation process. The function then calls the Cookbook's create_cookbook method to
+    from the name during the creation process. The function then calls the Cookbook's create method to
     create the new cookbook.
 
     Args:
@@ -48,7 +48,7 @@ def api_read_cookbook(cb_id: str) -> dict:
     """
     Retrieves a cookbook based on the provided cookbook ID.
 
-    This function reads a cookbook using the `read_cookbook` method
+    This function reads a cookbook using the `read` method
     of the `Cookbook` class, and converts the returned `Cookbook` object to a dictionary using its `to_dict` method.
 
     Args:
@@ -65,7 +65,7 @@ def api_read_cookbooks(cb_ids: conlist(str, min_length=1)) -> list[dict]:
     """
     Retrieves a list of cookbooks based on the provided list of cookbook IDs.
 
-    This function iterates over the list of provided cookbook IDs, reads each cookbook using the `read_cookbook` method
+    This function iterates over the list of provided cookbook IDs, reads each cookbook using the `read` method
     of the `Cookbook` class, and converts the returned `Cookbook` objects to dictionaries using their `to_dict` method.
     It then returns a list of these dictionary representations.
 
@@ -95,7 +95,7 @@ def api_update_cookbook(cb_id: str, **kwargs) -> bool:
         bool: True if the cookbook was successfully updated.
 
     Raises:
-        Exception: If there's an error during the update process.
+        RuntimeError: If the cookbook with the given ID does not exist.
     """
     # Check if the cookbook exists
     try:
@@ -139,7 +139,7 @@ def api_get_all_cookbook() -> list[dict]:
     """
     Retrieves all available cookbooks.
 
-    This function calls the `get_available_cookbooks` method of the `Cookbook` class, which returns a tuple
+    This function calls the `get_available_items` method of the `Cookbook` class, which returns a tuple
     containing a list of cookbook IDs and a list of `CookbookArguments` objects. The function then returns a list
     of dictionaries, each representing a cookbook.
 
@@ -154,7 +154,7 @@ def api_get_all_cookbook_name() -> list[str]:
     """
     Retrieves the names of all available cookbooks.
 
-    This function calls the `get_available_cookbooks` method of the `Cookbook` class, which returns a tuple
+    This function calls the `get_available_items` method of the `Cookbook` class, which returns a tuple
     containing a list of cookbook IDs and a list of `CookbookArguments` objects. The function then returns the
     list of cookbook IDs, which are the names of the cookbooks.
 

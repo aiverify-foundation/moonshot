@@ -21,10 +21,15 @@ def api_insert_bookmark(
     Args:
         name (str): The unique name of the bookmark.
         prompt (str): The associated prompt text for the bookmark.
+        prepared_prompt (str): The prepared prompt text for the bookmark.
         response (str): The corresponding response text for the bookmark.
-        context_strategy (str): The strategy used for context management in the bookmark.
-        prompt_template (str): The template used for generating the prompt.
-        attack_module (str): The attack module linked with the bookmark.
+        context_strategy (str, optional): The strategy used for context management in the bookmark. Defaults to "".
+        prompt_template (str, optional): The template used for generating the prompt. Defaults to "".
+        attack_module (str, optional): The attack module linked with the bookmark. Defaults to "".
+        metric (str, optional): The metric associated with the bookmark. Defaults to "".
+
+    Returns:
+        dict: A dictionary containing the details of the newly inserted bookmark.
     """
     # Create a new BookmarkArguments object
     bookmark_args = BookmarkArguments(
@@ -57,10 +62,10 @@ def api_get_bookmark(bookmark_name: str) -> dict:
     Retrieves the details of a specific bookmark by its name.
 
     Args:
-        bookmark_name (int): The name of the bookmark to retrieve.
+        bookmark_name (str): The name of the bookmark to retrieve.
 
     Returns:
-        dict: The bookmark details corresponding to the provided ID.
+        dict: The bookmark details corresponding to the provided name.
     """
     return Bookmark().get_bookmark(bookmark_name)
 
@@ -71,6 +76,9 @@ def api_delete_bookmark(bookmark_name: str) -> dict:
 
     Args:
         bookmark_name (str): The name of the bookmark to be removed.
+
+    Returns:
+        dict: A dictionary containing the details of the deleted bookmark.
     """
     return Bookmark().delete_bookmark(bookmark_name)
 
@@ -78,6 +86,9 @@ def api_delete_bookmark(bookmark_name: str) -> dict:
 def api_delete_all_bookmark() -> dict:
     """
     Removes all bookmarks from the database.
+
+    Returns:
+        dict: A dictionary indicating the result of the delete operation.
     """
     return Bookmark().delete_all_bookmark()
 

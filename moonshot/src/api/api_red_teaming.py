@@ -11,9 +11,7 @@ def api_get_all_attack_modules() -> list[str]:
     Retrieves all available attack module IDs.
 
     This function calls the `get_available_items` method from the `AttackModule` class to retrieve all available
-    attack modules.
-
-    It then extracts the IDs of each attack module and returns a list of these IDs.
+    attack modules. It then extracts the IDs of each attack module and returns a list of these IDs.
 
     Returns:
         list[str]: A list of strings, each representing an attack module ID.
@@ -27,10 +25,8 @@ def api_get_all_attack_module_metadata() -> list[dict]:
     Retrieves metadata for all available attack modules.
 
     This function calls the `get_available_items` method from the `AttackModule` class to retrieve all available
-    attack modules metadata.
-
-    It then extracts the metadata for each attack module and returns a list of dictionaries, each containing the
-    metadata of an attack module.
+    attack modules. It then extracts the metadata for each attack module and returns a list of dictionaries,
+    each containing the metadata of an attack module.
 
     Returns:
         list[dict]: A list of dictionaries, each representing the metadata of an attack module.
@@ -44,7 +40,7 @@ def api_delete_attack_module(am_id: str) -> bool:
     """
     Deletes an attack module by its identifier.
 
-    This function takes an attack module ID as input and calls the delete method from the AttackModule class
+    This function takes an attack module ID as input and calls the `delete` method from the `AttackModule` class
     to remove the specified attack module from storage.
 
     Args:

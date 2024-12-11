@@ -63,7 +63,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {"expected_output": True, "expected_id": "my-new-endpoint"},
             ),
@@ -75,7 +76,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {"expected_output": True, "expected_id": "my-new-endpoint-1"},
             ),
@@ -87,7 +89,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {"expected_output": True, "expected_id": "my-new-end-point-1-23"},
             ),
@@ -100,7 +103,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -116,7 +120,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -132,7 +137,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -148,7 +154,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -164,7 +171,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": None,
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -180,7 +188,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": {},
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -196,7 +205,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": [],
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -212,7 +222,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 0,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -228,7 +239,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": -1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -244,7 +256,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -260,7 +273,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -276,7 +290,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -292,7 +307,8 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
-                    "params": {"temperature": "0.5", "model": "gpt-4-turbo"},
+                    "model": "gpt-4-turbo",
+                    "params": {"temperature": "0.5"},
                 },
                 {
                     "expected_output": False,
@@ -308,6 +324,41 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
+                    "model": [],
+                    "params": {"temperature": "0.5"},
+                },
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                {
+                    "name": "valid-name",
+                    "connector_type": "OpenAIConnector",
+                    "uri": "",
+                    "token": "",
+                    "max_calls_per_second": 1,
+                    "max_concurrency": 1,
+                    "model": None,
+                    "params": {"temperature": "0.5"},
+                },
+                {
+                    "expected_output": False,
+                    "expected_error_message": "Input should be a valid string",
+                    "expected_exception": "ValidationError",
+                },
+            ),
+            (
+                {
+                    "name": "valid-name",
+                    "connector_type": "OpenAIConnector",
+                    "uri": "",
+                    "token": "",
+                    "max_calls_per_second": 1,
+                    "max_concurrency": 1,
+                    "model": "gpt-4-turbo",
                     "params": [],
                 },
                 {
@@ -324,6 +375,7 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
+                    "model": "gpt-4-turbo",
                     "params": "",
                 },
                 {
@@ -340,6 +392,7 @@ class TestCollectionApiConnectorEndpoint:
                     "token": "",
                     "max_calls_per_second": 1,
                     "max_concurrency": 1,
+                    "model": "gpt-4-turbo",
                     "params": None,
                 },
                 {
@@ -364,7 +417,8 @@ class TestCollectionApiConnectorEndpoint:
 
         The test cases include:
         - Valid cases with proper input arguments that should result in successful endpoint creation.
-        - Invalid cases with improper input arguments that should raise specific exceptions with appropriate error messages.
+        - Invalid cases with improper input arguments that should raise specific exceptions with
+          appropriate error messages.
         """
         if expected_dict["expected_output"]:
             # Test valid cases where endpoint creation should succeed.
@@ -376,6 +430,7 @@ class TestCollectionApiConnectorEndpoint:
                     input_args["token"],
                     input_args["max_calls_per_second"],
                     input_args["max_concurrency"],
+                    input_args["model"],
                     input_args["params"],
                 )
                 == expected_dict["expected_id"]
@@ -391,6 +446,7 @@ class TestCollectionApiConnectorEndpoint:
                         input_args["token"],
                         input_args["max_calls_per_second"],
                         input_args["max_concurrency"],
+                        input_args["model"],
                         input_args["params"],
                     )
                 assert e.value.args[0] == expected_dict["expected_error_message"]
@@ -404,6 +460,7 @@ class TestCollectionApiConnectorEndpoint:
                         input_args["token"],
                         input_args["max_calls_per_second"],
                         input_args["max_concurrency"],
+                        input_args["model"],
                         input_args["params"],
                     )
                 assert len(e.value.errors()) == 1
@@ -434,12 +491,11 @@ class TestCollectionApiConnectorEndpoint:
                         "token": "",
                         "max_calls_per_second": 100,
                         "max_concurrency": 100,
+                        "model": "gpt-4",
                         "params": {
                             "timeout": 300,
-                            "allow_retries": True,
-                            "num_of_retries": 3,
+                            "max_attempts": 3,
                             "temperature": 0.5,
-                            "model": "gpt-4",
                         },
                     }
                 },
@@ -457,8 +513,8 @@ class TestCollectionApiConnectorEndpoint:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "Connector Endpoint ID is empty.",
-                    "expected_exception": "RuntimeError",
+                    "expected_error_message": "String should have at least 1 character",
+                    "expected_exception": "ValidationError",
                 },
             ),
             (
@@ -512,7 +568,8 @@ class TestCollectionApiConnectorEndpoint:
 
         Args:
             ep_id (str): The endpoint ID to read.
-            expected_dict (dict): A dictionary containing the expected output or the expected error message and exception.
+            expected_dict (dict): A dictionary containing the expected output or the expected error message
+                                  and exception.
 
         Raises:
             AssertionError: If the actual output or exception does not match the expected value.
@@ -770,8 +827,8 @@ class TestCollectionApiConnectorEndpoint:
                 "",
                 {
                     "expected_output": False,
-                    "expected_error_message": "No connectors_endpoints found with ID: ",
-                    "expected_exception": "RuntimeError",
+                    "expected_error_message": "String should have at least 1 character",
+                    "expected_exception": "ValidationError",
                 },
             ),
             (
@@ -820,8 +877,11 @@ class TestCollectionApiConnectorEndpoint:
         """
         Test the deletion of an API endpoint.
 
-        This test function verifies that the api_delete_endpoint function behaves as expected when provided with an endpoint ID.
-        It checks if the function returns the correct response or raises the expected exceptions with the appropriate error messages.
+        This test function verifies that the api_delete_endpoint function behaves as expected when provided
+        with an endpoint ID.
+
+        It checks if the function returns the correct response or raises the expected exceptions with the
+        appropriate error messages.
 
         Args:
             ep_id (str): The ID of the endpoint to be deleted.
@@ -853,6 +913,11 @@ class TestCollectionApiConnectorEndpoint:
                     in e.value.errors()[0]["msg"]
                 )
 
+            elif expected_dict["expected_exception"] == "ValueError":
+                with pytest.raises(ValueError) as e:
+                    api_delete_endpoint(ep_id)
+                assert e.value.args[0] == expected_dict["expected_error_message"]
+
             else:
                 assert False
 
@@ -876,13 +941,8 @@ class TestCollectionApiConnectorEndpoint:
                 "token": "",
                 "max_calls_per_second": 100,
                 "max_concurrency": 100,
-                "params": {
-                    "timeout": 300,
-                    "allow_retries": True,
-                    "num_of_retries": 3,
-                    "temperature": 0.5,
-                    "model": "gpt-4",
-                },
+                "model": "gpt-4",
+                "params": {"timeout": 300, "max_attempts": 3, "temperature": 0.5},
             }
         ]
 
@@ -924,7 +984,8 @@ class TestCollectionApiConnectorEndpoint:
         """
         Test the api_get_all_endpoint_name function.
 
-        This test ensures that the api_get_all_endpoint_name function returns a list containing the correct endpoint names.
+        This test ensures that the api_get_all_endpoint_name function returns a list containing
+        the correct endpoint names.
         """
         detected_endpoints = ["openai-gpt4"]
 

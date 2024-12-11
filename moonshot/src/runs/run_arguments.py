@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import json
 
 from pydantic import BaseModel
 
@@ -83,20 +84,7 @@ class RunArguments(BaseModel):
         Returns:
             tuple: A tuple containing the run arguments ready for database insertion.
         """
-        return (
-            self.runner_id,
-            self.runner_type.name.lower(),
-            str(self.runner_args),
-            str(self.endpoints),
-            self.results_file,
-            self.start_time,
-            self.end_time,
-            self.duration,
-            str(self.error_messages),
-            str(self.raw_results),
-            str(self.results),
-            self.status.name.lower(),
-        )
+        return self._to_tuple(include_run_id=False)
 
     def to_tuple(self) -> tuple:
         """
@@ -112,7 +100,42 @@ class RunArguments(BaseModel):
         Returns:
             tuple: A tuple containing the serialized attributes of the RunArguments instance.
         """
-        return (
+        return self._to_tuple(include_run_id=True)
+
+    def _to_tuple(self, include_run_id: bool) -> tuple:
+        """
+        Converts the RunArguments object to a tuple format.
+
+        This method serializes the RunArguments instance into a tuple, including or excluding the run_id based on the
+        include_run_id parameter. It ensures that all dictionary keys are converted to strings and JSON-encodes
+        the raw_results and results attributes.
+
+        Args:
+            include_run_id (bool): A flag indicating whether to include the run_id in the resulting tuple.
+
+        Returns:
+            tuple: A tuple containing the serialized attributes of the RunArguments instance.
+        """
+
+        def convert_keys_to_str(d):
+            """
+            Recursively converts all keys in a dictionary to strings.
+
+            Args:
+                d (dict): The dictionary whose keys need to be converted.
+
+            Returns:
+                dict: A new dictionary with all keys converted to strings.
+            """
+
+            def convert_value(v):
+                if isinstance(v, dict):
+                    return {str(k): convert_value(val) for k, val in v.items()}
+                return v
+
+            return {str(k): convert_value(v) for k, v in d.items()}
+
+        base_tuple = (
             self.runner_id,
             self.runner_type.name.lower(),
             str(self.runner_args),
@@ -122,11 +145,11 @@ class RunArguments(BaseModel):
             self.end_time,
             self.duration,
             str(self.error_messages),
-            str(self.raw_results),
-            str(self.results),
+            json.dumps(convert_keys_to_str(self.raw_results)),
+            json.dumps(self.results),
             self.status.name.lower(),
-            self.run_id,
         )
+        return base_tuple + (self.run_id,) if include_run_id else base_tuple
 
     @classmethod
     def from_tuple(cls, run_record: tuple) -> RunArguments:
@@ -156,7 +179,7 @@ class RunArguments(BaseModel):
             end_time=float(run_record[7]),
             duration=run_record[8],
             error_messages=ast.literal_eval(run_record[9]),
-            raw_results=ast.literal_eval(run_record[10]),
-            results=ast.literal_eval(run_record[11]),
+            raw_results=json.loads(run_record[10]),
+            results=json.loads(run_record[11]),
             status=RunStatus(run_record[12]),
         )
