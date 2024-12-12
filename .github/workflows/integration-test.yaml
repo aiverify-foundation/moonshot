@@ -133,6 +133,7 @@ jobs:
 
     - name: Upload Playwright Traces
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
           name: playwright-trace
           path: |
