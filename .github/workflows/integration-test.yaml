@@ -146,6 +146,14 @@ jobs:
          npx playwright install --with-deps
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" npx playwright test
 
+    - name: Upload Playwright Traces
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+          name: playwright-trace
+          path: |
+            test-results
+
     - name: TestRail CLI upload results
       env:
         TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
