@@ -220,7 +220,7 @@ class Metric:
                 EnvVariables.METRICS.name, metric_config, "json"
             )
             # Retrieve the configurations of the specified metric, and return empty list if no requirements
-            metric_config = obj_results.get("me_id", {})
+            metric_config = obj_results.get(me_id, {})
             return {"metric_id": me_id, "metric_configurations": metric_config}
 
         except Exception as e:
