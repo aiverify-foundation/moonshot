@@ -638,13 +638,13 @@ class AttackModule:
                 )
 
     @staticmethod
-    def update_attack_module_config(am_id: str, value: Any) -> bool:
+    def update_attack_module_config(am_id: str, value: dict) -> bool:
         """
         Updates the attack_modules_config.json with the specified key-value pair.
 
         Args:
             am_id (str): The attack module in the configuration to update.
-            value (Any): The new value to set for the specified attack module.
+            value (dict): The new value in dict to set for the specified attack module.
 
         Raises:
             Exception: If an error occurs during the update process.
@@ -656,7 +656,7 @@ class AttackModule:
                 EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
             )
             # Update the configuration with the new key-value pair
-            obj_results[am_id] = value
+            obj_results[am_id].update(value)
             # Write the updated configuration back to storage
             Storage.create_object(
                 obj_type=EnvVariables.ATTACK_MODULES.name,
@@ -692,10 +692,9 @@ class AttackModule:
             if am_id in obj_results:
                 del obj_results[am_id]
             else:
-                logger.warning(
-                    f"[AttackModule] '{am_id}' does not have any configuration."
+                logger.info(
+                    f"[AttackModule] '{am_id}' does not have any configuration to delete."
                 )
-
             # Write the updated configuration back to storage
             Storage.create_object(
                 obj_type=EnvVariables.ATTACK_MODULES.name,
@@ -713,14 +712,15 @@ class AttackModule:
     @staticmethod
     def delete(am_id: str) -> bool:
         """
-        Deletes the specified attack module from storage.
+        Deletes an attack module identified by its unique attack module ID.
 
         This method attempts to delete the attack module identified by the given ID from the storage.
         If the deletion is successful, it returns True. If an exception occurs during the deletion process,
         it prints an error message and re-raises the exception.
+        It also deletes the configuration of the attack module if it has any.
 
         Args:
-            am_id (str): The ID of the attack module to be deleted.
+            am_id (str): The unique identifier of the attack module to be deleted.
 
         Returns:
             bool: True if the attack module was successfully deleted.

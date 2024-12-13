@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic import validate_call
 
 from moonshot.src.redteaming.attack.attack_module import AttackModule
@@ -70,7 +68,7 @@ def api_get_all_attack_modules_config() -> dict:
     return AttackModule.get_all_attack_modules_config()
 
 
-def api_update_attack_module_config(am_id: str, value: Any) -> bool:
+def api_update_attack_module_config(am_id: str, **kwargs) -> bool:
     """
     Updates the configuration of a specific attack module.
 
@@ -78,7 +76,7 @@ def api_update_attack_module_config(am_id: str, value: Any) -> bool:
 
     Args:
         am_id (str): The unique identifier of the attack module to be updated.
-        value (Any): The new configuration value to be set for the attack module.
+        **kwargs: Additional keyword arguments for updating the metric configuration.
 
     Returns:
         bool: True if the configuration was successfully updated.
@@ -86,7 +84,7 @@ def api_update_attack_module_config(am_id: str, value: Any) -> bool:
     Raises:
         Exception: If the update process encounters an error.
     """
-    return AttackModule.update_attack_module_config(am_id, value)
+    return AttackModule.update_attack_module_config(am_id, kwargs)
 
 
 def api_delete_attack_module_config(am_id: str) -> bool:
