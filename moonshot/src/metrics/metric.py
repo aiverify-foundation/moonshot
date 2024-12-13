@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from pydantic import validate_call
 
@@ -53,7 +52,7 @@ class Metric:
 
         This method attempts to delete the metric with the given ID from the storage. If the deletion is successful,
         it returns True. If an exception occurs during the deletion process, it prints an error message and re-raises
-        the exception.
+        the exception. It also deletes the configuration of the metric if it has any.
 
         Args:
             met_id (str): The unique identifier of the metric to be deleted.
@@ -66,6 +65,7 @@ class Metric:
         """
         try:
             Storage.delete_object(EnvVariables.METRICS.name, met_id, "py")
+            Metric.delete_metric_config(met_id)
             return True
 
         except Exception as e:
@@ -197,7 +197,7 @@ class Metric:
         return met_metadata, cache_updated
 
     @staticmethod
-    def get_all_metrics_config() -> dict:
+    def get_all_metric_config() -> dict:
         """
         Retrieves the configuration for all metrics from metrics_config.json.
 
@@ -237,25 +237,25 @@ class Metric:
                 )
 
     @staticmethod
-    def update_metric_config(me_id: str, value: Any) -> bool:
+    def update_metric_config(met_id: str, value: dict) -> bool:
         """
         Updates the metrics_config.json with the specified key-value pair.
 
         Args:
-            me_id (str): The metric in the configuration to update.
-            value (Any): The new value to set for the specified key.
+            met_id (str): The metric in the configuration to update.
+            value (dict): The new value in dict to set for the specified key.
 
         Raises:
             Exception: If an error occurs during the update process.
         """
-        metric_config = "metrics_configs"
+        metric_config = "metrics_config"
         try:
             # Read the existing configuration
             obj_results = Storage.read_object(
                 EnvVariables.METRICS.name, metric_config, "json"
             )
             # Update the configuration with the new key-value pair
-            obj_results[me_id] = value
+            obj_results[met_id].update(value)
             # Write the updated configuration back to storage
             Storage.create_object(
                 obj_type=EnvVariables.METRICS.name,
@@ -269,7 +269,7 @@ class Metric:
             raise e
 
     @staticmethod
-    def delete_metric_config(me_id: str) -> bool:
+    def delete_metric_config(met_id: str) -> bool:
         """
         Deletes the specified metric from metrics_config.json.
 
@@ -286,10 +286,12 @@ class Metric:
                 EnvVariables.METRICS.name, metric_config, "json"
             )
             # Delete the metric from the configuration if it exists
-            if me_id in obj_results:
-                del obj_results[me_id]
+            if met_id in obj_results:
+                del obj_results[met_id]
             else:
-                logger.warning(f"[Metric] '{me_id}' does not have any configuration.")
+                logger.info(
+                    f"[Metric] '{met_id}' does not have any configuration to delete."
+                )
 
             # Write the updated configuration back to storage
             Storage.create_object(
@@ -301,6 +303,6 @@ class Metric:
             return True
         except Exception as e:
             logger.error(
-                f"[Metric] Failed to delete metric {me_id} from metric configuration: {str(e)}"
+                f"[Metric] Failed to delete metric {met_id} from metric configuration: {str(e)}"
             )
             raise e

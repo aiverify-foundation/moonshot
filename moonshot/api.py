@@ -43,11 +43,11 @@ from moonshot.src.api.api_dataset import (
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
     api_delete_metric,
-    api_delete_metrics_config,
+    api_delete_metric_config,
     api_get_all_metric,
+    api_get_all_metric_config,
     api_get_all_metric_name,
-    api_get_all_metrics_config,
-    api_update_metrics_config,
+    api_update_metric_config,
 )
 from moonshot.src.api.api_prompt_template import (
     api_delete_prompt_template,
@@ -132,9 +132,9 @@ __all__ = [
     "api_delete_metric",
     "api_get_all_metric",
     "api_get_all_metric_name",
-    "api_get_all_metrics_config",
-    "api_update_metrics_config",
-    "api_delete_metrics_config",
+    "api_get_all_metric_config",
+    "api_update_metric_config",
+    "api_delete_metric_config",
     "api_get_all_prompt_template_detail",
     "api_get_all_prompt_template_name",
     "api_delete_prompt_template",
