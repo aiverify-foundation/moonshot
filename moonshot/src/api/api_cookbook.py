@@ -2,6 +2,7 @@ from pydantic import conlist, validate_call
 
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.recipes.recipe import Recipe
 
 
 # ------------------------------------------------------------------------------
@@ -107,6 +108,20 @@ def api_update_cookbook(cb_id: str, **kwargs) -> bool:
     for key, value in kwargs.items():
         if hasattr(existing_cookbook, key):
             setattr(existing_cookbook, key, value)
+
+    # Update the cookbook's categories and tags if any of the recipe(s) are changed
+    if "recipes" in kwargs:
+        consolidated_tags = set()
+        consolidated_categories = set()
+        for key, value in kwargs.items():
+            if key == "recipes":
+                for recipe_id in value:
+                    recipe = Recipe.read(recipe_id)
+                    consolidated_tags.update(recipe.tags)
+                    consolidated_categories.update(recipe.categories)
+        # Consolidate and set the tags and categories
+        existing_cookbook.tags = list(consolidated_tags)
+        existing_cookbook.categories = list(consolidated_categories)
 
     # Perform pydantic check on the updated existing cookbook
     CookbookArguments.model_validate(existing_cookbook.to_dict())
