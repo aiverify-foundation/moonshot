@@ -190,7 +190,7 @@ def _display_results(results_list):
         recipes = metadata["recipes"]
         cookbooks = metadata["cookbooks"]
         endpoints = metadata["endpoints"]
-        num_of_prompts = metadata["num_of_prompts"]
+        prompt_selection_percentage = metadata["prompt_selection_percentage"]
         random_seed = metadata["random_seed"]
         system_prompt = metadata["system_prompt"]
         idx = result.get("idx", idx)
@@ -200,7 +200,9 @@ def _display_results(results_list):
         recipes_info = display_view_list_format("Recipes", recipes)
         cookbooks_info = display_view_list_format("Cookbooks", cookbooks)
         endpoints_info = display_view_list_format("Endpoints", endpoints)
-        prompts_info = display_view_str_format("Number of Prompts", num_of_prompts)
+        prompts_info = display_view_str_format(
+            "Prompt Selection Percentage", prompt_selection_percentage
+        )
         seed_info = display_view_str_format("Seed", random_seed)
         system_prompt_info = display_view_str_format("System Prompt", system_prompt)
 
