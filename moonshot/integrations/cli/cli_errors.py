@@ -52,8 +52,11 @@ ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION = (
 ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION_1 = (
     "The 'endpoints' argument must evaluate to a list of strings."
 )
-ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION = (
-    "The 'num_of_prompts' argument must be an integer."
+ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be an integer."
+)
+ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be between 1 - 100."
 )
 ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION = (
     "The 'random_seed' argument must be an integer."
@@ -278,8 +281,11 @@ ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION = (
 ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION_1 = (
     "The 'endpoints' argument must evaluate to a list of strings."
 )
-ERROR_BENCHMARK_RUN_RECIPE_NUM_OF_PROMPTS_VALIDATION = (
-    "The 'num_of_prompts' argument must be an integer."
+ERROR_BENCHMARK_RUN_RECIPE_PROMPT_SELECTION_PERCENTAGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be an integer."
+)
+ERROR_BENCHMARK_RUN_RECIPE_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be between 1 - 100."
 )
 ERROR_BENCHMARK_RUN_RECIPE_RANDOM_SEED_VALIDATION = (
     "The 'random_seed' argument must be an integer."
