@@ -156,7 +156,7 @@ jobs:
          echo "Running Benchmarking Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
 
-    - name: Run Integration UI Test
+    - name: Run Integration CLI Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
@@ -167,7 +167,6 @@ jobs:
       run: |
          source venv/bin/activate
          cd moonshot-integration-testing/cli-integration-testing
-         cd tests
          pip install python-dotenv
          pip install pytest
          pytest
