@@ -95,7 +95,9 @@ class BenchmarkingResult:
             "recipes": results_args.params.get("recipes"),
             "cookbooks": results_args.params.get("cookbooks"),
             "endpoints": results_args.params.get("endpoints"),
-            "num_of_prompts": results_args.params.get("num_of_prompts"),
+            "prompt_selection_percentage": results_args.params.get(
+                "prompt_selection_percentage"
+            ),
             "random_seed": results_args.params.get("random_seed"),
             "system_prompt": results_args.params.get("system_prompt"),
         }

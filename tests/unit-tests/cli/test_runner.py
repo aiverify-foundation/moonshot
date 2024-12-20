@@ -30,7 +30,7 @@ class TestCollectionCliRunner:
                 "recipes": ["bbq", "mmlu"],
                 "cookbooks": None,
                 "endpoints": ["openai-gpt35-turbo"],
-                "num_of_prompts": 1,
+                "prompt_selection_percentage": 100,
                 "random_seed": 1,
                 "system_prompt": "You are an intelligent AI",
             },
