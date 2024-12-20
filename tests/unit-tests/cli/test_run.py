@@ -14,7 +14,7 @@ class TestCollectionCliRun:
             "runner_type": RunnerType.BENCHMARK,
             "runner_args": {
                 "recipes": ["bbq"],
-                "num_of_prompts": 1,
+                "prompt_selection_percentage": 100,
                 "random_seed": 1,
                 "system_prompt": "You are an intelligent AI",
                 "runner_processing_module": "benchmarking",
@@ -37,7 +37,7 @@ class TestCollectionCliRun:
             "runner_type": RunnerType.BENCHMARK,
             "runner_args": {
                 "recipes": ["bbq"],
-                "num_of_prompts": 1,
+                "prompt_selection_percentage": 100,
                 "random_seed": 1,
                 "system_prompt": "You are an intelligent AI",
                 "runner_processing_module": "benchmarking",
