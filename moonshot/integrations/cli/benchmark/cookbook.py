@@ -436,9 +436,20 @@ def _display_cookbooks(cookbooks_list):
     table.add_column("Cookbook", justify="left", width=78)
     table.add_column("Contains", justify="left", width=20, overflow="fold")
     for idx, cookbook in enumerate(cookbooks_list, 1):
-        id, name, description, recipes, *other_args = cookbook.values()
+        (
+            id,
+            name,
+            tags,
+            categories,
+            description,
+            recipes,
+            *other_args,
+        ) = cookbook.values()
         idx = cookbook.get("idx", idx)
-        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n\n{description}"
+        cookbook_info += (
+            f"\n\n[blue]Tags: {tags}[/blue]\n[blue]Categories: {categories}[/blue]\n"
+        )
         recipes_info = display_view_list_format("Recipes", recipes)
         table.add_section()
         table.add_row(str(idx), cookbook_info, recipes_info)
@@ -459,11 +470,11 @@ def _display_view_cookbook(cookbook_info):
     Returns:
         None
     """
-    id, name, description, recipes = cookbook_info.values()
+    id, name, tags, categories, description, recipes = cookbook_info.values()
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
-            title=f'Cookbook "{name}"',
+            title=f'Cookbook: "{name}"\n Tags: {tags}\n Categories: {categories}\n',
             show_lines=True,
             expand=True,
             header_style="bold",
@@ -471,6 +482,7 @@ def _display_view_cookbook(cookbook_info):
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
         table.add_column("Contains", justify="left", width=20, overflow="fold")
+
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,

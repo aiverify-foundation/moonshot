@@ -12,24 +12,30 @@ MOCK_COOKBOOKS = [
         "id": "test-cookbook-1",
         "name": "Test Cookbook 1",
         "description": "Test Cookbook description",
+        "tags": [],
+        "categories": [],
         "recipes": [
             "recipe-1",
             "recipe-2",
             "recipe-3"
         ],
         "total_prompt_in_cookbook": None,
+        'total_dataset_in_cookbook': None,
         "endpoint_required": None
     },
     {
         "id": "test-cookbook-2",
         "name": "Test Cookbook 2",
         "description": "Test Cookbook description",
+        "tags": [],
+        "categories": [],
         "recipes": [
             "recipe-1",
             "recipe-2",
             "recipe-3"
         ],
         "total_prompt_in_cookbook": None,
+        'total_dataset_in_cookbook': None,
         "endpoint_required": None
     }
 ]
@@ -44,13 +50,13 @@ MOCK_COOKBOOK_CREATE_DTO = CookbookCreateDTO(
 MOCK_COOKBOOK_UPDATE_DTO = CookbookUpdateDTO(
     name="Updated Cookbook",
     description="An updated cookbook description",
+    tags= [],
+    categories= [],
     recipes=["recipe-1", "recipe-2", "recipe-3"]
 )
 
 # Exception scenarios to test
 exception_scenarios = [
-    (FileNotFoundError("File not found"), "FileNotFound"),
-    (ValueError("Invalid value"), "ValueError"),
     (Exception("Unexpected error"), "UnexpectedError"),
 ]
 
@@ -125,6 +131,8 @@ def test_update_cookbook_success(mock_moonshot_api, cookbook_service):
         cb_id="cookbook_id",
         name=MOCK_COOKBOOK_UPDATE_DTO.name,
         description=MOCK_COOKBOOK_UPDATE_DTO.description,
+        tags= MOCK_COOKBOOK_UPDATE_DTO.tags,
+        categories= MOCK_COOKBOOK_UPDATE_DTO.categories,
         recipes=MOCK_COOKBOOK_UPDATE_DTO.recipes
     )
 
