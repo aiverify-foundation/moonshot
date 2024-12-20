@@ -155,7 +155,10 @@ jobs:
     #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
     #      echo "Running Benchmarking Test Cases"
     #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
-        
+    
+    - name: Print Environment Variables
+      run: env
+      
     - name: Run Integration CLI Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
@@ -164,11 +167,13 @@ jobs:
         MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
         MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
         CLI_DIR: ${{ secrets.CLI_DIR }}
+        ACTIONS_STEP_DEBUG: true
+        ACTIONS_RUNNER_DEBUG: true
       run: |
          source venv/bin/activate
          cd moonshot-integration-testing/cli-integration-testing
-         echo "Current Directory: $PWD"
-         echo "GitHub Workspace: $GITHUB_WORKSPACE"
+         echo "GitHub Workspace: ${GITHUB_WORKSPACE}"
+         echo "Substring: ${GITHUB_WORKSPACE:0:10}"
          pip install python-dotenv
          pip install pytest
          pytest
