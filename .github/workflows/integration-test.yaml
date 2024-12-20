@@ -110,7 +110,7 @@ jobs:
       run: |
         source venv/bin/activate
         pip install nltk
-        python -c "import nltk; nltk.download('stopwords')"
+        python -c "import nltk; nltk.download('stopwords');nltk.download('averaged_perceptron_tagger'); nltk.download('omw');nltk.download('universal_tagset'); nltk.download('wordnet');nltk.download('punkt')"
     
     - name: Setup Moonshot UI
       run: |
