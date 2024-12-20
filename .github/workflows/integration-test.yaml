@@ -167,7 +167,8 @@ jobs:
       run: |
          source venv/bin/activate
          cd moonshot-integration-testing/cli-integration-testing
-         echo pwd
+         echo "Current Directory: $PWD"
+         echo "GitHub Workspace: $GITHUB_WORKSPACE"
          pip install python-dotenv
          pip install pytest
          pytest
