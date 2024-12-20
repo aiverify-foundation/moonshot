@@ -167,6 +167,7 @@ jobs:
       run: |
          source venv/bin/activate
          cd moonshot-integration-testing/cli-integration-testing
+         echo pwd
          pip install python-dotenv
          pip install pytest
          pytest
