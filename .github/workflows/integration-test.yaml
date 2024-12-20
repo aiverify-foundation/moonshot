@@ -156,6 +156,14 @@ jobs:
          echo "Running Benchmarking Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
 
+     # Download Ollama
+    - name: Download Ollama for cli testing
+      run: |
+        source venv/bin/activate
+        curl -fsSL https://ollama.com/install.sh | sh
+        ollama pull llama3
+        ollama run llama3
+        
     - name: Run Integration CLI Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
