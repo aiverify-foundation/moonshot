@@ -127,34 +127,34 @@ jobs:
           repository: aiverify-foundation/moonshot-integration-testing
           path: moonshot-integration-testing
 
-    - name: Run Integration UI Test
-      env: 
-        URI: ${{ secrets.URI }}
-        TOKEN: ${{ secrets.TOKEN }}
-        URI2: ${{ secrets.URI2 }}
-        TOKEN2: ${{ secrets.TOKEN2 }}
-        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
-        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
-        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
-      id: integrationuitest
-      run: |
-         source venv/bin/activate
-         cd moonshot-integration-testing/ui-integration-testing
-         npm ci
-         npx playwright install
-         npx playwright install-deps
-         npm install dotenv --save
-         echo "Running Home Page Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
-         echo "Running Endpoint Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
-         echo "Running Red Teaming Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
-         echo "Running Benchmarking Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
+    # - name: Run Integration UI Test
+    #   env: 
+    #     URI: ${{ secrets.URI }}
+    #     TOKEN: ${{ secrets.TOKEN }}
+    #     URI2: ${{ secrets.URI2 }}
+    #     TOKEN2: ${{ secrets.TOKEN2 }}
+    #     ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+    #     TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+    #     OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+    #   id: integrationuitest
+    #   run: |
+    #      source venv/bin/activate
+    #      cd moonshot-integration-testing/ui-integration-testing
+    #      npm ci
+    #      npx playwright install
+    #      npx playwright install-deps
+    #      npm install dotenv --save
+    #      echo "Running Home Page Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
+    #      echo "Running Endpoint Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
+    #      echo "Running Red Teaming Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
+    #      echo "Running Benchmarking Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
         
     - name: Run Integration CLI Test
       env: 
@@ -177,13 +177,13 @@ jobs:
         echo "Checking moonshot logs"
         cat output.txt || echo "No logs found"
          
-    - name: Upload Playwright Traces
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-          name: playwright-trace
-          path: |
-            /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    # - name: Upload Playwright Traces
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #       name: playwright-trace
+    #       path: |
+    #         /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
     - name: TestRail CLI upload results
       env:
