@@ -2,6 +2,7 @@ from pydantic import conlist, validate_call
 
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.cookbooks.cookbook_arguments import CookbookArguments
+from moonshot.src.recipes.recipe import Recipe
 
 
 # ------------------------------------------------------------------------------
@@ -20,6 +21,8 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     Args:
         name (str): The name of the new cookbook.
         description (str): A brief description of the new cookbook.
+        tags (list[str]): A list of tags associated with the cookbook.
+        categories (list[str]): A list of categories the cookbook belongs to.
         recipes (list[str]): A list of recipes to be included in the new cookbook.
 
     Returns:
@@ -29,10 +32,13 @@ def api_create_cookbook(name: str, description: str, recipes: list[str]) -> str:
     # We do not need to provide the id.
     # This is because during creation:
     # 1. the id is slugify from the name and stored as id.
+    # We do not need to provide tags and categories as they will be generated based on the recipes selected.
     cb_args = CookbookArguments(
         id="",
         name=name,
         description=description,
+        tags=[],
+        categories=[],
         recipes=recipes,
     )
     return Cookbook.create(cb_args)
@@ -102,6 +108,20 @@ def api_update_cookbook(cb_id: str, **kwargs) -> bool:
     for key, value in kwargs.items():
         if hasattr(existing_cookbook, key):
             setattr(existing_cookbook, key, value)
+
+    # Update the cookbook's categories and tags if any of the recipe(s) are changed
+    if "recipes" in kwargs:
+        consolidated_tags = set()
+        consolidated_categories = set()
+        for key, value in kwargs.items():
+            if key == "recipes":
+                for recipe_id in value:
+                    recipe = Recipe.read(recipe_id)
+                    consolidated_tags.update(recipe.tags)
+                    consolidated_categories.update(recipe.categories)
+        # Consolidate and set the tags and categories
+        existing_cookbook.tags = list(consolidated_tags)
+        existing_cookbook.categories = list(consolidated_categories)
 
     # Perform pydantic check on the updated existing cookbook
     CookbookArguments.model_validate(existing_cookbook.to_dict())

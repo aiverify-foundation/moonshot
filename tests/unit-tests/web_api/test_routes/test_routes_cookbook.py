@@ -8,6 +8,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         None,
@@ -18,6 +20,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     (
         {
             "description": "A test cookbook description without name",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         None,
@@ -28,7 +32,9 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     (
         {
             "name": "Test Cookbook",
-            "description": "A test cookbook description without recipes"
+            "description": "A test cookbook description without recipes",
+            "tags": [],
+            "categories": []
         },
         None,
         422,
@@ -38,7 +44,9 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     (
         {
             "name": "Test Cookbook",
-            "recipes": ["recipe1", "recipe2"]
+            "recipes": ["recipe1", "recipe2"],
+            "tags": [],
+            "categories": [],
         },
         None,
         200,
@@ -47,6 +55,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     # Missing 'name' and 'description'
     (
         {
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         None,
@@ -56,7 +66,9 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     # Missing 'recipes' and 'description'
     (
         {
-            "name": "Test Cookbook"
+            "name": "Test Cookbook",
+            "tags": [],
+            "categories": [],
         },
         None,
         422,
@@ -65,6 +77,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
     # Missing 'name' and 'recipes'
     (
         {
+            "tags": [],
+            "categories": [],
             "description": "A test cookbook description without name and recipes"
         },
         None,
@@ -76,6 +90,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "",
             "description": "A test cookbook description with empty name",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         None,
@@ -87,6 +103,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description with empty recipes",
+            "tags": [],
+            "categories": [],
             "recipes": []
         },
         None,
@@ -98,6 +116,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description with invalid recipes type",
+            "tags": [],
+            "categories": [],
             "recipes": "recipe1"
         },
         None,
@@ -116,6 +136,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("A file not found error occurred", "create_cookbook", "FileNotFound"),
@@ -125,6 +147,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("A validation error occurred", "create_cookbook", "ValidationError"),
@@ -134,6 +158,8 @@ from moonshot.integrations.web_api.services.utils.exceptions_handler import Serv
         {
             "name": "Test Cookbook",
             "description": "A test cookbook description",
+            "tags": [],
+            "categories": [],
             "recipes": ["recipe1", "recipe2"]
         },
         ServiceException("An unexpected error occurred", "create_cookbook", "UnknownError"),
@@ -164,14 +190,19 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-1",
                 "name": "Test Cookbook 1",
                 "description": "Description for Test Cookbook 1",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                'total_dataset_in_cookbook': None,
                 "endpoint_required": None
             },
             {
                 "id": "test-cookbook-2",
                 "name": "Test Cookbook 2",
                 "description": "Description for Test Cookbook 2",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -185,6 +216,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-1",
                 "name": "Test Cookbook 1",
                 "description": "Description for Test Cookbook 1",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,                
@@ -194,6 +227,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-2",
                 "name": "Test Cookbook 2",
                 "description": "Description for Test Cookbook 2",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -209,6 +244,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-1",
                 "name": "Filtered Cookbook 1",
                 "description": "Filtered Description 1",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-3"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -222,6 +259,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-1",
                 "name": "Filtered Cookbook 1",
                 "description": "Filtered Description 1",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-3"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -237,8 +276,11 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-tagged",
                 "name": "Tagged Cookbook",
                 "description": "A cookbook with a specific tag",
+                "tags": [],
+                "categories": [],
                 "recipes": ["one-recipe-contains-this-tag"],
                 "total_prompt_in_cookbook": None,
+                'total_dataset_in_cookbook': None,
                 "endpoint_required": None
             }
         ],
@@ -249,6 +291,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-tagged",
                 "name": "Tagged Cookbook",
                 "description": "A cookbook with a specific tag",
+                "tags": [],
+                "categories": [],
                 "recipes": ["one-recipe-contains-this-tag"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -264,8 +308,11 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-category",
                 "name": "Category Cookbook",
                 "description": "A cookbook with a specific category",
+                "tags": [],
+                "categories": [],
                 "recipes": ["one-recipe-contains-this-category"],
                 "total_prompt_in_cookbook": None,
+                'total_dataset_in_cookbook': None,
                 "endpoint_required": None
             }
         ],
@@ -276,6 +323,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-category",
                 "name": "Category Cookbook",
                 "description": "A cookbook with a specific category",
+                "tags": [],
+                "categories": [],
                 "recipes": ["one-recipe-contains-this-category"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,
@@ -291,8 +340,11 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-count",
                 "name": "Cookbook with Count",
                 "description": "A cookbook with a count of recipes",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": 2,
+                'total_dataset_in_cookbook': None,
                 "endpoint_required": None
             }
         ],
@@ -303,6 +355,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-count",
                 "name": "Cookbook with Count",
                 "description": "A cookbook with a count of recipes",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": 2,
                 "total_dataset_in_cookbook": None,
@@ -318,8 +372,11 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-count",
                 "name": "Cookbook with Count",
                 "description": "A cookbook with a count of recipes",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
+                'total_dataset_in_cookbook': None,
                 "endpoint_required": ["openai-gpt35-turbo-16k"]
             }
         ],
@@ -330,6 +387,8 @@ def test_create_cookbook(test_client, mock_cookbook_service, cookbook_data, expe
                 "id": "test-cookbook-count",
                 "name": "Cookbook with Count",
                 "description": "A cookbook with a count of recipes",
+                "tags": [],
+                "categories": [],
                 "recipes": ["recipe-1", "recipe-2"],
                 "total_prompt_in_cookbook": None,
                 "total_dataset_in_cookbook": None,

@@ -1,6 +1,8 @@
 {
     "name": "Sample Cookbook",
     "description": "This is a sample cookbook",
+    "tags": [],
+    "categories": [],
     "recipes": [
         "arc"
     ]
