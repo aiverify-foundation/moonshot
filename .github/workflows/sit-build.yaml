@@ -82,7 +82,7 @@ jobs:
             --parameters 'commands=["sudo su - ubuntu -c \". ~/scripts/install_ms_service.sh ${{ inputs.branch_moonshot }} ${{ inputs.branch_moonshot_data }} ${{ inputs.branch_moonshot_ui }}\""]' \
             --query "Command.CommandId" \
             --output text)
-      
+
           max_attempts=20
           delay=60
           attempts=0
@@ -101,6 +101,13 @@ jobs:
               attempts=$((attempts + 1))
             else
               echo "Command status: $status"
+              # Fetch and echo error details
+              error_details=$(aws ssm list-command-invocations \
+                --command-id "$command_id" \
+                --instance-id "${{ vars.AWS_SIT_INSTANCE_ID }}" \
+                --query "CommandInvocations[0].CommandPlugins[0].Output" \
+                --output text)
+              echo "Error details: $error_details"
               exit 1
             fi
           done
