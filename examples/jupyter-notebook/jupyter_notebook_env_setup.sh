@@ -47,7 +47,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Clone moonshot data and install its requirements
-git clone https://github.com/aiverify-foundation/moonshot-data.git
+git clone -b ms-584 https://github.com/aiverify-foundation/moonshot-data.git
 if [ $? -ne 0 ]; then
     echo "Failed to clone moonshot-data repository."
     deactivate
