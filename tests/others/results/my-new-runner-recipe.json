@@ -14,7 +14,7 @@
       "openai-gpt35-turbo",
       "openai-gpt35-turbo-16k"
     ],
-    "num_of_prompts": 2,
+    "prompt_selection_percentage": 2,
     "random_seed": 2,
     "system_prompt": ""
   },

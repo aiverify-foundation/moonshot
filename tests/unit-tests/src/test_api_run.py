@@ -63,7 +63,7 @@ class TestCollectionApiRun:
                 "runner_type": RunnerType.BENCHMARK,
                 "runner_args": {
                     "recipes": ["bbq", "auto-categorisation"],
-                    "num_of_prompts": 1,
+                    "prompt_selection_percentage": 1,
                     "random_seed": 1,
                     "system_prompt": "You are an intelligent AI",
                     "runner_processing_module": "benchmarking",
@@ -111,7 +111,7 @@ class TestCollectionApiRun:
                             "runner_type": RunnerType.BENCHMARK,
                             "runner_args": {
                                 "recipes": ["bbq", "auto-categorisation"],
-                                "num_of_prompts": 1,
+                                "prompt_selection_percentage": 1,
                                 "random_seed": 1,
                                 "system_prompt": "You are an intelligent AI",
                                 "runner_processing_module": "benchmarking",
@@ -140,7 +140,7 @@ class TestCollectionApiRun:
                             "runner_type": RunnerType.BENCHMARK,
                             "runner_args": {
                                 "recipes": ["bbq", "auto-categorisation"],
-                                "num_of_prompts": 1,
+                                "prompt_selection_percentage": 1,
                                 "random_seed": 1,
                                 "system_prompt": "You are an intelligent AI",
                                 "runner_processing_module": "benchmarking",
@@ -173,7 +173,7 @@ class TestCollectionApiRun:
                             "runner_type": RunnerType.BENCHMARK,
                             "runner_args": {
                                 "recipes": ["bbq", "auto-categorisation"],
-                                "num_of_prompts": 1,
+                                "prompt_selection_percentage": 1,
                                 "random_seed": 1,
                                 "system_prompt": "You are an intelligent AI",
                                 "runner_processing_module": "benchmarking",
@@ -202,7 +202,7 @@ class TestCollectionApiRun:
                             "runner_type": RunnerType.BENCHMARK,
                             "runner_args": {
                                 "recipes": ["bbq", "auto-categorisation"],
-                                "num_of_prompts": 1,
+                                "prompt_selection_percentage": 1,
                                 "random_seed": 1,
                                 "system_prompt": "You are an intelligent AI",
                                 "runner_processing_module": "benchmarking",
