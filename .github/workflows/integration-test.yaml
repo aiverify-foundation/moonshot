@@ -129,6 +129,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
 
+          # Debugging output
+          echo "Testing SSH connection..."
+          ssh -T git@gitlab.com || true  # This will output the result of the SSH authentication
+
     # Clone the GitLab repository
     - name: Clone GitLab repository
       run: |
