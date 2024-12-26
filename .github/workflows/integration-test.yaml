@@ -126,6 +126,14 @@ jobs:
       with:
           repository: aiverify-foundation/moonshot-integration-testing
           path: moonshot-integration-testing
+
+    - name: Set up Git for cloning GitLab repository
+      run: |
+          git config --global url."https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/".insteadOf "https://gitlab.com/"
+
+    - name: Clone GitLab repository
+      run: |
+          git clone https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
           
     - name: Run Integration UI Test
       env: 
@@ -142,7 +150,7 @@ jobs:
          git clone https://gitlab-ci-token:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/sample-files.git
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ./setup_api_tera.sh
          echo "Done setup"
-
+    
 
     # - name: Run Integration UI Test
     #   env: 
