@@ -128,7 +128,7 @@ jobs:
           path: moonshot-integration-testing
           
     - name: Checkout the current repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
     - name: Clone private GitLab repository using GitLab token
       env:
