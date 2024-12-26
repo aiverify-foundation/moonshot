@@ -126,56 +126,67 @@ jobs:
       with:
           repository: aiverify-foundation/moonshot-integration-testing
           path: moonshot-integration-testing
-
+          
     - name: Run Integration UI Test
-      env: 
-        URI: ${{ secrets.URI }}
-        TOKEN: ${{ secrets.TOKEN }}
-        URI2: ${{ secrets.URI2 }}
-        TOKEN2: ${{ secrets.TOKEN2 }}
-        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
-        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
-        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
-      id: integrationuitest
-      run: |
-         source venv/bin/activate
-         cd moonshot-integration-testing/ui-integration-testing
-         npm ci
-         npx playwright install
-         npx playwright install-deps
-         npm install dotenv --save
-         echo "Running Home Page Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
-         echo "Running Endpoint Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
-         echo "Running Red Teaming Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
-         echo "Running Benchmarking Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
-    
-    - name: Print Environment Variables
-      run: env
-      
-    - name: Run Integration CLI Test
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
-        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
-        MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
-        MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
-        CLI_DIR: ${{ secrets.CLI_DIR }}
-        ACTIONS_STEP_DEBUG: true
-        ACTIONS_RUNNER_DEBUG: true
+      id: integrationuitest
       run: |
          source venv/bin/activate
-         cd moonshot-integration-testing/cli-integration-testing
-         echo "Current Directory: $(pwd)"
-         pip install python-dotenv
-         pip install pytest
-         pytest
+         cd moonshot-integration-testing
+         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ./setup_api_tera
+         echo "Done setup"
+
+    # - name: Run Integration UI Test
+    #   env: 
+    #     URI: ${{ secrets.URI }}
+    #     TOKEN: ${{ secrets.TOKEN }}
+    #     URI2: ${{ secrets.URI2 }}
+    #     TOKEN2: ${{ secrets.TOKEN2 }}
+    #     ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+    #     TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+    #     OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+    #   id: integrationuitest
+    #   run: |
+    #      source venv/bin/activate
+    #      cd moonshot-integration-testing/ui-integration-testing
+    #      npm ci
+    #      npx playwright install
+    #      npx playwright install-deps
+    #      npm install dotenv --save
+    #      echo "Running Home Page Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
+    #      echo "Running Endpoint Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
+    #      echo "Running Red Teaming Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
+    #      echo "Running Benchmarking Test Cases"
+    #      URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
+    
+    # - name: Print Environment Variables
+    #   run: env
+      
+    # - name: Run Integration CLI Test
+    #   env: 
+    #     AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
+    #     AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
+    #     ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+    #     MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
+    #     MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
+    #     CLI_DIR: ${{ secrets.CLI_DIR }}
+    #     ACTIONS_STEP_DEBUG: true
+    #     ACTIONS_RUNNER_DEBUG: true
+    #   run: |
+    #      source venv/bin/activate
+    #      cd moonshot-integration-testing/cli-integration-testing
+    #      echo "Current Directory: $(pwd)"
+    #      pip install python-dotenv
+    #      pip install pytest
+    #      pytest
       
     - name: Monitor Server Logs
       if: always()   # Ensure this runs even if the previous step fails
