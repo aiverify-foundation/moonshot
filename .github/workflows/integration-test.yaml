@@ -120,23 +120,18 @@ jobs:
     #     npm run build
     #     cd ../
     #     nohup python -m moonshot web > output.txt &
-
-    # Set up SSH
-    - name: Set up SSH
+    
+    - name: Set up Git configuration
       run: |
-          mkdir -p ~/.ssh
-          echo "$GITLAB_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        git config --global user.name "imda-jackson"
+        git config --global user.email "jackson_boey@imda.gov.sg"
 
-          # Debugging output
-          echo "Testing SSH connection..."
-          ssh -T git@gitlab.com || true  # This will output the result of the SSH authentication
-
-    # Clone the GitLab repository
     - name: Clone GitLab repository
+      env:
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
-        git clone https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+        git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+
 
     # - name: Run Integration UI Test
     #   env: 
