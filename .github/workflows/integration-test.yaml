@@ -138,7 +138,7 @@ jobs:
          echo "NEO4J_URL=="bolt://localhost:7687"" >> $GITHUB_ENV
          echo "NEO4J_USERNAME="neo4j"" >> $GITHUB_ENV
          cd moonshot-integration-testing
-         git clone https://gitlab-ci-token:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+         git clone https://imda-jackson:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
          git clone https://gitlab-ci-token:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/sample-files.git
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ./setup_api_tera.sh
          echo "Done setup"
