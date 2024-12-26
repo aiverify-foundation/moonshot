@@ -126,15 +126,13 @@ jobs:
       with:
           repository: aiverify-foundation/moonshot-integration-testing
           path: moonshot-integration-testing
-          
-    - name: Checkout the current repository
-      uses: actions/checkout@v3
 
     - name: Clone private GitLab repository using GitLab token
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
-        git clone https://gitlab-ci-token:${GITLAB_TOKEN}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
+        git clone https://imda-jackson:${GITLAB_TOKEN}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
+        
 
     - name: Run Integration UI Test
       env: 
