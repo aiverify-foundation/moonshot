@@ -131,7 +131,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        git clone http://imda-jackson:$GH_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
+        git clone http://imda-jackson:${GH_TOKEN}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
         
 
     - name: Run Integration UI Test
