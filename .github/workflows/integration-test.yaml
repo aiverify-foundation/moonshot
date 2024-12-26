@@ -131,14 +131,17 @@ jobs:
       env: 
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
          python -m venv venv
          source venv/bin/activate
          echo "NEO4J_URL=="bolt://localhost:7687"" >> $GITHUB_ENV
          echo "NEO4J_USERNAME="neo4j"" >> $GITHUB_ENV
          cd moonshot-integration-testing
+         git config --global url."https://gitlab-ci-token:$GITLAB_TOKEN@gitlab.com/".insteadOf "https://gitlab.com/"
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ./setup_api_tera.sh
          echo "Done setup"
+
 
     # - name: Run Integration UI Test
     #   env: 
