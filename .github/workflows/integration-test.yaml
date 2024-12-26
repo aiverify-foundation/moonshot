@@ -120,6 +120,11 @@ jobs:
     #     npm run build
     #     cd ../
     #     nohup python -m moonshot web > output.txt &
+
+    - name: Test connectivity to GitLab
+      run: |
+       curl -I https://gitlab.com
+
     
     - name: Set up Git configuration
       run: |
@@ -129,7 +134,7 @@ jobs:
     - name: Clone GitLab repository
       run: |
         git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-
+    
 
     # - name: Run Integration UI Test
     #   env: 
