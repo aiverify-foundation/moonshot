@@ -132,6 +132,7 @@ jobs:
         AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
         AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
       run: |
+         python -m venv venv
          source venv/bin/activate
          echo "NEO4J_URL=="bolt://localhost:7687"" >> $GITHUB_ENV
          echo "NEO4J_USERNAME="neo4j"" >> $GITHUB_ENV
