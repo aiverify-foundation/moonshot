@@ -120,7 +120,23 @@ jobs:
     #     npm run build
     #     cd ../
     #     nohup python -m moonshot web > output.txt &
+    - name: Check Current Git Version
+      run: git --version
 
+    - name: Install Dependencies
+      run: sudo apt-get update
+
+    - name: Add PPA for Latest Git
+      run: |
+        sudo add-apt-repository ppa:git-core/ppa
+        sudo apt-get update
+
+    - name: Install Latest Git
+      run: sudo apt-get install git -y
+
+    - name: Verify Git Version
+      run: git --version
+      
     - name: Checkout Repository
       run: |
           git clone https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
