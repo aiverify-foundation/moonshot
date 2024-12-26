@@ -121,12 +121,12 @@ jobs:
     #     cd ../
     #     nohup python -m moonshot web > output.txt &
 
-    - name: Checkout Repository
-      run: |
-          git clone https://$GITLAB_USERNAME:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-      env:
-          GITLAB_USERNAME: imda-jackson
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      - name: Checkout Repository
+        run: |
+            git clone https://$GITLAB_USERNAME:$GITLAB_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+        env:
+            GITLAB_USERNAME: imda-jackson
+            GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
     
 
     # - name: Run Integration UI Test
