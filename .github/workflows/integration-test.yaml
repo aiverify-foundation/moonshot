@@ -124,6 +124,9 @@ jobs:
     - name: Test connectivity to GitLab
       run: |
        curl -I https://gitlab.com
+    - name: Debug GitLab connectivity
+      run: |
+        curl -I https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
     
     - name: Set up Git configuration
