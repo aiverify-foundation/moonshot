@@ -129,9 +129,9 @@ jobs:
 
     - name: Clone private GitLab repository using GitLab token
       env:
-        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        git clone https://imda-jackson:${GITLAB_TOKEN}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
+        git clone https://imda-jackson:$GH_TOKEN@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
         
 
     - name: Run Integration UI Test
