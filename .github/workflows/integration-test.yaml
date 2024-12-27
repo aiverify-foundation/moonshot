@@ -123,20 +123,10 @@ jobs:
     - name: Check Current Git Version
       run: git --version
 
-      
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-        ssh -T git@gitlab.com
-
 
     - name: Clone GitLab Repository
       run: |
-          git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-
+          git clone https://imda_jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
     # - name: Run Integration UI Test
     #   env: 
