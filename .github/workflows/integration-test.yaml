@@ -124,12 +124,16 @@ jobs:
       run: git --version
 
       
-    - name: Checkout Repository
+    - name: Set up SSH
       run: |
-          echo ${{ secrets.GITLAB_PROJECT_TOKEN }}
-          GIT_TRACE_PACKET=1 GIT_TRACE=2 GIT_CURL_VERBOSE=1 git clone https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-          
-    
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+
+    - name: Clone GitLab Repository
+        run: git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+
 
     # - name: Run Integration UI Test
     #   env: 
