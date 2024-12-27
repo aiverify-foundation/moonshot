@@ -125,10 +125,8 @@ jobs:
       
     - name: Checkout Repository
       run: |
-          git remote rename origin old_origin
-          git remote add origin https://imda-jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-          git config --add checkout.defaultRemote origin
-          git clone https://imda-jackson@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+          echo ${{ secrets.GITLAB_TOKEN }}
+          git clone https://imda-jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
     
 
     # - name: Run Integration UI Test
