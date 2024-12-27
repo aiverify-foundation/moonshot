@@ -122,9 +122,6 @@ jobs:
     #     nohup python -m moonshot web > output.txt &
     - name: Check Current Git Version
       run: git --version
-      
-    - name: Debug Git Remote
-      run: git remote -v
 
     - name: Test Repository Access
       run: git ls-remote https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
