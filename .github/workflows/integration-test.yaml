@@ -133,9 +133,7 @@ jobs:
 
     - name: Clone GitLab Repository
       run: |
-          git remote rename origin old_origin
-          git remote add origin https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
-          git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+          git clone https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
 
 
     # - name: Run Integration UI Test
