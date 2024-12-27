@@ -121,7 +121,7 @@ jobs:
     #     cd ../
     #     nohup python -m moonshot web > output.txt &
     - name: Check Current Git Version
-      run: git --version'
+      run: git --version
       
     - name: Debug Git Remote
       run: git remote -v
