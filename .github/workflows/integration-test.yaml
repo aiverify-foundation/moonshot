@@ -123,14 +123,11 @@ jobs:
     - name: Check Current Git Version
       run: git --version
 
-    - name: Test Repository Access
-      run: git ls-remote https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-
       
     - name: Checkout Repository
       run: |
           echo ${{ secrets.GITLAB_TOKEN }}
-          git clone https://imda-jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+          git clone https://gitlab-ci-token:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
     
 
     # - name: Run Integration UI Test
