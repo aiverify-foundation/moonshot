@@ -126,7 +126,8 @@ jobs:
 
     - name: Clone GitLab Repository
       run: |
-          git clone https://imda_jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+          git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+
 
     # - name: Run Integration UI Test
     #   env: 
