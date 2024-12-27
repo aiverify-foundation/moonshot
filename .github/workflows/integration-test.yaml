@@ -133,7 +133,7 @@ jobs:
 
     - name: Clone GitLab Repository
       run: |
-          git clone https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend
+          git clone https://gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
 
     # - name: Run Integration UI Test
