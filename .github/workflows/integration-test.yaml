@@ -139,6 +139,7 @@ jobs:
       
     - name: Checkout Repository
       run: |
+          git remote set-url origin https://imda-jackson:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
           git clone https://imda-jackson@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
     
 
