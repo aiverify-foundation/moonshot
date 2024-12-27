@@ -130,6 +130,8 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        ssh-add -L
+        ssh-add ~/.ssh/id_rsa
 
     - name: Clone GitLab Repository
       run: |
