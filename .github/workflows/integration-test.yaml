@@ -132,7 +132,7 @@ jobs:
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
 
     - name: Clone GitLab Repository
-        run: git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+      run: git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
 
     # - name: Run Integration UI Test
