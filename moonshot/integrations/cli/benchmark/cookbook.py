@@ -370,6 +370,10 @@ def _display_cookbook_configurations(cookbooks: list) -> None:
                 )
                 for key, value in metric_config["metric_configurations"].items():
                     console.print(f"\t\t\t{key}: {value}")
+                    if "embeddings" in value:
+                        console.print(
+                            "\t\t\t[bold yellow]Embedding-based retrieval is required. Please ensure that the recipe has been updated to use your custom dataset[/]"  # noqa: E501
+                        )
         console.print("\n")
     if require_config:
         console.print(

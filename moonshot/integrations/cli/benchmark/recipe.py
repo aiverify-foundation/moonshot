@@ -438,7 +438,11 @@ def _display_recipe_configurations(recipes: list) -> None:
                 f"\t[bold yellow]Metric {me_id} requires the following configurations:[/]"
             )
             for key, value in metric_config["metric_configurations"].items():
-                console.print(f"\t\t{key}: {value}")
+                console.print(f"\t\t\t{key}: {value}")
+                if "embeddings" in value:
+                    console.print(
+                        "\t\t\t[bold yellow]Embedding-based retrieval is required. Please ensure that the recipe has been updated to use your custom dataset[/]"  # noqa: E501
+                    )
 
     if require_config:
         console.print(
