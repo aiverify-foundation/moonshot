@@ -14,7 +14,7 @@ router = APIRouter(tags=["Datasets"])
 
 @router.post("/api/v1/datasets/csv")
 @inject
-async def convert_dataset(
+async def upload_dataset(
     file: UploadFile = File(...),
     name: str = Form(..., min_length=1),
     description: str = Form(default="", min_length=1),
