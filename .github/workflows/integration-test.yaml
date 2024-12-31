@@ -125,14 +125,14 @@ jobs:
 
 
     - name: Set up SSH
-        run: |
+      run: |
           mkdir -p ~/.ssh
           echo "$GITLAB_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
-      - name: Clone GitLab repository
-        run: git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
+    - name: Clone GitLab repository
+      run: git clone git@gitlab.com:imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
 
     # - name: Run Integration UI Test
