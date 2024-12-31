@@ -127,7 +127,7 @@ jobs:
     - name: Set up SSH
       run: |
           mkdir -p ~/.ssh
-          echo "$GITLAB_SSH_KEY" > ~/.ssh/id_ed25519
+          echo "${{ secrets.GITLAB_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
