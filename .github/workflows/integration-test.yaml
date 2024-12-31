@@ -126,6 +126,7 @@ jobs:
 
     - name: Clone GitLab Repository
       run: |
+          git credential-cache exit
           git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
 
 
