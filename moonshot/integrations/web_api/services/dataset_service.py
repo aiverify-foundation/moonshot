@@ -17,7 +17,7 @@ class DatasetService(BaseService):
             dataset_data (CSV_Dataset_DTO): The data required to convert the dataset.
 
         Returns:
-            str: The path to the newly created dataset.
+            str: The filename of the newly created dataset.
 
         Raises:
             Exception: If an error occurs during dataset conversion.
@@ -30,7 +30,7 @@ class DatasetService(BaseService):
             license=dataset_data.license,
             csv_file_path=dataset_data.csv_file_path,
         )
-        return os.path.abspath(new_ds_path)
+        return os.path.splitext(os.path.basename(new_ds_path))[0]
 
     @exception_handler
     def download_dataset(self, dataset_data: HF_Dataset_DTO) -> str:
