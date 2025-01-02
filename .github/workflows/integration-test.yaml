@@ -123,7 +123,9 @@ jobs:
     - name: Check Current Git Version
       run: git --version
 
-
+    - name: Get runner IP address
+      run: curl https://ifconfig.me
+        
     - name: Set up SSH
       run: |
           mkdir -p ~/.ssh
