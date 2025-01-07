@@ -1,4 +1,6 @@
 from pydantic import validate_call
+import json
+from typing import Iterator
 
 from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
@@ -81,10 +83,10 @@ def api_download_dataset(
 
 
 def api_convert_dataset(
-    name: str, description: str, reference: str, license: str, csv_file_path: str
+    name: str, description: str, reference: str, license: str, file_path: str
 ) -> str:
     """
-    Converts a CSV file to a dataset and creates a new dataset with the provided details.
+    Converts a CSV or JSON file to a dataset and creates a new dataset with the provided details.
 
     This function takes the name, description, reference, and license for a new dataset as input, along with the file
     path to a CSV file. It then creates a new DatasetArguments object with these details and an empty id. The id is left
@@ -96,18 +98,33 @@ def api_convert_dataset(
         description (str): A brief description of the new dataset.
         reference (str): A reference link for the new dataset.
         license (str): The license of the new dataset.
-        csv_file_path (str): The file path to the CSV file.
+        file_path (str): The file path to the CSV or JSONfile.
 
     Returns:
         str: The ID of the newly created dataset.
     """
-    examples = Dataset.convert_data(csv_file_path)
-    ds_args = DatasetArguments(
-        id="",
-        name=name,
-        description=description,
-        reference=reference,
-        license=license,
-        examples=examples,
-    )
+    ds_args = None
+    if file_path.endswith(".json"):
+        json_data = json.load(open(file_path))
+        if "examples" in json_data:
+            ds_args = DatasetArguments(
+                id="",
+                name=json_data.get("name", name),
+                description=json_data.get("description", description),
+                reference=json_data.get("reference", reference),
+                license=json_data.get("license", license),
+                examples=iter(json_data["examples"]),
+            )
+        else:
+            raise ValueError("JSON file does not contain 'examples' key")
+    else:
+        examples = Dataset.convert_data(file_path)
+        ds_args = DatasetArguments(
+            id="",
+            name=name,
+            description=description,
+            reference=reference,
+            license=license,
+            examples=examples,
+        )
     return Dataset.create(ds_args)
