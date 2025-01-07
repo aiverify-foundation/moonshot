@@ -202,7 +202,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-2",
@@ -224,7 +224,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ],
         None,
@@ -250,7 +250,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-2",
@@ -272,7 +272,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ]
     ),
@@ -300,7 +300,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-3",
@@ -322,7 +322,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ],
         None,
@@ -348,7 +348,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-3",
@@ -370,7 +370,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ]
     ),
@@ -398,7 +398,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-4",
@@ -420,7 +420,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ],
         None,
@@ -446,7 +446,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-4",
@@ -468,7 +468,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ]
     ),
@@ -496,7 +496,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-5",
@@ -518,7 +518,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ],
         None,
@@ -544,7 +544,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
             {
                 "id": "test-recipe-5",
@@ -566,7 +566,7 @@ def test_create_recipe(test_client, mock_recipe_service, recipe_data, exception,
                     }
                 },
                 "total_prompt_in_recipe": 5,
-                "endpoint_required": None
+                "required_config": None
             },
         ]
     ),
