@@ -120,6 +120,12 @@ jobs:
         npm run build
         cd ../
         nohup python -m moonshot web > output.txt &
+
+    - name: Checkout Integration Test 
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot-integration-testing
+          path: moonshot-integration-testing
     
     - name: Run Integration UI Test
       env: 
