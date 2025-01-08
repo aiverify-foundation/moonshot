@@ -71,7 +71,7 @@ def create_app(cfg: providers.Configuration) -> CustomFastAPI:
     }
 
     app: CustomFastAPI = CustomFastAPI(
-        title="Project Moonshot", version="0.5.1", **app_kwargs
+        title="Project Moonshot", version="0.6.0", **app_kwargs
     )
 
     if cfg.cors.enabled():
