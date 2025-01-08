@@ -296,7 +296,11 @@ def run_cookbook(args) -> None:
             cb_runner = api_create_runner(args.name, endpoints)
 
         # Display all requirements for every recipe in the cookbook
-        _display_cookbook_configurations(cookbooks)
+        proceed = _display_cookbook_configurations(cookbooks)
+
+        # if user does not enter 'y' to the prompt, do not run cookbook
+        if not proceed:
+            return
 
         async def run():
             await cb_runner.run_cookbooks(
@@ -326,7 +330,7 @@ def run_cookbook(args) -> None:
         print(f"[run_cookbook]: {str(e)}")
 
 
-def _display_cookbook_configurations(cookbooks: list) -> None:
+def _display_cookbook_configurations(cookbooks: list) -> bool:
     """
     Display the configurations for each recipe in the provided cookbooks.
 
@@ -338,7 +342,7 @@ def _display_cookbook_configurations(cookbooks: list) -> None:
         cookbooks (list): A list of cookbook identifiers for which configurations need to be displayed.
 
     Returns:
-        None: This function does not return any value. It prints the configurations to the console.
+        bool: It returns a bool depending on whether the cookbook should be run based on the user's input
 
     Side Effects:
         Prints the configurations of each recipe in the cookbooks to the console. If any configurations are found,
@@ -376,9 +380,23 @@ def _display_cookbook_configurations(cookbooks: list) -> None:
                         )
         console.print("\n")
     if require_config:
-        console.print(
-            "[bold yellow]Ensure that the configurations are set before running recipe.[/]"
+        # Confirm with the user before running the cookbook
+        confirmation = console.input(
+            "[bold yellow]Have you uploaded the necessary datasets and updated dataset in the recipe?[/]"
         )
+        if confirmation.lower() != "y":
+            console.print(
+                "\n[bold yellow]Please upload the datasets before continuing. You can:[/]"
+            )
+            console.print(
+                "\t[bold yellow]- Use the convert_dataset command to convert an existing dataset or use the download_dataset command to download a new dataset. [/]"  # noqa: E501
+            )
+            console.print(
+                "\t[bold yellow]- Use the update_recipe command and set the dataset you want to use. [/]"
+            )
+            return False
+
+    return True
 
 
 def update_cookbook(args) -> None:

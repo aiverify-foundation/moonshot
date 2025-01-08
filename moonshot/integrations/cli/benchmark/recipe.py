@@ -376,7 +376,11 @@ def run_recipe(args) -> None:
             rec_runner = api_create_runner(args.name, endpoints)
 
         # Display all requirements every recipe
-        _display_recipe_configurations(recipes)
+        proceed = _display_recipe_configurations(recipes)
+
+        # if user does not enter 'y' to the prompt, do not run recipe
+        if not proceed:
+            return
 
         async def run():
             await rec_runner.run_recipes(
@@ -406,7 +410,7 @@ def run_recipe(args) -> None:
         print(f"[run_recipe]: {str(e)}")
 
 
-def _display_recipe_configurations(recipes: list) -> None:
+def _display_recipe_configurations(recipes: list) -> bool:
     """
     Display the required configurations for a list of recipes.
 
@@ -418,7 +422,7 @@ def _display_recipe_configurations(recipes: list) -> None:
         recipes (list): A list of recipe identifiers for which configurations need to be displayed.
 
     Returns:
-        None: This function does not return any value. It prints the configurations to the console.
+        bool: It returns a bool depending on whether the cookbook should be run based on the user's input
     """
     # get all configurations from all recipes and print them out (currently all the configurations come from metrics)
     require_config = False
@@ -445,9 +449,23 @@ def _display_recipe_configurations(recipes: list) -> None:
                     )
 
     if require_config:
-        console.print(
-            "\n[bold yellow]Ensure that the configurations are set before running recipe.[/]"
+        # Confirm with the user before running the recipe
+        confirmation = console.input(
+            "[bold yellow]Have you uploaded the necessary datasets and updated dataset in the recipe?[/]"
         )
+        if confirmation.lower() != "y":
+            console.print(
+                "\n[bold yellow]Please upload the datasets before continuing. You can:[/]"
+            )
+            console.print(
+                "\t[bold yellow]- Use the convert_dataset command to convert an existing dataset or use the download_dataset command to download a new dataset. [/]"  # noqa: E501
+            )
+            console.print(
+                "\t[bold yellow]- Use the update_recipe command and set the dataset you want to use. [/]"
+            )
+            return False
+
+    return True
 
 
 def update_recipe(args) -> None:
