@@ -76,7 +76,7 @@ jobs:
         name: python-package-distributions
         path: dist/
     - name: Sign the dists with Sigstore
-      uses: sigstore/gh-action-sigstore-python@latest
+      uses: sigstore/gh-action-sigstore-python@main
       with:
         inputs: >-
           ./dist/*.tar.gz
