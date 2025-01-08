@@ -40,6 +40,7 @@ pyreadline3~=3.4.1 ; python_version >= "3.11" and python_version < "3.12" and sy
 python-dateutil~=2.9.0.post0 ; python_version >= "3.11" and python_version < "3.12"
 python-dotenv~=1.0.1 ; python_version >= "3.11" and python_version < "3.12"
 python-slugify~=8.0.4 ; python_version >= "3.11" and python_version < "3.12"
+python-multipart~=0.0.9 ; python_version >= "3.11" and python_version < "3.12"
 pytz~=2024.2 ; python_version >= "3.11" and python_version < "3.12"
 pyyaml~=6.0.2 ; python_version >= "3.11" and python_version < "3.12"
 requests~=2.32.3 ; python_version >= "3.11" and python_version < "3.12"

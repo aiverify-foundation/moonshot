@@ -29,7 +29,8 @@ dependencies = [
     "datasets>=2.21.0",
     "pandas>=2.2.2",
     "numpy>=1.26.4",
-    "tenacity>=8.5.0"
+    "tenacity>=8.5.0",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
