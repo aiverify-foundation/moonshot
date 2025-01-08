@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BenchmarkRunnerDTO(BaseModel):
@@ -7,7 +7,7 @@ class BenchmarkRunnerDTO(BaseModel):
     description: str
     endpoints: list[str]
     inputs: list[str]
-    num_of_prompts: int
+    prompt_selection_percentage: int = Field(..., ge=1, le=100)
     random_seed: int
     system_prompt: str
     runner_processing_module: str
