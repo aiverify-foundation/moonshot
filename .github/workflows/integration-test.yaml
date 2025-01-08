@@ -120,23 +120,7 @@ jobs:
         npm run build
         cd ../
         nohup python -m moonshot web > output.txt &
-
-    - name: Run Integration UI Test
-      env: 
-        AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
-        AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: |
-         python -m venv venv
-         source venv/bin/activate
-         echo "NEO4J_URL=="bolt://localhost:7687"" >> $GITHUB_ENV
-         echo "NEO4J_USERNAME="neo4j"" >> $GITHUB_ENV
-         cd moonshot-integration-testing
-         git clone https://github.com/imda_dsl/t2po/tech-analysis-tool/tera-backend.git
-         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ./setup_api_tera.sh
-         echo "Done setup"
     
-
     - name: Run Integration UI Test
       env: 
         URI: ${{ secrets.URI }}
