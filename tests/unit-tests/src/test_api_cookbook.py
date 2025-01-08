@@ -26,6 +26,7 @@ class TestCollectionApiCookbook:
                 "RECIPES": "tests/unit-tests/src/data/recipes/",
                 "DATASETS": "tests/unit-tests/src/data/datasets/",
                 "TEMPLATES": "tests/unit-tests/src/data/templates/",
+                "IO_MODULES": "tests/unit-tests/src/data/io-modules/"
             }
         )
 
@@ -40,7 +41,7 @@ class TestCollectionApiCookbook:
         )
         shutil.copyfile(
             "tests/unit-tests/common/samples/arc-easy.json",
-            "tests/unit-tests/src/data/recipes/arc-easy.json",
+            "tests/unit-tests/src/data/datasets/arc-easy.json",
         )
 
         # Yield to test execution
@@ -50,7 +51,7 @@ class TestCollectionApiCookbook:
         cookbook_paths = [
             "tests/unit-tests/src/data/cookbooks/sample-cookbook.json",
             "tests/unit-tests/src/data/recipes/arc.json",
-            "tests/unit-tests/src/data/recipes/arc-easy.json",
+            "tests/unit-tests/src/data/datasets/arc-easy.json",
             "tests/unit-tests/src/data/cookbooks/my-new-coo-kbook-1-23.json",
             "tests/unit-tests/src/data/cookbooks/my-new-cookbook-1.json",
             "tests/unit-tests/src/data/cookbooks/my-new-cookbook.json",
@@ -123,6 +124,8 @@ class TestCollectionApiCookbook:
                 {
                     "name": "",
                     "description": "My new Cookbook!",
+                    "tags": [],
+                    "categories": [],
                     "recipes": ["arc"],
                 },
                 {
@@ -339,6 +342,8 @@ class TestCollectionApiCookbook:
                         "id": "sample-cookbook",
                         "name": "Sample Cookbook",
                         "description": "This is a sample cookbook",
+                        "tags": [],
+                        "categories": [],
                         "recipes": ["arc"],
                     }
                 },
@@ -452,6 +457,8 @@ class TestCollectionApiCookbook:
                             "id": "sample-cookbook",
                             "name": "Sample Cookbook",
                             "description": "This is a sample cookbook",
+                            "tags": [],
+                            "categories": [],
                             "recipes": ["arc"],
                         }
                     ]
@@ -623,7 +630,7 @@ class TestCollectionApiCookbook:
                 {
                     "name": "Another Updated Sample Cookbook",
                     "description": "A comprehensive guide to baking",
-                    "recipes": ["arc", "arc-easy"],
+                    "recipes": ["arc"],
                 },
                 {"expected_output": True},
             ),
@@ -913,6 +920,8 @@ class TestCollectionApiCookbook:
                 "id": "sample-cookbook",
                 "name": "Sample Cookbook",
                 "recipes": ["arc"],
+                "tags": [],
+                "categories": [],
             }
         ]
 
