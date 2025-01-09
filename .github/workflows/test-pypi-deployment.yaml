@@ -1,5 +1,5 @@
 # Test PyPi
-name: Test PyPi Deployment
+name: Test PyPi Deployment test
 
 on:
 
