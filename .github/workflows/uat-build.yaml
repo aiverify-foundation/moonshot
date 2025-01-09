@@ -1,4 +1,4 @@
-name: UAT Deploy
+name: UAT Build
 
 # Trigger when the PR to merge to main is merged
 on:
