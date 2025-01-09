@@ -1,6 +1,6 @@
 name: UAT Deploy
 
-# Trigger when the PR to merge to main is merged.
+# Trigger when the PR to merge to main is merged
 on:
   pull_request:
     branches:
