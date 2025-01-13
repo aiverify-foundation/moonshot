@@ -265,8 +265,17 @@ class Metric:
             )
             return True
         except Exception as e:
-            logger.error(f"[Metric] Failed to update metric configuration: {str(e)}")
-            raise e
+            if not obj_results.get(met_id):
+                logger.error(
+                    f"[Metric] '{met_id}' does not exist in the configuration file."
+                )
+                # Raise a specific exception when obj_results[met_id] does not exist
+                raise KeyError(f"'{met_id}' does not exist in the configuration file.")
+            else:
+                logger.error(
+                    f"[Metric] Failed to update metric configuration: {str(e)}"
+                )
+                raise e
 
     @staticmethod
     def delete_metric_config(met_id: str) -> bool:
@@ -274,7 +283,7 @@ class Metric:
         Deletes the specified metric from metrics_config.json.
 
         Args:
-            key (str): The metric in the configuration to delete.
+            met_id (str): The metric in the configuration to delete.
 
         Raises:
             Exception: If an error occurs during the deletion process.
@@ -292,7 +301,7 @@ class Metric:
                 logger.info(
                     f"[Metric] '{met_id}' does not have any configuration to delete."
                 )
-
+                return False
             # Write the updated configuration back to storage
             Storage.create_object(
                 obj_type=EnvVariables.METRICS.name,

@@ -32,3 +32,36 @@ class AttackModuleService(BaseService):
         """
         am_metadata = moonshot_api.api_get_all_attack_module_metadata()
         return am_metadata
+
+    @exception_handler
+    def update_attack_module_config(
+        self, attack_module_id: str, update_args: dict
+    ) -> bool:
+        """
+        Updates the configuration of a specific attack module.
+
+        Args:
+            attack_module_id (str): The ID of the attack module to be updated.
+            update_args (dict): The updated configuration parameters.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        bool_updated = moonshot_api.api_update_attack_module_config(
+            attack_module_id, **update_args
+        )
+        return bool_updated
+
+    @exception_handler
+    def delete_attack_module_config(self, attack_module_id: str) -> bool:
+        """
+        Deletes the configuration of a specific attack module.
+
+        Args:
+            attack_module_id (str): The ID of the attack module to be deleted.
+
+        Returns:
+            bool: True if the deletion was successful, False otherwise.
+        """
+        bool_deleted = moonshot_api.api_delete_attack_module_config(attack_module_id)
+        return bool_deleted

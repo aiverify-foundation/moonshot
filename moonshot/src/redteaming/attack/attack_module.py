@@ -666,10 +666,17 @@ class AttackModule:
             )
             return True
         except Exception as e:
-            logger.error(
-                f"[AttackModule] Failed to update attack module configuration: {str(e)}"
-            )
-            raise e
+            if not obj_results.get(am_id):
+                logger.error(
+                    f"[AttackModule] '{am_id}' does not exist in the configuration file."
+                )
+                # Raise a specific exception when obj_results[am_id] does not exist
+                raise KeyError(f"'{am_id}' does not exist in the configuration file.")
+            else:
+                logger.error(
+                    f"[AttackModule] Failed to update attack module configuration: {str(e)}"
+                )
+                raise e
 
     @staticmethod
     def delete_attack_module_config(am_id: str) -> bool:
@@ -695,6 +702,7 @@ class AttackModule:
                 logger.info(
                     f"[AttackModule] '{am_id}' does not have any configuration to delete."
                 )
+                return False
             # Write the updated configuration back to storage
             Storage.create_object(
                 obj_type=EnvVariables.ATTACK_MODULES.name,
