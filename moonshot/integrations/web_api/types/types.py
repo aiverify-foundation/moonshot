@@ -85,7 +85,7 @@ class ResultMetadata(TypedDict):
     recipes: List[str]
     cookbooks: List[str]
     endpoints: List[str]
-    num_of_prompts: int
+    prompt_selection_percentage: int
     status: str
 
 
