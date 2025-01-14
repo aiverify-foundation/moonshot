@@ -1,7 +1,10 @@
+import json
 import time
 from typing import Callable
 
+from moonshot.src.messages_constants import RUN_NOTIFY_PROGRESS_DB_INSTANCE_NOT_PROVIDED
 from moonshot.src.runs.run_arguments import RunArguments
+from moonshot.src.runs.run_progress_structure import create_run_progress_structure
 from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
@@ -17,38 +20,44 @@ class RunProgress:
         WHERE run_id=?
     """
 
+    def display_run_progress(self, progress: dict) -> None:
+        """
+        Display the current progress of the run.
+
+        This method prints the current progress to the console. It is used as the default
+        callback function for displaying run progress if no other callback function is provided.
+
+        Args:
+            progress (dict): A dictionary containing the current progress information.
+        """
+        # Print the progress dictionary to the console
+        print("Progress: ", json.dumps(progress))
+
     def __init__(
         self, run_arguments: RunArguments, run_progress_callback_func: Callable | None
     ):
         """
-        Initializes the RunProgress instance with the given run arguments and callback function.
+        Initialize a RunProgress instance to track and manage the progress of a run.
+
+        This constructor sets up the initial state of the RunProgress object, including
+        storing the run arguments and setting up a callback function for progress updates.
 
         Args:
-            run_arguments (RunArguments): The arguments related to the run.
-            run_progress_callback_func (Callable | None): A callback function for updating run progress.
+            run_arguments (RunArguments): The arguments related to the run, containing
+                                          details such as start time, error messages, etc.
+            run_progress_callback_func (Callable | None): A callback function that is invoked
+                                                          to update run progress. If None, a default
+                                                          display function is used.
         """
-        # Store the run arguments and callback function for progress updates
+        self.current_progress = create_run_progress_structure()
+
+        # Store the run arguments
         self.run_arguments = run_arguments
-        self.run_progress_callback_func = run_progress_callback_func
 
-        # Initialize progress tracking attributes
-        self.total_num_of_tasks: int = 0
-        self.total_num_of_prompts: int = 0
-        self.total_num_of_metrics: int = 0
-        self.completed_num_of_prompts: int = 0
-        self.cancelled_num_of_prompts: int = 0
-        self.error_num_of_prompts: int = 0
-        self.completed_num_of_metrics: int = 0
-        self.overall_progress: int = 0
-        self.overall_prompt_progress: int = 0
-        self.overall_metric_progress: int = 0
-
-        # Lists to track error or cancelled prompts
-        self.cancelled_prompts = []
-        self.error_prompts = []
-
-        # List to track current running tasks
-        self.current_running_tasks = []
+        # Assign the callback function for progress updates, default to display function if no callback is provided
+        self.run_progress_callback_func = (
+            run_progress_callback_func or self.display_run_progress
+        )
 
     def notify_error(self, error_message: str) -> None:
         """
@@ -63,10 +72,12 @@ class RunProgress:
         if error_message:
             # Log the error message
             logger.error(error_message)
+
+            # Append the error message to the run arguments' error messages list if it's not already present
             if error_message not in self.run_arguments.error_messages:
                 self.run_arguments.error_messages.append(error_message)
 
-            # Update progress status
+            # Update progress status to indicate that the run is continuing with errors
             self.notify_progress(status=RunStatus.RUNNING_WITH_ERRORS)
 
     def notify_progress(self, **kwargs) -> None:
@@ -96,13 +107,15 @@ class RunProgress:
 
         # Update run arguments values with provided key-value pairs
         for key, value in kwargs.items():
-            # Update self values
-            if hasattr(self, key):
-                setattr(self, key, value)
-
-            # Update self.run_arguments
+            # Update self.run_arguments if the attribute exists
             if hasattr(self.run_arguments, key):
                 setattr(self.run_arguments, key, value)
+
+            # Update self.current_progress with the key and value
+            if key == "status" and isinstance(value, RunStatus):
+                self.current_progress[key] = value.value
+            else:
+                self.current_progress[key] = value
 
         # Update database record
         if self.run_arguments.database_instance:
@@ -112,58 +125,28 @@ class RunProgress:
                 RunProgress.sql_update_run_record,
             )
         else:
-            logger.warning(
-                "[RunProgress] Failed to update run progress: database instance is not initialized."
-            )
+            logger.warning(RUN_NOTIFY_PROGRESS_DB_INSTANCE_NOT_PROVIDED)
 
         # If a callback function is provided, call it with the updated run arguments
         if self.run_progress_callback_func:
-            self.run_progress_callback_func(self.get_dict())
+            # Call the callback function with the current state of run arguments
+            self.run_progress_callback_func(self.format_progress())
 
-    def get_dict(self) -> dict:
+    def format_progress(self) -> dict:
         """
-        Constructs and returns a dictionary with the current state of the run progress.
+        Format the current progress by removing duplicate error messages.
 
-        This method assembles a dictionary encapsulating the current progress of the run.
-        The resulting dictionary includes the total number of tasks, total number of prompts,
-        completed prompts, cancelled prompts, error prompts, total number of metrics, completed metrics,
-        current runner ID, current status, current progress, current cancelled prompts, current error prompts,
-        a list of unique error messages, and the current running tasks.
+        This method ensures that the 'current_error_messages' list in the current progress
+        dictionary contains only unique error messages. It then returns the updated
+        current progress dictionary.
 
         Returns:
-            dict: A dictionary representing the current run progress state. The dictionary contains the following keys:
-                - total_num_of_tasks (int): The total number of tasks.
-                - total_num_of_prompts (int): The total number of prompts.
-                - total_num_of_metrics (int): The total number of metrics.
-                - completed_num_of_prompts (int): The number of completed prompts.
-                - cancelled_num_of_prompts (int): The number of cancelled prompts.
-                - error_num_of_prompts (int): The number of error prompts.
-                - completed_num_of_metrics (int): The number of completed metrics.
-                - current_runner_id (str): The ID of the current runner.
-                - current_status (str): The current status of the run.
-                - current_progress (float): The overall progress of the run.
-                - current_prompt_progress (float): The progress of the prompts.
-                - current_metric_progress (float): The progress of the metrics.
-                - current_cancelled_prompts (list): The current cancelled benchmark prompts.
-                - current_error_prompts (list): The current error benchmark prompts.
-                - current_error_messages (list[str]): A list of unique error messages.
-                - current_running_tasks (list[dict]): A list of dictionaries representing the current running tasks.
+            dict: The updated current progress dictionary with unique error messages.
         """
-        return {
-            "total_num_of_tasks": self.total_num_of_tasks,
-            "total_num_of_prompts": self.total_num_of_prompts,
-            "total_num_of_metrics": self.total_num_of_metrics,
-            "completed_num_of_prompts": self.completed_num_of_prompts,
-            "cancelled_num_of_prompts": self.cancelled_num_of_prompts,
-            "error_num_of_prompts": self.error_num_of_prompts,
-            "completed_num_of_metrics": self.completed_num_of_metrics,
-            "current_runner_id": self.run_arguments.runner_id,
-            "current_status": self.run_arguments.status.value,
-            "current_progress": self.overall_progress,
-            "current_prompt_progress": self.overall_prompt_progress,
-            "current_metric_progress": self.overall_metric_progress,
-            "current_cancelled_prompts": self.cancelled_prompts,
-            "current_error_prompts": self.error_prompts,
-            "current_error_messages": list(set(self.run_arguments.error_messages)),
-            "current_running_tasks": self.current_running_tasks,
-        }
+        # Remove duplicate error messages
+        self.current_progress["current_error_messages"] = list(
+            set(self.current_progress["current_error_messages"])
+        )
+
+        # Return the updated current progress
+        return self.current_progress

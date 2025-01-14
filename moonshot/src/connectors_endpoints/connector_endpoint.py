@@ -12,7 +12,7 @@ from moonshot.src.messages_constants import (
     CONNECTOR_ENDPOINT_DELETE_ERROR,
     CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR,
     CONNECTOR_ENDPOINT_READ_ERROR,
-    CONNECTOR_ENDPOINT_READ_INVALID,
+    CONNECTOR_ENDPOINT_READ_INVALID_ID_ERROR,
     CONNECTOR_ENDPOINT_UPDATE_ERROR,
 )
 from moonshot.src.storage.storage import Storage
@@ -94,7 +94,9 @@ class ConnectorEndpoint:
         try:
             endpoint_details = ConnectorEndpoint._read_endpoint(ep_id)
             if not endpoint_details:
-                raise RuntimeError(CONNECTOR_ENDPOINT_READ_INVALID.format(ep_id=ep_id))
+                raise RuntimeError(
+                    CONNECTOR_ENDPOINT_READ_INVALID_ID_ERROR.format(ep_id=ep_id)
+                )
 
             return ConnectorEndpointArguments(**endpoint_details)
 

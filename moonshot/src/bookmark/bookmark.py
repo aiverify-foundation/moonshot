@@ -12,13 +12,13 @@ from moonshot.src.messages_constants import (
     BOOKMARK_DELETE_ALL_BOOKMARK_ERROR,
     BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS,
     BOOKMARK_DELETE_BOOKMARK_ERROR,
-    BOOKMARK_DELETE_BOOKMARK_ERROR_1,
-    BOOKMARK_DELETE_BOOKMARK_FAIL,
+    BOOKMARK_DELETE_BOOKMARK_INVALID_NAME_ERROR,
+    BOOKMARK_DELETE_BOOKMARK_NOT_FOUND_ERROR,
     BOOKMARK_DELETE_BOOKMARK_SUCCESS,
     BOOKMARK_EXPORT_BOOKMARK_ERROR,
     BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR,
     BOOKMARK_GET_BOOKMARK_ERROR,
-    BOOKMARK_GET_BOOKMARK_ERROR_1,
+    BOOKMARK_GET_BOOKMARK_INVALID_NAME_ERROR,
 )
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
@@ -197,7 +197,7 @@ class Bookmark:
                 )
         else:
             raise RuntimeError(
-                BOOKMARK_GET_BOOKMARK_ERROR_1.format(message=bookmark_name)
+                BOOKMARK_GET_BOOKMARK_INVALID_NAME_ERROR.format(message=bookmark_name)
             )
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
@@ -231,7 +231,10 @@ class Bookmark:
                         "message": BOOKMARK_DELETE_BOOKMARK_SUCCESS,
                     }
                 else:
-                    return {"success": False, "message": BOOKMARK_DELETE_BOOKMARK_FAIL}
+                    return {
+                        "success": False,
+                        "message": BOOKMARK_DELETE_BOOKMARK_NOT_FOUND_ERROR,
+                    }
             except Exception as e:
                 return {
                     "success": False,
@@ -240,7 +243,7 @@ class Bookmark:
         else:
             return {
                 "success": False,
-                "message": BOOKMARK_DELETE_BOOKMARK_ERROR_1.format(
+                "message": BOOKMARK_DELETE_BOOKMARK_INVALID_NAME_ERROR.format(
                     message=bookmark_name
                 ),
             }

@@ -2,9 +2,26 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from moonshot.src.configs.env_variables import EnvVariables
+from moonshot.src.messages_constants import (
+    RUN_CANCEL_WARNING,
+    RUN_FORMAT_RESULTS_FORMATTING_ERROR,
+    RUN_FORMAT_RESULTS_MODULE_INSTANCE_ERROR,
+    RUN_GET_ALL_RUNS_LOAD_DB_INSTANCE_NOT_PROVIDED,
+    RUN_INITIALIZE_RUN_DB_INSTANCE_NOT_INITIALISED,
+    RUN_INITIALIZE_RUN_ERROR,
+    RUN_INITIALIZE_RUN_FAILED_TO_CREATE_RECORD,
+    RUN_LOAD_DB_INSTANCE_NOT_PROVIDED,
+    RUN_LOAD_FAILED_TO_GET_DB_RECORD,
+    RUN_LOAD_MODULE_NAME_NOT_PROVIDED,
+    RUN_LOAD_MODULES_LOADING_ERROR,
+    RUN_LOAD_UNABLE_TO_GET_INSTANCE,
+    RUN_RUN_BENCHMARK_MODULE_INSTANCE_ERROR,
+    RUN_RUN_BENCHMARK_PROCESSING_ERROR,
+    RUN_RUN_FAILED,
+)
 from moonshot.src.results.result_arguments import ResultArguments
 from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_arguments import RunArguments
@@ -20,8 +37,8 @@ logger = configure_logger(__name__)
 
 
 class Run:
-    sql_table_name = "run_table"
-    sql_create_run_table = """
+    sql_table_name: str = "run_table"
+    sql_create_run_table: str = """
         CREATE TABLE IF NOT EXISTS run_table (
         run_id INTEGER PRIMARY KEY AUTOINCREMENT,
         runner_id text NOT NULL,
@@ -38,18 +55,18 @@ class Run:
         status text NOT NULL
         );
     """
-    sql_create_run_record = """
+    sql_create_run_record: str = """
         INSERT INTO run_table (
         runner_id,runner_type,runner_args,endpoints,results_file,start_time,end_time,duration,error_messages,raw_results,results,status)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
-    sql_read_run_record = """
+    sql_read_run_record: str = """
         SELECT * from run_table WHERE run_id=?
     """
-    sql_read_latest_run_record = """
+    sql_read_latest_run_record: str = """
         SELECT * FROM run_table WHERE run_id=(SELECT MAX(run_id) FROM run_table)
     """
-    sql_read_all_run_records = """
+    sql_read_all_run_records: str = """
         SELECT * FROM run_table
     """
 
@@ -63,6 +80,18 @@ class Run:
         results_file: str,
         progress_callback_func: Callable | None = None,
     ) -> None:
+        """
+        Initialize a Run instance.
+
+        Args:
+            runner_id (str): The ID of the runner.
+            runner_type (RunnerType): The type of the runner.
+            runner_args (dict): Arguments for the runner.
+            database_instance (Any | None): The database instance.
+            endpoints (list[str]): List of endpoints.
+            results_file (str): The results file path.
+            progress_callback_func (Callable | None, optional): Callback function for progress updates.
+        """
         # Create run arguments
         self.run_arguments = RunArguments(
             runner_id=runner_id,
@@ -93,22 +122,20 @@ class Run:
     @staticmethod
     def load(database_instance: DBInterface | None, run_id: int | None) -> RunArguments:
         """
-        Loads run data for a given run_id from the database, or the latest run if run_id is None.
+        Load run arguments from the database.
 
-        This method retrieves run data for the specified run_id from the database, or if run_id is None,
-        it retrieves the latest run. If the database instance is not provided, it raises a RuntimeError.
-        If the database instance is provided, it invokes the read_record method of the database instance
-        with the given run_id or the latest run and returns a RunArguments object created from the retrieved record.
-
-        Parameters:
-            database_instance (DBAccessor | None): The database accessor instance.
-            run_id (int | None): The ID of the run to retrieve, or None to retrieve the latest run.
+        Args:
+            database_instance (DBInterface | None): The database instance.
+            run_id (int | None): The ID of the run to load.
 
         Returns:
-            RunArguments: An object containing the details of the run with the given run_id or the latest run.
+            RunArguments: The loaded run arguments.
+
+        Raises:
+            RuntimeError: If the database instance is not provided or if the record cannot be retrieved.
         """
         if not database_instance:
-            raise RuntimeError("[Run] Database instance not provided.")
+            raise RuntimeError(RUN_LOAD_DB_INSTANCE_NOT_PROVIDED)
 
         if run_id is not None:
             run_arguments_info = Storage.read_database_record(
@@ -127,26 +154,27 @@ class Run:
             return RunArguments.from_tuple(run_arguments_info)
         else:
             raise RuntimeError(
-                f"[Run] Failed to get database record for run_id {run_id}: {database_instance}"
+                RUN_LOAD_FAILED_TO_GET_DB_RECORD.format(
+                    run_id=run_id, database_instance=database_instance
+                )
             )
 
     @staticmethod
     def get_all_runs(database_instance: DBInterface) -> list[RunArguments]:
         """
-        Retrieves all run records from the database.
+        Get all run arguments from the database.
 
-        This method fetches all the run records from the database and converts them into a list of RunArguments objects.
-        If the database instance is not provided, it raises a RuntimeError. If no records are found, it also raises
-        a RuntimeError.
-
-        Parameters:
-            database_instance (DBInterface): The database interface to fetch records from.
+        Args:
+            database_instance (DBInterface): The database instance.
 
         Returns:
-            list[RunArguments]: A list of RunArguments objects representing each run record.
+            list[RunArguments]: A list of all run arguments.
+
+        Raises:
+            RuntimeError: If the database instance is not provided.
         """
         if not database_instance:
-            raise RuntimeError("[Run] Database instance not provided.")
+            raise RuntimeError(RUN_GET_ALL_RUNS_LOAD_DB_INSTANCE_NOT_PROVIDED)
 
         # Check that the table exists
         if not Storage.check_database_table_exists(
@@ -167,43 +195,62 @@ class Run:
 
     def cancel(self) -> None:
         """
-        Sets the cancel event to stop the run process.
-
-        This method is used to signal that the run process should be cancelled. It sets the cancel_event
-        which can be checked in various points of the asynchronous run process to gracefully stop the execution.
-
-        Returns:
-            None
+        Cancel the run by setting the cancel event.
         """
-        logger.warning("[Run] Cancelling run...")
+        logger.warning(RUN_CANCEL_WARNING)
         self.cancel_event.set()
 
     async def run(self) -> ResultArguments | None:
         """
-        Executes the run process asynchronously.
-
-        This method is the main entry point for running the process. It performs the run operation
-        asynchronously and returns a ResultArguments object if the run completes successfully, or None
-        if the run is cancelled or fails to complete.
+        Execute the run process.
 
         Returns:
-            ResultArguments | None: The result of the run operation if successful, otherwise None.
+            ResultArguments | None: The result arguments if the run is successful, None otherwise.
+        """
+        try:
+            # Initialize the run, setting up necessary parameters and database records
+            self._initialize_run()
+
+            # Get the current running event loop
+            loop = asyncio.get_running_loop()
+
+            # Load the runner and result processing modules
+            runner_module_instance, result_module_instance = self._load_modules()
+
+            # Execute the benchmarking tasks and get the results
+            runner_results = await self._run_benchmark(loop, runner_module_instance)
+
+            # Format the results obtained from the benchmarking tasks
+            updated_runner_results = self._format_results(
+                result_module_instance, runner_results
+            )
+
+            # Finalize the run, updating the status and cleaning up
+            self._finalize_run()
+
+            return updated_runner_results
+
+        except Exception as e:
+            # Log the error and notify the run progress of the failure
+            self.run_progress.notify_error(RUN_RUN_FAILED.format(str(e)))
+            return None
+
+    def _initialize_run(self) -> None:
+        """
+        Initialize the run by setting start and end times, creating a database record,
+        and notifying the run progress.
 
         Raises:
-            RuntimeError: If any error occurs during the run process.
+            RuntimeError: If the database instance is not initialized or if the record creation fails.
         """
-        # ------------------------------------------------------------------------------
-        # Part 0: Initialise
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 0: Initialising run...")
-        start_time = time.perf_counter()
         try:
-            # Initialise the run
+            # Set the start and end times for the run
             self.run_arguments.start_time = time.time()
             self.run_arguments.end_time = time.time()
 
-            # Create a new run record in database
+            # Check if the database instance is provided
             if self.run_arguments.database_instance:
+                # Create a database record for the run
                 inserted_record = Storage.create_database_record(
                     self.run_arguments.database_instance,
                     self.run_arguments.to_create_tuple(),
@@ -212,64 +259,38 @@ class Run:
                 if inserted_record:
                     self.run_arguments.run_id = inserted_record[0]
                 else:
-                    raise RuntimeError(
-                        "[Run] Failed to create record: record not inserted."
-                    )
+                    raise RuntimeError(RUN_INITIALIZE_RUN_FAILED_TO_CREATE_RECORD)
             else:
-                raise RuntimeError(
-                    "[Run] Failed to create record: db_instance is not initialised."
-                )
+                raise RuntimeError(RUN_INITIALIZE_RUN_DB_INSTANCE_NOT_INITIALISED)
 
-            # Set status to running
+            # Notify that the run is in progress
             self.run_progress.notify_progress(status=RunStatus.RUNNING)
 
         except Exception as e:
-            error_message = (
-                f"[Run] Failed to initialise run in Part 0 due to error: {str(e)}"
-            )
+            # Handle any exceptions that occur during initialization
+            error_message = RUN_INITIALIZE_RUN_ERROR.format(error=str(e))
             self.run_progress.notify_error(error_message)
 
-        finally:
-            logger.debug(
-                f"[Run] Initialise run took {(time.perf_counter() - start_time):.4f}s"
-            )
+    async def _run_benchmark(
+        self, loop: asyncio.AbstractEventLoop, runner_module_instance: Any
+    ) -> Any:
+        """
+        Run the benchmark using the runner module instance.
 
-        # ------------------------------------------------------------------------------
-        # Part 1: Get asyncio running loop
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 1: Loading asyncio running loop...")
-        loop = asyncio.get_running_loop()
+        Args:
+            loop (asyncio.AbstractEventLoop): The event loop to run the benchmark.
+            runner_module_instance (Any): The instance of the runner module.
 
-        # ------------------------------------------------------------------------------
-        # Part 2: Load runner and result processing module
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 2: Loading modules...")
-        start_time = time.perf_counter()
-        runner_module_instance = None
-        result_module_instance = None
-        try:
-            runner_module_instance = self._load_module(
-                "runner_processing_module", EnvVariables.RUNNERS_MODULES.name
-            )
-            result_module_instance = self._load_module(
-                "result_processing_module", EnvVariables.RESULTS_MODULES.name
-            )
-        except Exception as e:
-            self.run_progress.notify_error(f"[Run] Module loading error: {e}")
-        finally:
-            logger.debug(
-                f"[Run] Module loading took {(time.perf_counter() - start_time):.4f}s"
-            )
+        Returns:
+            Any: The results of the benchmark.
 
-        # ------------------------------------------------------------------------------
-        # Part 3: Run runner processing module
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 3: Running runner processing module...")
-        start_time = time.perf_counter()
-        runner_results = None
+        Raises:
+            RuntimeError: If the runner module instance is not provided or if there is an error during processing.
+        """
         try:
             if runner_module_instance:
-                runner_results = await runner_module_instance.generate(  # type: ignore ; ducktyping
+                # Run the benchmark using the runner module instance
+                return await runner_module_instance.generate(  # type: ignore ; ducktyping
                     loop,
                     self.run_arguments.run_id,
                     self.run_arguments.runner_id,
@@ -280,51 +301,99 @@ class Run:
                     self.cancel_event,
                 )
             else:
-                raise RuntimeError("Failed to initialise runner module instance.")
+                raise RuntimeError(RUN_RUN_BENCHMARK_MODULE_INSTANCE_ERROR)
 
         except Exception as e:
-            error_message = f"[Run] Failed to run runner processing module in Part 3 due to error: {str(e)}"
-            self.run_progress.notify_error(error_message)
-
-        finally:
-            logger.debug(
-                f"[Run] Running runner processing module took {(time.perf_counter() - start_time):.4f}s"
+            # Handle any exceptions that occur during benchmark processing
+            self.run_progress.notify_error(
+                RUN_RUN_BENCHMARK_PROCESSING_ERROR.format(error=str(e))
             )
 
-        # ------------------------------------------------------------------------------
-        # Part 4: Run result processing module
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 4: Running result processing module...")
-        start_time = time.perf_counter()
-        updated_runner_results = None
+    def _format_results(
+        self, result_module_instance: Any, runner_results: Any
+    ) -> ResultArguments | None:
+        """
+        Format the results using the result module instance.
+
+        Args:
+            result_module_instance (Any): The instance of the result module.
+            runner_results (Any): The results from the runner module.
+
+        Returns:
+            ResultArguments | None: The formatted runner results or None if formatting fails.
+
+        Raises:
+            RuntimeError: If the result module instance is not provided or if there is an error during formatting.
+        """
         try:
             if result_module_instance:
-                updated_runner_results = result_module_instance.generate(  # type: ignore ; ducktyping
-                    runner_results
-                )
-                if updated_runner_results:
+                # Format the results using the result module instance
+                formatted_runner_results = result_module_instance.generate(runner_results)  # type: ignore ; ducktyping
+                if formatted_runner_results:
                     self.run_progress.notify_progress(
-                        results=updated_runner_results.results
+                        results=formatted_runner_results.results
                     )
+                return formatted_runner_results
             else:
-                raise RuntimeError("Failed to initialise result module instance.")
+                raise RuntimeError(RUN_FORMAT_RESULTS_MODULE_INSTANCE_ERROR)
 
         except Exception as e:
-            error_message = f"[Run] Failed to run result processing module in Part 4 due to error: {str(e)}"
-            self.run_progress.notify_error(error_message)
+            # Handle any exceptions that occur during result formatting
+            self.run_progress.notify_error(
+                RUN_FORMAT_RESULTS_FORMATTING_ERROR.format(error=str(e))
+            )
+            return None
 
-        finally:
-            logger.debug(
-                f"[Run] Running result processing module took {(time.perf_counter() - start_time):.4f}s"
+    def _finalize_run(self) -> None:
+        """
+        Finalize the run by updating the run progress status based on the run state.
+        """
+        if self.cancel_event.is_set():
+            # Notify that the run was cancelled
+            self.run_progress.notify_progress(status=RunStatus.CANCELLED)
+
+        elif self.run_progress.run_arguments.error_messages:
+            # Notify that the run completed with errors
+            self.run_progress.notify_progress(status=RunStatus.COMPLETED_WITH_ERRORS)
+
+        else:
+            # Notify that the run completed successfully
+            self.run_progress.notify_progress(status=RunStatus.COMPLETED)
+
+    def _load_modules(self) -> tuple[Optional[Any], Optional[Any]]:
+        """
+        Load the runner and result processing modules.
+
+        Returns:
+            tuple[Optional[Any], Optional[Any]]: A tuple containing the runner module instance
+            and the result module instance.
+
+        Raises:
+            RuntimeError: If there is an error loading the modules.
+        """
+        runner_module_instance: Optional[Any] = None
+        result_module_instance: Optional[Any] = None
+
+        try:
+            # Load the runner processing module
+            runner_module_instance = self._load_module(
+                "runner_processing_module", EnvVariables.RUNNERS_MODULES.name
+            )
+            # Load the result processing module
+            result_module_instance = self._load_module(
+                "result_processing_module", EnvVariables.RESULTS_MODULES.name
             )
 
-        # ------------------------------------------------------------------------------
-        # Part 5: Wrap up run
-        # ------------------------------------------------------------------------------
-        logger.debug("[Run] Part 5: Wrap up run...")
-        return updated_runner_results
+        except Exception as e:
+            # Handle any exceptions that occur during module loading
+            self.run_progress.notify_error(
+                RUN_LOAD_MODULES_LOADING_ERROR.format(error=str(e))
+            )
 
-    def _load_module(self, arg_key: str, env_var: str):
+        finally:
+            return runner_module_instance, result_module_instance
+
+    def _load_module(self, arg_key: str, env_var: str) -> Any:
         """
         Load a module based on the argument key and environment variable.
 
@@ -338,20 +407,22 @@ class Run:
             env_var (str): The environment variable used to obtain the file path of the module.
 
         Returns:
-            An instance of the loaded module.
+            Any: An instance of the loaded module.
 
         Raises:
             RuntimeError: If the module name is not provided or the module instance cannot be created.
         """
         module_name = self.run_arguments.runner_args.get(arg_key)
         if not module_name:
-            raise RuntimeError(f"[Run] Module name for '{arg_key}' not provided.")
+            raise RuntimeError(
+                RUN_LOAD_MODULE_NAME_NOT_PROVIDED.format(arg_key=arg_key)
+            )
         module_instance = get_instance(
             module_name,
             Storage.get_filepath(env_var, module_name, "py"),
         )
         if not module_instance:
             raise RuntimeError(
-                f"[Run] Unable to get instance for module '{module_name}'."
+                RUN_LOAD_UNABLE_TO_GET_INSTANCE.format(module_name=module_name)
             )
         return module_instance()
