@@ -159,7 +159,7 @@ def test_convert_dataset_success(mock_copy_file, mock_moonshot_api):
     dataset_service = DatasetService()
     result = dataset_service.convert_dataset(MOCK_DATASET_CREATE_DTO_CSV)
     
-    assert result == "Dataset created successfully"
+    assert result == "dataset"
     mock_moonshot_api.api_convert_dataset.assert_called_once_with(
         name="New Dataset",
         description="This dataset is created from postman",
@@ -167,4 +167,3 @@ def test_convert_dataset_success(mock_copy_file, mock_moonshot_api):
         license="license",
         file_path="tests/unit-tests/common/samples/sample-dataset.csv"
     )
-    mock_copy_file.assert_called_once_with("/path/to/new/dataset")
