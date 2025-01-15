@@ -43,7 +43,7 @@ MOCK_DATASET_CREATE_DTO_CSV = CSV_Dataset_DTO(
     description="This dataset is created from postman",
     reference="reference.com",
     license="license",
-    csv_file_path="tests/unit-tests/common/samples/sample-dataset.csv"
+    file_path="tests/unit-tests/common/samples/sample-dataset.csv"
 )
 
 # Exception scenarios to test
@@ -165,6 +165,6 @@ def test_convert_dataset_success(mock_copy_file, mock_moonshot_api):
         description="This dataset is created from postman",
         reference="reference.com",
         license="license",
-        csv_file_path="tests/unit-tests/common/samples/sample-dataset.csv"
+        file_path="tests/unit-tests/common/samples/sample-dataset.csv"
     )
     mock_copy_file.assert_called_once_with("/path/to/new/dataset")
