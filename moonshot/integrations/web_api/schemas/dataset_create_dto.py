@@ -14,7 +14,7 @@ class CSV_Dataset_DTO(DatasetPydanticModel):
     description: str = Field(default="", min_length=1)
     license: Optional[str] = ""
     reference: Optional[str] = ""
-    csv_file_path: str = Field(..., min_length=1)
+    file_path: str = Field(..., min_length=1)
 
 
 class HF_Dataset_DTO(DatasetPydanticModel):

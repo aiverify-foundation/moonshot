@@ -12,7 +12,7 @@ import os
 router = APIRouter(tags=["Datasets"])
 
 
-@router.post("/api/v1/datasets/csv")
+@router.post("/api/v1/datasets/file")
 @inject
 async def upload_dataset(
     file: UploadFile = File(...),
@@ -51,7 +51,7 @@ async def upload_dataset(
         description=description,
         license=license,
         reference=reference,
-        csv_file_path=temp_file_path
+        file_path=temp_file_path
     )
 
     try:

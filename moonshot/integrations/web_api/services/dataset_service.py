@@ -28,7 +28,7 @@ class DatasetService(BaseService):
             description=dataset_data.description,
             reference=dataset_data.reference,
             license=dataset_data.license,
-            csv_file_path=dataset_data.csv_file_path,
+            file_path=dataset_data.file_path,
         )
         return os.path.splitext(os.path.basename(new_ds_path))[0]
 
