@@ -134,7 +134,17 @@ jobs:
       run: |
          source venv/bin/activate
          cd moonshot-smoke-testing
-         npm install --global yarn
-         yarn add playwright
-         yarn playwright install --with-deps
+         npm ci
+         npx playwright install
+         npx playwright install-deps
+         npm install dotenv --save
          AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts
+    
+    - name: Upload Playwright Traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace-integration-ui-test-redteaming-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot-smoke-testing/test-results
+    
