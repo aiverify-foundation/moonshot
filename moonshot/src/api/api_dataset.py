@@ -1,6 +1,6 @@
-from pydantic import validate_call
 import json
-from typing import Iterator
+
+from pydantic import validate_call
 
 from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
@@ -104,6 +104,8 @@ def api_convert_dataset(
         str: The ID of the newly created dataset.
     """
     ds_args = None
+
+    # if file is already in json format
     if file_path.endswith(".json"):
         json_data = json.load(open(file_path))
         if "examples" in json_data:
@@ -117,6 +119,8 @@ def api_convert_dataset(
             )
         else:
             raise ValueError("JSON file does not contain 'examples' key")
+
+    # if file is in csv format
     else:
         examples = Dataset.convert_data(file_path)
         ds_args = DatasetArguments(

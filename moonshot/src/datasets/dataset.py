@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Iterator
 
@@ -91,7 +92,27 @@ class Dataset:
         Returns:
             Iterator[dict]: An iterator of dictionaries representing the CSV data.
         """
-        df = pd.read_csv(csv_file_path, chunksize=1)
+
+        # validate file contents
+        if os.path.getsize(csv_file_path) == 0:
+            raise ValueError("The uploaded file is empty.")
+
+        # validate headers
+        df_header = pd.read_csv(csv_file_path, nrows=1)
+        headers = df_header.columns.tolist()
+        required_headers = ["input", "target"]
+        if not all(header in headers for header in required_headers):
+            raise KeyError(
+                f"Required headers not found in the dataset. Required headers are {required_headers}."
+            )
+
+        df = pd.read_csv(csv_file_path, chunksize=1000)
+
+        # validate dataset
+        first_chunk = next(df, None)
+        if first_chunk is None or first_chunk.empty:
+            raise ValueError("The uploaded file does not contain any data.")
+
         for chunk in df:
             yield chunk.to_dict("records")[0]
 
