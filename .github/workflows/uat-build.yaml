@@ -1,5 +1,6 @@
-name: UAT Deploy
+name: UAT Build
 
+# Trigger when the PR to merge to main is merged
 on:
   pull_request:
     branches:
@@ -30,13 +31,17 @@ jobs:
 
       - name: Bump version
         run: |
-          echo "Bumping version..."
+          echo "Bump version..."
           pip install bump2version
           bump2version patch
 
+      - name: Generate notices file
+        run: |
+          echo "Generate notice file..."
+
       - name: Package test PyPI
         run: |
-          echo "Packaging test PyPI..."
+          echo "Package test PyPI..."
           pip install build
           python3 -m build
 
@@ -70,7 +75,17 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
 
+# Deploy moonshot to UAT by installing moonshot package from test pypi
+  # deploy-to-uat:
+  #   needs:
+  #     - publish-to-testpypi
+  #   runs-on: ubuntu-latest
 
+# Run integration test
+  # integration-test:
+  #   needs:
+  #     - publish-to-testpypi:
+  #     runs-on: ubuntu-latest
 
 
 
