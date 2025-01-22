@@ -76,3 +76,50 @@ def delete_metric(
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete metric: {e.msg}"
             )
+
+
+@router.post("/api/v1/metric/update-config")
+@inject
+def update_metric_config(
+    metric_id: str,
+    update_args: dict,
+    metric_service: MetricService = Depends(Provide[Container.metric_service]),
+) -> bool:
+    try:
+        return metric_service.update_metric_config(metric_id, update_args)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to delete metric config: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to delete metric config: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to delete metric config: {e.msg}"
+            )
+
+
+@router.post("/api/v1/metric/delete-config")
+@inject
+def delete_metric_config(
+    metric_id: str,
+    metric_service: MetricService = Depends(Provide[Container.metric_service]),
+) -> bool:
+    try:
+        return metric_service.delete_metric_config(metric_id)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404, detail=f"Failed to delete metric config: {e.msg}"
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400, detail=f"Failed to delete metric config: {e.msg}"
+            )
+        else:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to delete metric_config: {e.msg}"
+            )
