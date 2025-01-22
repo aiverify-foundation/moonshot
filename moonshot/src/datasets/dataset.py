@@ -61,7 +61,6 @@ class Dataset:
             }
 
             examples = ds_args.examples
-
             # Write as JSON output
             file_path = Storage.create_object_with_iterator(
                 EnvVariables.DATASETS.name,
@@ -93,7 +92,6 @@ class Dataset:
             Iterator[dict]: An iterator of dictionaries representing the CSV data.
         """
 
-        # validate file contents
         if os.path.getsize(csv_file_path) == 0:
             raise ValueError("The uploaded file is empty.")
 
@@ -113,8 +111,8 @@ class Dataset:
         if first_chunk is None or first_chunk.empty:
             raise ValueError("The uploaded file does not contain any data.")
 
-        for chunk in df:
-            yield chunk.to_dict("records")[0]
+        result = [chunk.to_dict("records")[0] for chunk in df]
+        return iter(result)
 
     @staticmethod
     @validate_call

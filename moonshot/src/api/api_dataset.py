@@ -105,6 +105,12 @@ def api_convert_dataset(
     """
     ds_args = None
 
+    # Check if file is in a supported format
+    if not (file_path.endswith(".json") or file_path.endswith(".csv")):
+        raise ValueError(
+            "Unsupported file format. Please provide a .json or .csv file."
+        )
+
     # if file is already in json format
     if file_path.endswith(".json"):
         json_data = json.load(open(file_path))
@@ -122,13 +128,17 @@ def api_convert_dataset(
 
     # if file is in csv format
     else:
-        examples = Dataset.convert_data(file_path)
-        ds_args = DatasetArguments(
-            id="",
-            name=name,
-            description=description,
-            reference=reference,
-            license=license,
-            examples=examples,
-        )
-    return Dataset.create(ds_args)
+        try:
+            examples = Dataset.convert_data(file_path)
+            ds_args = DatasetArguments(
+                id="",
+                name=name,
+                description=description,
+                reference=reference,
+                license=license,
+                examples=examples,
+            )
+            return Dataset.create(ds_args)
+        except Exception as e:
+            print("raising exception:", e)
+            raise e
