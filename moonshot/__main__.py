@@ -116,6 +116,13 @@ def download_nltk_resources() -> None:
             raise
 
 
+def download_spacy_model() -> None:
+    """
+    Downloads the en_core_web_lg model using the spacy module (for entity processor module).
+    """
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_lg"])
+
+
 def moonshot_data_installation(unattended: bool, overwrite: bool) -> None:
     """
     Install Moonshot Data from GitHub.
@@ -175,9 +182,11 @@ def moonshot_data_installation(unattended: bool, overwrite: bool) -> None:
     if os.path.exists("requirements.txt"):
         run_subprocess(["pip", "install", "-r", "requirements.txt"], check=True)
         download_nltk_resources()
+        download_spacy_model()
 
     # Change back to the base directory
     os.chdir("..")
+
 
 def check_node() -> bool:
     """

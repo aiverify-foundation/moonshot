@@ -108,7 +108,7 @@ jobs:
       run: |
         source venv/bin/activate
         pip install nltk
-        python -c "import nltk; nltk.download('stopwords')"
+        python -c "import nltk; nltk.download('stopwords');nltk.download('punkt');nltk.download('punkt_tab');nltk.download('averaged_perceptron_tagger_eng')"
         
     - name: Setup Moonshot UI
       run: |
@@ -134,7 +134,17 @@ jobs:
       run: |
          source venv/bin/activate
          cd moonshot-smoke-testing
-         npm install --global yarn
-         yarn add playwright
-         yarn playwright install --with-deps
-         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts
+         npm ci
+         npx playwright install
+         npx playwright install-deps
+         npm install dotenv --save
+         AZURE_OPENAI_URI="$AZURE_OPENAI_URI" AZURE_OPENAI_TOKEN="$AZURE_OPENAI_TOKEN" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" MOONSHOT_URL="$MOONSHOT_URL" MOONSHOT_PORT_NUMBER="$MOONSHOT_PORT_NUMBER" DEBUG=pw:api npx playwright test tests/smoke-test.spec.ts --trace on
+    
+    - name: Upload Playwright Traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace-integration-ui-test-redteaming-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot-smoke-testing/test-results
+    
