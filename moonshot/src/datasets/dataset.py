@@ -99,12 +99,14 @@ class Dataset:
                 f"Required headers not found in the dataset. Required headers are {required_headers}."
             )
 
-        df = pd.read_csv(csv_file_path, chunksize=1000)
-
+        df = pd.read_csv(csv_file_path, chunksize=1)
         # validate dataset
         first_chunk = next(df, None)
         if first_chunk is None or first_chunk.empty:
             raise ValueError("The uploaded file does not contain any data.")
+
+        # Reset df after performing next(df)
+        df = pd.read_csv(csv_file_path, chunksize=1)
 
         result = [chunk.to_dict("records")[0] for chunk in df]
         return iter(result)
