@@ -17,7 +17,7 @@ class DatasetArguments(BaseModel):
     description: str
 
     # examples (Iterator[dict] | None): Generator of examples from the dataset, where each example is a dictionary.
-    examples: Iterator[dict]
+    examples: Iterator[dict] | None
 
     # num_of_dataset_prompts (int): The number of dataset prompts, automatically calculated
     num_of_dataset_prompts: int = 0
