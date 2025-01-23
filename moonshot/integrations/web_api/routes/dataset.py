@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
@@ -6,8 +9,6 @@ from ..schemas.dataset_create_dto import CSV_Dataset_DTO, HF_Dataset_DTO
 from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.dataset_service import DatasetService
 from ..services.utils.exceptions_handler import ServiceException
-import tempfile
-import os
 
 router = APIRouter(tags=["Datasets"])
 
@@ -38,23 +39,24 @@ async def upload_dataset(
                        An error with status code 400 if there is a validation error.
                        An error with status code 500 for any other server-side error.
     """
-    
+
     # Create a temporary file with a secure random name
-    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp_file:
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix=os.path.splitext(file.filename)[1]
+    ) as tmp_file:
         content = await file.read()
         tmp_file.write(content)
         temp_file_path = tmp_file.name
-    
-      # Create the DTO with the form data including optional fields
-    dataset_data = CSV_Dataset_DTO(
-        name=name,
-        description=description,
-        license=license,
-        reference=reference,
-        file_path=temp_file_path
-    )
 
     try:
+        # Create the DTO with the form data including optional fields
+        dataset_data = CSV_Dataset_DTO(
+            name=name,
+            description=description,
+            license=license,
+            reference=reference,
+            file_path=temp_file_path,
+        )
         return dataset_service.convert_dataset(dataset_data)
     except ServiceException as e:
         if e.error_code == "FileNotFound":

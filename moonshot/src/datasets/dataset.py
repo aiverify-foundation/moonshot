@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Iterator
 
@@ -91,10 +90,6 @@ class Dataset:
         Returns:
             Iterator[dict]: An iterator of dictionaries representing the CSV data.
         """
-
-        if os.path.getsize(csv_file_path) == 0:
-            raise ValueError("The uploaded file is empty.")
-
         # validate headers
         df_header = pd.read_csv(csv_file_path, nrows=1)
         headers = df_header.columns.tolist()

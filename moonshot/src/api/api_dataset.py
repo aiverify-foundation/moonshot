@@ -1,6 +1,7 @@
 import json
+import os
 
-from pydantic import validate_call
+from pydantic import ValidationError, validate_call
 
 from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.datasets.dataset_arguments import DatasetArguments
@@ -103,18 +104,61 @@ def api_convert_dataset(
     Returns:
         str: The ID of the newly created dataset.
     """
+    # ds_args = None
+
+    # # Check if file is in a supported format
+    # if not (file_path.endswith(".json") or file_path.endswith(".csv")):
+    #     raise ValueError(
+    #         "Unsupported file format. Please provide a .json or .csv file."
+    #     )
+
+    # # if file is already in json format
+    # if file_path.endswith(".json"):
+    #     json_data = json.load(open(file_path))
+
+    #     if "examples" in json_data:
+    #         ds_args = DatasetArguments(
+    #             id="",
+    #             name=json_data.get("name", name),
+    #             description=json_data.get("description", description),
+    #             reference=json_data.get("reference", reference),
+    #             license=json_data.get("license", license),
+    #             examples=iter(json_data["examples"]),
+    #         )
+    #     else:
+    #         raise ValueError("JSON file does not contain 'examples' key")
+
+    # # if file is in csv format
+    # else:
+    #     try:
+    #         examples = Dataset.convert_data(file_path)
+    #         ds_args = DatasetArguments(
+    #             id="",
+    #             name=name,
+    #             description=description,
+    #             reference=reference,
+    #             license=license,
+    #             examples=examples,
+    #         )
+    #     except Exception as e:
+    #         raise e
+    # return Dataset.create(ds_args)
+
     ds_args = None
 
     # Check if file is in a supported format
     if not (file_path.endswith(".json") or file_path.endswith(".csv")):
-        raise ValueError(
-            "Unsupported file format. Please provide a .json or .csv file."
-        )
+        raise ValueError("Unsupported file format. Please provide a JSON or CSV file.")
+
+    # Check that file is not empty
+    if os.path.getsize(file_path) == 0:
+        raise ValueError("The uploaded file is empty.")
 
     # if file is already in json format
     if file_path.endswith(".json"):
         json_data = json.load(open(file_path))
-        if "examples" in json_data:
+
+        try:
             ds_args = DatasetArguments(
                 id="",
                 name=json_data.get("name", name),
@@ -123,10 +167,15 @@ def api_convert_dataset(
                 license=json_data.get("license", license),
                 examples=iter(json_data["examples"]),
             )
-        else:
-            raise ValueError("JSON file does not contain 'examples' key")
+        except ValidationError as ve:
+            print("wut wut")
+            raise ve
 
-    # if file is in csv format
+        except Exception as e:
+            print("wut wut")
+            raise e
+
+    # if file is in csv format, convert data
     else:
         try:
             examples = Dataset.convert_data(file_path)
@@ -138,7 +187,6 @@ def api_convert_dataset(
                 license=license,
                 examples=examples,
             )
-            return Dataset.create(ds_args)
         except Exception as e:
-            print("raising exception:", e)
             raise e
+    return Dataset.create(ds_args)
