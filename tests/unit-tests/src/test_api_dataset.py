@@ -212,7 +212,7 @@ class TestCollectionApiDataset:
                     "reference": "www.reference.com",
                     "license": "LICENSE",
                     "method": "csv",
-                    "csv_file_path": "tests/unit-tests/common/samples/sample-dataset.csv"
+                    "file_path": "tests/unit-tests/common/samples/sample-dataset.csv"
                 },
                 "tests/unit-tests/src/data/datasets/test-csv-dataset.json"
             )
@@ -235,10 +235,10 @@ class TestCollectionApiDataset:
         description = dataset_details.pop('description')
         reference = dataset_details.pop('reference')
         license = dataset_details.pop('license')
-        csv_file_path= dataset_details.pop('csv_file_path')
+        file_path= dataset_details.pop('file_path')
 
         # Call the api_convert_dataset function with unpacked arguments
-        result = api_convert_dataset(name, description, reference, license, csv_file_path)
+        result = api_convert_dataset(name, description, reference, license, file_path)
         # Assert that the result matches the expected result
         assert result == expected_result, f"The result '{result}' does not match the expected result '{expected_result}'."
 

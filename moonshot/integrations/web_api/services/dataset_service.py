@@ -4,6 +4,7 @@ from ..schemas.dataset_response_dto import DatasetResponseDTO
 from ..services.base_service import BaseService
 from ..services.utils.exceptions_handler import exception_handler
 from .utils.file_manager import copy_file
+import os
 
 
 class DatasetService(BaseService):
@@ -16,7 +17,7 @@ class DatasetService(BaseService):
             dataset_data (CSV_Dataset_DTO): The data required to convert the dataset.
 
         Returns:
-            str: The path to the newly created dataset.
+            str: The filename of the newly created dataset.
 
         Raises:
             Exception: If an error occurs during dataset conversion.
@@ -27,9 +28,9 @@ class DatasetService(BaseService):
             description=dataset_data.description,
             reference=dataset_data.reference,
             license=dataset_data.license,
-            csv_file_path=dataset_data.csv_file_path,
+            file_path=dataset_data.file_path,
         )
-        return copy_file(new_ds_path)
+        return os.path.splitext(os.path.basename(new_ds_path))[0]
 
     @exception_handler
     def download_dataset(self, dataset_data: HF_Dataset_DTO) -> str:
