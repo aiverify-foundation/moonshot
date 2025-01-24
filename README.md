@@ -2,7 +2,7 @@
 
 ![Moonshot Logo](https://github.com/aiverify-foundation/moonshot/raw/main/misc/aiverify-moonshot-logo.png)
 
-**Version 0.6.1**
+**Version 0.6.2**
 
 A simple and modular tool to evaluate any LLM application.
 
