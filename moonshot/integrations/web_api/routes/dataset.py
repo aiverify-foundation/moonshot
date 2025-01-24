@@ -1,5 +1,8 @@
+import os
+import tempfile
+
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from ..container import Container
 from ..schemas.dataset_create_dto import CSV_Dataset_DTO, HF_Dataset_DTO
@@ -10,10 +13,14 @@ from ..services.utils.exceptions_handler import ServiceException
 router = APIRouter(tags=["Datasets"])
 
 
-@router.post("/api/v1/datasets/csv")
+@router.post("/api/v1/datasets/file")
 @inject
-def convert_dataset(
-    dataset_data: CSV_Dataset_DTO,
+async def upload_dataset(
+    file: UploadFile = File(...),
+    name: str = Form(..., min_length=1),
+    description: str = Form(default="", min_length=1),
+    license: str = Form(default=""),
+    reference: str = Form(default=""),
     dataset_service: DatasetService = Depends(Provide[Container.dataset_service]),
 ) -> str:
     """
@@ -32,7 +39,24 @@ def convert_dataset(
                        An error with status code 400 if there is a validation error.
                        An error with status code 500 for any other server-side error.
     """
+
+    # Create a temporary file with a secure random name
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix=os.path.splitext(file.filename)[1]
+    ) as tmp_file:
+        content = await file.read()
+        tmp_file.write(content)
+        temp_file_path = tmp_file.name
+
     try:
+        # Create the DTO with the form data including optional fields
+        dataset_data = CSV_Dataset_DTO(
+            name=name,
+            description=description,
+            license=license,
+            reference=reference,
+            file_path=temp_file_path,
+        )
         return dataset_service.convert_dataset(dataset_data)
     except ServiceException as e:
         if e.error_code == "FileNotFound":
@@ -47,6 +71,10 @@ def convert_dataset(
             raise HTTPException(
                 status_code=500, detail=f"Failed to convert dataset: {e.msg}"
             )
+    finally:
+        # Clean up the temporary file
+        if os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
 
 
 @router.post("/api/v1/datasets/hf")
