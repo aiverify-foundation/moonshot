@@ -64,3 +64,56 @@ def get_all_attack_module_metadata(
             raise HTTPException(
                 status_code=500, detail=f"Failed to retrieve attack modules: {e.msg}"
             )
+
+
+@router.post("/api/v1/attack-modules/update-config")
+@inject
+def update_attack_module_config(
+    attack_module_id: str,
+    update_args: dict,
+    am_service: AttackModuleService = Depends(Provide[Container.am_service]),
+) -> bool:
+    try:
+        return am_service.update_attack_module_config(attack_module_id, update_args)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404,
+                detail=f"Failed to update attack module config: {e.msg}",
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to update attack module config: {e.msg}",
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to update attack module config: {e.msg}",
+            )
+
+
+@router.post("/api/v1/attack-modules/delete-config")
+@inject
+def delete_attack_module_config(
+    attack_module_id: str,
+    am_service: AttackModuleService = Depends(Provide[Container.am_service]),
+) -> bool:
+    try:
+        return am_service.delete_attack_module_config(attack_module_id)
+    except ServiceException as e:
+        if e.error_code == "FileNotFound":
+            raise HTTPException(
+                status_code=404,
+                detail=f"Failed to delete attack module config: {e.msg}",
+            )
+        elif e.error_code == "ValidationError":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to delete attack module config: {e.msg}",
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to delete attack module config: {e.msg}",
+            )
