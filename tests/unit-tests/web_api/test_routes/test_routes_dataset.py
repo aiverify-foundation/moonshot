@@ -169,68 +169,78 @@ def test_download_dataset(test_client, mock_dataset_service, dataset_data, excep
     assert response.json() == expected_response
 
 
-@pytest.mark.parametrize("dataset_data, exception, expected_status, expected_response", [
-    # Successful case for "csv" method
+@pytest.mark.parametrize("file_name, form_data, exception, expected_status, expected_response", [
+    # Successful case
     (
+        "test.csv",
         {
             "name": "New Dataset",
             "description": "This dataset is created from postman",
             "license": "norman license",
             "reference": "reference.com",
-            "csv_file_path": "/Users/normanchia/LocalDocs/your_dataset.csv",
         },
         None,
         200,
         "Dataset created successfully"
     ),
-    # Exception case for validation error
+    # Exception cases
     (
+        "test.csv",
         {
             "name": "New Dataset",
             "description": "This dataset is created from postman",
             "license": "norman license",
             "reference": "reference.com",
-            "csv_file_path": "/Users/normanchia/LocalDocs/your_dataset.csv",
         },
         ServiceException("A validation error occurred", "create_dataset", "ValidationError"),
         400,
         {'detail': 'Failed to convert dataset: [ServiceException] ValidationError in create_dataset - A validation error occurred'}
     ),
-    # Exception case for file not found error
     (
+        "test.csv",
         {
             "name": "New Dataset",
             "description": "This dataset is created from postman",
             "license": "norman license",
             "reference": "reference.com",
-            "csv_file_path": "/Users/normanchia/LocalDocs/your_dataset.csv",
         },
         ServiceException("A file not found error occurred", "create_dataset", "FileNotFound"),
         404,
         {'detail': 'Failed to convert dataset: [ServiceException] FileNotFound in create_dataset - A file not found error occurred'}
     ),
-    # Exception case for server error
     (
+        "test.csv",
         {
             "name": "New Dataset",
             "description": "This dataset is created from postman",
             "license": "norman license",
             "reference": "reference.com",
-            "csv_file_path": "/Users/normanchia/LocalDocs/your_dataset.csv",
         },
         ServiceException("An server error occurred", "create_dataset", "ServerError"),
         500,
         {'detail': 'Failed to convert dataset: [ServiceException] ServerError in create_dataset - An server error occurred'}
     ),
 ])
-def test_convert_dataset(test_client, mock_dataset_service, dataset_data, exception, expected_status, expected_response, mocker):
+def test_convert_dataset(test_client, mock_dataset_service, file_name, form_data, exception, expected_status, expected_response, mocker):
     mocker.patch("moonshot.integrations.web_api.routes.dataset.Provide", return_value=mock_dataset_service)
+    
+    # Create a mock file content
+    file_content = b"mock,csv,content\n1,2,3"
+    files = {
+        "file": (file_name, file_content, "text/csv")
+    }
     
     if exception:
         mock_dataset_service.convert_dataset.side_effect = exception
     else:
         mock_dataset_service.convert_dataset.return_value = expected_response
 
-    response = test_client.post("/api/v1/datasets/csv", json=dataset_data)
+    # Use test client with form data and files
+    response = test_client.post(
+        "/api/v1/datasets/file",
+        data=form_data,
+        files=files
+    )
+    
     assert response.status_code == expected_status
     assert response.json() == expected_response

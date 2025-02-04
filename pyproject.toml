@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.6.1"
+version = "0.6.2"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -29,7 +29,8 @@ dependencies = [
     "datasets>=2.21.0",
     "pandas>=2.2.2",
     "numpy>=1.26.4",
-    "tenacity>=8.5.0"
+    "tenacity>=8.5.0",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
@@ -97,7 +98,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.6.1"
+version = "0.6.2"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
