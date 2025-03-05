@@ -54,7 +54,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=moonshot
-            -Dsonar.verbose=true 
+          #  -Dsonar.verbose=true 
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONARQUBE_SERVER_URL }}
