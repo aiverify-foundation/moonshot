@@ -35,10 +35,13 @@ jobs:
           echo "project_key=${PROJECT_KEY}" >> $GITHUB_ENV
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "branch_to_test=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+            echo "pr_num=#${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           elif [ "${{ github.event_name }}" == "push" ]; then
             echo "branch_to_test=${{ github.ref }}" >> $GITHUB_ENV
+            echo "pr_num=push" >> $GITHUB_ENV
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "branch_to_test=${{ inputs.branch_to_test }}" >> $GITHUB_ENV
+            echo "pr_num=dispatch" >> $GITHUB_ENV
           fi
 
       - name: Checkout code
@@ -59,20 +62,44 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONARQUBE_SERVER_URL }}
 
-      - name: Display scan results
+      - name: Display scan summary
+        id: scan_summary
         run: |
             SONAR_PROJECT_KEY=${{ env.project_key }}
-            echo "Fetching SonarQube analysis results..."
+            echo "SonarQube analysis results:"
             response=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
               "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells")
-            vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value')
-            reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value')
-            maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value')
-            echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
+            vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value | tonumber')
+            reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value | tonumber')
+            maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value | tonumber')
+            echo "summary_msg=vulnerabilities: ${vulnerabilities}, reliability: ${reliability}, maintainability: ${maintainability}" >> $GITHUB_ENV
 
-            echo "Fetching vulnerability details..."
-            vulnerabilities_details=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
-              "${{ vars.SONARQUBE_SERVER_URL }}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&types=VULNERABILITY")
-            echo "Vulnerability details: $vulnerabilities_details"
+            if [ "$vulnerabilities" -gt 0 ]; then
+              DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
+              RED='\033[0;31m'
+              echo -e "${RED}${{ env.summary_msg }}"
+              echo -e "${RED}Refer to ${DASHBOARD_URL} for more details."
+              exit 2
+            elifse
+              exit 0
+            fi
 
-  
+            # echo "Fetching vulnerability details..."
+            # vulnerabilities_details=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
+            #   "${{ vars.SONARQUBE_SERVER_URL }}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&types=VULNERABILITY")
+            # echo "Vulnerability details: $vulnerabilities_details"
+
+      # Send slack notification
+      - name: Send slack notification
+        if: ${{ ! cancelled() }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.pr_num }}",
+              "status": "SAST: ${{ steps.scan_summary.outcome }}",
+              "details": "${{ env.CODEQL_SUMMARY }}",
+              "ref": "${{ github.server_url }}/${{ github.repository }}/security/code-scanning"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_CI }}
