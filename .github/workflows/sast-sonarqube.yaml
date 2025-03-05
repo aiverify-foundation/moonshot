@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: true
   
 jobs:  
-  sonarqube:
+  analyze:
     runs-on: ubuntu-latest
     steps:
       - name: Set env variables
@@ -74,10 +74,8 @@ jobs:
             maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value | tonumber')
             
             SUMMARY_MSG="vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
-            echo $SUMMARY_MSG
+            DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)"=${{ env.project_key }}"
             echo "summary_msg=${SUMMARY_MSG}" >> $GITHUB_ENV
-            DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
-            echo $DASHBOARD_URL
             echo "dashboard_url=${DASHBOARD_URL}" >> $GITHUB_ENV
 
             RED='\033[0;31m'
@@ -112,5 +110,6 @@ jobs:
               "status": "SAST: ${{ steps.analysis_results.outcome }}",
               "details": "${{ env.summary_msg }}",
               "ref": "${{ env.dashboard_url }}"
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_CI }}
