@@ -70,7 +70,7 @@ jobs:
             maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value')
             echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
 
-            vulnerabilities_int=$(($vulnerabilities))
+            vulnerabilities_int=$(($vulnerabilities+0))
             if [ "$vulnerabilities_int" -gt 0 ]; then
               echo "Fetching vulnerability details..."
               vulnerabilities_details=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
