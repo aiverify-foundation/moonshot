@@ -53,7 +53,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.0.0 # See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
         with:
           args: >
-            -Dsonar.projectKey=moonshot --quiet
+            -Dsonar.projectKey=moonshot
             -Dssonar.scanner.metadataFilePath=${{ github.workspace }}
           #  -Dsonar.verbose=true 
         env:
