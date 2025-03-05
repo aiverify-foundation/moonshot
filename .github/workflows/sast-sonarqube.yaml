@@ -1,0 +1,56 @@
+name: SAST - Sonarqube
+
+on:
+    # Runs when a pull request to main is being assigned
+  pull_request:
+    types: [ assigned, synchronize ]
+    branches: [ main ]
+
+    # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      branch_to_test:
+        description: 'Branch or tag to run test'
+        required: true
+        default: 'main'
+        type: string
+            
+  push:
+    branches: [ ci/sonarqube-sast ]
+
+    # Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+  
+jobs:  
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set env variables (pull request)
+        if: github.event_name == 'pull_request'
+        run: |
+            echo "BRANCH_TO_TEST=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_ENV"
+
+      - name: Set env variables (push)
+        if: github.event_name == 'push'
+        run: |
+          echo "BRANCH_TO_TEST=${{ github.ref }}" >> "$GITHUB_ENV"
+
+      - name: Set env variables (workflow dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "BRANCH_TO_TEST=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_TO_TEST }}
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5.0.0 # See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONARQUBE_SERVER_URL }}
