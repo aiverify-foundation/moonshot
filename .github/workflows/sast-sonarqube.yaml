@@ -72,16 +72,23 @@ jobs:
             vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value | tonumber')
             reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value | tonumber')
             maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value | tonumber')
-            echo "summary_msg=vulnerabilities: ${vulnerabilities}, reliability: ${reliability}, maintainability: ${maintainability}" >> $GITHUB_ENV
-
+            echo 'summary_msg="vulnerabilities: ${vulnerabilities}, reliability: ${reliability}, maintainability: ${maintainability}"' >> $GITHUB_ENV
+            echo "dashboard_url=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)" >> $GITHUB_ENV
+             
+            RED='\033[0;31m'
+            ORANGE='\033[0;33m'
+            GREEN='\033[0;32m'
+            NC='\033[0m' # No Color
+  
             if [ "$vulnerabilities" -gt 0 ]; then
-              DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
-              RED='\033[0;31m'
               echo -e "${RED}${{ env.summary_msg }}"
-              echo -e "${RED}Refer to ${DASHBOARD_URL} for more details."
+              echo -e "${RED}Refer to ${{ env.dashboard_url }} for more details."
               exit 2
-            elifse
-              exit 0
+            elif [ "$reliability" -gt 0 ] || [ "$maintainability" -gt 0 ]; then
+              echo -e "${ORANGE}${summary_msg}${NC}"
+              echo -e "${ORANGE}Refer to ${{ env.dashboard_url }}}} for more details.${NC}"
+            else
+              echo -e "${GREEN}${summary_msg}${NC}"
             fi
 
             # echo "Fetching vulnerability details..."
@@ -98,8 +105,7 @@ jobs:
             {
               "workflow": "${{ github.repository }} - ${{ github.workflow }} - ${{ env.pr_num }}",
               "status": "SAST: ${{ steps.scan_summary.outcome }}",
-              "details": "${{ env.CODEQL_SUMMARY }}",
-              "ref": "${{ github.server_url }}/${{ github.repository }}/security/code-scanning"
-            }
+              "details": "${{ env.summary_msg }}",
+              "ref": "${{ env.dashboard_url }}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_CI }}
