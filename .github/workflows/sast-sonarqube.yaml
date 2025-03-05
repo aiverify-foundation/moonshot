@@ -77,6 +77,7 @@ jobs:
             echo $SUMMARY_MSG
             echo "summary_msg=${SUMMARY_MSG}" >> $GITHUB_ENV
             DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
+            echo $DASHBOARD_URL
             echo "dashboard_url=${DASHBOARD_URL}" >> $GITHUB_ENV
 
             RED='\033[0;31m'
