@@ -54,7 +54,17 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=moonshot
+            -Dssonar.scanner.metadataFilePath=${{ github.workspace }}
           #  -Dsonar.verbose=true 
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONARQUBE_SERVER_URL }}
+
+      - name: Display scan results
+        run: |
+          if [ -f "${{ github.workspace }}/report-task.txt" ]; then
+            cat "${{ github.workspace }}/report-task.txt"
+          else
+            echo "report-task.txt not found"
+          fi
+          
