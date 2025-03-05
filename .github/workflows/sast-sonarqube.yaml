@@ -69,7 +69,7 @@ jobs:
             if [ -n "$SONAR_CE_TASK_ID" ] && [ -n "$SONAR_PROJECT_KEY" ]; then
               echo "Fetching SonarQube analysis results..."
               curl -u ${{ secrets.SONARQUBE_TOKEN }}: \
-                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,reliability_rating,maintainability_rating"
+                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells"
             else
               echo "SonarQube task ID or project key not found in report-task.txt"
             fi
