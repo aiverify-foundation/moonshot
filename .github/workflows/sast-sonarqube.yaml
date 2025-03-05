@@ -53,7 +53,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.0.0 # See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
         with:
           args: >
-            -Dsonar.projectKey=moonshot
+            -Dsonar.projectKey=moonshot --quiet
             -Dssonar.scanner.metadataFilePath=${{ github.workspace }}
           #  -Dsonar.verbose=true 
         env:
@@ -62,9 +62,9 @@ jobs:
 
       - name: Display scan results
         run: |
-          if [ -f "${{ github.workspace }}/report-task.txt" ]; then
-            cat "${{ github.workspace }}/report-task.txt"
+          ls -al
+          if [ -f "${{ github.workspace }}/.sonar/report-task.txt" ]; then
+            cat "${{ github.workspace }}/.sonar/report-task.txt"
           else
             echo "report-task.txt not found"
           fi
-          
