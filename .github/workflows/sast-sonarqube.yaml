@@ -73,8 +73,9 @@ jobs:
             reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value | tonumber')
             maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value | tonumber')
             
-            SUMMARY_MSG=$(echo "vulnerabilities: ${vulnerabilities}, reliability: ${reliability}, maintainability: ${maintainability}")
-            echo SUMMARY_MSG
+            # SUMMARY_MSG=$(echo "vulnerabilities: ${vulnerabilities}, reliability: ${reliability}, maintainability: ${maintainability}")
+            SUMMARY_MSG=
+            echo $SUMMARY_MSG
             echo "summary_msg=${SUMMARY_MSG}" >> $GITHUB_ENV
             DASHBOARD_URL=$(grep "dashboardUrl" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
             echo "dashboard_url=${DASHBOARD_URL}" >> $GITHUB_ENV
