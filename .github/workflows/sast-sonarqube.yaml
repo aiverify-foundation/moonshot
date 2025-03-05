@@ -62,9 +62,18 @@ jobs:
 
       - name: Display scan results
         run: |
-          ls -al .scannerwork
           if [ -f "${{ github.workspace }}/.scannerwork/report-task.txt" ]; then
             cat "${{ github.workspace }}/.scannerwork/report-task.txt"
+            SONAR_CE_TASK_ID=$(grep "ceTaskId" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
+            SONAR_PROJECT_KEY=$(grep "projectKey" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
+            if [ -n "$SONAR_CE_TASK_ID" ] && [ -n "$SONAR_PROJECT_KEY" ]; then
+              echo "Fetching SonarQube analysis results..."
+              curl -u ${{ secrets.SONARQUBE_TOKEN }}: \
+                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=coverage,bugs,vulnerabilities,code_smells"
+            else
+              echo "SonarQube task ID or project key not found in report-task.txt"
+            fi
           else
             echo "report-task.txt not found"
           fi
+  
