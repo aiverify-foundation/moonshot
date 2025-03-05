@@ -62,18 +62,23 @@ jobs:
 
       - name: Display scan results
         run: |
-          if [ -f "${{ github.workspace }}/.scannerwork/report-task.txt" ]; then
-            cat "${{ github.workspace }}/.scannerwork/report-task.txt"
-            SONAR_CE_TASK_ID=$(grep "ceTaskId" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
-            SONAR_PROJECT_KEY=$(grep "projectKey" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
+          if [ -f "${{ github.workspace }}/report-task.txt" ]; then
+            cat "${{ github.workspace }}/report-task.txt"
+            SONAR_CE_TASK_ID=$(grep "ceTaskId" "${{ github.workspace }}/report-task.txt" | cut -d '=' -f 2)
+            SONAR_PROJECT_KEY=$(grep "projectKey" "${{ github.workspace }}/report-task.txt" | cut -d '=' -f 2)
             if [ -n "$SONAR_CE_TASK_ID" ] && [ -n "$SONAR_PROJECT_KEY" ]; then
               echo "Fetching SonarQube analysis results..."
-              curl -u ${{ secrets.SONARQUBE_TOKEN }}: \
-                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells"
+              response=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
+                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells")
+              vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value')
+              reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value')
+              maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value')
+              echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
             else
               echo "SonarQube task ID or project key not found in report-task.txt"
             fi
           else
             echo "report-task.txt not found"
           fi
+
   
