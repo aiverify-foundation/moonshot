@@ -87,10 +87,10 @@ jobs:
   
             if [ "$vulnerabilities" -gt 0 ]; then
               echo -e "${RED}${SUMMARY_MSG}${NC}"
-              echo -e "${RED}Refer to ${DASHBOARD_URL} for more details."
+              echo -e "${RED}Refer to ${DASHBOARD_URL} for more details.${NC}"
               exit 2
             elif [ "$reliability" -gt 0 ] || [ "$maintainability" -gt 0 ]; then
-              echo -e "${ORANGE${SUMMARY_MSG}${NC}"
+              echo -e "${ORANGE}${SUMMARY_MSG}${NC}"
               echo -e "${ORANGE}Refer to ${DASHBOARD_URL} for more details.${NC}"
             else
               echo -e "${GREEN}${SUMMARY_MSG}${NC}"
