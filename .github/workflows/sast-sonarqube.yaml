@@ -1,5 +1,8 @@
 name: SAST - Sonarqube
 
+env:
+  PROJECT_KEY:  'moonshot'
+
 on:
   # Runs when a pull request to main is being assigned
   pull_request:
@@ -27,25 +30,21 @@ jobs:
   sonarqube:
     runs-on: ubuntu-latest
     steps:
-      - name: Set env variables (pull request)
-        if: github.event_name == 'pull_request'
+      - name: Set env variables
         run: |
-            echo "BRANCH_TO_TEST=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_ENV"
-
-      - name: Set env variables (push)
-        if: github.event_name == 'push'
-        run: |
-          echo "BRANCH_TO_TEST=${{ github.ref }}" >> "$GITHUB_ENV"
-
-      - name: Set env variables (workflow dispatch)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "BRANCH_TO_TEST=${{ inputs.branch_to_test }}" >> "$GITHUB_ENV"
+          echo "project_key=${PROJECT_KEY}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "branch_to_test=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            echo "branch_to_test=${{ github.ref }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch_to_test=${{ inputs.branch_to_test }}" >> $GITHUB_ENV
+          fi
 
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.BRANCH_TO_TEST }}
+          ref: ${{ env.branch_to_test }}
           # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
 
@@ -53,7 +52,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.0.0 # See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
         with:
           args: >
-            -Dsonar.projectKey=moonshot
+            -Dsonar.projectKey=${{ env.project_key }}
             -Dssonar.scanner.metadataFilePath=${{ github.workspace }}
           #  -Dsonar.verbose=true 
         env:
@@ -62,23 +61,20 @@ jobs:
 
       - name: Display scan results
         run: |
-          if [ -f "${{ github.workspace }}/.scannerwork/report-task.txt" ]; then
-            cat "${{ github.workspace }}/.scannerwork/report-task.txt"
-            SONAR_CE_TASK_ID=$(grep "ceTaskId" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
-            SONAR_PROJECT_KEY=$(grep "projectKey" "${{ github.workspace }}/.scannerwork/report-task.txt" | cut -d '=' -f 2)
-            if [ -n "$SONAR_CE_TASK_ID" ] && [ -n "$SONAR_PROJECT_KEY" ]; then
-              echo "Fetching SonarQube analysis results..."
-              response=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
-                "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells")
-              vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value')
-              reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value')
-              maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value')
-              echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
-            else
-              echo "SonarQube task ID or project key not found in report-task.txt"
+            SONAR_PROJECT_KEY=${{ env.project_key }}
+            echo "Fetching SonarQube analysis results..."
+            response=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
+              "${{ vars.SONARQUBE_SERVER_URL }}/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=vulnerabilities,software_quality_reliability_issues,code_smells")
+            vulnerabilities=$(echo $response | jq '.component.measures[] | select(.metric == "vulnerabilities") | .value')
+            reliability=$(echo $response | jq '.component.measures[] | select(.metric == "software_quality_reliability_issues") | .value')
+            maintainability=$(echo $response | jq '.component.measures[] | select(.metric == "code_smells") | .value')
+            echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
+
+            if [ "$vulnerabilities" -gt 0 ]; then
+              echo "Fetching vulnerability details..."
+              vulnerabilities_details=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
+                "${{ vars.SONARQUBE_SERVER_URL }}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&types=VULNERABILITY")
+              echo "Vulnerability details: $vulnerabilities_details"
             fi
-          else
-            echo "report-task.txt not found"
-          fi
 
   
