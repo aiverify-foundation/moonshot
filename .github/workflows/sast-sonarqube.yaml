@@ -62,9 +62,9 @@ jobs:
 
       - name: Display scan results
         run: |
-          ls -al .sonarwork
-          if [ -f "${{ github.workspace }}/.sonarwork/report-task.txt" ]; then
-            cat "${{ github.workspace }}/.sonarwork/report-task.txt"
+          ls -al .scannerwork
+          if [ -f "${{ github.workspace }}/.scannerwork/report-task.txt" ]; then
+            cat "${{ github.workspace }}/.scannerwork/report-task.txt"
           else
             echo "report-task.txt not found"
           fi
