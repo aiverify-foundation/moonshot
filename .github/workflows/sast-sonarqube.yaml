@@ -71,7 +71,7 @@ jobs:
             echo "vulnerabilities: $vulnerabilities, reliability: $reliability, maintainability: $maintainability"
 
             if (( $vulnerabilities > 0 )) then
-              echo "Fetching vulnerability details..."
+              echo "Fetching vulnerability details.."
               vulnerabilities_details=$(curl -s -u ${{ secrets.SONARQUBE_TOKEN }}: \
                 "${{ vars.SONARQUBE_SERVER_URL }}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&types=VULNERABILITY")
               echo "Vulnerability details: $vulnerabilities_details"
