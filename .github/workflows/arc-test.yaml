@@ -8,6 +8,6 @@ on:
 jobs:
   Explore-GitHub-Actions:
     # You need to use the INSTALLATION_NAME from the previous step
-    runs-on: arc-runner-jacksom
+    runs-on: arc-runner-moonshot
     steps:
     - run: echo "This job uses self-hosted runners!"
