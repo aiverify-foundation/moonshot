@@ -49,7 +49,7 @@ The best way to start developing a new metric is to learn by an example. We have
 
 #### Modify Your Metric Metadata
 
-Using `samplemetric.py` as an example, you can edit the following elements from line 20 to line 22.
+Using `samplemetric.py` as an example, you can edit the following elements from line 21 to line 23.
 
 1. `id`: This is the identifier of the metric that the user will use in their recipe or red teaming module. This should be the file name.
 2. `name`: This is the name of the metric. This will be shown when the user lists the metrics.
@@ -63,7 +63,7 @@ The core code should be written in `get_results`. In this function, you will hav
 2. `predicted_results`: the list of predicted responses based on the prompts
 3. `targets`: the list of ground truth
 
-In addition to these 3 parameters, you can also access user-defined metric configurations at line 23. Users provide their configurations through the `metrics_config.json` file.
+In addition to these 3 parameters, you can also access user-defined metric configurations at line 26. Users provide their configurations through the `metrics_config.json` file.
 ```
 {
     "samplemetric":{
@@ -71,8 +71,10 @@ In addition to these 3 parameters, you can also access user-defined metric confi
             "openai-gpt35-turbo-16k",
             "openai-gpt35-turbo"
         ],
-        "threshold_value": "0.35",
-        "num_of_prompts_to_calculate": 1
+        "configurations":{
+            "threshold_value": "0.35",
+            "num_of_prompts_to_calculate": 1
+        }
     }
 }
 ```
@@ -128,22 +130,19 @@ You can find a list of [available recipes here](https://github.com/aiverify-foun
 
 To create a recipe, you can copy one of the recipe files and edit the following elements:
 
-1. `id`: This is an unique identifier that will be used by the user. This should be the file name.
-2. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
-3. `description`: This describes what the recipe tests. We recommend also including what constitutes a better score and what that implies..
-4. `tags`: This is a list of tags, which can help the user to find your recipe. We suggest to insert some relevant keywords related to domain and nature of the test.
-5. `categories`: This helps to group the recipe. We suggest using `Trust & Safety`, `Capability` and `Quality`.
-6. `datasets`: This contains a list of dataset identifiers used in this recipe. This dataset must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/datasets).
-7. `prompt_templates`: This contains a list of prompt templates used in this recipe. This prompt template must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/prompt-templates).
-8. `attack_modules`: A list of attack modules that is used in this recipe. The attack modules must be available in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/attack-modules).
-9. `metrics`: This contains a list of metric identifiers used in this recipe. This metric must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/metrics).
-10. `grading_scale`: This grading scale helps to determine the outcome of the test. Leaving this empty will result in '-' as its grade in the report.
+1. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
+2. `description`: This describes what the recipe tests. We recommend also including what constitutes a better score and what that implies.
+3. `tags`: This is a list of tags, which can help the user to find your recipe. We suggest to insert some relevant keywords related to domain and nature of the test.
+4. `categories`: This helps to group the recipe. We suggest using `Trust & Safety`, `Capability` and `Quality`.
+5. `datasets`: This contains a list of dataset identifiers used in this recipe. This dataset must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/datasets).
+6. `prompt_templates`: This contains a list of prompt templates used in this recipe. This prompt template must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/prompt-templates).
+7. `metrics`: This contains a list of metric identifiers used in this recipe. This metric must be included in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/metrics).
+8. `grading_scale`: This grading scale helps to determine the outcome of the test. Leaving this empty will result in '-' as its grade in the report.
 
 Here's an example recipe:
 
 ```
 {
-    "id": "recipe1",
     "name": "Recipe 1",
     "description": "This recipe measures performance of the system.",
     "tags": ["Safety"],
@@ -151,7 +150,6 @@ Here's an example recipe:
     "datasets": ["dataset1"],
     "prompt_templates": [],
     "metrics": ["exactstrmatch"],
-    "attack_modules": [],
     "grading_scale": {
         "A": [
             80,
@@ -183,18 +181,24 @@ You can find a list of [available cookbooks here](https://github.com/aiverify-fo
 
 To create a cookbook, you can copy one of the cookbook files and edit the following elements:
 
-1. `id`: This is an unique identifier that will be used by the user. This should be the file name.
-2. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
-3. `description`: This describes what the recipe test.
-4. `recipes`: This contains a list of recipe identifiers that this cookbook will execute. These recipes must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/recipes).
+1. `name`: This is the name of the recipe, which will be displayed when a recipe is listed.
+2. `description`: This describes what the recipe test.
+3. `tags`: This is a list of tags, which can help the user to find your cookbook. We suggest to insert some relevant keywords related to domain and nature of the test.
+4. `categories`: This helps to group the cookbook. We suggest using `Trust & Safety`, `Capability` and `Quality`.
+5. `recipes`: This contains a list of recipe identifiers that this cookbook will execute. These recipes must be found in [this folder](https://github.com/aiverify-foundation/moonshot-data/tree/main/recipes).
 
 Here's an example cookbook:
 
 ```
 {
-    "id": "example-cookbook",
     "name": "Example Cookbook",
     "description": "This cookbook measures the system performance. ",
+    "tags": [
+        "Example Tag"
+    ],
+    "categories": [
+        "Capability"
+    ],  
     "recipes": [
         "recipe1",
         "recipe2"

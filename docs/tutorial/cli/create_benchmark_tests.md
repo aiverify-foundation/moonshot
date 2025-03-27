@@ -15,7 +15,7 @@ In this tutorial, you will learn how to create a custom cookbook via our command
 
         To run the help example, enter:
                 
-            add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -a "['charswap_attack']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}"
+            add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}" 
 
     - Cookbook
 
@@ -26,6 +26,8 @@ In this tutorial, you will learn how to create a custom cookbook via our command
          To run the help example, enter:
 
             add_cookbook 'My new cookbook' 'I am cookbook description' "['analogical-similarity','auto-categorisation']"
+        
+        Once you've created your cookbook, the tags and categories will automatically be filled in according to the selected recipe.
 
 4. View the newly created recipe or cookbook:
     - Enter:

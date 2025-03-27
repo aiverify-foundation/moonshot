@@ -40,7 +40,7 @@ You will see a list of available connector endpoints that we have created before
 
     You should see a help example:
 
-        add_endpoint openai-connector 'my-openai-connector' myendpointuri mythisismysecretapitoken 2 10 "{'temperature': 0.5}"
+        add_endpoint openai-connector 'my-openai-connector' myendpointuri mythisismysecretapitoken 2 10 "gpt-3.5-turbo-1106" "{'temperature': 0.5}"
         
     In this example, we are creating a connector endpoint for the `openai-connector` **connector type**:
 
@@ -49,6 +49,7 @@ You will see a list of available connector endpoints that we have created before
     - API token: `thisismysecretapitoken`
     - Max number of calls made to the endpoint per second: `2`
     - Max concurrency of the endpoint:`10`
+    - Model of the endpoint you want to connect to.
     - Other parameters that this endpoint may need:
         - Temperature: 0.5        
 
