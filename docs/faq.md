@@ -94,9 +94,9 @@ This is the full list of requirements for the following tests:
 
 | Test | Type | Model Required | Name of the Endpoint | Configuration Required
 | --- | ---| --- | --- | --- |
-| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) | API Token - `token` field
-| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
-| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json) | API Token - `token` field
+| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json)  | API Token - `token` field
+| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json)  | API Token - `token` field
 | [Bias - Occupation](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/bias-occupation.json) | Recipe | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
 | [Chinese Linguistics & Cognition Challenge](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/clcc.json) | Recipe | Flageval Flag Judge | [Flageval Flag Judge](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/flageval-flagjudge.json) | -
 | [Malicious Question Generator](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/malicious_question_generator.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
@@ -109,9 +109,9 @@ If you are not running any of the above, you should check the details of the spe
 
 If you do not have tokens for Llama Guard via Together AI, 
 
-1.	Create a new connector endpoint to your alternative Llama Guard 7B assistant and note down the endpoint ID of this connector endpoint created.
+1.	Create a new connector endpoint to your alternative Llama Guard 8B assistant and note down the endpoint ID of this connector endpoint created.
 2.	Open up `moonshot-data/metrics_config.json` in a code editor
-3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
+3.	Replace `together-llama-guard-8b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
 

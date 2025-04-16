@@ -37,7 +37,7 @@ Here, you are required to select an endpoint for testing. If needed, you can cre
 !!! warning
     <b>Important information before running your benchmark:</b>
 
-    Before proceeding, please ensure that you have your [together-llama-guard-7b-assistant endpoint](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
+    Before proceeding, please ensure that you have your [together-llama-guard-8b-assistant endpoint](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json) endpoint token set up. This is necessary to run one of our baseline cookbooks, MLCommon's AI Safety Benchmark.
 
     Refer to this [list for the requirements](../../faq.md#requirements).
 

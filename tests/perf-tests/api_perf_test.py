@@ -142,7 +142,7 @@ def profile_api_connector():
         "openai-gpt4",
         "openai-gpt35-turbo-16k",
         "openai-gpt35-turbo",
-        "together-llama-guard-7b-assistant",
+        "together-llama-guard-8b-assistant",
         "together-llama3-8b-chat-hf",
     ]
 
