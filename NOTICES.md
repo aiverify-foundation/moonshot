@@ -5,69 +5,76 @@ Copyright 2025
 Phase: DEVELOPMENT
 Distribution: OPENSOURCE
 
+Notices Report Content
+ * License Data
+ * License Text
+
 Components: 
 
-aiohappyeyeballs 2.4.4 : Python Software Foundation License 2.0
-aiohttp 3.10.11 : Apache License 2.0
-aiosignal 1.3.2 : Apache License 2.0
-aiverify-moonshot 0.6.0 : Apache License 2.0
-annotated-types 0.7.0 : MIT License
-anyio 4.6.2.post1 : MIT License
-Click - Python Command Line Utility 8.1.8 : BSD 3-clause "New" or "Revised" License
-cmd2 2.4.3 : MIT License
-datasets 2.21.0 : Apache License 2.0
-ets-labs/python-dependency-injector 4.41.0 : BSD 3-clause "New" or "Revised" License
-filesystem_spec 2024.6.1 : BSD 3-clause "New" or "Revised" License
-frozenlist 1.4.1 : Apache License 2.0
-h11 0.14.0 : MIT License
-huggingface-hub 0.25.2 : Apache License 2.0
-idna 3.10 : BSD 3-clause "New" or "Revised" License
-ijson 3.3.0 : BSD 3-clause "New" or "Revised" License
-jinjapython 3.1.5 : BSD 3-clause "New" or "Revised" License
-markdown-it-py 3.0.0 : MIT License
-MarkupSafe 2.1.5 : BSD 3-clause "New" or "Revised" License
-mdurl 0.1.2 : MIT License
-moonshot-admin/moonshot 0.5.1 : Apache License 2.0
-multi_process 0.70.16 : BSD 3-clause "New" or "Revised" License
-multidict 6.1.0 : Apache License 2.0
-NumPy 1.26.4 : BSD 3-clause "New" or "Revised" License
-Packaging 24.2 : (BSD 2-clause "Simplified" License OR Apache License 2.0)
-pandas-python 2.2.3 : BSD 3-clause "New" or "Revised" License
-psf-requests 2.32.3 : Apache License 2.0
-py-filelock 3.16.1 : The Unlicense
-pyarrow 17.0.0 : Apache License 2.0
-pydantic 2.8.2 : MIT License
-pydantic-core 2.20.1 : MIT License
-Pygments - Python syntax highlighter 2.18.0 : BSD 2-clause "Simplified" License
-Pyparsing 3.1.4 : MIT License
-pyperclip 1.9.0 : BSD 3-clause "New" or "Revised" License
-Python six 1.16.0 : MIT License
-Python tzdata 2024.2 : Apache License 2.0
-python-attrs 24.2.0 : MIT License
-python-certifi 2024.8.30 : Mozilla Public License 2.0
-python-dateutil 2.9.0.post0 : (Apache License 2.0 OR BSD 3-clause "New" or "Revised" License)
-python-dill 0.3.8 : BSD 3-clause "New" or "Revised" License
-python-dotenv 1.0.1 : BSD 3-clause "New" or "Revised" License
-python-slugify 8.0.4 : MIT License
-python-typing-extensions 4.12.2 : Python Software Foundation License 2.3
-python3-charset-normalizer 3.3.2 : MIT License
-PyTZ - Python Time Zone Library 2024.2 : MIT License
-PyYAML 6.0.2 : MIT License
-rich 13.9.4 : MIT License
-sniffio 1.3.1 : Apache License 2.0
-Starlette 0.41.3 : BSD 3-clause "New" or "Revised" License
-tenacity 8.5.0 : Apache License 2.0
-text-unidecode 1.3 : Artistic License 1.0
-tqdm 4.66.6 : (MIT License AND Mozilla Public License 2.0)
-urllib3 2.2.3 : MIT License
-uvicorn 0.30.6 : BSD 3-clause "New" or "Revised" License
-wcwidth 0.2.13 : MIT License
-xxhash 3.5.0 : BSD 3-clause "New" or "Revised" License
-yarl 1.13.1 : Apache License 2.0
+aiohappyeyeballs 2.4.8: https://github.com/aio-libs/aiohappyeyeballs : Python Software Foundation License 2.0
+aiohttp 3.10.11: http://aiohttp.readthedocs.io : Apache License 2.0
+aiosignal 1.3.2: https://github.com/aio-libs/aiosignal : Apache License 2.0
+aiverify-foundation/moonshot 0.6.2: https://github.com/aiverify-foundation/moonshot : Apache License 2.0
+aiverify-moonshot 0.6.2 : Apache License 2.0
+annotated-types 0.7.0: https://github.com/annotated-types/annotated-types : MIT License
+anyio 4.6.2.post1: https://pypi.org/project/anyio/ : MIT License
+Click - Python Command Line Utility 8.1.8: http://click.pocoo.org/ : BSD 3-clause "New" or "Revised" License
+cmd2 2.4.3: http://pypi.python.org/pypi/cmd2 : MIT License
+datasets 2.21.0: https://pypi.org/project/datasets/ : Apache License 2.0
+encode/uvicorn 0.30.6: https://www.uvicorn.org/ : BSD 3-clause "New" or "Revised" License
+ets-labs/python-dependency-injector 4.41.0: http://github.com/ets-labs/python-dependency-injector/ : BSD 3-clause "New" or "Revised" License
+fastapi 0.115.12: https://fastapi.tiangolo.com/ : MIT License
+filesystem_spec 2024.6.1: https://github.com/fsspec/filesystem_spec : BSD 3-clause "New" or "Revised" License
+frozenlist 1.4.1: https://github.com/aio-libs/frozenlist : Apache License 2.0
+h11 0.14.0: https://github.com/njsmith/h11 : MIT License
+huggingface-hub 0.25.2: https://github.com/huggingface/huggingface_hub : Apache License 2.0
+idna 3.10: https://github.com/kjd/idna : BSD 3-clause "New" or "Revised" License
+ijson 3.3.0: http://pypi.python.org/pypi/ijson/ : BSD 3-clause "New" or "Revised" License
+jinjapython 3.1.6: https://jinja.palletsprojects.com : BSD 3-clause "New" or "Revised" License
+markdown-it-py 3.0.0: https://github.com/executablebooks/markdown-it-py : MIT License
+MarkupSafe 2.1.5: https://www.palletsprojects.com/p/markupsafe/ : BSD 3-clause "New" or "Revised" License
+mdurl 0.1.2: https://pypi.org/project/mdurl/ : MIT License
+multi_process 0.70.16: https://github.com/jgraichen/multi_process : BSD 3-clause "New" or "Revised" License
+multidict 6.1.0: https://github.com/aio-libs/multidict/ : Apache License 2.0
+NumPy 1.26.4: https://numpy.org/ : BSD 3-clause "New" or "Revised" License
+Packaging 24.2: https://github.com/pypa/packaging : (BSD 2-clause "Simplified" License OR Apache License 2.0)
+pandas-python 2.2.3: https://pandas.pydata.org : BSD 3-clause "New" or "Revised" License
+psf-requests 2.32.3: http://docs.python-requests.org : Apache License 2.0
+py-filelock 3.16.1: https://github.com/benediktschmitt/py-filelock : The Unlicense
+pyarrow 17.0.0: https://arrow.apache.org/ : Apache License 2.0
+pydantic 2.8.2: https://pydantic-docs.helpmanual.io/ : MIT License
+pydantic-core 2.20.1: https://github.com/samuelcolvin/pydantic-core : MIT License
+Pygments - Python syntax highlighter 2.18.0: http://pygments.org/ : BSD 2-clause "Simplified" License
+Pyparsing 3.1.4: https://github.com/pyparsing/pyparsing/ : MIT License
+pyperclip 1.9.0: http://coffeeghost.net/2010/10/09/pyperclip-a-cross-platform-clipboard-module-for-python/comment-page-1/ : BSD 3-clause "New" or "Revised" License
+Python six 1.16.0: http://pypi.python.org/pypi/six : MIT License
+Python tzdata 2024.2: https://github.com/python/tzdata : Apache License 2.0
+python-attrs 24.2.0: https://attrs.readthedocs.org/ : MIT License
+python-certifi 2024.8.30: https://certifiio.readthedocs.io/en/latest/ : Mozilla Public License 2.0
+python-dateutil 2.9.0.post0: https://github.com/dateutil/dateutil : (Apache License 2.0 OR BSD 3-clause "New" or "Revised" License)
+python-dill 0.3.8: https://pypi.org/project/dill/ : BSD 3-clause "New" or "Revised" License
+python-dotenv 1.0.1: http://github.com/theskumar/python-dotenv : BSD 3-clause "New" or "Revised" License
+python-multipart 0.0.20: http://github.com/andrew-d/python-multipart : Apache License 2.0
+python-slugify 8.0.4: https://github.com/un33k/python-slugify : MIT License
+python-typing-extensions 4.12.2 : Python Software Foundation License 2.0
+python3-charset-normalizer 3.3.2: https://github.com/ousret/charset_normalizer : MIT License
+python3-rich 13.9.4: https://github.com/willmcgugan/rich : MIT License
+PyTZ - Python Time Zone Library 2024.2: http://pythonhosted.org/pytz/ : MIT License
+PyYAML 6.0.2: https://pyyaml.org/ : MIT License
+sniffio 1.3.1: https://github.com/python-trio/sniffio : Apache License 2.0
+Starlette 0.41.3: https://www.starlette.io/ : BSD 3-clause "New" or "Revised" License
+tenacity 8.5.0: https://github.com/jd/tenacity : Apache License 2.0
+text-unidecode 1.3: https://github.com/kmike/text-unidecode/ : Artistic License 1.0
+tqdm 4.66.6: https://tqdm.github.io : (MIT License AND Mozilla Public License 2.0)
+urllib3 2.2.3: https://urllib3.readthedocs.io/en/stable : MIT License
+wcwidth 0.2.13: https://pypi.python.org/pypi/wcwidth : MIT License
+xxhash 3.5.0: https://github.com/ifduyue/python-xxhash : BSD 3-clause "New" or "Revised" License
+yarl 1.13.1: https://github.com/aio-libs/yarl/ : Apache License 2.0
+
 Licenses: 
 
 Apache License 2.0
-(aiohttp 3.10.11, aiosignal 1.3.2, aiverify-moonshot 0.6.0, datasets 2.21.0, frozenlist 1.4.1, huggingface-hub 0.25.2, moonshot-admin/moonshot 0.5.1, multidict 6.1.0, Packaging 24.2, psf-requests 2.32.3, pyarrow 17.0.0, Python tzdata 2024.2, python-dateutil 2.9.0.post0, sniffio 1.3.1, tenacity 8.5.0, yarl 1.13.1)
+(aiohttp 3.10.11, aiosignal 1.3.2, aiverify-foundation/moonshot 0.6.2, aiverify-moonshot 0.6.2, datasets 2.21.0, frozenlist 1.4.1, huggingface-hub 0.25.2, multidict 6.1.0, Packaging 24.2, psf-requests 2.32.3, pyarrow 17.0.0, Python tzdata 2024.2, python-dateutil 2.9.0.post0, python-multipart 0.0.20, sniffio 1.3.1, tenacity 8.5.0, yarl 1.13.1)
 
 Apache License
 Version 2.0, January 2004
@@ -397,7 +404,7 @@ DAMAGE.
 ---
 
 BSD 3-clause "New" or "Revised" License
-(Click - Python Command Line Utility 8.1.8, ets-labs/python-dependency-injector 4.41.0, filesystem_spec 2024.6.1, idna 3.10, ijson 3.3.0, jinjapython 3.1.5, MarkupSafe 2.1.5, multi_process 0.70.16, NumPy 1.26.4, pandas-python 2.2.3, pyperclip 1.9.0, python-dateutil 2.9.0.post0, python-dill 0.3.8, python-dotenv 1.0.1, Starlette 0.41.3, uvicorn 0.30.6, xxhash 3.5.0)
+(Click - Python Command Line Utility 8.1.8, encode/uvicorn 0.30.6, ets-labs/python-dependency-injector 4.41.0, filesystem_spec 2024.6.1, idna 3.10, ijson 3.3.0, jinjapython 3.1.6, MarkupSafe 2.1.5, multi_process 0.70.16, NumPy 1.26.4, pandas-python 2.2.3, pyperclip 1.9.0, python-dateutil 2.9.0.post0, python-dill 0.3.8, python-dotenv 1.0.1, Starlette 0.41.3, xxhash 3.5.0)
 
 Copyright (c) <YEAR>, <OWNER>
 All rights reserved.
@@ -455,7 +462,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 ---
 
 MIT License
-(annotated-types 0.7.0, anyio 4.6.2.post1, cmd2 2.4.3, h11 0.14.0, markdown-it-py 3.0.0, mdurl 0.1.2, pydantic 2.8.2, pydantic-core 2.20.1, Pyparsing 3.1.4, python-attrs 24.2.0, python-slugify 8.0.4, python3-charset-normalizer 3.3.2, PyTZ - Python Time Zone Library 2024.2, PyYAML 6.0.2, rich 13.9.4, tqdm 4.66.6, urllib3 2.2.3, wcwidth 0.2.13)
+(annotated-types 0.7.0, anyio 4.6.2.post1, cmd2 2.4.3, fastapi 0.115.12, h11 0.14.0, markdown-it-py 3.0.0, mdurl 0.1.2, pydantic 2.8.2, pydantic-core 2.20.1, Pyparsing 3.1.4, python-attrs 24.2.0, python-slugify 8.0.4, python3-charset-normalizer 3.3.2, python3-rich 13.9.4, PyTZ - Python Time Zone Library 2024.2, PyYAML 6.0.2, tqdm 4.66.6, urllib3 2.2.3, wcwidth 0.2.13)
 
 The MIT License
 ===============
@@ -896,7 +903,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 ---
 
 Python Software Foundation License 2.0
-(aiohappyeyeballs 2.4.4)
+(aiohappyeyeballs 2.4.8, python-typing-extensions 4.12.2)
 
 This license was approved as the official PSF License Version 2 on October 22,
 2004. The only differences between this and version 1 of the PSF license consist
@@ -950,208 +957,6 @@ PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
 
   8.  By copying, installing or otherwise using Python, Licensee agrees to be
     bound by the terms and conditions of this License Agreement.
-
----
-
-Python Software Foundation License 2.3
-(python-typing-extensions 4.12.2)
-
-Python 2.3.3 license
-====================
-
-This is the official license for the Python 2.3.3 release:
-
---------------------------------------------------------------------------------
-
-
-A. HISTORY OF THE SOFTWARE
---------------------------
-
---------------------------------------------------------------------------------
-
-
-
-Python was created in the early 1990s by Guido van Rossum at Stichting
-Mathematisch Centrum (CWI, see http://www.cwi.nl) in the Netherlands as a
-successor of a language called ABC.  Guido remains Python's principal author,
-although it includes many contributions from others.
-
-In 1995, Guido continued his work on Python at the Corporation for National
-Research Initiatives (CNRI, see http://www.cnri.reston.va.us) in Reston, Virginia
-where he released several versions of the software.
-
-In May 2000, Guido and the Python core development team moved to BeOpen.com to
-form the BeOpen PythonLabs team.  In October of the same year, the PythonLabs
-team moved to Digital Creations (now Zope Corporation, see http://www.zope.com). 
-In 2001, the Python Software Foundation (PSF, see http://www.python.org/psf/) was
-formed, a non-profit organization created specifically to own Python-related
-Intellectual Property.  Zope Corporation is a sponsoring member of the PSF.
-
-All Python releases are Open Source (see http://www.opensource.org for the Open
-Source Definition).  Historically, most, but not all, Python releases have also
-been GPL-compatible; the table below summarizes the various releases.
-
-    Release        
-
-Derived     Year       
-
-Owner       GPL-                    
-
-from                                  compatible? (1)     0.9.0 thru
-
-1.2             
-
-1991-1995   CWI         yes     1.3 thru 1.5.2  1.2        
-
-1995-1999   CNRI        yes    
-
-1.6            
-
-1.5.2       2000       
-
-CNRI        no    
-
-2.0            
-
-1.6        
-
-2000        BeOpen.com  no     1.6.1          
-
-1.6        
-
-2001       
-
-CNRI        yes (2)    
-
-2.1            
-
-2.0+1.6.1   2001       
-
-PSF         no     2.0.1          
-
-2.0+1.6.1   2001       
-
-PSF         yes     2.1.1          
-
-2.1+2.0.1   2001       
-
-PSF         yes    
-
-2.2            
-
-2.1.1       2001       
-
-PSF         yes     2.1.2          
-
-2.1.1       2002       
-
-PSF         yes     2.1.3          
-
-2.1.2       2002       
-
-PSF         yes     2.2.1          
-
-2.2        
-
-2002       
-
-PSF         yes     2.2.2          
-
-2.2.1       2002       
-
-PSF         yes    
-
-2.3            
-
-2.2.2       2002-2003  
-
-PSF         yes     2.3.1          
-
-2.3         2002-2003  
-
-PSF         yes     2.3.2          
-
-2.3.1       2002-2003  
-
-PSF         yes     2.3.3          
-
-2.3.2       2002-2003  
-
-PSF         yes
-
-Footnotes:
-
-(1) GPL-compatible doesn't mean that we're distributing Python under     the
-GPL.  All Python licenses, unlike the GPL, let you distribute     a modified
-version without making your changes open source.  The     GPL-compatible licenses
-make it possible to combine Python with     other software that is released under
-the GPL; the others don't.
-
-(2) According to Richard Stallman, 1.6.1 is not GPL-compatible,     because its
-license has a choice of law clause.  According to     CNRI, however, Stallman's
-lawyer has told CNRI's lawyer that 1.6.1     is "not incompatible" with the GPL.
-
-Thanks to the many outside volunteers who have worked under Guido's direction to
-make these releases possible.
-
---------------------------------------------------------------------------------
-
-
-B. TERMS AND CONDITIONS FOR ACCESSING OR OTHERWISE USING PYTHON
----------------------------------------------------------------
-
---------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------
-
-PSF LICENSE AGREEMENT FOR PYTHON 2.3
-
---------------------------------------------------------------------------------
-
-
-
-1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
-the Individual or Organization ("Licensee") accessing and otherwise using Python
-2.3 software in source or binary form and its associated documentation.
-
-2. Subject to the terms and conditions of this License Agreement, PSF hereby
-grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
-analyze, test, perform and/or display publicly, prepare derivative works,
-distribute, and otherwise use Python 2.3 alone or in any derivative version,
-provided, however, that PSF's License Agreement and PSF's notice of copyright,
-i.e., "Copyright (c) 2001, 2002, 2003 Python Software Foundation; All Rights
-Reserved" are retained in Python 2.3 alone or in any derivative version prepared
-by Licensee.
-
-3. In the event Licensee prepares a derivative work that is based on or
-incorporates Python 2.3 or any part thereof, and wants to make the derivative
-work available to others as provided herein, then Licensee hereby agrees to
-include in any such work a brief summary of the changes made to Python 2.3.
-
-4. PSF is making Python 2.3 available to Licensee on an "AS IS" basis.  PSF MAKES
-NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF EXAMPLE, BUT NOT
-LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR WARRANTY OF
-MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF PYTHON
-2.3 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
-
-5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 2.3 FOR ANY
-INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF MODIFYING,
-DISTRIBUTING, OR OTHERWISE USING PYTHON 2.3, OR ANY DERIVATIVE THEREOF, EVEN IF
-ADVISED OF THE POSSIBILITY THEREOF.
-
-6. This License Agreement will automatically terminate upon a material breach of
-its terms and conditions.
-
-7. Nothing in this License Agreement shall be deemed to create any relationship
-of agency, partnership, or joint venture between PSF and Licensee.  This License
-Agreement does not grant permission to use PSF trademarks or trade name in a
-trademark sense to endorse or promote products or services of Licensee, or any
-third party.
-
-8. By copying, installing or otherwise using Python 2.3, Licensee agrees to be
-bound by the terms and conditions of this License Agreement.
 
 ---
 
