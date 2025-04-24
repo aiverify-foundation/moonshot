@@ -139,6 +139,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -148,7 +149,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          # echo "Running UI Endpoint Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
              
     - name: Print Environment Variables
       run: env
@@ -286,6 +287,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -295,7 +297,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
     
     - name: Print Environment Variables
       run: env
@@ -418,6 +420,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       run: |
         source venv/bin/activate
         cd moonshot-ui
@@ -444,6 +447,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -453,7 +457,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          echo "Running Benchmarking UI Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
     
     - name: Print Environment Variables
       run: env
@@ -577,6 +581,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       run: |
         source venv/bin/activate
         cd moonshot-ui
@@ -603,6 +608,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -612,7 +618,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          # echo "Running Red Teaming UI Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
     
     - name: Print Environment Variables
       run: env
@@ -750,6 +756,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -759,7 +766,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/utils.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/utils.spec.ts
     
     - name: Print Environment Variables
       run: env
@@ -897,6 +904,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
       id: integrationuitest
       run: |
          source venv/bin/activate
@@ -906,7 +914,7 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" DEBUG=pw:api npx playwright test tests/history.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/history.spec.ts
     
     - name: Print Environment Variables
       run: env
