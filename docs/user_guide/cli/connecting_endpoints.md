@@ -22,7 +22,7 @@ You will see a list of available connector endpoints that we have created before
 
     You should see a help example:
     
-        update_endpoint openai-gpt4 "[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here')]"
+        update_endpoint openai-gpt4 "[('name', 'my-special-openai-endpoint'), ('uri', 'my-uri-loc'), ('token', 'my-token-here'), ('params', {'hello': 'world'})]"
 
     Here, we are updating a connector endpoint with the ID `openai-gpt4`. The keys and values to be updated are tuples in a list (i.e. update the key `name` with the value`my-special-openai-endpoint`)
 
@@ -40,30 +40,29 @@ You will see a list of available connector endpoints that we have created before
 
     You should see a help example:
 
-        add_endpoint openai-connector 'my-openai-connector' myendpointuri mythisismysecretapitoken 2 10 "gpt-3.5-turbo-1106" "{'temperature': 0.5}"
+        add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' MY_URI ADD_YOUR_TOKEN_HERE 1 2 'gpt-3.5-turbo-1106' "{'temperature': 0.5}"
         
     In this example, we are creating a connector endpoint for the `openai-connector` **connector type**:
 
-    - Name of your endpoint connenctor (unique identifier): `my-openai-connector`
-    - URI: `myendpointuri` (set this to a random string like `none` if it is not required by your connector endpoint)
-    - API token: `thisismysecretapitoken`
-    - Max number of calls made to the endpoint per second: `2`
-    - Max concurrency of the endpoint:`10`
-    - Model of the endpoint you want to connect to.
+    - Name of the Connector you want to use: `my-openai-connector`
+    - Name of your new Connector Endpoint: `OpenAI GPT3.5 Turbo 1106`
+    - Uri: `ADD_YOUR_TOKEN_HERE`
+    - API token: `ADD_YOUR_TOKEN_HERE`
+    - Max number of calls made to the endpoint per second: `1`
+    - Max concurrency of the endpoint:`2`
+    - Model of the endpoint you want to connect to `'gpt-3.5-turbo-1106'`
     - Other parameters that this endpoint may need:
         - Temperature: 0.5        
+
 
         To view the list of connector types, enter `list_connector_types`:
             ![list of connector types](cli_images/connector_types.png)
 
 
-        > **_NOTE:_** If you do not see the connector type you want to use, refer to our guide in contributor_guide/create_connector.md to learn how to create your own connector type. 
+2. After you have used the `add_endpoint` command to create your endpoint, enter the following command to view your newly created connector endpoint:
 
-
-2. After you have used the `add_endpoint` command to create your endpoint. Enter the following command to view your newly created connector endpoint:
-
-        view_endpoint my-openai-connector
+        view_endpoint openai-gpt3-5-turbo-1106
     
-    > **_NOTE:_** The ID (my-openai-connector)of the connector endpoint is created by slugifying the name.
+    > **_NOTE:_** The ID (openai-gpt3-5-turbo-1106) of the connector endpoint is created by slugifying the name.
 
     ![endpoint connected](cli_images/endpoint_created.png)
