@@ -32,27 +32,37 @@ else
   touch pip-audit-report.html
 fi
 
+# Analyse license risk
 if [ -f licenses-found.md ]; then
-  copyleftLic=("GPL" "LGPL" "MPL" "AGPL" "EUPL" "CCDL" "EPL" "CC-BY-SA" "OSL" "CPL")
-  echo "============ Copyleft Licenses Found ============"
+  strong_copyleft_lic=("GPL" "AGPL" "EUPL" "CCDL" "EPL" "OSL" "CPL")
+  weak_copyleft_lic=("LGPL" "MPL" "CC-BY-SA")
+  
+  echo "============ Strong Copyleft Licenses Found ============"
   head -n 2 licenses-found.md
   while IFS= read -r line; do
-    for lic in "${copyleftLic[@]}"; do
+    for lic in "${strong_copyleft_lic[@]}"; do
       if [[ $line == *"$lic"* ]]; then
         echo "$line"
         break
       fi
     done
   done < licenses-found.md
+
+  echo "============ Weak Copyleft Licenses Found ============"
+  head -n 2 licenses-found.md
+  while IFS= read -r line; do
+    for lic in "${weak_copyleft_lic[@]}"; do
+      if [[ $line == *"$lic"* ]]; then
+        echo "$line"
+        break
+      fi
+    done
+  done < licenses-found.md
+
   mdtree licenses-found.md > license-report.html
 else
   touch license-report.html
 fi
-
-# Create badges
-#pip install anybadge
-#python3 ci/createBadges.py dependency
-#python3 ci/createBadges.py license
 
 deactivate
 rm -rf ci-venv

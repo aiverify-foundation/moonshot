@@ -23,6 +23,10 @@ on:
         default: 'dev_main'
         type: string
 
+  push:
+    branches:
+      - 'ci/workflow-updates'
+      
 # Allow one concurrent deployment
 concurrency:
   group: ${{ github.repository }}-${{ github.workflow }}

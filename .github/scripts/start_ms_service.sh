@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 BASE_DIR=~/moonshot
 MOONSHOT_SIT=moonshot-sit
