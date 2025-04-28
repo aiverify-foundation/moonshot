@@ -67,7 +67,7 @@ You can try the following:
 
 ### Why am I encountering errors with my endpoints after updating Moonshot?
 
-In release 0.5.0 (Dec 2024), we changed the schema for connector-endpoints. Check out the new schema [here](https://github.com/aiverify-foundation/moonshot-data/tree/main/connectors-endpoints)
+In release 0.5.0 (Dec 2024), we changed the schema for connector-endpoints. Check out the new schema [here](https://github.com/aiverify-foundation/moonshot-data/tree/main/connectors-endpoints).
 This is a non-backwards compatible change, if you update `moonshot` but not `moonshot-data`, you may encounter errors due to schema mismatch.
 
 If you have created a connector-endpoint following the previous schema, you will need to edit/ create a new one that uses the latest schema.
@@ -94,10 +94,13 @@ This is the full list of requirements for the following tests:
 
 | Test | Type | Model Required | Name of the Endpoint | Configuration Required
 | --- | ---| --- | --- | --- |
-| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json) | API Token - `token` field
-| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
-| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe | Meta LlamaGuard | [Together Llama Guard 7B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-7b-assistant.json)  | API Token - `token` field
+| [MLCommons AI Safety Benchmarks v0.5](https://github.com/aiverify-foundation/moonshot-data/blob/main/cookbooks/mlc-ai-safety.json) | Cookbook | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json) | API Token - `token` field
+| All MLCommons Recipes (i.e. [mlc-cae](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-cae.json)) | Recipe | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json)  | API Token - `token` field
+| [Singapore Safety](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Recipe | Meta LlamaGuard | [Together Llama Guard 8B Assistant](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/together-llama-guard-8b-assistant.json)  | API Token - `token` field
 | [Bias - Occupation](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/bias-occupation.json) | Recipe | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| All Cybersecurity Evaluation Recipes for Different Languages (i.e. [cyberseceval-cn](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/cyberseceval-cn.json)) | Recipe | OpenAI GPT-4o | [OpenAI GPT-4o](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4o.json)  | API Token - `token` field
+| [Cyberseceval - Prompt Injection](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/bias-occupation.json) | Recipe | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
+| [Ragas RAG Evaluation](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/ragas-evaluation.json) | Recipe | Azure OpenAI GPT-4o,  | [Azure OpenAI GPT-4o](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/azure-langchain-openai-chatopenai-gpt4o.json) <br> [Azure OpenAI Text Embedding Ada 002](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/azure-langchain-openai-embedding-ada-2.json)| URI - `uri` of your LLM <br> API Token - `token` field
 | [Chinese Linguistics & Cognition Challenge](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/clcc.json) | Recipe | Flageval Flag Judge | [Flageval Flag Judge](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/flageval-flagjudge.json) | -
 | [Malicious Question Generator](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/malicious_question_generator.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
 | [Violent Durian](https://github.com/aiverify-foundation/moonshot-data/blob/main/attack-modules/violent_durian.py) | Attack Module | OpenAI GPT4 | [OpenAI GPT4](https://github.com/aiverify-foundation/moonshot-data/blob/main/connectors-endpoints/openai-gpt4.json)| API Token - `token` field
@@ -109,9 +112,9 @@ If you are not running any of the above, you should check the details of the spe
 
 If you do not have tokens for Llama Guard via Together AI, 
 
-1.	Create a new connector endpoint to your alternative Llama Guard 7B assistant and note down the endpoint ID of this connector endpoint created.
+1.	Create a new connector endpoint to your alternative Llama Guard 8B assistant and note down the endpoint ID of this connector endpoint created.
 2.	Open up `moonshot-data/metrics_config.json` in a code editor
-3.	Replace `together-llama-guard-7b-assistant` with your new endpoint ID.
+3.	Replace `together-llama-guard-8b-assistant` with your new endpoint ID.
 4.	Save the file and run your test.
 
 
