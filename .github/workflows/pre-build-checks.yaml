@@ -136,6 +136,7 @@ jobs:
         if: ${{ ! cancelled() }}
         run: |
           set +e
+          cp ci/.flake8 .
           bash ci/run-flake8.sh
           source ci/gen_pre_build_summ.sh lint
           lint_status=$?
