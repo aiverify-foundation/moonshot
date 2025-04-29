@@ -8,7 +8,7 @@
 name: Pre-Build Checks
 
 on:
-  # Runs when a pull request to main is being assigned
+  # Runs when a pull request to dev_main is being assigned
   pull_request:
     types: [ assigned, synchronize ]
     branches:
