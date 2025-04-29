@@ -1,6 +1,6 @@
 # Running Benchmarks
 
-1. Before you can start running benchmarks, provide the following info. These will be included in the report generated at the end of the run. 
+1. Before you can start running benchmarks, you have to provide the following information. These will be included in the report generated at the end of the run. 
 
 
     | Name        |Description   | Example          |
@@ -21,20 +21,22 @@
 
     - Start Red Teaming to discover new vulnerabilities   
     - Create a custom cookbook by curating your own set of recipes   
-    - Go back to home  
+    - Return back to the Main Page  
 
-5. To view the progress of the run, click on the bell icon, then select the specific benchmark run.
+5. To view the progress of the run, click on the bell icon and select the specific benchmark run.
 
     ![Progress of Multiple Runs](./imgs/run_progress(13).png)
 
-6. Once run is completed, you can click on ‘View Report’ 
+6. Once a benchmark run is completed, you can click on ‘View Report’ 
 
     ![View Report](./imgs/view_report(14).png)
 
-7. One report will be generated for each endpoint tested. Click on the dropdown to toggle the report displayed. You can also download the HTML report and the detailed results as a JSON file. 
+7. One report will be generated for each tested endpoint. Click on the dropdown to toggle the report displayed. You can also download the HTML report and the detailed results as a JSON file. 
 
     ![Download Benchmark Report](./imgs/download_report(15).png)
 
-8. You can also view the details of previous runs through: 
-    1. Click on ‘history’ icon, then ‘View Past Runs’ 
-    2. Click on ‘benchmarking’ icon, then ‘View Past Runs’ 
+8. You can also view the details of previous runs through 2 methods
+    1. By clicking on ‘benchmarking’ icon on the Sidebar and clicking the ‘View Past Runs’ button
+    2. By clicking on the ‘history’ icon on the Sidebar and clicking the ‘View Past Runs’ button
+
+    This is the window that will list the information of the previous runs. For more detailed information of each run, click in the "View Results" button

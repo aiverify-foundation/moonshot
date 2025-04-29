@@ -1,6 +1,6 @@
 # Connecting to LLMs
 
-1. This page shows you the connector endpoints available to be tested. Moonshot comes with pre-configured connector endpoints to some popular model providers, you will just need to provide your API key.  
+1. This page shows you the connector endpoints available for testing. Moonshot comes with pre-configured connector endpoints of some popular model providers, you will need to provide your respective API key
 
     - Click on ‘Edit’ to add in the API key for any of these models you may wish to test. 
 
@@ -8,7 +8,7 @@
 
     ![List of Endpoints](./imgs/benchmarking(8).png)
 
-2. Provide the following info as necessary, and click ‘Save’ to create/ update the endpoint. 
+2. Provide the following information and click ‘Save’ to create/update the endpoint. 
 
     ![Creating New Endpoints](./imgs/benchmarking(9).png)
 
@@ -24,8 +24,6 @@
 
 
 
-3. Select the endpoints to the AI systems that you wish to run benchmarks on, and click the next button when done. 
+3. Select the endpoints to the AI models by checking their checkboxes. and click the next button to move onto the next step. 
 
-
-    Click on ‘Edit’ for Together Llama Guard 7B Assistant, provide your API token, and click ‘Save’. (You don’t need to select Together Llama Guard 7B Assistant for testing. This is necessary to run some of the cookbooks like MLCommon's AI Safety Benchmark.) 
     ![Selection of Endpoints](./imgs/selecting_endpoints(10).png)
