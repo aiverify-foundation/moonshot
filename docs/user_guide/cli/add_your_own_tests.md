@@ -99,7 +99,7 @@ moonshot > add_recipe -h
 Add a new recipe using the dataset that you have created in the previous section using the following command:
 
 ```
-add_recipe 'My new recipe' 'I am recipe description' "['fruits']" "['capability']" "['example-dataset']" "[]" "['exactstrmatch']" "[]" "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}" 
+My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}" 
 ```
 
 ### View Recipe
@@ -132,7 +132,7 @@ The fields are as follows for this example:
 
 - Name (A unique name for the cookbook): `My new cookbook`
 - Description (A detailed explanation of the cookbook's purpose and the types of recipes it contains): `I am cookbook description`
-- Recipes (A list of recipe names that are included in the cookbook. Each recipe represents a specific test or benchmark): `['analogical-similarity','auto-categorisation']`
+- Recipes (A list of recipe names that are included in the cookbook. Each recipe represents a specific test or benchmark): `['my-new-recipe','auto-categorisation']`
 
 You can also view the description of this command using the following command:
 
