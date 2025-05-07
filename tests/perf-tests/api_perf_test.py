@@ -137,8 +137,7 @@ def profile_api_connector():
     example_connector_id = "openai-gpt4"
     example_connector_ids = [
         "claude2",
-        "huggingface-gpt2",
-        "huggingface-llama2-13b-gptq",
+        "huggingface-deepseekr1",
         "openai-gpt4",
         "openai-gpt35-turbo-16k",
         "openai-gpt35-turbo",
