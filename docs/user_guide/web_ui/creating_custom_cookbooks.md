@@ -14,16 +14,16 @@ Using the recipes available on Moonshot, you can easily curate custom cookbooks 
 
 3. Click on ‘Select Recipes’ to view a list of available recipes. 
 
-    ![Create Cookbook Page](./imgs/select_recipe_for_cookbook(37).png)
+    ![Create Cookbook Page](./imgs/custom_cookbook_1.png)
 
 
 4. View the list of recipes available in Moonshot. Select the desired recipes by checking their checkboxes and click on ‘Add to Cookbook’. 
 
-    ![Select Recipes for Cookbook](./imgs/add_to_cookbook(38).png)
+    ![Select Recipes for Cookbook](./imgs/custom_cookbook_2.png)
 
 5. Click on ‘Create Cookbook’ to create the custom cookbook. 
 
-    ![Create Cookbook](./imgs/create_cookbook(39).png)
+    ![Create Cookbook](./imgs/custom_cookbook_3.png)
 
 6. This cookbook will now be available. You can use the cookbook when running the next benchmark run. 
 
