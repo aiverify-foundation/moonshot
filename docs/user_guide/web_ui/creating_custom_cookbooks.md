@@ -27,4 +27,4 @@ Using the recipes available on Moonshot, you can easily curate custom cookbooks 
 
 6. This cookbook will now be available. You can use the cookbook when running the next benchmark run. 
 
-    [Click here to find out how to start a benchmarking run](./running_benchmarks.md) 
+    [Click here to find out how to start a benchmarking run](./choosing_relevant_tests.md) 

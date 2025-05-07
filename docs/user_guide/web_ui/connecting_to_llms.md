@@ -2,15 +2,17 @@
 
 1. This page shows you the connector endpoints available for testing. Moonshot comes with pre-configured connector endpoints of some popular model providers, you will need to provide your respective API key
 
+
+    ![List of Endpoints](./imgs/benchmark_2a.png)
+
+2. Provide the following information 
     - Click on ‘Edit’ to add in the API key for any of these models you may wish to test. 
 
     - If you wish to test other LLMs or your own hosted LLM application, click on ‘Create New Endpoint’. 
 
-    ![List of Endpoints](./imgs/benchmarking(8).png)
+    - Click ‘Save’ to create/update the endpoint.
 
-2. Provide the following information and click ‘Save’ to create/update the endpoint. 
-
-    ![Creating New Endpoints](./imgs/benchmarking(9).png)
+    ![Creating New Endpoints](./imgs/benchmark_2c.png)
 
     | Name                    | Description                                                                                                                         | Example                                     |
     |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
@@ -26,4 +28,4 @@
 
 3. Select the endpoints to the AI models by checking their checkboxes. and click the next button to move onto the next step. 
 
-    ![Selection of Endpoints](./imgs/selecting_endpoints(10).png)
+    ![Selection of Endpoints](./imgs/benchmark_2b.png)

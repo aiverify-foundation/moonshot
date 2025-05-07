@@ -11,11 +11,11 @@
 
 2. Click ‘Run’ to start running the benchmarks. 
 
-    ![Benchmark Initialisation](./imgs/run_benchmark(11).png)
+    ![Benchmark Initialisation](./imgs/benchmark_4.png)
 
 3. You can click on ‘See Details’ to recap on what is currently being run. 
 
-    ![Progress of Benchmark](./imgs/view_run_details(12).png)
+    ![Progress of Benchmark](./imgs/benchmark_5.png)
 
 4. A report will be generated once the run is completed. Meanwhile, you can:
 
@@ -25,11 +25,11 @@
 
 5. To view the progress of the run, click on the bell icon and select the specific benchmark run.
 
-    ![Progress of Multiple Runs](./imgs/run_progress(13).png)
+    ![Progress of Multiple Runs](./imgs/benchmark_6.png)
 
 6. Once a benchmark run is completed, you can click on ‘View Report’ 
 
-    ![View Report](./imgs/view_report(14).png)
+    ![View Report](./imgs/benchmark_7.png)
 
 7. One report will be generated for each tested endpoint. Click on the dropdown to toggle the report displayed. You can also download the HTML report and the detailed results as a JSON file. 
 

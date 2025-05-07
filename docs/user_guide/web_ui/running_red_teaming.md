@@ -4,11 +4,11 @@
     1. Click on ‘Discover new vulnerabilities’
     2. Click on the Red Teaming icon on the Sidebar and click the "Start New Session" button.
 
-    ![Homepage](./imgs/red_teaming_discover(16).png)
+    ![Homepage](./imgs/redteaming_0.png)
 
-2. Select the endpoints to the LLMs that you wish to red team simultaneously within the same session and click the next button. <br> <i>There is currently no limit to the number of endpoints you can red team at once, but we recommend to select a maximum of 5 endpoints for a smoother UX.</i>
+2. Select the endpoints to the LLMs that you wish to red team simultaneously within the same session and click the down arrow to move on. <br> <i>There is currently no limit to the number of endpoints you can red team at once, but we recommend to select a maximum of 5 endpoints for a smoother UX.</i>
 
-    ![Choose Endpoints](./imgs/red_teaming_endpoints_selection(17).png)
+    ![Choose Endpoints](./imgs/redteaming_1.png)
 
 3. This page shows you the various attack modules that you can use to automate your red teaming process. Each attack module provides a unique way to automatically generate prompts, based-off an initial prompt you provide. Some of these attack modules require the connection to a helper model e.g., GPT4. 
 
@@ -36,25 +36,25 @@
 
     ![Start New Red Teaming Session](./imgs/start_red_teaming(19).png)
 
-6. This page shows red teaming interface for Moonshot.  
 
-    ![Red teaming Interface](./imgs/red_teaming_interface(20).png)
-
-The Red Teaming Interface
+**The Red Teaming Interface**
 
 **Chat boxes and Layout**
 
-Each chat box will allow you to view the prompt and response sent to / received from each endpoint.   
+Each chat box will allow you to view the prompt and response sent to or received from each endpoint.   
 
-There are two layout options:   
-1. Carousel (The default setting if you have more than 3 endpoints)  
+There are two layout options if you choose more than 3 endpoints:   
+1. Carousel  
 2. Free Layout, which allows you to re-arrange, re-size and minimise the chat boxes. 
+
+![Sending Prompts during red teaming](./imgs/redteaming_4c.png)
 
 **Sending Prompts**
 
 Provide your prompt in the ‘Prompt’ text box and click ‘Send’ to send the prompt to all the endpoints in your session.
 
-![Sending Prompts during red teaming](./imgs/red_teaming_chatbot_layout(21).png)
+
+![Sending Prompts during red teaming](./imgs/redteaming_4a.png)
 
 **Red Teaming Tools** 
 
@@ -63,55 +63,57 @@ You can use some of these tools to enhance your red teaming process:
 1. **Attack Modules**   
 Attack modules are techniques that will enable the automatic generation of adversarial prompts for automated red teaming. Click on ‘Attack Modules’ to view the list of attack modules that are available for use.
 
-    ![View Attack Modules](./imgs/red_teaming_attack_module(22).png)
+![View Attack Modules](./imgs/redteaming_4d.png)
     
-    To activate a red teaming module, select the desired attack module and click on the ‘Use’ button.
+To activate a red teaming module, select the desired attack module and click on the ‘Use’ button.
 
-    ![Select Attack Modules](./imgs/select_attack_module(23).png)
+![Select Attack Modules](./imgs/redteaming_4b.png)
 
-    - Enter your prompt in the ‘Prompt’ box as the initial prompt that the attack module will use to generate adversarial prompts. 
-    
-    - Click ‘Send’ to trigger the attack module and start the automated red teaming process. Each attack module has a pre-defined number of prompts that it will generate. 
+- Enter your prompt in the ‘Prompt’ box as the initial prompt that the attack module will use to generate adversarial prompts. 
 
-    !!!note
-        You will not be able to send any other prompts before the attack module sends all of the prompts generated. 
+- Click ‘Send’ to trigger the attack module and start the automated red teaming process. Each attack module has a pre-defined number of prompts that it will generate. 
 
-    ![Start Automated Red Teaming Process](./imgs/send_prompt(24).png)
+!!!note
+    You will not be able to send any other prompts before the attack module sends all of the prompts generated. 
 
-    To remove the attack module, click on 'X' to remove the attack module set.
-    ![Remove Attack Module](./imgs/remove_attack_module(25).png)
+![Start Automated Red Teaming Process](./imgs/send_prompt(24).png)
+
+To remove the attack module, click on 'X' to remove the attack module set.
+![Remove Attack Module](./imgs/remove_attack_module(25).png)
 
     
 1. **Prompt Templates**  
-    Prompt templates are predefined text structures that guide the format and context of the prompt that is sent to the AI system. Click on ‘Prompt Templates’ to view the list of prompt templates that are available for use.  
-    ![List of Prompt Templates](./imgs/prompt_template(26).png)
 
-    To activate a prompt template, select the desired prompt template and click on the ‘Use’ button.
-    ![Select Prompt Templates](./imgs/select_prompt_template(27).png)
+Prompt templates are predefined text structures that guide the format and context of the prompt that is sent to the AI system. Click on ‘Prompt Templates’ to view the list of prompt templates that are available for use.  
+![List of Prompt Templates](./imgs/prompt_template(26).png)
 
-    Enter your prompt in the ‘Prompt’ box. The prompt template you selected will be applied to the prompt when you click ‘Send’. 
-    ![Send Prompt](./imgs/prompt_template(28).png)
+To activate a prompt template, select the desired prompt template and click on the ‘Use’ button.
+![Select Prompt Templates](./imgs/select_prompt_template(27).png)
 
-    Hover your mouse over each prompt to view its details. 
-    ![View Prompt Details](./imgs/prompt_details(29).png)
+Enter your prompt in the ‘Prompt’ box. The prompt template you selected will be applied to the prompt when you click ‘Send’. 
+![Send Prompt](./imgs/prompt_template(28).png)
 
-    Click on ‘X’ to remove the prompt template set. 
-    ![Remove Prompt Template](./imgs/remove_prompt_template_set(30).png)
+Hover your mouse over each prompt to view its details. 
+
+![View Prompt Details](./imgs/prompt_details(29).png)
+
+Click on ‘X’ to remove the prompt template set. 
+![Remove Prompt Template](./imgs/remove_prompt_template_set(30).png)
 
 2. **Context Strategies**  
 
-    Context Strategies are predefined approaches to append the red teaming session's context to each prompt. Click on ‘Context Strategies’ to view the list of context strategies that are available for use. 
-     
-    ![List Context Strategies](./imgs/available_context_strategies(31).png)
+Context Strategies are predefined approaches to append the red teaming session's context to each prompt. Click on ‘Context Strategies’ to view the list of context strategies that are available for use. 
     
+![List Context Strategies](./imgs/available_context_strategies(31).png)
 
-    To activate a context strategy, select the desired context strategy and click on the ‘Use’ button.
-    ![Pick Context Strategy](./imgs/use_context_strategy(32).png)
 
-    Enter your prompt in the ‘Prompt’ box. Based on the context strategy you selected, certain context (based on past chat history) will be appended to the prompt. 
+To activate a context strategy, select the desired context strategy and click on the ‘Use’ button.
+![Pick Context Strategy](./imgs/use_context_strategy(32).png)
 
-    Click on ‘X’ to remove the context strategy set. 
-    ![Remove Context Strategy](./imgs/remove_context_strategy_set(33).png)
+Enter your prompt in the ‘Prompt’ box. Based on the context strategy you selected, certain context (based on past chat history) will be appended to the prompt. 
+
+Click on ‘X’ to remove the context strategy set. 
+![Remove Context Strategy](./imgs/remove_context_strategy_set(33).png)
 
 
 **Ending a Session**<br>
@@ -127,4 +129,4 @@ Click on 'Exit'.
     1. By clicking on 'red teaming' icon on the Sidebar and clicking the ‘View Past Sessions' button
     2. By clicking on the ‘history’ icon on the Sidebar and clicking the ‘View Past Sessions’ button
 
-    This is the window that will list the information of the previous sessions. To resume the session, click in the "Resume Session" button
+[Click here to find out more about accessing your Moonshot History](./moonshot_interface/history.md)
