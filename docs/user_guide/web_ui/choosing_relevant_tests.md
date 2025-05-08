@@ -25,7 +25,7 @@ Each cookbook contains recipes of the same focus area. Select the cookbooks that
 
         Facts about Singapore (Requires an API key for accessing Llama Guard via Together AI)
 
-        To provide the TogetherAI API key, edit the “Together Llama Guard 7B Assistant” endpoint. (Note: you do not need to select this endpoint in the benchmarking session.) If you would like to use an alternative Llama Guard 7B assistant, see the [FAQ](../../faq.md#requirements) on how to do so.
+        To provide the TogetherAI API key, edit the “Together Llama Guard 8B Assistant” endpoint. (Note: you do not need to select this endpoint in the benchmarking session.) If you would like to use an alternative Llama Guard 8B assistant, see the [FAQ](../../faq.md#requirements) on how to do so.
 
     ![List of Cookbooks](./imgs/cookbook_2b.png) 
 
