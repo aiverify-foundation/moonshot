@@ -40,10 +40,10 @@ Each cookbook contains recipes of the same focus area. Select the cookbooks that
 
     ![Create Cookbook Button](./imgs/cookbook_3.png)
 
-2. This will lead you to the window to define your custom cookbook name, description and selected recipes. Click on the *Select Recipes* button to add the desired recipes
+2. This will lead you to the window to define your custom cookbook name, description and selected recipes. Click on the "Select Recipes" button to add the desired recipes
 
     ![Create Cookbook Window](./imgs/cookbook_4.png)
 
-3. Check the relevant recipes. These recipes will show up at the bottom right box. Click Ok to proceed. This cookbook will be saved and you can use it for your benchmarking run. 
+3. Check the relevant recipes. These recipes will show up at the bottom right box. Click "Ok" to proceed. This cookbook will be saved and you can use it for your benchmarking run. 
 
     ![Choose Recipes](./imgs/cookbook_5.png)

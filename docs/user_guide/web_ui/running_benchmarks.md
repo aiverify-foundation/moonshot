@@ -2,11 +2,11 @@
 
 This page documents the steps to starting a benchmark run
 
-1. To begin, click on the *Run Benchmark* button as indicated
+1. To begin, click on the "Run Benchmark" button as indicated
 
     ![Run Benchmark Button](./imgs/benchmark_1.png)
 
-2. Pick the desired endpoints for this benchmark run. You can also configure them at this point by clicking on their respective *edit* button. Click on *NEXT* to proceed
+2. Pick the desired endpoints for this benchmark run. You can also configure them at this point by clicking on their respective "edit" button. Click on "NEXT" to proceed
 
     ![Select Endpoints](./imgs/benchmark_2.png)
 
@@ -14,7 +14,7 @@ This page documents the steps to starting a benchmark run
 
     ![Select Cookbooks](./imgs/benchmark_3.png)
 
-    However, you can click *about* to find out more about the cookbook, which will contain more detailed information about the specific cookbook
+    However, you can click "About" to find out more about the cookbook, which will contain more detailed information about the specific cookbook
 
     ![Cookbook Details](./imgs/benchmark_3b.png)
 

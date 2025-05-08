@@ -2,7 +2,7 @@
 
 This page documents the steps for a red-teaming session.
 
-1. To start a red teaming session, click on ‘Discover new vulnerabilities’
+1. To start a red teaming session, click on "Discover new vulnerabilities".
 
     ![Redteam Homepage](./imgs/redteam_1.png)
 
@@ -21,7 +21,7 @@ This page documents the steps for a red-teaming session.
 
         To configure the attack module endpoints, see [Connecting to LLMs](./connecting_to_llms.md)
 
-    Select one attack module you would like to try out as a start and click the next button, or click on ‘Skip for now’:
+    Select one attack module you would like to try out as a start and click the next button, or click on "Skip for now":
     ![Choosing of Attack Modules](./imgs/choose_attack_modules(18).png)
     You will still be able to select attack modules in the midst of a red teaming session. 
 
