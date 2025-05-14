@@ -200,8 +200,6 @@ def cookbook_has_categories(categories: str, cookbook: Cookbook) -> bool:
     )
 
 
-
-
 @staticmethod
 def cookbook_metrics_dependency(cookbook: Cookbook) -> dict | None:
     """
