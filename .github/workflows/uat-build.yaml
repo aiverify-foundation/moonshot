@@ -1,0 +1,91 @@
+name: UAT Build
+
+# Trigger when the PR to merge to main is merged
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  build-python-package:
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          submodules: recursive
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Bump version
+        run: |
+          echo "Bump version..."
+          pip install bump2version
+          bump2version patch
+
+      - name: Generate notices file
+        run: |
+          echo "Generate notice file..."
+
+      - name: Package test PyPI
+        run: |
+          echo "Package test PyPI..."
+          pip install build
+          python3 -m build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package
+          path: dist/
+
+  publish-to-testpypi:
+    needs:
+      - build-python-package
+    runs-on: ubuntu-latest
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/aiverify-moonshot
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download python package
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package
+          path: dist/
+
+      - name: Publish to test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+# Deploy moonshot to UAT by installing moonshot package from test pypi
+  # deploy-to-uat:
+  #   needs:
+  #     - publish-to-testpypi
+  #   runs-on: ubuntu-latest
+
+# Run integration test
+  # integration-test:
+  #   needs:
+  #     - publish-to-testpypi:
+  #     runs-on: ubuntu-latest
+
+
+

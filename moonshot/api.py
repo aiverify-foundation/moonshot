@@ -1,3 +1,11 @@
+from moonshot.src.api.api_bookmark import (
+    api_delete_all_bookmark,
+    api_delete_bookmark,
+    api_export_bookmarks,
+    api_get_all_bookmarks,
+    api_get_bookmark,
+    api_insert_bookmark,
+)
 from moonshot.src.api.api_connector import (
     api_create_connector_from_endpoint,
     api_create_connectors_from_endpoints,
@@ -26,10 +34,11 @@ from moonshot.src.api.api_cookbook import (
     api_update_cookbook,
 )
 from moonshot.src.api.api_dataset import (
+    api_convert_dataset,
     api_delete_dataset,
+    api_download_dataset,
     api_get_all_datasets,
     api_get_all_datasets_name,
-    api_create_datasets
 )
 from moonshot.src.api.api_environment_variables import api_set_environment_variables
 from moonshot.src.api.api_metrics import (
@@ -87,14 +96,6 @@ from moonshot.src.api.api_session import (
     api_update_prompt_template,
     api_update_system_prompt,
 )
-from moonshot.src.api.api_bookmark import (
-    api_get_all_bookmarks,
-    api_get_bookmark,
-    api_insert_bookmark,
-    api_delete_bookmark,
-    api_delete_all_bookmark,
-    api_export_bookmarks,
-)
 
 __all__ = [
     "api_create_connector_from_endpoint",
@@ -116,7 +117,8 @@ __all__ = [
     "api_read_cookbook",
     "api_read_cookbooks",
     "api_update_cookbook",
-    "api_create_datasets",
+    "api_convert_dataset",
+    "api_download_dataset",
     "api_delete_dataset",
     "api_get_all_datasets",
     "api_get_all_datasets_name",

@@ -25,3 +25,7 @@ Click "OK" to confirm your details.
 Click "Save" to save your configuration.
 
 ![save endpoint](./res/create_endpoint_5.png)
+
+The newly created Connector Endpoint should be at the top.
+
+![save endpoint](./res/create_endpoint_6.png)

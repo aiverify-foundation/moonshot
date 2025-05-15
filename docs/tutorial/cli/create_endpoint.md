@@ -12,7 +12,7 @@ In this tutorial, you will learn how to configure and seamlessly connect Moonsho
 
     To run the help example, enter:
 
-        add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' MY_URI ADD_YOUR_TOKEN_HERE 1 1 "{'temperature': 0.5, 'model': 'gpt-3.5-turbo-1106'}"
+        add_endpoint openai-connector 'OpenAI GPT3.5 Turbo 1106' MY_URI ADD_YOUR_TOKEN_HERE 1 1 'gpt-3.5-turbo-1106' "{'temperature': 0.5}"
 
 4. View the newly created connector endpoint by entering:
      

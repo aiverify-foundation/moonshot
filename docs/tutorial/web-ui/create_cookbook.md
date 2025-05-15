@@ -21,3 +21,7 @@ Finalise the creation of your cookbook by clicking on "Create Cookbook".
 Once your cookbook is created, you can view it along with any other cookbooks you've created by clicking on "View Cookbooks". 
 
 ![view cookbooks](./res/create_cookbook_5.png)
+
+Search for your newly created cookbook.
+
+![view created cookbook](./res/create_cookbook_6.png)

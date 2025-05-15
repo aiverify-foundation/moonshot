@@ -52,8 +52,11 @@ ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION = (
 ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION_1 = (
     "The 'endpoints' argument must evaluate to a list of strings."
 )
-ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION = (
-    "The 'num_of_prompts' argument must be an integer."
+ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be an integer."
+)
+ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be between 1 - 100."
 )
 ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION = (
     "The 'random_seed' argument must be an integer."
@@ -278,8 +281,11 @@ ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION = (
 ERROR_BENCHMARK_RUN_RECIPE_ENDPOINTS_VALIDATION_1 = (
     "The 'endpoints' argument must evaluate to a list of strings."
 )
-ERROR_BENCHMARK_RUN_RECIPE_NUM_OF_PROMPTS_VALIDATION = (
-    "The 'num_of_prompts' argument must be an integer."
+ERROR_BENCHMARK_RUN_RECIPE_PROMPT_SELECTION_PERCENTAGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be an integer."
+)
+ERROR_BENCHMARK_RUN_RECIPE_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION = (
+    "The 'prompt_selection_percentage' argument must be between 1 - 100."
 )
 ERROR_BENCHMARK_RUN_RECIPE_RANDOM_SEED_VALIDATION = (
     "The 'random_seed' argument must be an integer."
@@ -347,6 +353,9 @@ ERROR_COMMON_ADD_ENDPOINT_TOKEN_VALIDATION = (
 ERROR_COMMON_ADD_ENDPOINT_MAX_CALLS_PER_SECOND_VALIDATION = "The 'max_calls_per_second' argument must be a non-empty positive integer and not None."  # noqa: E501
 ERROR_COMMON_ADD_ENDPOINT_MAX_CONCURRENCY_VALIDATION = (
     "The 'max_concurrency' argument must be a non-empty positive integer and not None."
+)
+ERROR_COMMON_ADD_ENDPOINT_MODEL_VALIDATION = (
+    "The 'model' argument must be a string and not None."
 )
 ERROR_COMMON_ADD_ENDPOINT_PARAMS_VALIDATION = (
     "The 'params' argument must be a string representation of a dictionary."
@@ -508,4 +517,18 @@ ERROR_RED_TEAMING_ADD_BOOKMARK_NO_ACTIVE_SESSION = (
 # ------------------------------------------------------------------------------
 ERROR_RED_TEAMING_USE_BOOKMARK_NO_ACTIVE_SESSION = (
     "There is no active session. Activate a session to bookmark a prompt."
+)
+
+
+# ------------------------------------------------------------------------------
+# Redteaming - list_attack_modules
+# ------------------------------------------------------------------------------
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_FIND_VALIDATION = (
+    "Invalid type for parameter: find. Expecting type str."
+)
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION = (
+    "Invalid type for parameter: pagination. Expecting type str."
+)
+ERROR_RED_TEAMING_LIST_ATTACK_MODULES_PAGINATION_VALIDATION_1 = (
+    "The 'pagination' argument must be a tuple of two integers."
 )

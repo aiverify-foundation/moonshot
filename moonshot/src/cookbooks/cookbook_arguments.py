@@ -8,6 +8,10 @@ class CookbookArguments(BaseModel):
 
     description: str  # description (str): A brief description of the Cookbook.
 
+    tags: list[str]  #  tags (list): The list of tags in the Cookbook.
+
+    categories: list[str]  # categories (list): The list of categories in the Cookbook.
+
     recipes: list[str] = Field(
         min_length=1
     )  # recipes (list): A list of recipes included in the Cookbook.
@@ -29,6 +33,8 @@ class CookbookArguments(BaseModel):
         return {
             "id": self.id,
             "name": self.name,
+            "tags": self.tags,
+            "categories": self.categories,
             "description": self.description,
             "recipes": self.recipes,
         }

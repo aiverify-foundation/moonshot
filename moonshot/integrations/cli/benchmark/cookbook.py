@@ -37,7 +37,8 @@ from moonshot.integrations.cli.cli_errors import (
     ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION_1,
     ERROR_BENCHMARK_RUN_COOKBOOK_NAME_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_NO_RESULT,
-    ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION,
+    ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION,
+    ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RESULT_PROC_MOD_VALIDATION,
     ERROR_BENCHMARK_RUN_COOKBOOK_RUNNER_PROC_MOD_VALIDATION,
@@ -212,11 +213,12 @@ def run_cookbook(args) -> None:
     The cookbooks are run against the specified endpoints, and the results are processed and displayed.
 
     Args:
-        args: A namespace object from argparse. It should have the following attributes:
+        args (argparse.Namespace): The arguments provided to the command line interface.
+        Expected keys are:
             name (str): The name of the cookbook runner.
             cookbooks (str): A string representation of a list of cookbooks to run.
             endpoints (str): A string representation of a list of endpoints to run.
-            num_of_prompts (int): The number of prompts to run.
+            prompt_selection_percentage (int): The percentage of prompts to run.
             random_seed (int): The random seed number for reproducibility.
             system_prompt (str): The system prompt to use.
             runner_proc_module (str): The runner processing module to use.
@@ -248,19 +250,24 @@ def run_cookbook(args) -> None:
         ):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_ENDPOINTS_VALIDATION)
 
-        if isinstance(args.num_of_prompts, bool) or not isinstance(
-            args.num_of_prompts, int
+        if isinstance(args.prompt_selection_percentage, bool) or not isinstance(
+            args.prompt_selection_percentage, int
         ):
-            raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_NUM_OF_PROMPTS_VALIDATION)
+            raise TypeError(
+                ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_VALIDATION
+            )
+        elif (
+            args.prompt_selection_percentage < 1
+            or args.prompt_selection_percentage > 100
+        ):
+            raise ValueError(
+                ERROR_BENCHMARK_RUN_COOKBOOK_PROMPT_SELECTION_PERCENTAGE_RANGE_VALIDATION
+            )
 
         if isinstance(args.random_seed, bool) or not isinstance(args.random_seed, int):
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_RANDOM_SEED_VALIDATION)
 
-        if (
-            not isinstance(args.system_prompt, str)
-            or not args.system_prompt
-            or args.system_prompt is None
-        ):
+        if not isinstance(args.system_prompt, str) or args.system_prompt is None:
             raise TypeError(ERROR_BENCHMARK_RUN_COOKBOOK_SYS_PROMPT_VALIDATION)
 
         if (
@@ -301,7 +308,7 @@ def run_cookbook(args) -> None:
         async def run():
             await cb_runner.run_cookbooks(
                 cookbooks,
-                args.num_of_prompts,
+                args.prompt_selection_percentage,
                 args.random_seed,
                 args.system_prompt,
                 args.runner_proc_module,
@@ -440,9 +447,20 @@ def _display_cookbooks(cookbooks_list):
     table.add_column("Cookbook", justify="left", width=78)
     table.add_column("Contains", justify="left", width=20, overflow="fold")
     for idx, cookbook in enumerate(cookbooks_list, 1):
-        id, name, description, recipes, *other_args = cookbook.values()
+        (
+            id,
+            name,
+            tags,
+            categories,
+            description,
+            recipes,
+            *other_args,
+        ) = cookbook.values()
         idx = cookbook.get("idx", idx)
-        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n{description}"
+        cookbook_info = f"[red]ID: {id}[/red]\n\n[blue]{name}[/blue]\n\n{description}"
+        cookbook_info += (
+            f"\n\n[blue]Tags: {tags}[/blue]\n[blue]Categories: {categories}[/blue]\n"
+        )
         recipes_info = display_view_list_format("Recipes", recipes)
         table.add_section()
         table.add_row(str(idx), cookbook_info, recipes_info)
@@ -463,15 +481,19 @@ def _display_view_cookbook(cookbook_info):
     Returns:
         None
     """
-    id, name, description, recipes = cookbook_info.values()
+    id, name, tags, categories, description, recipes = cookbook_info.values()
     recipes_list = api_read_recipes(recipes)
     if recipes_list:
         table = Table(
-            title="View Cookbook", show_lines=True, expand=True, header_style="bold"
+            title=f'Cookbook: "{name}"\n Tags: {tags}\n Categories: {categories}\n',
+            show_lines=True,
+            expand=True,
+            header_style="bold",
         )
         table.add_column("No.", width=2)
         table.add_column("Recipe", justify="left", width=78)
         table.add_column("Contains", justify="left", width=20, overflow="fold")
+
         for recipe_id, recipe in enumerate(recipes_list, 1):
             (
                 id,
@@ -482,7 +504,6 @@ def _display_view_cookbook(cookbook_info):
                 datasets,
                 prompt_templates,
                 metrics,
-                attack_strategies,
                 grading_scale,
                 stats,
             ) = recipe.values()
@@ -494,9 +515,6 @@ def _display_view_cookbook(cookbook_info):
                 "Prompt Templates", prompt_templates
             )
             metrics_info = display_view_list_format("Metrics", metrics)
-            attack_strategies_info = display_view_list_format(
-                "Attack Strategies", attack_strategies
-            )
             grading_scale_info = _display_view_grading_scale_format(
                 "Grading Scale", grading_scale
             )
@@ -506,7 +524,9 @@ def _display_view_cookbook(cookbook_info):
                 f"[red]id: {id}[/red]\n\n[blue]{name}[/blue]\n{description}\n\n"
                 f"{tags_info}\n\n{categories_info}\n\n{grading_scale_info}\n\n{stats_info}"
             )
-            contains_info = f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}\n\n{attack_strategies_info}"
+            contains_info = (
+                f"{datasets_info}\n\n{prompt_templates_info}\n\n{metrics_info}"
+            )
 
             table.add_section()
             table.add_row(str(recipe_id), recipe_info, contains_info)
@@ -721,7 +741,11 @@ run_cookbook_args.add_argument("name", type=str, help="Name of cookbook runner")
 run_cookbook_args.add_argument("cookbooks", type=str, help="List of cookbooks to run")
 run_cookbook_args.add_argument("endpoints", type=str, help="List of endpoints to run")
 run_cookbook_args.add_argument(
-    "-n", "--num_of_prompts", type=int, default=0, help="Number of prompts to run"
+    "-n",
+    "--prompt_selection_percentage",
+    type=int,
+    default=100,
+    help="Percentage of prompts to run",
 )
 run_cookbook_args.add_argument(
     "-r", "--random_seed", type=int, default=0, help="Random seed number"

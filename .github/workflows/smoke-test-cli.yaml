@@ -1,0 +1,136 @@
+# Cli Smoke Test
+
+name: Moonshot CLI Smoke Test
+
+on:
+  # Runs on Pull Request Review
+  pull_request:
+    types: [ assigned, synchronize ]
+    branches:
+      - 'dev_main'
+
+  # Run this workflow manually from Actions tab
+  workflow_dispatch:
+    inputs:
+      moonshot_branch:
+        description: 'Moonshot Branch / Tag Name'
+        required: true
+        default: 'dev_main'
+        type: string
+      moonshot_data_branch:
+        description: 'Moonshot Data Branch / Tag Name'
+        required: true
+        default: 'dev_main'
+        type: string
+      moonshot_ui_branch:
+        description: 'Moonshot UI Branch / Tag Name'
+        required: true
+        default: 'dev_main'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+
+    steps:
+
+    - name: Checkout Moonshot (Pull Request Review)
+      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v4
+      with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Checkout Moonshot (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: ${{ inputs.moonshot_branch }}
+    
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
+    
+    - name: Setup Moonshot
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        touch .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
+
+    - name: Checkout Moonshot Data (Pull Request Review)
+      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v4
+      with: 
+         repository: aiverify-foundation/moonshot-data
+         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
+         path: moonshot-data
+
+    - name: Checkout Moonshot Data (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with: 
+         repository: aiverify-foundation/moonshot-data
+         ref: ${{ inputs.moonshot_data_branch }}
+         path: moonshot-data
+
+    - name: Setup Moonshot Data
+      run: |
+        source venv/bin/activate
+        cd moonshot-data
+        pip install -r requirements.txt
+
+    - name: Checkout Moonshot UI (Pull Request Review)
+      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v4
+      with:
+        repository: aiverify-foundation/moonshot-ui
+        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
+        path: moonshot-ui
+
+    - name: Checkout Moonshot UI (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+        repository: aiverify-foundation/moonshot-ui
+        ref: ${{ inputs.moonshot_ui_branch }}
+        path: moonshot-ui
+    
+    - name: Setup Moonshot UI
+      run: |
+        cd moonshot-ui
+        npm ci
+        npm run build
+        cd ../
+
+    - name: Checkout Smoke Test 
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot-smoke-testing
+          path: moonshot-smoke-testing
+
+    - name: Run Smoke Test
+      env: 
+        AZURE_OPENAI_URI: ${{ secrets.AZURE_OPENAI_URI }}
+        AZURE_OPENAI_TOKEN: ${{ secrets.AZURE_OPENAI_TOKEN }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        MOONSHOT_URL: ${{ secrets.MOONSHOT_URL }}
+        MOONSHOT_PORT_NUMBER: ${{ secrets.MOONSHOT_PORT_NUMBER }}
+        CLI_DIR: ${{ secrets.CLI_DIR }}
+      run: |
+         source venv/bin/activate
+         cd moonshot-smoke-testing
+         cd tests
+         pip install python-dotenv
+         pip install pytest
+         pytest test_cli.py

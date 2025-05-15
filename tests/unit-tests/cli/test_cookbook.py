@@ -20,6 +20,8 @@ class TestCollectionCliCookbook:
             "name": "Cookbook 1",
             "description": "Desc 1",
             "recipes": ["recipe1"],
+            "tags": ['test-tag'],
+            "categories": ['test-cat']
         }
     ]
     api_response_pagination = [
@@ -28,6 +30,8 @@ class TestCollectionCliCookbook:
             "name": "Cookbook 1",
             "description": "Desc 1",
             "recipes": ["recipe1"],
+            "tags": ['test-tag'],
+            "categories": ['test-cat'],
             "idx": 1,
         }
     ]
@@ -41,19 +45,23 @@ class TestCollectionCliCookbook:
     # Test add_cookbook functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "name, description, recipes, expected_output",
+        "name, description, recipes, categories, tags, expected_output",
         [
             # Valid case
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",
                 "[add_cookbook]: Cookbook (new_cookbook_id) created.",
             ),
             (
                 "Another Cookbook",
                 "Another description.",
                 "['recipe3']",
+                "['test_category']",
+                "['test_tag']",  
                 "[add_cookbook]: Cookbook (new_cookbook_id) created.",
             ),
             # Invalid case for name
@@ -61,42 +69,56 @@ class TestCollectionCliCookbook:
                 None,
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 "",
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 99,
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 {},
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 [],
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 (),
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             (
                 True,
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'name' argument must be a non-empty string and not None.",
             ),
             # Invalid case for description
@@ -104,42 +126,56 @@ class TestCollectionCliCookbook:
                 "Test Cookbook",
                 None,
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 99,
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 {},
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 [],
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 (),
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 True,
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'description' argument must be a non-empty string and not None.",
             ),
             # Invalid case for recipes - not a list of strings
@@ -147,12 +183,16 @@ class TestCollectionCliCookbook:
                 "Test Cookbook",
                 "This is a test cookbook.",
                 "None",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a list of strings after evaluation.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 "[123, 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a list of strings after evaluation.",
             ),
             # Invalid case for recipes
@@ -160,42 +200,56 @@ class TestCollectionCliCookbook:
                 "Test Cookbook",
                 "This is a test cookbook.",
                 None,
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 "",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 99,
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 {},
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 [],
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 (),
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             (
                 "Test Cookbook",
                 "This is a test cookbook.",
                 True,
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: The 'recipes' argument must be a non-empty string and not None.",
             ),
             # Exception case
@@ -203,6 +257,8 @@ class TestCollectionCliCookbook:
                 "Test Cookbook",
                 "This is a test cookbook.",
                 "['recipe1', 'recipe2']",
+                "['test_category']",
+                "['test_tag']",                
                 "[add_cookbook]: An error has occurred while creating cookbook.",
             ),
         ],
@@ -214,6 +270,8 @@ class TestCollectionCliCookbook:
         name,
         description,
         recipes,
+        categories,
+        tags,
         expected_output,
         capsys,
     ):
@@ -231,6 +289,8 @@ class TestCollectionCliCookbook:
         args.name = name
         args.description = description
         args.recipes = recipes
+        args.categories = categories
+        args.tags = tags
 
         add_cookbook(args)
 
@@ -634,6 +694,8 @@ class TestCollectionCliCookbook:
                     "name": "Cookbook 1",
                     "description": "Desc 1",
                     "recipes": ["recipe1"],
+                    "categories": "['test_category']",
+                    "tags": "['test_tag']",                                    
                 },
                 "",
                 True,
@@ -646,6 +708,8 @@ class TestCollectionCliCookbook:
                     "name": "Cookbook 1",
                     "description": "Desc 1",
                     "recipes": ["recipe1"],
+                    "categories": "['test_category']",
+                    "tags": "['test_tag']",                         
                 },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
@@ -658,6 +722,8 @@ class TestCollectionCliCookbook:
                     "name": "Cookbook 1",
                     "description": "Desc 1",
                     "recipes": ["recipe1"],
+                    "categories": "['test_category']",
+                    "tags": "['test_tag']",                         
                 },
                 "[view_cookbook]: The 'cookbook' argument must be a non-empty string and not None.",
                 False,
@@ -770,7 +836,7 @@ class TestCollectionCliCookbook:
     # Test run_cookbook functionality
     # ------------------------------------------------------------------------------
     @pytest.mark.parametrize(
-        "name, cookbooks, endpoints, num_of_prompts, random_seed, system_prompt, \
+        "name, cookbooks, endpoints, prompt_selection_percentage, random_seed, system_prompt, \
         runner_proc_module, result_proc_module, expected_log",
         [
             # Valid case
@@ -781,6 +847,17 @@ class TestCollectionCliCookbook:
                 10,
                 42,
                 "Test system prompt",
+                "runner_module",
+                "result_module",
+                "",
+            ),
+            (
+                "Test Runner",
+                "['cookbook1', 'cookbook2']",
+                "['endpoint1', 'endpoint2']",
+                10,
+                42,
+                "",
                 "runner_module",
                 "result_module",
                 "",
@@ -1043,7 +1120,43 @@ class TestCollectionCliCookbook:
                 "result_module",
                 "[run_cookbook]: The 'endpoints' argument must be a non-empty string and not None.",
             ),
-            # Invalid case: num_of_prompts is not an integer
+            # Invalid case: prompt_selection_percentage is 0
+            (
+                "Test Runner",
+                "['cookbook1', 'cookbook2']",
+                "['endpoint1', 'endpoint2']",
+                0,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is -1
+            (
+                "Test Runner",
+                "['cookbook1', 'cookbook2']",
+                "['endpoint1', 'endpoint2']",
+                -1,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is 101
+            (
+                "Test Runner",
+                "['cookbook1', 'cookbook2']",
+                "['endpoint1', 'endpoint2']",
+                101,
+                42,
+                "Test system prompt",
+                "runner_module",
+                "result_module",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be between 1 - 100.",
+            ),
+            # Invalid case: prompt_selection_percentage is not an integer
             (
                 "Test Runner",
                 "['cookbook1', 'cookbook2']",
@@ -1053,7 +1166,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1064,7 +1177,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1075,7 +1188,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1086,7 +1199,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1097,7 +1210,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             (
                 "Test Runner",
@@ -1108,7 +1221,7 @@ class TestCollectionCliCookbook:
                 "Test system prompt",
                 "runner_module",
                 "result_module",
-                "[run_cookbook]: The 'num_of_prompts' argument must be an integer.",
+                "[run_cookbook]: The 'prompt_selection_percentage' argument must be an integer.",
             ),
             # Invalid case: random_seed is not an integer
             (
@@ -1185,17 +1298,6 @@ class TestCollectionCliCookbook:
                 10,
                 42,
                 None,
-                "runner_module",
-                "result_module",
-                "[run_cookbook]: The 'system_prompt' argument must be a non-empty string and not None.",
-            ),
-            (
-                "Test Runner",
-                "['cookbook1', 'cookbook2']",
-                "['endpoint1', 'endpoint2']",
-                10,
-                42,
-                "",
                 "runner_module",
                 "result_module",
                 "[run_cookbook]: The 'system_prompt' argument must be a non-empty string and not None.",
@@ -1467,7 +1569,7 @@ class TestCollectionCliCookbook:
         name,
         cookbooks,
         endpoints,
-        num_of_prompts,
+        prompt_selection_percentage,
         random_seed,
         system_prompt,
         runner_proc_module,
@@ -1534,7 +1636,7 @@ class TestCollectionCliCookbook:
         args.name = name
         args.cookbooks = cookbooks
         args.endpoints = endpoints
-        args.num_of_prompts = num_of_prompts
+        args.prompt_selection_percentage = prompt_selection_percentage
         args.random_seed = random_seed
         args.system_prompt = system_prompt
         args.runner_proc_module = runner_proc_module

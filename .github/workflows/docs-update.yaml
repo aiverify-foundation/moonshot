@@ -1,0 +1,80 @@
+name: "Docs Update"
+
+on:
+#  push:
+#    branches: [ "docs" ]
+
+  workflow_dispatch:
+    inputs:
+      docs_branch:
+        description: 'Branch to checkout docs'
+        required: true
+        default: 'docs'
+        type: string
+
+  workflow_call:
+    inputs:
+      docs_branch:
+        description: 'Branch to checkout docs'
+        required: true
+        default: 'docs'
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+
+  docs-update:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.docs_branch }}
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install dependencies
+      - name: Install mkdocs
+        run: |
+          pip install mkdocs mkdocs-material mkdocstrings mkdocstrings-python mkdocs-swagger-ui-tag
+
+      - name: Build docs
+        run: |
+          mkdocs build
+
+      - name: Upload docs artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  pages-deploy:
+    needs: docs-update
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    # Ensure main branch can deploy to pages in the GitHub Pages Environment settings
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

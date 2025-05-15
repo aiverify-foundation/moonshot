@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import asyncio
 import copy
+import json
 import random
 import time
 from itertools import groupby
@@ -13,16 +14,13 @@ from jinja2 import Template
 from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors.connector import Connector
 from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptArguments
+from moonshot.src.connectors.connector_response import ConnectorResponse
 from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoint
 from moonshot.src.cookbooks.cookbook import Cookbook
 from moonshot.src.datasets.dataset import Dataset
 from moonshot.src.metrics.metric import Metric
 from moonshot.src.recipes.recipe import Recipe
-from moonshot.src.redteaming.attack.attack_module import AttackModule
-from moonshot.src.redteaming.attack.attack_module_arguments import AttackModuleArguments
-from moonshot.src.redteaming.session.session import Session
 from moonshot.src.results.result_arguments import ResultArguments
-from moonshot.src.runners.runner_type import RunnerType
 from moonshot.src.runs.run_progress import RunProgress
 from moonshot.src.runs.run_status import RunStatus
 from moonshot.src.storage.db_interface import DBInterface
@@ -41,7 +39,8 @@ class Benchmarking:
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
     """
     sql_read_runner_cache_record = """
-        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? AND prompt_template_id=? AND prompt=?
+        SELECT * from runner_cache_table WHERE connection_id=? AND recipe_id=? 
+        AND dataset_id=? AND prompt_template_id=? AND prompt=?
     """
     BATCH_SIZE = 10
     QUEUE_SIZE = 10
@@ -92,9 +91,20 @@ class Benchmarking:
             # Get required arguments from runner_args
             self.cookbooks = self.runner_args.get("cookbooks", None)
             self.recipes = self.runner_args.get("recipes", None)
-            self.num_of_prompts = self.runner_args.get("num_of_prompts", 0)
+            self.prompt_selection_percentage = self.runner_args.get(
+                "prompt_selection_percentage", 100
+            )
             self.random_seed = self.runner_args.get("random_seed", 0)
             self.system_prompt = self.runner_args.get("system_prompt", "")
+
+            # Perform validation on prompt_selection_percentage
+            if (
+                self.prompt_selection_percentage < 1
+                or self.prompt_selection_percentage > 100
+            ):
+                raise RuntimeError(
+                    "The 'prompt_selection_percentage' argument must be between 1 - 100."
+                )
 
             # ------------------------------------------------------------------------------
             # Part 0: Load common instances
@@ -232,7 +242,7 @@ class Benchmarking:
                     "recipes": self.recipes,
                     "cookbooks": self.cookbooks,
                     "endpoints": self.endpoints,
-                    "num_of_prompts": self.num_of_prompts,
+                    "prompt_selection_percentage": self.prompt_selection_percentage,
                     "random_seed": self.random_seed,
                     "system_prompt": self.system_prompt,
                 },
@@ -395,7 +405,7 @@ class Benchmarking:
                     f"{(time.perf_counter() - start_time):.4f}s"
                 )
             else:
-                raise RuntimeError("Recipe Instance is not initialised.")
+                raise RuntimeError("Recipe Instance is not initialized.")
 
         except Exception as e:
             self.run_progress.notify_error(
@@ -410,7 +420,7 @@ class Benchmarking:
         start_time = time.perf_counter()
         grouped_recipe_preds = {}
         try:
-            # Assuming `recipe_preds` is your list of PromptArguments instances
+            # Assuming `recipe_predictions` is your list of PromptArguments instances
             recipe_predictions.sort(
                 key=attrgetter("conn_id", "rec_id", "ds_id", "pt_id")
             )
@@ -481,7 +491,7 @@ class Benchmarking:
                     group_data.append(
                         {
                             "prompt": prompt,
-                            "predicted_result": predicted_result,
+                            "predicted_result": predicted_result.to_dict(),
                             "target": target,
                             "duration": duration,
                         }
@@ -623,64 +633,6 @@ class Benchmarking:
             )
             return []  # Return an empty list in case of error
 
-    async def _generate_prompts_with_attack_module(self, prompt: str) -> list[str]:
-        """
-        Asynchronously generates prompts using all attack modules specified in the recipe instance.
-
-        This method loads each attack module from the list of attack modules defined in the recipe instance,
-        initializes it with the necessary arguments, and executes it to generate prompts based on the input prompt.
-
-        Args:
-            prompt (str): The original prompt from which to generate new prompts using the attack modules.
-
-        Returns:
-            list[str]: A list of prompts generated by all the attack modules.
-            Returns the original prompt if no attack modules are specified in the recipe instance.
-
-        Raises:
-            Exception: If any issue arises during the loading or execution of the attack modules.
-        """
-        # Iterate over all attack modules and apply them sequentially
-        modified_prompts = []
-
-        # Check if there's session in runner. If not, create session
-        if not Session.load(self.database_instance):
-            Session(
-                self.run_progress.run_arguments.runner_id,
-                RunnerType.REDTEAM,
-                {},  # runner arguments not required
-                self.database_instance,
-                self.endpoints,
-                Storage.get_filepath(
-                    EnvVariables.RESULTS.name,
-                    self.run_progress.run_arguments.runner_id,
-                    "json",
-                    True,
-                ),
-            )
-
-        for attack_module_name in self.recipe_instance.attack_modules:
-            loaded_attack_module = AttackModule.load(
-                attack_module_name,
-                AttackModuleArguments(
-                    connector_ids=self.endpoints,
-                    prompt=prompt,
-                    db_instance=self.database_instance,
-                    cancel_event=self.cancel_event,
-                ),
-            )
-
-            # Log the loaded attack module
-            logger.debug(f"[Benchmarking] Loaded attack module: {loaded_attack_module}")
-
-            # Execute the attack module and return the generated prompts
-            new_prompts = await loaded_attack_module.execute()
-            modified_prompts.extend(
-                (attack_module_name, new_prompt) for new_prompt in new_prompts
-            )
-
-        return modified_prompts
-
     async def _generate_prompts(self) -> AsyncGenerator[PromptArguments, None]:
         """
         Asynchronously generates and yields prompts for benchmarking tasks.
@@ -718,14 +670,7 @@ class Benchmarking:
         # applying the attack module.
         for ds_id in self.recipe_instance.datasets:
             async for prompt_index, prompt in self._get_dataset_prompts(ds_id):
-                # Apply the attack module to the prompt input and get the modified prompts
-                if not self.recipe_instance.attack_modules:
-                    # No attack module
-                    modified_prompts = [("", prompt["input"])]
-                else:
-                    modified_prompts = await self._generate_prompts_with_attack_module(
-                        prompt["input"]
-                    )
+                modified_prompts = [("", prompt["input"])]
 
                 # If templates are available, render the modified prompts using the templates
                 if templates:
@@ -773,7 +718,7 @@ class Benchmarking:
         """
         Asynchronously retrieves prompts from a dataset based on the specified dataset ID.
 
-        This method determines the total number of prompts in the dataset and generates a list of prompt indices.
+        This method calculates the total number of prompts in the dataset and generates a list of prompt indices.
         If a specific number of prompts is requested (num_of_prompts), it will randomly select that many prompts
         using the provided random seed. Otherwise, it will retrieve all prompts. Each prompt is then fetched and
         yielded along with its index.
@@ -784,25 +729,25 @@ class Benchmarking:
         Yields:
             tuple[int, dict]: A tuple containing the index of the prompt and the prompt data itself.
         """
-        # Get dataset arguments
+        # Retrieve dataset arguments
         ds_args = Dataset.read(ds_id)
 
-        # Generate a list of prompt indices based on num_of_prompts and random_seed
-        if (
-            self.num_of_prompts == 0
-            or self.num_of_prompts > ds_args.num_of_dataset_prompts
-        ):
-            prompt_indices = range(1, ds_args.num_of_dataset_prompts + 1)
+        # Generate a list of prompt indices based on prompt_selection_percentage and random_seed
+        self.num_of_prompts = int(
+            (self.prompt_selection_percentage / 100) * ds_args.num_of_dataset_prompts
+        )
+        if self.num_of_prompts == ds_args.num_of_dataset_prompts:
+            prompt_indices = range(ds_args.num_of_dataset_prompts)
         else:
             random.seed(self.random_seed)
             prompt_indices = random.sample(
-                range(1, ds_args.num_of_dataset_prompts + 1), self.num_of_prompts
+                range(ds_args.num_of_dataset_prompts), self.num_of_prompts
             )
         logger.debug(
             f"[Benchmarking] Dataset {ds_id}, using {len(prompt_indices)} of {ds_args.num_of_dataset_prompts} prompts."
         )
 
-        # Use for loop to iterate over the async generator
+        # Iterate over the dataset examples and yield prompts based on the generated indices
         prompts_gen_index = 0
         for prompts_data in ds_args.examples:
             if prompts_gen_index in prompt_indices:
@@ -932,6 +877,7 @@ class Benchmarking:
                 (
                     new_prompt_info.conn_id,
                     new_prompt_info.rec_id,
+                    new_prompt_info.ds_id,
                     new_prompt_info.pt_id,
                     new_prompt_info.connector_prompt.prompt,
                 ),
@@ -1014,7 +960,7 @@ class PromptArguments(BaseModel):
             self.connector_prompt.prompt_index,
             self.connector_prompt.prompt,
             str(self.connector_prompt.target),
-            str(self.connector_prompt.predicted_results),
+            json.dumps(self.connector_prompt.predicted_results.to_dict()),
             str(self.connector_prompt.duration),
             self.random_seed,
             self.system_prompt,
@@ -1048,7 +994,8 @@ class PromptArguments(BaseModel):
             target = cache_record[9]
 
         try:
-            predicted_results = ast.literal_eval(cache_record[10])
+            predicted_results_dict = json.loads(cache_record[10])
+            predicted_results = ConnectorResponse(**predicted_results_dict)
         except Exception:
             predicted_results = cache_record[10]
 

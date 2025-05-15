@@ -31,9 +31,26 @@ class AttackModule:
         INSERT INTO {} (connection_id,context_strategy,prompt_template,attack_module,
         metric,prompt,prepared_prompt,system_prompt,predicted_result,duration,prompt_time)VALUES(?,?,?,?,?,?,?,?,?,?,?)
         """
+    sql_create_chat_history_table = """
+        CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        connection_id text NOT NULL,
+        context_strategy text,
+        prompt_template text,
+        attack_module text,
+        metric text,
+        prompt text NOT NULL,
+        prepared_prompt text NOT NULL,
+        system_prompt text,
+        predicted_result text NOT NULL,
+        duration text NOT NULL,
+        prompt_time text NOT NULL
+        );
+    """
 
     def __init__(self, am_id: str, am_arguments: AttackModuleArguments | None = None):
         self.id = am_id
+        self.req_and_config = self.get_attack_module_req_and_config()
         if am_arguments is not None:
             self.connector_ids = am_arguments.connector_ids
             self.prompt_templates = am_arguments.prompt_templates
@@ -260,6 +277,15 @@ class AttackModule:
             list: A list of consolidated responses from the specified LLM connector.
         """
         consolidated_responses = []
+
+        # perform a check to see if the target endpoint has its table in the db. if not, create one
+        endpoint_id = target_llm_connector.id.replace("-", "_")
+        if not Storage.check_database_table_exists(self.db_instance, endpoint_id):
+            Storage.create_database_table(
+                self.db_instance,
+                AttackModule.sql_create_chat_history_table.format(endpoint_id),
+            )
+
         for prepared_prompt in list_of_prompts:
             if self.cancel_event.is_set():
                 logger.warning(
@@ -315,6 +341,7 @@ class AttackModule:
             chat_record_tuple (tuple): A tuple containing the chat record information.
             chat_record_id (str): The ID of the chat record.
         """
+
         endpoint_id = chat_record_id.replace("-", "_")
         Storage.create_database_record(
             self.db_instance,
@@ -529,6 +556,45 @@ class AttackModule:
 
         return am_metadata, cache_updated
 
+    def get_attack_module_req_and_config(self) -> dict:
+        """
+        Retrieves the configuration for a specific attack module by its identifier.
+
+        Returns:
+            dict: The attack module configuration as a dictionary. Returns an empty dict if the configuration
+            is not found.
+
+        Raises:
+            Exception: If reading the attack module configuration fails or if the configuration cannot be created.
+        """
+        attack_module_config = "attack_modules_config"
+        try:
+            obj_results = Storage.read_object(
+                EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+            )
+            return obj_results.get(self.id, {})
+        except Exception as e:
+            logger.warning(
+                f"[AttackModule] Failed to read attack module configuration: {str(e)}"
+            )
+            logger.info("Attempting to create empty attack module configuration...")
+            try:
+                Storage.create_object(
+                    obj_type=EnvVariables.ATTACK_MODULES.name,
+                    obj_id=attack_module_config,
+                    obj_info={},
+                    obj_extension="json",
+                )
+                # After creation, attempt to read it again to ensure it was created successfully
+                obj_results = Storage.read_object(
+                    EnvVariables.ATTACK_MODULES.name, attack_module_config, "json"
+                )
+                return obj_results.get(self.id, {})
+            except Exception as e:
+                raise Exception(
+                    f"[AttackModule] Failed to retrieve attack modules configuration: {str(e)}"
+                )
+
     @staticmethod
     def delete(am_id: str) -> bool:
         """
@@ -583,7 +649,8 @@ class RedTeamingPromptArguments(BaseModel):
 
         This method collects all the attributes of the RedTeamingPromptArguments instance and forms a tuple
         with the attribute values in this specific order: conn_id, cs_id, pt_id, am_id, me_id, original_prompt,
-        connector_prompt.prompt, connector_prompt.predicted_results, connector_prompt.duration, start_time.
+        connector_prompt.prompt, system_prompt, connector_prompt.predicted_results.response, 
+        connector_prompt.duration, start_time.
 
         Returns:
             tuple: A tuple representation of the RedTeamingPromptArguments instance.
@@ -597,21 +664,21 @@ class RedTeamingPromptArguments(BaseModel):
             self.original_prompt,
             self.connector_prompt.prompt,
             self.system_prompt,
-            str(self.connector_prompt.predicted_results),
+            self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             str(self.connector_prompt.duration),
             self.start_time,
         )
 
     def to_dict(self) -> dict:
         """
-        Converts the RedTeamingPromptArguments instance into a dict.
+        Converts the RedTeamingPromptArguments instance into a dictionary.
 
-        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dict
-        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, prepared_prompt, system_prompt
+        This method collects all the attributes of the RedTeamingPromptArguments instance and forms a dictionary
+        with the keys: conn_id, cs_id, pt_id, am_id, me_id, original_prompt, system_prompt, prepared_prompt,
         response, duration, start_time.
 
         Returns:
-            dict: A dict representation of the RedTeamingPromptArguments instance.
+            dict: A dictionary representation of the RedTeamingPromptArguments instance.
         """
         return {
             "conn_id": self.conn_id,
@@ -622,7 +689,7 @@ class RedTeamingPromptArguments(BaseModel):
             "original_prompt": self.original_prompt,
             "prepared_prompt": self.connector_prompt.prompt,
             "system_prompt": self.system_prompt,
-            "response": str(self.connector_prompt.predicted_results),
+            "response": self.connector_prompt.predicted_results.response if self.connector_prompt.predicted_results else "",
             "duration": str(self.connector_prompt.duration),
             "start_time": self.start_time,
         }

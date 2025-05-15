@@ -315,7 +315,7 @@ class Runner:
     async def run_recipes(
         self,
         recipes: list[str],
-        num_of_prompts: int = 0,
+        prompt_selection_percentage: int = 100,
         random_seed: int = 0,
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
@@ -325,26 +325,21 @@ class Runner:
         Initiates an asynchronous benchmark run using a set of recipes.
 
         This method sets up and starts a benchmark run tailored for recipes. It instantiates a benchmark run object,
-        applies the configuration based on the provided recipes, number of prompts, random seed, system prompt, and
+        applies the configuration based on the provided recipes, percentage of prompts, random seed, system prompt, and
         the specified runner and result processing modules, and then commences the run asynchronously.
 
         Args:
             recipes (list[str]): The recipes to be included in the benchmark run.
-
-            num_of_prompts (int, optional): The count of prompts to utilize during the benchmark.
-            Defaults to 0.
-
+            prompt_selection_percentage (int, optional): The percentage of prompts to utilize during the benchmark.
+                Defaults to 100.
             random_seed (int, optional): The seed for random number generation to ensure reproducibility.
-            Defaults to 0.
-
+                Defaults to 0.
             system_prompt (str, optional): The system prompt to be used during the benchmark.
-            Defaults to an empty string.
-
+                Defaults to an empty string.
             runner_processing_module (str, optional): The module responsible for processing the runner.
-            Defaults to "benchmarking".
-
+                Defaults to "benchmarking".
             result_processing_module (str, optional): The module responsible for processing the results.
-            Defaults to "benchmarking-result".
+                Defaults to "benchmarking-result".
 
         Raises:
             Exception: If any error occurs during the setup or execution of the benchmark run.
@@ -357,7 +352,7 @@ class Runner:
                 RunnerType.BENCHMARK,
                 {
                     "recipes": recipes,
-                    "num_of_prompts": num_of_prompts,
+                    "prompt_selection_percentage": prompt_selection_percentage,
                     "random_seed": random_seed,
                     "system_prompt": system_prompt,
                     "runner_processing_module": runner_processing_module,
@@ -382,7 +377,7 @@ class Runner:
     async def run_cookbooks(
         self,
         cookbooks: list[str],
-        num_of_prompts: int = 0,
+        prompt_selection_percentage: int = 100,
         random_seed: int = 0,
         system_prompt: str = "",
         runner_processing_module: str = "benchmarking",
@@ -393,26 +388,21 @@ class Runner:
 
         This method is responsible for initiating a benchmark cookbook run with the specified cookbooks and parameters.
         It creates a new benchmark cookbook run instance, configures it with the provided cookbook names,
-        number of prompts, random seed, system prompt, runner processing module, and result processing module,
+        percentage of prompts, random seed, system prompt, runner processing module, and result processing module,
         and then starts the run asynchronously.
 
         Args:
             cookbooks (list[str]): A list of cookbook names to be run in the benchmark.
-
-            num_of_prompts (int, optional): The number of prompts to be used in the benchmark run.
-            Defaults to 0.
-
+            prompt_selection_percentage (int, optional): The percentage of prompts to be used in the benchmark run.
+                Defaults to 100.
             random_seed (int, optional): The seed for random number generation to ensure reproducibility.
-            Defaults to 0.
-
+                Defaults to 0.
             system_prompt (str, optional): A system prompt to be used in the benchmark run.
-            Defaults to an empty string.
-
+                Defaults to an empty string.
             runner_processing_module (str, optional): The module responsible for processing the runner.
-            Defaults to "benchmarking".
-
+                Defaults to "benchmarking".
             result_processing_module (str, optional): The module responsible for processing the results.
-            Defaults to "benchmarking-result".
+                Defaults to "benchmarking-result".
 
         Raises:
             Exception: If any error occurs during the setup or execution of the benchmark run.
@@ -425,7 +415,7 @@ class Runner:
                 RunnerType.BENCHMARK,
                 {
                     "cookbooks": cookbooks,
-                    "num_of_prompts": num_of_prompts,
+                    "prompt_selection_percentage": prompt_selection_percentage,
                     "random_seed": random_seed,
                     "system_prompt": system_prompt,
                     "runner_processing_module": runner_processing_module,

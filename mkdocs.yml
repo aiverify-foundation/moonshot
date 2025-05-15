@@ -62,7 +62,7 @@ nav:
   - User Guide: 
     - Moonshot Web UI: 
       - Get Started with Moonshot Web UI: user_guide/web_ui/web_ui_guide.md
-      - Moonshot Interface:
+      - Moonshot Web UI Functionalities:
         - Home: user_guide/web_ui/moonshot_interface/homepage.md
         - Endpoint: user_guide/web_ui/moonshot_interface/endpoint.md
         - Benchmarking: user_guide/web_ui/moonshot_interface/benchmarking.md

@@ -60,7 +60,7 @@ class RecipeService(BaseService):
         for recipe_dict in recipes:
             recipe = RecipeResponseModel(**recipe_dict)
             if count:
-                recipe.total_prompt_in_recipe = get_total_prompt_in_recipe(recipe)
+                recipe.total_prompt_in_recipe, _ = get_total_prompt_in_recipe(recipe)
             filtered_recipes.append(recipe)
 
         # TODO - do all filtering in 1 pass
@@ -83,6 +83,9 @@ class RecipeService(BaseService):
         if sort_by:
             if sort_by == "id":
                 filtered_recipes.sort(key=lambda x: x.id)
+
+        for recipe in filtered_recipes:
+            recipe.required_config = get_metric_dependency_in_recipe(recipe)
 
         return filtered_recipes
 
@@ -126,7 +129,7 @@ class RecipeService(BaseService):
 
 
 @staticmethod
-def get_total_prompt_in_recipe(recipe: Recipe) -> int:
+def get_total_prompt_in_recipe(recipe: Recipe) -> tuple[int, int]:
     """
     Calculate the total number of prompts in a recipe.
 
@@ -139,6 +142,7 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> int:
 
     Returns:
         int: The total count of prompts within the recipe.
+        int: The total count of datasets within the recipe.
     """
     # Initialize total prompt count
     total_prompt_count = 0
@@ -151,4 +155,51 @@ def get_total_prompt_in_recipe(recipe: Recipe) -> int:
     if recipe.prompt_templates:
         total_prompt_count *= len(recipe.prompt_templates)
 
-    return total_prompt_count
+    return total_prompt_count, int(recipe.stats.get("num_of_datasets", 0))
+
+
+@staticmethod
+def get_metric_dependency_in_recipe(recipe: Recipe) -> dict | None:
+    """
+    Retrieve endpoint and configuration dependencies for a given recipe.
+
+    This function gathers all available metrics along with their endpoints and configurations,
+    then identifies and compiles the dependencies based on the metrics present in the provided recipe.
+
+    Args:
+        recipe (Recipe): The recipe object containing metrics information.
+
+    Returns:
+        dict[str, dict[str, list[str]]] | None: A dictionary with 'endpoints' and 'configurations' as keys,
+        where 'endpoints' is a list of endpoint dependencies and 'configurations' is a dictionary of configuration
+        dependencies. Returns None if no dependencies are found.
+    """
+    metrics = recipe.metrics
+    all_metrics = moonshot_api.api_get_all_metric()
+    aggregated_endpoints = set()
+    aggregated_configurations = {}
+
+    for metric in metrics:
+        metric_data = next((m for m in all_metrics if m["id"] == metric), None)
+        if metric_data:
+            # Aggregate endpoints
+            aggregated_endpoints.update(metric_data.get("endpoints", []))
+
+            # Aggregate configurations
+            for key, value in metric_data.get("configurations", {}).items():
+                if key in aggregated_configurations:
+                    aggregated_configurations[key].extend(
+                        v for v in value if v not in aggregated_configurations[key]
+                    )
+                else:
+                    aggregated_configurations[key] = value
+
+    aggregated_data = {
+        "endpoints": list(aggregated_endpoints),
+        "configurations": aggregated_configurations,
+    }
+    return (
+        aggregated_data
+        if aggregated_data["endpoints"] or aggregated_data["configurations"]
+        else None
+    )
