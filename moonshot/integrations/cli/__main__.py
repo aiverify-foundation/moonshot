@@ -1,10 +1,9 @@
-import sys
 import warnings
 
 from moonshot.integrations.cli.cli import CommandLineInterface
 
 
-def start_app(cli_command = None):
+def start_app(cli_command=None):
     """
     Run the Moonshot application
     """
@@ -22,4 +21,3 @@ def start_app(cli_command = None):
     else:
         # Show help if no command is provided
         cli_instance.onecmd("help")
-              

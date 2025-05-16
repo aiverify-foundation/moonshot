@@ -1,9 +1,11 @@
 from typing import Optional
 
+from pydantic import Field
+
 from moonshot.src.cookbooks.cookbook_arguments import (
     CookbookArguments as CookbookPydanticModel,
 )
-from pydantic import Field
+
 
 class CookbookCreateDTO(CookbookPydanticModel):
     id: Optional[str] = None
