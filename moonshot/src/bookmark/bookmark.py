@@ -5,21 +5,6 @@ from datetime import datetime
 
 from moonshot.src.bookmark.bookmark_arguments import BookmarkArguments
 from moonshot.src.configs.env_variables import EnvVariables
-from moonshot.src.messages_constants import (
-    BOOKMARK_ADD_BOOKMARK_ERROR,
-    BOOKMARK_ADD_BOOKMARK_SUCCESS,
-    BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR,
-    BOOKMARK_DELETE_ALL_BOOKMARK_ERROR,
-    BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS,
-    BOOKMARK_DELETE_BOOKMARK_ERROR,
-    BOOKMARK_DELETE_BOOKMARK_ERROR_1,
-    BOOKMARK_DELETE_BOOKMARK_FAIL,
-    BOOKMARK_DELETE_BOOKMARK_SUCCESS,
-    BOOKMARK_EXPORT_BOOKMARK_ERROR,
-    BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR,
-    BOOKMARK_GET_BOOKMARK_ERROR,
-    BOOKMARK_GET_BOOKMARK_ERROR_1,
-)
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
 
@@ -28,6 +13,29 @@ logger = configure_logger(__name__)
 
 
 class Bookmark:
+    BOOKMARK_ADD_BOOKMARK_ERROR = "[Bookmark] Failed to add bookmark record: {message}"
+    BOOKMARK_ADD_BOOKMARK_SUCCESS = "[Bookmark] Bookmark added successfully."
+    BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR = "Error inserting record into database."
+    BOOKMARK_DELETE_ALL_BOOKMARK_ERROR = (
+        "[Bookmark] Failed to delete all bookmark records: {message}"
+    )
+    BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS = "[Bookmark] All bookmark records deleted."
+    BOOKMARK_DELETE_BOOKMARK_ERROR = (
+        "[Bookmark] Failed to delete bookmark record: {message}"
+    )
+    BOOKMARK_DELETE_BOOKMARK_ERROR_1 = "[Bookmark] Invalid bookmark name: {message}"
+    BOOKMARK_DELETE_BOOKMARK_FAIL = (
+        "[Bookmark] Bookmark record not found. Unable to delete."
+    )
+    BOOKMARK_DELETE_BOOKMARK_SUCCESS = "[Bookmark] Bookmark record deleted."
+    BOOKMARK_EXPORT_BOOKMARK_ERROR = "[Bookmark] Failed to export bookmarks: {message}"
+    BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR = (
+        "Export filename must be a non-empty string."
+    )
+    BOOKMARK_GET_BOOKMARK_ERROR = (
+        "[Bookmark] No record found for bookmark name: {message}"
+    )
+    BOOKMARK_GET_BOOKMARK_ERROR_1 = "[Bookmark] Invalid bookmark name: {message}"
     _instance = None
 
     sql_table_name = "bookmark"
@@ -135,13 +143,16 @@ class Bookmark:
                 self.db_instance, data, Bookmark.sql_insert_bookmark_record
             )
             if results is not None:
-                return {"success": True, "message": BOOKMARK_ADD_BOOKMARK_SUCCESS}
+                return {
+                    "success": True,
+                    "message": Bookmark.BOOKMARK_ADD_BOOKMARK_SUCCESS,
+                }
             else:
-                raise Exception(BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR)
+                raise Exception(Bookmark.BOOKMARK_ADD_BOOKMARK_VALIDATION_ERROR)
         except Exception as e:
             return {
                 "success": False,
-                "message": BOOKMARK_ADD_BOOKMARK_ERROR.format(message=str(e)),
+                "message": Bookmark.BOOKMARK_ADD_BOOKMARK_ERROR.format(message=str(e)),
             }
 
     def get_all_bookmarks(self) -> list[dict]:
@@ -193,11 +204,11 @@ class Bookmark:
                 return BookmarkArguments.from_tuple_to_dict(bookmark_info)
             else:
                 raise RuntimeError(
-                    BOOKMARK_GET_BOOKMARK_ERROR.format(message=bookmark_name)
+                    Bookmark.BOOKMARK_GET_BOOKMARK_ERROR.format(message=bookmark_name)
                 )
         else:
             raise RuntimeError(
-                BOOKMARK_GET_BOOKMARK_ERROR_1.format(message=bookmark_name)
+                Bookmark.BOOKMARK_GET_BOOKMARK_ERROR_1.format(message=bookmark_name)
             )
 
     def delete_bookmark(self, bookmark_name: str) -> dict:
@@ -228,19 +239,24 @@ class Bookmark:
                     )
                     return {
                         "success": True,
-                        "message": BOOKMARK_DELETE_BOOKMARK_SUCCESS,
+                        "message": Bookmark.BOOKMARK_DELETE_BOOKMARK_SUCCESS,
                     }
                 else:
-                    return {"success": False, "message": BOOKMARK_DELETE_BOOKMARK_FAIL}
+                    return {
+                        "success": False,
+                        "message": Bookmark.BOOKMARK_DELETE_BOOKMARK_FAIL,
+                    }
             except Exception as e:
                 return {
                     "success": False,
-                    "message": BOOKMARK_DELETE_BOOKMARK_ERROR.format(message=str(e)),
+                    "message": Bookmark.BOOKMARK_DELETE_BOOKMARK_ERROR.format(
+                        message=str(e)
+                    ),
                 }
         else:
             return {
                 "success": False,
-                "message": BOOKMARK_DELETE_BOOKMARK_ERROR_1.format(
+                "message": Bookmark.BOOKMARK_DELETE_BOOKMARK_ERROR_1.format(
                     message=bookmark_name
                 ),
             }
@@ -256,11 +272,16 @@ class Bookmark:
             Storage.delete_database_record_in_table(
                 self.db_instance, Bookmark.sql_delete_bookmark_records
             )
-            return {"success": True, "message": BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS}
+            return {
+                "success": True,
+                "message": Bookmark.BOOKMARK_DELETE_ALL_BOOKMARK_SUCCESS,
+            }
         except Exception as e:
             return {
                 "success": False,
-                "message": BOOKMARK_DELETE_ALL_BOOKMARK_ERROR.format(message=str(e)),
+                "message": Bookmark.BOOKMARK_DELETE_ALL_BOOKMARK_ERROR.format(
+                    message=str(e)
+                ),
             }
 
     def export_bookmarks(self, export_file_name: str = "bookmarks") -> str:
@@ -281,8 +302,8 @@ class Bookmark:
             Exception: If the export file name is invalid or an error occurs during export.
         """
         if not isinstance(export_file_name, str) or not export_file_name:
-            error_message = BOOKMARK_EXPORT_BOOKMARK_ERROR.format(
-                message=BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR
+            error_message = Bookmark.BOOKMARK_EXPORT_BOOKMARK_ERROR.format(
+                message=Bookmark.BOOKMARK_EXPORT_BOOKMARK_VALIDATION_ERROR
             )
             logger.error(error_message)
             raise Exception(error_message)
@@ -312,7 +333,9 @@ class Bookmark:
                 "json",
             )
         except Exception as e:
-            error_message = BOOKMARK_EXPORT_BOOKMARK_ERROR.format(message=str(e))
+            error_message = Bookmark.BOOKMARK_EXPORT_BOOKMARK_ERROR.format(
+                message=str(e)
+            )
             logger.error(error_message)
             raise Exception(error_message)
 

@@ -10,13 +10,17 @@ from moonshot.src.connectors_endpoints.connector_endpoint import ConnectorEndpoi
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.messages_constants import (
-    CONNECTOR_ENDPOINT_CREATE_ERROR,
-    CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR,
-    CONNECTOR_ENDPOINT_UPDATE_ERROR,
-)
 from moonshot.src.storage.storage import Storage
 
+CONNECTOR_ENDPOINT_CREATE_ERROR = (
+    "[ConnectorEndpoint] Failed to create connector endpoint: {message}"
+)
+CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR = (
+    "[ConnectorEndpoint] Failed to get available connector endpoints: {message}"
+)
+CONNECTOR_ENDPOINT_UPDATE_ERROR = (
+    "[ConnectorEndpoint] Failed to update connector endpoint: {message}"
+)
 
 class TestCollectionConnectorEndpoint:
     # ------------------------------------------------------------------------------

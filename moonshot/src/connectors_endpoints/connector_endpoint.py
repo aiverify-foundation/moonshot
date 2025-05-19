@@ -7,14 +7,6 @@ from moonshot.src.configs.env_variables import EnvVariables
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.messages_constants import (
-    CONNECTOR_ENDPOINT_CREATE_ERROR,
-    CONNECTOR_ENDPOINT_DELETE_ERROR,
-    CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR,
-    CONNECTOR_ENDPOINT_READ_ERROR,
-    CONNECTOR_ENDPOINT_READ_INVALID,
-    CONNECTOR_ENDPOINT_UPDATE_ERROR,
-)
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.log import configure_logger
 
@@ -23,6 +15,23 @@ logger = configure_logger(__name__)
 
 
 class ConnectorEndpoint:
+    CONNECTOR_ENDPOINT_CREATE_ERROR = (
+        "[ConnectorEndpoint] Failed to create connector endpoint: {message}"
+    )
+    CONNECTOR_ENDPOINT_DELETE_ERROR = (
+        "[ConnectorEndpoint] Failed to delete connector endpoint: {message}"
+    )
+    CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR = (
+        "[ConnectorEndpoint] Failed to get available connector endpoints: {message}"
+    )
+    CONNECTOR_ENDPOINT_READ_ERROR = (
+        "[ConnectorEndpoint] Failed to read connector endpoint: {message}"
+    )
+    CONNECTOR_ENDPOINT_READ_INVALID = "Invalid connector endpoint id - {ep_id}"
+    CONNECTOR_ENDPOINT_UPDATE_ERROR = (
+        "[ConnectorEndpoint] Failed to update connector endpoint: {message}"
+    )
+
     @staticmethod
     @validate_call
     def create(ep_args: ConnectorEndpointArguments) -> str:
@@ -67,7 +76,9 @@ class ConnectorEndpoint:
             return ep_id
 
         except Exception as e:
-            logger.error(CONNECTOR_ENDPOINT_CREATE_ERROR.format(message=str(e)))
+            logger.error(
+                ConnectorEndpoint.CONNECTOR_ENDPOINT_CREATE_ERROR.format(message=str(e))
+            )
             raise e
 
     @staticmethod
@@ -94,12 +105,18 @@ class ConnectorEndpoint:
         try:
             endpoint_details = ConnectorEndpoint._read_endpoint(ep_id)
             if not endpoint_details:
-                raise RuntimeError(CONNECTOR_ENDPOINT_READ_INVALID.format(ep_id=ep_id))
+                raise RuntimeError(
+                    ConnectorEndpoint.CONNECTOR_ENDPOINT_READ_INVALID.format(
+                        ep_id=ep_id
+                    )
+                )
 
             return ConnectorEndpointArguments(**endpoint_details)
 
         except Exception as e:
-            logger.error(CONNECTOR_ENDPOINT_READ_ERROR.format(message=str(e)))
+            logger.error(
+                ConnectorEndpoint.CONNECTOR_ENDPOINT_READ_ERROR.format(message=str(e))
+            )
             raise e
 
     @staticmethod
@@ -167,7 +184,9 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            logger.error(CONNECTOR_ENDPOINT_UPDATE_ERROR.format(message=str(e)))
+            logger.error(
+                ConnectorEndpoint.CONNECTOR_ENDPOINT_UPDATE_ERROR.format(message=str(e))
+            )
             raise e
 
     @staticmethod
@@ -194,7 +213,9 @@ class ConnectorEndpoint:
             return True
 
         except Exception as e:
-            logger.error(CONNECTOR_ENDPOINT_DELETE_ERROR.format(message=str(e)))
+            logger.error(
+                ConnectorEndpoint.CONNECTOR_ENDPOINT_DELETE_ERROR.format(message=str(e))
+            )
             raise e
 
     @staticmethod
@@ -234,6 +255,8 @@ class ConnectorEndpoint:
 
         except Exception as e:
             logger.error(
-                CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR.format(message=str(e))
+                ConnectorEndpoint.CONNECTOR_ENDPOINT_GET_AVAILABLE_ITEMS_ERROR.format(
+                    message=str(e)
+                )
             )
             raise e
