@@ -12,11 +12,9 @@ Jump to:
 ### How do I get started?
 
 To install Moonshot, please follow our [quick start guide](./getting_started/quick_start.md) or [quick install page](./getting_started/quick_install.md) 
-To install Moonshot, please follow our [quick start guide](./getting_started/quick_start.md) or [quick install page](./getting_started/quick_install.md) 
 
 ### What are Moonshot's prerequisites?
 
-Here are the requirements. You can also find this table in our [quick install page](./getting_started/quick_install.md).
 Here are the requirements. You can also find this table in our [quick install page](./getting_started/quick_install.md).
 
  | Software                                                                           | Version Requirement |
