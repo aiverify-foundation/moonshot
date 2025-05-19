@@ -95,7 +95,7 @@ result = {
 
 The `grading_criteria` will be used by the grading scale in the recipe to assess the outcome of the test. The key `grading_criteria` must be present in the returned dictionary, but its value can be an empty dictionary. If the value is an empty dictionary, the report generated from the UI will display '-' as the grade.
 
-### Adding a new dataset.
+### Adding a new dataset
 
 You can find a list of [available datasets here](https://github.com/aiverify-foundation/moonshot-data/tree/main/datasets).
 
