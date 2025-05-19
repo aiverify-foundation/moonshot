@@ -1,9 +1,9 @@
 # FAQ
 
 Jump to:
-- [Issues with installing Moonshot](#installing-moonshot)
-- [Issues caused by updating Moonshot](#updating-moonshot)
-- [Issues while using Moonshot](#using-moonshot)
+- Issues with [installing Moonshot](#installing-moonshot)
+- Issues caused by [updating Moonshot](#updating-moonshot)
+- Issues while [using Moonshot](#using-moonshot)
 
 </br>
 
