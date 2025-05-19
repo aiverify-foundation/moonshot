@@ -44,7 +44,7 @@ You may face issues installing some of the dependencies. We suggest using virtua
 
 Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
-### (MacOs Only) I am unable to install PyTorch
+### (MacOS Only) I am unable to install PyTorch
 
 If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
 
