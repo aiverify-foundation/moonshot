@@ -53,6 +53,14 @@ all = [
     "rich>=13.8.0",
 ]
 
+[tool.poetry.extras]
+web-api = ["typing-extensions", "fastapi", "uvicorn", "dependency-injector"]
+cli = ["cmd2", "rich"]
+all = ["typing-extensions", "fastapi", "uvicorn", "dependency-injector", "cmd2", "rich"]
+
+[[tool.poetry.packages]]
+include = "moonshot"
+
 [tool.hatch.build.targets.sdist]
 exclude = [
   "assets/",
