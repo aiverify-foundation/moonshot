@@ -1,6 +1,6 @@
 # Moonshot
 
-Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/?utm_source=Github&utm_medium=referral&utm_campaign=20230607_AI_Verify_Foundation_GitHub), [Moonshot](https://github.com/aiverify-foundation/moonshot/pull/new/update_readme_link) is one of the first tools to bring benchmarking and red teaming together to help AI developers, compliance teams and AI system owners test and evaluate their LLMs and LLM applications.
+Developed by the [AI Verify Foundation](https://github.com/aiverify-foundation), Moonshot is one of the first tools to bring benchmarking and red teaming together to help AI developers, compliance teams and AI system owners test and evaluate their LLMs and LLM applications.
 
 ## What does Moonshot do?
 
