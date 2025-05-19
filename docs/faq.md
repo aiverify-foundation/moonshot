@@ -8,14 +8,6 @@ Jump to:
 </br>
 
 ## Installing Moonshot
-Jump to:
-- [Issues with installing Moonshot](#installing-moonshot)
-- [Issues caused by updating Moonshot](#updating-moonshot)
-- [Issues while using Moonshot](#using-moonshot)
-
-</br>
-
-## Installing Moonshot
 
 ### How do I get started?
 
