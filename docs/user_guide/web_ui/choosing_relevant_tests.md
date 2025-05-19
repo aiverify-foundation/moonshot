@@ -1,45 +1,49 @@
 # Choosing Relevant Tests
 
-1. Click on ‘Get Started’ 
+In moonshot, testsets are known as Cookbooks, where each Cookbooks contain a set of recipes, the datasets. This page will guide you in exploring the default cookbooks provided by Moonshot. 
 
-![Home Page for Moonshot](./imgs/get_started(1).png)
+Each cookbook contains recipes of the same focus area. Select the cookbooks that are most relevant to your use case. You will also be able to curate custom cookbooks.
 
-2. This page lists the cookbooks that Moonshot provides. Each cookbook contains tests of the same theme. Select the areas that are relevant to your use case. This is not final as you will be able to further curate the scope and scale of the tests in following steps.   
+[View full list of cookbook details](../../resources/cookbooks.md) 
 
-    [View full list of cookbook details](../../resources/cookbooks.md) 
+[Instructions to create a custom cookbook](./creating_custom_cookbooks.md) 
+
+1. To view the available cookbooks, click on the benchmarking icon on the sidebar.
+
+    ![Home Page for Moonshot](./imgs/cookbook_1.png)
+
+2. Click on "View Cookbooks" to show the list of available cookbooks.
+
+    ![Options for Benchmarking](./imgs/cookbook_2.png) 
+
+3. The window will show the list of available cookbooks. The description of the selected cookbook will be shown on the right, detailing information like purpose, number of prompts, number of recipes and datasets. 
 
     !!! note 
-        Some of these cookbooks contain scoring metrics that require connection to specific models. 
+        Observe that certain cookbooks have a purple box icon. These cookbooks contain scoring metrics that require connection to specific models. 
 
         MLCommons AI Safety Benchmarks v0.5 (Requires an API key for accessing Llama Guard via Together AI)
 
         Facts about Singapore (Requires an API key for accessing Llama Guard via Together AI)
 
-        To provide the TogetherAI API key, edit the “Together Llama Guard 7B Assistant” endpoint. (Note that you don’t need to select this endpoint in the benchmarking session.) If you would like to use an alternative Llama Guard 7B assistant, see the [FAQ](../../faq.md#requirements) on how to do so.
+        To provide the TogetherAI API key, edit the “Together Llama Guard 8B Assistant” endpoint. (Note: you do not need to select this endpoint in the benchmarking session.) If you would like to use an alternative Llama Guard 8B assistant, see the [FAQ](../../faq.md#requirements) on how to do so.
 
+    ![List of Cookbooks](./imgs/cookbook_2b.png) 
 
-3. When done, click on the next button. 
-    ![List of Cookbooks](./imgs/list_cookbooks(2).png) 
+4. Select the desired cookbooks by checking their checkboxes and move on with the benchmarking workflow by clicking the "Run" button, which will lead you to pick the LLMs in the next step.
+    
+    [Continue with Benchmarking Test Run](./connecting_to_llms.md) 
 
-4. The total number of prompts in the cookbooks selected is displayed. Later on, you can specify the number of       prompts per dataset that will be executed. Click on ‘these cookbooks’ to see in greater detail what tests will be run. 
-    ![Cookbooks that will be running](./imgs/cookbook_recommendations(3).png)
+---
+**Extra: Creating your custom cookbook**
 
-5. This page shows you the cookbooks available in Moonshot, categorised according to Capability, Trust & Safety, Quality and Others (for cookbooks without any categories).   
+1. There is also a functionality to create your own Cookbook. Click on the button on the top right of the windoww
 
-    You can click on ‘About’ for each cookbook to see what recipes it contains. 
+    ![Create Cookbook Button](./imgs/cookbook_3.png)
 
-    ![Recommended Cookbooks](./imgs/benchmarking(4).png) 
+2. This will lead you to the window to define your custom cookbook name, description and selected recipes. Click on the "Select Recipes" button to add the desired recipes
 
-    Check the ‘Run this cookbook’ checkbox if you wish to run any of the cookbooks. Click on ‘X’ to close the pop-up. 
+    ![Create Cookbook Window](./imgs/cookbook_4.png)
 
-    ![Cookbook Details](./imgs/benchmarking(5).png) 
+3. Check the relevant recipes. These recipes will show up at the bottom right box. Click "Ok" to proceed. This cookbook will be saved and you can use it for your benchmarking run. 
 
-    You can also unselect cookbooks if you do not wish to run them. 
-
-    Click on ‘OK’ once you are satisfied with the cookbooks to be run. The total number of prompts to be sent should be updated. (There will be a step later on in the workflow for you to run a smaller number of prompts) 
-
-    ![Choosing of Cookbooks](./imgs/benchmarking(6).png) 
-
-    Click on the next button. 
-
-    ![Page Displaying Number of Prompts](./imgs/benchmarking(7).png) 
+    ![Choose Recipes](./imgs/cookbook_5.png)

@@ -23,13 +23,13 @@ The "Discover new vulnerabilities" button initiates a red teaming process. Red t
 
 The "Evaluate against standard tests" button starts a benchmarking process. Benchmarking allows you to assess your models' performance against a set of standard tests, providing a comprehensive evaluation of their capabilities.
 
-## Create Cookbooks
+## Create cookbooks
 
-The "Create Cookbooks" button takes you to the cookbook creation page. Cookbooks are collections of recipes (tests) that you can run against your models. By creating your own cookbooks, you can curate a set of tests that are most relevant to your models' use cases.
+The "Create cookbooks" button takes you to the cookbook creation page. Cookbooks are collections of recipes (tests) that you can run against your models. By creating your own cookbooks, you can curate a set of tests that are most relevant to your models' use cases.
 
 ## Initiating the Benchmarking Process
 
-The "Get Started" button serves as your gateway to initiate a benchmarking process. By clicking on this button, you will be directed to the benchmarking setup page where you can configure and start the benchmarking process for your models.
+The "Get Started →" button serves as your gateway to initiate a benchmarking process. By clicking on this button, you will be directed to the benchmarking setup page where you can configure and start the benchmarking process for your models.
 
 ## Monitoring the Benchmarking Run Status
 
