@@ -45,8 +45,12 @@ cli = [
     "rich>=13.8.0",
 ]
 all = [
-    "aiverify-moonshot[web-api]",
-    "aiverify-moonshot[cli]",
+    "typing-extensions>=4.12.2",
+    "fastapi>=0.115.4",
+    "uvicorn>=0.30.6",
+    "dependency-injector>=4.41.0",
+    "cmd2>=2.4.3",
+    "rich>=13.8.0",
 ]
 
 [tool.hatch.build.targets.sdist]
