@@ -122,6 +122,7 @@ uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
 cmd2 = ">=2.4.3"
 rich = ">=13.8.0"
+urllib3 = "^2.4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"

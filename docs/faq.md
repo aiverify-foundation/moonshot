@@ -1,9 +1,9 @@
 # FAQ
 
 Jump to:
-- [Issues with installing Moonshot](#installing-moonshot)
-- [Issues caused by updating Moonshot](#updating-moonshot)
-- [Issues while using Moonshot](#using-moonshot)
+- Issues with [installing Moonshot](#installing-moonshot)
+- Issues caused by [updating Moonshot](#updating-moonshot)
+- Issues while [using Moonshot](#using-moonshot)
 
 </br>
 
@@ -12,11 +12,9 @@ Jump to:
 ### How do I get started?
 
 To install Moonshot, please follow our [quick start guide](./getting_started/quick_start.md) or [quick install page](./getting_started/quick_install.md) 
-To install Moonshot, please follow our [quick start guide](./getting_started/quick_start.md) or [quick install page](./getting_started/quick_install.md) 
 
 ### What are Moonshot's prerequisites?
 
-Here are the requirements. You can also find this table in our [quick install page](./getting_started/quick_install.md).
 Here are the requirements. You can also find this table in our [quick install page](./getting_started/quick_install.md).
 
  | Software                                                                           | Version Requirement |
@@ -46,7 +44,7 @@ You may face issues installing some of the dependencies. We suggest using virtua
 
 Some of the functions may not work as expected. We suggest users to reinstall Moonshot to ensure that all libraries are installed successfully.
 
-### (MacOs Only) I am unable to install PyTorch
+### (MacOS Only) I am unable to install PyTorch
 
 If you are operating on an x86 MacOS, you may encounter difficulties when attempting to install the PyTorch requirement from the moonshot-data. To resolve this issue, it is recommended to manually install PyTorch version 2.2.0, which is compatible with your computer's architecture.
 

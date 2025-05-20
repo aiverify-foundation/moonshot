@@ -20,7 +20,7 @@ In this tutorial, you will learn how to create a custom cookbook via our command
 
             For effective evaluation of your RAG application, do ensure you are using your own custom test dataset. You can view more information on how to add your custom test dataset [here](../../user_guide/cli/add_your_own_tests.md).
 
-        Here is an example of the command to create a cookbook:
+        Here is an example of the command to create a recipe:
                 
             add_recipe 'My new recipe' 'I am recipe description' "['category1','category2']" "['bbq-lite-age-ambiguous']" "['bertscore','bleuscore']" -p "['analogical-similarity','mmlu']" -t "['tag1','tag2']" -g "{'A':[80,100],'B':[60,79],'C':[40,59],'D':[20,39],'E':[0,19]}" 
 
