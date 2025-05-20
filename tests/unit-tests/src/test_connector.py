@@ -13,18 +13,22 @@ from moonshot.src.connectors.connector_prompt_arguments import ConnectorPromptAr
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.messages_constants import (
-    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
-    CONNECTOR_CREATE_ERROR,
-    CONNECTOR_GET_AVAILABLE_ITEMS_ERROR,
-    CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR,
-    CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR,
-    CONNECTOR_GET_PREDICTION_ERROR,
-    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
-    CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR,
-    CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR,
-    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR,
+
+CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR = "[Connector] The 'ep_args' argument must be an instance of ConnectorEndpointArguments and not None."  # noqa: E501
+CONNECTOR_CREATE_ERROR = "[Connector] Failed to create connector: {message}"
+CONNECTOR_GET_AVAILABLE_ITEMS_ERROR = (
+    "[Connector] Failed to get available connectors: {message}"
 )
+CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR = "[Connector] The 'connector' argument must be an instance of Connector and not None."  # noqa: E501
+CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR = "[Connector] The 'generated_prompt' argument must be an instance of ConnectorPromptArguments and not None."  # noqa: E501
+CONNECTOR_GET_PREDICTION_ERROR = "[Connector ID: {connector_id}] Prompt Index {prompt_index} failed to get prediction: {message}"  # noqa: E501
+CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR = "[Connector] The 'ep_args' argument must be an instance of ConnectorEndpointArguments and not None."  # noqa: E501
+CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR = (
+    "[Connector] Failed to get connector instance: {message}"
+)
+CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR = "[Connector ID: {connector_id}] Attempt {attempt_no} failed due to error: {message}"  # noqa: E501
+CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR = "[Connector] The 'system_prompt' argument must be an instance of string and not None."  # noqa: E501
+
 from moonshot.src.storage.storage import Storage
 
 
