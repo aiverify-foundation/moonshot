@@ -15,20 +15,6 @@ from moonshot.src.connectors.connector_response import ConnectorResponse
 from moonshot.src.connectors_endpoints.connector_endpoint_arguments import (
     ConnectorEndpointArguments,
 )
-from moonshot.src.messages_constants import (
-    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
-    CONNECTOR_CREATE_ERROR,
-    CONNECTOR_GET_AVAILABLE_ITEMS_ERROR,
-    CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR,
-    CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR,
-    CONNECTOR_GET_PREDICTION_ERROR,
-    CONNECTOR_GET_PREDICTION_INFO,
-    CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO,
-    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR,
-    CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR,
-    CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR,
-    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR,
-)
 from moonshot.src.storage.storage import Storage
 from moonshot.src.utils.import_modules import get_instance
 from moonshot.src.utils.log import configure_logger
@@ -50,6 +36,8 @@ def perform_retry_callback(connector_id: str, retry_state: RetryCallState) -> No
         retry_state (RetryCallState): The state of the retry call, which includes
             information about the current attempt, the exception raised, and the next action.
     """
+    CONNECTOR_PERFORM_RETRY_CALLBACK_ERROR = "[Connector ID: {connector_id}] Attempt {attempt_no} failed due to error: {message}"  # noqa: E501
+
     sleep_time = retry_state.idle_for if retry_state else 0
     exception = (
         retry_state.outcome.exception() if retry_state.outcome else "Unknown exception"
@@ -92,6 +80,24 @@ def perform_retry(func):
 
 
 class Connector:
+    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR = "[Connector] The 'ep_args' argument must be an instance of ConnectorEndpointArguments and not None."  # noqa: E501
+    CONNECTOR_CREATE_ERROR = "[Connector] Failed to create connector: {message}"
+    CONNECTOR_GET_AVAILABLE_ITEMS_ERROR = (
+        "[Connector] Failed to get available connectors: {message}"
+    )
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR = "[Connector] The 'connector' argument must be an instance of Connector and not None."  # noqa: E501
+    CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR = "[Connector] The 'generated_prompt' argument must be an instance of ConnectorPromptArguments and not None."  # noqa: E501
+    CONNECTOR_GET_PREDICTION_ERROR = "[Connector ID: {connector_id}] Prompt Index {prompt_index} failed to get prediction: {message}"  # noqa: E501
+    CONNECTOR_GET_PREDICTION_INFO = (
+        "[Connector ID: {connector_id}] Predicting Prompt Index {prompt_index}."
+    )
+    CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO = "[Connector ID: {connector_id}] Prompt Index {prompt_index} took {prompt_duration}s."  # noqa: E501
+    CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR = "[Connector] The 'ep_args' argument must be an instance of ConnectorEndpointArguments and not None."  # noqa: E501
+    CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR = (
+        "[Connector] Failed to get connector instance: {message}"
+    )
+    CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR = "[Connector] The 'system_prompt' argument must be an instance of string and not None."  # noqa: E501
+
     def __init__(self, ep_args: ConnectorEndpointArguments) -> None:
         self.id = ep_args.id
 
@@ -223,7 +229,7 @@ class Connector:
         """
         if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
             raise ValueError(
-                CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
+                Connector.CONNECTOR_LOAD_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
             )
 
         connector_instance = get_instance(
@@ -236,7 +242,7 @@ class Connector:
             return connector_instance(ep_args)
         else:
             raise RuntimeError(
-                CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR.format(
+                Connector.CONNECTOR_LOAD_CONNECTOR_INSTANCE_RUNTIME_ERROR.format(
                     message=ep_args.connector_type
                 )
             )
@@ -264,12 +270,12 @@ class Connector:
         try:
             if ep_args is None or not isinstance(ep_args, ConnectorEndpointArguments):
                 raise ValueError(
-                    CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
+                    Connector.CONNECTOR_CREATE_CONNECTOR_ENDPOINT_ARGUMENTS_VALIDATION_ERROR
                 )
             return Connector.load(ep_args)
 
         except Exception as e:
-            logger.error(CONNECTOR_CREATE_ERROR.format(message=str(e)))
+            logger.error(Connector.CONNECTOR_CREATE_ERROR.format(message=str(e)))
             raise e
 
     @staticmethod
@@ -296,7 +302,9 @@ class Connector:
             ]
 
         except Exception as e:
-            logger.error(CONNECTOR_GET_AVAILABLE_ITEMS_ERROR.format(message=str(e)))
+            logger.error(
+                Connector.CONNECTOR_GET_AVAILABLE_ITEMS_ERROR.format(message=str(e))
+            )
             raise e
 
     @staticmethod
@@ -336,17 +344,17 @@ class Connector:
             generated_prompt, ConnectorPromptArguments
         ):
             raise ValueError(
-                CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR
+                Connector.CONNECTOR_GET_PREDICTION_ARGUMENTS_GENERATED_PROMPT_VALIDATION_ERROR
             )
 
         if connector is None or not isinstance(connector, Connector):
             raise ValueError(
-                CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR
+                Connector.CONNECTOR_GET_PREDICTION_ARGUMENTS_CONNECTOR_VALIDATION_ERROR
             )
 
         try:
             logger.info(
-                CONNECTOR_GET_PREDICTION_INFO.format(
+                Connector.CONNECTOR_GET_PREDICTION_INFO.format(
                     connector_id=connector.id,
                     prompt_index=generated_prompt.prompt_index,
                 )
@@ -358,7 +366,7 @@ class Connector:
             )
             generated_prompt.duration = time.perf_counter() - start_time
             logger.debug(
-                CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO.format(
+                Connector.CONNECTOR_GET_PREDICTION_TIME_TAKEN_INFO.format(
                     connector_id=connector.id,
                     prompt_index=generated_prompt.prompt_index,
                     prompt_duration=f"{generated_prompt.duration:.4f}",
@@ -374,7 +382,7 @@ class Connector:
 
         except Exception as e:
             logger.error(
-                CONNECTOR_GET_PREDICTION_ERROR.format(
+                Connector.CONNECTOR_GET_PREDICTION_ERROR.format(
                     connector_id=connector.id,
                     prompt_index=generated_prompt.prompt_index,
                     message=str(e),
@@ -396,5 +404,5 @@ class Connector:
             ValueError: If the provided system prompt is not a string or is None.
         """
         if system_prompt is None or not isinstance(system_prompt, str):
-            raise ValueError(CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR)
+            raise ValueError(Connector.CONNECTOR_SET_SYSTEM_PROMPT_VALIDATION_ERROR)
         self.system_prompt = system_prompt
