@@ -87,6 +87,7 @@ def get_all_prompt_templates_names(
                 detail=f"Failed to retrieve prompt template names: {e.msg}",
             )
 
+
 @router.delete("/api/v1/prompt-templates/{prompt_template_name}")
 @inject
 def delete_prompt_template(

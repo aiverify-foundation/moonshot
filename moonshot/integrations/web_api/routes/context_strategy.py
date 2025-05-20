@@ -7,6 +7,7 @@ from ..services.utils.exceptions_handler import ServiceException
 
 router = APIRouter(tags=["Context Strategy"])
 
+
 @router.get("/api/v1/context-strategies")
 @inject
 def get_all_context_strategies(
@@ -46,7 +47,8 @@ def get_all_context_strategies(
                 status_code=500,
                 detail=f"Failed to retrieve context strategies: {e.msg}",
             )
-        
+
+
 @router.get("/api/v1/context-strategies/name")
 @inject
 def get_all_context_strategies_name(

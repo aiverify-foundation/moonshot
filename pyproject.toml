@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.6.2"
+version = "0.6.3"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -98,7 +98,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.6.2"
+version = "0.6.3"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -122,6 +122,7 @@ uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
 cmd2 = ">=2.4.3"
 rich = ">=13.8.0"
+urllib3 = "^2.4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
