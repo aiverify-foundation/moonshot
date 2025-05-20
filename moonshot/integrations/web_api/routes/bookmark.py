@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from dependency_injector.wiring import Provide, inject
@@ -138,6 +137,8 @@ def delete_bookmark(
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete bookmark: {e.msg}"
             )
+
+
 @router.get(
     "/api/v1/bookmarks/export", response_description="Exporting Bookmark to JSON file"
 )
@@ -160,7 +161,9 @@ def export_bookbookmarks(
     """
     try:
         file_path = bookmark_service.export_bookmarks(export_file_name)
-        return FileResponse(file_path, media_type="application/json", filename=export_file_name)
+        return FileResponse(
+            file_path, media_type="application/json", filename=export_file_name
+        )
     except ServiceException as e:
         if e.error_code == "FileNotFound":
             raise HTTPException(

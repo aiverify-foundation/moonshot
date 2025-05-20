@@ -1,8 +1,9 @@
 from typing import Optional
 
+from pydantic import Field
+
 from moonshot.src.recipes.recipe_arguments import RecipeArguments as RecipePydanticModel
 
-from pydantic import Field
 
 class RecipeCreateDTO(RecipePydanticModel):
     id: Optional[str] = None

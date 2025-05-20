@@ -131,6 +131,7 @@ async def get_one_results(
                 status_code=500, detail=f"Failed to retrieve result: {e.msg}"
             )
 
+
 @router.delete("/api/v1/benchmarks/results/{result_id}")
 @inject
 def delete_result(
