@@ -58,7 +58,7 @@ def new_session(args) -> None:
             - context_strategy (str, optional): The context strategy to be used.
             - prompt_template (str, optional): The prompt template to be used.
             - endpoints (str, optional): The list of endpoints for the runner."""
-    global active_session
+    global active_session  # noqa: F824
 
     try:
         required_parameters = [("runner_id", str)]
@@ -136,7 +136,7 @@ def use_session(args) -> None:
     Args:
         args (Namespace): The arguments passed to the function.
     """
-    global active_session
+    global active_session  # noqa: F824
 
     # Load session metadata
     try:
@@ -168,7 +168,7 @@ def show_prompts() -> None:
     """
     Shows the chat table in a session so that users don't have to restart a session to view the chat table
     """
-    global active_session
+    global active_session  # noqa: F824
 
     if not active_session:
         print(ERROR_RED_TEAMING_SHOW_PROMPTS_NO_ACTIVE_SESSION_VALIDATION)
@@ -181,7 +181,7 @@ def end_session() -> None:
     """
     Ends the current session by clearing active_session variable.
     """
-    global active_session
+    global active_session  # noqa: F824
     active_session.clear()
 
 
@@ -249,7 +249,7 @@ def update_chat_display() -> None:
     The table includes columns for the chat ID, prepared prompts, and the prompt/response pairs.
     If there is no active session, a message is printed to the console.
     """
-    global active_session
+    global active_session  # noqa: F824
 
     if active_session:
         list_of_endpoint_chats = api_get_all_chats_from_session(
@@ -311,7 +311,7 @@ def add_bookmark(args) -> None:
 
     If there is no active session, a message is printed to the console and the function returns.
     """
-    global active_session
+    global active_session  # noqa: F824
 
     if active_session:
         try:
@@ -372,7 +372,7 @@ def use_bookmark(args) -> None:
 
     If there is no active session, a message is printed to the console and the function returns.
     """
-    global active_session
+    global active_session  # noqa: F824
     if active_session:
         try:
             bookmark_name = args.bookmark_name
@@ -747,7 +747,7 @@ def _reload_session(runner_id: str) -> None:
     Args:
         runner_id (str): The ID of the runner for which the session metadata needs to be reloaded.
     """
-    global active_session
+    global active_session  # noqa: F824
     try:
         session_metadata = api_load_session(runner_id)
         if not session_metadata:
