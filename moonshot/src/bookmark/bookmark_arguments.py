@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import ClassVar
 
-from moonshot.src.messages_constants import (
-    BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR,
-)
+from pydantic import BaseModel, Field
 
 
 class BookmarkArguments(BaseModel):
+    BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR: ClassVar[
+        str
+    ] = "[BookmarkArguments] Failed to convert to dictionary because of the insufficient number of values."  # noqa: E501
+
     name: str = Field(min_length=1)
     prompt: str = Field(min_length=1)
     prepared_prompt: str = Field(min_length=1)
@@ -33,7 +35,9 @@ class BookmarkArguments(BaseModel):
             ValueError: If the number of values in the tuple is less than 10.
         """
         if len(values) < 10:
-            raise ValueError(BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR)
+            raise ValueError(
+                BookmarkArguments.BOOKMARK_ARGUMENTS_FROM_TUPLE_TO_DICT_VALIDATION_ERROR
+            )
 
         return {
             "name": values[1],
