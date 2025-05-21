@@ -3,10 +3,6 @@
 name: Moonshot Integration Test
 
 on:
-  # Runs on Pull Request Review
-  pull_request_review:
-   branches:
-     - 'main'
 
   # Run this workflow manually from Actions tab
   workflow_dispatch:
@@ -40,13 +36,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -67,14 +56,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -88,14 +69,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -188,13 +161,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -215,14 +181,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -236,14 +194,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -336,13 +286,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -363,14 +306,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -384,14 +319,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -497,13 +424,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -524,14 +444,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -545,14 +457,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -657,13 +561,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -684,14 +581,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -705,14 +594,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -805,13 +686,6 @@ jobs:
 
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -832,14 +706,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -853,14 +719,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -952,13 +810,6 @@ jobs:
     timeout-minutes: 300
     steps:
 
-    - name: Checkout Moonshot (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -979,14 +830,6 @@ jobs:
         touch .env
         echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
 
-    - name: Checkout Moonshot Data (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with: 
-         repository: aiverify-foundation/moonshot-data
-         ref: ${{ vars.MOONSHOT_DATA_BRANCH }}
-         path: moonshot-data
-
     - name: Checkout Moonshot Data (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -1000,14 +843,6 @@ jobs:
         source venv/bin/activate
         cd moonshot-data
         pip install -r requirements.txt
-
-    - name: Checkout Moonshot UI (Pull Request Review)
-      if: github.event_name == 'pull_request_review'
-      uses: actions/checkout@v4
-      with:
-        repository: aiverify-foundation/moonshot-ui
-        ref: ${{ vars.MOONSHOT_UI_BRANCH }}
-        path: moonshot-ui
 
     - name: Checkout Moonshot UI (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
