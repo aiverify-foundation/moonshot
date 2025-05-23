@@ -51,7 +51,7 @@ The starter kit cookbooks follow the same structure as other cookbooks - for a r
 
 A set of tests that assess factual accuracy, namely general knowledge across different domains (e.g. math, law, sociology) and local facts about Singapore, such as iconic places and political history. Answers are expected to be multiple-choice or short-form. Currently, this cookbook includes the following tests:
 
-| Test | Description | Format | Number of prompts |
+| Test | Description | Expected format for the test (prompt/response) | Number of prompts |
 |------|-------------|--------|-------------------|
 | [**MMLU**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mmlu.json) | Measures ability to answer accurately across 57 tasks including elementary mathematics, US history, computer science, law, and more. The higher the grade, the better the system performs. | MCQ question with categorical response | 17,487 |
 | [**Facts About Singapore**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-facts.json) | Tests knowledge related to Singapore across 7 topics including political history, public housing, transport etc. Curated in-house | True/False and MCQ format with categorical response | 276 |
@@ -65,16 +65,12 @@ A set of tests that assess factual accuracy, namely general knowledge across dif
 
 A set of tests that assess tendency to generate undesirable content, meaning content that inflicts harm on individuals, communities, or the public interest, such as socially harmful or legally prohibited content. It includes tests relating to toxicity, information on committing crimes, etc.
 
-| Test | Description | Format | Number of prompts |
-|------|-------------|--------|-------------------|
-| [**MLCommons AILuminate - Violent Crimes**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-vcr-en.json) | Measures ability to respond without enabling, encouraging, or endorsing the commission of violent crimes. A high grade indicates that the system under test handles the response well. | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge.
-
-For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the [FAQ](./faq.md) section for more details | 100 |
-| [**MLCommons AILuminate - Non Violent Crimes**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-nvc.json) | Measures ability to respond without enabling, encouraging, or endorsing the commission  of non violent crimes. A high grade indicates that the system under test handles the response well. | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge.
-
-For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the [FAQ](./faq.md) section for more details | 100 |
-| [**Singapore Safety Questions**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json) | Tests ability to respond safely to prompts related to culturally and legally sensitive situations in Singapore | Open-ended, assessed using llamaguardannotator | 59 |
-| [**Real Toxicity Prompts**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/real-toxicity-prompts-completion.json) | Measures ability to identify toxic sentences. The higher the grade, the less toxic the system is. | Open-ended, assess using toxicity classifier | 198,884 |
+| Test | Description | Expected format for the test (prompt/response) | Number of prompts |
+|------|-------------|-----------------------------------------------|-------------------|
+| **[MLCommons AILuminate - Violent Crimes](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-vcr-en.json)** | Measures ability to respond without enabling, encouraging, or endorsing the commission of violent crimes. A high grade indicates that the system under test handles the response well. | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge. For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the FAQ section for more details | 100 |
+| **[MLCommons AILuminate - Non Violent Crimes](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-nvc.json)** | Measures ability to respond without enabling, encouraging, or endorsing the commission of non violent crimes. A high grade indicates that the system under test handles the response well. | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge. For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the FAQ section for more details | 100 |
+| **[Singapore Safety Questions](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/singapore-safety.json)** | Tests ability to respond safely to prompts related to culturally and legally sensitive situations in Singapore | Open-ended, assessed using llamaguardannotator | 59 |
+| **[Real Toxicity Prompts](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/real-toxicity-prompts-completion.json)** | Measures ability to identify toxic sentences. The higher the grade, the less toxic the system is. | Open-ended, assess using toxicity classifier | 198,884 |
 
 *Coming soon*
 
@@ -85,29 +81,23 @@ For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a 
 
 A set of tests that assess the tendency to disclose information that is commonly considered to be sensitive or aid requests to obtain such information in an unauthorised manner. It covers a variety of sensitive information types in realistic conversational style over various sentence formats.
 
-| Test | Description | Format | Number of prompts |
-|------|-------------|--------|-------------------|
-| [**MLCommons AILuminate - Privacy**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-prv-en.json) | Same approach as violent crimes | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge.
-
-For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the [FAQ](./faq.md) section for more details | 100 |
+| Test | Description | Expected format for the test (prompt/response) | Number of prompts |
+|------|-------------|-----------------------------------------------|-------------------|
+| **[MLCommons AILuminate - Privacy](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/mlc-prv-en.json)** | Same approach as violent crimes | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge. For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the FAQ section for more details | 100 |
 
 *Coming soon*
 
 *Upcoming tests to be included in this cookbook include XSTest, SorryBench and others.*
 
 
-**Vulnerability to adversarial prompts**
+**Adversarial Prompts Cookbook**
 
 Tests for susceptibility to producing unsafe outputs (which may include incorrect content, undesirable content and/or sensitive information) when presented with intentional prompt attacks. It covers a range of prompt attack techniques across different risk categories.
 
-| Test | Description | Format | Number of prompts |
-|------|-------------|--------|-------------------|
-| [**CyberSecEval - Prompt Injections 3**](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/cyberseceval-en.json) | Measures model's susceptibility to prompt injections, adapted from Purple Llama CyberSecEval benchmark
+| Test | Description | Expected format for the test (prompt/response) | Number of prompts |
+|------|-------------|-----------------------------------------------|-------------------|
+| **[CyberSecEval - Prompt Injections 3](https://github.com/aiverify-foundation/moonshot-data/blob/main/recipes/cyberseceval-en.json)** | Measures model's susceptibility to prompt injections, adapted from Purple Llama CyberSecEval benchmark NOTE: This test would soon be upgraded to match the CyberSecEval Prompt Injections v4 from PurpleLlama | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge. For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the FAQ section for more details | 251 |
 
-NOTE: This test would soon be upgraded to match the CyberSecEval Prompt Injections v4 from PurpleLlama
- | Conversation questions/ instruction with open-ended responses, which are assessed using LLM-as-a-judge.
-
-For the current cookbook implementation, GPT4o as LLM-as-a-judge and there is a requirement to provide an OpenAI API key to run the recipe/cookbook. Please refer to the [FAQ](./faq.md) section for more details | 251 |
 
 *Coming soon*
 
