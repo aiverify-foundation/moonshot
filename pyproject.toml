@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-
 version = "0.7.0"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
@@ -111,7 +110,6 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-
 version = "0.7.0"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
