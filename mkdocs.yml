@@ -40,6 +40,7 @@ markdown_extensions:
 
 nav: 
   - Home: index.md
+  - Components of Moonshot: components.md
   - Getting Started:
     - Quick Start Guide: getting_started/quick_start.md
     - Running Starter Kit: getting_started/starter_kit.md
