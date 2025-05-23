@@ -3,7 +3,7 @@ repo_url: https://github.com/aiverify-foundation/moonshot
 
 plugins:
   - search
-  - mkdocstrings
+  # - mkdocstrings
   - swagger-ui-tag:
         defaultModelsExpandDepth: -1
         docExpansion: none
@@ -42,6 +42,7 @@ nav:
   - Home: index.md
   - Getting Started:
     - Quick Start Guide: getting_started/quick_start.md
+    - Running Starter Kit: getting_started/starter_kit.md
     - Overview: getting_started/overview.md
     - Quick Install: getting_started/quick_install.md
     - Your First Test: getting_started/first_test.md
