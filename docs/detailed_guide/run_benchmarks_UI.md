@@ -1,4 +1,4 @@
-# Running Benchmarking
+# Run Benchmarks
 
 In this guide, you will learn how to
 
@@ -20,7 +20,7 @@ Benchmarks consists of 3 main components:
 
 ## Launch Moonshot UI
 
-Moonshot UI is designed to simplify the testing workflows. Once Moonshot is [installed](./quick_install.md), you can start the Web UI using the  following command:
+Moonshot UI is designed to simplify the testing workflows. Once Moonshot is [installed](../getting_started/quick_install.md), you can start the Web UI using the  following command:
 
 ```
 python -m moonshot web
