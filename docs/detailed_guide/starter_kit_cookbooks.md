@@ -80,4 +80,4 @@ Tests for susceptibility to producing unsafe outputs (which may include incorrec
 
 *Upcoming tests to be included in this cookbook include Cyberseceval 4 (version upgrade, Microsoft BIPIA and others.*
 
-Refer to [getting started guide here](./getting_started/starter_kit.md) on how to run these tests for your model/application.
+Refer to [getting started guide here](../getting_started/starter_kit.md) on how to run these tests for your model/application.
