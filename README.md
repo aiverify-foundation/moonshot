@@ -21,7 +21,7 @@ Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), [Moonsh
 
 In the rapidly evolving landscape of Generative AI, ensuring safety, reliability, and performance of LLM applications is paramount. Moonshot addresses this critical need by providing a unified platform for:
 - <b>Benchmark Tests:</b> Systematically test LLM Apps or LLMs across critical trust & safety risks using a wide array of open-source benchmark dataset and metrics, including guided workflows to implement <b>IMDA's Starter Kit for LLM-based App Testing</b>.
-- <b>Red Team Attacks:</b> Proactively identify vulnerabilities and potential misuse scenarios in your LLLM applications through streamlined adversarial prompting.
+- <b>Red Team Attacks:</b> Proactively identify vulnerabilities and potential misuse scenarios in your LLM applications through streamlined adversarial prompting.
 
 </br>
 
