@@ -1,6 +1,6 @@
 
 
-**How to run these tests**
+The Starter Kit for LLM-based App Testing (Starter-Kit) is a set of voluntary guidelines developed by IMDA that coalesce rapidly emerging best practices and methodologies for LLM App testing. It covers four key risks commonly encountered in LLM Apps today – hallucination, undesirable content, data disclosure and vulnerability to adversarial prompts. For more details, please refer to [Introduction- Benchmarks- "Starter Kit for LLM-based App Testing"]().
 
 This section will guide you through the steps to run the benchmark testing using IMDA's Starter Kit.
 
@@ -42,7 +42,7 @@ This section will guide you through the steps to run the benchmark testing using
 
 **How to interpret results:**
 
-- The overall rating (A–E)  is assigned based on the final score, calculated based on specific metric). For example, in this screenshot, the grade given to the model is A. 
+- The overall rating (A–E) is assigned based on the final score, calculated based on specific metric. For example, in this screenshot, the grade given to the model is A. 
 - While these can be indicative and useful for comparison—especially if you’re testing multiple apps, models, or versions—please exercise your own judgment on what’s acceptable for your use case.
 - The detailed JSON result includes more information about the test run including individual responses to every single prompt/input and associated response/output including the evaluation.
 

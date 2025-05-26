@@ -45,7 +45,10 @@ Currently, each risk area has a cookbook associated with it:
 The starter kit cookbooks follow the same structure as other cookbooks - for a refresher on cookbooks, recipes, datasets and metrics, please visit [the components of moonshot section here](components.md).
 
 
-![starterkit-components](../res/starter-kit-components.png)
+<!-- ![starterkit-components](./res/starter-kit-components.png) -->
+<!-- ![starterkit-components](./res/starter-kit-components.png) -->
+
+![starterkit-components](./res/starter-kit-components.png)
 
 **Hallucination cookbook**
 
