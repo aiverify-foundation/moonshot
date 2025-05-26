@@ -13,16 +13,15 @@ A simple and modular tool to evaluate any LLM-based AI systems.
 
 ## 🎯 Motivation
 
-Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), [Moonshot](https://aiverifyfoundation.sg/project-moonshot/) is one of the first tools to bring Benchmarking and Red-Teaming together to help AI developers, compliance teams and AI system owners <b>evaluate LLMs and LLM-based AI systems</b>.
+Developed by the [AI Verify Foundation](https://aiverifyfoundation.sg/), [Moonshot](https://aiverifyfoundation.sg/project-moonshot/) is a tool to bring Benchmarking and Red-Teaming together to help AI developers, compliance teams evaluate LLM-based Apps and LLMs.
 
 </br>
 
 ## 🚀 Why Moonshot
 
-In the rapidly evolving landscape of Generative AI, ensuring safety, reliability, and performance of AI systems is paramount. Moonshot addresses this critical need by providing a unified platform for:
-- <b>Benchmark Tests:</b> Systematically test LLMs across various performance metrics, and critical trust & safety dimensions using a wide array of open-source benchmarks and domain-specific tests.
-- <b>Red Team Attacks:</b> Proactively identify vulnerabilities and potential misuse scenarios in your AI systems through streamlined adversarial prompting.
-- <b>Streamline MLOps:</b> Integrate evaluation seamlessly into your development pipeline with flexible APIs.
+In the rapidly evolving landscape of Generative AI, ensuring safety, reliability, and performance of LLM applications is paramount. Moonshot addresses this critical need by providing a unified platform for:
+- <b>Benchmark Tests:</b> Systematically test LLM Apps or LLMs across critical trust & safety risks using a wide array of open-source benchmark dataset and metrics, including guided workflows to implement <b>IMDA's Starter Kit for LLM-based App Testing</b>.
+- <b>Red Team Attacks:</b> Proactively identify vulnerabilities and potential misuse scenarios in your LLM applications through streamlined adversarial prompting.
 
 </br>
 
@@ -33,20 +32,20 @@ In the rapidly evolving landscape of Generative AI, ensuring safety, reliability
   - [View list of available datasets available](https://aiverify-foundation.github.io/moonshot/resources/datasets/)
   - Test for <b>Performance</b> (e.g., accuracy, BLEU)
   - Ensure <b>Trust & Safety</b> e.g., bias, toxicity, hallucination)
-  - Utilize pre-built Cookbooks of tests or easily create your custom evaluations. [View available pre-built Cookbooks](https://aiverify-foundation.github.io/moonshot/resources/cookbooks/)
+  - Utilize built-in workflow to implement IMDA's Starter Kit for LLM-based App Testing. [View available pre-built Cookbooks](https://aiverify-foundation.github.io/moonshot/resources/cookbooks/)
 - <b>Powerful Red-Teaming:</b>
   - [View list of available attack modules](https://aiverify-foundation.github.io/moonshot/resources/attack_modules/)
   - Simplify adversarial prompt generation using algorithmic strategies or generative LLM to uncover potential misuse.
   - Leverage prompt templates, context strategies, and automated attack modules.
-- <b>Customizable Recipes:</b> Define your evaluation logic with custom datasets (input-target pairs), metrics, optional prompt templates, evaluation metric, and grading scales. [View available pre-built Recipes](https://aiverify-foundation.github.io/moonshot/resources/recipes/)
-- <b>Insightful Reporting:</b> Generate comprehensive HTML reports with interactive charts for clear visualization of test results, and detailed raw JSON results for deeper programmatic analysis.
-- <b>Extensible & Modular:</b> Designed for easy extension and integration with new LLMs, benchmarks, and attack techniques.
+- <b>Customizable Recipes:</b> Build your own benchmark tests with custom datasets (input-target pairs), prompt templates (optional), evaluation metric, and grading scales. [View available pre-built Recipes](https://aiverify-foundation.github.io/moonshot/resources/recipes/)
+- <b>Insightful Reporting:</b> Use our HTML reports with interactive charts for clear visualization of test results, and download detailed raw JSON results for deeper programmatic analysis.
+- <b>Extensible & Modular:</b> Designed for easy extension and integration with new LLM applications, benchmarks, and attack techniques.
 
 </br>
 
 # Getting Started
 
-In this Beta version, Moonshot can be used through several interfaces:
+Moonshot can be used through several interfaces:
 - User-friendly Web UI - [Web UI User Guide](https://aiverify-foundation.github.io/moonshot/user_guide/web_ui/web_ui_guide/)
 - Interactive Command Line Interface - [CLI User Guide](https://aiverify-foundation.github.io/moonshot/user_guide/cli/connecting_endpoints/)
 - Seamless Integration into your MLOps workflow via Moonshot Library APIs or Moonshot Web APIs - [Notebook Examples](https://github.com/aiverify-foundation/moonshot/tree/main/examples/jupyter-notebook), [Web API Docs](https://aiverify-foundation.github.io/moonshot/api_reference/web_api_swagger/)
