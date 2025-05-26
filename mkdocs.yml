@@ -47,6 +47,7 @@ nav:
     - Run Starter Kit for LLM-based App Testing: getting_started/starter_kit.md
   - Detailed Guides:
     - Run Benchmarks: detailed_guide/run_benchmarks_UI.md
+    - Starter Kit Cookbooks: detailed_guide/starter_kit_cookbooks.md
     - Run RedTeaming: detailed_guide/run_redteaming_UI.md
     - Run Moonshot with custom LLM Application: detailed_guide/run_customLLM_UI.md
     - Run Moonshot using Command Line Interface (CLI): detailed_guide/moonshot_cli_detailed_guide.md
