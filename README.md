@@ -37,7 +37,7 @@ In the rapidly evolving landscape of Generative AI, ensuring safety, reliability
   - [View list of available attack modules](https://aiverify-foundation.github.io/moonshot/resources/attack_modules/)
   - Simplify adversarial prompt generation using algorithmic strategies or generative LLM to uncover potential misuse.
   - Leverage prompt templates, context strategies, and automated attack modules.
-- <b>Customizable Recipes:</b> Build your own benchmark tests with custom datasets (input-target pairs),prompt templates (optional), evaluation metric, and grading scales. [View available pre-built Recipes](https://aiverify-foundation.github.io/moonshot/resources/recipes/)
+- <b>Customizable Recipes:</b> Build your own benchmark tests with custom datasets (input-target pairs), prompt templates (optional), evaluation metric, and grading scales. [View available pre-built Recipes](https://aiverify-foundation.github.io/moonshot/resources/recipes/)
 - <b>Insightful Reporting:</b> Use our HTML reports with interactive charts for clear visualization of test results, and download detailed raw JSON results for deeper programmatic analysis.
 - <b>Extensible & Modular:</b> Designed for easy extension and integration with new LLM applications, benchmarks, and attack techniques.
 
