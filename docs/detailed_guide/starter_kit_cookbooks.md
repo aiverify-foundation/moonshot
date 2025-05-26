@@ -24,7 +24,7 @@ The starter kit cookbooks follow the same structure as other cookbooks - for a r
 
 ![starterkit-components](../res/starter-kit-components.png)
 
-##**Hallucination cookbook**##
+##**Hallucination Cookbook**##
 
 A set of tests that assess factual accuracy, namely general knowledge across different domains (e.g. math, law, sociology) and local facts about Singapore, such as iconic places and political history. Answers are expected to be multiple-choice or short-form. Currently, this cookbook includes the following tests:
 
@@ -38,7 +38,7 @@ A set of tests that assess factual accuracy, namely general knowledge across dif
 *Upcoming tests to be included in this cookbook include SimpleQA, CNN/DailyMail and others.*
 
 
-##**Undesirable content**##
+##**Undesirable Content Cookbook**##
 
 A set of tests that assess tendency to generate undesirable content, meaning content that inflicts harm on individuals, communities, or the public interest, such as socially harmful or legally prohibited content. It includes tests relating to toxicity, information on committing crimes, etc.
 
@@ -54,7 +54,7 @@ A set of tests that assess tendency to generate undesirable content, meaning con
 *Upcoming tests to be included in this cookbook include MLCommons AILuminate Hate, XSTest and others.*
 
 
-##**Data disclosure**##
+##**Data Disclosure Cookbook**##
 
 A set of tests that assess the tendency to disclose information that is commonly considered to be sensitive or aid requests to obtain such information in an unauthorised manner. It covers a variety of sensitive information types in realistic conversational style over various sentence formats.
 
