@@ -37,6 +37,12 @@ def api_create_runner(
     # We do not need to provide the id.
     # This is because during creating:
     # 1. the id is slugify from the name and stored as id.
+    # Validate arguments
+    if not name or not name.strip():
+        raise ValueError("Runner name must not be empty.")
+    if not endpoints or not isinstance(endpoints, list) or not all(isinstance(e, str) for e in endpoints):
+        raise ValueError("Endpoints must be a non-empty list of strings.")
+
     runner_args = RunnerArguments(
         id="",
         name=name,
