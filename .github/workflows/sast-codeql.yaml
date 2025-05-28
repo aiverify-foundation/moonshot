@@ -4,16 +4,11 @@ name: "SAST - CodeQL"
 on:
   # Run when code is pushed to the main branch
   push:
-    branches: [ main ]
+    branches: [ main, ci/cleanup-workflows ]
 
   # Run when pull requests are created against dev_main
   pull_request:
     branches: [ dev_main ]
-
-  # Commented out scheduled run
-  # Uncommenting would trigger the workflow weekly on Friday nights
-#  schedule:
-#    - cron: "5 14 * * 5"
 
   # Allow manual triggering with a branch parameter
   workflow_dispatch:
@@ -28,7 +23,7 @@ on:
   workflow_call:
     inputs:
       branch_to_test:
-        description: 'Branch or tag to run test'
+        description: 'Branch or tag to run scan'
         required: true
         default: 'dev_main'
         type: string
