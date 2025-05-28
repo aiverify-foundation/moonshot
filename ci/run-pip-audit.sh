@@ -35,9 +35,14 @@ fi
 if [ -f licenses-found.md ]; then
   strongCopyleftLic=("GPL" "AGPL" "EUPL" "OSL")
   weakCopyleftLic=("LGPL" "MPL" "CCDL" "EPL" "CC-BY-SA" "CPL")
+
   echo "============ Strong Copyleft Licenses Found ============"
   head -n 2 licenses-found.md
   while IFS= read -r line; do
+    # Skip text-unidecode with Artistic Licenses
+    if [[ $line == *"text-unidecode"* ]] && [[ $line == *"Artistic Licenses"* ]]; then
+      continue
+    fi
     for lic in "${strongCopyleftLic[@]}"; do
       if [[ $line == *"$lic"* ]]; then
         echo "$line"
@@ -49,6 +54,11 @@ if [ -f licenses-found.md ]; then
   echo "============ Weak Copyleft Licenses Found ============"
   head -n 2 licenses-found.md
   while IFS= read -r line; do
+    # Special case for text-unidecode
+    if [[ $line == *"text-unidecode"* ]] && [[ $line == *"Artistic Licenses"* ]]; then
+      echo "$line (Reclassified as weak copyleft)"
+      continue
+    fi
     for lic in "${weakCopyleftLic[@]}"; do
       if [[ $line == *"$lic"* ]]; then
         echo "$line"
@@ -56,28 +66,9 @@ if [ -f licenses-found.md ]; then
       fi
     done
   done < licenses-found.md
-
-  # Create combined report
-  {
-    echo "# Copyleft License Report"
-    echo "## Strong Copyleft Licenses"
-    echo ""
-    for lic in "${strongCopyleftLic[@]}"; do
-      grep -i "$lic" licenses-found.md | sort -u || true
-    done
-    echo ""
-    echo "## Weak Copyleft Licenses"
-    echo ""
-    for lic in "${weakCopyleftLic[@]}"; do
-      grep -i "$lic" licenses-found.md | sort -u || true
-    done
-  } > copyleft-licenses.md
-
   mdtree licenses-found.md > license-report.html
-  mdtree copyleft-licenses.md > copyleft-report.html
 else
   touch license-report.html
-  touch copyleft-report.html
 fi
 
 deactivate

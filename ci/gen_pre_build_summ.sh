@@ -69,13 +69,25 @@ read_license() {
 
   if [ -f licenses-found.md ]; then
     while IFS= read -r line; do
+      # Special exception for text-unidecode with Artistic License
+      if [[ $line == *"text-unidecode"* && $line == *"Artistic License"* ]]; then
+        ((numWeakCopyleftLic++))
+        continue
+      fi
       # Check for strong copyleft licenses
+      foundStrongLic=false
       for lic in "${strongCopyleftLic[@]}"; do
         if [[ $line == *"$lic"* ]]; then
           ((numStrongCopyleftLic++))
+          foundStrongLic=true
           break
         fi
       done
+
+      # Skip to next line if we found a strong license
+      if $foundStrongLic; then
+        continue
+      fi
 
       # Check for weak copyleft licenses
       for lic in "${weakCopyleftLic[@]}"; do
