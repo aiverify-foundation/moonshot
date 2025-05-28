@@ -1,29 +1,21 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
+
 name: "SAST - CodeQL"
 
 on:
+  # Run when code is pushed to the main branch
   push:
     branches: [ main ]
 
+  # Run when pull requests are created against dev_main
   pull_request:
     branches: [ dev_main ]
 
-
-#  # Trigger every Friday at 10:05pm (14:05 UTC)
-#  # cron: min hr day-of-mth mth day-of-week
+  # Commented out scheduled run
+  # Uncommenting would trigger the workflow weekly on Friday nights
 #  schedule:
 #    - cron: "5 14 * * 5"
 
+  # Allow manual triggering with a branch parameter
   workflow_dispatch:
     inputs:
       branch_to_test:
@@ -32,6 +24,7 @@ on:
         default: 'dev_main'
         type: string
 
+  # Allow other workflows to call this workflow with parameters
   workflow_call:
     inputs:
       branch_to_test:
@@ -43,30 +36,27 @@ on:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    # Runner size impacts CodeQL analysis time. To learn more, please see:
-    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
-    #   - https://gh.io/supported-runners-and-hardware-resources
-    #   - https://gh.io/using-larger-runners (GitHub.com only)
-    # Consider using larger runners or machines with greater resources for possible analysis time improvements.
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
-      # required for all workflows
+      # Access to upload code scanning results
       security-events: write
-
-      # required to fetch internal or private CodeQL packs
+      # Access to fetch CodeQL packs
       packages: read
-
-      # only required for workflows in private repositories
+      # Permissions needed for private repositories
       actions: read
       contents: read
 
+    # Define strategy for matrix jobs
     strategy:
+      # Continue with other jobs even if one fails
       fail-fast: false
       matrix:
+        # Define languages to analyze
         include:
         - language: python
           build-mode: none
+        # Documentation for other supported languages and options
         # CodeQL supports the following values keywords for 'language': 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift'
         # Use `c-cpp` to analyze code written in C, C++ or both
         # Use 'java-kotlin' to analyze code written in Java, Kotlin or both
@@ -78,6 +68,7 @@ jobs:
     
     steps:
 
+      # Set branch variable based on the event that triggered the workflow
       - name: Set branch variable
         run: |
           if [[ ${{ github.event_name }} == 'pull_request' ]]; then
@@ -97,31 +88,30 @@ jobs:
             echo "PR_NUM=#0" >> $GITHUB_ENV
           fi
 
+      # Checkout the repository code to analyze
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH }}
           submodules: recursive
 
-      # Initializes the CodeQL tools for scanning.
+      # Set up the CodeQL tools and database
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          # If you wish to specify custom queries, you can do so here or in a config file.
-          # By default, queries listed here will override any specified in a config file.
-          # Prefix the list here with "+" to use these queries and those in the config file.
-
-          # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+          # Configuration options for custom queries (commented)
           # queries: security-extended,security-and-quality
 
+      # Run the CodeQL analysis
       - name: Perform CodeQL Analysis
         id: codeql_analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"
 
+      # Generate a summary of the analysis results
       - name: Generate CodeQL Analysis Summary
         id: codeql_summary
         if: ${{ ! cancelled() }}
@@ -135,7 +125,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      # Send slack notification
+      # Send a notification to Slack with the analysis results
       - name: Send slack notification
         if: ${{ ! cancelled() }}
         uses: slackapi/slack-github-action@v1.26.0
@@ -150,3 +140,4 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           
+
