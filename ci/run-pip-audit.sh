@@ -40,7 +40,7 @@ if [ -f licenses-found.md ]; then
   head -n 2 licenses-found.md
   while IFS= read -r line; do
     # Skip text-unidecode with Artistic Licenses
-    if [[ $line == *"text-unidecode"* ]] && [[ $line == *"Artistic Licenses"* ]]; then
+    if [[ $line == *"text-unidecode"* && $line == *"Artistic License"* ]]; then
       continue
     fi
     for lic in "${strongCopyleftLic[@]}"; do
@@ -55,7 +55,7 @@ if [ -f licenses-found.md ]; then
   head -n 2 licenses-found.md
   while IFS= read -r line; do
     # Special case for text-unidecode
-    if [[ $line == *"text-unidecode"* ]] && [[ $line == *"Artistic Licenses"* ]]; then
+    if [[ $line == *"text-unidecode"* && $line == *"Artistic License"* ]]; then
       echo "$line (Reclassified as weak copyleft)"
       continue
     fi
