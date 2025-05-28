@@ -161,13 +161,6 @@ jobs:
             exit 1
           fi
 
-#      - name: Capture step statuses
-#        if: ${{ ! cancelled() }}
-#        run: |
-#          echo "UNIT_TESTS_STATUS=${{ steps.unit_tests.outcome }}" >> $GITHUB_ENV
-#          echo "CODE_QUALITY_STATUS=${{ steps.code_quality.outcome }}" >> $GITHUB_ENV
-#          echo "DEPENDENCY_ANALYSIS_STATUS=${{ steps.dependency_analysis.outcome }}" >> $GITHUB_ENV
-
       # Send slack notification
       - name: Send slack notification
         if: ${{ ! cancelled() }}

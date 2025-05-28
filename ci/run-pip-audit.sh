@@ -33,26 +33,52 @@ else
 fi
 
 if [ -f licenses-found.md ]; then
-  copyleftLic=("GPL" "LGPL" "MPL" "AGPL" "EUPL" "CCDL" "EPL" "CC-BY-SA" "OSL" "CPL")
-  echo "============ Copyleft Licenses Found ============"
+  strongCopyleftLic=("GPL" "AGPL" "EUPL" "OSL")
+  weakCopyleftLic=("LGPL" "MPL" "CCDL" "EPL" "CC-BY-SA" "CPL")
+  echo "============ Strong Copyleft Licenses Found ============"
   head -n 2 licenses-found.md
   while IFS= read -r line; do
-    for lic in "${copyleftLic[@]}"; do
+    for lic in "${strongCopyleftLic[@]}"; do
       if [[ $line == *"$lic"* ]]; then
         echo "$line"
         break
       fi
     done
   done < licenses-found.md
+
+  echo "============ Weak Copyleft Licenses Found ============"
+  head -n 2 licenses-found.md
+  while IFS= read -r line; do
+    for lic in "${weakCopyleftLic[@]}"; do
+      if [[ $line == *"$lic"* ]]; then
+        echo "$line"
+        break
+      fi
+    done
+  done < licenses-found.md
+
+  # Create combined report
+  {
+    echo "# Copyleft License Report"
+    echo "## Strong Copyleft Licenses"
+    echo ""
+    for lic in "${strongCopyleftLic[@]}"; do
+      grep -i "$lic" licenses-found.md | sort -u || true
+    done
+    echo ""
+    echo "## Weak Copyleft Licenses"
+    echo ""
+    for lic in "${weakCopyleftLic[@]}"; do
+      grep -i "$lic" licenses-found.md | sort -u || true
+    done
+  } > copyleft-licenses.md
+
   mdtree licenses-found.md > license-report.html
+  mdtree copyleft-licenses.md > copyleft-report.html
 else
   touch license-report.html
+  touch copyleft-report.html
 fi
-
-# Create badges
-#pip install anybadge
-#python3 ci/createBadges.py dependency
-#python3 ci/createBadges.py license
 
 deactivate
 rm -rf ci-venv
