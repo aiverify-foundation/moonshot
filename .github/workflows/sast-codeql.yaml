@@ -4,7 +4,7 @@ name: "SAST - CodeQL"
 on:
   # Run when code is pushed to the main branch
   push:
-    branches: [ main, ci/cleanup-workflows ]
+    branches: [ main ]
 
   # Run when pull requests are created against dev_main
   pull_request:
