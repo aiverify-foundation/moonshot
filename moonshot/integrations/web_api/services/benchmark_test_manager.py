@@ -82,12 +82,20 @@ class BenchmarkTestManager(BaseService):
         self, input_data: BenchmarkRunnerDTO, benchmark_type: BenchmarkCollectionType
     ) -> str:
         task_id = self.generate_unique_task_id()
-        runner = self.runner_service.create_runner(
-            input_data.run_name,
-            input_data.endpoints,
-            input_data.description,
-            self.progress_status_updater.on_progress_update,
-        )
+        try:
+            runner = self.runner_service.create_runner(
+                input_data.run_name,
+                input_data.endpoints,
+                input_data.description,
+                self.progress_status_updater.on_progress_update,
+            )
+        except ValueError as e:
+            self.logger.error(f"Failed to create runner - {e}")
+            raise ValueError("Failed to create runner due to invalid input.")
+        except Exception as e:
+            self.logger.error(f"Failed to create runner - {e}")
+            raise Exception(f"Unexpected error in core library - {e}")
+        
         benchmark_coroutine = self.run_test(input_data, benchmark_type, runner)
 
         task = asyncio.create_task(benchmark_coroutine, name=task_id)
