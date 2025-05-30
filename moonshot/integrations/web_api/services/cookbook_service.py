@@ -21,6 +21,9 @@ class CookbookService(BaseService):
         Args:
             cookbook_data (CookbookCreateDTO): Data transfer object containing cookbook details.
         """
+        existing_cookbook = moonshot_api.api_read_cookbook(cookbook_data.name)
+        if existing_cookbook:
+            raise ValueError("Cookbook with this name already exists.")
         moonshot_api.api_create_cookbook(
             name=cookbook_data.name,
             description=cookbook_data.description,
