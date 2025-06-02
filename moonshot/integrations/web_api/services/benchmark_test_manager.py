@@ -95,7 +95,7 @@ class BenchmarkTestManager(BaseService):
         except Exception as e:
             self.logger.error(f"Failed to create runner - {e}")
             raise Exception(f"Unexpected error in core library - {e}")
-        
+
         benchmark_coroutine = self.run_test(input_data, benchmark_type, runner)
 
         task = asyncio.create_task(benchmark_coroutine, name=task_id)
