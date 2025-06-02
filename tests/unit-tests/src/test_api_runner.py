@@ -147,8 +147,8 @@ class TestCollectionApiRunner:
                 {
                     "expected_output": False,
                     "expected_id": "",
-                    "expected_error_message": "String should have at least 1 character",
-                    "expected_exception": "ValidationError",
+                    "expected_error_message": "Runner name must not be empty.",
+                    "expected_exception": "ValueError",
                 },
             ),
             (
@@ -344,6 +344,15 @@ class TestCollectionApiRunner:
                     expected_dict["expected_error_message"]
                     in e.value.errors()[0]["msg"]
                 )
+
+            elif expected_dict["expected_exception"] == "ValueError":
+                with pytest.raises(ValueError) as e:
+                    api_create_runner(
+                        input_args["name"],
+                        input_args["endpoints"],
+                        input_args["description"],
+                    )
+                assert expected_dict["expected_error_message"] in str(e.value)
 
             else:
                 # If an unexpected exception is specified, fail the test.
