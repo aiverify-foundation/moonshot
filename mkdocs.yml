@@ -73,5 +73,10 @@ nav:
   - Appendix:
     - Installation: appendix/installation.md
     - Jupyter Notebooks: appendix/jupyter-notebooks.md
+    - Resources - Attack modules : appendix/attack-modules.md
+    - Resources - Datasets : appendix/datasets.md
+    - Resources - Metrics : appendix/metrics.md
+    - Resources - Cookbooks : appendix/cookbooks.md
     - Contributor Guide: contributing.md
+    
   - FAQ : faq.md
