@@ -1,5 +1,6 @@
 import asyncio
 import uuid
+import traceback
 from typing import Any
 
 from dependency_injector.wiring import inject
@@ -90,10 +91,10 @@ class BenchmarkTestManager(BaseService):
                 self.progress_status_updater.on_progress_update,
             )
         except ValueError as e:
-            self.logger.error(f"Failed to create runner - {e}")
+            self.logger.error("Failed to create runner - Error: %s, Stacktrace: %s", e, traceback.print_exc())
             raise ValueError("Failed to create runner due to invalid input.")
         except Exception as e:
-            self.logger.error(f"Failed to create runner - {e}")
+            self.logger.error("Failed to create runner - Error: %s, Stacktrace: %s", e, traceback.print_exc())
             raise Exception(f"Unexpected error in core library - {e}")
 
         benchmark_coroutine = self.run_test(input_data, benchmark_type, runner)
