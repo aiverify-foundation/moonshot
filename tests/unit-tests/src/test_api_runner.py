@@ -292,6 +292,19 @@ class TestCollectionApiRunner:
                     "expected_exception": "ValidationError",
                 },
             ),
+            (
+                {
+                    "name": "my-new-runner",
+                    "description": "My new Runner!",
+                    "endpoints": ["openai-gpt4", ""],
+                },
+                {
+                    "expected_output": False,
+                    "expected_id": "my-new-runner",
+                    "expected_error_message": "Endpoints must be a non-empty list of strings.",
+                    "expected_exception": "ValueError",
+                },
+            ),
         ],
     )
     def test_api_create_runner(self, input_args, expected_dict):
