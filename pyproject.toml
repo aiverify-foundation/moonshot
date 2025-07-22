@@ -20,22 +20,22 @@ classifiers = [
 ]
 dependencies = [
     "python-slugify>=8.0.4",
-    "python-dotenv>=1.0.1",
+    "python-dotenv>=1.1.0",
     "ijson>=3.3.0",
     "jinja2>=3.1.6",
     "pydantic==2.8.2",
-    "pyparsing>=3.1.4",
+    "pyparsing>=3.2.3",
     "xxhash>=3.5.0",
-    "datasets>=2.21.0",
+    "datasets~=3.2.0",
     "pandas>=2.2.2",
-    "numpy>=1.26.4",
-    "tenacity>=8.5.0",
+    "numpy~=1.26.4",
+    "tenacity~=8.5.0",
     "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
 web-api = [
-    "typing-extensions>=4.12.2",
+    "typing-extensions==4.13.2",
     "fastapi>=0.115.4",
     "uvicorn>=0.30.6",
     "dependency-injector>=4.41.0",
@@ -45,7 +45,7 @@ cli = [
     "rich>=13.8.0",
 ]
 all = [
-    "typing-extensions>=4.12.2",
+    "typing-extensions==4.13.2",
     "fastapi>=0.115.4",
     "uvicorn>=0.30.6",
     "dependency-injector>=4.41.0",
@@ -118,17 +118,17 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
 python-slugify = ">=8.0.4"
-python-dotenv = ">=1.0.1"
+python-dotenv = ">=1.1.0"
 ijson = ">=3.3.0"
 jinja2 = ">=3.1.6"
 pydantic = "2.8.2"
-pyparsing = ">=3.1.4"
+pyparsing = ">=3.2.3"
 xxhash = ">=3.5.0"
-datasets = ">=2.21.0"
+datasets = "~=3.2.0"
 pandas = ">=2.2.2"
-numpy = ">=1.26.4"
-tenacity = ">=8.5.0"
-typing-extensions = ">=4.12.2"
+numpy = "~=1.26.4"
+tenacity = "~=8.5.0"
+typing-extensions = "==4.13.2"
 fastapi = ">=0.115.4"
 uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
@@ -167,3 +167,15 @@ requests = "^2.32.4"
 jinja2 = "^3.1.6"
 aiohttp = "^3.12.14"
 cryptography = "^44.0.1"
+huggingface-hub = "==0.30.2"
+anyio = "==4.8.0"
+attrs = "==25.1.0"
+filelock = "==3.17.0"
+frozenlist = "==1.5.0"
+multidict = "==6.1.0"
+propcache = "==0.2.1"
+pytz = "==2025.1"
+python-dotenv = "==1.1.0"
+tzdata = "==2025.1"
+typing-extensions = "==4.13.2"
+yarl = "==1.18.0"
