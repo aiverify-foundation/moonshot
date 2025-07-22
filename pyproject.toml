@@ -22,7 +22,7 @@ dependencies = [
     "python-slugify>=8.0.4",
     "python-dotenv>=1.0.1",
     "ijson>=3.3.0",
-    "jinja2>=3.1.4",
+    "jinja2>=3.1.6",
     "pydantic==2.8.2",
     "pyparsing>=3.1.4",
     "xxhash>=3.5.0",
@@ -120,7 +120,7 @@ python = ">=3.11,<3.12"
 python-slugify = ">=8.0.4"
 python-dotenv = ">=1.0.1"
 ijson = ">=3.3.0"
-jinja2 = ">=3.1.4"
+jinja2 = ">=3.1.6"
 pydantic = "2.8.2"
 pyparsing = ">=3.1.4"
 xxhash = ">=3.5.0"
@@ -134,7 +134,12 @@ uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
 cmd2 = ">=2.4.3"
 rich = ">=13.8.0"
-urllib3 = "^2.4.0"
+h11 = "^0.16.0"
+starlette = "^0.47.2"
+urllib3 = "^2.5.0"
+requests = "^2.32.4"
+aiohttp = "^3.12.14"
+cryptography = "^44.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
