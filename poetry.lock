@@ -4087,4 +4087,4 @@ web-api = ["dependency-injector", "fastapi", "typing-extensions", "uvicorn"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "50d721eb8ebebfea7848d523dd5a23c46681878866eab45853ef093a2cfb0f64"
+content-hash = "ae1775590c12d39cb40a8f842f9bf3ccf34d5b16ccf1a4cff894d59e9203d06f"
