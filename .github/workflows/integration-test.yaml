@@ -36,6 +36,21 @@ jobs:
 
     steps:
 
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
