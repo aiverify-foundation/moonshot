@@ -36,6 +36,21 @@ jobs:
 
     steps:
 
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
       uses: actions/checkout@v4
@@ -135,31 +150,29 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml"
 ##########################################################################################################################################################################
+
   integration-ui-test-homepage:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -260,31 +273,29 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml"
   ##########################################################################################################################################################################
+
   integration-ui-test-benchmarking:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -397,32 +408,29 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml"
-            
 ##########################################################################################################################################################################
+
   integration-ui-test-red-teaming:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -535,31 +543,29 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml" 
   ##########################################################################################################################################################################
+
   integration-ui-test-utils:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -660,31 +666,29 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml"
   ##########################################################################################################################################################################
+
   integration-ui-test-history:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
@@ -785,30 +789,28 @@ jobs:
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
             
-    - name: TestRail upload results
-      env:
-        TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-        TESTRAIL_PASSWORD: ${{ secrets.TESTRAIL_PASSWORD }}
-      run: |
-          cd moonshot-integration-testing/ui-integration-testing
-          pip install trcli
-          trcli -y \
-            -h https://imdabtg.testrail.io/ \
-            --project "Moonshot" \
-            -u $TESTRAIL_USERNAME \
-            -p $TESTRAIL_PASSWORD \
-            parse_junit \
-            --title "Moonshot" \
-            --result-fields "os:Ubuntu 22.04" \
-            --milestone-id "5" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "./test-results/junit-report.xml"
   ##########################################################################################################################################################################
+  
   integration-cli-test:
 
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Workflow Dispatch)
       if: github.event_name == 'workflow_dispatch'
