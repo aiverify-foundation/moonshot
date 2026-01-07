@@ -1,5 +1,5 @@
 aiohappyeyeballs==2.6.1 ; python_version >= "3.11" and python_version < "3.12"
-aiohttp==3.12.14 ; python_version >= "3.11" and python_version < "3.12"
+aiohttp==3.13.3 ; python_version >= "3.11" and python_version < "3.12"
 aiosignal==1.4.0 ; python_version >= "3.11" and python_version < "3.12"
 annotated-doc==0.0.4 ; python_version >= "3.11" and python_version < "3.12"
 annotated-types==0.7.0 ; python_version >= "3.11" and python_version < "3.12"
