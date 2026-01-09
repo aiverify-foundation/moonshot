@@ -113,7 +113,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -155,6 +155,14 @@ jobs:
           name: playwright-trace-integration-ui-test-endpoint-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-endpoint-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
 ##########################################################################################################################################################################
 
@@ -237,7 +245,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -279,6 +287,14 @@ jobs:
           name: playwright-trace-integration-ui-test-homepage-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-homepage-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
@@ -373,7 +389,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -415,7 +431,15 @@ jobs:
           name: playwright-trace-integration-ui-test-benchmarking-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
-            
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-benchmarking-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
+
 ##########################################################################################################################################################################
 
   integration-ui-test-red-teaming:
@@ -509,7 +533,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -551,6 +575,14 @@ jobs:
           name: playwright-trace-integration-ui-test-redteaming-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-redteaming-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
@@ -633,7 +665,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -675,6 +707,14 @@ jobs:
           name: playwright-trace-integration-ui-test-utils-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-utils-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
@@ -757,7 +797,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -799,6 +839,14 @@ jobs:
           name: playwright-trace-integration-ui-test-history-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-history-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
@@ -881,7 +929,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > mmoonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -923,6 +971,14 @@ jobs:
           name: playwright-trace-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
 
 
   ##########################################################################################################################################################################
@@ -1006,7 +1062,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > mmoonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -1034,5 +1090,13 @@ jobs:
          pip install python-dotenv
          pip install pytest
          pytest
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-cli-test-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
 
