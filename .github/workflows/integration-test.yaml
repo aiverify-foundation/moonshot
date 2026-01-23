@@ -1000,7 +1000,7 @@ jobs:
             
   ##########################################################################################################################################################################
 
-  ui-test-flaky-tag:
+  ui-test-with-flaky-tag:
 
     if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
@@ -1133,7 +1133,7 @@ jobs:
             
   ##########################################################################################################################################################################
 
-  ui-test-with-tag:
+  ui-test-with-wip-tag:
 
     if: ${{ inputs.run-ui-test-with-wip-tag-only == 'true' }}
     runs-on: ubuntu-latest
@@ -1251,7 +1251,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-          name: playwright-trace-integration-ui-test-with-wip-tag-${{ github.run_id }}
+          name: playwright-trace-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
     
@@ -1259,7 +1259,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-          name: Moonshot-logs-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
+          name: Moonshot-logs-integration-ui-test-with-wip-tag-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot.log
 
