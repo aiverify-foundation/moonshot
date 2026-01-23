@@ -1119,7 +1119,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-          name: playwright-trace-integration-ui-test-history-${{ github.run_id }}
+          name: playwright-trace-integration-ui-test-with-flay-tag-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
     
@@ -1127,7 +1127,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-          name: Moonshot-logs-integration-ui-test-history-${{ github.run_id }}
+          name: Moonshot-logs-integration-ui-test-with-flaky-tag-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot.log
             
@@ -1251,7 +1251,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-          name: playwright-trace-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
+          name: playwright-trace-integration-ui-test-with-wip-tag-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
     
