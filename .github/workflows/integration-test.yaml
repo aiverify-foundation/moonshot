@@ -142,8 +142,8 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running UI Endpoint Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts  --grep-invert @wip
+         echo "Running UI Endpoint Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts --grep-invert "@wip|@flaky"
              
     - name: Print Environment Variables
       run: env
@@ -274,7 +274,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
+         echo "Running Homepage Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
@@ -709,7 +709,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Red Teaming UI Test Cases"
+         echo "Running Red Teaming UI Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
@@ -842,7 +842,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
+         echo "Running Homepage Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/utils.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
@@ -975,7 +975,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
+         echo "Running Homepage Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/history.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
@@ -1108,7 +1108,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
+         echo "Running flaky test Cases from all test cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test --grep "@flaky" --grep-invert "@wip"
     
     - name: Print Environment Variables
@@ -1241,7 +1241,7 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
+         echo "Running work-in-progress Test Cases"
          URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test --grep "@wip"
     
     - name: Print Environment Variables
