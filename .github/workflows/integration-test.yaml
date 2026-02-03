@@ -22,6 +22,11 @@ on:
         required: true
         default: 'main'
         type: string
+      run-ui-test-with-wip-tag-only:
+        description: 'Only run UI Test and with @wip tag (true/false)'
+        required: true
+        default: 'false'
+        type: string
 
 # Allow one concurrent deployment
 concurrency:
@@ -29,8 +34,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  integration-ui-test-endpoint:
+  ui-test-endpoint:
 
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -107,7 +113,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -136,8 +142,8 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running UI Endpoint Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts
+         echo "Running UI Endpoint Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/endpoint.spec.ts --grep-invert "@wip|@flaky"
              
     - name: Print Environment Variables
       run: env
@@ -149,11 +155,20 @@ jobs:
           name: playwright-trace-integration-ui-test-endpoint-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-endpoint-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
 ##########################################################################################################################################################################
 
-  integration-ui-test-homepage:
+  ui-test-homepage:
 
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -230,7 +245,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -259,10 +274,11 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts
+         echo "Running Homepage Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/homepage.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
+      if: always()
       run: env
       
     - name: Upload Playwright Traces
@@ -272,11 +288,20 @@ jobs:
           name: playwright-trace-integration-ui-test-homepage-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-homepage-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
-  integration-ui-test-benchmarking:
+  ui-test-benchmarking:
 
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -365,7 +390,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -395,9 +420,10 @@ jobs:
          npx playwright install-deps
          npm install dotenv --save
          echo "Running Benchmarking UI Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
+      if: always()
       run: env
       
     - name: Upload Playwright Traces
@@ -407,11 +433,20 @@ jobs:
           name: playwright-trace-integration-ui-test-benchmarking-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
-            
-##########################################################################################################################################################################
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-benchmarking-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
 
-  integration-ui-test-red-teaming:
+  ##########################################################################################################################################################################
 
+  ui-test-benchmarking-imda-starter-kit:
+
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -500,7 +535,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -529,10 +564,156 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Red Teaming UI Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts
+         echo "Running Benchmarking UI Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/benchmarking.imda-starter-kit.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
+      if: always()
+      run: env
+      
+    - name: Upload Playwright Traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace-integration-ui-test-benchmarking-imda-starter-kit-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-benchmarking-imda-starter-kit-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
+
+##########################################################################################################################################################################
+
+  ui-test-red-teaming:
+
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Checkout Moonshot (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: ${{ inputs.moonshot_branch }}
+          
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
+    
+    - name: Setup Moonshot
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        touch .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
+
+    - name: Checkout Moonshot Data (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with: 
+         repository: aiverify-foundation/moonshot-data
+         ref: ${{ inputs.moonshot_data_branch }}
+         path: moonshot-data
+
+    - name: Setup Moonshot Data
+      run: |
+        source venv/bin/activate
+        cd moonshot-data
+        pip install -r requirements.txt
+
+    - name: Checkout Moonshot UI (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+        repository: aiverify-foundation/moonshot-ui
+        ref: ${{ inputs.moonshot_ui_branch }}
+        path: moonshot-ui
+
+     # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+        source venv/bin/activate
+        pip install nltk
+        python -c "import nltk; nltk.download('stopwords');nltk.download('punkt');nltk.download('punkt_tab');nltk.download('averaged_perceptron_tagger_eng')"
+    
+    - name: Setup Moonshot UI
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        URI2: ${{ secrets.URI2 }}
+        TOKEN2: ${{ secrets.TOKEN2 }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
+      run: |
+        source venv/bin/activate
+        cd moonshot-ui
+        npm install
+        npm run build
+        cd ../
+        nohup python -m moonshot web > moonshot.log 2>&1 &
+
+    - name: Checkout Integration Test 
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot-integration-testing
+          path: moonshot-integration-testing
+    
+    - name: Run Integration UI Test
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        URI2: ${{ secrets.URI2 }}
+        TOKEN2: ${{ secrets.TOKEN2 }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
+      id: integrationuitest
+      run: |
+         source venv/bin/activate
+         cd moonshot-integration-testing/ui-integration-testing
+         npm ci
+         npx playwright install
+         npx playwright install-deps
+         npm install dotenv --save
+         echo "Running Red Teaming UI Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/red_teaming.spec.ts --grep-invert "@wip|@flaky"
+    
+    - name: Print Environment Variables
+      if: always()
       run: env
       
     - name: Upload Playwright Traces
@@ -542,11 +723,20 @@ jobs:
           name: playwright-trace-integration-ui-test-redteaming-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-redteaming-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
-  integration-ui-test-utils:
+  ui-test-utils:
 
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -623,7 +813,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -652,10 +842,11 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/utils.spec.ts
+         echo "Running Homepage Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/utils.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
+      if: always()
       run: env
       
     - name: Upload Playwright Traces
@@ -665,11 +856,20 @@ jobs:
           name: playwright-trace-integration-ui-test-utils-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-utils-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
 
-  integration-ui-test-history:
+  ui-test-history:
 
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
@@ -746,7 +946,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -775,10 +975,11 @@ jobs:
          npx playwright install
          npx playwright install-deps
          npm install dotenv --save
-         # echo "Running Homepage Test Cases"
-         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/history.spec.ts
+         echo "Running Homepage Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test tests/history.spec.ts --grep-invert "@wip|@flaky"
     
     - name: Print Environment Variables
+      if: always()
       run: env
       
     - name: Upload Playwright Traces
@@ -788,11 +989,287 @@ jobs:
           name: playwright-trace-integration-ui-test-history-${{ github.run_id }}
           path: |
             /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-history-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
             
   ##########################################################################################################################################################################
-  
-  integration-cli-test:
 
+  ui-test-with-flaky-tag:
+
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Checkout Moonshot (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: ${{ inputs.moonshot_branch }}
+          
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
+    
+    - name: Setup Moonshot
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        touch .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
+
+    - name: Checkout Moonshot Data (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with: 
+         repository: aiverify-foundation/moonshot-data
+         ref: ${{ inputs.moonshot_data_branch }}
+         path: moonshot-data
+
+    - name: Setup Moonshot Data
+      run: |
+        source venv/bin/activate
+        cd moonshot-data
+        pip install -r requirements.txt
+
+    - name: Checkout Moonshot UI (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+        repository: aiverify-foundation/moonshot-ui
+        ref: ${{ inputs.moonshot_ui_branch }}
+        path: moonshot-ui
+
+     # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+        source venv/bin/activate
+        pip install nltk
+        python -c "import nltk; nltk.download('stopwords');nltk.download('punkt');nltk.download('punkt_tab');nltk.download('averaged_perceptron_tagger_eng')"
+    
+    - name: Setup Moonshot UI
+      run: |
+        source venv/bin/activate
+        cd moonshot-ui
+        npm install
+        npm run build
+        cd ../
+        nohup python -m moonshot web > moonshot.log 2>&1 &
+
+    - name: Checkout Integration Test 
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot-integration-testing
+          path: moonshot-integration-testing
+    
+    - name: Run Integration UI Test
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        URI2: ${{ secrets.URI2 }}
+        TOKEN2: ${{ secrets.TOKEN2 }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
+      id: integrationuitest
+      run: |
+         source venv/bin/activate
+         cd moonshot-integration-testing/ui-integration-testing
+         npm ci
+         npx playwright install
+         npx playwright install-deps
+         npm install dotenv --save
+         echo "Running flaky test Cases from all test cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test --grep "@flaky" --grep-invert "@wip"
+    
+    - name: Print Environment Variables
+      if: always()
+      run: env
+      
+    - name: Upload Playwright Traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace-integration-ui-test-with-flaky-tag-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-with-flaky-tag-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
+            
+  ##########################################################################################################################################################################
+
+  ui-test-with-wip-tag:
+
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Checkout Moonshot (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot
+          ref: ${{ inputs.moonshot_branch }}
+          
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
+    
+    - name: Setup Moonshot
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        touch .env
+        echo "${{ secrets.ENVIRONMENT_VARS }}" >> .env
+
+    - name: Checkout Moonshot Data (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with: 
+         repository: aiverify-foundation/moonshot-data
+         ref: ${{ inputs.moonshot_data_branch }}
+         path: moonshot-data
+
+    - name: Setup Moonshot Data
+      run: |
+        source venv/bin/activate
+        cd moonshot-data
+        pip install -r requirements.txt
+
+    - name: Checkout Moonshot UI (Workflow Dispatch)
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/checkout@v4
+      with:
+        repository: aiverify-foundation/moonshot-ui
+        ref: ${{ inputs.moonshot_ui_branch }}
+        path: moonshot-ui
+
+     # Download NLTK stopwords
+    - name: Download NLTK stopwords
+      run: |
+        source venv/bin/activate
+        pip install nltk
+        python -c "import nltk; nltk.download('stopwords');nltk.download('punkt');nltk.download('punkt_tab');nltk.download('averaged_perceptron_tagger_eng')"
+    
+    - name: Setup Moonshot UI
+      run: |
+        source venv/bin/activate
+        cd moonshot-ui
+        npm install
+        npm run build
+        cd ../
+        nohup python -m moonshot web > moonshot.log 2>&1 &
+
+    - name: Checkout Integration Test 
+      uses: actions/checkout@v4
+      with:
+          repository: aiverify-foundation/moonshot-integration-testing
+          path: moonshot-integration-testing
+    
+    - name: Run Integration UI Test
+      env: 
+        URI: ${{ secrets.URI }}
+        TOKEN: ${{ secrets.TOKEN }}
+        URI2: ${{ secrets.URI2 }}
+        TOKEN2: ${{ secrets.TOKEN2 }}
+        ADDITIONAL_PARAMETERS: ${{ secrets.ADDITIONAL_PARAMETERS }}
+        TOGETHER_TOKEN: ${{ secrets.TOGETHER_TOKEN }}
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        H2OGPT_TOKEN: ${{ secrets.H2OGPT_TOKEN }}
+      id: integrationuitest
+      run: |
+         source venv/bin/activate
+         cd moonshot-integration-testing/ui-integration-testing
+         npm ci
+         npx playwright install
+         npx playwright install-deps
+         npm install dotenv --save
+         echo "Running work-in-progress Test Cases"
+         URI="$URI" TOKEN="$TOKEN" URI2="$URI2" TOKEN2="$TOKEN2" ADDITIONAL_PARAMETERS="$ADDITIONAL_PARAMETERS" TOGETHER_TOKEN="$TOGETHER_TOKEN" OPENAI_TOKEN="$OPENAI_TOKEN" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" GOOGLE_TOKEN="$GOOGLE_TOKEN" H2OGPT_TOKEN="$H2OGPT_TOKEN" DEBUG=pw:api npx playwright test --grep "@wip"
+    
+    - name: Print Environment Variables
+      run: env
+      
+    - name: Upload Playwright Traces
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: playwright-trace-integration-ui-test-with-wip-tag-only-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot-integration-testing/ui-integration-testing/test-results
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-ui-test-with-wip-tag-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
+
+
+  ##########################################################################################################################################################################
+
+
+  cli-test:
+
+    if: ${{ inputs.run-ui-test-with-wip-tag-only == 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -868,7 +1345,7 @@ jobs:
         npm install
         npm run build
         cd ../
-        nohup python -m moonshot web &
+        nohup python -m moonshot web > moonshot.log 2>&1 &
 
     - name: Checkout Integration Test 
       uses: actions/checkout@v4
@@ -896,5 +1373,11 @@ jobs:
          pip install python-dotenv
          pip install pytest
          pytest
-            
-
+    
+    - name: Upload Moonshot logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Moonshot-logs-integration-cli-test-${{ github.run_id }}
+          path: |
+            /home/runner/work/moonshot/moonshot/moonshot.log
