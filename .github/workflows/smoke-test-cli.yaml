@@ -37,9 +37,24 @@ jobs:
   smoke-test:
     if: (github.event_name == 'pull_request' && github.event.pull_request.assignee != null) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 100
+    timeout-minutes: 60
 
     steps:
+
+    # [WS-299] Remove pre-installed tools to free up space for installation of moonshot-data
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        # Required for Python
+        tool-cache: false
+        
+        # Remove tools
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
 
     - name: Checkout Moonshot (Pull Request Review)
       if: github.event_name == 'pull_request'

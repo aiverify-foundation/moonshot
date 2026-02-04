@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.7.4"
+version = "0.7.5"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -25,12 +25,28 @@ dependencies = [
     "jinja2>=3.1.6",
     "pydantic==2.8.2",
     "pyparsing>=3.2.3",
-    "xxhash>=3.5.0",
+    "xxhash>=3.6.0",
     "datasets~=3.2.0",
-    "pandas>=2.2.2",
-    "numpy~=1.26.4",
-    "tenacity~=8.5.0",
+    "pandas~=2.3.3",
+    "numpy~=2.1.3",
+    "tenacity~=9.1.2",
     "python-multipart>=0.0.9",
+
+    # Sub-dependencies to match moonshot-data's requirements.txt
+    "certifi~=2025.11.12",
+    "charset-normalizer>=3.4.4",
+    "click>=8.3.1",
+    "huggingface-hub~=0.36.0",
+    "idna~=3.11",
+    "markdown-it-py~=4.0.0",
+    "markupsafe~=3.0.3",
+    "packaging~=25.0",
+    "pyarrow~=22.0.0",
+    "pygments~=2.19.2",
+    "pyparsing~=3.3.1",
+    "pyyaml~=6.0.3",
+    "rich~=14.2.0",
+    "wcwidth>=0.2.14",
 ]
 
 [project.optional-dependencies]
@@ -110,7 +126,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.7.4"
+version = "0.7.5"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -125,18 +141,15 @@ pydantic = "2.8.2"
 pyparsing = ">=3.2.3"
 xxhash = ">=3.5.0"
 datasets = "~=3.2.0"
-pandas = ">=2.2.2"
-numpy = "~=1.26.4"
-tenacity = "~=8.5.0"
 typing-extensions = "==4.13.2"
-fastapi = ">=0.115.4"
+fastapi = "^0.128.0"
 uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
 cmd2 = ">=2.4.3"
 rich = ">=13.8.0"
 h11 = "^0.16.0"
-starlette = "^0.47.2"
-urllib3 = "^2.5.0"
+starlette = "^0.49.1"
+urllib3 = "^2.6.0"
 requests = "^2.32.4"
 aiohttp = "^3.12.14"
 cryptography = "^44.0.1"
@@ -161,13 +174,12 @@ mkdocs-material = "^9.6.14"
 mkdocs-swagger-ui-tag = "^0.7.1"
 mkdocstrings-python = "^1.16.10"
 h11 = "^0.16.0"
-starlette = "^0.47.2"
-urllib3 = "^2.5.0"
+starlette = "^0.49.1"
+urllib3 = "^2.6.0"
 requests = "^2.32.4"
 jinja2 = "^3.1.6"
-aiohttp = "^3.12.14"
+aiohttp = "^3.13.2"
 cryptography = "^44.0.1"
-huggingface-hub = "==0.30.2"
 anyio = "==4.8.0"
 attrs = "==25.1.0"
 filelock = "==3.17.0"
