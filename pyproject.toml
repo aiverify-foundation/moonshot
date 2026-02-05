@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aiverify-moonshot"
-version = "0.7.5"
+version = "0.7.6"
 authors = [
     { name="AI Verify Foundation", email="info@aiverify.sg" }
 ]
@@ -57,7 +57,7 @@ web-api = [
     "dependency-injector>=4.41.0",
 ]
 cli = [
-    "cmd2>=2.4.3",
+    "cmd2>=2.5.11,<3.0.0",
     "rich>=13.8.0",
 ]
 all = [
@@ -65,7 +65,7 @@ all = [
     "fastapi>=0.115.4",
     "uvicorn>=0.30.6",
     "dependency-injector>=4.41.0",
-    "cmd2>=2.4.3",
+    "cmd2>=2.5.11,<3.0.0",
     "rich>=13.8.0",
 ]
 
@@ -126,7 +126,7 @@ allow-direct-references = true
 
 [tool.poetry]
 name = "aiverify-moonshot"
-version = "0.7.5"
+version = "0.7.6"
 description = "A simple and modular tool to evaluate and red-team any LLM application."
 authors = ["The Moonshot Team <our.moonshot.team@gmail.com>"]
 readme = "README.md"
@@ -145,7 +145,7 @@ typing-extensions = "==4.13.2"
 fastapi = "^0.128.0"
 uvicorn = ">=0.30.6"
 dependency-injector = ">=4.41.0"
-cmd2 = ">=2.4.3"
+cmd2 = ">=2.5.11,<3.0.0"
 rich = ">=13.8.0"
 h11 = "^0.16.0"
 starlette = "^0.49.1"
