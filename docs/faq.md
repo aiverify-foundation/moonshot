@@ -50,15 +50,17 @@ If you are operating on an x86 MacOS, you may encounter difficulties when attemp
 
 ### (Windows Only) I am having issues installing some Tensorflow Python packages
 
-At the time of writing (Jun 2024), there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
+At the time of writing (Jun 2026), there seems to be no `tensorflow-io-gcs-filesystem` wheel for Windows beyond a certain version. You may encounter this issue while you're installing `moonshot-data`:
 
 ![windows-installation-error-tensorflow](./res/faq/windows-installation-error-tensorflow.png)
 
 You can try the following:
 
 1. In the directory where you installed `moonshot-data`, change the version of `tensorflow-io-gcs-filesystem` in `moonshot-data/requirements.txt` to `0.31.0`.
-2. Install the requirements of `moonshot-data` again: `pip install -r moonshot-data/requirements.txt`.
-3. The issue should be resolved.
+2. Remove line `tensorflow-text==2.11.0` in `moonshot-data/requirements.txt`
+3. Install the requirements of `moonshot-data` again: `python -m moonshot -i moonshot-data -i moonshot-ui`.
+4. Enter `n` when prompted `Directory moonshot-data already exists. Do you want to remove it and reinstall? (Y/n)`. This is because Moonshot will proceed to download resources for nltk and spacy libraries.
+5. The issue should be resolved.
 
 
 </br>
