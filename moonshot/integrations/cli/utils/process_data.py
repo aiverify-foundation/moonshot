@@ -24,29 +24,28 @@ def filter_data(
 
     # if pagination is required
     if pagination:
-        # add index to every dictionary in the list
-        if all(isinstance(item, dict) for item in list_of_data):
-            for index, item in enumerate(list_of_data, 1):
-                if isinstance(item, dict):
-                    item["idx"] = index
-
-        # get paginated data
-        page_number = pagination[0]
-        page_size = pagination[1]
+        page_number, page_size = pagination
 
         if page_number <= 0 or page_size <= 0:
-            # print("Invalid page number or page size. Page number and page size should start from 1.")
             raise RuntimeError(
                 "Invalid page number or page size. Page number and page size should start from 1."
             )
 
+        # An empty filtered result has no last page to fall back to.
+        if not list_of_data:
+            return []
+
+        # Preserve CLI row numbering without mutating the source records.
+        if all(isinstance(item, dict) for item in list_of_data):
+            list_of_data = [
+                {**item, "idx": index}
+                for index, item in enumerate(list_of_data, 1)
+            ]
+
         paginated_data = get_paginated_lists(page_size, list_of_data)
 
-        # perform index checks
-        paginated_data_size = len(paginated_data)
-        if page_number > paginated_data_size:
-            list_of_data = paginated_data[(paginated_data_size - 1)]
-        else:
-            list_of_data = paginated_data[(page_number - 1)]
+        # Preserve the existing behavior of selecting the last available
+        # page when the requested page number exceeds the result count.
+        list_of_data = paginated_data[min(page_number, len(paginated_data)) - 1]
 
     return list_of_data
